@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.GethRepository
-import pm.gnosis.android.app.wallet.data.model.Transaction
+import pm.gnosis.android.app.wallet.data.model.TransactionJson
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.util.snackbar
@@ -49,10 +49,10 @@ class MainActivity : AppCompatActivity() {
     fun processQrCode(data: String) {
         try {
             val bytes = Base64.decode(data, Base64.DEFAULT)
-            val jsonAdapter = moshi.adapter<Transaction>(Transaction::class.java)
-            val transaction = jsonAdapter.fromJson(String(bytes))
+            val jsonAdapter = moshi.adapter<TransactionJson>(TransactionJson::class.java)
+            val transactionJson = jsonAdapter.fromJson(String(bytes))
             val intent = Intent(this, TransactionDetailsActivity::class.java)
-            intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transaction)
+            intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transactionJson)
             startActivity(intent)
         } catch (e: Exception) {
             Timber.e(e)

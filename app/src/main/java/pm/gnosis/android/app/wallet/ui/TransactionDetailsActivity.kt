@@ -6,6 +6,7 @@ import kotlinx.android.synthetic.main.activity_transaction_details.*
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.model.Transaction
+import pm.gnosis.android.app.wallet.data.model.TransactionJson
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 
@@ -21,16 +22,19 @@ class TransactionDetailsActivity : AppCompatActivity() {
         inject()
         setContentView(R.layout.activity_transaction_details)
 
-        intent.extras?.let { transaction = it.getParcelable(TRANSACTION_EXTRA) }
+        intent.extras?.let {
+            val transactionJson: TransactionJson = it.getParcelable(TRANSACTION_EXTRA)
+            transaction = transactionJson.read()
+        }
         fillTransactionDetails()
     }
 
     fun fillTransactionDetails() {
         recipient.text = transaction?.to ?: "No value"
-        gas_limit.text = transaction?.gasLimit ?: "No value"
-        gas_price.text = transaction?.gasPrice ?: "No value"
+        gas_limit.text = transaction?.gasLimit.toString() ?: "No value"
+        gas_price.text = transaction?.gasPrice.toString() ?: "No value"
         nonce.text = transaction?.nonce ?: "No value"
-        value.text = transaction?.value ?: "No value"
+        value.text = transaction?.value.toString() ?: "No value"
         data.text = transaction?.data ?: "No value"
     }
 
