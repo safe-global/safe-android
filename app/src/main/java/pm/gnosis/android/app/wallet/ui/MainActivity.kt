@@ -5,9 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import org.ethereum.geth.KeyStore
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
+import pm.gnosis.android.app.wallet.data.GethRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.util.toast
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
-    @Inject lateinit var keyStore: KeyStore
+    @Inject lateinit var gethRepo: GethRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,12 +28,13 @@ class MainActivity : AppCompatActivity() {
             val integrator = ZxingIntentIntegrator(this)
             integrator.initiateScan(QR_CODE_TYPES)
         }
+        account_address.text = gethRepo.getAccount().address.hex
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == ZxingIntentIntegrator.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(SCAN_RESULT_EXTRA)) {
-                toast(data.getStringExtra("SCAN_RESULT"))
+                toast(data.getStringExtra(SCAN_RESULT_EXTRA))
             } else {
                 toast("Something went wrong :(")
             }
