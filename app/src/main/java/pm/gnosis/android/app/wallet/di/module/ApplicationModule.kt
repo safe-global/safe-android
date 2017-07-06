@@ -23,5 +23,4 @@ class ApplicationModule(val application: Application) {
     @Provides
     @Singleton
     fun providesGethKeyStore() = KeyStore("${application.filesDir}/keystore", Geth.LightScryptN, Geth.LightScryptP)
-
 }
