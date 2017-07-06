@@ -4,21 +4,26 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Base64
+import android.widget.Toast
+import com.squareup.moshi.Moshi
 import kotlinx.android.synthetic.main.activity_main.*
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.GethRepository
+import pm.gnosis.android.app.wallet.data.model.Transaction
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.util.toast
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.QR_CODE_TYPES
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
+import timber.log.Timber
 import javax.inject.Inject
-
 
 class MainActivity : AppCompatActivity() {
     @Inject lateinit var gethRepo: GethRepository
+    @Inject lateinit var moshi: Moshi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +39,25 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == ZxingIntentIntegrator.REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(SCAN_RESULT_EXTRA)) {
-                toast(data.getStringExtra(SCAN_RESULT_EXTRA))
-            } else {
-                toast("Something went wrong :(")
+                processQrCode(data.getStringExtra(SCAN_RESULT_EXTRA))
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                toast("Cancelled by the user")
             }
+        }
+    }
+
+    //TODO: new thread
+    fun processQrCode(data: String) {
+        try {
+            val bytes = Base64.decode(data, Base64.DEFAULT)
+            val jsonAdapter = moshi.adapter<Transaction>(Transaction::class.java)
+            val transaction = jsonAdapter.fromJson(String(bytes))
+            val intent = Intent(this, TransactionDetailsActivity::class.java)
+            intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transaction)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Timber.e(e)
+            toast("QRCode does not contain a valid transaction", Toast.LENGTH_LONG)
         }
     }
 
