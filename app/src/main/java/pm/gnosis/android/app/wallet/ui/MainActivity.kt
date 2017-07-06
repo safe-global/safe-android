@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Base64
-import android.widget.Toast
 import com.squareup.moshi.Moshi
 import kotlinx.android.synthetic.main.activity_main.*
 import pm.gnosis.android.app.wallet.GnosisApplication
@@ -14,7 +13,7 @@ import pm.gnosis.android.app.wallet.data.GethRepository
 import pm.gnosis.android.app.wallet.data.model.Transaction
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
-import pm.gnosis.android.app.wallet.util.toast
+import pm.gnosis.android.app.wallet.util.snackbar
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.QR_CODE_TYPES
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
@@ -41,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(SCAN_RESULT_EXTRA)) {
                 processQrCode(data.getStringExtra(SCAN_RESULT_EXTRA))
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                toast("Cancelled by the user")
+                snackbar(coordinator_layout, "Cancelled by the user")
             }
         }
     }
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         } catch (e: Exception) {
             Timber.e(e)
-            toast("QRCode does not contain a valid transaction", Toast.LENGTH_LONG)
+            snackbar(coordinator_layout, "QRCode does not contain a valid transaction")
         }
     }
 
