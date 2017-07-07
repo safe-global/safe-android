@@ -3,7 +3,7 @@ package pm.gnosis.android.app.wallet.data
 import org.ethereum.geth.BigInt
 import org.ethereum.geth.KeyStore
 import org.ethereum.geth.Transaction
-import pm.gnosis.android.app.wallet.data.remote.EtherscanService
+import pm.gnosis.android.app.wallet.data.remote.EtherscanApi
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class GethRepository @Inject constructor(private val accountManager: AccountManager,
                                          private val gethKeyStore: KeyStore,
-                                         private val etherscanService: EtherscanService) {
+                                         private val etherscanApi: EtherscanApi) {
     fun getAccount() = accountManager.getAccount()
 
     fun sendRawTransaction() {

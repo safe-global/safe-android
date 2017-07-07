@@ -11,6 +11,7 @@ import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.GethRepository
 import pm.gnosis.android.app.wallet.data.model.TransactionJson
+import pm.gnosis.android.app.wallet.data.remote.EthereumConnector
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.util.snackbar
@@ -18,6 +19,7 @@ import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.QR_CODE_TYPES
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -33,6 +35,7 @@ class MainActivity : AppCompatActivity() {
             integrator.initiateScan(QR_CODE_TYPES)
         }
         account_address.text = gethRepo.getAccount().address.hex
+        startLightClient()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -43,6 +46,11 @@ class MainActivity : AppCompatActivity() {
                 snackbar(coordinator_layout, "Cancelled by the user")
             }
         }
+    }
+
+    fun startLightClient() {
+        val ethNode = EthereumConnector().createEthereumNode(File(baseContext.filesDir, ".ethereum_rb").absolutePath)
+        ethNode.start()
     }
 
     //TODO: new thread

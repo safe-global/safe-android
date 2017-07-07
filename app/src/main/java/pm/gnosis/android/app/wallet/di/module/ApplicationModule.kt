@@ -8,7 +8,7 @@ import dagger.Provides
 import io.reactivex.schedulers.Schedulers
 import org.ethereum.geth.Geth
 import org.ethereum.geth.KeyStore
-import pm.gnosis.android.app.wallet.data.remote.EtherscanService
+import pm.gnosis.android.app.wallet.data.remote.EtherscanApi
 import pm.gnosis.android.app.wallet.di.ApplicationContext
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -44,12 +44,12 @@ class ApplicationModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun providesEtherscanService(): EtherscanService {
+    fun providesEtherscanService(): EtherscanApi {
         val retrofit = Retrofit.Builder()
-                .baseUrl(EtherscanService.RINKEBY_BASE_URL)
+                .baseUrl(EtherscanApi.RINKEBY_BASE_URL)
                 .addConverterFactory(MoshiConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build()
-        return retrofit.create(EtherscanService::class.java)
+        return retrofit.create(EtherscanApi::class.java)
     }
 }
