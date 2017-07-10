@@ -1,25 +1,18 @@
 package pm.gnosis.android.app.wallet.data.remote
 
-import org.ethereum.geth.*
+import org.ethereum.geth.Context
+import org.ethereum.geth.Node
+import pm.gnosis.android.app.wallet.di.module.EthereumModule
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 
-class EthereumConnector {
-    val RINKEBY_NODE: NodeConfig by lazy {
-        NodeConfig().apply {
-            val nodes = Enodes()
+@Singleton
+class EthereumConnector @Inject constructor(
+        val context: Context,
+        @Named(EthereumModule.RINKEBY_NODE) val rinkebyNode: Node) {
 
-            RinkebyParams.BOOT_NODES.forEach {
-                nodes.append(Enode(it))
-            }
-
-            bootstrapNodes = nodes
-            ethereumGenesis = RinkebyParams.GENESIS_BLOCK
-            ethereumNetworkID = RinkebyParams.CHAIN_ID
-
-        }
-    }
-
-
-    fun createEthereumNode(path: String, nodeConfig: NodeConfig = RINKEBY_NODE): Node {
-        return Geth.newNode(path, nodeConfig)
+    init {
+        rinkebyNode.start()
     }
 }

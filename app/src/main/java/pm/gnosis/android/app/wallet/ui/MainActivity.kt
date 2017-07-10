@@ -19,12 +19,13 @@ import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.QR_CODE_TYPES
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     @Inject lateinit var gethRepo: GethRepository
     @Inject lateinit var moshi: Moshi
+    @Inject lateinit var ethereumConnector: EthereumConnector
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +36,6 @@ class MainActivity : AppCompatActivity() {
             integrator.initiateScan(QR_CODE_TYPES)
         }
         account_address.text = gethRepo.getAccount().address.hex
-        startLightClient()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -46,11 +46,6 @@ class MainActivity : AppCompatActivity() {
                 snackbar(coordinator_layout, "Cancelled by the user")
             }
         }
-    }
-
-    fun startLightClient() {
-        val ethNode = EthereumConnector().createEthereumNode(File(baseContext.filesDir, ".ethereum_rb").absolutePath)
-        ethNode.start()
     }
 
     //TODO: new thread

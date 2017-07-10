@@ -48,6 +48,15 @@
             android:padding="16dp"
             android:text="Scan Transaction QR Code" />
 
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/sync_light_client"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="32dp"
+            android:padding="16dp"
+            android:text="Sync Progress" />
+
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
