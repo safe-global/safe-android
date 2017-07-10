@@ -11,3 +11,13 @@ class WeiAdapter {
         return Wei(BigInteger(wei))
     }
 }
+
+class HexNumberAdapter {
+    @ToJson fun toJson(hexNumber: BigInteger): String {
+        return StringBuilder("0x").append(hexNumber.toString(16)).toString()
+    }
+
+    @FromJson fun fromJson(hexNumber: String): BigInteger {
+        return BigInteger(hexNumber.removePrefix("0x"), 16)
+    }
+}

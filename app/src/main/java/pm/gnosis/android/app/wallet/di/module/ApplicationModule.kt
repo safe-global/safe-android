@@ -8,6 +8,7 @@ import dagger.Provides
 import io.reactivex.schedulers.Schedulers
 import org.ethereum.geth.Geth
 import org.ethereum.geth.KeyStore
+import pm.gnosis.android.app.wallet.data.model.HexNumberAdapter
 import pm.gnosis.android.app.wallet.data.model.WeiAdapter
 import pm.gnosis.android.app.wallet.data.remote.EtherscanApi
 import pm.gnosis.android.app.wallet.di.ApplicationContext
@@ -37,7 +38,10 @@ class ApplicationModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun providesMoshi() = Moshi.Builder().add(WeiAdapter()).build()
+    fun providesMoshi() = Moshi.Builder()
+            .add(WeiAdapter())
+            .add(HexNumberAdapter())
+            .build()
 
     @Provides
     @Singleton

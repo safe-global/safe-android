@@ -2,6 +2,7 @@ package pm.gnosis.android.app.wallet.data.remote
 
 import io.reactivex.Observable
 import pm.gnosis.android.app.wallet.data.model.Balance
+import pm.gnosis.android.app.wallet.data.model.BlockNumber
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -12,4 +13,7 @@ interface EtherscanApi {
 
     @GET("api?module=account&action=balance&tag=latest")
     fun etherBalance(@Query("address") address: String): Observable<Balance>
+
+    @GET("api?module=proxy&action=eth_blockNumber")
+    fun mostRecentBlockNumber(): Observable<BlockNumber>
 }

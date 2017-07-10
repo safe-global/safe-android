@@ -15,6 +15,7 @@ import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.GethRepository
 import pm.gnosis.android.app.wallet.data.model.Balance
+import pm.gnosis.android.app.wallet.data.model.BlockNumber
 import pm.gnosis.android.app.wallet.data.model.TransactionJson
 import pm.gnosis.android.app.wallet.data.remote.EtherscanRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
@@ -51,10 +52,19 @@ class MainActivity : AppCompatActivity() {
                 etherscanRepository.getEtherBalance()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(onNext = this::onBalance, onError = Timber::e)
+
+        disposables +=
+                etherscanRepository.getMostRecentBlockNumber()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(onNext = this::onRecentBlock, onError = Timber::e)
     }
 
     private fun onBalance(balance: Balance) {
         account_balance.text = balance.result.toEther().stripTrailingZeros().toPlainString() + " Ξ"
+    }
+
+    private fun onRecentBlock(blockNumber: BlockNumber) {
+        recent_block.text = blockNumber.result.toString(10)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
