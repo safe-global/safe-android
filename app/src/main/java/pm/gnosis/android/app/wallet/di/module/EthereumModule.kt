@@ -48,5 +48,5 @@ class EthereumModule(@ApplicationContext val applicationContext: android.content
     @Provides
     @Singleton
     @Named(RINKEBY_NODE_PATH)
-    fun providesRinkebyNodePath() = File(applicationContext.filesDir, ".rinkeby_node").absolutePath
+    fun providesRinkebyNodePath() = File(applicationContext.filesDir, "rinkeby.eth_node").absolutePath
 }

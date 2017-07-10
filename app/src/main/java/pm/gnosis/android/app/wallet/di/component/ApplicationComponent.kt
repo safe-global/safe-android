@@ -6,14 +6,12 @@ import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import dagger.Component
 import org.ethereum.geth.KeyStore
-import org.ethereum.geth.Node
 import pm.gnosis.android.app.wallet.data.GethRepository
 import pm.gnosis.android.app.wallet.data.remote.EthereumConnector
 import pm.gnosis.android.app.wallet.data.remote.EtherscanApi
 import pm.gnosis.android.app.wallet.di.ApplicationContext
 import pm.gnosis.android.app.wallet.di.module.ApplicationModule
 import pm.gnosis.android.app.wallet.di.module.EthereumModule
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
@@ -27,7 +25,5 @@ interface ApplicationComponent {
     fun gethRepo(): GethRepository
     fun etherscanService(): EtherscanApi
 
-    fun gethContext(): org.ethereum.geth.Context
-    @Named(EthereumModule.RINKEBY_NODE) fun rinkebyNode(): Node
     fun ethereumConnector(): EthereumConnector
 }

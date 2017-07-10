@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var moshi: Moshi
     @Inject lateinit var ethereumConnector: EthereumConnector
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
@@ -36,6 +35,7 @@ class MainActivity : AppCompatActivity() {
             integrator.initiateScan(QR_CODE_TYPES)
         }
         account_address.text = gethRepo.getAccount().address.hex
+        Timber.d(ethereumConnector.toString())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -2,7 +2,6 @@ package pm.gnosis.android.app.wallet.di.component
 
 import android.content.Context
 import dagger.Component
-import pm.gnosis.android.app.wallet.data.remote.EthereumConnector
 import pm.gnosis.android.app.wallet.di.ForView
 import pm.gnosis.android.app.wallet.di.ViewContext
 import pm.gnosis.android.app.wallet.di.module.ViewModule
