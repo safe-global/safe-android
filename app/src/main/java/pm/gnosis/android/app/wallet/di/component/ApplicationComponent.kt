@@ -9,6 +9,7 @@ import org.ethereum.geth.KeyStore
 import pm.gnosis.android.app.wallet.data.GethRepository
 import pm.gnosis.android.app.wallet.data.remote.EthereumConnector
 import pm.gnosis.android.app.wallet.data.remote.EtherscanApi
+import pm.gnosis.android.app.wallet.data.remote.EtherscanRepository
 import pm.gnosis.android.app.wallet.di.ApplicationContext
 import pm.gnosis.android.app.wallet.di.module.ApplicationModule
 import pm.gnosis.android.app.wallet.di.module.EthereumModule
@@ -26,4 +27,5 @@ interface ApplicationComponent {
     fun etherscanService(): EtherscanApi
 
     fun ethereumConnector(): EthereumConnector
+    fun etherscanRepository(): EtherscanRepository
 }

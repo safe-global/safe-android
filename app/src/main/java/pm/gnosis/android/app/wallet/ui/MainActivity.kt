@@ -6,12 +6,17 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Base64
 import com.squareup.moshi.Moshi
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_main.*
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.GethRepository
+import pm.gnosis.android.app.wallet.data.model.Balance
 import pm.gnosis.android.app.wallet.data.model.TransactionJson
-import pm.gnosis.android.app.wallet.data.remote.EthereumConnector
+import pm.gnosis.android.app.wallet.data.remote.EtherscanRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.util.snackbar
@@ -24,7 +29,9 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     @Inject lateinit var gethRepo: GethRepository
     @Inject lateinit var moshi: Moshi
-    @Inject lateinit var ethereumConnector: EthereumConnector
+    @Inject lateinit var etherscanRepository: EtherscanRepository
+
+    val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,11 +42,19 @@ class MainActivity : AppCompatActivity() {
             integrator.initiateScan(QR_CODE_TYPES)
         }
         account_address.text = gethRepo.getAccount().address.hex
-        Timber.d(ethereumConnector.toString())
+        Timber.d(account_address.text.toString())
+    }
 
-        sync_light_client.setOnClickListener {
-            ethereumConnector.xpto()
-        }
+    override fun onStart() {
+        super.onStart()
+        disposables +=
+                etherscanRepository.getEtherBalance()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(onNext = this::onBalance, onError = Timber::e)
+    }
+
+    private fun onBalance(balance: Balance) {
+        account_balance.text = balance.result.toEther().stripTrailingZeros().toPlainString() + " Ξ"
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -50,6 +65,11 @@ class MainActivity : AppCompatActivity() {
                 snackbar(coordinator_layout, "Cancelled by the user")
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        disposables.clear()
     }
 
     //TODO: new thread

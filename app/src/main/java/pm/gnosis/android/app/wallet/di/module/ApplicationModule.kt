@@ -8,6 +8,7 @@ import dagger.Provides
 import io.reactivex.schedulers.Schedulers
 import org.ethereum.geth.Geth
 import org.ethereum.geth.KeyStore
+import pm.gnosis.android.app.wallet.data.model.WeiAdapter
 import pm.gnosis.android.app.wallet.data.remote.EtherscanApi
 import pm.gnosis.android.app.wallet.di.ApplicationContext
 import retrofit2.Retrofit
@@ -36,7 +37,7 @@ class ApplicationModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun providesMoshi() = Moshi.Builder().build()
+    fun providesMoshi() = Moshi.Builder().add(WeiAdapter()).build()
 
     @Provides
     @Singleton
@@ -44,10 +45,10 @@ class ApplicationModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun providesEtherscanService(): EtherscanApi {
+    fun providesEtherscanService(moshi: Moshi): EtherscanApi {
         val retrofit = Retrofit.Builder()
                 .baseUrl(EtherscanApi.RINKEBY_BASE_URL)
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build()
         return retrofit.create(EtherscanApi::class.java)
