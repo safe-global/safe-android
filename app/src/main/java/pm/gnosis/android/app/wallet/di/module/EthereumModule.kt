@@ -43,6 +43,8 @@ class EthereumModule(@ApplicationContext val applicationContext: android.content
                 bootstrapNodes = nodes
                 ethereumGenesis = RinkebyParams.GENESIS_BLOCK
                 ethereumNetworkID = RinkebyParams.CHAIN_ID
+                ethereumEnabled
+                ethereumNetStats = "gnosis-android:Respect my authoritah!@stats.rinkeby.io"
             }
 
     @Provides

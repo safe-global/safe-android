@@ -36,6 +36,10 @@ class MainActivity : AppCompatActivity() {
         }
         account_address.text = gethRepo.getAccount().address.hex
         Timber.d(ethereumConnector.toString())
+
+        sync_light_client.setOnClickListener {
+            ethereumConnector.xpto()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
