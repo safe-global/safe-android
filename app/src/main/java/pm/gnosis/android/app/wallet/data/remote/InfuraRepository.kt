@@ -32,4 +32,9 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
             infuraApi.post(JsonRpcRequest(method = "eth_sendRawTransaction",
                     params = arrayListOf(signedTransactionData)))
                     .map { it.result }
+
+    fun getTransactionCount(): Observable<BigInteger> =
+            infuraApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
+                    params = arrayListOf(gethAccountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
+                    .map { BigInteger(it.result.removePrefix("0x")) }
 }
