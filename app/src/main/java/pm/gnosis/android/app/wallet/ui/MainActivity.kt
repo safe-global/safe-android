@@ -17,7 +17,7 @@ import pm.gnosis.android.app.wallet.data.GethRepository
 import pm.gnosis.android.app.wallet.data.model.Balance
 import pm.gnosis.android.app.wallet.data.model.BlockNumber
 import pm.gnosis.android.app.wallet.data.model.TransactionJson
-import pm.gnosis.android.app.wallet.data.remote.EtherscanRepository
+import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.util.snackbar
@@ -30,7 +30,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     @Inject lateinit var gethRepo: GethRepository
     @Inject lateinit var moshi: Moshi
-    @Inject lateinit var etherscanRepository: EtherscanRepository
+    @Inject lateinit var infuraRepository: InfuraRepository
 
     val disposables = CompositeDisposable()
 
@@ -49,18 +49,18 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         disposables +=
-                etherscanRepository.getEtherBalance()
+                infuraRepository.getBalance()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(onNext = this::onBalance, onError = Timber::e)
 
-        disposables +=
+        /*disposables +=
                 etherscanRepository.getMostRecentBlockNumber()
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeBy(onNext = this::onRecentBlock, onError = Timber::e)
+                        .subscribeBy(onNext = this::onRecentBlock, onError = Timber::e)*/
     }
 
     private fun onBalance(balance: Balance) {
-        account_balance.text = balance.result.toEther().stripTrailingZeros().toPlainString() + " Ξ"
+        account_balance.text = balance.wei.toEther().stripTrailingZeros().toPlainString() + " Ξ"
     }
 
     private fun onRecentBlock(blockNumber: BlockNumber) {

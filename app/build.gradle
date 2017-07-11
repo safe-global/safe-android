@@ -18,6 +18,7 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
+            buildConfigField "String", "INFURA_API_KEY", getKey("INFURA_API_KEY")
         }
 
         release {
@@ -34,6 +35,13 @@ android {
         exclude 'META-INF/rxjava.properties'
     }
 }
+
+static def getKey(String property) {
+    Properties properties = new Properties()
+    properties.load(new FileInputStream("project_keys"))
+    return properties.getProperty(property)
+}
+
 
 dependencies {
     final SUPPORT_LIB_VERSION = '26.0.0-beta1'
