@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.GethRepository
-import pm.gnosis.android.app.wallet.data.model.BlockNumber
 import pm.gnosis.android.app.wallet.data.model.TransactionJson
 import pm.gnosis.android.app.wallet.data.model.Wei
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
@@ -25,6 +24,7 @@ import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.QR_CODE_TYPES
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -53,18 +53,18 @@ class MainActivity : AppCompatActivity() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(onNext = this::onBalance, onError = Timber::e)
 
-        /*disposables +=
-                etherscanRepository.getMostRecentBlockNumber()
+        disposables +=
+                infuraRepository.getLatestBlock()
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeBy(onNext = this::onRecentBlock, onError = Timber::e)*/
+                        .subscribeBy(onNext = this::onRecentBlock, onError = Timber::e)
     }
 
     private fun onBalance(balance: Wei) {
         account_balance.text = balance.toEther().stripTrailingZeros().toPlainString() + " Ξ"
     }
 
-    private fun onRecentBlock(blockNumber: BlockNumber) {
-        recent_block.text = blockNumber.result.toString(10)
+    private fun onRecentBlock(blockNumber: BigInteger) {
+        recent_block.text = blockNumber.toString(10)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -24,4 +24,12 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
                             params = arrayListOf(accountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
                     .map { Wei(BigInteger(it.result.removePrefix("0x"), 16)) }
 
+    fun getLatestBlock(): Observable<BigInteger> =
+            infuraApi.post(JsonRpcRequest(method = "eth_blockNumber"))
+                    .map { BigInteger(it.result.removePrefix("0x"), 16) }
+
+    fun sendRawTransaction(signedTransactionData: String): Observable<String> =
+            infuraApi.post(JsonRpcRequest(method = "eth_sendRawTransaction",
+                    params = arrayListOf(signedTransactionData)))
+                    .map { it.result }
 }
