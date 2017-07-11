@@ -6,118 +6,113 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="2dp"
-            app:contentPadding="8dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                app:cardCornerRadius="2dp"
+                app:contentPadding="8dp">
 
-                <android.support.v7.widget.AppCompatTextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Account Address"
-                    android:textSize="24sp" />
+                    android:orientation="vertical">
 
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/account_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    tools:text="0x01ca023012ab3123" />
-            </LinearLayout>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Account Address"
+                        android:textSize="24sp" />
 
-        </android.support.v7.widget.CardView>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/account_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        tools:text="0x01ca023012ab3123" />
+                </LinearLayout>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:cardCornerRadius="2dp"
-            app:contentPadding="8dp">
+            </android.support.v7.widget.CardView>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="2dp"
+                app:contentPadding="8dp">
 
-                <android.support.v7.widget.AppCompatTextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Account Balance"
-                    android:textSize="24sp" />
+                    android:orientation="vertical">
 
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/account_balance"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textSize="42sp"
-                    tools:text="42 Ξ" />
-            </LinearLayout>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Account Balance"
+                        android:textSize="24sp" />
 
-        </android.support.v7.widget.CardView>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/account_balance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textSize="42sp"
+                        tools:text="42 Ξ" />
+                </LinearLayout>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:cardCornerRadius="2dp"
-            app:contentPadding="8dp">
+            </android.support.v7.widget.CardView>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="2dp"
+                app:contentPadding="8dp">
 
-                <android.support.v7.widget.AppCompatTextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Most recent block"
-                    android:textSize="24sp" />
+                    android:orientation="vertical">
 
-                <android.support.v7.widget.AppCompatTextView
-                    android:id="@+id/recent_block"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textSize="42sp"
-                    tools:text="#513,174" />
-            </LinearLayout>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Most recent block"
+                        android:textSize="24sp" />
 
-        </android.support.v7.widget.CardView>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/recent_block"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textSize="42sp"
+                        tools:text="#513,174" />
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
 
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/scan_qr_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="32dp"
-            android:padding="16dp"
-            android:text="Scan Transaction QR Code" />
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/scan_qr_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:padding="16dp"
+                android:text="Scan Transaction QR Code" />
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/sync_light_client"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="32dp"
-            android:padding="16dp"
-            android:text="Sync Progress" />
-
-    </LinearLayout>
-
+        </LinearLayout>
+    </ScrollView>
 </android.support.design.widget.CoordinatorLayout>
 
 

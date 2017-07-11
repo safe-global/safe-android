@@ -5,8 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_transaction_details.*
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
-import pm.gnosis.android.app.wallet.data.model.Transaction
-import pm.gnosis.android.app.wallet.data.model.TransactionJson
+import pm.gnosis.android.app.wallet.data.model.TransactionDetails
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 
@@ -15,7 +14,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         const val TRANSACTION_EXTRA = "extra.transaction"
     }
 
-    private var transaction: Transaction? = null
+    private var transaction: TransactionDetails? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,18 +22,15 @@ class TransactionDetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_transaction_details)
 
         intent.extras?.let {
-            val transactionJson: TransactionJson = it.getParcelable(TRANSACTION_EXTRA)
-            transaction = transactionJson.read()
+            transaction = it.getParcelable(TRANSACTION_EXTRA)
         }
         fillTransactionDetails()
     }
 
     fun fillTransactionDetails() {
-        recipient.text = transaction?.to ?: "No value"
-        gas_limit.text = transaction?.gasLimit.toString() ?: "No value"
-        gas_price.text = transaction?.gasPrice.toString() ?: "No value"
-        nonce.text = transaction?.nonce ?: "No value"
-        value.text = transaction?.value.toString() ?: "No value"
+        recipient.text = transaction?.address
+        suggested_gas.text = transaction?.gas ?: "No value"
+        value.text = transaction?.value ?: "No value"
         data.text = transaction?.data ?: "No value"
     }
 

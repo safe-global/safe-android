@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Base64
 import com.squareup.moshi.Moshi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -14,11 +13,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.GethRepository
-import pm.gnosis.android.app.wallet.data.model.TransactionJson
 import pm.gnosis.android.app.wallet.data.model.Wei
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
+import pm.gnosis.android.app.wallet.util.ERC67Parser
 import pm.gnosis.android.app.wallet.util.snackbar
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.QR_CODE_TYPES
@@ -82,18 +81,14 @@ class MainActivity : AppCompatActivity() {
         disposables.clear()
     }
 
-    //TODO: new thread
     fun processQrCode(data: String) {
-        try {
-            val bytes = Base64.decode(data, Base64.DEFAULT)
-            val jsonAdapter = moshi.adapter<TransactionJson>(TransactionJson::class.java)
-            val transactionJson = jsonAdapter.fromJson(String(bytes))
+        val transactionDetails = ERC67Parser.parse(data)
+        if (transactionDetails != null) {
             val intent = Intent(this, TransactionDetailsActivity::class.java)
-            intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transactionJson)
+            intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transactionDetails)
             startActivity(intent)
-        } catch (e: Exception) {
-            Timber.e(e)
-            snackbar(coordinator_layout, "QRCode does not contain a valid transaction")
+        } else {
+            snackbar(coordinator_layout, "QRCode is not a valid transaction URI")
         }
     }
 

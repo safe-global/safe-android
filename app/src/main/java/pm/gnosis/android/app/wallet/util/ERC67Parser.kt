@@ -1,6 +1,6 @@
 package pm.gnosis.android.app.wallet.util
 
-import pm.gnosis.android.app.wallet.data.model.TransferDetails
+import pm.gnosis.android.app.wallet.data.model.TransactionDetails
 
 class ERC67Parser {
     companion object {
@@ -10,7 +10,7 @@ class ERC67Parser {
         const val DATA_KEY = "data="
         const val SEPARATOR = "?"
 
-        fun parse(string: String): TransferDetails? {
+        fun parse(string: String): TransactionDetails? {
             if (string.startsWith(SCHEMA)) {
                 val noSchema = string.removePrefix(SCHEMA)
                 val tokens = noSchema.split(SEPARATOR)
@@ -28,7 +28,7 @@ class ERC67Parser {
                     }
                 }
                 address?.let {
-                    return TransferDetails(it, value, gas, data)
+                    return TransactionDetails(it, value, gas, data)
                 }
             }
             return null

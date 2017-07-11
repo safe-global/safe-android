@@ -1,7 +1,7 @@
 package pm.gnosis.android.app.wallet.data.remote
 
 import io.reactivex.Observable
-import pm.gnosis.android.app.wallet.data.AccountManager
+import pm.gnosis.android.app.wallet.data.GethAccountManager
 import pm.gnosis.android.app.wallet.data.model.JsonRpcRequest
 import pm.gnosis.android.app.wallet.data.model.Wei
 import java.math.BigInteger
@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Singleton
 class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
-                                           private val accountManager: AccountManager) {
+                                           private val gethAccountManager: GethAccountManager) {
     companion object {
         const val DEFAULT_BLOCK_EARLIEST = "earliest"
         const val DEFAULT_BLOCK_LATEST = "latest"
@@ -21,7 +21,7 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
             infuraApi.post(
                     JsonRpcRequest(
                             method = "eth_getBalance",
-                            params = arrayListOf(accountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
+                            params = arrayListOf(gethAccountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
                     .map { Wei(BigInteger(it.result.removePrefix("0x"), 16)) }
 
     fun getLatestBlock(): Observable<BigInteger> =

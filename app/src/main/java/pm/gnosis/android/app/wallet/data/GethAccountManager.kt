@@ -8,8 +8,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AccountManager @Inject constructor(private val preferencesManager: PreferencesManager,
-                                         private val keyStore: KeyStore) {
+class GethAccountManager @Inject constructor(private val preferencesManager: PreferencesManager,
+                                             private val keyStore: KeyStore) {
     fun getAccount(): Account = //Only one account per installation
             if (keyStore.accounts.size() > 0) keyStore.accounts[0] else keyStore.newAccount(getAccountPassphrase())
 

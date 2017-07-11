@@ -41,40 +41,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Gas limit:"
+                android:text="Suggested Gas:"
                 android:textStyle="bold" />
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/gas_limit"
+                android:id="@+id/suggested_gas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="10000" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Gas Price:"
-                android:textStyle="bold" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/gas_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="100" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Nonce:"
-                android:textStyle="bold" />
-
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/nonce"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="10" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
