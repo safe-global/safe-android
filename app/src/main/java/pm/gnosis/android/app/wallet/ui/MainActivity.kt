@@ -14,9 +14,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.GethRepository
-import pm.gnosis.android.app.wallet.data.model.Balance
 import pm.gnosis.android.app.wallet.data.model.BlockNumber
 import pm.gnosis.android.app.wallet.data.model.TransactionJson
+import pm.gnosis.android.app.wallet.data.model.Wei
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
@@ -59,8 +59,8 @@ class MainActivity : AppCompatActivity() {
                         .subscribeBy(onNext = this::onRecentBlock, onError = Timber::e)*/
     }
 
-    private fun onBalance(balance: Balance) {
-        account_balance.text = balance.wei.toEther().stripTrailingZeros().toPlainString() + " Ξ"
+    private fun onBalance(balance: Wei) {
+        account_balance.text = balance.toEther().stripTrailingZeros().toPlainString() + " Ξ"
     }
 
     private fun onRecentBlock(blockNumber: BlockNumber) {

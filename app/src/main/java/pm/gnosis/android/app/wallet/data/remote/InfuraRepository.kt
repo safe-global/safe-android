@@ -2,7 +2,6 @@ package pm.gnosis.android.app.wallet.data.remote
 
 import io.reactivex.Observable
 import pm.gnosis.android.app.wallet.data.AccountManager
-import pm.gnosis.android.app.wallet.data.model.Balance
 import pm.gnosis.android.app.wallet.data.model.JsonRpcRequest
 import pm.gnosis.android.app.wallet.data.model.Wei
 import java.math.BigInteger
@@ -18,10 +17,11 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
         const val DEFAULT_BLOCK_PENDING = "pending"
     }
 
-    fun getBalance(): Observable<Balance> =
+    fun getBalance(): Observable<Wei> =
             infuraApi.post(
                     JsonRpcRequest(
                             method = "eth_getBalance",
                             params = arrayListOf(accountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
-                    .map { Balance(Wei(BigInteger(it.result.removePrefix("0x"), 16))) }
+                    .map { Wei(BigInteger(it.result.removePrefix("0x"), 16)) }
+
 }

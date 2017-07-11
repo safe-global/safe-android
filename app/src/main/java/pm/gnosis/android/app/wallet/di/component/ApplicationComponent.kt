@@ -22,9 +22,7 @@ interface ApplicationComponent {
     fun moshi(): Moshi
     fun sharedPreferences(): SharedPreferences
     fun gethRepo(): GethRepository
-    fun etherscanService(): EtherscanApi
     fun infuraRepository(): InfuraRepository
 
     fun ethereumConnector(): EthereumConnector
-    fun etherscanRepository(): EtherscanRepository
 }
