@@ -28,9 +28,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
     }
 
     fun fillTransactionDetails() {
-        recipient.text = transaction?.address
-        suggested_gas.text = transaction?.gas ?: "No value"
-        value.text = transaction?.value ?: "No value"
+        recipient.text = transaction?.address?.let { "0x${it.toString(16)}" } ?: "No value"
+        suggested_gas.text = transaction?.gas?.let { it.toString(10) } ?: "No value"
+        value.text = transaction?.value?.let { it.toEther().stripTrailingZeros().toPlainString() } ?: "No value"
         data.text = transaction?.data ?: "No value"
     }
 

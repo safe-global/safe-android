@@ -7,3 +7,6 @@ inline fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
     editor.func()
     editor.apply()
 }
+
+//Map functions that throw exceptions into optional types
+fun <T> nullOnThrow(func: () -> T): T? = try { func.invoke() } catch (e: Exception) { null }
