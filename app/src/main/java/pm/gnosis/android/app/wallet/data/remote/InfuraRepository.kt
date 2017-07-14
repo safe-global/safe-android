@@ -4,6 +4,7 @@ import io.reactivex.Observable
 import pm.gnosis.android.app.wallet.data.geth.GethAccountManager
 import pm.gnosis.android.app.wallet.data.model.JsonRpcRequest
 import pm.gnosis.android.app.wallet.data.model.Wei
+import pm.gnosis.android.app.wallet.util.hexAsBigInteger
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,11 +23,11 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
                     JsonRpcRequest(
                             method = "eth_getBalance",
                             params = arrayListOf(gethAccountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
-                    .map { Wei(BigInteger(it.result.removePrefix("0x"), 16)) }
+                    .map { Wei(it.result.hexAsBigInteger()) }
 
     fun getLatestBlock(): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_blockNumber"))
-                    .map { BigInteger(it.result.removePrefix("0x"), 16) }
+                    .map { it.result.hexAsBigInteger() }
 
     fun sendRawTransaction(signedTransactionData: String): Observable<String> =
             infuraApi.post(JsonRpcRequest(method = "eth_sendRawTransaction",
@@ -36,9 +37,9 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
     fun getTransactionCount(): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
                     params = arrayListOf(gethAccountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
-                    .map { BigInteger(it.result.removePrefix("0x"), 16) }
+                    .map { it.result.hexAsBigInteger() }
 
     fun getGasPrice(): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_gasPrice"))
-                    .map { BigInteger(it.result.removePrefix("0x"), 16) }
+                    .map { it.result.hexAsBigInteger() }
 }

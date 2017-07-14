@@ -23,9 +23,9 @@ class ERC67Parser {
 
                 tokens.forEach {
                     when {
-                        it.startsWith("0x") -> address = nullOnThrow { BigInteger(it.removePrefix("0x"), 16) }
-                        it.startsWith(VALUE_KEY) -> value = nullOnThrow { Wei(BigInteger(it.removePrefix(VALUE_KEY), 10)) }
-                        it.startsWith(GAS_KEY) -> gas = nullOnThrow { BigInteger(it.removePrefix(GAS_KEY), 10) }
+                        it.startsWith("0x") -> address = nullOnThrow { it.hexAsBigInteger() }
+                        it.startsWith(VALUE_KEY) -> value = nullOnThrow { Wei(it.removePrefix(VALUE_KEY).decimalAsBigInteger()) }
+                        it.startsWith(GAS_KEY) -> gas = nullOnThrow { it.removePrefix(GAS_KEY).decimalAsBigInteger() }
                         it.startsWith(DATA_KEY) -> data = it.removePrefix(DATA_KEY)
                     }
                 }

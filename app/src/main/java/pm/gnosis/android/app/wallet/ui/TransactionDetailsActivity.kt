@@ -14,6 +14,8 @@ import pm.gnosis.android.app.wallet.data.model.TransactionDetails
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
+import pm.gnosis.android.app.wallet.util.asDecimalString
+import pm.gnosis.android.app.wallet.util.asHexString
 import pm.gnosis.android.app.wallet.util.toast
 import timber.log.Timber
 import java.math.BigInteger
@@ -60,7 +62,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
     }
 
     fun fillTransactionDetails() {
-        recipient.text = "0x${transaction.address.toString(16)}"
+        recipient.text = transaction.address.asHexString()
         suggested_gas.text = transaction.gas?.toString(10) ?: "No value"
         value.text = transaction.value?.toEther()?.stripTrailingZeros()?.toPlainString() ?: "No value"
         data.text = transaction.data ?: "No value"
@@ -85,7 +87,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
     fun onGasPrice(gasPrice: BigInteger) {
         this.gasPrice = gasPrice
-        gas_price.text = gasPrice.toString(10)
+        gas_price.text = gasPrice.asDecimalString()
     }
 
     fun onGasPriceError(throwable: Throwable) {
