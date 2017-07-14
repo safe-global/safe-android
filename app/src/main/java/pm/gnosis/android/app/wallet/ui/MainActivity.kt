@@ -23,6 +23,7 @@ import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.QR_CODE_TYPES
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
 import timber.log.Timber
+import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -59,7 +60,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onBalance(balance: Wei) {
-        account_balance.text = balance.toEther().stripTrailingZeros().toPlainString() + " Ξ"
+        val etherBalance = balance.toEther()
+        //Java 7 bug - does not strip trailing zeroes when the number itself is zero
+        account_balance.text = if (etherBalance.compareTo(BigDecimal.ZERO) == 0) "0 Ξ" else etherBalance.stripTrailingZeros().toPlainString() + " Ξ"
     }
 
     private fun onRecentBlock(blockNumber: BigInteger) {
