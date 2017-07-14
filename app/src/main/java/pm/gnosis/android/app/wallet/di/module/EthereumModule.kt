@@ -3,7 +3,7 @@ package pm.gnosis.android.app.wallet.di.module
 import dagger.Module
 import dagger.Provides
 import org.ethereum.geth.*
-import pm.gnosis.android.app.wallet.data.remote.RinkebyParams
+import pm.gnosis.android.app.wallet.data.geth.RinkebyParams
 import pm.gnosis.android.app.wallet.di.ApplicationContext
 import java.io.File
 import javax.inject.Named

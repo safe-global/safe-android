@@ -1,7 +1,7 @@
 package pm.gnosis.android.app.wallet.data.remote
 
 import io.reactivex.Observable
-import pm.gnosis.android.app.wallet.data.GethAccountManager
+import pm.gnosis.android.app.wallet.data.geth.GethAccountManager
 import pm.gnosis.android.app.wallet.data.model.JsonRpcRequest
 import pm.gnosis.android.app.wallet.data.model.Wei
 import java.math.BigInteger
@@ -36,5 +36,9 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
     fun getTransactionCount(): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
                     params = arrayListOf(gethAccountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
-                    .map { BigInteger(it.result.removePrefix("0x")) }
+                    .map { BigInteger(it.result.removePrefix("0x"), 16) }
+
+    fun getGasPrice(): Observable<BigInteger> =
+            infuraApi.post(JsonRpcRequest(method = "eth_gasPrice"))
+                    .map { BigInteger(it.result.removePrefix("0x"), 16) }
 }

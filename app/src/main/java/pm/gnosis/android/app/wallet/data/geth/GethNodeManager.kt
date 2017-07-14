@@ -1,4 +1,4 @@
-package pm.gnosis.android.app.wallet.data.remote
+package pm.gnosis.android.app.wallet.data.geth
 
 import org.ethereum.geth.Context
 import org.ethereum.geth.Node
@@ -8,7 +8,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
-class EthereumConnector @Inject constructor(
+class GethNodeManager @Inject constructor(
         val context: Context,
         @Named(EthereumModule.RINKEBY_NODE) val rinkebyNode: Node) {
 

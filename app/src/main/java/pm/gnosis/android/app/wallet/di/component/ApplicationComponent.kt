@@ -6,8 +6,8 @@ import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import dagger.Component
 import org.ethereum.geth.KeyStore
-import pm.gnosis.android.app.wallet.data.GethRepository
-import pm.gnosis.android.app.wallet.data.remote.EthereumConnector
+import pm.gnosis.android.app.wallet.data.geth.GethRepository
+import pm.gnosis.android.app.wallet.data.geth.GethNodeManager
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.ApplicationContext
 import pm.gnosis.android.app.wallet.di.module.ApplicationModule
@@ -25,5 +25,5 @@ interface ApplicationComponent {
     fun gethRepo(): GethRepository
     fun infuraRepository(): InfuraRepository
 
-    fun ethereumConnector(): EthereumConnector
+    fun ethereumConnector(): GethNodeManager
 }

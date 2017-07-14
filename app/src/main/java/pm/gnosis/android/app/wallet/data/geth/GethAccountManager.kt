@@ -1,7 +1,8 @@
-package pm.gnosis.android.app.wallet.data
+package pm.gnosis.android.app.wallet.data.geth
 
 import org.ethereum.geth.Account
 import org.ethereum.geth.KeyStore
+import pm.gnosis.android.app.wallet.data.PreferencesManager
 import pm.gnosis.android.app.wallet.util.edit
 import pm.gnosis.android.app.wallet.util.generateRandomString
 import javax.inject.Inject

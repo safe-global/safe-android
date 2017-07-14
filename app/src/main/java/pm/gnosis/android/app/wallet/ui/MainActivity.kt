@@ -12,7 +12,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_main.*
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
-import pm.gnosis.android.app.wallet.data.GethRepository
+import pm.gnosis.android.app.wallet.data.geth.GethRepository
 import pm.gnosis.android.app.wallet.data.model.Wei
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent

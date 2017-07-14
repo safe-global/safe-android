@@ -1,4 +1,4 @@
-package pm.gnosis.android.app.wallet.data.remote
+package pm.gnosis.android.app.wallet.data.geth
 
 object RinkebyParams {
     const val CHAIN_ID = 4L

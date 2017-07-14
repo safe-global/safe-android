@@ -22,17 +22,10 @@ data class TransactionDetails(val address: BigInteger,
         parcel.writeString(data)
     }
 
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents() = 0
 
     companion object CREATOR : Parcelable.Creator<TransactionDetails> {
-        override fun createFromParcel(parcel: Parcel): TransactionDetails {
-            return TransactionDetails(parcel)
-        }
-
-        override fun newArray(size: Int): Array<TransactionDetails?> {
-            return arrayOfNulls(size)
-        }
+        override fun createFromParcel(parcel: Parcel) = TransactionDetails(parcel)
+        override fun newArray(size: Int): Array<TransactionDetails?> = arrayOfNulls(size)
     }
 }
