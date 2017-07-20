@@ -2,8 +2,10 @@ package pm.gnosis.android.app.wallet.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_transaction_details.*
@@ -68,11 +70,16 @@ class TransactionDetailsActivity : AppCompatActivity() {
         data.text = transaction.data ?: "No value"
     }
 
+    data class NonceAndGasPrice(val nonce: BigInteger, val gasPrice: BigInteger)
+
     fun processTransaction() {
         val wei = transaction.value?.value
         if (wei != null && gasPrice != null) { // Ether being transferred
-            disposables += infuraRepository.getTransactionCount()
-                    .map { gethRepository.signTransaction(it, transaction.address, wei, transaction.gas!!, gasPrice!!, transaction.data!!) }
+            disposables += Observable.zip(
+                    infuraRepository.getTransactionCount(),
+                    infuraRepository.getGasPrice(), BiFunction<BigInteger, BigInteger, NonceAndGasPrice> { nonce, gasPrice ->
+                NonceAndGasPrice(nonce, gasPrice)
+            }).map { gethRepository.signTransaction(it.nonce, transaction.address, wei, transaction.gas!!, it.gasPrice, transaction.data!!) }
                     .subscribeBy(onNext = this::onSignedTransaction, onError = this::onSignedError)
         }
     }
