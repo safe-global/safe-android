@@ -3,8 +3,11 @@ package pm.gnosis.android.app.wallet.data.remote
 import io.reactivex.Observable
 import pm.gnosis.android.app.wallet.data.geth.GethAccountManager
 import pm.gnosis.android.app.wallet.data.model.JsonRpcRequest
+import pm.gnosis.android.app.wallet.data.model.TransactionCallParams
 import pm.gnosis.android.app.wallet.data.model.Wei
+import pm.gnosis.android.app.wallet.util.asHexString
 import pm.gnosis.android.app.wallet.util.hexAsBigInteger
+import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,10 +39,16 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
 
     fun getTransactionCount(): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
-                    params = arrayListOf(gethAccountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
+                    params = arrayListOf(gethAccountManager.getAccount().address.hex)))
                     .map { it.result.hexAsBigInteger() }
 
     fun getGasPrice(): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_gasPrice"))
+                    .map { it.result.hexAsBigInteger() }
+
+    fun estimateGas(from: BigInteger, to: BigInteger, value: BigInteger, data: String): Observable<BigInteger> =
+            infuraApi.post(JsonRpcRequest(method = "eth_estimateGas", id = 42,
+                    params = arrayListOf(TransactionCallParams(from = from.asHexString(), to = to.asHexString(), value = value.asHexString(), data = data))))
+                    .doOnNext { Timber.d(it.toString()) }
                     .map { it.result.hexAsBigInteger() }
 }
