@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_transaction_details.*
 import pm.gnosis.android.app.wallet.GnosisApplication
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.geth.GethRepository
+import pm.gnosis.android.app.wallet.data.model.TransactionCallParams
 import pm.gnosis.android.app.wallet.data.model.TransactionDetails
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
@@ -79,13 +80,18 @@ class TransactionDetailsActivity : AppCompatActivity() {
                     infuraRepository.getTransactionCount(),
                     infuraRepository.getGasPrice(), BiFunction<BigInteger, BigInteger, NonceAndGasPrice> { nonce, gasPrice ->
                 NonceAndGasPrice(nonce, gasPrice)
-            }).map { gethRepository.signTransaction(it.nonce, transaction.address, wei, transaction.gas!!, it.gasPrice, transaction.data!!) }
+            })
+                    .map { gethRepository.signTransaction(it.nonce, transaction.address, wei, transaction.gas!!, it.gasPrice, transaction.data!!) }
+                    .flatMap { infuraRepository.sendRawTransaction(it) }
+                    //.flatMap { infuraRepository.sendTransaction(TransactionCallParams(gethRepository.getAccount().address.hex, transaction.address.asHexString(), "0x76c0", it.gasPrice.asHexString(), wei.asHexString(), transaction.data, it.nonce.asHexString())) }
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onNext = this::onSignedTransaction, onError = this::onSignedError)
         }
     }
 
     fun onSignedTransaction(hash: String) {
         toast(hash)
+        Timber.d(hash)
     }
 
     fun onSignedError(throwable: Throwable) {
