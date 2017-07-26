@@ -44,7 +44,7 @@ static def getKey(String property) {
 
 
 dependencies {
-    final SUPPORT_LIB_VERSION = '26.0.0-beta1'
+    final SUPPORT_LIB_VERSION = '26.0.0'
     final DAGGER_VERSION = '2.11'
     final RETROFIT_VERSION = '2.3.0'
 
