@@ -5,8 +5,10 @@ import pm.gnosis.android.app.wallet.data.geth.GethAccountManager
 import pm.gnosis.android.app.wallet.data.model.JsonRpcRequest
 import pm.gnosis.android.app.wallet.data.model.TransactionCallParams
 import pm.gnosis.android.app.wallet.data.model.Wei
+import pm.gnosis.android.app.wallet.util.ERC20
 import pm.gnosis.android.app.wallet.util.asHexString
 import pm.gnosis.android.app.wallet.util.hexAsBigInteger
+import pm.gnosis.android.app.wallet.util.toAscii
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -32,14 +34,14 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
             infuraApi.post(JsonRpcRequest(method = "eth_blockNumber"))
                     .map { it.result.hexAsBigInteger() }
 
-    fun sendTransaction(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
-            infuraApi.post(JsonRpcRequest(method = "eth_sendTransaction",
-                    params = arrayListOf(transactionCallParams)))
+    fun call(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
+            infuraApi.post(JsonRpcRequest(method = "eth_call",
+                    params = arrayListOf(transactionCallParams, DEFAULT_BLOCK_LATEST)))
                     .map { it.result.hexAsBigInteger() }
 
     fun sendRawTransaction(signedTransactionData: String): Observable<String> =
             infuraApi.post(JsonRpcRequest(method = "eth_sendRawTransaction",
-                    params = arrayListOf(signedTransactionData)))
+                    params = arrayListOf(signedTransactionData, DEFAULT_BLOCK_LATEST)))
                     .map { it.result }
 
     fun getTransactionCount(): Observable<BigInteger> =
@@ -51,9 +53,20 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
             infuraApi.post(JsonRpcRequest(method = "eth_gasPrice"))
                     .map { it.result.hexAsBigInteger() }
 
-    fun estimateGas(from: BigInteger, to: BigInteger, value: BigInteger, data: String): Observable<BigInteger> =
+    fun getTokenName(contractAddress: BigInteger): Observable<String> =
+            call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.NAME_METHOD_ID))
+                    .map { it.toAscii() }
+
+    fun getTokenSymbol(contractAddress: BigInteger): Observable<String> =
+            call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.SYMBOL_METHOD_ID))
+                    .map { it.toAscii() }
+
+    fun getTokenDecimals(contractAddress: BigInteger): Observable<BigInteger> =
+            call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.DECIMALS_METHOD_ID))
+
+    fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_estimateGas", id = 42,
-                    params = arrayListOf(TransactionCallParams(from = from.asHexString(), to = to.asHexString(), value = value.asHexString(), data = data))))
+                    params = arrayListOf(transactionCallParams)))
                     .doOnNext { Timber.d(it.toString()) }
                     .map { it.result.hexAsBigInteger() }
 }
