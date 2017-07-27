@@ -18,7 +18,6 @@ import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.util.asDecimalString
 import pm.gnosis.android.app.wallet.util.asHexString
-import pm.gnosis.android.app.wallet.util.toast
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -107,8 +106,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
         data.text = transaction.data ?: "No value"
     }
 
-    data class NonceAndGasPrice(val nonce: BigInteger, val gasPrice: BigInteger)
-
     private fun signTransaction(transaction: TransactionDetails) {
         val nonce = transaction.nonce
         val gasLimit = transaction.gas
@@ -118,15 +115,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
             val signedTx = gethRepository.signTransaction(nonce, transaction.address, transaction.value?.value, gasLimit, gasPrice, transaction.data)
             Timber.d(signedTx)
         }
-    }
-
-    fun onSignedTransaction(hash: String) {
-        toast(hash)
-        Timber.d(hash)
-    }
-
-    fun onSignedError(throwable: Throwable) {
-        Timber.e(throwable)
     }
 
     fun inject() {
