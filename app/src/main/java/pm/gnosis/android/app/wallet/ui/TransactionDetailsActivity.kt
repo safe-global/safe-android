@@ -17,7 +17,6 @@ import pm.gnosis.android.app.wallet.data.model.TransactionDetails
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
-import pm.gnosis.android.app.wallet.util.asDecimalString
 import pm.gnosis.android.app.wallet.util.asHexString
 import pm.gnosis.android.app.wallet.util.toast
 import timber.log.Timber
@@ -35,7 +34,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
     private val disposables = CompositeDisposable()
     private var gasPrice: BigInteger? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
@@ -47,17 +45,54 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
 
         fillTransactionDetails()
-        sign_transaction.setOnClickListener { processTransaction() }
+        sign_transaction.setOnClickListener { signTransaction(transaction) }
     }
 
     override fun onStart() {
         super.onStart()
-        disposables += infuraRepository.getGasPrice()
+
+        val observables = ArrayList<Observable<FieldResult>>()
+
+        if (transaction.gas == null) {
+            observables.add(infuraRepository.estimateGas(
+                    TransactionCallParams(to = transaction.address.asHexString(), data = transaction.data))
+                    .map { GasResult(it) })
+        }
+
+        if (transaction.nonce == null) {
+            observables.add(infuraRepository.getTransactionCount()
+                    .map { NonceResult(it) })
+        }
+
+        if (transaction.gasPrice == null) {
+            observables.add(infuraRepository.getGasPrice()
+                    .map { GasPriceResult(it) })
+        }
+
+        disposables += Observable.merge(observables)
+                .scan(transaction, { previous, result -> stateReducer(previous, result) })
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { _ -> onGasPriceLoading(true) }
-                .doOnTerminate { onGasPriceLoading(false) }
-                .subscribeBy(onNext = this::onGasPrice, onError = this::onGasPriceError)
+                .subscribeBy(onNext = this::onTransactionDetails, onError = Timber::e)
     }
+
+    private fun stateReducer(previous: TransactionDetails, result: FieldResult): TransactionDetails {
+        return when (result) {
+            is GasResult -> previous.copy(gas = result.value)
+            is NonceResult -> previous.copy(nonce = result.value)
+            is GasPriceResult -> previous.copy(gasPrice = result.value)
+            else -> previous
+        }
+    }
+
+    private fun onTransactionDetails(transactionDetails: TransactionDetails) {
+        transaction = transactionDetails
+        sign_transaction.isEnabled = transaction.nonce != null && transaction.gas != null && transaction.gasPrice != null
+    }
+
+    interface FieldResult
+    data class GasResult(val value: BigInteger) : FieldResult
+    data class NonceResult(val value: BigInteger) : FieldResult
+    data class GasPriceResult(val value: BigInteger) : FieldResult
 
     override fun onStop() {
         super.onStop()
@@ -72,6 +107,17 @@ class TransactionDetailsActivity : AppCompatActivity() {
     }
 
     data class NonceAndGasPrice(val nonce: BigInteger, val gasPrice: BigInteger)
+
+    private fun signTransaction(transaction: TransactionDetails) {
+        val nonce = transaction.nonce
+        val gasLimit = transaction.gas
+        val gasPrice = transaction.gasPrice
+
+        if (nonce != null && gasLimit != null && gasPrice != null) {
+            val signedTx = gethRepository.signTransaction(nonce, transaction.address, transaction.value?.value, gasLimit, gasPrice, transaction.data)
+            Timber.d(signedTx)
+        }
+    }
 
     fun processTransaction() {
         val wei = transaction.value?.value
@@ -96,22 +142,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
     fun onSignedError(throwable: Throwable) {
         Timber.e(throwable)
-    }
-
-    fun onGasPrice(gasPrice: BigInteger) {
-        this.gasPrice = gasPrice
-        gas_price.text = gasPrice.asDecimalString()
-    }
-
-    fun onGasPriceError(throwable: Throwable) {
-        Timber.e(throwable)
-        gas_price.text = "Error fetching gas price"
-    }
-
-    fun onGasPriceLoading(isLoading: Boolean) {
-        if (isLoading) {
-            gas_price.text = "Fetching gas price..."
-        }
     }
 
     fun inject() {

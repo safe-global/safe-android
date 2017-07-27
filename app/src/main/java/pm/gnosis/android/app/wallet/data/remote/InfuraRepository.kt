@@ -65,7 +65,7 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
             call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.DECIMALS_METHOD_ID))
 
     fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
-            infuraApi.post(JsonRpcRequest(method = "eth_estimateGas", id = 42,
+            infuraApi.post(JsonRpcRequest(method = "eth_estimateGas",
                     params = arrayListOf(transactionCallParams)))
                     .doOnNext { Timber.d(it.toString()) }
                     .map { it.result.hexAsBigInteger() }

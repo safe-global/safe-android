@@ -7,10 +7,10 @@ import java.math.BigInteger
 
 data class TransactionDetails(val address: BigInteger,
                               val value: Wei? = null,
-                              val gas: BigInteger? = null,
-                              val gasPrice: BigInteger? = null,
+                              var gas: BigInteger? = null,
+                              var gasPrice: BigInteger? = null,
                               val data: String? = null,
-                              val nonce: BigInteger? = null) : Parcelable {
+                              var nonce: BigInteger? = null) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString().hexAsBigInteger(),
             nullOnThrow { Wei(parcel.readString().hexAsBigInteger()) },

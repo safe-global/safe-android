@@ -6,7 +6,6 @@ import org.ethereum.geth.Geth
 import org.ethereum.geth.KeyStore
 import pm.gnosis.android.app.wallet.util.hexAsBigInteger
 import java.math.BigInteger
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,12 +14,14 @@ class GethRepository @Inject constructor(private val gethAccountManager: GethAcc
                                          private val gethKeyStore: KeyStore) {
     fun getAccount() = gethAccountManager.getAccount()
 
-    fun signTransaction(nonce: BigInteger, to: BigInteger, amount: BigInteger = BigInteger.ZERO, gasLimit: BigInteger,
-                        gasPrice: BigInteger, data: String = ""): String {
+    fun signTransaction(nonce: BigInteger, to: BigInteger, amount: BigInteger?, gasLimit: BigInteger,
+                        gasPrice: BigInteger, data: String? = null): String {
         val account = getAccount()
 
-        val transaction = Geth.newTransaction(nonce.toLong(), Address("0x${to.toString(16)}"), BigInt(amount.toLong()),
-                BigInt(gasLimit.toLong()), BigInt(gasPrice.toLong()), data.hexAsBigInteger().toByteArray())
+        val dataBytes = data?.hexAsBigInteger()?.toByteArray()
+
+        val transaction = Geth.newTransaction(nonce.toLong(), Address("0x${to.toString(16)}"),
+                BigInt(amount?.toLong() ?: 0L), BigInt(gasLimit.toLong()), BigInt(gasPrice.toLong()), dataBytes)
 
         val signed = gethKeyStore.signTxPassphrase(
                 account, gethAccountManager.getAccountPassphrase(), transaction, BigInt(RinkebyParams.CHAIN_ID))
