@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_transaction_details.*
@@ -17,6 +16,7 @@ import pm.gnosis.android.app.wallet.data.model.TransactionDetails
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
+import pm.gnosis.android.app.wallet.util.asDecimalString
 import pm.gnosis.android.app.wallet.util.asHexString
 import pm.gnosis.android.app.wallet.util.toast
 import timber.log.Timber
@@ -32,7 +32,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
     @Inject lateinit var gethRepository: GethRepository
     private lateinit var transaction: TransactionDetails
     private val disposables = CompositeDisposable()
-    private var gasPrice: BigInteger? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,12 +49,12 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
         val observables = ArrayList<Observable<FieldResult>>()
 
         if (transaction.gas == null) {
             observables.add(infuraRepository.estimateGas(
                     TransactionCallParams(to = transaction.address.asHexString(), data = transaction.data))
+                    .doOnSubscribe { _ -> suggested_gas.text = "Loading..." }
                     .map { GasResult(it) })
         }
 
@@ -66,6 +65,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         if (transaction.gasPrice == null) {
             observables.add(infuraRepository.getGasPrice()
+                    .doOnSubscribe { _ -> gas_price.text = "Loading..." }
                     .map { GasPriceResult(it) })
         }
 
@@ -87,12 +87,13 @@ class TransactionDetailsActivity : AppCompatActivity() {
     private fun onTransactionDetails(transactionDetails: TransactionDetails) {
         transaction = transactionDetails
         sign_transaction.isEnabled = transaction.nonce != null && transaction.gas != null && transaction.gasPrice != null
+        gas_price.text = transaction.gasPrice?.asDecimalString() ?: "Loading..."
     }
 
     interface FieldResult
-    data class GasResult(val value: BigInteger) : FieldResult
-    data class NonceResult(val value: BigInteger) : FieldResult
-    data class GasPriceResult(val value: BigInteger) : FieldResult
+    data class GasResult(val value: BigInteger?) : FieldResult
+    data class NonceResult(val value: BigInteger?) : FieldResult
+    data class GasPriceResult(val value: BigInteger?) : FieldResult
 
     override fun onStop() {
         super.onStop()
@@ -116,22 +117,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
         if (nonce != null && gasLimit != null && gasPrice != null) {
             val signedTx = gethRepository.signTransaction(nonce, transaction.address, transaction.value?.value, gasLimit, gasPrice, transaction.data)
             Timber.d(signedTx)
-        }
-    }
-
-    fun processTransaction() {
-        val wei = transaction.value?.value
-        if (wei != null && gasPrice != null) { // Ether being transferred
-            disposables += Observable.zip(
-                    infuraRepository.getTransactionCount(),
-                    infuraRepository.getGasPrice(), BiFunction<BigInteger, BigInteger, NonceAndGasPrice> { nonce, gasPrice ->
-                NonceAndGasPrice(nonce, gasPrice)
-            })
-                    .map { gethRepository.signTransaction(it.nonce, transaction.address, wei, transaction.gas!!, it.gasPrice, transaction.data!!) }
-                    .flatMap { infuraRepository.sendRawTransaction(it) }
-                    //.flatMap { infuraRepository.sendTransaction(TransactionCallParams(gethRepository.getAccount().address.hex, transaction.address.asHexString(), "0x76c0", it.gasPrice.asHexString(), wei.asHexString(), transaction.data, it.nonce.asHexString())) }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = this::onSignedTransaction, onError = this::onSignedError)
         }
     }
 
