@@ -9,13 +9,13 @@ object ERC20 {
     const val SYMBOL_METHOD_ID = "0x95d89b41"
     const val NAME_METHOD_ID = "0x06fdde03"
 
-    fun parseTransferData(data: String, decimalPlaces: Int): TokenTransfer? {
+    fun parseTransferData(data: String, decimalPlaces: BigInteger): TokenTransfer? {
         if (data.startsWith(TRANSFER_METHOD_ID)) {
             val arguments = data.removePrefix(TRANSFER_METHOD_ID)
             if (arguments.length == 128) {
                 val to = arguments.substring(0, 64)
                 val value = arguments.substring(64, 128)
-                return TokenTransfer(to.hexAsBigInteger(), BigDecimal(value.hexAsBigInteger(), decimalPlaces))
+                return TokenTransfer(to.hexAsBigInteger(), BigDecimal(value.hexAsBigInteger(), decimalPlaces.toInt()))
             }
         }
         return null

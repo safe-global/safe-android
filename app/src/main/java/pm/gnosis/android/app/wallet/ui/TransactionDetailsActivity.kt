@@ -2,6 +2,7 @@ package pm.gnosis.android.app.wallet.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -19,7 +20,6 @@ import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.util.ERC20
 import pm.gnosis.android.app.wallet.util.asDecimalString
 import pm.gnosis.android.app.wallet.util.asHexString
-import pm.gnosis.android.app.wallet.util.toast
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -83,7 +83,14 @@ class TransactionDetailsActivity : AppCompatActivity() {
     }
 
     private fun onTokenInfo(token: ERC20.Token) {
-        toast(token.toString())
+        token_name.text = token.name
+        transaction.data?.let {
+            ERC20.parseTransferData(it, token.decimals)?.let {
+                token_card.visibility = View.VISIBLE
+                token_amount.text = it.value.stripTrailingZeros().toPlainString()
+                token_receiver.text = it.to.asHexString()
+            }
+        }
     }
 
     private fun stateReducer(previous: TransactionDetails, result: FieldResult): TransactionDetails {
