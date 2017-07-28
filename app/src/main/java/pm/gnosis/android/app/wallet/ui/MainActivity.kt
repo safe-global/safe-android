@@ -3,6 +3,7 @@ package pm.gnosis.android.app.wallet.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import com.squareup.moshi.Moshi
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -44,6 +45,18 @@ class MainActivity : AppCompatActivity() {
         }
         account_address.text = gethRepo.getAccount().address.hex
         Timber.d(account_address.text.toString())
+
+        account_card.setOnClickListener {
+            AlertDialog.Builder(this)
+                    .setTitle("Select account")
+                    .setItems(gethRepo.getAccounts().map { it.address.hex }.toTypedArray(),
+                            { dialog, which ->
+                                val selected = (dialog as AlertDialog).listView.getItemAtPosition(which) as String
+                                gethRepo.setActiveAccount(selected)
+                                account_address.text = selected
+                            })
+                    .show()
+        }
     }
 
     override fun onStart() {

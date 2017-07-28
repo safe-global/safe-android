@@ -14,22 +14,21 @@ class GethRepository @Inject constructor(private val gethAccountManager: GethAcc
                                          private val gethKeyStore: KeyStore) {
     fun getAccount() = gethAccountManager.getActiveAccount()
 
+    fun getAccounts() = gethAccountManager.getAccounts()
+
+    fun setActiveAccount(publicKey: String) = gethAccountManager.setActiveAccount(publicKey)
+
     fun signTransaction(nonce: BigInteger, to: BigInteger, amount: BigInteger?, gasLimit: BigInteger,
                         gasPrice: BigInteger, data: String? = null): String {
         val account = getAccount()
-
         val dataBytes = data?.hexAsBigInteger()?.toByteArray()
-
         val transaction = Geth.newTransaction(nonce.toLong(), Address("0x${to.toString(16)}"),
                 BigInt(amount?.toLong() ?: 0L), BigInt(gasLimit.toLong()), BigInt(gasPrice.toLong()), dataBytes)
 
         val signed = gethKeyStore.signTxPassphrase(
                 account, gethAccountManager.getAccountPassphrase(), transaction, BigInt(RinkebyParams.CHAIN_ID))
-
         val builder = StringBuilder()
-        signed.encodeRLP().forEach {
-            builder.append(String.format("%02x", it))
-        }
+        signed.encodeRLP().forEach { builder.append(String.format("%02x", it)) }
         return "0x$builder"
     }
 }
