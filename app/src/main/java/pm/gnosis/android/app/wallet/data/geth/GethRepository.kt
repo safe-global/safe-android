@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class GethRepository @Inject constructor(private val gethAccountManager: GethAccountManager,
                                          private val gethKeyStore: KeyStore) {
-    fun getAccount() = gethAccountManager.getAccount()
+    fun getAccount() = gethAccountManager.getActiveAccount()
 
     fun signTransaction(nonce: BigInteger, to: BigInteger, amount: BigInteger?, gasLimit: BigInteger,
                         gasPrice: BigInteger, data: String? = null): String {

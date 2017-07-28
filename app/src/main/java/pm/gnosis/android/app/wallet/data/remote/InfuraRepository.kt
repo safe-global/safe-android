@@ -28,7 +28,7 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
             infuraApi.post(
                     JsonRpcRequest(
                             method = "eth_getBalance",
-                            params = arrayListOf(gethAccountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
+                            params = arrayListOf(gethAccountManager.getActiveAccount().address.hex, DEFAULT_BLOCK_LATEST)))
                     .map { Wei(it.result.hexAsBigInteger()) }
 
     fun getLatestBlock(): Observable<BigInteger> =
@@ -47,7 +47,7 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
 
     fun getTransactionCount(): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
-                    params = arrayListOf(gethAccountManager.getAccount().address.hex, DEFAULT_BLOCK_LATEST)))
+                    params = arrayListOf(gethAccountManager.getActiveAccount().address.hex, DEFAULT_BLOCK_LATEST)))
                     .map { it.result.hexAsBigInteger() }
 
     fun getGasPrice(): Observable<BigInteger> =

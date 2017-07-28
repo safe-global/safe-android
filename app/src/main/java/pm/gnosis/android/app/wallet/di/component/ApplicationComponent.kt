@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import dagger.Component
 import org.ethereum.geth.KeyStore
+import pm.gnosis.android.app.wallet.data.geth.GethAccountManager
 import pm.gnosis.android.app.wallet.data.geth.GethNodeManager
 import pm.gnosis.android.app.wallet.data.geth.GethRepository
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
