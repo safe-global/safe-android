@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import com.squareup.moshi.Moshi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_main.*
@@ -54,25 +55,33 @@ class MainActivity : AppCompatActivity() {
                                 val selected = (dialog as AlertDialog).listView.getItemAtPosition(which) as String
                                 gethRepo.setActiveAccount(selected)
                                 account_address.text = selected
+                                disposables += getBalance()
+                                disposables += getLatestBlock()
                             })
+                    .setOnDismissListener { snackbar(coordinator_layout, "Changed account") }
                     .show()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        disposables +=
-                infuraRepository.getBalance()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeBy(onNext = this::onBalance, onError = Timber::e)
-
-        disposables +=
-                infuraRepository.getLatestBlock()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeBy(onNext = this::onRecentBlock, onError = Timber::e)
+        disposables += getBalance()
+        disposables += getLatestBlock()
     }
 
-    private fun onBalance(balance: Wei) {
+    private fun getBalance(): Disposable {
+        return infuraRepository.getBalance()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onNext = this::onBalance, onError = Timber::e)
+    }
+
+    private fun getLatestBlock(): Disposable {
+        return infuraRepository.getLatestBlock()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onNext = this::onRecentBlock, onError = Timber::e)
+    }
+
+    fun onBalance(balance: Wei) {
         val etherBalance = balance.toEther()
         //Java 7 bug - does not strip trailing zeroes when the number itself is zero
         account_balance.text = if (etherBalance.compareTo(BigDecimal.ZERO) == 0) "0 Ξ" else etherBalance.stripTrailingZeros().toPlainString() + " Ξ"
