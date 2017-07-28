@@ -16,8 +16,10 @@ import pm.gnosis.android.app.wallet.data.model.TransactionDetails
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
+import pm.gnosis.android.app.wallet.util.ERC20
 import pm.gnosis.android.app.wallet.util.asDecimalString
 import pm.gnosis.android.app.wallet.util.asHexString
+import pm.gnosis.android.app.wallet.util.toast
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -68,10 +70,20 @@ class TransactionDetailsActivity : AppCompatActivity() {
                     .map { GasPriceResult(it) })
         }
 
+        if (transaction.address in ERC20.verifiedTokens) {
+            disposables += infuraRepository.getTokenInfo(transaction.address)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onNext = this::onTokenInfo, onError = Timber::e)
+        }
+
         disposables += Observable.merge(observables)
                 .scan(transaction, { previous, result -> stateReducer(previous, result) })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onTransactionDetails, onError = Timber::e)
+    }
+
+    private fun onTokenInfo(token: ERC20.Token) {
+        toast(token.toString())
     }
 
     private fun stateReducer(previous: TransactionDetails, result: FieldResult): TransactionDetails {

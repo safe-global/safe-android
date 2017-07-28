@@ -1,6 +1,7 @@
 package pm.gnosis.android.app.wallet.data.remote
 
 import io.reactivex.Observable
+import io.reactivex.functions.Function3
 import pm.gnosis.android.app.wallet.data.geth.GethAccountManager
 import pm.gnosis.android.app.wallet.data.model.JsonRpcRequest
 import pm.gnosis.android.app.wallet.data.model.TransactionCallParams
@@ -63,6 +64,13 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
 
     fun getTokenDecimals(contractAddress: BigInteger): Observable<BigInteger> =
             call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.DECIMALS_METHOD_ID))
+
+    fun getTokenInfo(contractAddress: BigInteger): Observable<ERC20.Token> =
+            Observable.zip(
+                    getTokenName(contractAddress),
+                    getTokenSymbol(contractAddress),
+                    getTokenDecimals(contractAddress),
+                    Function3 { name, symbol, decimals -> ERC20.Token(name, symbol, decimals) })
 
     fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_estimateGas",
