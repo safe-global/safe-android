@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import com.squareup.moshi.Moshi
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -27,6 +28,7 @@ import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.SCAN_RESULT
 import timber.log.Timber
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -56,7 +58,6 @@ class MainActivity : AppCompatActivity() {
                                 gethRepo.setActiveAccount(selected)
                                 account_address.text = selected
                                 disposables += getBalance()
-                                disposables += getLatestBlock()
                             })
                     .setOnDismissListener { snackbar(coordinator_layout, "Changed account") }
                     .show()
@@ -76,7 +77,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getLatestBlock(): Disposable {
-        return infuraRepository.getLatestBlock()
+        return Observable.interval(0L, 10, TimeUnit.SECONDS)
+                .flatMap { _ -> infuraRepository.getLatestBlock() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onRecentBlock, onError = Timber::e)
     }
