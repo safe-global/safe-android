@@ -22,7 +22,13 @@ object ERC20 {
     }
 
     data class Token(val name: String, val symbol: String, val decimals: BigInteger)
-    data class TokenTransfer(val to: BigInteger, val value: BigDecimal)
+    data class TokenTransfer(val to: BigInteger, val value: BigDecimal) {
+        fun encode(decimalPlaces: Int = 18): String {
+            val to = to.toString(16).padStart(64, '0')
+            val value = value.multiply(BigDecimal.TEN.pow(decimalPlaces)).toBigInteger().toString(16).padStart(64, '0')
+            return "$TRANSFER_METHOD_ID$to$value"
+        }
+    }
 
     val verifiedTokens = mapOf(
             "0x9a642d6b3368ddc662CA244bAdf32cDA716005BC".hexAsBigInteger() to "Qtum",

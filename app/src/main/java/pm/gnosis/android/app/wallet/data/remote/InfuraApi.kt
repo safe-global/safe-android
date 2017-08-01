@@ -14,9 +14,9 @@ interface InfuraApi {
         const val KOVAN_NETWORK = "kovan"
         const val RINKEBY_NETWORK = "rinkeby"
 
-        const val RINKEBY_BASE_URL = "https://$RINKEBY_NETWORK.infura.io/"
+        const val RINKEBY_BASE_URL = "https://e5185e24.ngrok.io"
     }
 
-    @POST(BuildConfig.INFURA_API_KEY)
+    @POST("/")
     fun post(@Body jsonRpcRequest: JsonRpcRequest): Observable<JsonRpcResult>
 }

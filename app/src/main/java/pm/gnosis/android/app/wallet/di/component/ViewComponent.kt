@@ -5,6 +5,7 @@ import dagger.Component
 import pm.gnosis.android.app.wallet.di.ForView
 import pm.gnosis.android.app.wallet.di.ViewContext
 import pm.gnosis.android.app.wallet.di.module.ViewModule
+import pm.gnosis.android.app.wallet.ui.GenerateTransactionActivity
 import pm.gnosis.android.app.wallet.ui.MainActivity
 import pm.gnosis.android.app.wallet.ui.TransactionDetailsActivity
 
@@ -15,4 +16,5 @@ interface ViewComponent {
 
     fun inject(activity: MainActivity)
     fun inject(activity: TransactionDetailsActivity)
+    fun inject(activity: GenerateTransactionActivity)
 }

@@ -105,6 +105,15 @@
 
 
             <android.support.v7.widget.AppCompatButton
+                android:id="@+id/generate_transaction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:padding="16dp"
+                android:text="Generate Transaction" />
+
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/scan_qr_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

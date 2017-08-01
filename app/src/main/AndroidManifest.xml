@@ -22,6 +22,9 @@
         <activity
             android:name=".ui.TransactionDetailsActivity"
             android:parentActivityName=".ui.MainActivity" />
+        <activity
+            android:name=".ui.GenerateTransactionActivity"
+            android:parentActivityName=".ui.MainActivity" />
     </application>
 
 </manifest>
