@@ -1,21 +1,22 @@
 package pm.gnosis.android.app.wallet.util.abi
 
-interface AbiType
-class AbiUInt8 : AbiType
-class AbiUInt32 : AbiType
-class AbiUInt64 : AbiType
-class AbiUInt128 : AbiType
-class AbiUInt256 : AbiType
-class AbiInt8 : AbiType
-class AbiInt32 : AbiType
-class AbiInt64 : AbiType
-class AbiInt128 : AbiType
-class AbiInt256 : AbiType
-class AbiAddress : AbiType
-class AbiBool : AbiType
-class AbiBytes : AbiType
-class AbiString : AbiType
+interface SolidityType
+class SolidityUInt8 : SolidityType
+class SolidityUInt32 : SolidityType
+class SolidityUInt64 : SolidityType
+class SolidityUInt128 : SolidityType
+class SolidityUInt256 : SolidityType
+class SolidityInt8 : SolidityType
+class SolidityInt32 : SolidityType
+class SolidityInt64 : SolidityType
+class SolidityInt128 : SolidityType
+class SolidityInt256 : SolidityType
+class SolidityAddress : SolidityType
+class SolidityBool : SolidityType
+class SolidityBytes : SolidityType
+class SolidityString : SolidityType
+class SolidityVoid : SolidityType
 
 
-class AbiFunctionArgument<out T : AbiType>(val name: String, val type: T)
-class AbiFunction<out T : AbiType>(val arguments: List<AbiFunctionArgument<AbiType>> = emptyList(), val returnType: T)
+class SolidityFunctionArgument<out T : SolidityType>(val name: String, val type: T)
+class SolidityFunction<out T : SolidityType>(val name: String, val arguments: List<SolidityFunctionArgument<SolidityType>> = emptyList(), val returnType: T)
