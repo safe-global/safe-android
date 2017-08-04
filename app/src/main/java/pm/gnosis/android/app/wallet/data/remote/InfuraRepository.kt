@@ -77,4 +77,14 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
                     params = arrayListOf(transactionCallParams)))
                     .doOnNext { Timber.d(it.toString()) }
                     .map { it.result.hexAsBigInteger() }
+
+    fun getTransactionParameters(transactionCallParams: TransactionCallParams) =
+            Observable.zip(
+                    estimateGas(transactionCallParams),
+                    getGasPrice(),
+                    getTransactionCount(),
+                    Function3<BigInteger, BigInteger, BigInteger, TransactionParameters> { gas, gasPrice, nonce -> TransactionParameters(gas, gasPrice, nonce) }
+            )
+
+    data class TransactionParameters(val gas: BigInteger, val gasPrice: BigInteger, val nonce: BigInteger)
 }

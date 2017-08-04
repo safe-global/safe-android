@@ -1,5 +1,8 @@
 package pm.gnosis.android.app.wallet.data.contracts
 
+import io.reactivex.Observable
+import pm.gnosis.android.app.wallet.data.geth.GethRepository
+import pm.gnosis.android.app.wallet.data.model.TransactionCallParams
 import pm.gnosis.android.app.wallet.data.model.Wei
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.util.hexAsBigInteger
@@ -8,7 +11,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GnosisMultisig @Inject constructor(private val infuraRepository: InfuraRepository) {
+class GnosisMultisig @Inject constructor(private val infuraRepository: InfuraRepository,
+                                         private val gethRepository: GethRepository) {
     companion object {
         const val ADDRESS = "0xe71d2ddb3ca69a94b557695a9614d3262845ea11" //test address
         const val CONFIRM_TRANSACTION_METHOD_ID = "0xc01a8c84"
@@ -28,12 +32,34 @@ class GnosisMultisig @Inject constructor(private val infuraRepository: InfuraRep
         }
     }
 
-    fun confirmTransaction(transactionId: BigInteger) {
-
+    fun confirmTransaction(transactionId: BigInteger, transactionCallParams: TransactionCallParams): Observable<String> {
+        val data = "0x$CONFIRM_TRANSACTION_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"
+        return infuraRepository.getTransactionParameters(transactionCallParams)
+                .map {
+                    gethRepository.signTransaction(
+                            nonce = it.nonce,
+                            to = ADDRESS.hexAsBigInteger(),
+                            gasLimit = it.gas,
+                            gasPrice = it.gasPrice,
+                            data = data,
+                            amount = BigInteger.ZERO)
+                }
+                .flatMap { infuraRepository.sendRawTransaction(it) }
     }
 
-    fun revokeTransaction(transactionId: BigInteger) {
-
+    fun revokeTransaction(transactionId: BigInteger, transactionCallParams: TransactionCallParams): Observable<String> {
+        val data = "0x$REVOKE_TRANSACTION_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"
+        return infuraRepository.getTransactionParameters(transactionCallParams)
+                .map {
+                    gethRepository.signTransaction(
+                            nonce = it.nonce,
+                            to = ADDRESS.hexAsBigInteger(),
+                            gasLimit = it.gas,
+                            gasPrice = it.gasPrice,
+                            data = data,
+                            amount = BigInteger.ZERO)
+                }
+                .flatMap { infuraRepository.sendRawTransaction(it) }
     }
 
     data class MultiSigTransaction(val address: BigInteger, val value: Wei)
