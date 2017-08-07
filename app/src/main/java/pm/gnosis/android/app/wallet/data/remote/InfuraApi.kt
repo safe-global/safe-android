@@ -14,7 +14,7 @@ interface InfuraApi {
         const val KOVAN_NETWORK = "kovan"
         const val RINKEBY_NETWORK = "rinkeby"
 
-        const val RINKEBY_BASE_URL = "https://e5185e24.ngrok.io"
+        const val RINKEBY_BASE_URL = "https://26145dff.ngrok.io/"
     }
 
     @POST("/")

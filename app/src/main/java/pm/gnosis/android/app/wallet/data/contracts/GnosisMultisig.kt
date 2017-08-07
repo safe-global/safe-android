@@ -14,7 +14,7 @@ import javax.inject.Singleton
 class GnosisMultisig @Inject constructor(private val infuraRepository: InfuraRepository,
                                          private val gethRepository: GethRepository) {
     companion object {
-        const val ADDRESS = "0xe71d2ddb3ca69a94b557695a9614d3262845ea11" //test address
+        const val ADDRESS = "0xc6fc5e99b5d253f6eabf53fb2eab94af4e6a1444" //test address
         const val CONFIRM_TRANSACTION_METHOD_ID = "0xc01a8c84"
         const val REVOKE_TRANSACTION_METHOD_ID = "0x20ea8d86"
         const val TRANSACTIONS_METHOD_ID = "0x9ace38c2"
@@ -23,7 +23,7 @@ class GnosisMultisig @Inject constructor(private val infuraRepository: InfuraRep
             val noPrefix = hex.removePrefix("0x")
             if (noPrefix.isEmpty() || noPrefix.length.rem(64) != 0) return null
             val properties = arrayListOf<CharSequence>()
-            (0..noPrefix.length step 64).forEach { i -> properties += noPrefix.subSequence(i, i + 64 - 1) }
+            (0..noPrefix.length - 1 step 64).forEach { i -> properties += noPrefix.subSequence(i, i + 64) }
             if (properties.size >= 2) {
                 return MultiSigTransaction(properties[0].toString().hexAsBigInteger(),
                         Wei(properties[1].toString().hexAsBigInteger()))
@@ -32,8 +32,15 @@ class GnosisMultisig @Inject constructor(private val infuraRepository: InfuraRep
         }
     }
 
-    fun confirmTransaction(transactionId: BigInteger, transactionCallParams: TransactionCallParams): Observable<String> {
-        val data = "0x$CONFIRM_TRANSACTION_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"
+    fun getTransaction(transactionId: BigInteger): Observable<MultiSigTransaction> {
+        return infuraRepository.call(TransactionCallParams(to = ADDRESS,
+                data = "$TRANSACTIONS_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"))
+                .map { decodeTransactionResult(it)!! }
+    }
+
+    fun confirmTransaction(transactionId: BigInteger): Observable<String> {
+        val data = "$CONFIRM_TRANSACTION_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"
+        val transactionCallParams = TransactionCallParams(to = ADDRESS, data = data, from = gethRepository.getAccount().address.hex)
         return infuraRepository.getTransactionParameters(transactionCallParams)
                 .map {
                     gethRepository.signTransaction(
@@ -48,7 +55,7 @@ class GnosisMultisig @Inject constructor(private val infuraRepository: InfuraRep
     }
 
     fun revokeTransaction(transactionId: BigInteger, transactionCallParams: TransactionCallParams): Observable<String> {
-        val data = "0x$REVOKE_TRANSACTION_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"
+        val data = "$REVOKE_TRANSACTION_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"
         return infuraRepository.getTransactionParameters(transactionCallParams)
                 .map {
                     gethRepository.signTransaction(

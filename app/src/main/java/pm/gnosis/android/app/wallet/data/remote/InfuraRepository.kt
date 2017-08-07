@@ -35,14 +35,14 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
             infuraApi.post(JsonRpcRequest(method = "eth_blockNumber"))
                     .map { it.result.hexAsBigInteger() }
 
-    fun call(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
+    fun call(transactionCallParams: TransactionCallParams): Observable<String> =
             infuraApi.post(JsonRpcRequest(method = "eth_call",
                     params = arrayListOf(transactionCallParams, DEFAULT_BLOCK_LATEST)))
-                    .map { it.result.hexAsBigInteger() }
+                    .map { it.result }
 
     fun sendRawTransaction(signedTransactionData: String): Observable<String> =
             infuraApi.post(JsonRpcRequest(method = "eth_sendRawTransaction",
-                    params = arrayListOf(signedTransactionData, DEFAULT_BLOCK_LATEST)))
+                    params = arrayListOf(signedTransactionData)))
                     .map { it.result }
 
     fun getTransactionCount(): Observable<BigInteger> =
@@ -56,14 +56,14 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
 
     fun getTokenName(contractAddress: BigInteger): Observable<String> =
             call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.NAME_METHOD_ID))
-                    .map { it.toAscii() }
+                    .map { it.hexAsBigInteger().toAscii() }
 
     fun getTokenSymbol(contractAddress: BigInteger): Observable<String> =
             call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.SYMBOL_METHOD_ID))
-                    .map { it.toAscii() }
+                    .map { it.hexAsBigInteger().toAscii() }
 
     fun getTokenDecimals(contractAddress: BigInteger): Observable<BigInteger> =
-            call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.DECIMALS_METHOD_ID))
+            call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.DECIMALS_METHOD_ID)).map { it.hexAsBigInteger() }
 
     fun getTokenInfo(contractAddress: BigInteger): Observable<ERC20.Token> =
             Observable.zip(
@@ -78,7 +78,7 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
                     .doOnNext { Timber.d(it.toString()) }
                     .map { it.result.hexAsBigInteger() }
 
-    fun getTransactionParameters(transactionCallParams: TransactionCallParams) =
+    fun getTransactionParameters(transactionCallParams: TransactionCallParams): Observable<TransactionParameters> =
             Observable.zip(
                     estimateGas(transactionCallParams),
                     getGasPrice(),

@@ -52,13 +52,17 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
 
 
     fun getAccountPassphrase(): String {
-        var passphrase = preferencesManager.prefs.getString(PreferencesManager.PASSPHRASE_KEY, "")
-        if (passphrase.isEmpty()) {
-            preferencesManager.prefs.edit {
-                passphrase = generateRandomString()
-                putString(PreferencesManager.PASSPHRASE_KEY, passphrase)
+        if (BuildConfig.DEBUG) {
+            return TestRPC.accounts[getActiveAccount().address.hex]?.second!!
+        } else {
+            var passphrase = preferencesManager.prefs.getString(PreferencesManager.PASSPHRASE_KEY, "")
+            if (passphrase.isEmpty()) {
+                preferencesManager.prefs.edit {
+                    passphrase = generateRandomString()
+                    putString(PreferencesManager.PASSPHRASE_KEY, passphrase)
+                }
             }
+            return passphrase
         }
-        return passphrase
     }
 }
