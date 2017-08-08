@@ -8,13 +8,23 @@ import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.ui.GenerateTransactionActivity
 import pm.gnosis.android.app.wallet.ui.MainActivity
 import pm.gnosis.android.app.wallet.ui.TransactionDetailsActivity
+import pm.gnosis.android.app.wallet.ui.account.AccountFragment
+import pm.gnosis.android.app.wallet.ui.account.AccountPresenter
+import pm.gnosis.android.app.wallet.ui.multisig.MultisigFragment
+import pm.gnosis.android.app.wallet.ui.scan.ScanFragment
+import pm.gnosis.android.app.wallet.ui.tokens.TokensFragment
 
 @ForView
 @Component(dependencies = arrayOf(ApplicationComponent::class), modules = arrayOf(ViewModule::class))
 interface ViewComponent {
-    @ViewContext fun Context(): Context
+    @ViewContext fun context(): Context
+    fun accountPresenter(): AccountPresenter
 
     fun inject(activity: MainActivity)
     fun inject(activity: TransactionDetailsActivity)
     fun inject(activity: GenerateTransactionActivity)
+    fun inject(fragment: AccountFragment)
+    fun inject(fragment: MultisigFragment)
+    fun inject(fragment: ScanFragment)
+    fun inject(fragment: TokensFragment)
 }

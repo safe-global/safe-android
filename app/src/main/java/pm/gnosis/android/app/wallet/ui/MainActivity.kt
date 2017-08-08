@@ -3,7 +3,7 @@ package pm.gnosis.android.app.wallet.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import com.squareup.moshi.Moshi
 import io.reactivex.Observable
@@ -20,13 +20,15 @@ import pm.gnosis.android.app.wallet.data.model.Wei
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
+import pm.gnosis.android.app.wallet.ui.account.AccountFragment
+import pm.gnosis.android.app.wallet.ui.multisig.MultisigFragment
+import pm.gnosis.android.app.wallet.ui.scan.ScanFragment
+import pm.gnosis.android.app.wallet.ui.tokens.TokensFragment
 import pm.gnosis.android.app.wallet.util.ERC67Parser
 import pm.gnosis.android.app.wallet.util.snackbar
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
-import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.QR_CODE_TYPES
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
 import timber.log.Timber
-import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -42,7 +44,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.activity_main)
-        scan_qr_btn.setOnClickListener {
+
+        bottom_navigation.setOnNavigationItemSelectedListener {
+            val fragment = when (it.itemId) {
+                R.id.action_account -> AccountFragment()
+                R.id.action_multisig -> MultisigFragment()
+                R.id.action_tokens -> TokensFragment()
+                R.id.action_scan -> ScanFragment()
+                else -> null
+            }
+            if (fragment != null) {
+                replaceFragment(fragment)
+                return@setOnNavigationItemSelectedListener true
+            } else {
+                return@setOnNavigationItemSelectedListener false
+            }
+        }
+
+        bottom_navigation.selectedItemId = R.id.action_account
+
+        /*scan_qr_btn.setOnClickListener {
             val integrator = ZxingIntentIntegrator(this)
             integrator.initiateScan(QR_CODE_TYPES)
         }
@@ -61,7 +82,11 @@ class MainActivity : AppCompatActivity() {
                             })
                     .setOnDismissListener { snackbar(coordinator_layout, "Changed account") }
                     .show()
-        }
+        }*/
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().replace(R.id.main_content, fragment).commit()
     }
 
     override fun onStart() {
@@ -86,11 +111,11 @@ class MainActivity : AppCompatActivity() {
     fun onBalance(balance: Wei) {
         val etherBalance = balance.toEther()
         //Java 7 bug - does not strip trailing zeroes when the number itself is zero
-        account_balance.text = if (etherBalance.compareTo(BigDecimal.ZERO) == 0) "0 Ξ" else etherBalance.stripTrailingZeros().toPlainString() + " Ξ"
+        // account_balance.text = if (etherBalance.compareTo(BigDecimal.ZERO) == 0) "0 Ξ" else etherBalance.stripTrailingZeros().toPlainString() + " Ξ"
     }
 
     private fun onRecentBlock(blockNumber: BigInteger) {
-        recent_block.text = blockNumber.toString(10)
+        // recent_block.text = blockNumber.toString(10)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
