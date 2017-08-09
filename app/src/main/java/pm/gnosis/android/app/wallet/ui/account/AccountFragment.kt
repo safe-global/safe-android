@@ -44,7 +44,7 @@ class AccountFragment : BaseFragment() {
 
         fragment_account_clipboard.setOnClickListener {
             context.copyToClipboard("address", fragment_account_address.text.toString())
-            snackbar(fragment_account_coordinator_layout, "Copied address to clipboard")
+            snackbar(fragment_account_coordinator_layout, "Address copied to clipboard")
         }
 
         fragment_account_share.setOnClickListener {

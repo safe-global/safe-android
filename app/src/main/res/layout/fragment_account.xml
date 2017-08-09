@@ -49,6 +49,7 @@
                     android:id="@+id/fragment_account_clipboard"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:background="?selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/ic_content_copy_24dp" />
 
                 <android.support.v7.widget.AppCompatImageView
@@ -57,6 +58,7 @@
                     android:layout_height="32dp"
                     android:layout_marginLeft="24dp"
                     android:layout_marginStart="24dp"
+                    android:background="?selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/ic_share_24dp" />
 
                 <android.support.v7.widget.AppCompatImageView
@@ -65,6 +67,7 @@
                     android:layout_height="32dp"
                     android:layout_marginLeft="24dp"
                     android:layout_marginStart="24dp"
+                    android:background="?selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/ic_qr_24dp" />
 
             </LinearLayout>
@@ -84,11 +87,11 @@
 
             </LinearLayout>
 
-
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/fragment_account_balance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
                 android:textSize="42sp"
                 tools:text="42 Ξ" />
 
