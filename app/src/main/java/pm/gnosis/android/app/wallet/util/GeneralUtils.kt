@@ -14,3 +14,5 @@ fun <T> nullOnThrow(func: () -> T): T? = try {
 } catch (e: Exception) {
     null
 }
+
+fun sameSign(a: Int, b: Int) = (a * b) > 0
