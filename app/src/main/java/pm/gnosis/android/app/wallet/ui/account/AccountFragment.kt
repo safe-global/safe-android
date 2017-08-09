@@ -11,7 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.dialog_qr_code.view.*
+import kotlinx.android.synthetic.main.dialog_show_qr_code.view.*
 import kotlinx.android.synthetic.main.fragment_account.*
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.model.Wei
@@ -85,7 +85,7 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun onQrCode(bitmap: Bitmap) {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_qr_code, null)
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_show_qr_code, null)
         dialogView.dialog_qr_code_image.setImageBitmap(bitmap)
         AlertDialog.Builder(context)
                 .setView(dialogView)

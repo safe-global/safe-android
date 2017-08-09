@@ -1,6 +1,7 @@
 package pm.gnosis.android.app.wallet.di.module
 
 import android.app.Application
+import android.arch.persistence.room.Room
 import android.content.Context
 import com.squareup.moshi.Moshi
 import dagger.Module
@@ -11,6 +12,7 @@ import okhttp3.OkHttpClient
 import org.ethereum.geth.Geth
 import org.ethereum.geth.KeyStore
 import pm.gnosis.android.app.wallet.BuildConfig
+import pm.gnosis.android.app.wallet.data.db.GnosisAuthenticatorDb
 import pm.gnosis.android.app.wallet.data.model.HexNumberAdapter
 import pm.gnosis.android.app.wallet.data.model.WeiAdapter
 import pm.gnosis.android.app.wallet.data.remote.InfuraApi
@@ -88,4 +90,8 @@ class ApplicationModule(val application: Application) {
             it.proceed(request)
         }
     }
+
+    @Provides
+    @Singleton
+    fun providesDb() = Room.databaseBuilder(application, GnosisAuthenticatorDb::class.java, GnosisAuthenticatorDb.DB_NAME).build()
 }

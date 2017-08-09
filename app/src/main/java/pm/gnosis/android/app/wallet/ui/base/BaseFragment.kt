@@ -14,5 +14,10 @@ abstract class BaseFragment : Fragment() {
         inject(GnosisApplication[this.context].component)
     }
 
+    override fun onStop() {
+        super.onStop()
+        disposables.clear()
+    }
+
     abstract fun inject(component: ApplicationComponent)
 }
