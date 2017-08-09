@@ -69,6 +69,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:$RETROFIT_VERSION"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$RETROFIT_VERSION"
 
+    implementation "com.google.zxing:core:3.3.0"
+
     //Dagger
     implementation "com.google.dagger:dagger:$DAGGER_VERSION"
     kapt "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
