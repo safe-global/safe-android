@@ -2,6 +2,7 @@ package pm.gnosis.android.app.wallet.ui.account
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.dialog_qr_code.view.*
 import kotlinx.android.synthetic.main.fragment_account.*
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.model.Wei
@@ -83,7 +85,11 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun onQrCode(bitmap: Bitmap) {
-        Timber.d(bitmap.toString())
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_qr_code, null)
+        dialogView.dialog_qr_code_image.setImageBitmap(bitmap)
+        AlertDialog.Builder(context)
+                .setView(dialogView)
+                .show()
     }
 
     private fun onQrCodeLoading(isLoading: Boolean) {
