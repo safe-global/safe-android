@@ -2,6 +2,7 @@ package pm.gnosis.android.app.wallet.ui.multisig
 
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,14 +24,20 @@ import javax.inject.Inject
 
 class MultisigFragment : BaseFragment() {
     @Inject lateinit var presenter: MultisigPresenter
+    @Inject lateinit var adapter: MultisigAdapter
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?) =
             inflater?.inflate(R.layout.fragment_multisig, container, false)
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fragment_multisig_wallets.layoutManager = LinearLayoutManager(context)
+        fragment_multisig_wallets.adapter = adapter
+    }
 
     override fun onStart() {
         super.onStart()
         fragment_multisig_input_address.setOnClickListener { showMultisigInputDialog() }
-
         disposables += presenter.observeMultisigList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -38,7 +45,8 @@ class MultisigFragment : BaseFragment() {
     }
 
     private fun onMultisigWallets(wallets: List<MultisigWallet>) {
-        Timber.d(wallets.toString())
+        adapter.setItems(wallets)
+        fragment_multisig_empty_view.visibility = if (wallets.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun onMultisigWalletsError(throwable: Throwable) {

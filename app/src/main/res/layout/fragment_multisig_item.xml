@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:padding="16dp">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/fragment_multisig_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/fragment_multisig_item_copy"
+        android:layout_toStartOf="@+id/fragment_multisig_item_copy"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/gnosisBlue"
+        android:textStyle=""
+        tools:text="My Multisig Wallet" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/fragment_multisig_item_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/fragment_multisig_item_name"
+        android:layout_toLeftOf="@+id/fragment_multisig_item_copy"
+        android:layout_toStartOf="@+id/fragment_multisig_item_copy"
+        android:ellipsize="end"
+        android:maxLines="2"
+        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/fragment_multisig_item_copy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="8dp"
+        app:srcCompat="@drawable/ic_content_copy_24dp" />
+</RelativeLayout>

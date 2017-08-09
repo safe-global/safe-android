@@ -3,4 +3,6 @@
     <color name="colorPrimary">#263238</color>
     <color name="colorPrimaryDark">#263238</color>
     <color name="colorAccent">#FF7043</color>
+
+    <color name="gnosisBlue">#00a6c4</color>
 </resources>
