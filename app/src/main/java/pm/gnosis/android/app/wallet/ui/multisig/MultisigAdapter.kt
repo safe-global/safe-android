@@ -11,6 +11,7 @@ import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.db.MultisigWallet
 import pm.gnosis.android.app.wallet.di.ForView
 import pm.gnosis.android.app.wallet.di.ViewContext
+import pm.gnosis.android.app.wallet.util.shareExternalText
 import javax.inject.Inject
 
 
@@ -40,6 +41,11 @@ class MultisigAdapter @Inject constructor(@ViewContext private val context: Cont
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
+            itemView.fragment_multisig_item_share.setOnClickListener {
+                items[adapterPosition].address?.let {
+                    context.shareExternalText(it, "Sharing ${items[adapterPosition].name ?: ""}")
+                }
+            }
         }
 
         fun bind(item: MultisigWallet) {
