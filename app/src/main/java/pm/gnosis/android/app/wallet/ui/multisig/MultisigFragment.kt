@@ -1,8 +1,11 @@
 package pm.gnosis.android.app.wallet.ui.multisig
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +20,12 @@ import pm.gnosis.android.app.wallet.di.component.ApplicationComponent
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.ui.base.BaseFragment
+import pm.gnosis.android.app.wallet.util.addAddressPrefix
+import pm.gnosis.android.app.wallet.util.isValidEthereumAddress
 import pm.gnosis.android.app.wallet.util.snackbar
+import pm.gnosis.android.app.wallet.util.toast
+import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
+import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,13 +44,39 @@ class MultisigFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        fragment_multisig_input_address.setOnClickListener { showMultisigInputDialog() }
+        fragment_multisig_input_address.setOnClickListener {
+            fragment_multisig_fab.close(true)
+            showMultisigInputDialog()
+        }
+
+        fragment_multisig_scan_qr_code.setOnClickListener {
+            fragment_multisig_fab.close(true)
+            val integrator = ZxingIntentIntegrator(this)
+            integrator.initiateScan(QR_CODE_TYPES)
+        }
+
         disposables += presenter.observeMultisigList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onMultisigWallets, onError = this::onMultisigWalletsError)
 
         disposables += adapter.multisigSelection
                 .subscribeBy(onNext = this::onMultisigSelection, onError = Timber::e)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(SCAN_RESULT_EXTRA)) {
+                val scanResult = data.getStringExtra(SCAN_RESULT_EXTRA)
+                if (scanResult.isValidEthereumAddress()) {
+                    showMultisigInputDialog(scanResult)
+                } else {
+                    snackbar(fragment_multisig_coordinator_layout, "Invalid address")
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                snackbar(fragment_multisig_coordinator_layout, "Cancelled by the user")
+            }
+        }
     }
 
     private fun onMultisigWallets(wallets: List<MultisigWallet>) {
@@ -54,20 +88,31 @@ class MultisigFragment : BaseFragment() {
         Timber.e(throwable)
     }
 
-    private fun showMultisigInputDialog() {
+    private fun showMultisigInputDialog(withAddress: String = "") {
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_multisig_text, null)
-        fragment_multisig_fab.close(true)
-        AlertDialog.Builder(context)
+
+        if (!withAddress.isNullOrEmpty()) {
+            dialogView.dialog_add_multisig_text_address.setText(withAddress)
+            dialogView.dialog_add_multisig_text_address.isEnabled = false
+            dialogView.dialog_add_multisig_text_address.inputType = InputType.TYPE_NULL
+        }
+
+        val dialog = AlertDialog.Builder(context)
                 .setTitle("Add a Multisig Wallet")
                 .setView(dialogView)
-                .setPositiveButton("Add", { _, _ ->
-                    disposables += addMultisigWalletDisposable(
-                            dialogView.dialog_add_multisig_text_name.text.toString(),
-                            dialogView.dialog_add_multisig_text_address.text.toString())
-
-                })
+                .setPositiveButton("Add", { _, _ -> })
                 .setNegativeButton("Cancel", { _, _ -> })
                 .show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val name = dialogView.dialog_add_multisig_text_name.text.toString()
+            val address = dialogView.dialog_add_multisig_text_address.text.toString()
+            if (address.isValidEthereumAddress()) {
+                disposables += addMultisigWalletDisposable(name, address.addAddressPrefix())
+                dialog.dismiss()
+            } else {
+                context.toast("Invalid ethereum address")
+            }
+        }
     }
 
     private fun addMultisigWalletDisposable(name: String, address: String) =

@@ -7,3 +7,6 @@ fun String.decimalAsBigInteger() = BigInteger(this, 10)
 
 fun BigInteger.asHexString() = "0x${this.toString(16)}"
 fun BigInteger.asDecimalString() = this.toString(10)
+
+fun String.isValidEthereumAddress() = this.removePrefix("0x").length == 40 &&
+        nullOnThrow { this.hexAsBigInteger() } != null

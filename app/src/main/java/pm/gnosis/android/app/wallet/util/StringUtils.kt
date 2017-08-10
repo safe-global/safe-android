@@ -29,3 +29,5 @@ fun String.hexToByteArray(): ByteArray {
     }
     return data
 }
+
+fun String.addAddressPrefix() = if (!this.startsWith("0x")) "0x$this" else this
