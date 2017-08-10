@@ -2,10 +2,36 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2857618de824ee796f84bff4d6a115c6",
+    "identityHash": "e113991685d07499785f8181179f211a",
     "entities": [
       {
         "tableName": "multisig_wallets",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT, `name` TEXT, PRIMARY KEY(`address`))",
+        "fields": [
+          {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "address"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "verified_tokens",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT, `name` TEXT, PRIMARY KEY(`address`))",
         "fields": [
           {
@@ -33,7 +59,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2857618de824ee796f84bff4d6a115c6\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e113991685d07499785f8181179f211a\")"
     ]
   }
 }

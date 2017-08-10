@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import com.squareup.moshi.Moshi
 import dagger.Component
 import org.ethereum.geth.KeyStore
+import pm.gnosis.android.app.wallet.data.PreferencesManager
 import pm.gnosis.android.app.wallet.data.contracts.GnosisMultisig
 import pm.gnosis.android.app.wallet.data.db.GnosisAuthenticatorDb
 import pm.gnosis.android.app.wallet.data.geth.GethNodeManager
@@ -27,6 +28,7 @@ interface ApplicationComponent {
     fun gethRepo(): GethRepository
     fun infuraRepository(): InfuraRepository
     fun gnosisAuthenticatorDb(): GnosisAuthenticatorDb
+    fun preferencesManager(): PreferencesManager
 
     fun ethereumConnector(): GethNodeManager
     fun gnosisMultiSig(): GnosisMultisig
