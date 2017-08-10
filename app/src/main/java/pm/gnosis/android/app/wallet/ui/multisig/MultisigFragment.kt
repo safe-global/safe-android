@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_add_multisig_text.view.*
 import kotlinx.android.synthetic.main.fragment_multisig.*
 import pm.gnosis.android.app.wallet.R
@@ -39,9 +38,11 @@ class MultisigFragment : BaseFragment() {
         super.onStart()
         fragment_multisig_input_address.setOnClickListener { showMultisigInputDialog() }
         disposables += presenter.observeMultisigList()
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onMultisigWallets, onError = this::onMultisigWalletsError)
+
+        disposables += adapter.multisigSelection
+                .subscribeBy(onNext = this::onMultisigSelection, onError = Timber::e)
     }
 
     private fun onMultisigWallets(wallets: List<MultisigWallet>) {
@@ -74,12 +75,66 @@ class MultisigFragment : BaseFragment() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletAdded, onError = this::onMultisigWalletAddError)
 
+    private fun removeMultisigWalletDisposable(multisigWallet: MultisigWallet) =
+            presenter.removeMultisigWallet(multisigWallet)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onComplete = this::onMultisigWalletRemoved, onError = this::onMultisigWalletRemoveError)
+
+    private fun updateMultisigWalletNameDisposable(address: String, newName: String) =
+            presenter.updateMultisigWalletName(address, newName)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onComplete = this::onMultisigWalletNameChange, onError = this::onMultisigWalletNameChangeError)
+
     private fun onMultisigWalletAdded() {
         snackbar(fragment_multisig_coordinator_layout, "Added MultisigWallet")
     }
 
     private fun onMultisigWalletAddError(throwable: Throwable) {
         Timber.e(throwable)
+    }
+
+    private fun onMultisigWalletRemoved() {
+        snackbar(fragment_multisig_coordinator_layout, "Removed Multisigwallet")
+    }
+
+    private fun onMultisigWalletRemoveError(throwable: Throwable) {
+        Timber.e(throwable)
+    }
+
+    private fun onMultisigWalletNameChange() {
+        snackbar(fragment_multisig_coordinator_layout, "Changed MultisigWallet name")
+    }
+
+    private fun onMultisigWalletNameChangeError(throwable: Throwable) {
+        Timber.e(throwable)
+    }
+
+    private fun onMultisigSelection(multisigWallet: MultisigWallet) {
+        val nameUpdate = if (multisigWallet.name.isNullOrEmpty()) "Add name" else "Change name"
+        AlertDialog.Builder(context)
+                .setTitle(multisigWallet.name)
+                .setItems(arrayOf(nameUpdate, "Remove Multisig"), { dialog, which ->
+                    when (which) {
+                        0 -> showEditMultisigNameDialog(multisigWallet)
+                        1 -> disposables += removeMultisigWalletDisposable(multisigWallet)
+                    }
+                }).show()
+    }
+
+    private fun showEditMultisigNameDialog(multisigWallet: MultisigWallet) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_multisig_text, null)
+        dialogView.dialog_add_multisig_text_address.visibility = View.GONE
+        AlertDialog.Builder(context)
+                .setTitle(multisigWallet.name)
+                .setView(dialogView)
+                .setPositiveButton("Change name", { _, _ ->
+                    multisigWallet.address?.let {
+                        disposables += updateMultisigWalletNameDisposable(it,
+                                dialogView.dialog_add_multisig_text_name.text.toString())
+                    }
+                })
+                .setNegativeButton("Cancel", { _, _ -> })
+                .show()
     }
 
     override fun inject(component: ApplicationComponent) {
