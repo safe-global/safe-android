@@ -55,7 +55,7 @@ class MultisigFragment : BaseFragment() {
             integrator.initiateScan(QR_CODE_TYPES)
         }
 
-        disposables += presenter.observeMultisigList()
+        disposables += presenter.observeMultisigWallets()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onMultisigWallets, onError = this::onMultisigWalletsError)
 

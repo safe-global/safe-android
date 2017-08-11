@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_tokens_coordinator_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/fragment_tokens_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/fragment_tokens_empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="No tokens added" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fragment_tokens_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        app:layout_behavior="pm.gnosis.android.app.wallet.view.FloatingActionButtonScrollBehavior">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fragment_tokens_scan_qr_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_qrcode_scan_white_24dp"
+            app:fab_label="Scan QRCode"
+            app:fab_size="normal" />
+
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fragment_tokens_input_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_text_input_white"
+            app:fab_label="Input Token Address"
+            app:fab_size="normal" />
+
+
+    </com.github.clans.fab.FloatingActionMenu>
+</android.support.design.widget.CoordinatorLayout>

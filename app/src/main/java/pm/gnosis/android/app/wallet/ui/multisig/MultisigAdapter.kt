@@ -16,8 +16,7 @@ import javax.inject.Inject
 
 
 @ForView
-class MultisigAdapter @Inject constructor(@ViewContext private val context: Context,
-                                          private val presenter: MultisigPresenter) : RecyclerView.Adapter<MultisigAdapter.ViewHolder>() {
+class MultisigAdapter @Inject constructor(@ViewContext private val context: Context) : RecyclerView.Adapter<MultisigAdapter.ViewHolder>() {
     val items = mutableListOf<MultisigWallet>()
     val multisigSelection: PublishSubject<MultisigWallet> = PublishSubject.create<MultisigWallet>()
 

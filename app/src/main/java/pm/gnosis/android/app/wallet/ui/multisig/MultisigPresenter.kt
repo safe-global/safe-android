@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @ForView
 class MultisigPresenter @Inject constructor(private val gnosisAuthenticatorDb: GnosisAuthenticatorDb) {
-    fun observeMultisigList(): Flowable<List<MultisigWallet>> {
+    fun observeMultisigWallets(): Flowable<List<MultisigWallet>> {
         return gnosisAuthenticatorDb.multisigWalletDao().observeMultisigWallets().subscribeOn(Schedulers.io())
     }
 
