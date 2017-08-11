@@ -1,5 +1,6 @@
 package pm.gnosis.android.app.wallet.ui.tokens
 
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.android.app.wallet.data.db.ERC20Token
@@ -17,4 +18,11 @@ class TokensPresenter @Inject constructor(private val gnosisAuthenticatorDb: Gno
 
     fun observeTokenInfo(token: ERC20Token) =
             token.address?.let { infuraRepository.getTokenInfo(it.hexAsBigInteger()) }
+
+    fun addToken(address: String, name: String = "") = Completable.fromCallable {
+        val token = ERC20Token()
+        token.address = address
+        token.name = name
+        gnosisAuthenticatorDb.erc20TokenDao().insertERC20Token(token)
+    }.subscribeOn(Schedulers.io())
 }

@@ -8,7 +8,7 @@ import io.reactivex.Flowable
 
 @Dao
 interface ERC20TokenDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.FAIL)
     fun insertERC20Token(erC20Token: ERC20Token)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -1,14 +1,19 @@
 package pm.gnosis.android.app.wallet.ui.tokens
 
+import android.app.Activity
+import android.content.Intent
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.android.synthetic.main.dialog_token_add_input.view.*
 import kotlinx.android.synthetic.main.dialog_token_info.view.*
 import kotlinx.android.synthetic.main.fragment_tokens.*
 import pm.gnosis.android.app.wallet.R
@@ -17,9 +22,8 @@ import pm.gnosis.android.app.wallet.di.component.ApplicationComponent
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.ui.base.BaseFragment
-import pm.gnosis.android.app.wallet.util.ERC20
-import pm.gnosis.android.app.wallet.util.asDecimalString
-import pm.gnosis.android.app.wallet.util.snackbar
+import pm.gnosis.android.app.wallet.util.*
+import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,8 +36,36 @@ class TokensFragment : BaseFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        fragment_tokens_input_address.setOnClickListener {
+            fragment_tokens_fab.close(true)
+            showTokenAddressInputDialog()
+        }
+
+        fragment_tokens_scan_qr_code.setOnClickListener {
+            fragment_tokens_fab.close(true)
+            val integrator = ZxingIntentIntegrator(this)
+            integrator.initiateScan(ZxingIntentIntegrator.QR_CODE_TYPES)
+        }
+
         fragment_tokens_list.layoutManager = LinearLayoutManager(context)
         fragment_tokens_list.adapter = adapter
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ZxingIntentIntegrator.REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)) {
+                val scanResult = data.getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
+                if (scanResult.isValidEthereumAddress()) {
+                    showTokenAddressInputDialog(scanResult)
+                } else {
+                    snackbar(fragment_tokens_coordinator_layout, "Invalid address")
+                }
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                snackbar(fragment_tokens_coordinator_layout, "Cancelled by the user")
+            }
+        }
     }
 
     override fun onStart() {
@@ -85,6 +117,34 @@ class TokensFragment : BaseFragment() {
                 .show()
     }
 
+    private fun showTokenAddressInputDialog(withAddress: String = "") {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_token_add_input, null)
+
+        if (!withAddress.isNullOrEmpty()) {
+            dialogView.dialog_token_add_address.setText(withAddress)
+            dialogView.dialog_token_add_address.isEnabled = false
+            dialogView.dialog_token_add_address.inputType = InputType.TYPE_NULL
+        }
+
+        val dialog = AlertDialog.Builder(context)
+                .setTitle("Add a new ERC20 Token")
+                .setView(dialogView)
+                .setNegativeButton("Cancel", { _, _ -> })
+                .setPositiveButton("Add", { _, _ -> })
+                .show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val address = dialogView.dialog_token_add_address.text.toString()
+            val name = dialogView.dialog_token_add_name.text.toString()
+            if (address.isValidEthereumAddress()) {
+                disposables += addTokenDisposable(address, name)
+                dialog.dismiss()
+            } else {
+                context.toast("Invalid ethereum address")
+            }
+        }
+    }
+
     private fun onTokenInfoLoading(isLoading: Boolean) {
         adapter.itemsClickable = !isLoading
         fragment_tokens_progress_bar.visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -92,6 +152,21 @@ class TokensFragment : BaseFragment() {
 
     private fun onTokenInfoError(throwable: Throwable) {
         Timber.e(throwable)
+    }
+
+    private fun addTokenDisposable(address: String, name: String) =
+            presenter.addToken(address, name).observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onComplete = this::onTokenAdded, onError = this::onTokenAddError)
+
+    private fun onTokenAdded() {
+        snackbar(fragment_tokens_coordinator_layout, "Token added")
+    }
+
+    private fun onTokenAddError(throwable: Throwable) {
+        Timber.e(throwable)
+        if (throwable is SQLiteConstraintException) {
+            snackbar(fragment_tokens_coordinator_layout, "Token already stored")
+        }
     }
 
     override fun inject(component: ApplicationComponent) {

@@ -7,8 +7,9 @@ fun generateRandomString(numBits: Int = 130, radix: Int = 32): String {
     return BigInteger(numBits, SecureRandom()).toString(radix)
 }
 
-fun BigInteger.toAscii(): String {
+fun BigInteger.toAlfaNumericAscii(): String? {
     val hexString = this.toString(16)
+    if (hexString.length.rem(2) != 0) return null
     val stringBuilder = StringBuilder()
     (0..hexString.length - 1 step 2)
             .map { hexString.substring(it, it + 2) }
