@@ -85,7 +85,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
     private fun onTokenInfo(token: ERC20.Token) {
         token_name.text = token.name
         transaction.data?.let {
-            ERC20.parseTransferData(it, token.decimals)?.let {
+            ERC20.parseTransferData(it, token.decimals!!)?.let {
                 token_card.visibility = View.VISIBLE
                 token_amount.text = it.value.stripTrailingZeros().toPlainString()
                 token_receiver.text = it.to.asEthereumAddressString()

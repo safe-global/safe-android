@@ -1,15 +1,14 @@
 package pm.gnosis.android.app.wallet.data.remote
 
+import com.gojuno.koptional.Optional
+import com.gojuno.koptional.toOptional
 import io.reactivex.Observable
 import io.reactivex.functions.Function3
 import pm.gnosis.android.app.wallet.data.geth.GethAccountManager
 import pm.gnosis.android.app.wallet.data.model.JsonRpcRequest
 import pm.gnosis.android.app.wallet.data.model.TransactionCallParams
 import pm.gnosis.android.app.wallet.data.model.Wei
-import pm.gnosis.android.app.wallet.util.ERC20
-import pm.gnosis.android.app.wallet.util.asEthereumAddressString
-import pm.gnosis.android.app.wallet.util.hexAsBigInteger
-import pm.gnosis.android.app.wallet.util.toAscii
+import pm.gnosis.android.app.wallet.util.*
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -54,24 +53,24 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
             infuraApi.post(JsonRpcRequest(method = "eth_gasPrice"))
                     .map { it.result.hexAsBigInteger() }
 
-    fun getTokenName(contractAddress: BigInteger): Observable<String> =
+    fun getTokenName(contractAddress: BigInteger): Observable<Optional<String>> =
             call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.NAME_METHOD_ID))
-                    .map { it.hexAsBigInteger().toAscii() }
+                    .map { it.hexAsBigIntegerOrNull()?.toAscii().toOptional() }
 
-    fun getTokenSymbol(contractAddress: BigInteger): Observable<String> =
+    fun getTokenSymbol(contractAddress: BigInteger): Observable<Optional<String>> =
             call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.SYMBOL_METHOD_ID))
-                    .map { it.hexAsBigInteger().toAscii() }
+                    .map { it.hexAsBigIntegerOrNull()?.toAscii().toOptional() }
 
-    fun getTokenDecimals(contractAddress: BigInteger): Observable<BigInteger> =
+    fun getTokenDecimals(contractAddress: BigInteger): Observable<Optional<BigInteger>> =
             call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.DECIMALS_METHOD_ID))
-                    .map { it.hexAsBigInteger() }
+                    .map { it.hexAsBigIntegerOrNull().toOptional() }
 
     fun getTokenInfo(contractAddress: BigInteger): Observable<ERC20.Token> =
             Observable.zip(
                     getTokenName(contractAddress),
                     getTokenSymbol(contractAddress),
                     getTokenDecimals(contractAddress),
-                    Function3 { name, symbol, decimals -> ERC20.Token(name, symbol, decimals) })
+                    Function3 { name, symbol, decimals -> ERC20.Token(name.toNullable(), symbol.toNullable(), decimals.toNullable()) })
 
     fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_estimateGas",
