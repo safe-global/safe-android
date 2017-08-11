@@ -20,7 +20,7 @@ data class TransactionDetails(val address: BigInteger,
             nullOnThrow { parcel.readString().decimalAsBigInteger() })
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(address.asHexString())
+        parcel.writeString(address.asEthereumAddressString())
         parcel.writeString(value?.value?.asDecimalString())
         parcel.writeString(gas?.asDecimalString())
         parcel.writeString(gasPrice?.asDecimalString())

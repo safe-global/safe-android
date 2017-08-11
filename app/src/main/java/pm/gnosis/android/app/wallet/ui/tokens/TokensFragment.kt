@@ -36,6 +36,10 @@ class TokensFragment : BaseFragment() {
         disposables += presenter.observeTokens()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onTokensList, onError = this::onTokensListError)
+
+        disposables += adapter.tokensSelection
+                .flatMap { presenter.observeTokenInfo(it) }
+                .subscribeBy(onNext = { Timber.d(it.toString()) }, onError = Timber::e)
     }
 
     private fun onTokensList(tokens: List<ERC20Token>) {

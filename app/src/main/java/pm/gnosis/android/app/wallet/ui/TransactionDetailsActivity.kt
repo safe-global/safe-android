@@ -19,7 +19,7 @@ import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.util.ERC20
 import pm.gnosis.android.app.wallet.util.asDecimalString
-import pm.gnosis.android.app.wallet.util.asHexString
+import pm.gnosis.android.app.wallet.util.asEthereumAddressString
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -54,7 +54,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         if (transaction.gas == null) {
             observables.add(infuraRepository.estimateGas(
-                    TransactionCallParams(to = transaction.address.asHexString(), data = transaction.data))
+                    TransactionCallParams(to = transaction.address.asEthereumAddressString(), data = transaction.data))
                     .doOnSubscribe { _ -> suggested_gas.text = "Loading..." }
                     .map { GasResult(it) })
         }
@@ -88,7 +88,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
             ERC20.parseTransferData(it, token.decimals)?.let {
                 token_card.visibility = View.VISIBLE
                 token_amount.text = it.value.stripTrailingZeros().toPlainString()
-                token_receiver.text = it.to.asHexString()
+                token_receiver.text = it.to.asEthereumAddressString()
             }
         }
     }
@@ -119,7 +119,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
     }
 
     fun fillTransactionDetails() {
-        recipient.text = transaction.address.asHexString()
+        recipient.text = transaction.address.asEthereumAddressString()
         suggested_gas.text = transaction.gas?.toString(10) ?: "No value"
         value.text = transaction.value?.toEther()?.stripTrailingZeros()?.toPlainString() ?: "No value"
         data.text = transaction.data ?: "No value"

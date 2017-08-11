@@ -7,7 +7,7 @@ import pm.gnosis.android.app.wallet.data.model.JsonRpcRequest
 import pm.gnosis.android.app.wallet.data.model.TransactionCallParams
 import pm.gnosis.android.app.wallet.data.model.Wei
 import pm.gnosis.android.app.wallet.util.ERC20
-import pm.gnosis.android.app.wallet.util.asHexString
+import pm.gnosis.android.app.wallet.util.asEthereumAddressString
 import pm.gnosis.android.app.wallet.util.hexAsBigInteger
 import pm.gnosis.android.app.wallet.util.toAscii
 import timber.log.Timber
@@ -55,15 +55,16 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
                     .map { it.result.hexAsBigInteger() }
 
     fun getTokenName(contractAddress: BigInteger): Observable<String> =
-            call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.NAME_METHOD_ID))
+            call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.NAME_METHOD_ID))
                     .map { it.hexAsBigInteger().toAscii() }
 
     fun getTokenSymbol(contractAddress: BigInteger): Observable<String> =
-            call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.SYMBOL_METHOD_ID))
+            call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.SYMBOL_METHOD_ID))
                     .map { it.hexAsBigInteger().toAscii() }
 
     fun getTokenDecimals(contractAddress: BigInteger): Observable<BigInteger> =
-            call(TransactionCallParams(to = contractAddress.asHexString(), data = ERC20.DECIMALS_METHOD_ID)).map { it.hexAsBigInteger() }
+            call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.DECIMALS_METHOD_ID))
+                    .map { it.hexAsBigInteger() }
 
     fun getTokenInfo(contractAddress: BigInteger): Observable<ERC20.Token> =
             Observable.zip(

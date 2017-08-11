@@ -7,7 +7,7 @@ import pm.gnosis.android.app.wallet.data.db.ERC20Token
 import pm.gnosis.android.app.wallet.data.db.GnosisAuthenticatorDb
 import pm.gnosis.android.app.wallet.di.ForView
 import pm.gnosis.android.app.wallet.util.ERC20
-import pm.gnosis.android.app.wallet.util.asHexString
+import pm.gnosis.android.app.wallet.util.asEthereumAddressString
 import pm.gnosis.android.app.wallet.util.edit
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -26,7 +26,7 @@ class SplashPresenter @Inject constructor(private val preferencesManager: Prefer
             if (isFirstLaunch) {
                 val tokens = ERC20.verifiedTokens.entries.map {
                     val erc20Token = ERC20Token()
-                    erc20Token.address = it.key.asHexString()
+                    erc20Token.address = it.key.asEthereumAddressString()
                     erc20Token.name = it.value
                     return@map erc20Token
                 }.toList()

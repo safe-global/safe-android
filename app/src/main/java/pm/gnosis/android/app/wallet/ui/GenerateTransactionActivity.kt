@@ -14,7 +14,7 @@ import pm.gnosis.android.app.wallet.data.model.Wei
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.util.ERC20
-import pm.gnosis.android.app.wallet.util.asHexString
+import pm.gnosis.android.app.wallet.util.asEthereumAddressString
 import pm.gnosis.android.app.wallet.util.hexAsBigInteger
 import pm.gnosis.android.app.wallet.util.nullOnThrow
 import java.math.BigDecimal
@@ -34,7 +34,7 @@ class GenerateTransactionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_generate_transaction)
 
         accounts.addAll(gethRepo.getAccounts().map { it.address.hex })
-        tokenContracts.addAll(ERC20.verifiedTokens.map { "${it.key.asHexString()} (${it.value})" })
+        tokenContracts.addAll(ERC20.verifiedTokens.map { "${it.key.asEthereumAddressString()} (${it.value})" })
 
         to_address.setOnClickListener {
             AlertDialog.Builder(this)
