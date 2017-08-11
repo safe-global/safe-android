@@ -21,7 +21,7 @@ object ERC20 {
         return null
     }
 
-    data class Token(val name: String?, val symbol: String?, val decimals: BigInteger?)
+    data class Token(val address: String, val name: String?, val symbol: String?, val decimals: BigInteger?)
     data class TokenTransfer(val to: BigInteger, val value: BigDecimal) {
         fun encode(decimalPlaces: Int = 18): String {
             val to = to.toString(16).padStart(64, '0')

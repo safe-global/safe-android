@@ -83,6 +83,7 @@ dependencies {
 
     implementation "com.google.zxing:core:3.3.0"
     implementation "com.github.clans:fab:1.6.4"
+    implementation "me.zhanghai.android.materialprogressbar:library:1.4.1"
 
     //Dagger
     implementation "com.google.dagger:dagger:$DAGGER_VERSION"

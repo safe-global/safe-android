@@ -55,11 +55,11 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
 
     fun getTokenName(contractAddress: BigInteger): Observable<Optional<String>> =
             call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.NAME_METHOD_ID))
-                    .map { it.hexAsBigIntegerOrNull()?.toAscii().toOptional() }
+                    .map { it.hexAsBigIntegerOrNull()?.toAscii()?.trim().toOptional() }
 
     fun getTokenSymbol(contractAddress: BigInteger): Observable<Optional<String>> =
             call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.SYMBOL_METHOD_ID))
-                    .map { it.hexAsBigIntegerOrNull()?.toAscii().toOptional() }
+                    .map { it.hexAsBigIntegerOrNull()?.toAscii()?.trim().toOptional() }
 
     fun getTokenDecimals(contractAddress: BigInteger): Observable<Optional<BigInteger>> =
             call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.DECIMALS_METHOD_ID))
@@ -70,7 +70,7 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
                     getTokenName(contractAddress),
                     getTokenSymbol(contractAddress),
                     getTokenDecimals(contractAddress),
-                    Function3 { name, symbol, decimals -> ERC20.Token(name.toNullable(), symbol.toNullable(), decimals.toNullable()) })
+                    Function3 { name, symbol, decimals -> ERC20.Token(contractAddress.asEthereumAddressString(), name.toNullable(), symbol.toNullable(), decimals.toNullable()) })
 
     fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
             infuraApi.post(JsonRpcRequest(method = "eth_estimateGas",
