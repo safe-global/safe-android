@@ -10,7 +10,7 @@ import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.ui.account.AccountFragment
 import pm.gnosis.android.app.wallet.ui.multisig.MultisigFragment
-import pm.gnosis.android.app.wallet.ui.scan.ScanFragment
+import pm.gnosis.android.app.wallet.ui.authenticate.AuthenticateFragment
 import pm.gnosis.android.app.wallet.ui.tokens.TokensFragment
 
 class MainActivity : AppCompatActivity() {
@@ -21,10 +21,10 @@ class MainActivity : AppCompatActivity() {
 
         bottom_navigation.setOnNavigationItemSelectedListener {
             val fragment = when (it.itemId) {
+                R.id.action_authenticate -> AuthenticateFragment()
                 R.id.action_account -> AccountFragment()
                 R.id.action_multisig -> MultisigFragment()
                 R.id.action_tokens -> TokensFragment()
-                R.id.action_scan -> ScanFragment()
                 else -> null
             }
             if (fragment != null) {
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        bottom_navigation.selectedItemId = R.id.action_account
+        bottom_navigation.selectedItemId = R.id.action_authenticate
     }
 
     private fun replaceFragment(fragment: Fragment) {

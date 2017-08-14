@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/action_authenticate"
+        android:icon="@drawable/ic_sign_24dp"
+        android:title="Authenticate" />
+    <item
         android:id="@+id/action_account"
         android:icon="@drawable/ic_account_box_white_24dp"
         android:title="Account" />
@@ -14,9 +18,4 @@
         android:id="@+id/action_tokens"
         android:icon="@drawable/ic_token_white_24dp"
         android:title="Tokens" />
-
-    <item
-        android:id="@+id/action_scan"
-        android:icon="@drawable/ic_qrcode_scan_white_24dp"
-        android:title="Scan" />
 </menu>

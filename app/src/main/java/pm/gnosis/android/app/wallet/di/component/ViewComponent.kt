@@ -11,7 +11,7 @@ import pm.gnosis.android.app.wallet.ui.TransactionDetailsActivity
 import pm.gnosis.android.app.wallet.ui.account.AccountFragment
 import pm.gnosis.android.app.wallet.ui.account.AccountPresenter
 import pm.gnosis.android.app.wallet.ui.multisig.MultisigFragment
-import pm.gnosis.android.app.wallet.ui.scan.ScanFragment
+import pm.gnosis.android.app.wallet.ui.authenticate.AuthenticateFragment
 import pm.gnosis.android.app.wallet.ui.splash.SplashActivity
 import pm.gnosis.android.app.wallet.ui.tokens.TokensFragment
 
@@ -27,6 +27,6 @@ interface ViewComponent {
     fun inject(activity: GenerateTransactionActivity)
     fun inject(fragment: AccountFragment)
     fun inject(fragment: MultisigFragment)
-    fun inject(fragment: ScanFragment)
+    fun inject(fragment: AuthenticateFragment)
     fun inject(fragment: TokensFragment)
 }

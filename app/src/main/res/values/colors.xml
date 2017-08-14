@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#263238</color>
     <color name="colorPrimaryDark">#263238</color>
-    <color name="colorAccent">#FF7043</color>
+    <color name="colorAccent">#546E7A</color>
 
     <color name="gnosisBlue">#00a6c4</color>
 </resources>
