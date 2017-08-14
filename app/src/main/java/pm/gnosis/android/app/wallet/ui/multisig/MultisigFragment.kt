@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.dialog_add_multisig_text.view.*
+import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
 import kotlinx.android.synthetic.main.fragment_multisig.*
 import pm.gnosis.android.app.wallet.R
 import pm.gnosis.android.app.wallet.data.db.MultisigWallet
@@ -89,7 +89,7 @@ class MultisigFragment : BaseFragment() {
     }
 
     private fun showMultisigInputDialog(withAddress: String = "") {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_add_multisig_text, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
 
         if (!withAddress.isNullOrEmpty()) {
             dialogView.dialog_add_multisig_text_address.setText(withAddress)
@@ -167,7 +167,7 @@ class MultisigFragment : BaseFragment() {
     }
 
     private fun showEditMultisigNameDialog(multisigWallet: MultisigWallet) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_add_multisig_text, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
         dialogView.dialog_add_multisig_text_address.visibility = View.GONE
         AlertDialog.Builder(context)
                 .setTitle(multisigWallet.name)
