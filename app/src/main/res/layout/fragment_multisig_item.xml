@@ -19,7 +19,7 @@
         android:gravity="center_vertical"
         android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/fragment_multisig_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
             android:textStyle=""
             tools:text="My Multisig Wallet" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/fragment_multisig_item_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
             tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
     </LinearLayout>
 
-    <android.support.v7.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/fragment_multisig_item_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

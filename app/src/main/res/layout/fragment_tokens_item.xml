@@ -7,7 +7,7 @@
     android:background="?attr/selectableItemBackground"
     android:padding="16dp">
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/fragment_tokens_item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
         android:textSize="18sp"
         tools:text="Gnosis" />
 
-    <android.support.v7.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/fragment_tokens_item_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,5 +34,4 @@
         android:visibility="gone"
         app:srcCompat="@drawable/ic_delete_24dp"
         tools:visibility="visible" />
-
 </RelativeLayout>

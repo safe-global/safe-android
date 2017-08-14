@@ -27,13 +27,13 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Your account address"
                 android:textSize="22sp" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/fragment_account_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,14 +48,14 @@
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
-                <android.support.v7.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/fragment_account_clipboard"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="?selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/ic_content_copy_24dp" />
 
-                <android.support.v7.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/fragment_account_share"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -64,7 +64,7 @@
                     android:background="?selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/ic_share_24dp" />
 
-                <android.support.v7.widget.AppCompatImageView
+                <ImageView
                     android:id="@+id/fragment_account_qrcode"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -82,7 +82,7 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Balance"
@@ -90,7 +90,7 @@
 
             </LinearLayout>
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/fragment_account_balance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

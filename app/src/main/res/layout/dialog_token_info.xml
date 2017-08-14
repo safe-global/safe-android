@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/dialog_token_info_symbol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,13 +22,13 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Decimals:"
             android:textStyle="bold" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/dialog_token_info_decimals"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,18 +43,18 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Address:"
             android:textStyle="bold" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/dialog_token_info_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            tools:text="	0x6810e776880c02933d47db1b9fc05908e5386b96" />
+            tools:text="0x6810e776880c02933d47db1b9fc05908e5386b96" />
     </LinearLayout>
 
 </LinearLayout>

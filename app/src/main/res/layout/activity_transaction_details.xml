@@ -22,72 +22,72 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Transaction"
                     android:textSize="24sp" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Recipient:"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/recipient"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="0x198231928301301923" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Suggested Gas:"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/suggested_gas"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="10000" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Value:"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="42" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Data:"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/data"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="This is a special message" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Gas Price:"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/gas_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -112,46 +112,46 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="ERC20 Token Transfer"
                     android:textSize="24sp" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Token Recipient:"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/token_receiver"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="0x198231928301301923" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Token Name:"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/token_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="Gnosis Token" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Tokens being transferred:"
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <TextView
                     android:id="@+id/token_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
