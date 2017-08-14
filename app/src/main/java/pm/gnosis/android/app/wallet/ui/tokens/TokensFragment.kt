@@ -74,7 +74,7 @@ class TokensFragment : BaseFragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onTokensList, onError = this::onTokensListError)
 
-        disposables += adapter.tokensSelection
+        disposables += adapter.tokensSelectionSubject
                 .flatMap {
                     presenter.observeTokenInfo(it)
                             ?.observeOn(AndroidSchedulers.mainThread())
@@ -83,6 +83,10 @@ class TokensFragment : BaseFragment() {
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onTokenInfo, onError = this::onTokenInfoError)
+
+        disposables += adapter.tokenRemovalSubject
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onNext = this::showTokenRemovalDialog, onError = Timber::e)
     }
 
     private fun onTokensList(tokens: List<ERC20Token>) {
@@ -143,6 +147,30 @@ class TokensFragment : BaseFragment() {
                 context.toast("Invalid ethereum address")
             }
         }
+    }
+
+    private fun showTokenRemovalDialog(erC20Token: ERC20Token) {
+        AlertDialog.Builder(context)
+                .setTitle("Remove ${erC20Token.name ?: "token"}?")
+                .setMessage("${if (erC20Token.name.isNullOrBlank()) "This token" else erC20Token.name} is going to be removed from the local database")
+                .setPositiveButton("Remove", { _, _ ->
+                    disposables += removeTokenDisposable(erC20Token)
+                })
+                .setNegativeButton("Cancel", { _, _ -> })
+                .show()
+    }
+
+    private fun removeTokenDisposable(erC20Token: ERC20Token) = presenter.removeToken(erC20Token)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onComplete = this::onTokenRemoved, onError = this::onTokenRemoveError)
+
+    private fun onTokenRemoved() {
+        snackbar(fragment_tokens_coordinator_layout, "Token removed")
+    }
+
+    private fun onTokenRemoveError(throwable: Throwable) {
+        Timber.e(throwable)
+        snackbar(fragment_tokens_coordinator_layout, "Could not remove token")
     }
 
     private fun onTokenInfoLoading(isLoading: Boolean) {

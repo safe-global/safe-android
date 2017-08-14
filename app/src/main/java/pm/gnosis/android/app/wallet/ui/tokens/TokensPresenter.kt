@@ -25,4 +25,8 @@ class TokensPresenter @Inject constructor(private val gnosisAuthenticatorDb: Gno
         token.name = name
         gnosisAuthenticatorDb.erc20TokenDao().insertERC20Token(token)
     }.subscribeOn(Schedulers.io())
+
+    fun removeToken(token: ERC20Token) = Completable.fromCallable {
+        gnosisAuthenticatorDb.erc20TokenDao().deleteToken(token)
+    }.subscribeOn(Schedulers.io())
 }

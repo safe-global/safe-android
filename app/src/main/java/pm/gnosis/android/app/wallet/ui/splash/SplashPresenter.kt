@@ -28,6 +28,7 @@ class SplashPresenter @Inject constructor(private val preferencesManager: Prefer
                     val erc20Token = ERC20Token()
                     erc20Token.address = it.key.asEthereumAddressString()
                     erc20Token.name = it.value
+                    erc20Token.verified = true
                     return@map erc20Token
                 }.toList()
                 gnosisAuthenticatorDb.erc20TokenDao().insertERC20Tokens(tokens)

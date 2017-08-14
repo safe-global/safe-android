@@ -17,7 +17,8 @@ import javax.inject.Inject
 @ForView
 class TokensAdapter @Inject constructor(@ViewContext private val context: Context) : RecyclerView.Adapter<TokensAdapter.ViewHolder>() {
     private val items = mutableListOf<ERC20Token>()
-    val tokensSelection: PublishSubject<ERC20Token> = PublishSubject.create<ERC20Token>()
+    val tokensSelectionSubject: PublishSubject<ERC20Token> = PublishSubject.create()
+    val tokenRemovalSubject: PublishSubject<ERC20Token> = PublishSubject.create()
     var itemsClickable = true
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
@@ -40,15 +41,19 @@ class TokensAdapter @Inject constructor(@ViewContext private val context: Contex
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
+            itemView.fragment_tokens_item_delete.setOnClickListener {
+                tokenRemovalSubject.onNext(items[adapterPosition])
+            }
         }
 
         fun bind(item: ERC20Token) {
-            itemView.fragment_tokens_item_name.text = item.name
+            itemView.fragment_tokens_item_name.text = if (item.name.isNullOrEmpty()) item.address else item.name
+            itemView.fragment_tokens_item_delete.visibility = if (item.verified) View.GONE else View.VISIBLE
         }
 
         override fun onClick(v: View?) {
             if (itemsClickable) {
-                tokensSelection.onNext(items[adapterPosition])
+                tokensSelectionSubject.onNext(items[adapterPosition])
             }
         }
     }

@@ -24,6 +24,10 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         inject()
+    }
+
+    override fun onStart() {
+        super.onStart()
         disposables += presenter.initialSetup()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onComplete = this::startApplication, onError = {
