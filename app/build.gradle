@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "pm.gnosis.android.app.wallet"
         minSdkVersion 16
@@ -51,7 +51,7 @@ static def getKey(String property) {
 
 
 dependencies {
-    final SUPPORT_LIB_VERSION = '26.0.0'
+    final SUPPORT_LIB_VERSION = '26.0.1'
     final DAGGER_VERSION = '2.11'
     final RETROFIT_VERSION = '2.3.0'
     final ARCHITECTURE_COMPONENTS_VERSION = '1.0.0-alpha8'
