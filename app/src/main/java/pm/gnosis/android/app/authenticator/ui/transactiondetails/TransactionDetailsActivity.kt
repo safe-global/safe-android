@@ -11,13 +11,11 @@ import kotlinx.android.synthetic.main.activity_transaction_details.*
 import pm.gnosis.android.app.authenticator.GnosisAuthenticatorApplication
 import pm.gnosis.android.app.authenticator.R
 import pm.gnosis.android.app.authenticator.data.contracts.GnosisMultisigWrapper
+import pm.gnosis.android.app.authenticator.data.db.MultisigWallet
 import pm.gnosis.android.app.authenticator.data.model.TransactionDetails
 import pm.gnosis.android.app.authenticator.di.component.DaggerViewComponent
 import pm.gnosis.android.app.authenticator.di.module.ViewModule
-import pm.gnosis.android.app.authenticator.util.asDecimalString
-import pm.gnosis.android.app.authenticator.util.isSolidityMethod
-import pm.gnosis.android.app.authenticator.util.snackbar
-import pm.gnosis.android.app.authenticator.util.toast
+import pm.gnosis.android.app.authenticator.util.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,7 +34,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_transaction_details)
 
         val t: TransactionDetails? = intent.extras?.getParcelable(TRANSACTION_EXTRA)
-        if (t == null || t.data == null) {
+        if (t?.data == null) {
             finish()
             return
         } else {
@@ -52,6 +50,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         } else {
             activity_transaction_details_button.visibility = View.GONE
         }
+        activity_transaction_details_wallet_address.text = t.address.asEthereumAddressString()
     }
 
     override fun onStart() {
@@ -59,6 +58,19 @@ class TransactionDetailsActivity : AppCompatActivity() {
         activity_transaction_details_button.setOnClickListener {
             disposables += signTransactionDisposable()
         }
+
+        presenter.getMultisigWalletDetails(transaction.address)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onNext = this::onMultisigWallet, onError = this::onMultisigWalletError)
+    }
+
+    private fun onMultisigWallet(multisigWallet: MultisigWallet) {
+        activity_transaction_details_wallet_name.text = if (multisigWallet.name.isNullOrEmpty()) "Multisig Address" else multisigWallet.name
+        activity_transaction_details_add_wallet.visibility = View.GONE
+    }
+
+    private fun onMultisigWalletError(throwable: Throwable) {
+        Timber.e(throwable)
     }
 
     private fun signTransactionDisposable() = presenter.signTransaction(transaction)

@@ -33,7 +33,7 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
             val noPrefix = hex.removePrefix("0x")
             if (noPrefix.isEmpty() || noPrefix.length.rem(64) != 0) return null
             val properties = arrayListOf<CharSequence>()
-            (0..noPrefix.length - 1 step 64).forEach { i -> properties += noPrefix.subSequence(i, i + 64) }
+            (0 until noPrefix.length step 64).forEach { i -> properties += noPrefix.subSequence(i, i + 64) }
             if (properties.size >= 2) {
                 return MultiSigTransaction(properties[0].toString().hexAsBigInteger(),
                         Wei(properties[1].toString().hexAsBigInteger()))
