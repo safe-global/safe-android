@@ -32,3 +32,5 @@ fun String.hexToByteArray(): ByteArray {
 }
 
 fun String.addAddressPrefix() = if (!this.startsWith("0x")) "0x$this" else this
+
+fun String.isSolidityMethod(methodId: String) = this.startsWith(methodId)

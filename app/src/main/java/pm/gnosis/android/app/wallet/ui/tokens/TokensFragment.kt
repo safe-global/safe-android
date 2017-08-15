@@ -44,8 +44,7 @@ class TokensFragment : BaseFragment() {
 
         fragment_tokens_scan_qr_code.setOnClickListener {
             fragment_tokens_fab.close(true)
-            val integrator = ZxingIntentIntegrator(this)
-            integrator.initiateScan(ZxingIntentIntegrator.QR_CODE_TYPES)
+            scanQrCode()
         }
 
         fragment_tokens_list.layoutManager = LinearLayoutManager(context)

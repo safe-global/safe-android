@@ -5,9 +5,8 @@ import dagger.Component
 import pm.gnosis.android.app.wallet.di.ForView
 import pm.gnosis.android.app.wallet.di.ViewContext
 import pm.gnosis.android.app.wallet.di.module.ViewModule
-import pm.gnosis.android.app.wallet.ui.GenerateTransactionActivity
 import pm.gnosis.android.app.wallet.ui.MainActivity
-import pm.gnosis.android.app.wallet.ui.TransactionDetailsActivity
+import pm.gnosis.android.app.wallet.ui.transactiondetails.TransactionDetailsActivity
 import pm.gnosis.android.app.wallet.ui.account.AccountFragment
 import pm.gnosis.android.app.wallet.ui.account.AccountPresenter
 import pm.gnosis.android.app.wallet.ui.multisig.MultisigFragment
@@ -24,7 +23,6 @@ interface ViewComponent {
     fun inject(activity: SplashActivity)
     fun inject(activity: MainActivity)
     fun inject(activity: TransactionDetailsActivity)
-    fun inject(activity: GenerateTransactionActivity)
     fun inject(fragment: AccountFragment)
     fun inject(fragment: MultisigFragment)
     fun inject(fragment: AuthenticateFragment)

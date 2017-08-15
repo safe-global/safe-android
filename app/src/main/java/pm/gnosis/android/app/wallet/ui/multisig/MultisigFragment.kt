@@ -20,10 +20,7 @@ import pm.gnosis.android.app.wallet.di.component.ApplicationComponent
 import pm.gnosis.android.app.wallet.di.component.DaggerViewComponent
 import pm.gnosis.android.app.wallet.di.module.ViewModule
 import pm.gnosis.android.app.wallet.ui.base.BaseFragment
-import pm.gnosis.android.app.wallet.util.addAddressPrefix
-import pm.gnosis.android.app.wallet.util.isValidEthereumAddress
-import pm.gnosis.android.app.wallet.util.snackbar
-import pm.gnosis.android.app.wallet.util.toast
+import pm.gnosis.android.app.wallet.util.*
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
 import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator.*
 import timber.log.Timber
@@ -51,8 +48,7 @@ class MultisigFragment : BaseFragment() {
 
         fragment_multisig_scan_qr_code.setOnClickListener {
             fragment_multisig_fab.close(true)
-            val integrator = ZxingIntentIntegrator(this)
-            integrator.initiateScan(QR_CODE_TYPES)
+            scanQrCode()
         }
 
         disposables += presenter.observeMultisigWallets()

@@ -1,12 +1,15 @@
 package pm.gnosis.android.app.wallet.util
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.Toast
+import pm.gnosis.android.app.wallet.util.zxing.ZxingIntentIntegrator
 
 
 fun Context.toast(text: CharSequence, duration: Int = Toast.LENGTH_LONG) {
@@ -29,3 +32,6 @@ fun Context.shareExternalText(text: String, dialogTitle: String = "") {
     sendIntent.type = "text/plain"
     startActivity(Intent.createChooser(sendIntent, dialogTitle))
 }
+
+fun Activity.scanQrCode() = ZxingIntentIntegrator(this).initiateScan(ZxingIntentIntegrator.QR_CODE_TYPES)
+fun Fragment.scanQrCode() = ZxingIntentIntegrator(this).initiateScan(ZxingIntentIntegrator.QR_CODE_TYPES)

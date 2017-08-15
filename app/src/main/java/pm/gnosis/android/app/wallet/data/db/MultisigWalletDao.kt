@@ -11,6 +11,9 @@ interface MultisigWalletDao {
     @Query("SELECT * FROM ${MultisigWallet.TABLE_NAME}")
     fun observeMultisigWallets(): Flowable<List<MultisigWallet>>
 
+    @Query("SELECT * FROM ${MultisigWallet.TABLE_NAME} WHERE ${MultisigWallet.COL_ADDRESS} = :address")
+    fun observeMultisigWallet(address: String): Flowable<MultisigWallet>
+
     @Delete
     fun removeMultisigWallet(multisigWallet: MultisigWallet)
 

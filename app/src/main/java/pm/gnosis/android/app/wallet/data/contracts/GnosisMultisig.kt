@@ -8,6 +8,8 @@ import pm.gnosis.android.app.wallet.data.model.TransactionCallParams
 import pm.gnosis.android.app.wallet.data.model.Wei
 import pm.gnosis.android.app.wallet.data.remote.InfuraRepository
 import pm.gnosis.android.app.wallet.util.hexAsBigInteger
+import pm.gnosis.android.app.wallet.util.hexAsBigIntegerOrNull
+import pm.gnosis.android.app.wallet.util.isSolidityMethod
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,6 +37,27 @@ class GnosisMultisig @Inject constructor(private val infuraRepository: InfuraRep
             if (properties.size >= 2) {
                 return MultiSigTransaction(properties[0].toString().hexAsBigInteger(),
                         Wei(properties[1].toString().hexAsBigInteger()))
+            }
+            return null
+        }
+
+        fun decodeConfirm(data: String): BigInteger? {
+            if (!data.isSolidityMethod(CONFIRM_TRANSACTION_METHOD_ID)) {
+                return null
+            }
+            return decodeUint256(data.removePrefix(CONFIRM_TRANSACTION_METHOD_ID))
+        }
+
+        fun decodeRevoke(data: String): BigInteger? {
+            if (!data.isSolidityMethod(REVOKE_TRANSACTION_METHOD_ID)) {
+                return null
+            }
+            return decodeUint256(data.removePrefix(REVOKE_TRANSACTION_METHOD_ID))
+        }
+
+        private fun decodeUint256(data: String): BigInteger? {
+            if (data.length == 64) {
+                return data.hexAsBigIntegerOrNull()
             }
             return null
         }
