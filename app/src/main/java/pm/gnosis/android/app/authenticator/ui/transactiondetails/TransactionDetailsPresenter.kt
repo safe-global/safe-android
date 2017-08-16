@@ -2,6 +2,7 @@ package pm.gnosis.android.app.authenticator.ui.transactiondetails
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.android.app.authenticator.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.android.app.authenticator.data.db.GnosisAuthenticatorDb
@@ -43,6 +44,6 @@ class TransactionDetailsPresenter @Inject constructor(private val infuraReposito
         gnosisAuthenticatorDb.multisigWalletDao().insertMultisigWallet(multisigWallet)
     }.subscribeOn(Schedulers.io())
 
-    fun getTransactionDetails(address: String, transactionId: BigInteger) =
+    fun getTransactionDetails(address: String, transactionId: BigInteger): Observable<GnosisMultisigWrapper.Transaction> =
             gnosisMultisigWrapper.getTransaction(address, transactionId)
 }

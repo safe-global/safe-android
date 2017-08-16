@@ -81,10 +81,15 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 .subscribeBy(onNext = this::onMultisigWallet, onError = this::onMultisigWalletError)
     }
 
-    private fun onTransactionDetails(multiSigTransaction: GnosisMultisigWrapper.MultiSigTransaction) {
-        activity_transaction_details_container.visibility = View.VISIBLE
-        activity_transaction_details_transaction_recipient.text = multiSigTransaction.address.asEthereumAddressString()
-        activity_transaction_details_transaction_amount.text = multiSigTransaction.value.toEther().stripTrailingZeros().toPlainString()
+    private fun onTransactionDetails(multiSigTransaction: GnosisMultisigWrapper.Transaction) {
+        when (multiSigTransaction) {
+            is GnosisMultisigWrapper.TokenTransfer -> Timber.d("It's a Token Transfer")
+            is GnosisMultisigWrapper.Transfer -> Timber.d("It's a Normal Transfer")
+            is GnosisMultisigWrapper.ChangeDailyLimit -> Timber.d("It's a change daily limit")
+        }
+        //activity_transaction_details_container.visibility = View.VISIBLE
+        //activity_transaction_details_transaction_recipient.text = multiSigTransaction.address.asEthereumAddressString()
+        //activity_transaction_details_transaction_amount.text = multiSigTransaction.value.toEther().stripTrailingZeros().toPlainString()
     }
 
     private fun onTransactionDetailsLoading(isLoading: Boolean) {

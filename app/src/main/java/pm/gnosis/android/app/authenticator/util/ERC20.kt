@@ -4,14 +4,14 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 object ERC20 {
-    const val DECIMALS_METHOD_ID = "0x313ce567"
-    const val TRANSFER_METHOD_ID = "0xa9059cbb"
-    const val SYMBOL_METHOD_ID = "0x95d89b41"
-    const val NAME_METHOD_ID = "0x06fdde03"
+    const val DECIMALS_METHOD_ID = "313ce567"
+    const val TRANSFER_METHOD_ID = "a9059cbb"
+    const val SYMBOL_METHOD_ID = "95d89b41"
+    const val NAME_METHOD_ID = "06fdde03"
 
     fun parseTransferData(data: String, decimalPlaces: BigInteger): TokenTransfer? {
-        if (data.startsWith(TRANSFER_METHOD_ID)) {
-            val arguments = data.removePrefix(TRANSFER_METHOD_ID)
+        if (data.isSolidityMethod(TRANSFER_METHOD_ID)) {
+            val arguments = data.removeSolidityMethodPrefix(TRANSFER_METHOD_ID)
             if (arguments.length == 128) {
                 val to = arguments.substring(0, 64)
                 val value = arguments.substring(64, 128)

@@ -11,7 +11,7 @@ fun BigInteger.toAlfaNumericAscii(): String? {
     val hexString = this.toString(16)
     if (hexString.length.rem(2) != 0) return null
     val stringBuilder = StringBuilder()
-    (0..hexString.length - 1 step 2)
+    (0 until hexString.length step 2)
             .map { hexString.substring(it, it + 2) }
             .filter { it.toInt(16) in 32..126 } //alfanumeric
             .forEach { stringBuilder.append(it.toInt(16).toChar()) }
@@ -33,4 +33,5 @@ fun String.hexToByteArray(): ByteArray {
 
 fun String.addAddressPrefix() = if (!this.startsWith("0x")) "0x$this" else this
 
-fun String.isSolidityMethod(methodId: String) = this.startsWith(methodId)
+fun String.isSolidityMethod(methodId: String) = this.removePrefix("0x").startsWith(methodId.removePrefix("0x"))
+fun String.removeSolidityMethodPrefix(methodId: String) = this.removePrefix("0x").removePrefix(methodId)

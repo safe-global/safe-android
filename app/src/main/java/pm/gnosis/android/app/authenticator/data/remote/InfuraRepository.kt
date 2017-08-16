@@ -54,15 +54,15 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
                     .map { it.result.hexAsBigInteger() }
 
     fun getTokenName(contractAddress: BigInteger): Observable<Optional<String>> =
-            call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.NAME_METHOD_ID))
+            call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.NAME_METHOD_ID}"))
                     .map { it.hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim().toOptional() }
 
     fun getTokenSymbol(contractAddress: BigInteger): Observable<Optional<String>> =
-            call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.SYMBOL_METHOD_ID))
+            call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.SYMBOL_METHOD_ID}"))
                     .map { it.hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim().toOptional() }
 
     fun getTokenDecimals(contractAddress: BigInteger): Observable<Optional<BigInteger>> =
-            call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = ERC20.DECIMALS_METHOD_ID))
+            call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.DECIMALS_METHOD_ID}"))
                     .map { it.hexAsBigIntegerOrNull().toOptional() }
 
     fun getTokenInfo(contractAddress: BigInteger): Observable<ERC20.Token> =
