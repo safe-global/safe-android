@@ -68,9 +68,28 @@ class TransactionDetailsActivity : AppCompatActivity() {
             showAddWalletDialog()
         }
 
+        activity_transaction_details_transaction_id.text.toString().decimalAsBigIntegerOrNull()?.let {
+            presenter.getTransactionDetails(transaction.address.asEthereumAddressString(), it)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { onTransactionDetailsLoading(true) }
+                    .doOnTerminate { onTransactionDetailsLoading(false) }
+                    .subscribeBy(onNext = this::onTransactionDetails, onError = Timber::e)
+        }
+
         presenter.getMultisigWalletDetails(transaction.address)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onMultisigWallet, onError = this::onMultisigWalletError)
+    }
+
+    private fun onTransactionDetails(multiSigTransaction: GnosisMultisigWrapper.MultiSigTransaction) {
+        activity_transaction_details_container.visibility = View.VISIBLE
+        activity_transaction_details_transaction_recipient.text = multiSigTransaction.address.asEthereumAddressString()
+        activity_transaction_details_transaction_amount.text = multiSigTransaction.value.toEther().stripTrailingZeros().toPlainString()
+    }
+
+    private fun onTransactionDetailsLoading(isLoading: Boolean) {
+        activity_transaction_details_button.isEnabled = !isLoading
+        activity_transaction_details_progress_bar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun showAddWalletDialog() {

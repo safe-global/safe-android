@@ -2,7 +2,7 @@ package pm.gnosis.android.app.authenticator.data.contracts
 
 import io.reactivex.Observable
 import pm.gnosis.android.app.authenticator.data.PreferencesManager
-import pm.gnosis.android.app.authenticator.data.exceptions.AddressInvalidException
+import pm.gnosis.android.app.authenticator.data.exceptions.InvalidAddressException
 import pm.gnosis.android.app.authenticator.data.geth.GethRepository
 import pm.gnosis.android.app.authenticator.data.model.TransactionCallParams
 import pm.gnosis.android.app.authenticator.data.model.Wei
@@ -10,6 +10,7 @@ import pm.gnosis.android.app.authenticator.data.remote.InfuraRepository
 import pm.gnosis.android.app.authenticator.util.hexAsBigInteger
 import pm.gnosis.android.app.authenticator.util.hexAsBigIntegerOrNull
 import pm.gnosis.android.app.authenticator.util.isSolidityMethod
+import pm.gnosis.android.app.authenticator.util.isValidEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,11 +19,6 @@ import javax.inject.Singleton
 class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: InfuraRepository,
                                                 private val gethRepository: GethRepository,
                                                 private val preferencesManager: PreferencesManager) {
-    var address: String? = null
-
-    init {
-        address = preferencesManager.prefs.getString(PreferencesManager.CURRENT_MULTISIG_ADDRESS, null)
-    }
 
     companion object {
         const val CONFIRM_TRANSACTION_METHOD_ID = "0xc01a8c84"
@@ -63,15 +59,15 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
         }
     }
 
-    fun getTransaction(transactionId: BigInteger): Observable<MultiSigTransaction> {
-        val address = this.address ?: return Observable.error(AddressInvalidException(address))
+    fun getTransaction(address: String, transactionId: BigInteger): Observable<MultiSigTransaction> {
+        if (!address.isValidEthereumAddress()) return Observable.error(InvalidAddressException(address))
         return infuraRepository.call(TransactionCallParams(to = address,
                 data = "$TRANSACTIONS_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"))
                 .map { decodeTransactionResult(it)!! }
     }
 
-    fun confirmTransaction(transactionId: BigInteger): Observable<String> {
-        val address = this.address ?: return Observable.error(AddressInvalidException(address))
+    fun confirmTransaction(address: String, transactionId: BigInteger): Observable<String> {
+        if (!address.isValidEthereumAddress()) return Observable.error(InvalidAddressException(address))
         val data = "$CONFIRM_TRANSACTION_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"
         val transactionCallParams = TransactionCallParams(to = address, data = data, from = gethRepository.getAccount().address.hex)
         return infuraRepository.getTransactionParameters(transactionCallParams)
@@ -87,8 +83,8 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
                 .flatMap { infuraRepository.sendRawTransaction(it) }
     }
 
-    fun revokeTransaction(transactionId: BigInteger, transactionCallParams: TransactionCallParams): Observable<String> {
-        val address = this.address ?: return Observable.error(AddressInvalidException(address))
+    fun revokeTransaction(address: String, transactionId: BigInteger, transactionCallParams: TransactionCallParams): Observable<String> {
+        if (!address.isValidEthereumAddress()) return Observable.error(InvalidAddressException(address))
         val data = "$REVOKE_TRANSACTION_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"
         return infuraRepository.getTransactionParameters(transactionCallParams)
                 .map {

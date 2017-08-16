@@ -3,6 +3,7 @@ package pm.gnosis.android.app.authenticator.ui.transactiondetails
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.android.app.authenticator.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.android.app.authenticator.data.db.GnosisAuthenticatorDb
 import pm.gnosis.android.app.authenticator.data.db.MultisigWallet
 import pm.gnosis.android.app.authenticator.data.geth.GethRepository
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @ForView
 class TransactionDetailsPresenter @Inject constructor(private val infuraRepository: InfuraRepository,
                                                       private val gethRepository: GethRepository,
-                                                      private val gnosisAuthenticatorDb: GnosisAuthenticatorDb) {
+                                                      private val gnosisAuthenticatorDb: GnosisAuthenticatorDb,
+                                                      private val gnosisMultisigWrapper: GnosisMultisigWrapper) {
     fun getMultisigWalletDetails(address: BigInteger): Flowable<MultisigWallet> =
             gnosisAuthenticatorDb.multisigWalletDao().observeMultisigWallet(address.asEthereumAddressString())
                     .subscribeOn(Schedulers.io())
@@ -40,4 +42,7 @@ class TransactionDetailsPresenter @Inject constructor(private val infuraReposito
         multisigWallet.address = address
         gnosisAuthenticatorDb.multisigWalletDao().insertMultisigWallet(multisigWallet)
     }.subscribeOn(Schedulers.io())
+
+    fun getTransactionDetails(address: String, transactionId: BigInteger) =
+            gnosisMultisigWrapper.getTransaction(address, transactionId)
 }
