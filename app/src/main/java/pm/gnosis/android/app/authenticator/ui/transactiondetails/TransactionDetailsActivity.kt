@@ -124,6 +124,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
     private fun signTransactionDisposable() = presenter.signTransaction(transaction)
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { onSendTransactionLoading(true) }
+            .doOnTerminate { onSendTransactionLoading(false) }
             .subscribeBy(onNext = this::onSendTransaction, onError = this::onSendTransactionError)
 
     private fun onSendTransaction(transactionHash: String) {
@@ -140,6 +142,11 @@ class TransactionDetailsActivity : AppCompatActivity() {
     private fun onSendTransactionError(throwable: Throwable) {
         Timber.e(throwable)
         snackbar(activity_transaction_details_coordinator, "Something went wrong. Transaction not completed.")
+    }
+
+    private fun onSendTransactionLoading(isLoading: Boolean) {
+        activity_transaction_details_button.isEnabled = !isLoading
+        activity_transaction_details_progress_bar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     override fun onStop() {

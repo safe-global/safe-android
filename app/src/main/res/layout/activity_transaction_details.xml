@@ -6,6 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/activity_transaction_details_progress_bar"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_useIntrinsicPadding="false"
+        tools:visibility="visible" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">

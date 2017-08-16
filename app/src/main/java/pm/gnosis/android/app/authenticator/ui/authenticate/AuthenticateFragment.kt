@@ -44,7 +44,6 @@ class AuthenticateFragment : BaseFragment() {
     private fun validateQrCode(qrCodeData: String) {
         val transaction = ERC67Parser.parse(qrCodeData)
         if (transaction != null) {
-            snackbar(fragment_scan_coordinator, qrCodeData)
             val data = transaction.data
             if (data != null && (data.isSolidityMethod(GnosisMultisigWrapper.CONFIRM_TRANSACTION_METHOD_ID) ||
                     data.isSolidityMethod(GnosisMultisigWrapper.REVOKE_TRANSACTION_METHOD_ID))) {
