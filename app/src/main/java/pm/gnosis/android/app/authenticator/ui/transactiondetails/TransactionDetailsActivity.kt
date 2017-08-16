@@ -1,13 +1,16 @@
 package pm.gnosis.android.app.authenticator.ui.transactiondetails
 
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.text.InputType
 import android.view.View
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_transaction_details.*
+import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
 import pm.gnosis.android.app.authenticator.GnosisAuthenticatorApplication
 import pm.gnosis.android.app.authenticator.R
 import pm.gnosis.android.app.authenticator.data.contracts.GnosisMultisigWrapper
@@ -41,14 +44,16 @@ class TransactionDetailsActivity : AppCompatActivity() {
             transaction = t
         }
 
-        if (t.data.isSolidityMethod(GnosisMultisigWrapper.CONFIRM_TRANSACTION_METHOD_ID)) {
-            activity_transaction_details_button.text = "Confirm Transaction"
-            activity_transaction_details_transaction_id.text = GnosisMultisigWrapper.decodeConfirm(t.data)?.asDecimalString() ?: "-"
-        } else if (t.data.isSolidityMethod(GnosisMultisigWrapper.REVOKE_TRANSACTION_METHOD_ID)) {
-            activity_transaction_details_button.text = "Revoke Transaction"
-            activity_transaction_details_transaction_id.text = GnosisMultisigWrapper.decodeRevoke(t.data)?.asDecimalString() ?: "-"
-        } else {
-            activity_transaction_details_button.visibility = View.GONE
+        when {
+            t.data.isSolidityMethod(GnosisMultisigWrapper.CONFIRM_TRANSACTION_METHOD_ID) -> {
+                activity_transaction_details_button.text = "Confirm Transaction"
+                activity_transaction_details_transaction_id.text = GnosisMultisigWrapper.decodeConfirm(t.data)?.asDecimalString() ?: "-"
+            }
+            t.data.isSolidityMethod(GnosisMultisigWrapper.REVOKE_TRANSACTION_METHOD_ID) -> {
+                activity_transaction_details_button.text = "Revoke Transaction"
+                activity_transaction_details_transaction_id.text = GnosisMultisigWrapper.decodeRevoke(t.data)?.asDecimalString() ?: "-"
+            }
+            else -> activity_transaction_details_button.visibility = View.GONE
         }
         activity_transaction_details_wallet_address.text = t.address.asEthereumAddressString()
     }
@@ -59,9 +64,53 @@ class TransactionDetailsActivity : AppCompatActivity() {
             disposables += signTransactionDisposable()
         }
 
+        activity_transaction_details_add_wallet.setOnClickListener {
+            showAddWalletDialog()
+        }
+
         presenter.getMultisigWalletDetails(transaction.address)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onMultisigWallet, onError = this::onMultisigWalletError)
+    }
+
+    private fun showAddWalletDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
+
+        dialogView.dialog_add_multisig_text_address.setText(transaction.address.asEthereumAddressString())
+        dialogView.dialog_add_multisig_text_address.isEnabled = false
+        dialogView.dialog_add_multisig_text_address.inputType = InputType.TYPE_NULL
+
+
+        val dialog = AlertDialog.Builder(this)
+                .setTitle("Add a Multisig Wallet")
+                .setView(dialogView)
+                .setPositiveButton("Add", { _, _ -> })
+                .setNegativeButton("Cancel", { _, _ -> })
+                .show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val name = dialogView.dialog_add_multisig_text_name.text.toString()
+            val address = dialogView.dialog_add_multisig_text_address.text.toString()
+            if (address.isValidEthereumAddress()) {
+                disposables += addMultisigWalletDisposable(name, address.addAddressPrefix())
+                dialog.dismiss()
+            } else {
+                toast("Invalid ethereum address")
+            }
+        }
+    }
+
+    private fun addMultisigWalletDisposable(name: String, address: String) =
+            presenter.addMultisigWallet(name, address)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onComplete = this::onMultisigWalletAdded, onError = this::onMultisigWalletAddError)
+
+    private fun onMultisigWalletAdded() {
+        snackbar(activity_transaction_details_coordinator, "Added MultisigWallet")
+    }
+
+    private fun onMultisigWalletAddError(throwable: Throwable) {
+        Timber.e(throwable)
+        snackbar(activity_transaction_details_coordinator, "Could not add MultisigWallet")
     }
 
     private fun onMultisigWallet(multisigWallet: MultisigWallet) {

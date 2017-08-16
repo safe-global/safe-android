@@ -1,5 +1,6 @@
 package pm.gnosis.android.app.authenticator.ui.transactiondetails
 
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.android.app.authenticator.data.db.GnosisAuthenticatorDb
@@ -32,4 +33,11 @@ class TransactionDetailsPresenter @Inject constructor(private val infuraReposito
                                 it.gas, it.gasPrice, transactionDetails.data)
                     }
                     .flatMap { infuraRepository.sendRawTransaction(it) }
+
+    fun addMultisigWallet(name: String = "", address: String) = Completable.fromCallable {
+        val multisigWallet = MultisigWallet()
+        multisigWallet.name = name
+        multisigWallet.address = address
+        gnosisAuthenticatorDb.multisigWalletDao().insertMultisigWallet(multisigWallet)
+    }.subscribeOn(Schedulers.io())
 }
