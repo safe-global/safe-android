@@ -4,5 +4,5 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 data class Wei(val value: BigInteger) {
-    fun toEther(): BigDecimal = BigDecimal(value).div(BigDecimal(10).pow(18)).setScale(18)
+    fun toEther(): BigDecimal = BigDecimal(value).setScale(3).div(BigDecimal(10).pow(18))
 }
