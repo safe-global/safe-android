@@ -10,12 +10,19 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_transaction_details.*
+import kotlinx.android.synthetic.main.activity_transaction_details_add_owner.view.*
+import kotlinx.android.synthetic.main.activity_transaction_details_change_confirmations.view.*
+import kotlinx.android.synthetic.main.activity_transaction_details_change_daily_limit.view.*
+import kotlinx.android.synthetic.main.activity_transaction_details_remove_owner.view.*
+import kotlinx.android.synthetic.main.activity_transaction_details_replace_owner.view.*
+import kotlinx.android.synthetic.main.activity_transaction_details_transfer.view.*
 import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
 import pm.gnosis.android.app.authenticator.GnosisAuthenticatorApplication
 import pm.gnosis.android.app.authenticator.R
 import pm.gnosis.android.app.authenticator.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.android.app.authenticator.data.db.MultisigWallet
 import pm.gnosis.android.app.authenticator.data.model.TransactionDetails
+import pm.gnosis.android.app.authenticator.data.model.Wei
 import pm.gnosis.android.app.authenticator.di.component.DaggerViewComponent
 import pm.gnosis.android.app.authenticator.di.module.ViewModule
 import pm.gnosis.android.app.authenticator.util.*
@@ -84,16 +91,51 @@ class TransactionDetailsActivity : AppCompatActivity() {
     private fun onTransactionDetails(multiSigTransaction: GnosisMultisigWrapper.Transaction) {
         when (multiSigTransaction) {
             is GnosisMultisigWrapper.TokenTransfer -> Timber.d("It's a Token Transfer")
-            is GnosisMultisigWrapper.Transfer -> Timber.d("It's a Normal Transfer")
-            is GnosisMultisigWrapper.ChangeDailyLimit -> Timber.d("It's a change daily limit")
-            is GnosisMultisigWrapper.ReplaceOwner -> Timber.d("It's a replace owner")
-            is GnosisMultisigWrapper.AddOwner -> Timber.d("It's an add owner")
-            is GnosisMultisigWrapper.RemoveOwner -> Timber.d("It's a remove owner")
-            is GnosisMultisigWrapper.ChangeConfirmations -> Timber.d("It's a change confirmations")
+            is GnosisMultisigWrapper.Transfer -> onTransfer(multiSigTransaction)
+            is GnosisMultisigWrapper.ChangeDailyLimit -> onChangeDailyLimit(multiSigTransaction)
+            is GnosisMultisigWrapper.ReplaceOwner -> onReplaceOwner(multiSigTransaction)
+            is GnosisMultisigWrapper.AddOwner -> onAddOwner(multiSigTransaction)
+            is GnosisMultisigWrapper.RemoveOwner -> onRemoveOwner(multiSigTransaction)
+            is GnosisMultisigWrapper.ChangeConfirmations -> onChangeConfirmations(multiSigTransaction)
         }
-        //activity_transaction_details_container.visibility = View.VISIBLE
-        //activity_transaction_details_transaction_recipient.text = multiSigTransaction.address.asEthereumAddressString()
-        //activity_transaction_details_transaction_amount.text = multiSigTransaction.value.toEther().stripTrailingZeros().toPlainString()
+    }
+
+    private fun onTransfer(transaction: GnosisMultisigWrapper.Transfer) {
+        val view = layoutInflater.inflate(R.layout.activity_transaction_details_transfer, activity_transaction_details_coordinator, false)
+        activity_transaction_details_action_container.addView(view)
+        view.activity_transaction_details_transfer_amount.text = transaction.value.toEther().stripTrailingZeros().toPlainString()
+        view.activity_transaction_details_transfer_recipient.text = transaction.address.asEthereumAddressString()
+    }
+
+    private fun onAddOwner(transaction: GnosisMultisigWrapper.AddOwner) {
+        val view = layoutInflater.inflate(R.layout.activity_transaction_details_add_owner, activity_transaction_details_coordinator, false)
+        activity_transaction_details_action_container.addView(view)
+        view.activity_transaction_details_add_owner_address.text = transaction.owner.asEthereumAddressString()
+    }
+
+    private fun onRemoveOwner(transaction: GnosisMultisigWrapper.RemoveOwner) {
+        val view = layoutInflater.inflate(R.layout.activity_transaction_details_remove_owner, activity_transaction_details_coordinator, false)
+        activity_transaction_details_action_container.addView(view)
+        view.activity_transaction_details_remove_owner_address.text = transaction.owner.asEthereumAddressString()
+    }
+
+    private fun onChangeConfirmations(transaction: GnosisMultisigWrapper.ChangeConfirmations) {
+        val view = layoutInflater.inflate(R.layout.activity_transaction_details_change_confirmations, activity_transaction_details_coordinator, false)
+        activity_transaction_details_action_container.addView(view)
+        view.activity_transaction_details_change_confirmations_number.text = transaction.newConfirmations.asDecimalString()
+    }
+
+    private fun onChangeDailyLimit(transaction: GnosisMultisigWrapper.ChangeDailyLimit) {
+        val view = layoutInflater.inflate(R.layout.activity_transaction_details_change_daily_limit, activity_transaction_details_coordinator, false)
+        activity_transaction_details_action_container.addView(view)
+        view.activity_transaction_details_change_daily_limit_value.text = Wei(transaction.newDailyLimit).toEther().stripTrailingZeros().toPlainString()
+    }
+
+    private fun onReplaceOwner(transaction: GnosisMultisigWrapper.ReplaceOwner) {
+        val view = layoutInflater.inflate(R.layout.activity_transaction_details_replace_owner, activity_transaction_details_coordinator, false)
+        activity_transaction_details_action_container.addView(view)
+        view.activity_transaction_details_replace_owner_old_owner.text = transaction.owner.asEthereumAddressString()
+        view.activity_transaction_details_replace_owner_new_owner.text = transaction.newOwner.asEthereumAddressString()
     }
 
     private fun onTransactionDetailsLoading(isLoading: Boolean) {
