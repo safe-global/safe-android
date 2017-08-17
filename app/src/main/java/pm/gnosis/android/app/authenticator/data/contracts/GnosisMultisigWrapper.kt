@@ -1,7 +1,6 @@
 package pm.gnosis.android.app.authenticator.data.contracts
 
 import io.reactivex.Observable
-import pm.gnosis.android.app.authenticator.data.PreferencesManager
 import pm.gnosis.android.app.authenticator.data.exceptions.InvalidAddressException
 import pm.gnosis.android.app.authenticator.data.geth.GethRepository
 import pm.gnosis.android.app.authenticator.data.model.TransactionCallParams
@@ -15,14 +14,16 @@ import javax.inject.Singleton
 
 @Singleton
 class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: InfuraRepository,
-                                                private val gethRepository: GethRepository,
-                                                private val preferencesManager: PreferencesManager) {
+                                                private val gethRepository: GethRepository) {
 
     companion object {
         const val CONFIRM_TRANSACTION_METHOD_ID = "c01a8c84"
         const val REVOKE_TRANSACTION_METHOD_ID = "20ea8d86"
         const val TRANSACTIONS_METHOD_ID = "9ace38c2"
         const val CHANGE_DAILY_LIMIT_METHOD_ID = "cea08621"
+        const val ADD_OWNER_METHOD_ID = "7065cb48"
+        const val REMOVE_OWNER_METHOD_ID = "173825d9"
+        const val REPLACE_OWNER_METHOD_ID = "e20056e6"
 
         fun decodeTransactionResult(hex: String): Transaction? {
             var noPrefix = hex.removePrefix("0x")
@@ -34,7 +35,13 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
                 noPrefix = noPrefix.removeRange(0..63)
             }
 
-            if (properties.size == 7) { //we have inner data
+            if (properties.size == 8) {
+                if (properties[5].isSolidityMethod(REPLACE_OWNER_METHOD_ID)) {
+                    var innerData = properties[5] + properties[6] + properties[7]
+                    innerData.substring(0..innerData.length - 56)
+                    return decodeReplaceOwner(innerData)
+                }
+            } else if (properties.size == 7) {
                 if (properties[5].isSolidityMethod(CHANGE_DAILY_LIMIT_METHOD_ID)) {
                     var innerData = properties[5] + properties[6]
                     innerData.substring(0..innerData.length - 56)
@@ -77,6 +84,21 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
             if (args.length >= 64) {
                 decodeUint256(args.substring(0..63))?.let {
                     return ChangeDailyLimit(it)
+                }
+            }
+            return null
+        }
+
+        fun decodeReplaceOwner(data: String): ReplaceOwner? {
+            if (!data.isSolidityMethod(REPLACE_OWNER_METHOD_ID)) {
+                return null
+            }
+            val args = data.removeSolidityMethodPrefix(REPLACE_OWNER_METHOD_ID)
+            if (args.length >= 128) {
+                val owner = decodeUint256(args.substring(0..63))
+                val newOwner = decodeUint256(args.substring(64..127))
+                if (owner != null && newOwner != null) {
+                    return ReplaceOwner(owner, newOwner)
                 }
             }
             return null
@@ -134,4 +156,5 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
     data class Transfer(val address: BigInteger, val value: Wei) : Transaction
     data class ChangeDailyLimit(val newDailyLimit: BigInteger) : Transaction
     data class TokenTransfer(val address: BigInteger, val tokens: BigDecimal) : Transaction
+    data class ReplaceOwner(val owner: BigInteger, val newOwner: BigInteger) : Transaction
 }
