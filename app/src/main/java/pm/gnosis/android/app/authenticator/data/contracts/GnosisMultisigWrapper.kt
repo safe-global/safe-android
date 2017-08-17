@@ -24,6 +24,7 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
         const val ADD_OWNER_METHOD_ID = "7065cb48"
         const val REMOVE_OWNER_METHOD_ID = "173825d9"
         const val REPLACE_OWNER_METHOD_ID = "e20056e6"
+        const val CHANGE_CONFIRMATIONS_METHOD_ID = "ba51a6df"
 
         fun decodeTransactionResult(hex: String): Transaction? {
             var noPrefix = hex.removePrefix("0x")
@@ -38,19 +39,37 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
             if (properties.size == 8) {
                 if (properties[5].isSolidityMethod(REPLACE_OWNER_METHOD_ID)) {
                     var innerData = properties[5] + properties[6] + properties[7]
-                    innerData.substring(0..innerData.length - 56)
+                    innerData = innerData.substring(0, innerData.length - 56)
                     return decodeReplaceOwner(innerData)
                 }
             } else if (properties.size == 7) {
-                if (properties[5].isSolidityMethod(CHANGE_DAILY_LIMIT_METHOD_ID)) {
-                    var innerData = properties[5] + properties[6]
-                    innerData.substring(0..innerData.length - 56)
-                    return decodeChangeDailyLimit(innerData)
-                } else if (properties[4].isSolidityMethod(ERC20.TRANSFER_METHOD_ID)) {
-                    var innerData = properties[4] + properties[5] + properties[6]
-                    innerData.substring(0..innerData.length - 56)
-                    ERC20.parseTransferData(innerData, BigInteger("18"))?.let {
-                        return TokenTransfer(it.to, it.value)
+                when {
+                    properties[5].isSolidityMethod(CHANGE_DAILY_LIMIT_METHOD_ID) -> {
+                        var innerData = properties[5] + properties[6]
+                        innerData = innerData.substring(0, innerData.length - 56)
+                        return decodeChangeDailyLimit(innerData)
+                    }
+                    properties[4].isSolidityMethod(ERC20.TRANSFER_METHOD_ID) -> {
+                        var innerData = properties[4] + properties[5] + properties[6]
+                        innerData = innerData.substring(0, innerData.length - 56)
+                        ERC20.parseTransferData(innerData, BigInteger("18"))?.let {
+                            return TokenTransfer(it.to, it.value)
+                        }
+                    }
+                    properties[5].isSolidityMethod(ADD_OWNER_METHOD_ID) -> {
+                        var innerData = properties[5] + properties[6]
+                        innerData = innerData.substring(0, innerData.length - 56)
+                        return decodeAddOwner(innerData)
+                    }
+                    properties[5].isSolidityMethod(REMOVE_OWNER_METHOD_ID) -> {
+                        var innerData = properties[5] + properties[6]
+                        innerData = innerData.substring(0, innerData.length - 56)
+                        return decodeRemoveOwner(innerData)
+                    }
+                    properties[5].isSolidityMethod(CHANGE_CONFIRMATIONS_METHOD_ID) -> {
+                        var innerData = properties[5] + properties[6]
+                        innerData = innerData.substring(0, innerData.length - 56)
+                        return decodeChangeConfirmations(innerData)
                     }
                 }
             } else if (properties.size == 5) { //normal transaction
@@ -60,6 +79,45 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
 
             return null
 
+        }
+
+        private fun decodeRemoveOwner(data: String): RemoveOwner? {
+            if (!data.isSolidityMethod(REMOVE_OWNER_METHOD_ID)) {
+                return null
+            }
+            val args = data.removeSolidityMethodPrefix(REMOVE_OWNER_METHOD_ID)
+            if (args.length == 64) {
+                decodeUint256(args.substring(0..63))?.let {
+                    return RemoveOwner(it)
+                }
+            }
+            return null
+        }
+
+        private fun decodeAddOwner(data: String): AddOwner? {
+            if (!data.isSolidityMethod(ADD_OWNER_METHOD_ID)) {
+                return null
+            }
+            val args = data.removeSolidityMethodPrefix(ADD_OWNER_METHOD_ID)
+            if (args.length == 64) {
+                decodeUint256(args.substring(0..63))?.let {
+                    return AddOwner(it)
+                }
+            }
+            return null
+        }
+
+        private fun decodeChangeConfirmations(data: String): ChangeConfirmations? {
+            if (!data.isSolidityMethod(CHANGE_CONFIRMATIONS_METHOD_ID)) {
+                return null
+            }
+            val args = data.removeSolidityMethodPrefix(CHANGE_CONFIRMATIONS_METHOD_ID)
+            if (args.length == 64) {
+                decodeUint256(args.substring(0..63))?.let {
+                    return ChangeConfirmations(it)
+                }
+            }
+            return null
         }
 
         fun decodeConfirm(data: String): BigInteger? {
@@ -81,7 +139,7 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
                 return null
             }
             val args = data.removeSolidityMethodPrefix(CHANGE_DAILY_LIMIT_METHOD_ID)
-            if (args.length >= 64) {
+            if (args.length == 64) {
                 decodeUint256(args.substring(0..63))?.let {
                     return ChangeDailyLimit(it)
                 }
@@ -157,4 +215,7 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
     data class ChangeDailyLimit(val newDailyLimit: BigInteger) : Transaction
     data class TokenTransfer(val address: BigInteger, val tokens: BigDecimal) : Transaction
     data class ReplaceOwner(val owner: BigInteger, val newOwner: BigInteger) : Transaction
+    data class AddOwner(val owner: BigInteger) : Transaction
+    data class RemoveOwner(val owner: BigInteger) : Transaction
+    data class ChangeConfirmations(val newConfirmations: BigInteger) : Transaction
 }

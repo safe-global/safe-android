@@ -87,6 +87,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
             is GnosisMultisigWrapper.Transfer -> Timber.d("It's a Normal Transfer")
             is GnosisMultisigWrapper.ChangeDailyLimit -> Timber.d("It's a change daily limit")
             is GnosisMultisigWrapper.ReplaceOwner -> Timber.d("It's a replace owner")
+            is GnosisMultisigWrapper.AddOwner -> Timber.d("It's an add owner")
+            is GnosisMultisigWrapper.RemoveOwner -> Timber.d("It's a remove owner")
+            is GnosisMultisigWrapper.ChangeConfirmations -> Timber.d("It's a change confirmations")
         }
         //activity_transaction_details_container.visibility = View.VISIBLE
         //activity_transaction_details_transaction_recipient.text = multiSigTransaction.address.asEthereumAddressString()
