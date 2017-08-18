@@ -1,6 +1,5 @@
 package pm.gnosis.android.app.authenticator.util
 
-import java.math.BigDecimal
 import java.math.BigInteger
 
 object ERC20 {
@@ -9,26 +8,20 @@ object ERC20 {
     const val SYMBOL_METHOD_ID = "95d89b41"
     const val NAME_METHOD_ID = "06fdde03"
 
-    fun parseTransferData(data: String, decimalPlaces: BigInteger): TokenTransfer? {
+    fun parseTransferData(data: String): TokenTransfer? {
         if (data.isSolidityMethod(TRANSFER_METHOD_ID)) {
             val arguments = data.removeSolidityMethodPrefix(TRANSFER_METHOD_ID)
             if (arguments.length == 128) {
                 val to = arguments.substring(0, 64)
                 val value = arguments.substring(64, 128)
-                return TokenTransfer(to.hexAsBigInteger(), BigDecimal(value.hexAsBigInteger(), decimalPlaces.toInt()))
+                return TokenTransfer(to.hexAsBigInteger(), value.hexAsBigInteger())
             }
         }
         return null
     }
 
     data class Token(val address: String, val name: String?, val symbol: String?, val decimals: BigInteger?)
-    data class TokenTransfer(val to: BigInteger, val value: BigDecimal) {
-        fun encode(decimalPlaces: Int = 18): String {
-            val to = to.toString(16).padStart(64, '0')
-            val value = value.multiply(BigDecimal.TEN.pow(decimalPlaces)).toBigInteger().toString(16).padStart(64, '0')
-            return "$TRANSFER_METHOD_ID$to$value"
-        }
-    }
+    data class TokenTransfer(val to: BigInteger, val value: BigInteger)
 
     val verifiedTokens = mapOf(
             "0x9a642d6b3368ddc662CA244bAdf32cDA716005BC".hexAsBigInteger() to "Qtum",

@@ -7,7 +7,6 @@ import pm.gnosis.android.app.authenticator.data.model.TransactionCallParams
 import pm.gnosis.android.app.authenticator.data.model.Wei
 import pm.gnosis.android.app.authenticator.data.remote.InfuraRepository
 import pm.gnosis.android.app.authenticator.util.*
-import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -41,6 +40,14 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
                     var innerData = properties[5] + properties[6] + properties[7]
                     innerData = innerData.substring(0, innerData.length - 56)
                     return decodeReplaceOwner(innerData)
+                } else if (properties[5].isSolidityMethod(ERC20.TRANSFER_METHOD_ID)) {
+                    var innerData = properties[5] + properties[6] + properties[7]
+                    innerData = innerData.substring(0, innerData.length - 56)
+                    ERC20.parseTransferData(innerData)?.let { (to, value) ->
+                        properties[0].hexAsBigIntegerOrNull()?.let {
+                            return TokenTransfer(it, to, value)
+                        }
+                    }
                 }
             } else if (properties.size == 7) {
                 when {
@@ -48,13 +55,6 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
                         var innerData = properties[5] + properties[6]
                         innerData = innerData.substring(0, innerData.length - 56)
                         return decodeChangeDailyLimit(innerData)
-                    }
-                    properties[4].isSolidityMethod(ERC20.TRANSFER_METHOD_ID) -> {
-                        var innerData = properties[4] + properties[5] + properties[6]
-                        innerData = innerData.substring(0, innerData.length - 56)
-                        ERC20.parseTransferData(innerData, BigInteger("18"))?.let {
-                            return TokenTransfer(it.to, it.value)
-                        }
                     }
                     properties[5].isSolidityMethod(ADD_OWNER_METHOD_ID) -> {
                         var innerData = properties[5] + properties[6]
@@ -213,7 +213,7 @@ class GnosisMultisigWrapper @Inject constructor(private val infuraRepository: In
     interface Transaction
     data class Transfer(val address: BigInteger, val value: Wei) : Transaction
     data class ChangeDailyLimit(val newDailyLimit: BigInteger) : Transaction
-    data class TokenTransfer(val address: BigInteger, val tokens: BigDecimal) : Transaction
+    data class TokenTransfer(val tokenAddress: BigInteger, val recipient: BigInteger, val tokens: BigInteger) : Transaction
     data class ReplaceOwner(val owner: BigInteger, val newOwner: BigInteger) : Transaction
     data class AddOwner(val owner: BigInteger) : Transaction
     data class RemoveOwner(val owner: BigInteger) : Transaction

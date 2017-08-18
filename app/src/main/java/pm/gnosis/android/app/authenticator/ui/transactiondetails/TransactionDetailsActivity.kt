@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_transaction_details_change_confir
 import kotlinx.android.synthetic.main.activity_transaction_details_change_daily_limit.view.*
 import kotlinx.android.synthetic.main.activity_transaction_details_remove_owner.view.*
 import kotlinx.android.synthetic.main.activity_transaction_details_replace_owner.view.*
+import kotlinx.android.synthetic.main.activity_transaction_details_token_transfer.*
 import kotlinx.android.synthetic.main.activity_transaction_details_transfer.view.*
 import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
 import pm.gnosis.android.app.authenticator.GnosisAuthenticatorApplication
@@ -27,6 +28,7 @@ import pm.gnosis.android.app.authenticator.di.component.DaggerViewComponent
 import pm.gnosis.android.app.authenticator.di.module.ViewModule
 import pm.gnosis.android.app.authenticator.util.*
 import timber.log.Timber
+import java.math.BigDecimal
 import javax.inject.Inject
 
 class TransactionDetailsActivity : AppCompatActivity() {
@@ -90,7 +92,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
     private fun onTransactionDetails(multiSigTransaction: GnosisMultisigWrapper.Transaction) {
         when (multiSigTransaction) {
-            is GnosisMultisigWrapper.TokenTransfer -> Timber.d("It's a Token Transfer")
+            is GnosisMultisigWrapper.TokenTransfer -> onTokenTransfer(multiSigTransaction)
             is GnosisMultisigWrapper.Transfer -> onTransfer(multiSigTransaction)
             is GnosisMultisigWrapper.ChangeDailyLimit -> onChangeDailyLimit(multiSigTransaction)
             is GnosisMultisigWrapper.ReplaceOwner -> onReplaceOwner(multiSigTransaction)
@@ -136,6 +138,24 @@ class TransactionDetailsActivity : AppCompatActivity() {
         activity_transaction_details_action_container.addView(view)
         view.activity_transaction_details_replace_owner_old_owner.text = transaction.owner.asEthereumAddressString()
         view.activity_transaction_details_replace_owner_new_owner.text = transaction.newOwner.asEthereumAddressString()
+    }
+
+    private fun onTokenTransfer(transaction: GnosisMultisigWrapper.TokenTransfer) {
+        disposables += presenter.getTokenInfo(transaction.tokenAddress)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onNext = { onTokenTransferInfo(transaction, it) }, onError = Timber::e)
+    }
+
+    private fun onTokenTransferInfo(transaction: GnosisMultisigWrapper.TokenTransfer, token: ERC20.Token) {
+        if (token.decimals == null) return
+
+        val view = layoutInflater.inflate(R.layout.activity_transaction_details_token_transfer, activity_transaction_details_coordinator, false)
+        activity_transaction_details_action_container.addView(view)
+        activity_transaction_details_token_transfer_symbol.text = token.symbol ?: "Tokens"
+        activity_transaction_details_token_transfer_recipient.text = transaction.recipient.asEthereumAddressString()
+
+        val tokens = BigDecimal(transaction.tokens, token.decimals.toInt())
+        activity_transaction_details_token_transfer_amount.text = tokens.stripTrailingZeros().toPlainString()
     }
 
     private fun onTransactionDetailsLoading(isLoading: Boolean) {

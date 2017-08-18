@@ -46,4 +46,6 @@ class TransactionDetailsPresenter @Inject constructor(private val infuraReposito
 
     fun getTransactionDetails(address: String, transactionId: BigInteger): Observable<GnosisMultisigWrapper.Transaction> =
             gnosisMultisigWrapper.getTransaction(address, transactionId)
+
+    fun getTokenInfo(address: BigInteger) = infuraRepository.getTokenInfo(address)
 }
