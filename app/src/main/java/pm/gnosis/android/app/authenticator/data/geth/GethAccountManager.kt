@@ -16,7 +16,8 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
                                              private val keyStore: KeyStore) {
     init {
         if (keyStore.accounts.size() == 0L) {
-            if (BuildConfig.DEBUG) {
+            @Suppress("ConstantConditionIf")
+            if (BuildConfig.PRIVATE_TEST_NET) {
                 TestRPC.accounts.iterator().forEach({
                     val privateKey = it.value.first
                     val passphrase = it.value.second
@@ -33,7 +34,7 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
 
     fun getAccounts(): List<Account> {
         val accounts = ArrayList<Account>()
-        for (i in 0..keyStore.accounts.size() - 1) {
+        for (i in 0 until keyStore.accounts.size()) {
             accounts += keyStore.accounts[i]
         }
         return accounts
@@ -52,8 +53,9 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
 
 
     fun getAccountPassphrase(): String {
-        if (BuildConfig.DEBUG) {
-            return TestRPC.accounts[getActiveAccount().address.hex]?.second!!
+        @Suppress("ConstantConditionIf")
+        (return if (BuildConfig.PRIVATE_TEST_NET) {
+            TestRPC.accounts[getActiveAccount().address.hex]?.second!!
         } else {
             var passphrase = preferencesManager.prefs.getString(PreferencesManager.PASSPHRASE_KEY, "")
             if (passphrase.isEmpty()) {
@@ -62,7 +64,7 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
                     putString(PreferencesManager.PASSPHRASE_KEY, passphrase)
                 }
             }
-            return passphrase
-        }
+            passphrase
+        })
     }
 }

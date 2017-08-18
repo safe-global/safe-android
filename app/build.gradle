@@ -25,13 +25,15 @@ android {
     defaultConfig {
         buildConfigField "String", "BLOCKCHAIN_NET_URL", '"https://mainnet.infura.io"'
         buildConfigField "String", "INFURA_API_KEY", getKey("INFURA_API_KEY")
+        buildConfigField "boolean", "PRIVATE_TEST_NET", "false"
     }
 
     buildTypes {
-        otherChain {
+        chainTest {
             signingConfig signingConfigs.debug
             minifyEnabled false
             buildConfigField "String", "BLOCKCHAIN_NET_URL", getKey("BLOCKCHAIN_NET_URL")
+            buildConfigField "boolean", "PRIVATE_TEST_NET", getKey("PRIVATE_TEST_NET", "false")
         }
 
         debug {
@@ -41,7 +43,6 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "INFURA_API_KEY", getKey("INFURA_API_KEY")
         }
     }
 
@@ -55,11 +56,11 @@ android {
     }
 }
 
-static def getKey(String property) {
+static def getKey(String property, String defaultValue = "") {
     Properties properties = new Properties()
     properties.load(new FileInputStream("project_keys"))
     String value = properties.getProperty(property)
-    return value != null ? value : ""
+    return value != null ? value : defaultValue
 }
 
 
