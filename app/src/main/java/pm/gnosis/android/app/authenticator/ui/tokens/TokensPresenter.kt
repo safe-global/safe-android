@@ -5,19 +5,19 @@ import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.android.app.authenticator.data.db.ERC20Token
 import pm.gnosis.android.app.authenticator.data.db.GnosisAuthenticatorDb
-import pm.gnosis.android.app.authenticator.data.remote.InfuraRepository
+import pm.gnosis.android.app.authenticator.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.android.app.authenticator.di.ForView
 import pm.gnosis.android.app.authenticator.util.hexAsBigInteger
 import javax.inject.Inject
 
 @ForView
 class TokensPresenter @Inject constructor(private val gnosisAuthenticatorDb: GnosisAuthenticatorDb,
-                                          private val infuraRepository: InfuraRepository) {
+                                          private val ethereumJsonRpcRepository: EthereumJsonRpcRepository) {
     fun observeTokens(): Flowable<List<ERC20Token>> =
             gnosisAuthenticatorDb.erc20TokenDao().observeTokens().subscribeOn(Schedulers.io())
 
     fun observeTokenInfo(token: ERC20Token) =
-            token.address?.let { infuraRepository.getTokenInfo(it.hexAsBigInteger()) }
+            token.address?.let { ethereumJsonRpcRepository.getTokenInfo(it.hexAsBigInteger()) }
 
     fun addToken(address: String, name: String = "") = Completable.fromCallable {
         val token = ERC20Token()

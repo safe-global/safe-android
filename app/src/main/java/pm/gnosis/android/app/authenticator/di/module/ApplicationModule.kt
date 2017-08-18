@@ -15,7 +15,7 @@ import pm.gnosis.android.app.authenticator.BuildConfig
 import pm.gnosis.android.app.authenticator.data.db.GnosisAuthenticatorDb
 import pm.gnosis.android.app.authenticator.data.model.HexNumberAdapter
 import pm.gnosis.android.app.authenticator.data.model.WeiAdapter
-import pm.gnosis.android.app.authenticator.data.remote.InfuraApi
+import pm.gnosis.android.app.authenticator.data.remote.EthereumJsonRpcApi
 import pm.gnosis.android.app.authenticator.di.ApplicationContext
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -29,7 +29,7 @@ class ApplicationModule(val application: Application) {
         const val SHARED_PREFS_NAME = "gnosisPrefs"
 
         const val INFURA_API_KEY_INTERCEPTOR = "infuraApiKeyInterceptor"
-        const val INFURA_API_CLIENT = "infuraApiClient"
+        const val ETHEREUM_JSON_RPC_API_CLIENT = "ethereumJsonRpcApiClient"
     }
 
     @Provides
@@ -58,20 +58,20 @@ class ApplicationModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun providesInfuraService(moshi: Moshi,
-                              @Named(INFURA_API_CLIENT) client: OkHttpClient): InfuraApi {
+    fun providesEthereumJsonRpcService(moshi: Moshi,
+                                       @Named(ETHEREUM_JSON_RPC_API_CLIENT) client: OkHttpClient): EthereumJsonRpcApi {
         val retrofit = Retrofit.Builder()
                 .client(client)
-                .baseUrl(InfuraApi.RINKEBY_BASE_URL)
+                .baseUrl(EthereumJsonRpcApi.BASE_URL)
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build()
-        return retrofit.create(InfuraApi::class.java)
+        return retrofit.create(EthereumJsonRpcApi::class.java)
     }
 
     @Provides
     @Singleton
-    @Named(INFURA_API_CLIENT)
+    @Named(ETHEREUM_JSON_RPC_API_CLIENT)
     fun providesOkHttpClient(@Named(INFURA_API_KEY_INTERCEPTOR) interceptor: Interceptor): OkHttpClient {
         return OkHttpClient.Builder()
                 .addInterceptor(interceptor)

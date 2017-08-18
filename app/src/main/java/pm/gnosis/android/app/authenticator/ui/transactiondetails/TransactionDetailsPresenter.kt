@@ -10,14 +10,14 @@ import pm.gnosis.android.app.authenticator.data.db.MultisigWallet
 import pm.gnosis.android.app.authenticator.data.geth.GethRepository
 import pm.gnosis.android.app.authenticator.data.model.TransactionCallParams
 import pm.gnosis.android.app.authenticator.data.model.TransactionDetails
-import pm.gnosis.android.app.authenticator.data.remote.InfuraRepository
+import pm.gnosis.android.app.authenticator.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.android.app.authenticator.di.ForView
 import pm.gnosis.android.app.authenticator.util.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Inject
 
 @ForView
-class TransactionDetailsPresenter @Inject constructor(private val infuraRepository: InfuraRepository,
+class TransactionDetailsPresenter @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
                                                       private val gethRepository: GethRepository,
                                                       private val gnosisAuthenticatorDb: GnosisAuthenticatorDb,
                                                       private val gnosisMultisigWrapper: GnosisMultisigWrapper) {
@@ -26,7 +26,7 @@ class TransactionDetailsPresenter @Inject constructor(private val infuraReposito
                     .subscribeOn(Schedulers.io())
 
     fun signTransaction(transactionDetails: TransactionDetails) =
-            infuraRepository.getTransactionParameters(
+            ethereumJsonRpcRepository.getTransactionParameters(
                     TransactionCallParams(
                             to = transactionDetails.address.asEthereumAddressString(),
                             data = transactionDetails.data))
@@ -35,7 +35,7 @@ class TransactionDetailsPresenter @Inject constructor(private val infuraReposito
                                 it.nonce, transactionDetails.address, transactionDetails.value?.value,
                                 it.gas, it.gasPrice, transactionDetails.data)
                     }
-                    .flatMap { infuraRepository.sendRawTransaction(it) }
+                    .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
 
     fun addMultisigWallet(name: String = "", address: String) = Completable.fromCallable {
         val multisigWallet = MultisigWallet()
@@ -47,5 +47,5 @@ class TransactionDetailsPresenter @Inject constructor(private val infuraReposito
     fun getTransactionDetails(address: String, transactionId: BigInteger): Observable<GnosisMultisigWrapper.Transaction> =
             gnosisMultisigWrapper.getTransaction(address, transactionId)
 
-    fun getTokenInfo(address: BigInteger) = infuraRepository.getTokenInfo(address)
+    fun getTokenInfo(address: BigInteger) = ethereumJsonRpcRepository.getTokenInfo(address)
 }

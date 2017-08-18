@@ -15,8 +15,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
-                                           private val gethAccountManager: GethAccountManager) {
+class EthereumJsonRpcRepository @Inject constructor(private val ethereumJsonRpcApi: EthereumJsonRpcApi,
+                                                    private val gethAccountManager: GethAccountManager) {
     companion object {
         const val DEFAULT_BLOCK_EARLIEST = "earliest"
         const val DEFAULT_BLOCK_LATEST = "latest"
@@ -24,33 +24,33 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
     }
 
     fun getBalance(): Observable<Wei> =
-            infuraApi.post(
+            ethereumJsonRpcApi.post(
                     JsonRpcRequest(
                             method = "eth_getBalance",
                             params = arrayListOf(gethAccountManager.getActiveAccount().address.hex, DEFAULT_BLOCK_LATEST)))
                     .map { Wei(it.result.hexAsBigInteger()) }
 
     fun getLatestBlock(): Observable<BigInteger> =
-            infuraApi.post(JsonRpcRequest(method = "eth_blockNumber"))
+            ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_blockNumber"))
                     .map { it.result.hexAsBigInteger() }
 
     fun call(transactionCallParams: TransactionCallParams): Observable<String> =
-            infuraApi.post(JsonRpcRequest(method = "eth_call",
+            ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_call",
                     params = arrayListOf(transactionCallParams, DEFAULT_BLOCK_LATEST)))
                     .map { it.result }
 
     fun sendRawTransaction(signedTransactionData: String): Observable<String> =
-            infuraApi.post(JsonRpcRequest(method = "eth_sendRawTransaction",
+            ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_sendRawTransaction",
                     params = arrayListOf(signedTransactionData)))
                     .map { it.result }
 
     fun getTransactionCount(): Observable<BigInteger> =
-            infuraApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
+            ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
                     params = arrayListOf(gethAccountManager.getActiveAccount().address.hex, DEFAULT_BLOCK_LATEST)))
                     .map { it.result.hexAsBigInteger() }
 
     fun getGasPrice(): Observable<BigInteger> =
-            infuraApi.post(JsonRpcRequest(method = "eth_gasPrice"))
+            ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_gasPrice"))
                     .map { it.result.hexAsBigInteger() }
 
     fun getTokenName(contractAddress: BigInteger): Observable<Optional<String>> =
@@ -73,7 +73,7 @@ class InfuraRepository @Inject constructor(private val infuraApi: InfuraApi,
                     Function3 { name, symbol, decimals -> ERC20.Token(contractAddress.asEthereumAddressString(), name.toNullable(), symbol.toNullable(), decimals.toNullable()) })
 
     fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
-            infuraApi.post(JsonRpcRequest(method = "eth_estimateGas",
+            ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_estimateGas",
                     params = arrayListOf(transactionCallParams)))
                     .doOnNext { Timber.d(it.toString()) }
                     .map { it.result.hexAsBigInteger() }

@@ -21,15 +21,27 @@ android {
             }
         }
     }
+
+    defaultConfig {
+        buildConfigField "String", "BLOCKCHAIN_NET_URL", '"https://mainnet.infura.io"'
+        buildConfigField "String", "INFURA_API_KEY", getKey("INFURA_API_KEY")
+    }
+
     buildTypes {
+        otherChain {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+            buildConfigField "String", "BLOCKCHAIN_NET_URL", getKey("BLOCKCHAIN_NET_URL")
+        }
+
         debug {
             minifyEnabled false
-            buildConfigField "String", "INFURA_API_KEY", getKey("INFURA_API_KEY")
         }
 
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "INFURA_API_KEY", getKey("INFURA_API_KEY")
         }
     }
 
@@ -46,7 +58,8 @@ android {
 static def getKey(String property) {
     Properties properties = new Properties()
     properties.load(new FileInputStream("project_keys"))
-    return properties.getProperty(property)
+    String value = properties.getProperty(property)
+    return value != null ? value : ""
 }
 
 
@@ -54,7 +67,7 @@ dependencies {
     final SUPPORT_LIB_VERSION = '26.0.1'
     final DAGGER_VERSION = '2.11'
     final RETROFIT_VERSION = '2.3.0'
-    final ARCHITECTURE_COMPONENTS_VERSION = '1.0.0-alpha8'
+    final ARCHITECTURE_COMPONENTS_VERSION = '1.0.0-alpha9'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
