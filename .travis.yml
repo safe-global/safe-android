@@ -15,10 +15,9 @@ android:
 
 deploy:
   provider: releases
-  api_key:
-    secure: $GITHUB_API_KEY
+  api_key: "${GITHUB_API_KEY}"
   file_glob: true
-  file: app/build/output/apk/*/*.apk
+  file: app/build/outputs/apk/*/*.apk
   skip_cleanup: true
   on:
     tags: true
