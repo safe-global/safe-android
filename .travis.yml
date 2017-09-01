@@ -13,6 +13,16 @@ android:
 
     - extra-android-m2repository
 
+deploy:
+  provider: releases
+  api_key:
+    secure: $GITHUB_API_KEY
+  file_glob: true
+  file: app/build/output/apk/*/*.apk
+  skip_cleanup: true
+  on:
+    tags: true
+
 before_script:
  - chmod +x ./ci/prepare_env.sh
  - chmod +x ./ci/build_debug.sh
