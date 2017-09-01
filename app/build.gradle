@@ -33,7 +33,7 @@ android {
 
     signingConfigs {
         debug {
-            // We add teh debug keystore to repo so that the travis build will always have the same signature
+            // We add the debug keystore to repo so that the travis build will always have the same signature
             storeFile file("../debug.keystore")
         }
     }
