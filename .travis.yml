@@ -29,8 +29,10 @@ before_cache:
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 script:
-  - ./ci/prepare_env.sh
+  - . ./ci/prepare_env.sh
   - ./ci/build_debug.sh
+  - echo $APP_VERSION_CODE
+  - echo $APP_VERSION_NAME
 
 deploy:
   provider: releases
