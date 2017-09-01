@@ -1,0 +1,35 @@
+static def getKey(String name, String defaultValue = null) {
+    def value = null
+    try {
+        Properties properties = new Properties()
+        properties.load(new FileInputStream("project_keys"))
+        value = properties.getProperty(name)
+    } catch (Exception ignored) {
+        // noop
+    }
+    if (value == null) {
+        value = System.getenv(name)
+    }
+    if (value == null) {
+        return defaultValue
+    }
+    return value
+}
+
+def getInt(String name, int defaultValue) {
+    def envValue = getKey(name)
+    if (envValue == null) {
+        return defaultValue
+    }
+    return Integer.parseInt(envValue)
+}
+
+static def asString(String input) {
+    return input == null ? null : "\"" + input + "\""
+}
+
+ext {
+    getKey = this.&getKey
+    getInt = this.&getInt
+    asString = this.&asString
+}
