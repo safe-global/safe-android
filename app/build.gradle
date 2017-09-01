@@ -13,7 +13,11 @@ android {
         versionCode getInt("APP_VERSION_CODE", 1)
         versionName getKey("APP_VERSION_NAME", "1.0")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
         vectorDrawables.useSupportLibrary = true
+
+        project.ext.set("archivesBaseName", String.format("gnosis_authenticator_%s", defaultConfig.versionCode))
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation":
