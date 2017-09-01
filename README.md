@@ -12,7 +12,7 @@ A default account is created per installation.
 
 The Json RPC depends on [Infura](https://infura.io/). You need to get an API key and create a file named `project_keys` with the following contents:
 ```
-INFURA_API_KEY = "<YOUR_API_KEY>"
+INFURA_API_KEY=<YOUR_API_KEY>
 ```
 
 Replace `<YOUR_API_KEY>` with the key that you get from Infura.

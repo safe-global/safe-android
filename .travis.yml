@@ -1,0 +1,40 @@
+language: android
+android:
+  components:
+    - tools
+    - platform-tools
+    - tools
+
+    # The BuildTools version used by your project
+    - build-tools-26.0.1
+
+    # The SDK version used to compile your project
+    - android-26
+
+    - extra-android-m2repository
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+script:
+  - . ./ci/prepare_env.sh
+  - ./ci/build_debug.sh
+
+deploy:
+  provider: releases
+  api_key: "${GITHUB_API_KEY}"
+  file_glob: true
+  file: app/build/outputs/apk/*/*.apk
+  skip_cleanup: true
+  on:
+    tags: true
+
+after_deploy:
+  - ./ci/notify_slack.sh

@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/gnosis-android.iml" filepath="$PROJECT_DIR$/gnosis-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gnosis-authenticator-android.iml" filepath="$PROJECT_DIR$/gnosis-authenticator-android.iml" />
     </modules>
   </component>
 </project>
