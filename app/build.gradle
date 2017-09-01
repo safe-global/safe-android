@@ -16,12 +16,11 @@ android {
 
         vectorDrawables.useSupportLibrary = true
 
-        project.ext.set("archivesBaseName", String.format("gnosis_authenticator_%s", defaultConfig.versionCode))
+        project.ext.set("archivesBaseName", String.format("gnosis-authenticator-%s", defaultConfig.versionCode))
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ["room.schemaLocation":
-                                     "$projectDir/schemas".toString()]
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
     }
@@ -30,6 +29,13 @@ android {
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString("https://mainnet.infura.io")
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY"))
         buildConfigField javaTypes.BOOLEAN, "PRIVATE_TEST_NET", javaTypes.FALSE
+    }
+
+    signingConfigs {
+        debug {
+            // We add teh debug keystore to repo so that the travis build will always have the same signature
+            storeFile file("../debug.keystore")
+        }
     }
 
     buildTypes {
