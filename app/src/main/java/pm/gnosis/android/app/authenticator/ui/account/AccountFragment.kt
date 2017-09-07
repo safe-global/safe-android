@@ -40,7 +40,7 @@ class AccountFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         disposables += accountBalanceDisposable()
-        fragment_account_address.text = presenter.getAccountAddress()
+        disposables += accountAddressDisposable()
 
         fragment_account_clipboard.setOnClickListener {
             context.copyToClipboard("address", fragment_account_address.text.toString())
@@ -55,6 +55,14 @@ class AccountFragment : BaseFragment() {
             disposables += generateQrCodeDisposable(fragment_account_address.text.toString())
         }
     }
+
+    private fun accountAddressDisposable() = presenter.getAccountAddress()
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { onAccountBalanceLoading(true) }
+            .doOnTerminate { onAccountBalanceLoading(isLoading = false) }
+            .subscribeBy(onNext = {
+                fragment_account_address.text = it.address
+            }, onError = this::onAccountBalanceError)
 
     private fun accountBalanceDisposable() = presenter.getAccountBalance()
             .observeOn(AndroidSchedulers.mainThread())

@@ -21,7 +21,9 @@ import pm.gnosis.android.app.authenticator.di.component.DaggerViewComponent
 import pm.gnosis.android.app.authenticator.di.module.ViewModule
 import pm.gnosis.android.app.authenticator.ui.base.BaseFragment
 import pm.gnosis.android.app.authenticator.util.*
-import pm.gnosis.android.app.authenticator.util.zxing.ZxingIntentIntegrator.*
+import pm.gnosis.android.app.authenticator.util.zxing.ZxingIntentIntegrator.REQUEST_CODE
+import pm.gnosis.android.app.authenticator.util.zxing.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
+import pm.gnosis.utils.addAddressPrefix
 import timber.log.Timber
 import javax.inject.Inject
 

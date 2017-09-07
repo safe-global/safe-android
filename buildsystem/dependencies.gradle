@@ -12,6 +12,7 @@ ext {
             dagger                 : '2.11',
             floating_action_button : '1.6.4',
             geth                   : '1.6.6',
+            kethereum              : '0.20',
             koptional              : '1.2.0',
             material_progressbar   : '1.4.1',
             moshi                  : '1.4.0',
@@ -22,6 +23,7 @@ ext {
             rxandroid              : '2.0.1',
             rxjava                 : '2.1.2',
             rxkotlin               : '2.1.0',
+            spongycastle           : '1.58.0.0',
             timber                 : '4.5.1',
             zxing                  : '3.3.0',
 

@@ -6,13 +6,13 @@ import pm.gnosis.android.app.authenticator.di.ForView
 import pm.gnosis.android.app.authenticator.di.ViewContext
 import pm.gnosis.android.app.authenticator.di.module.ViewModule
 import pm.gnosis.android.app.authenticator.ui.MainActivity
-import pm.gnosis.android.app.authenticator.ui.transactiondetails.TransactionDetailsActivity
 import pm.gnosis.android.app.authenticator.ui.account.AccountFragment
 import pm.gnosis.android.app.authenticator.ui.account.AccountPresenter
-import pm.gnosis.android.app.authenticator.ui.multisig.MultisigFragment
 import pm.gnosis.android.app.authenticator.ui.authenticate.AuthenticateFragment
+import pm.gnosis.android.app.authenticator.ui.multisig.MultisigFragment
 import pm.gnosis.android.app.authenticator.ui.splash.SplashActivity
 import pm.gnosis.android.app.authenticator.ui.tokens.TokensFragment
+import pm.gnosis.android.app.authenticator.ui.transactiondetails.TransactionDetailsActivity
 
 @ForView
 @Component(dependencies = arrayOf(ApplicationComponent::class), modules = arrayOf(ViewModule::class))

@@ -1,5 +1,7 @@
 package pm.gnosis.android.app.authenticator.util
 
+import pm.gnosis.utils.isSolidityMethod
+import pm.gnosis.utils.removeSolidityMethodPrefix
 import java.math.BigInteger
 
 object ERC20 {

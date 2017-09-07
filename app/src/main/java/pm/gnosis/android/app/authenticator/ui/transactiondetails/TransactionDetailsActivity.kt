@@ -28,6 +28,9 @@ import pm.gnosis.android.app.authenticator.di.component.DaggerViewComponent
 import pm.gnosis.android.app.authenticator.di.module.ViewModule
 import pm.gnosis.android.app.authenticator.util.*
 import pm.gnosis.android.app.wallet.MultiSigWalletWithDailyLimit
+import pm.gnosis.utils.addAddressPrefix
+import pm.gnosis.utils.isSolidityMethod
+import pm.gnosis.utils.removeSolidityMethodPrefix
 import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -55,14 +58,14 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
 
         when {
-            t.data.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID) -> {
+            t.data!!.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID) -> {
                 activity_transaction_details_button.text = "Confirm Transaction"
-                val argument = t.data.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID)
+                val argument = t.data!!.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID)
                 activity_transaction_details_transaction_id.text = MultiSigWalletWithDailyLimit.ConfirmTransaction.decodeArguments(argument).transactionid.value.asDecimalString() ?: "-"
             }
-            t.data.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID) -> {
+            t.data!!.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID) -> {
                 activity_transaction_details_button.text = "Revoke Transaction"
-                val argument = t.data.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID)
+                val argument = t.data!!.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID)
                 activity_transaction_details_transaction_id.text = MultiSigWalletWithDailyLimit.RevokeConfirmation.decodeArguments(argument).transactionid.value.asDecimalString() ?: "-"
             }
             else -> activity_transaction_details_button.visibility = View.GONE
@@ -93,7 +96,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
                 .subscribeBy(onNext = this::onMultisigWallet, onError = this::onMultisigWalletError)
     }
 
-    private fun onTransactionDetails(multiSigTransaction: GnosisMultisigWrapper.Transaction) {
+    private fun onTransactionDetails(multiSigTransaction: GnosisMultisigWrapper.WrapperTransaction) {
         when (multiSigTransaction) {
             is GnosisMultisigWrapper.TokenTransfer -> onTokenTransfer(multiSigTransaction)
             is GnosisMultisigWrapper.Transfer -> onTransfer(multiSigTransaction)
@@ -157,7 +160,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         activity_transaction_details_token_transfer_symbol.text = token.symbol ?: "Tokens"
         activity_transaction_details_token_transfer_recipient.text = transaction.recipient.asEthereumAddressString()
 
-        val tokens = BigDecimal(transaction.tokens, token.decimals.toInt())
+        val tokens = BigDecimal(transaction.tokens, token.decimals!!.toInt())
         activity_transaction_details_token_transfer_amount.text = tokens.stripTrailingZeros().toPlainString()
     }
 

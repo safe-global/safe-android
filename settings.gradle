@@ -1,1 +1,9 @@
+include ':accounts-base'
+include ':accounts-geth'
+include ':accounts-kethereum'
 include ':app'
+include ':app-core'
+include ':crypto'
+include ':mnemonic'
+include ':utils'
+

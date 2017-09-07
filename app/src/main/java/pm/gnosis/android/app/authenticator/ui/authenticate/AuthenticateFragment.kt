@@ -13,11 +13,11 @@ import pm.gnosis.android.app.authenticator.di.module.ViewModule
 import pm.gnosis.android.app.authenticator.ui.base.BaseFragment
 import pm.gnosis.android.app.authenticator.ui.transactiondetails.TransactionDetailsActivity
 import pm.gnosis.android.app.authenticator.util.ERC67Parser
-import pm.gnosis.android.app.authenticator.util.isSolidityMethod
 import pm.gnosis.android.app.authenticator.util.scanQrCode
 import pm.gnosis.android.app.authenticator.util.snackbar
 import pm.gnosis.android.app.authenticator.util.zxing.ZxingIntentIntegrator
 import pm.gnosis.android.app.wallet.MultiSigWalletWithDailyLimit
+import pm.gnosis.utils.isSolidityMethod
 
 class AuthenticateFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?) =

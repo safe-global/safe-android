@@ -4,11 +4,12 @@ import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
 import io.reactivex.Observable
 import io.reactivex.functions.Function3
-import pm.gnosis.android.app.authenticator.data.geth.GethAccountManager
+import pm.gnosis.android.app.accounts.repositories.AccountsRepository
 import pm.gnosis.android.app.authenticator.data.model.JsonRpcRequest
 import pm.gnosis.android.app.authenticator.data.model.TransactionCallParams
 import pm.gnosis.android.app.authenticator.data.model.Wei
 import pm.gnosis.android.app.authenticator.util.*
+import pm.gnosis.utils.toAlfaNumericAscii
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -16,7 +17,7 @@ import javax.inject.Singleton
 
 @Singleton
 class EthereumJsonRpcRepository @Inject constructor(private val ethereumJsonRpcApi: EthereumJsonRpcApi,
-                                                    private val gethAccountManager: GethAccountManager) {
+                                                    private val accountsRepository: AccountsRepository) {
     companion object {
         const val DEFAULT_BLOCK_EARLIEST = "earliest"
         const val DEFAULT_BLOCK_LATEST = "latest"
@@ -24,11 +25,13 @@ class EthereumJsonRpcRepository @Inject constructor(private val ethereumJsonRpcA
     }
 
     fun getBalance(): Observable<Wei> =
-            ethereumJsonRpcApi.post(
-                    JsonRpcRequest(
-                            method = "eth_getBalance",
-                            params = arrayListOf(gethAccountManager.getActiveAccount().address.hex, DEFAULT_BLOCK_LATEST)))
-                    .map { Wei(it.result.hexAsBigInteger()) }
+            accountsRepository.loadActiveAccount().flatMap {
+                ethereumJsonRpcApi.post(
+                        JsonRpcRequest(
+                                method = "eth_getBalance",
+                                params = arrayListOf(it.address, DEFAULT_BLOCK_LATEST)))
+                        .map { Wei(it.result.hexAsBigInteger()) }
+            }
 
     fun getLatestBlock(): Observable<BigInteger> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_blockNumber"))
@@ -45,9 +48,11 @@ class EthereumJsonRpcRepository @Inject constructor(private val ethereumJsonRpcA
                     .map { it.result }
 
     fun getTransactionCount(): Observable<BigInteger> =
-            ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
-                    params = arrayListOf(gethAccountManager.getActiveAccount().address.hex, DEFAULT_BLOCK_LATEST)))
-                    .map { it.result.hexAsBigInteger() }
+            accountsRepository.loadActiveAccount().flatMap {
+                ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
+                        params = arrayListOf(it.address, DEFAULT_BLOCK_LATEST)))
+                        .map { it.result.hexAsBigInteger() }
+            }
 
     fun getGasPrice(): Observable<BigInteger> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_gasPrice"))

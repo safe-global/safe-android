@@ -5,12 +5,12 @@ import pm.gnosis.android.app.authenticator.data.exceptions.InvalidAddressExcepti
 import pm.gnosis.android.app.authenticator.data.model.TransactionCallParams
 import pm.gnosis.android.app.authenticator.data.model.Wei
 import pm.gnosis.android.app.authenticator.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.android.app.authenticator.util.asHexString
-import pm.gnosis.android.app.authenticator.util.isSolidityMethod
 import pm.gnosis.android.app.authenticator.util.isValidEthereumAddress
-import pm.gnosis.android.app.authenticator.util.removeSolidityMethodPrefix
 import pm.gnosis.android.app.wallet.MultiSigWalletWithDailyLimit
 import pm.gnosis.android.app.wallet.StandardToken
+import pm.gnosis.utils.isSolidityMethod
+import pm.gnosis.utils.removeSolidityMethodPrefix
+import pm.gnosis.utils.toHex
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,12 +19,12 @@ import javax.inject.Singleton
 class GnosisMultisigWrapper @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository) {
 
     companion object {
-        fun decodeTransactionResult(hex: String): Transaction? {
+        fun decodeTransactionResult(hex: String): WrapperTransaction? {
             val noPrefix = hex.removePrefix("0x")
             if (noPrefix.isEmpty() || noPrefix.length.rem(64) != 0) return null
 
             val transaction = MultiSigWalletWithDailyLimit.Transactions.decode(noPrefix)
-            val innerData = transaction.data.items.asHexString()
+            val innerData = transaction.data.items.toHex()
             return when {
                 innerData.isSolidityMethod(MultiSigWalletWithDailyLimit.ReplaceOwner.METHOD_ID) -> {
                     val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ReplaceOwner.METHOD_ID)
@@ -58,19 +58,19 @@ class GnosisMultisigWrapper @Inject constructor(private val ethereumJsonRpcRepos
         }
     }
 
-    fun getTransaction(address: String, transactionId: BigInteger): Observable<Transaction> {
+    fun getTransaction(address: String, transactionId: BigInteger): Observable<WrapperTransaction> {
         if (!address.isValidEthereumAddress()) return Observable.error(InvalidAddressException(address))
         return ethereumJsonRpcRepository.call(TransactionCallParams(to = address,
                 data = "${MultiSigWalletWithDailyLimit.Transactions.METHOD_ID}${transactionId.toString(16).padStart(64, '0')}"))
                 .map { decodeTransactionResult(it)!! }
     }
 
-    interface Transaction
-    data class Transfer(val address: BigInteger, val value: Wei) : Transaction
-    data class ChangeDailyLimit(val newDailyLimit: BigInteger) : Transaction
-    data class TokenTransfer(val tokenAddress: BigInteger, val recipient: BigInteger, val tokens: BigInteger) : Transaction
-    data class ReplaceOwner(val owner: BigInteger, val newOwner: BigInteger) : Transaction
-    data class AddOwner(val owner: BigInteger) : Transaction
-    data class RemoveOwner(val owner: BigInteger) : Transaction
-    data class ChangeConfirmations(val newConfirmations: BigInteger) : Transaction
+    interface WrapperTransaction
+    data class Transfer(val address: BigInteger, val value: Wei) : WrapperTransaction
+    data class ChangeDailyLimit(val newDailyLimit: BigInteger) : WrapperTransaction
+    data class TokenTransfer(val tokenAddress: BigInteger, val recipient: BigInteger, val tokens: BigInteger) : WrapperTransaction
+    data class ReplaceOwner(val owner: BigInteger, val newOwner: BigInteger) : WrapperTransaction
+    data class AddOwner(val owner: BigInteger) : WrapperTransaction
+    data class RemoveOwner(val owner: BigInteger) : WrapperTransaction
+    data class ChangeConfirmations(val newConfirmations: BigInteger) : WrapperTransaction
 }

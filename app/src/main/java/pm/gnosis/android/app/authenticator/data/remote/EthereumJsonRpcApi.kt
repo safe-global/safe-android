@@ -1,7 +1,7 @@
 package pm.gnosis.android.app.authenticator.data.remote
 
 import io.reactivex.Observable
-import pm.gnosis.android.app.authenticator.BuildConfig
+import pm.gnosis.android.app.core.BuildConfig
 import pm.gnosis.android.app.authenticator.data.model.JsonRpcRequest
 import pm.gnosis.android.app.authenticator.data.model.JsonRpcResult
 import retrofit2.http.Body

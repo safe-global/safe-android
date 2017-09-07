@@ -1,13 +1,11 @@
-package pm.gnosis.android.app.authenticator.data.geth
+package pm.gnosis.android.app.accounts.repositories.impl
 
 import org.ethereum.geth.Account
 import org.ethereum.geth.KeyStore
-import pm.gnosis.android.app.authenticator.BuildConfig
+import pm.gnosis.android.app.core.BuildConfig
 import pm.gnosis.android.app.authenticator.data.PreferencesManager
 import pm.gnosis.android.app.authenticator.util.edit
-import pm.gnosis.android.app.authenticator.util.generateRandomString
-import pm.gnosis.android.app.authenticator.util.hexToByteArray
-import pm.gnosis.android.app.authenticator.util.test.TestRPC
+import pm.gnosis.utils.hexStringToByteArray
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,10 +16,10 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
         if (keyStore.accounts.size() == 0L) {
             @Suppress("ConstantConditionIf")
             if (BuildConfig.PRIVATE_TEST_NET) {
-                TestRPC.accounts.iterator().forEach({
+                pm.gnosis.android.app.authenticator.util.test.TestRPC.accounts.iterator().forEach({
                     val privateKey = it.value.first
                     val passphrase = it.value.second
-                    keyStore.importECDSAKey(privateKey.hexToByteArray(), passphrase)
+                    keyStore.importECDSAKey(privateKey.hexStringToByteArray(), passphrase)
                 })
             } else {
                 keyStore.newAccount(getAccountPassphrase())
@@ -42,26 +40,26 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
 
     fun setActiveAccount(publicKey: String): Boolean {
         getAccounts().find { it.address.hex == publicKey }?.let {
-            preferencesManager.prefs.edit { putString(PreferencesManager.CURRENT_ACCOUNT_ADDRESS_KEY, it.address.hex) }
+            preferencesManager.prefs.edit { putString(PreferencesManager.Companion.CURRENT_ACCOUNT_ADDRESS_KEY, it.address.hex) }
             return true
         }
         return false
     }
 
     fun getActiveAccount(): Account =
-            getAccounts().find { it.address.hex == preferencesManager.prefs.getString(PreferencesManager.CURRENT_ACCOUNT_ADDRESS_KEY, null) }!! //we should always have an active account
+            getAccounts().find { it.address.hex == preferencesManager.prefs.getString(pm.gnosis.android.app.authenticator.data.PreferencesManager.Companion.CURRENT_ACCOUNT_ADDRESS_KEY, null) }!! //we should always have an active account
 
 
     fun getAccountPassphrase(): String {
         @Suppress("ConstantConditionIf")
         (return if (BuildConfig.PRIVATE_TEST_NET) {
-            TestRPC.accounts[getActiveAccount().address.hex]?.second!!
+            pm.gnosis.android.app.authenticator.util.test.TestRPC.accounts[getActiveAccount().address.hex]?.second!!
         } else {
-            var passphrase = preferencesManager.prefs.getString(PreferencesManager.PASSPHRASE_KEY, "")
+            var passphrase = preferencesManager.prefs.getString(pm.gnosis.android.app.authenticator.data.PreferencesManager.Companion.PASSPHRASE_KEY, "")
             if (passphrase.isEmpty()) {
                 preferencesManager.prefs.edit {
-                    passphrase = generateRandomString()
-                    putString(PreferencesManager.PASSPHRASE_KEY, passphrase)
+                    passphrase = pm.gnosis.android.app.authenticator.util.generateRandomString()
+                    putString(pm.gnosis.android.app.authenticator.data.PreferencesManager.Companion.PASSPHRASE_KEY, passphrase)
                 }
             }
             passphrase
