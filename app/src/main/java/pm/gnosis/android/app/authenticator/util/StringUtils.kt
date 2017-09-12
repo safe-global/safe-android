@@ -31,6 +31,12 @@ fun String.hexToByteArray(): ByteArray {
     return data
 }
 
+fun ByteArray.asHexString(): String {
+    val builder = StringBuilder()
+    this.forEach { builder.append(String.format("%02x", it)) }
+    return builder.toString()
+}
+
 fun String.addAddressPrefix() = if (!this.startsWith("0x")) "0x$this" else this
 
 fun String.isSolidityMethod(methodId: String) = this.removePrefix("0x").startsWith(methodId.removePrefix("0x"))

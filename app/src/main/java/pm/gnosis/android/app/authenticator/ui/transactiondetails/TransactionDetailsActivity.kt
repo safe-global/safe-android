@@ -27,6 +27,7 @@ import pm.gnosis.android.app.authenticator.data.model.Wei
 import pm.gnosis.android.app.authenticator.di.component.DaggerViewComponent
 import pm.gnosis.android.app.authenticator.di.module.ViewModule
 import pm.gnosis.android.app.authenticator.util.*
+import pm.gnosis.android.app.wallet.MultiSigWalletWithDailyLimit
 import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -54,13 +55,15 @@ class TransactionDetailsActivity : AppCompatActivity() {
         }
 
         when {
-            t.data.isSolidityMethod(GnosisMultisigWrapper.CONFIRM_TRANSACTION_METHOD_ID) -> {
+            t.data.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID) -> {
                 activity_transaction_details_button.text = "Confirm Transaction"
-                activity_transaction_details_transaction_id.text = GnosisMultisigWrapper.decodeConfirm(t.data)?.asDecimalString() ?: "-"
+                val argument = t.data.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID)
+                activity_transaction_details_transaction_id.text = MultiSigWalletWithDailyLimit.ConfirmTransaction.decodeArguments(argument).transactionid.value.asDecimalString() ?: "-"
             }
-            t.data.isSolidityMethod(GnosisMultisigWrapper.REVOKE_TRANSACTION_METHOD_ID) -> {
+            t.data.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID) -> {
                 activity_transaction_details_button.text = "Revoke Transaction"
-                activity_transaction_details_transaction_id.text = GnosisMultisigWrapper.decodeRevoke(t.data)?.asDecimalString() ?: "-"
+                val argument = t.data.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID)
+                activity_transaction_details_transaction_id.text = MultiSigWalletWithDailyLimit.RevokeConfirmation.decodeArguments(argument).transactionid.value.asDecimalString() ?: "-"
             }
             else -> activity_transaction_details_button.visibility = View.GONE
         }
@@ -220,9 +223,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
     private fun onSendTransaction(transactionHash: String) {
         transaction.data?.let {
-            if (it.isSolidityMethod(GnosisMultisigWrapper.CONFIRM_TRANSACTION_METHOD_ID)) {
+            if (it.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID)) {
                 toast("Transaction confirmed")
-            } else if (it.isSolidityMethod(GnosisMultisigWrapper.REVOKE_TRANSACTION_METHOD_ID)) {
+            } else if (it.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID)) {
                 toast("Transaction revoked")
             }
         }
