@@ -10,6 +10,7 @@ import pm.gnosis.android.app.authenticator.util.isSolidityMethod
 import pm.gnosis.android.app.authenticator.util.isValidEthereumAddress
 import pm.gnosis.android.app.authenticator.util.removeSolidityMethodPrefix
 import pm.gnosis.android.app.wallet.MultiSigWalletWithDailyLimit
+import pm.gnosis.android.app.wallet.StandardToken
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,6 +45,13 @@ class GnosisMultisigWrapper @Inject constructor(private val ethereumJsonRpcRepos
                 innerData.isSolidityMethod(MultiSigWalletWithDailyLimit.ChangeRequirement.METHOD_ID) -> {
                     val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ChangeRequirement.METHOD_ID)
                     MultiSigWalletWithDailyLimit.ChangeRequirement.decodeArguments(arguments).let { ChangeConfirmations(it._required.value) }
+                }
+                innerData.isSolidityMethod(StandardToken.Transfer.METHOD_ID) -> {
+                    val arguments = innerData.removeSolidityMethodPrefix(StandardToken.Transfer.METHOD_ID)
+                    StandardToken.Transfer.decodeArguments(arguments).let { TokenTransfer(transaction.destination.value, it.to.value, it.value.value) }
+                }
+                transaction.value.value != BigInteger.ZERO -> {
+                    Transfer(transaction.destination.value, Wei(transaction.value.value))
                 }
                 else -> null
             }
