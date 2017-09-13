@@ -104,7 +104,7 @@ dependencies {
 
     //Ethereum
     implementation "org.ethereum:geth:$versions.geth"
-    implementation 'com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:v0.1.0'
+    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
     testImplementation "junit:junit:$versions.junit"
 

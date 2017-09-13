@@ -12,7 +12,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$versions.android_tools"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
-        classpath 'com.github.gnosis.bivrost-kotlin:bivrost-gradle-plugin:v0.1.0'
+        classpath "com.github.gnosis.bivrost-kotlin:bivrost-gradle-plugin:$versions.bivrost"
     }
 }
 
