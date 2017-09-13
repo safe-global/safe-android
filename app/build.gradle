@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: "pm.gnosis.abiparser"
+apply plugin: 'bivrost'
 
 android {
     compileSdkVersion 26
@@ -104,7 +104,7 @@ dependencies {
 
     //Ethereum
     implementation "org.ethereum:geth:$versions.geth"
-    implementation 'com.github.gnosis.abi-kotlin:abi-data-types:master-SNAPSHOT'
+    implementation 'com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:v0.1.0'
 
     testImplementation "junit:junit:$versions.junit"
 
