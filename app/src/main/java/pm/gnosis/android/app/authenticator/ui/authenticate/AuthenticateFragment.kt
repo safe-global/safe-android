@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_authenticate.*
 import pm.gnosis.android.app.authenticator.R
-import pm.gnosis.android.app.authenticator.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.android.app.authenticator.di.component.ApplicationComponent
 import pm.gnosis.android.app.authenticator.di.component.DaggerViewComponent
 import pm.gnosis.android.app.authenticator.di.module.ViewModule
@@ -18,6 +17,7 @@ import pm.gnosis.android.app.authenticator.util.isSolidityMethod
 import pm.gnosis.android.app.authenticator.util.scanQrCode
 import pm.gnosis.android.app.authenticator.util.snackbar
 import pm.gnosis.android.app.authenticator.util.zxing.ZxingIntentIntegrator
+import pm.gnosis.android.app.wallet.MultiSigWalletWithDailyLimit
 
 class AuthenticateFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -45,8 +45,8 @@ class AuthenticateFragment : BaseFragment() {
         val transaction = ERC67Parser.parse(qrCodeData)
         if (transaction != null) {
             val data = transaction.data
-            if (data != null && (data.isSolidityMethod(GnosisMultisigWrapper.CONFIRM_TRANSACTION_METHOD_ID) ||
-                    data.isSolidityMethod(GnosisMultisigWrapper.REVOKE_TRANSACTION_METHOD_ID))) {
+            if (data != null && (data.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID) ||
+                    data.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID))) {
                 val intent = Intent(context, TransactionDetailsActivity::class.java)
                 intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transaction)
                 startActivity(intent)

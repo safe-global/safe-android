@@ -2,212 +2,67 @@ package pm.gnosis.android.app.authenticator.data.contracts
 
 import io.reactivex.Observable
 import pm.gnosis.android.app.authenticator.data.exceptions.InvalidAddressException
-import pm.gnosis.android.app.authenticator.data.geth.GethRepository
 import pm.gnosis.android.app.authenticator.data.model.TransactionCallParams
 import pm.gnosis.android.app.authenticator.data.model.Wei
 import pm.gnosis.android.app.authenticator.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.android.app.authenticator.util.*
+import pm.gnosis.android.app.authenticator.util.asHexString
+import pm.gnosis.android.app.authenticator.util.isSolidityMethod
+import pm.gnosis.android.app.authenticator.util.isValidEthereumAddress
+import pm.gnosis.android.app.authenticator.util.removeSolidityMethodPrefix
+import pm.gnosis.android.app.wallet.MultiSigWalletWithDailyLimit
+import pm.gnosis.android.app.wallet.StandardToken
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GnosisMultisigWrapper @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
-                                                private val gethRepository: GethRepository) {
+class GnosisMultisigWrapper @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository) {
 
     companion object {
-        const val CONFIRM_TRANSACTION_METHOD_ID = "c01a8c84"
-        const val REVOKE_TRANSACTION_METHOD_ID = "20ea8d86"
-        const val TRANSACTIONS_METHOD_ID = "9ace38c2"
-        const val CHANGE_DAILY_LIMIT_METHOD_ID = "cea08621"
-        const val ADD_OWNER_METHOD_ID = "7065cb48"
-        const val REMOVE_OWNER_METHOD_ID = "173825d9"
-        const val REPLACE_OWNER_METHOD_ID = "e20056e6"
-        const val CHANGE_CONFIRMATIONS_METHOD_ID = "ba51a6df"
-
         fun decodeTransactionResult(hex: String): Transaction? {
-            var noPrefix = hex.removePrefix("0x")
+            val noPrefix = hex.removePrefix("0x")
             if (noPrefix.isEmpty() || noPrefix.length.rem(64) != 0) return null
-            val properties = arrayListOf<String>()
 
-            while (noPrefix.length >= 64) {
-                properties.add(noPrefix.subSequence(0, 64).toString())
-                noPrefix = noPrefix.removeRange(0..63)
-            }
-
-            if (properties.size == 8) {
-                if (properties[5].isSolidityMethod(REPLACE_OWNER_METHOD_ID)) {
-                    var innerData = properties[5] + properties[6] + properties[7]
-                    innerData = innerData.substring(0, innerData.length - 56)
-                    return decodeReplaceOwner(innerData)
-                } else if (properties[5].isSolidityMethod(ERC20.TRANSFER_METHOD_ID)) {
-                    var innerData = properties[5] + properties[6] + properties[7]
-                    innerData = innerData.substring(0, innerData.length - 56)
-                    ERC20.parseTransferData(innerData)?.let { (to, value) ->
-                        properties[0].hexAsBigIntegerOrNull()?.let {
-                            return TokenTransfer(it, to, value)
-                        }
-                    }
+            val transaction = MultiSigWalletWithDailyLimit.Transactions.decode(noPrefix)
+            val innerData = transaction.data.items.asHexString()
+            return when {
+                innerData.isSolidityMethod(MultiSigWalletWithDailyLimit.ReplaceOwner.METHOD_ID) -> {
+                    val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ReplaceOwner.METHOD_ID)
+                    MultiSigWalletWithDailyLimit.ReplaceOwner.decodeArguments(arguments).let { ReplaceOwner(it.owner.value, it.newowner.value) }
                 }
-            } else if (properties.size == 7) {
-                when {
-                    properties[5].isSolidityMethod(CHANGE_DAILY_LIMIT_METHOD_ID) -> {
-                        var innerData = properties[5] + properties[6]
-                        innerData = innerData.substring(0, innerData.length - 56)
-                        return decodeChangeDailyLimit(innerData)
-                    }
-                    properties[5].isSolidityMethod(ADD_OWNER_METHOD_ID) -> {
-                        var innerData = properties[5] + properties[6]
-                        innerData = innerData.substring(0, innerData.length - 56)
-                        return decodeAddOwner(innerData)
-                    }
-                    properties[5].isSolidityMethod(REMOVE_OWNER_METHOD_ID) -> {
-                        var innerData = properties[5] + properties[6]
-                        innerData = innerData.substring(0, innerData.length - 56)
-                        return decodeRemoveOwner(innerData)
-                    }
-                    properties[5].isSolidityMethod(CHANGE_CONFIRMATIONS_METHOD_ID) -> {
-                        var innerData = properties[5] + properties[6]
-                        innerData = innerData.substring(0, innerData.length - 56)
-                        return decodeChangeConfirmations(innerData)
-                    }
+                innerData.isSolidityMethod(MultiSigWalletWithDailyLimit.ChangeDailyLimit.METHOD_ID) -> {
+                    val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ChangeDailyLimit.METHOD_ID)
+                    MultiSigWalletWithDailyLimit.ChangeDailyLimit.decodeArguments(arguments).let { ChangeDailyLimit(it._dailylimit.value) }
                 }
-            } else if (properties.size == 5) { //normal transaction
-                return Transfer(properties[0].hexAsBigInteger(),
-                        Wei(properties[1].hexAsBigInteger()))
-            }
-
-            return null
-
-        }
-
-        private fun decodeRemoveOwner(data: String): RemoveOwner? {
-            if (!data.isSolidityMethod(REMOVE_OWNER_METHOD_ID)) {
-                return null
-            }
-            val args = data.removeSolidityMethodPrefix(REMOVE_OWNER_METHOD_ID)
-            if (args.length == 64) {
-                decodeUint256(args.substring(0..63))?.let {
-                    return RemoveOwner(it)
+                innerData.isSolidityMethod(MultiSigWalletWithDailyLimit.AddOwner.METHOD_ID) -> {
+                    val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.AddOwner.METHOD_ID)
+                    MultiSigWalletWithDailyLimit.AddOwner.decodeArguments(arguments).let { AddOwner(it.owner.value) }
                 }
-            }
-            return null
-        }
-
-        private fun decodeAddOwner(data: String): AddOwner? {
-            if (!data.isSolidityMethod(ADD_OWNER_METHOD_ID)) {
-                return null
-            }
-            val args = data.removeSolidityMethodPrefix(ADD_OWNER_METHOD_ID)
-            if (args.length == 64) {
-                decodeUint256(args.substring(0..63))?.let {
-                    return AddOwner(it)
+                innerData.isSolidityMethod(MultiSigWalletWithDailyLimit.RemoveOwner.METHOD_ID) -> {
+                    val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.RemoveOwner.METHOD_ID)
+                    MultiSigWalletWithDailyLimit.RemoveOwner.decodeArguments(arguments).let { RemoveOwner(it.owner.value) }
                 }
-            }
-            return null
-        }
-
-        private fun decodeChangeConfirmations(data: String): ChangeConfirmations? {
-            if (!data.isSolidityMethod(CHANGE_CONFIRMATIONS_METHOD_ID)) {
-                return null
-            }
-            val args = data.removeSolidityMethodPrefix(CHANGE_CONFIRMATIONS_METHOD_ID)
-            if (args.length == 64) {
-                decodeUint256(args.substring(0..63))?.let {
-                    return ChangeConfirmations(it)
+                innerData.isSolidityMethod(MultiSigWalletWithDailyLimit.ChangeRequirement.METHOD_ID) -> {
+                    val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ChangeRequirement.METHOD_ID)
+                    MultiSigWalletWithDailyLimit.ChangeRequirement.decodeArguments(arguments).let { ChangeConfirmations(it._required.value) }
                 }
-            }
-            return null
-        }
-
-        fun decodeConfirm(data: String): BigInteger? {
-            if (!data.isSolidityMethod(CONFIRM_TRANSACTION_METHOD_ID)) {
-                return null
-            }
-            return decodeUint256(data.removeSolidityMethodPrefix(CONFIRM_TRANSACTION_METHOD_ID))
-        }
-
-        fun decodeRevoke(data: String): BigInteger? {
-            if (!data.isSolidityMethod(REVOKE_TRANSACTION_METHOD_ID)) {
-                return null
-            }
-            return decodeUint256(data.removeSolidityMethodPrefix(REVOKE_TRANSACTION_METHOD_ID))
-        }
-
-        fun decodeChangeDailyLimit(data: String): ChangeDailyLimit? {
-            if (!data.isSolidityMethod(CHANGE_DAILY_LIMIT_METHOD_ID)) {
-                return null
-            }
-            val args = data.removeSolidityMethodPrefix(CHANGE_DAILY_LIMIT_METHOD_ID)
-            if (args.length == 64) {
-                decodeUint256(args.substring(0..63))?.let {
-                    return ChangeDailyLimit(it)
+                innerData.isSolidityMethod(StandardToken.Transfer.METHOD_ID) -> {
+                    val arguments = innerData.removeSolidityMethodPrefix(StandardToken.Transfer.METHOD_ID)
+                    StandardToken.Transfer.decodeArguments(arguments).let { TokenTransfer(transaction.destination.value, it.to.value, it.value.value) }
                 }
-            }
-            return null
-        }
-
-        fun decodeReplaceOwner(data: String): ReplaceOwner? {
-            if (!data.isSolidityMethod(REPLACE_OWNER_METHOD_ID)) {
-                return null
-            }
-            val args = data.removeSolidityMethodPrefix(REPLACE_OWNER_METHOD_ID)
-            if (args.length >= 128) {
-                val owner = decodeUint256(args.substring(0..63))
-                val newOwner = decodeUint256(args.substring(64..127))
-                if (owner != null && newOwner != null) {
-                    return ReplaceOwner(owner, newOwner)
+                transaction.value.value != BigInteger.ZERO -> {
+                    Transfer(transaction.destination.value, Wei(transaction.value.value))
                 }
+                else -> null
             }
-            return null
-        }
-
-        private fun decodeUint256(data: String): BigInteger? {
-            if (data.length == 64) {
-                return data.hexAsBigIntegerOrNull()
-            }
-            return null
         }
     }
 
     fun getTransaction(address: String, transactionId: BigInteger): Observable<Transaction> {
         if (!address.isValidEthereumAddress()) return Observable.error(InvalidAddressException(address))
         return ethereumJsonRpcRepository.call(TransactionCallParams(to = address,
-                data = "$TRANSACTIONS_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"))
+                data = "${MultiSigWalletWithDailyLimit.Transactions.METHOD_ID}${transactionId.toString(16).padStart(64, '0')}"))
                 .map { decodeTransactionResult(it)!! }
-    }
-
-    fun confirmTransaction(address: String, transactionId: BigInteger): Observable<String> {
-        if (!address.isValidEthereumAddress()) return Observable.error(InvalidAddressException(address))
-        val data = "$CONFIRM_TRANSACTION_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"
-        val transactionCallParams = TransactionCallParams(to = address, data = data, from = gethRepository.getAccount().address.hex)
-        return ethereumJsonRpcRepository.getTransactionParameters(transactionCallParams)
-                .map {
-                    gethRepository.signTransaction(
-                            nonce = it.nonce,
-                            to = address.hexAsBigInteger(),
-                            gasLimit = it.gas,
-                            gasPrice = it.gasPrice,
-                            data = data,
-                            amount = BigInteger.ZERO)
-                }
-                .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
-    }
-
-    fun revokeTransaction(address: String, transactionId: BigInteger, transactionCallParams: TransactionCallParams): Observable<String> {
-        if (!address.isValidEthereumAddress()) return Observable.error(InvalidAddressException(address))
-        val data = "$REVOKE_TRANSACTION_METHOD_ID${transactionId.toString(16).padStart(64, '0')}"
-        return ethereumJsonRpcRepository.getTransactionParameters(transactionCallParams)
-                .map {
-                    gethRepository.signTransaction(
-                            nonce = it.nonce,
-                            to = address.hexAsBigInteger(),
-                            gasLimit = it.gas,
-                            gasPrice = it.gasPrice,
-                            data = data,
-                            amount = BigInteger.ZERO)
-                }
-                .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
     }
 
     interface Transaction
