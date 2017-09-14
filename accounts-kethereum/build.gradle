@@ -1,0 +1,17 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+
+    implementation project(":accounts-base")
+    implementation project(":app-core")
+    api project(":crypto")
+
+    kapt "com.google.dagger:dagger-compiler:$versions.dagger"
+
+    api "com.github.walleth.kethereum:rlp:$versions.kethereum"
+}

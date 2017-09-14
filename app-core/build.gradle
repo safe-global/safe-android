@@ -1,0 +1,50 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+android {
+
+    defaultConfig {
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString("https://mainnet.infura.io")
+        buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY"))
+        buildConfigField javaTypes.BOOLEAN, "PRIVATE_TEST_NET", javaTypes.FALSE
+    }
+
+    buildTypes {
+        chainTest {
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL"))
+            buildConfigField javaTypes.BOOLEAN, "PRIVATE_TEST_NET", getKey("PRIVATE_TEST_NET", javaTypes.FALSE)
+        }
+
+        debug {
+            buildConfigField javaTypes.BOOLEAN, "PRIVATE_TEST_NET", javaTypes.TRUE
+        }
+    }
+}
+
+dependencies {
+
+    api project(":utils")
+
+    api "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
+    api "com.android.support:appcompat-v7:$versions.android_support"
+    api "com.android.support:cardview-v7:$versions.android_support"
+    api "com.android.support:design:$versions.android_support"
+
+    api "com.jakewharton.timber:timber:$versions.timber"
+    //https://github.com/square/moshi/issues/315
+    api "com.squareup.moshi:moshi:$versions.moshi"
+    api "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
+    api "io.reactivex.rxjava2:rxjava:$versions.rxjava"
+    api "io.reactivex.rxjava2:rxkotlin:$versions.rxkotlin"
+    api "com.gojuno.koptional:koptional:$versions.koptional"
+
+    api "com.google.zxing:core:$versions.zxing"
+
+    //Dagger
+    api "com.google.dagger:dagger:$versions.dagger"
+    kapt "com.google.dagger:dagger-compiler:$versions.dagger"
+}

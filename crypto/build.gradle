@@ -1,0 +1,12 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+dependencies {
+    api project(":utils")
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
+    api "com.madgag.spongycastle:prov:$versions.spongycastle"
+}

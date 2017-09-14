@@ -106,7 +106,7 @@ class TokensFragment : BaseFragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_token_info, null)
 
         if (token.decimals != null) {
-            dialogView.dialog_token_info_decimals.text = token.decimals.asDecimalString()
+            dialogView.dialog_token_info_decimals.text = token.decimals?.asDecimalString()
         } else {
             dialogView.dialog_token_info_decimals_container.visibility = View.GONE
         }
