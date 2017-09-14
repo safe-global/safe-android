@@ -8,13 +8,14 @@ import org.ethereum.geth.KeyStore
 import pm.gnosis.android.app.accounts.repositories.AccountsRepository
 import pm.gnosis.android.app.accounts.repositories.impl.GethAccountManager
 import pm.gnosis.android.app.accounts.repositories.impl.GethAccountsRepository
+import pm.gnosis.android.app.authenticator.di.ApplicationContext
 import javax.inject.Singleton
 
 @Module
-class AccountsModule(val context: Context) {
+class AccountsModule {
     @Provides
     @Singleton
-    fun providesGethKeyStore() = KeyStore("${context.filesDir}/keystore", Geth.LightScryptN, Geth.LightScryptP)
+    fun providesGethKeyStore(@ApplicationContext context: Context) = KeyStore("${context.filesDir}/keystore", Geth.LightScryptN, Geth.LightScryptP)
 
     @Provides
     @Singleton

@@ -9,6 +9,7 @@ import pm.gnosis.android.app.accounts.models.Account
 import pm.gnosis.android.app.accounts.models.Transaction
 import pm.gnosis.android.app.accounts.repositories.AccountsRepository
 import pm.gnosis.android.app.authenticator.util.asEthereumAddressString
+import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,17 +33,15 @@ class GethAccountsRepository @Inject constructor(
                     transaction.nonce.toLong(),
                     Address(transaction.to.asEthereumAddressString()),
                     BigInt(transaction.value.toLong()),
-                    BigInt(transaction.startGas.toLong()),
+                    BigInt(transaction.adjustedStartGas.toLong()),
                     BigInt(transaction.gasPrice.toLong()),
                     transaction.data)
 
 
             val signed = gethKeyStore.signTxPassphrase(
-                    account, gethAccountManager.getAccountPassphrase(), tx, BigInt(transaction.chainCode.toLong()))
+                    account, gethAccountManager.getAccountPassphrase(), tx, BigInt(transaction.chainId.toLong()))
 
-            val builder = StringBuilder()
-            signed.encodeRLP().forEach { builder.append(String.format("%02x", it)) }
-            "0x$builder"
+            signed.encodeRLP().toHexString()
         }
     }
 }

@@ -1,7 +1,7 @@
 package pm.gnosis.android.app.authenticator.di.module
 
-import android.app.Application
 import android.arch.persistence.room.Room
+import android.content.Context
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -12,6 +12,7 @@ import pm.gnosis.android.app.authenticator.data.db.GnosisAuthenticatorDb
 import pm.gnosis.android.app.authenticator.data.model.HexNumberAdapter
 import pm.gnosis.android.app.authenticator.data.model.WeiAdapter
 import pm.gnosis.android.app.authenticator.data.remote.EthereumJsonRpcApi
+import pm.gnosis.android.app.authenticator.di.ApplicationContext
 import pm.gnosis.android.app.core.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -20,7 +21,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-class ApplicationModule(val application: Application) {
+class ApplicationModule {
     companion object {
         const val INFURA_API_KEY_INTERCEPTOR = "infuraApiKeyInterceptor"
         const val ETHEREUM_JSON_RPC_API_CLIENT = "ethereumJsonRpcApiClient"
@@ -70,5 +71,5 @@ class ApplicationModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun providesDb() = Room.databaseBuilder(application, GnosisAuthenticatorDb::class.java, GnosisAuthenticatorDb.DB_NAME).build()
+    fun providesDb(@ApplicationContext context: Context) = Room.databaseBuilder(context, GnosisAuthenticatorDb::class.java, GnosisAuthenticatorDb.DB_NAME).build()
 }

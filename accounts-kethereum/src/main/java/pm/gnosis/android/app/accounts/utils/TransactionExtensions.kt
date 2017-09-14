@@ -12,7 +12,7 @@ fun Transaction.rlp(signature: ECDSASignature? = null): ByteArray {
     val items = ArrayList<RLPElement>()
     items.add(nonce.toRLP())
     items.add(gasPrice.toRLP())
-    items.add(startGas.toRLP())
+    items.add(adjustedStartGas.toRLP())
     items.add(to.toRLP())
     items.add(value.toRLP())
     items.add(data.toRLP())
@@ -21,8 +21,8 @@ fun Transaction.rlp(signature: ECDSASignature? = null): ByteArray {
         items.add(adjustV(signature.v).toRLP())
         items.add(signature.r.toRLP())
         items.add(signature.s.toRLP())
-    } else if (chainCode > 0) {
-        items.add(chainCode.toRLP())
+    } else if (chainId > 0) {
+        items.add(chainId.toRLP())
         items.add(0.toRLP())
         items.add(0.toRLP())
     }
@@ -35,8 +35,8 @@ fun Transaction.hash(): ByteArray {
 }
 
 private fun Transaction.adjustV(v: Byte): Byte {
-    if (chainCode > 0) {
-        return (v.toInt() + 8 + 2 * chainCode).toByte()
+    if (chainId > 0) {
+        return (v.toInt() + 8 + 2 * chainId).toByte()
     }
     return v
 }
