@@ -1,7 +1,7 @@
 package pm.gnosis.mnemonic
 
+import pm.gnosis.mnemonic.wordlist.ENGLISH_WORD_LIST
 import pm.gnosis.mnemonic.wordlist.WordList
-import pm.gnosis.mnemonic.wordlist.englishWordList
 import pm.gnosis.utils.toBinaryString
 import pm.gnosis.utils.toHexString
 import java.security.MessageDigest
@@ -44,7 +44,7 @@ object Bip39 {
         return mnemonicToSeed(mnemonic, password).toHexString()
     }
 
-    fun generateMnemonic(strength: Int = MIN_ENTROPY_BITS, wordList: WordList = englishWordList): String {
+    fun generateMnemonic(strength: Int = MIN_ENTROPY_BITS, wordList: WordList = ENGLISH_WORD_LIST): String {
         if (strength < MIN_ENTROPY_BITS || strength > MAX_ENTROPY_BITS || strength % ENTROPY_MULTIPLE != 0) {
             throw IllegalArgumentException("Entropy length should be between $MIN_ENTROPY_BITS and $MAX_ENTROPY_BITS and be a multiple of $ENTROPY_MULTIPLE")
         }

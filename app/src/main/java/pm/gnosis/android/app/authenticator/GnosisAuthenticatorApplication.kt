@@ -2,12 +2,14 @@ package pm.gnosis.android.app.authenticator
 
 import android.content.Context
 import android.support.multidex.MultiDexApplication
+import org.spongycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.android.app.authenticator.di.component.ApplicationComponent
 import pm.gnosis.android.app.authenticator.di.component.DaggerApplicationComponent
 import pm.gnosis.android.app.authenticator.di.module.CoreModule
 import pm.gnosis.crypto.LinuxSecureRandom
 import timber.log.Timber
 import timber.log.Timber.DebugTree
+import java.security.Security
 
 class GnosisAuthenticatorApplication : MultiDexApplication() {
     val component: ApplicationComponent = DaggerApplicationComponent.builder()
@@ -20,8 +22,12 @@ class GnosisAuthenticatorApplication : MultiDexApplication() {
             Timber.plant(DebugTree())
         }
 
-        LinuxSecureRandom()
-        //Security.insertProviderAt(org.spongycastle.jce.provider.BouncyCastleProvider(), 1)
+        try {
+            LinuxSecureRandom()
+        } catch (e: Exception) {
+            Timber.e("Could not register LinuxSecureRandom. Using default SecureRandom.")
+        }
+        Security.insertProviderAt(BouncyCastleProvider(), 1)
     }
 
     companion object {

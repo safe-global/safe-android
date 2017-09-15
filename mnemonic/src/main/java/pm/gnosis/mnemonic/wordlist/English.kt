@@ -1,6 +1,6 @@
 package pm.gnosis.mnemonic.wordlist
 
-val englishWordList = WordList(" ", listOf(
+val ENGLISH_WORD_LIST = WordList(" ", listOf(
         "abandon",
         "ability",
         "able",

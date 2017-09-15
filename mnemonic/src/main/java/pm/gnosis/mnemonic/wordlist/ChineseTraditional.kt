@@ -1,6 +1,6 @@
 package pm.gnosis.mnemonic.wordlist
 
-val chineseTraditional = WordList(" ", listOf(
+val CHINESE_TRADITIONAL_WORD_LIST = WordList(" ", listOf(
         "的",
         "一",
         "是",
