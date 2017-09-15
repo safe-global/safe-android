@@ -7,4 +7,5 @@ targetCompatibility = JavaVersion.VERSION_1_8
 dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
     implementation "io.reactivex.rxjava2:rxkotlin:$versions.rxkotlin"
+    compile 'com.gojuno.koptional:koptional:1.2.0'
 }

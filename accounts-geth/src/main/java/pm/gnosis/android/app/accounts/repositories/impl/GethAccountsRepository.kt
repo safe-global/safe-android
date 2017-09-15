@@ -1,6 +1,6 @@
 package pm.gnosis.android.app.accounts.repositories.impl
 
-import io.reactivex.Observable
+import io.reactivex.Single
 import org.ethereum.geth.Address
 import org.ethereum.geth.BigInt
 import org.ethereum.geth.Geth
@@ -18,16 +18,16 @@ class GethAccountsRepository @Inject constructor(
         private val gethAccountManager: GethAccountManager,
         private val gethKeyStore: KeyStore
 ) : AccountsRepository {
-    override fun loadActiveAccount(): io.reactivex.Observable<Account> {
-        return Observable.fromCallable {
+    override fun loadActiveAccount(): Single<Account> {
+        return Single.fromCallable {
             gethAccountManager.getActiveAccount()
         }.map {
             Account(it.address.hex)
         }
     }
 
-    override fun signTransaction(transaction: Transaction): io.reactivex.Observable<String> {
-        return Observable.fromCallable {
+    override fun signTransaction(transaction: Transaction): Single<String> {
+        return Single.fromCallable {
             val account = gethAccountManager.getActiveAccount()
             val tx = Geth.newTransaction(
                     transaction.nonce.toLong(),

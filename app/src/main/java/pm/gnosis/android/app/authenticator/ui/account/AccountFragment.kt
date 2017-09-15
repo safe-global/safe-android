@@ -59,8 +59,8 @@ class AccountFragment : BaseFragment() {
     private fun accountAddressDisposable() = presenter.getAccountAddress()
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { onAccountBalanceLoading(true) }
-            .doOnTerminate { onAccountBalanceLoading(isLoading = false) }
-            .subscribeBy(onNext = {
+            .doAfterTerminate { onAccountBalanceLoading(isLoading = false) }
+            .subscribeBy(onSuccess = {
                 fragment_account_address.text = it.address
             }, onError = this::onAccountBalanceError)
 

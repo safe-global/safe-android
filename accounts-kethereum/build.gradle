@@ -1,9 +1,20 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
+
+android {
+    defaultConfig {
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+}
 
 dependencies {
 
@@ -14,4 +25,8 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
 
     api "com.github.walleth.kethereum:rlp:$versions.kethereum"
+
+    implementation "android.arch.persistence.room:runtime:$versions.architecture_components"
+    kapt "android.arch.persistence.room:compiler:$versions.architecture_components"
+    implementation "android.arch.persistence.room:rxjava2:$versions.architecture_components"
 }

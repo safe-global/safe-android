@@ -65,7 +65,7 @@ dependencies {
 
     implementation project(":app-core")
     implementation project(":accounts-base")
-    implementation project(":accounts-geth")
+    implementation project(":accounts-kethereum")
     implementation project(":crypto")
     implementation project(":mnemonic")
 

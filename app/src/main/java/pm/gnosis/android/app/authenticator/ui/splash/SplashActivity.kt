@@ -1,5 +1,6 @@
 package pm.gnosis.android.app.authenticator.ui.splash
 
+import android.arch.persistence.room.EmptyResultSetException
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -7,12 +8,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.rxkotlin.toSingle
 import pm.gnosis.android.app.authenticator.GnosisAuthenticatorApplication
 import pm.gnosis.android.app.authenticator.R
 import pm.gnosis.android.app.authenticator.di.component.DaggerViewComponent
 import pm.gnosis.android.app.authenticator.di.module.ViewModule
 import pm.gnosis.android.app.authenticator.ui.MainActivity
-import timber.log.Timber
 import javax.inject.Inject
 
 class SplashActivity : AppCompatActivity() {
@@ -28,12 +29,10 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += presenter.initialSetup()
+        disposables += presenter.initialSetup().toSingle()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onComplete = this::startApplication, onError = {
-                    Timber.e(it)
-                    startApplication()
-                })
+                .flatMap { presenter.loadActiveAccount() }
+                .subscribeBy(onSuccess = { startApplication() }, onError = this::onError)
     }
 
     private fun startApplication() {
@@ -42,6 +41,13 @@ class SplashActivity : AppCompatActivity() {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(i)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    private fun onError(throwable: Throwable) {
+        if (throwable is EmptyResultSetException) {
+            //TODO: No account we should go to the onboarding
+        }
+        startApplication()
     }
 
     override fun onStop() {
