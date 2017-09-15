@@ -5,9 +5,6 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import pm.gnosis.android.app.accounts.data.db.AccountsDb
-import pm.gnosis.android.app.accounts.repositories.AccountsRepository
-import pm.gnosis.android.app.accounts.repositories.impl.KethereumAccountsRepository
-import pm.gnosis.android.app.authenticator.data.PreferencesManager
 import pm.gnosis.android.app.authenticator.di.ApplicationContext
 import javax.inject.Singleton
 
