@@ -12,6 +12,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
 
         project.ext.set("archivesBaseName", String.format("gnosis-authenticator-%s", defaultConfig.versionCode))
 
@@ -33,6 +34,7 @@ android {
         chainTest {
             signingConfig signingConfigs.debug
             minifyEnabled false
+            debuggable true
         }
 
         debug {
@@ -64,10 +66,13 @@ dependencies {
     implementation project(":app-core")
     implementation project(":accounts-base")
     implementation project(":accounts-geth")
+    implementation project(":crypto")
+    implementation project(":mnemonic")
 
     implementation "android.arch.persistence.room:runtime:$versions.architecture_components"
     kapt "android.arch.persistence.room:compiler:$versions.architecture_components"
     implementation "android.arch.persistence.room:rxjava2:$versions.architecture_components"
+    implementation "com.android.support:multidex:$versions.multidex"
 
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-moshi:$versions.retrofit"

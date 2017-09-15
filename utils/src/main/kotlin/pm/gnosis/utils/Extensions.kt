@@ -66,3 +66,11 @@ fun String.addAddressPrefix() = if (!this.startsWith("0x")) "0x$this" else this
 
 fun String.isSolidityMethod(methodId: String) = this.removePrefix("0x").startsWith(methodId.removePrefix("0x"))
 fun String.removeSolidityMethodPrefix(methodId: String) = this.removePrefix("0x").removePrefix(methodId)
+
+fun ByteArray.toBinaryString(): String {
+    val sb = StringBuilder(this.size * java.lang.Byte.SIZE)
+    for (i in 0 until java.lang.Byte.SIZE * this.size) {
+        sb.append(if (this[i / java.lang.Byte.SIZE].toInt() shl i % java.lang.Byte.SIZE and 0x80 == 0) '0' else '1')
+    }
+    return sb.toString()
+}

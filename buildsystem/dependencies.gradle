@@ -16,6 +16,7 @@ ext {
             koptional              : '1.2.0',
             material_progressbar   : '1.4.1',
             moshi                  : '1.4.0',
+            multidex               : '1.0.2',
             okhttp                 : '3.8.1',
             okio                   : '1.13.0',
             retrofit               : '2.3.0',
