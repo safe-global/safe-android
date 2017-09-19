@@ -10,7 +10,7 @@ buildscript {
         maven { url 'https://www.jitpack.io' }
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$versions.android_tools"
+        classpath 'com.android.tools.build:gradle:3.0.0-beta6'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
         classpath "com.github.gnosis.bivrost-kotlin:bivrost-gradle-plugin:$versions.bivrost"
     }

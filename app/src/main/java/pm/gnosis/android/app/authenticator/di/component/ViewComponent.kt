@@ -10,6 +10,7 @@ import pm.gnosis.android.app.authenticator.ui.account.AccountFragment
 import pm.gnosis.android.app.authenticator.ui.account.AccountPresenter
 import pm.gnosis.android.app.authenticator.ui.authenticate.AuthenticateFragment
 import pm.gnosis.android.app.authenticator.ui.multisig.MultisigFragment
+import pm.gnosis.android.app.authenticator.ui.onboarding.GenerateMnemonicActivity
 import pm.gnosis.android.app.authenticator.ui.splash.SplashActivity
 import pm.gnosis.android.app.authenticator.ui.tokens.TokensFragment
 import pm.gnosis.android.app.authenticator.ui.transactiondetails.TransactionDetailsActivity
@@ -21,6 +22,7 @@ interface ViewComponent {
     fun accountPresenter(): AccountPresenter
 
     fun inject(activity: SplashActivity)
+    fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: MainActivity)
     fun inject(activity: TransactionDetailsActivity)
     fun inject(fragment: AccountFragment)

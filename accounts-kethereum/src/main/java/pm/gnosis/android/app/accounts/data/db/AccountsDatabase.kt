@@ -4,7 +4,7 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 
 @Database(entities = arrayOf(Account::class), version = 1)
-abstract class AccountsDb : RoomDatabase() {
+abstract class AccountsDatabase : RoomDatabase() {
     companion object {
         const val DB_NAME = "gnosis-accounts-db"
     }

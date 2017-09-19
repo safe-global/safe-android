@@ -2,7 +2,7 @@ package pm.gnosis.android.app.accounts.repositories.impl
 
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.android.app.accounts.data.db.AccountsDb
+import pm.gnosis.android.app.accounts.data.db.AccountsDatabase
 import pm.gnosis.android.app.accounts.models.Account
 import pm.gnosis.android.app.accounts.models.Transaction
 import pm.gnosis.android.app.accounts.repositories.AccountsRepository
@@ -16,10 +16,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class KethereumAccountsRepository @Inject constructor(private val accountsDb: AccountsDb) : AccountsRepository {
+class KethereumAccountsRepository @Inject constructor(private val accountsDatabase: AccountsDatabase) : AccountsRepository {
     override fun loadActiveAccount(): Single<Account> {
         return keyPairFromActiveAccount()
-                .map { it.pubKey.toHexString().asEthereumAddressString() }
+                .map { it.address.toHexString().asEthereumAddressString() }
                 .map { Account(it) }
     }
 
@@ -29,7 +29,7 @@ class KethereumAccountsRepository @Inject constructor(private val accountsDb: Ac
     }
 
     private fun keyPairFromActiveAccount(): Single<KeyPair> {
-        return accountsDb.accountsDao().observeAccounts()
+        return accountsDatabase.accountsDao().observeAccounts()
                 .subscribeOn(Schedulers.io())
                 .map { it.privateKey?.hexAsBigInteger() }
                 .map { KeyPair.fromPrivate(it) }

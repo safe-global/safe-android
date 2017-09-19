@@ -33,6 +33,7 @@ import pm.gnosis.crypto.exceptions.MissingPrivateKeyException
 import pm.gnosis.crypto.utils.Curves.SECP256K1
 import pm.gnosis.crypto.utils.HashUtils
 import pm.gnosis.utils.toBytes
+import pm.gnosis.utils.toHexString
 import java.io.Serializable
 import java.math.BigInteger
 import java.security.SignatureException

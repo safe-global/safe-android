@@ -22,6 +22,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.onboarding.GenerateMnemonicActivity"
+            android:theme="@style/SplashTheme" />
+        <activity
             android:name="pm.gnosis.android.app.authenticator.ui.MainActivity"
             android:launchMode="singleTop" />
         <activity

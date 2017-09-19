@@ -14,7 +14,9 @@ import pm.gnosis.android.app.authenticator.R
 import pm.gnosis.android.app.authenticator.di.component.DaggerViewComponent
 import pm.gnosis.android.app.authenticator.di.module.ViewModule
 import pm.gnosis.android.app.authenticator.ui.MainActivity
+import pm.gnosis.android.app.authenticator.ui.onboarding.GenerateMnemonicActivity
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 class SplashActivity : AppCompatActivity() {
     @Inject lateinit var presenter: SplashPresenter
@@ -36,18 +38,24 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun startApplication() {
-        val i = Intent(this, MainActivity::class.java)
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(i)
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        startActivityWithNoHistory(MainActivity::class)
     }
 
     private fun onError(throwable: Throwable) {
         if (throwable is EmptyResultSetException) {
-            //TODO: No account we should go to the onboarding
+            startActivityWithNoHistory(GenerateMnemonicActivity::class)
+        } else {
+            startApplication()
         }
-        startApplication()
+    }
+
+    //TODO: extract util
+    private fun <T : AppCompatActivity> startActivityWithNoHistory(activity: KClass<T>) {
+        val i = Intent(this, activity.java)
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(i)
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     override fun onStop() {
