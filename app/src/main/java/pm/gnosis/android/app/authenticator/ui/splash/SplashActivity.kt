@@ -42,7 +42,8 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun onError(throwable: Throwable) {
-        if (throwable is EmptyResultSetException) {
+        //TODO: when refactoring the model of the application add common exception for NoAccount
+        if (throwable is EmptyResultSetException || throwable is NoSuchElementException) {
             startActivityWithNoHistory(GenerateMnemonicActivity::class)
         } else {
             startApplication()

@@ -5,28 +5,12 @@ import org.ethereum.geth.KeyStore
 import pm.gnosis.android.app.android.utils.PreferencesManager
 import pm.gnosis.android.app.authenticator.util.edit
 import pm.gnosis.android.app.core.BuildConfig
-import pm.gnosis.utils.hexStringToByteArray
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GethAccountManager @Inject constructor(private val preferencesManager: PreferencesManager,
                                              private val keyStore: KeyStore) {
-    init {
-        if (keyStore.accounts.size() == 0L) {
-            @Suppress("ConstantConditionIf")
-            if (BuildConfig.PRIVATE_TEST_NET) {
-                pm.gnosis.android.app.authenticator.util.test.TestRPC.accounts.iterator().forEach({
-                    val privateKey = it.value.first
-                    val passphrase = it.value.second
-                    keyStore.importECDSAKey(privateKey.hexStringToByteArray(), passphrase)
-                })
-            } else {
-                keyStore.newAccount(getAccountPassphrase())
-            }
-            setActiveAccount(keyStore.accounts.get(0L).address.hex)
-        }
-    }
 
     fun getAccount(publicKey: String): Account? = getAccounts().find { it.address.hex == publicKey }
 
@@ -46,9 +30,7 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
         return false
     }
 
-    fun getActiveAccount(): Account =
-            getAccounts().find { it.address.hex == preferencesManager.prefs.getString(PreferencesManager.Companion.CURRENT_ACCOUNT_ADDRESS_KEY, null) }!! //we should always have an active account
-
+    fun getActiveAccount(): Account = getAccounts().first()
 
     fun getAccountPassphrase(): String {
         @Suppress("ConstantConditionIf")
