@@ -1,5 +1,6 @@
 package pm.gnosis.android.app.accounts.repositories.impl
 
+import io.reactivex.Completable
 import io.reactivex.Single
 import org.ethereum.geth.Address
 import org.ethereum.geth.BigInt
@@ -45,7 +46,7 @@ class GethAccountsRepository @Inject constructor(
         }
     }
 
-    override fun saveAccount(privateKey: ByteArray) {
+    override fun saveAccount(privateKey: ByteArray): Completable {
         TODO("not implemented")
     }
 }
