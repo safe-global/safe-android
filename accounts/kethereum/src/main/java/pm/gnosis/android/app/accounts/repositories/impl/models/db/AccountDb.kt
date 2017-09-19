@@ -1,11 +1,11 @@
-package pm.gnosis.android.app.accounts.data.db
+package pm.gnosis.android.app.accounts.repositories.impl.models.db
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 
-@Entity(tableName = Account.TABLE_NAME)
-class Account {
+@Entity(tableName = AccountDb.TABLE_NAME)
+class AccountDb {
     @PrimaryKey
     @ColumnInfo(name = PRIVATE_KEY_COL)
     var privateKey: String? = null

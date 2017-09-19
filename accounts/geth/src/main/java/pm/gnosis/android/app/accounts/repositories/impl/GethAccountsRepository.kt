@@ -44,4 +44,8 @@ class GethAccountsRepository @Inject constructor(
             signed.encodeRLP().toHexString()
         }
     }
+
+    override fun saveAccount(privateKey: ByteArray) {
+        TODO("not implemented")
+    }
 }
