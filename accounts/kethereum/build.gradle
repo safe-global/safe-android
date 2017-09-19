@@ -19,6 +19,8 @@ android {
 dependencies {
     implementation project(":accounts:base")
     implementation project(":app-core")
+    implementation project(":android-utils")
+    implementation project(":mnemonic")
     api project(":crypto")
 
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"

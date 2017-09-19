@@ -2,6 +2,7 @@ package pm.gnosis.android.app.accounts.repositories.impl
 
 import io.reactivex.Completable
 import io.reactivex.Single
+import okio.ByteString
 import org.ethereum.geth.Address
 import org.ethereum.geth.BigInt
 import org.ethereum.geth.Geth
@@ -9,7 +10,11 @@ import org.ethereum.geth.KeyStore
 import pm.gnosis.android.app.accounts.models.Account
 import pm.gnosis.android.app.accounts.models.Transaction
 import pm.gnosis.android.app.accounts.repositories.AccountsRepository
+import pm.gnosis.android.app.android.utils.PreferencesManager
 import pm.gnosis.android.app.authenticator.util.asEthereumAddressString
+import pm.gnosis.android.app.authenticator.util.edit
+import pm.gnosis.android.app.authenticator.util.generateRandomString
+import pm.gnosis.crypto.KeyGenerator
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,7 +22,8 @@ import javax.inject.Singleton
 @Singleton
 class GethAccountsRepository @Inject constructor(
         private val gethAccountManager: GethAccountManager,
-        private val gethKeyStore: KeyStore
+        private val gethKeyStore: KeyStore,
+        private val preferencesManager: PreferencesManager
 ) : AccountsRepository {
     override fun loadActiveAccount(): Single<Account> {
         return Single.fromCallable {
@@ -46,7 +52,24 @@ class GethAccountsRepository @Inject constructor(
         }
     }
 
-    override fun saveAccount(privateKey: ByteArray): Completable {
-        TODO("not implemented")
+    override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable =
+            Single.fromCallable {
+                val hdNode = KeyGenerator().masterNode(ByteString.of(*pm.gnosis.mnemonic.Bip39.mnemonicToSeed(mnemonic)))
+                hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
+            }.flatMapCompletable {
+                saveAccount(it.privKeyBytes ?: throw IllegalStateException("Private key must not be null"))
+            }
+
+
+    override fun saveMnemonic(mnemonic: String): Completable = Completable.fromCallable {
+        preferencesManager.prefs.edit {
+            //TODO: in the future this needs to be encrypted
+            putString(PreferencesManager.MNEMONIC_KEY, mnemonic)
+        }
     }
+
+    override fun saveAccount(privateKey: ByteArray): Completable =
+            Completable.fromCallable {
+                gethKeyStore.importECDSAKey(privateKey, generateRandomString())
+            }
 }

@@ -12,6 +12,10 @@ interface AccountsRepository {
 
     fun saveAccount(privateKey: ByteArray): Completable
 
+    fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long = 0): Completable
+
+    fun saveMnemonic(mnemonic: String): Completable
+
     companion object {
         const val CHAIN_ID_ANY = 0
     }

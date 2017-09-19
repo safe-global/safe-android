@@ -7,7 +7,7 @@ import pm.gnosis.android.app.accounts.repositories.impl.models.db.AccountDb
 @Dao
 interface AccountDao {
     @Insert(onConflict = OnConflictStrategy.FAIL)
-    fun insertAccount(account: AccountDb): Long
+    fun insertAccount(account: AccountDb)
 
     @Query("SELECT * FROM ${AccountDb.TABLE_NAME} WHERE ${AccountDb.PRIVATE_KEY_COL} = :privateKey")
     fun observeAccount(privateKey: String): Single<AccountDb>
