@@ -7,7 +7,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
 
-    implementation project(":accounts-base")
+    implementation project(":accounts:base")
     implementation project(":app-core")
     implementation project(":utils")
 

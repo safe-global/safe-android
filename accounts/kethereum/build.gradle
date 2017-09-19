@@ -18,7 +18,7 @@ android {
 
 dependencies {
 
-    implementation project(":accounts-base")
+    implementation project(":accounts:base")
     implementation project(":app-core")
     api project(":crypto")
 
