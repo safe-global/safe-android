@@ -3,7 +3,7 @@ package pm.gnosis.android.app.authenticator.ui.splash
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.android.app.accounts.repositories.AccountsRepository
-import pm.gnosis.android.app.authenticator.data.PreferencesManager
+import pm.gnosis.android.app.android.utils.PreferencesManager
 import pm.gnosis.android.app.authenticator.data.db.ERC20Token
 import pm.gnosis.android.app.authenticator.data.db.GnosisAuthenticatorDb
 import pm.gnosis.android.app.authenticator.di.ForView

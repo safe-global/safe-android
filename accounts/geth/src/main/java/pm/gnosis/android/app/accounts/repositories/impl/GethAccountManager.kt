@@ -2,9 +2,9 @@ package pm.gnosis.android.app.accounts.repositories.impl
 
 import org.ethereum.geth.Account
 import org.ethereum.geth.KeyStore
-import pm.gnosis.android.app.core.BuildConfig
-import pm.gnosis.android.app.authenticator.data.PreferencesManager
+import pm.gnosis.android.app.android.utils.PreferencesManager
 import pm.gnosis.android.app.authenticator.util.edit
+import pm.gnosis.android.app.core.BuildConfig
 import pm.gnosis.utils.hexStringToByteArray
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,7 +47,7 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
     }
 
     fun getActiveAccount(): Account =
-            getAccounts().find { it.address.hex == preferencesManager.prefs.getString(pm.gnosis.android.app.authenticator.data.PreferencesManager.Companion.CURRENT_ACCOUNT_ADDRESS_KEY, null) }!! //we should always have an active account
+            getAccounts().find { it.address.hex == preferencesManager.prefs.getString(PreferencesManager.Companion.CURRENT_ACCOUNT_ADDRESS_KEY, null) }!! //we should always have an active account
 
 
     fun getAccountPassphrase(): String {
@@ -55,11 +55,11 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
         (return if (BuildConfig.PRIVATE_TEST_NET) {
             pm.gnosis.android.app.authenticator.util.test.TestRPC.accounts[getActiveAccount().address.hex]?.second!!
         } else {
-            var passphrase = preferencesManager.prefs.getString(pm.gnosis.android.app.authenticator.data.PreferencesManager.Companion.PASSPHRASE_KEY, "")
+            var passphrase = preferencesManager.prefs.getString(PreferencesManager.Companion.PASSPHRASE_KEY, "")
             if (passphrase.isEmpty()) {
                 preferencesManager.prefs.edit {
                     passphrase = pm.gnosis.android.app.authenticator.util.generateRandomString()
-                    putString(pm.gnosis.android.app.authenticator.data.PreferencesManager.Companion.PASSPHRASE_KEY, passphrase)
+                    putString(PreferencesManager.Companion.PASSPHRASE_KEY, passphrase)
                 }
             }
             passphrase

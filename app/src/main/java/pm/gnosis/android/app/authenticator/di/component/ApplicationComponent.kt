@@ -7,7 +7,7 @@ import dagger.Component
 import pm.gnosis.android.app.accounts.di.AccountsBindingModule
 import pm.gnosis.android.app.accounts.di.AccountsModule
 import pm.gnosis.android.app.accounts.repositories.AccountsRepository
-import pm.gnosis.android.app.authenticator.data.PreferencesManager
+import pm.gnosis.android.app.android.utils.PreferencesManager
 import pm.gnosis.android.app.authenticator.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.android.app.authenticator.data.db.GnosisAuthenticatorDb
 import pm.gnosis.android.app.authenticator.data.remote.EthereumJsonRpcRepository

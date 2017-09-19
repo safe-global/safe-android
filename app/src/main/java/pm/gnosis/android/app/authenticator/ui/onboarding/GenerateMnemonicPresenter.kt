@@ -6,7 +6,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okio.ByteString
 import pm.gnosis.android.app.accounts.repositories.AccountsRepository
-import pm.gnosis.android.app.authenticator.data.PreferencesManager
+import pm.gnosis.android.app.android.utils.PreferencesManager
 import pm.gnosis.android.app.authenticator.di.ForView
 import pm.gnosis.android.app.authenticator.util.edit
 import pm.gnosis.crypto.KeyGenerator

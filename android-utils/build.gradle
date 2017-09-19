@@ -7,12 +7,6 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    implementation project(":accounts:base")
-    implementation project(":app-core")
-    implementation project(":android-utils")
-    implementation project(":utils")
-
-    api "org.ethereum:geth:$versions.geth"
-
+    compile project(path: ':app-core')
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
 }

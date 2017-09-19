@@ -1,4 +1,4 @@
-package pm.gnosis.android.app.authenticator.data
+package pm.gnosis.android.app.android.utils
 
 import android.content.Context
 import android.content.SharedPreferences
