@@ -32,7 +32,7 @@ class TransactionDetailsPresenter @Inject constructor(private val ethereumJsonRp
                     TransactionCallParams(
                             to = transactionDetails.address.asEthereumAddressString(),
                             data = transactionDetails.data))
-                    .flatMap {
+                    .flatMapSingle {
                         val tx = Transaction(it.nonce, transactionDetails.address, transactionDetails.value?.value ?: BigInteger("0"),
                                 it.gas, it.gasPrice, transactionDetails.data?.hexToByteArray() ?: ByteArray(0))
                         accountsRepository.signTransaction(tx)

@@ -7,7 +7,6 @@ import java.security.NoSuchAlgorithmException
 
 
 class KeyGenerator {
-
     /*
     Test transaction that can be used.
     Signed transaction hash is (when used with TestRPC account 0):
@@ -24,7 +23,7 @@ class KeyGenerator {
      */
 
     @Throws(UnsupportedEncodingException::class, NoSuchAlgorithmException::class, InvalidKeyException::class)
-    private fun masterNode(seed: ByteString): HDNode {
+    fun masterNode(seed: ByteString): HDNode {
         val hash = seed.hmacSha512(ByteString.encodeUtf8(MASTER_SECRET))
         return HDNode(KeyPair.fromPrivate(hash.substring(0, 32).toByteArray()), hash.substring(32), 0, 0, ByteString.of(0, 0, 0, 0))
     }

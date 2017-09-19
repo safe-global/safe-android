@@ -2,7 +2,8 @@ package pm.gnosis.android.app.authenticator.ui.splash
 
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.android.app.authenticator.data.PreferencesManager
+import pm.gnosis.android.app.accounts.repositories.AccountsRepository
+import pm.gnosis.android.app.android.utils.PreferencesManager
 import pm.gnosis.android.app.authenticator.data.db.ERC20Token
 import pm.gnosis.android.app.authenticator.data.db.GnosisAuthenticatorDb
 import pm.gnosis.android.app.authenticator.di.ForView
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @ForView
 class SplashPresenter @Inject constructor(private val preferencesManager: PreferencesManager,
-                                          private val gnosisAuthenticatorDb: GnosisAuthenticatorDb) {
+                                          private val gnosisAuthenticatorDb: GnosisAuthenticatorDb,
+                                          private val accountsRepository: AccountsRepository) {
     companion object {
         const val DELAY_NOT_FIRST_LAUNCH = 1500L
         const val DELAY_FIRST_LAUNCH = 2000L
@@ -37,4 +39,6 @@ class SplashPresenter @Inject constructor(private val preferencesManager: Prefer
         }.delay(if (isFirstLaunch) DELAY_FIRST_LAUNCH else DELAY_NOT_FIRST_LAUNCH, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
     }
+
+    fun loadActiveAccount() = accountsRepository.loadActiveAccount()
 }

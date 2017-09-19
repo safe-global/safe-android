@@ -8,7 +8,10 @@ import pm.gnosis.android.app.accounts.repositories.AccountsRepository
 import pm.gnosis.android.app.authenticator.data.model.JsonRpcRequest
 import pm.gnosis.android.app.authenticator.data.model.TransactionCallParams
 import pm.gnosis.android.app.authenticator.data.model.Wei
-import pm.gnosis.android.app.authenticator.util.*
+import pm.gnosis.android.app.authenticator.util.ERC20
+import pm.gnosis.android.app.authenticator.util.asEthereumAddressString
+import pm.gnosis.android.app.authenticator.util.hexAsBigInteger
+import pm.gnosis.android.app.authenticator.util.hexAsBigIntegerOrNull
 import pm.gnosis.utils.toAlfaNumericAscii
 import timber.log.Timber
 import java.math.BigInteger
@@ -25,7 +28,7 @@ class EthereumJsonRpcRepository @Inject constructor(private val ethereumJsonRpcA
     }
 
     fun getBalance(): Observable<Wei> =
-            accountsRepository.loadActiveAccount().flatMap {
+            accountsRepository.loadActiveAccount().flatMapObservable {
                 ethereumJsonRpcApi.post(
                         JsonRpcRequest(
                                 method = "eth_getBalance",
@@ -48,7 +51,7 @@ class EthereumJsonRpcRepository @Inject constructor(private val ethereumJsonRpcA
                     .map { it.result }
 
     fun getTransactionCount(): Observable<BigInteger> =
-            accountsRepository.loadActiveAccount().flatMap {
+            accountsRepository.loadActiveAccount().flatMapObservable {
                 ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
                         params = arrayListOf(it.address, DEFAULT_BLOCK_LATEST)))
                         .map { it.result.hexAsBigInteger() }
