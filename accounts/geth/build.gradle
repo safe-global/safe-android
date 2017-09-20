@@ -9,7 +9,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 dependencies {
     implementation project(":accounts:base")
     implementation project(":app-core")
-    implementation project(":android-utils")
+    implementation project(':heimdall-common')
     implementation project(':crypto')
     implementation project(':mnemonic')
     implementation project(":utils")

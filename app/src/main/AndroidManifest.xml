@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="pm.gnosis.android.app.authenticator">
+    package="pm.gnosis.heimdall">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="pm.gnosis.android.app.authenticator.GnosisAuthenticatorApplication"
+        android:name="pm.gnosis.heimdall.GnosisAuthenticatorApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="pm.gnosis.android.app.authenticator.ui.splash.SplashActivity"
+            android:name="pm.gnosis.heimdall.ui.splash.SplashActivity"
             android:launchMode="singleTask"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -22,13 +22,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.onboarding.GenerateMnemonicActivity"
+            android:name="pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity"
             android:theme="@style/SplashTheme" />
         <activity
-            android:name="pm.gnosis.android.app.authenticator.ui.MainActivity"
+            android:name="pm.gnosis.heimdall.ui.MainActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name="pm.gnosis.android.app.authenticator.ui.transactiondetails.TransactionDetailsActivity"
-            android:parentActivityName="pm.gnosis.android.app.authenticator.ui.MainActivity" />
+            android:name="pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity"
+            android:parentActivityName="pm.gnosis.heimdall.ui.MainActivity" />
     </application>
 </manifest>
