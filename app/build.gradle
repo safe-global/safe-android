@@ -6,7 +6,7 @@ apply plugin: 'bivrost'
 
 android {
     defaultConfig {
-        applicationId "pm.gnosis.android.app.wallet"
+        applicationId "pm.gnosis.heimdall"
         versionCode getInt("APP_VERSION_CODE", 1)
         versionName getKey("APP_VERSION_NAME", "1.0")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -66,7 +66,7 @@ dependencies {
     implementation project(":app-core")
     implementation project(":accounts:base")
     implementation project(":accounts:kethereum")
-    implementation project(":android-utils")
+    implementation project(':heimdall-common')
     implementation project(":crypto")
     implementation project(":mnemonic")
 
