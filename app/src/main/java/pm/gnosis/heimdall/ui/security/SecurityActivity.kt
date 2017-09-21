@@ -10,7 +10,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_security.*
-import pm.gnosis.heimdall.GnosisAuthenticatorApplication
+import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
@@ -36,7 +36,7 @@ class SecurityActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_security)
         DaggerViewComponent.builder()
-                .applicationComponent(GnosisAuthenticatorApplication[this].component)
+                .applicationComponent(HeimdallApplication[this].component)
                 .viewModule(ViewModule(this))
                 .build()
                 .inject(this)

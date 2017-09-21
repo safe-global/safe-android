@@ -15,7 +15,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.dialog_token_add_input.view.*
 import kotlinx.android.synthetic.main.dialog_token_info.view.*
-import kotlinx.android.synthetic.main.fragment_tokens.*
+import kotlinx.android.synthetic.main.layout_tokens.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.ApplicationComponent
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
@@ -37,23 +37,23 @@ class TokensFragment : BaseFragment() {
     @Inject lateinit var adapter: TokensAdapter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater?.inflate(R.layout.fragment_tokens, container, false)
+            inflater?.inflate(R.layout.layout_tokens, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fragment_tokens_input_address.setOnClickListener {
-            fragment_tokens_fab.close(true)
+        layout_tokens_input_address.setOnClickListener {
+            layout_tokens_fab.close(true)
             showTokenAddressInputDialog()
         }
 
-        fragment_tokens_scan_qr_code.setOnClickListener {
-            fragment_tokens_fab.close(true)
+        layout_tokens_scan_qr_code.setOnClickListener {
+            layout_tokens_fab.close(true)
             scanQrCode()
         }
 
-        fragment_tokens_list.layoutManager = LinearLayoutManager(context)
-        fragment_tokens_list.adapter = adapter
+        layout_tokens_list.layoutManager = LinearLayoutManager(context)
+        layout_tokens_list.adapter = adapter
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -64,10 +64,10 @@ class TokensFragment : BaseFragment() {
                 if (scanResult.isValidEthereumAddress()) {
                     showTokenAddressInputDialog(scanResult)
                 } else {
-                    snackbar(fragment_tokens_coordinator_layout, "Invalid address")
+                    snackbar(layout_tokens_coordinator_layout, "Invalid address")
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                snackbar(fragment_tokens_coordinator_layout, "Cancelled by the user")
+                snackbar(layout_tokens_coordinator_layout, "Cancelled by the user")
             }
         }
     }
@@ -95,7 +95,7 @@ class TokensFragment : BaseFragment() {
 
     private fun onTokensList(tokens: List<ERC20Token>) {
         adapter.setItems(tokens)
-        fragment_tokens_empty_view.visibility = if (tokens.isEmpty()) View.VISIBLE else View.GONE
+        layout_tokens_empty_view.visibility = if (tokens.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun onTokensListError(throwable: Throwable) {
@@ -104,7 +104,7 @@ class TokensFragment : BaseFragment() {
 
     private fun onTokenInfo(token: ERC20.Token) {
         if (token.decimals == null && token.name == null && token.symbol == null) {
-            snackbar(fragment_tokens_coordinator_layout, "Could not get token information")
+            snackbar(layout_tokens_coordinator_layout, "Could not get token information")
             return
         }
 
@@ -169,17 +169,17 @@ class TokensFragment : BaseFragment() {
             .subscribeBy(onComplete = this::onTokenRemoved, onError = this::onTokenRemoveError)
 
     private fun onTokenRemoved() {
-        snackbar(fragment_tokens_coordinator_layout, "Token removed")
+        snackbar(layout_tokens_coordinator_layout, "Token removed")
     }
 
     private fun onTokenRemoveError(throwable: Throwable) {
         Timber.e(throwable)
-        snackbar(fragment_tokens_coordinator_layout, "Could not remove token")
+        snackbar(layout_tokens_coordinator_layout, "Could not remove token")
     }
 
     private fun onTokenInfoLoading(isLoading: Boolean) {
         adapter.itemsClickable = !isLoading
-        fragment_tokens_progress_bar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        layout_tokens_progress_bar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun onTokenInfoError(throwable: Throwable) {
@@ -191,13 +191,13 @@ class TokensFragment : BaseFragment() {
                     .subscribeBy(onComplete = this::onTokenAdded, onError = this::onTokenAddError)
 
     private fun onTokenAdded() {
-        snackbar(fragment_tokens_coordinator_layout, "Token added")
+        snackbar(layout_tokens_coordinator_layout, "Token added")
     }
 
     private fun onTokenAddError(throwable: Throwable) {
         Timber.e(throwable)
         if (throwable is SQLiteConstraintException) {
-            snackbar(fragment_tokens_coordinator_layout, "Token already stored")
+            snackbar(layout_tokens_coordinator_layout, "Token already stored")
         }
     }
 

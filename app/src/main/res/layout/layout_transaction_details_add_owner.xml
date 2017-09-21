@@ -11,12 +11,12 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="Remove"
+        android:text="Add"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 
     <TextView
-        android:id="@+id/activity_transaction_details_remove_owner_address"
+        android:id="@+id/layout_transaction_details_add_owner_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="from the list of owners"
+        android:text="as a Multisig Wallet owner"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 </LinearLayout>

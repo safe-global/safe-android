@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.splash
 
 import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.data.db.ERC20Token
@@ -37,7 +36,6 @@ class SplashPresenter @Inject constructor(private val preferencesManager: Prefer
                 preferencesManager.prefs.edit { putBoolean(PreferencesManager.FIRST_LAUNCH_KEY, false) }
             }
         }.delay(if (isFirstLaunch) DELAY_FIRST_LAUNCH else DELAY_NOT_FIRST_LAUNCH, TimeUnit.MILLISECONDS)
-                .subscribeOn(Schedulers.io())
     }
 
     fun loadActiveAccount() = accountsRepository.loadActiveAccount()

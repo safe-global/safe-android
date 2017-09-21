@@ -4,8 +4,8 @@
     <color name="colorPrimaryDark">#263238</color>
     <color name="colorAccent">#546E7A</color>
     <color name="windowBackground">#263238</color>
+
     <color name="white">#ffffff</color>
-
-
+    <color name="black">#000000</color>
     <color name="gnosisBlue">#00a6c4</color>
 </resources>

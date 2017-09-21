@@ -85,3 +85,20 @@ fun ByteArray.toBinaryString(): String {
     }
     return sb.toString()
 }
+
+//Returns an array of indexes for the specified collection. If an item is not present its index is -1
+fun <T> Collection<T>.getIndexes(items: List<T>): Array<Int> {
+    if (items.isEmpty()) return emptyArray()
+    return items.map { indexOf(it) }.toTypedArray()
+}
+
+//Returns an array of indexes for the specified collection. If an item is not present an exception is thrown
+fun <T> Collection<T>.getIndexesAllMatching(items: List<T>): Array<Int> {
+    if (items.isEmpty()) return emptyArray()
+
+    return items.map {
+        val index = this.indexOf(it)
+        if (index == -1) throw IllegalArgumentException("$it is not present on the list")
+        index
+    }.toTypedArray()
+}

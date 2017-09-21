@@ -11,4 +11,8 @@
     <string name="fatal_error">An error occurred that prevents the app from working. Please restart the app and try again!</string>
     <string name="save_pin">Save PIN</string>
     <string name="unlock">Unlock</string>
+    <string name="generate_mnemonic_activity_dialog">The mnemonic &lt;font color="#00a6c4">&lt;b>\%1$s\&lt;/b>&lt;/font> is going to be used to generate your account. &lt;br/>&lt;br/>Have you saved it in a safe place?</string>
+    <string name="dialog_title_save_mnemonic">Save mnemonic</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

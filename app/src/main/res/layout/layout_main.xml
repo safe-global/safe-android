@@ -10,19 +10,19 @@
         android:layout_height="match_parent">
 
         <FrameLayout
-            android:id="@+id/main_content"
+            android:id="@+id/layout_main_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/bottom_navigation" />
+            android:layout_above="@+id/layout_main_bottom_navigation" />
 
         <android.support.design.widget.BottomNavigationView
-            android:id="@+id/bottom_navigation"
+            android:id="@+id/layout_main_bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             app:itemBackground="@color/colorPrimary"
-            app:itemIconTint="@android:color/white"
-            app:itemTextColor="@android:color/white"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
             app:menu="@menu/bottom_navigation" />
     </RelativeLayout>
 

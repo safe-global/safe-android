@@ -16,7 +16,7 @@
         android:textSize="24sp" />
 
     <TextView
-        android:id="@+id/activity_transaction_details_change_confirmations_number"
+        android:id="@+id/layout_transaction_details_change_confirmations_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

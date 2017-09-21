@@ -13,7 +13,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
-import kotlinx.android.synthetic.main.fragment_multisig.*
+import kotlinx.android.synthetic.main.layout_multisig.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.ApplicationComponent
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
@@ -35,23 +35,23 @@ class MultisigFragment : BaseFragment() {
     @Inject lateinit var adapter: MultisigAdapter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?) =
-            inflater?.inflate(R.layout.fragment_multisig, container, false)
+            inflater?.inflate(R.layout.layout_multisig, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fragment_multisig_wallets.layoutManager = LinearLayoutManager(context)
-        fragment_multisig_wallets.adapter = adapter
+        layout_multisig_wallets.layoutManager = LinearLayoutManager(context)
+        layout_multisig_wallets.adapter = adapter
     }
 
     override fun onStart() {
         super.onStart()
-        fragment_multisig_input_address.setOnClickListener {
-            fragment_multisig_fab.close(true)
+        layout_multisig_input_address.setOnClickListener {
+            layout_multisig_fab.close(true)
             showMultisigInputDialog()
         }
 
-        fragment_multisig_scan_qr_code.setOnClickListener {
-            fragment_multisig_fab.close(true)
+        layout_multisig_scan_qr_code.setOnClickListener {
+            layout_multisig_fab.close(true)
             scanQrCode()
         }
 
@@ -71,17 +71,17 @@ class MultisigFragment : BaseFragment() {
                 if (scanResult.isValidEthereumAddress()) {
                     showMultisigInputDialog(scanResult)
                 } else {
-                    snackbar(fragment_multisig_coordinator_layout, "Invalid address")
+                    snackbar(layout_multisig_coordinator_layout, "Invalid address")
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                snackbar(fragment_multisig_coordinator_layout, "Cancelled by the user")
+                snackbar(layout_multisig_coordinator_layout, "Cancelled by the user")
             }
         }
     }
 
     private fun onMultisigWallets(wallets: List<MultisigWallet>) {
         adapter.setItems(wallets)
-        fragment_multisig_empty_view.visibility = if (wallets.isEmpty()) View.VISIBLE else View.GONE
+        layout_multisig_empty_view.visibility = if (wallets.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun onMultisigWalletsError(throwable: Throwable) {
@@ -131,7 +131,7 @@ class MultisigFragment : BaseFragment() {
                     .subscribeBy(onComplete = this::onMultisigWalletNameChange, onError = this::onMultisigWalletNameChangeError)
 
     private fun onMultisigWalletAdded() {
-        snackbar(fragment_multisig_coordinator_layout, "Added MultisigWallet")
+        snackbar(layout_multisig_coordinator_layout, "Added MultisigWallet")
     }
 
     private fun onMultisigWalletAddError(throwable: Throwable) {
@@ -139,7 +139,7 @@ class MultisigFragment : BaseFragment() {
     }
 
     private fun onMultisigWalletRemoved() {
-        snackbar(fragment_multisig_coordinator_layout, "Removed Multisigwallet")
+        snackbar(layout_multisig_coordinator_layout, "Removed Multisigwallet")
     }
 
     private fun onMultisigWalletRemoveError(throwable: Throwable) {
@@ -147,7 +147,7 @@ class MultisigFragment : BaseFragment() {
     }
 
     private fun onMultisigWalletNameChange() {
-        snackbar(fragment_multisig_coordinator_layout, "Changed MultisigWallet name")
+        snackbar(layout_multisig_coordinator_layout, "Changed MultisigWallet name")
     }
 
     private fun onMultisigWalletNameChangeError(throwable: Throwable) {
