@@ -11,8 +11,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.toSingle
 import pm.gnosis.heimdall.GnosisAuthenticatorApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.di.module.ViewModule
+import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.ui.MainActivity
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
 import javax.inject.Inject

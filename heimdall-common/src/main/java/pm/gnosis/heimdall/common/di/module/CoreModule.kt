@@ -1,10 +1,10 @@
-package pm.gnosis.heimdall.di.module
+package pm.gnosis.heimdall.common.di.module
 
 import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.common.di.ApplicationContext
 import javax.inject.Singleton
 
 @Module

@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.util
+package pm.gnosis.utils
 
 import java.math.BigInteger
 

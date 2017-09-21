@@ -9,9 +9,9 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_multisig_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.MultisigWallet
-import pm.gnosis.heimdall.di.ForView
-import pm.gnosis.heimdall.di.ViewContext
-import pm.gnosis.heimdall.util.shareExternalText
+import pm.gnosis.heimdall.common.di.ForView
+import pm.gnosis.heimdall.common.di.ViewContext
+import pm.gnosis.heimdall.common.util.shareExternalText
 import javax.inject.Inject
 
 

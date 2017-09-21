@@ -7,8 +7,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
 import pm.gnosis.heimdall.GnosisAuthenticatorApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.di.module.ViewModule
+import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.ui.account.AccountFragment
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.multisig.MultisigFragment

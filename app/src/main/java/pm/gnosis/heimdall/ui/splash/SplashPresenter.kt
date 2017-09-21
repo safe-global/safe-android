@@ -6,10 +6,10 @@ import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.data.db.ERC20Token
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
-import pm.gnosis.heimdall.di.ForView
-import pm.gnosis.heimdall.util.ERC20
-import pm.gnosis.heimdall.util.asEthereumAddressString
-import pm.gnosis.heimdall.util.edit
+import pm.gnosis.heimdall.common.di.ForView
+import pm.gnosis.heimdall.common.util.ERC20
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.heimdall.common.util.edit
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

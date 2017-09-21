@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.di.component
+package pm.gnosis.heimdall.common.di.component
 
 import android.app.Application
 import android.content.Context
@@ -11,9 +11,9 @@ import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.heimdall.di.ApplicationContext
-import pm.gnosis.heimdall.di.module.ApplicationModule
-import pm.gnosis.heimdall.di.module.CoreModule
+import pm.gnosis.heimdall.common.di.ApplicationContext
+import pm.gnosis.heimdall.common.di.module.ApplicationModule
+import pm.gnosis.heimdall.common.di.module.CoreModule
 import javax.inject.Singleton
 
 @Singleton

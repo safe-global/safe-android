@@ -1,7 +1,10 @@
-package pm.gnosis.heimdall.util
+package pm.gnosis.heimdall.utils
 
+import pm.gnosis.utils.decimalAsBigInteger
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.heimdall.data.model.TransactionDetails
 import pm.gnosis.heimdall.data.model.Wei
+import pm.gnosis.utils.nullOnThrow
 import java.math.BigInteger
 
 class ERC67Parser {

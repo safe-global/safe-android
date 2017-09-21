@@ -2,7 +2,7 @@ package pm.gnosis.heimdall.data.model
 
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
-import pm.gnosis.heimdall.util.hexAsBigInteger
+import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 
 class WeiAdapter {

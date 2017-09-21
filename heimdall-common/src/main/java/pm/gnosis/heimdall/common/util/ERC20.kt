@@ -1,5 +1,6 @@
-package pm.gnosis.heimdall.util
+package pm.gnosis.heimdall.common.util
 
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.isSolidityMethod
 import pm.gnosis.utils.removeSolidityMethodPrefix
 import java.math.BigInteger

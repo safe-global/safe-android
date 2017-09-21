@@ -17,13 +17,18 @@ import kotlinx.android.synthetic.main.dialog_token_add_input.view.*
 import kotlinx.android.synthetic.main.dialog_token_info.view.*
 import kotlinx.android.synthetic.main.fragment_tokens.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.common.di.component.ApplicationComponent
+import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.module.ViewModule
+import pm.gnosis.heimdall.common.util.ERC20
+import pm.gnosis.heimdall.common.util.snackbar
+import pm.gnosis.heimdall.common.util.toast
 import pm.gnosis.heimdall.data.db.ERC20Token
-import pm.gnosis.heimdall.di.component.ApplicationComponent
-import pm.gnosis.heimdall.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.di.module.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.util.*
-import pm.gnosis.heimdall.util.zxing.ZxingIntentIntegrator
+import pm.gnosis.heimdall.utils.scanQrCode
+import pm.gnosis.heimdall.utils.zxing.ZxingIntentIntegrator
+import pm.gnosis.utils.asDecimalString
+import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
 

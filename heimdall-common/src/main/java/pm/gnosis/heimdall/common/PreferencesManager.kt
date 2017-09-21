@@ -2,7 +2,7 @@ package pm.gnosis.heimdall.common
 
 import android.content.Context
 import android.content.SharedPreferences
-import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.common.di.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 

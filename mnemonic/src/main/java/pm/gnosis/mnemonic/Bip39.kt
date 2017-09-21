@@ -1,14 +1,17 @@
 package pm.gnosis.mnemonic
 
+import org.spongycastle.jcajce.provider.digest.SHA256
+import org.spongycastle.jcajce.provider.symmetric.PBEPBKDF2
 import pm.gnosis.mnemonic.wordlist.ENGLISH_WORD_LIST
 import pm.gnosis.mnemonic.wordlist.WordList
 import pm.gnosis.utils.toBinaryString
 import pm.gnosis.utils.toHexString
-import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.security.spec.InvalidKeySpecException
+import java.security.spec.KeySpec
 import java.text.Normalizer
+import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
@@ -18,10 +21,16 @@ object Bip39 {
     private const val ENTROPY_MULTIPLE = 32
     private const val WORD_LIST_SIZE = 2048
 
+    class Hasher: PBEPBKDF2.PBKDF2withSHA512() {
+        fun generateSecret(keySpec: KeySpec): SecretKey {
+            return engineGenerateSecret(keySpec)
+        }
+    }
+
     @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
     private fun pbkdf2(password: CharArray, salt: ByteArray, iterations: Int, bytes: Int): ByteArray {
         val spec = PBEKeySpec(password, salt, iterations, bytes * 8)
-        val skf = SecretKeyFactory.getInstance("PBKDF2withHmacSHA512")
+        val skf = Hasher()
         return skf.generateSecret(spec).encoded
     }
 
@@ -53,7 +62,7 @@ object Bip39 {
         val bytes = ByteArray(strength / 8)
         SecureRandom().nextBytes(bytes)
 
-        val digest = MessageDigest.getInstance("SHA-256")
+        val digest = SHA256.Digest()
         val sha256 = digest.digest(bytes)
         val checksumLength = strength / 32
 

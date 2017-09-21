@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.util.test
+package pm.gnosis.heimdall.common.util.test
 
 object TestRPC {
     //seed 42

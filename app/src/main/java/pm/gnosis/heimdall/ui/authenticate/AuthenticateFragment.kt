@@ -8,15 +8,15 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_authenticate.*
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.component.ApplicationComponent
-import pm.gnosis.heimdall.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.di.module.ViewModule
+import pm.gnosis.heimdall.common.di.component.ApplicationComponent
+import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity
-import pm.gnosis.heimdall.util.ERC67Parser
-import pm.gnosis.heimdall.util.scanQrCode
-import pm.gnosis.heimdall.util.snackbar
-import pm.gnosis.heimdall.util.zxing.ZxingIntentIntegrator
+import pm.gnosis.heimdall.utils.ERC67Parser
+import pm.gnosis.heimdall.common.util.snackbar
+import pm.gnosis.heimdall.utils.scanQrCode
+import pm.gnosis.heimdall.utils.zxing.ZxingIntentIntegrator
 import pm.gnosis.utils.isSolidityMethod
 
 class AuthenticateFragment : BaseFragment() {

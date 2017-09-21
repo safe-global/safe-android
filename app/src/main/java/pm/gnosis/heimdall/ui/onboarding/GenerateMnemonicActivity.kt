@@ -10,8 +10,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_generate_mnemonic.*
 import pm.gnosis.heimdall.GnosisAuthenticatorApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.di.module.ViewModule
+import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.ui.MainActivity
 import timber.log.Timber
 import javax.inject.Inject

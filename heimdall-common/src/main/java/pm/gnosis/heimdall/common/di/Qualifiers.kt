@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.di
+package pm.gnosis.heimdall.common.di
 
 import javax.inject.Qualifier
 

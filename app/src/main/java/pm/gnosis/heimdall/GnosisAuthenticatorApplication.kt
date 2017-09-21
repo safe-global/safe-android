@@ -3,9 +3,9 @@ package pm.gnosis.heimdall
 import android.content.Context
 import android.support.multidex.MultiDexApplication
 import org.spongycastle.jce.provider.BouncyCastleProvider
-import pm.gnosis.heimdall.di.component.ApplicationComponent
-import pm.gnosis.heimdall.di.component.DaggerApplicationComponent
-import pm.gnosis.heimdall.di.module.CoreModule
+import pm.gnosis.heimdall.common.di.component.ApplicationComponent
+import pm.gnosis.heimdall.common.di.component.DaggerApplicationComponent
+import pm.gnosis.heimdall.common.di.module.CoreModule
 import pm.gnosis.crypto.LinuxSecureRandom
 import timber.log.Timber
 import timber.log.Timber.DebugTree

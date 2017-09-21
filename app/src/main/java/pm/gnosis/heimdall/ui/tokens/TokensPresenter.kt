@@ -6,8 +6,8 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.data.db.ERC20Token
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.heimdall.di.ForView
-import pm.gnosis.heimdall.util.hexAsBigInteger
+import pm.gnosis.heimdall.common.di.ForView
+import pm.gnosis.utils.hexAsBigInteger
 import javax.inject.Inject
 
 @ForView

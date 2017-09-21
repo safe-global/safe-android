@@ -25,12 +25,10 @@ import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.db.MultisigWallet
 import pm.gnosis.heimdall.data.model.TransactionDetails
 import pm.gnosis.heimdall.data.model.Wei
-import pm.gnosis.heimdall.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.di.module.ViewModule
-import pm.gnosis.heimdall.util.*
-import pm.gnosis.utils.addAddressPrefix
-import pm.gnosis.utils.isSolidityMethod
-import pm.gnosis.utils.removeSolidityMethodPrefix
+import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.module.ViewModule
+import pm.gnosis.heimdall.common.util.*
+import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject

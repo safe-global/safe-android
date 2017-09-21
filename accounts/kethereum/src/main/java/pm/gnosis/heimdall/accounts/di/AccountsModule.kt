@@ -5,7 +5,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import pm.gnosis.heimdall.accounts.data.db.AccountsDatabase
-import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.common.di.ApplicationContext
 import javax.inject.Singleton
 
 @Module

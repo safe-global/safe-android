@@ -9,8 +9,8 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_tokens_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ERC20Token
-import pm.gnosis.heimdall.di.ForView
-import pm.gnosis.heimdall.di.ViewContext
+import pm.gnosis.heimdall.common.di.ForView
+import pm.gnosis.heimdall.common.di.ViewContext
 import javax.inject.Inject
 
 

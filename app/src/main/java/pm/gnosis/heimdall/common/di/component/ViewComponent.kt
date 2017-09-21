@@ -1,10 +1,10 @@
-package pm.gnosis.heimdall.di.component
+package pm.gnosis.heimdall.common.di.component
 
 import android.content.Context
 import dagger.Component
-import pm.gnosis.heimdall.di.ForView
-import pm.gnosis.heimdall.di.ViewContext
-import pm.gnosis.heimdall.di.module.ViewModule
+import pm.gnosis.heimdall.common.di.ForView
+import pm.gnosis.heimdall.common.di.ViewContext
+import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.ui.MainActivity
 import pm.gnosis.heimdall.ui.account.AccountFragment
 import pm.gnosis.heimdall.ui.account.AccountPresenter
