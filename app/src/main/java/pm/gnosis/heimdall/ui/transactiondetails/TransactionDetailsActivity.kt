@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.ui.transactiondetails
 
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.text.InputType
 import android.view.View
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,26 +20,28 @@ import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
 import pm.gnosis.heimdall.GnosisAuthenticatorApplication
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.module.ViewModule
+import pm.gnosis.heimdall.common.util.ERC20
+import pm.gnosis.heimdall.common.util.snackbar
+import pm.gnosis.heimdall.common.util.toast
 import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.db.MultisigWallet
 import pm.gnosis.heimdall.data.model.TransactionDetails
 import pm.gnosis.heimdall.data.model.Wei
-import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.*
+import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class TransactionDetailsActivity : AppCompatActivity() {
+class TransactionDetailsActivity : BaseActivity() {
     companion object {
         const val TRANSACTION_EXTRA = "extra.transaction"
     }
 
     @Inject lateinit var presenter: TransactionDetailsPresenter
     private lateinit var transaction: TransactionDetails
-    private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -241,11 +242,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
     private fun onSendTransactionLoading(isLoading: Boolean) {
         activity_transaction_details_button.isEnabled = !isLoading
         activity_transaction_details_progress_bar.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    override fun onStop() {
-        super.onStop()
-        disposables.clear()
     }
 
     fun inject() {

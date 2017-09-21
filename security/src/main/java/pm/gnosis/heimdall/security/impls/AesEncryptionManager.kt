@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.security.impls
 
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.util.edit
@@ -33,6 +34,12 @@ class AesEncryptionManager @Inject constructor(val preferencesManager: Preferenc
         return instanceId
     }
 
+    override fun initialized(): Single<Boolean> {
+        return Single.fromCallable {
+            preferencesManager.prefs.getString(PREF_KEY_CHECKSUM, null) != null
+        }.subscribeOn(Schedulers.io())
+    }
+
     override fun setup(newKey: ByteArray, oldKey: ByteArray?): Single<Boolean> {
         return Single.fromCallable {
             synchronized(keySpecLock) {
@@ -47,7 +54,7 @@ class AesEncryptionManager @Inject constructor(val preferencesManager: Preferenc
 
                 keySpec != null
             }
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun unlocked(): Single<Boolean> {
@@ -55,7 +62,7 @@ class AesEncryptionManager @Inject constructor(val preferencesManager: Preferenc
             synchronized(keySpecLock) {
                 keySpec != null
             }
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun unlock(key: ByteArray): Single<Boolean> {
@@ -66,7 +73,7 @@ class AesEncryptionManager @Inject constructor(val preferencesManager: Preferenc
                 keySpec = buildKeySpecChecksum(key, checksum)
                 keySpec != null
             }
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun lock() {

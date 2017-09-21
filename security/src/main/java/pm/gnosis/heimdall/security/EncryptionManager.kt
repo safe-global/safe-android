@@ -10,4 +10,5 @@ interface EncryptionManager {
     fun unlock(key: ByteArray): Single<Boolean>
     fun lock()
     fun setup(newKey: ByteArray, oldKey: ByteArray? = null): Single<Boolean>
+    fun initialized(): Single<Boolean>
 }

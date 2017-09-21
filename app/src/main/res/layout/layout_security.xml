@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/layout_security_submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/primary_button_height"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gnosisBlue"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        tools:text="Save PIN" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/layout_security_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/layout_security_submit_button">
+
+        <LinearLayout
+            android:id="@+id/layout_security_input_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/layout_security_pin_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_pin"
+                android:inputType="numberPassword"
+                android:minWidth="160dp" />
+
+            <EditText
+                android:id="@+id/layout_security_repeat_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/repeat_pin"
+                android:inputType="numberPassword"
+                android:minWidth="160dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/layout_security_error_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/fatal_error"
+            android:visibility="gone" />
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/layout_security_progress"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center" />
+    </android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

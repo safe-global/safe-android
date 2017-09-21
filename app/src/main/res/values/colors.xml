@@ -3,6 +3,9 @@
     <color name="colorPrimary">#263238</color>
     <color name="colorPrimaryDark">#263238</color>
     <color name="colorAccent">#546E7A</color>
+    <color name="windowBackground">#263238</color>
+    <color name="white">#ffffff</color>
+
 
     <color name="gnosisBlue">#00a6c4</color>
 </resources>

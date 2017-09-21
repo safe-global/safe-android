@@ -24,6 +24,7 @@ ext {
             rxandroid              : '2.0.1',
             rxjava                 : '2.1.2',
             rxkotlin               : '2.1.0',
+            rxrelay                : '2.0.0',
             spongycastle           : '1.58.0.0',
             timber                 : '4.5.1',
             zxing                  : '3.3.0',

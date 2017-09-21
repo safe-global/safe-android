@@ -14,16 +14,16 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.ui.MainActivity
+import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
     @Inject lateinit var presenter: SplashPresenter
 
-    private val disposables = CompositeDisposable()
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        skipSecurityCheck()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         inject()
@@ -57,11 +57,6 @@ class SplashActivity : AppCompatActivity() {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         startActivity(i)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        disposables.clear()
     }
 
     private fun inject() {
