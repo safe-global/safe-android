@@ -3,13 +3,14 @@ package pm.gnosis.heimdall.ui.security
 import android.content.Context
 import android.support.annotation.StringRes
 import io.reactivex.Observable
+import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.base.BaseContract
-import pm.gnosis.heimdall.ui.base.BaseViewModel
+import pm.gnosis.heimdall.ui.base.buildTransformer
 import pm.gnosis.heimdall.ui.security.SecurityContract.ViewState
 import timber.log.Timber
 import javax.inject.Inject
@@ -17,9 +18,9 @@ import javax.inject.Inject
 
 @ForView
 class SecurityViewModel @Inject constructor(@ApplicationContext val context: Context, val encryptionManager: EncryptionManager) :
-        BaseViewModel<BaseContract.UiEvent, SecurityViewModel.State, ViewState>(), SecurityContract.ViewModel {
+        SecurityContract.ViewModel(), BaseContract.TransformerViewModel.Builder<BaseContract.UiEvent, SecurityViewModel.State, ViewState> {
 
-    override fun initialData(): Observable<State> =
+    private fun initialData() =
             encryptionManager.unlocked()
                     .flatMap({
                         if (it)
@@ -37,6 +38,9 @@ class SecurityViewModel @Inject constructor(@ApplicationContext val context: Con
                         State.FATAL_ERROR
                     }
                     .startWith(State.LOADING)
+
+    override fun transformer(): ObservableTransformer<BaseContract.UiEvent, ViewState> =
+            buildTransformer(initialData())
 
     override fun initialViewState() = ViewState.initial()
 

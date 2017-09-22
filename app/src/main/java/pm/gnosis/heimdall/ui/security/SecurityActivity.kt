@@ -1,10 +1,9 @@
 package pm.gnosis.heimdall.ui.security
 
-import android.arch.lifecycle.ViewModelProviders
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
@@ -17,7 +16,6 @@ import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.base.BaseContract
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -25,10 +23,10 @@ import javax.inject.Inject
 class SecurityActivity : BaseActivity() {
 
     @Inject
-    lateinit var viewModelFactory: BaseContract.ViewModelFactory
+    lateinit var viewModelProvider: ViewModelProvider
 
-    private val viewModelHolder by lazy {
-        ViewModelProviders.of(this, viewModelFactory).get(SecurityContract.ViewModelHolder::class.java)
+    private val viewModel by lazy {
+        viewModelProvider.get(SecurityContract.ViewModel::class.java)
     }
 
     private var currentSate = SecurityContract.State.UNKNOWN
@@ -66,7 +64,7 @@ class SecurityActivity : BaseActivity() {
                         else ->
                             Observable.empty()
                     }
-                }.compose(viewModelHolder.transformer())
+                }.compose(viewModel.transformer())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::setupUi, this::handleError)
     }

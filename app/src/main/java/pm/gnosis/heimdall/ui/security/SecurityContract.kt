@@ -32,7 +32,5 @@ object SecurityContract {
         fun shouldDisplay() = displayAt + maxDelay >= SystemClock.elapsedRealtime()
     }
 
-    class ViewModelHolder(vm: ViewModel) : BaseContract.ViewModelHolder<BaseContract.UiEvent, ViewState, ViewModel>(vm)
-
-    interface ViewModel : BaseContract.BaseViewModel<BaseContract.UiEvent, ViewState>
+    abstract class ViewModel : BaseContract.TransformerViewModel<BaseContract.UiEvent, ViewState>()
 }
