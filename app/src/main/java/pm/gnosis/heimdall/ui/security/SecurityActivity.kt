@@ -1,9 +1,12 @@
 package pm.gnosis.heimdall.ui.security
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import com.jakewharton.rxbinding2.view.clicks
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_security.*
@@ -13,7 +16,7 @@ import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.security.SecurityContract.Presenter
+import pm.gnosis.heimdall.ui.base.BaseContract
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -21,7 +24,13 @@ import javax.inject.Inject
 class SecurityActivity : BaseActivity() {
 
     @Inject
-    lateinit var presenter: Presenter
+    lateinit var viewModelFactory: BaseContract.ViewModelFactory
+
+    private val viewModelHolder by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(SecurityContract.ViewModelHolder::class.java)
+    }
+
+    private var currentSate = SecurityContract.State.UNKNOWN
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
@@ -32,6 +41,7 @@ class SecurityActivity : BaseActivity() {
                 .viewModule(ViewModule(this))
                 .build()
                 .inject(this)
+
         if (intent?.getBooleanExtra(EXTRA_CLOSE_APP, false) == true) {
             finish()
         }
@@ -40,20 +50,24 @@ class SecurityActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
 
-        disposables += presenter.observeViewState()
+        disposables += layout_security_submit_button.clicks()
+                .flatMap {
+                    when (currentSate) {
+                        SecurityContract.State.UNINITIALIZED -> Observable.just(
+                                SecurityContract.SetupPin(
+                                        layout_security_pin_input.text.toString(),
+                                        layout_security_repeat_input.text.toString()
+                                ))
+                        SecurityContract.State.LOCKED -> Observable.just(
+                                SecurityContract.Unlock(
+                                        layout_security_pin_input.text.toString()
+                                ))
+                        else ->
+                            Observable.empty()
+                    }
+                }.compose(viewModelHolder.transformer())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::setupUi, this::handleError)
-
-        disposables += presenter.observeNotifications()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ snackbar(layout_security_content_container, it) }, this::handleError)
-
-        presenter.start()
-    }
-
-    override fun onStop() {
-        presenter.stop()
-        super.onStop()
     }
 
     override fun onBackPressed() {
@@ -69,14 +83,22 @@ class SecurityActivity : BaseActivity() {
             SecurityContract.State.UNLOCKED -> finish()
         }
         toggleLoading(state.loading)
+        handleNotification(state.notification)
+        currentSate = state.securityState
+    }
+
+    private fun handleNotification(notification: SecurityContract.Notification?) {
+        notification?.let {
+            if (it.shouldDisplay()) {
+                snackbar(layout_security_content_container, notification.message)
+            }
+        }
     }
 
     private fun hideAll() {
         layout_security_error_label.visibility = View.GONE
         layout_security_input_container.visibility = View.GONE
         layout_security_submit_button.visibility = View.GONE
-
-        layout_security_submit_button.setOnClickListener(null)
     }
 
     private fun showSetupScreen() {
@@ -85,13 +107,6 @@ class SecurityActivity : BaseActivity() {
         layout_security_repeat_input.visibility = View.VISIBLE
         layout_security_submit_button.visibility = View.VISIBLE
         layout_security_submit_button.text = getString(R.string.save_pin)
-
-        layout_security_submit_button.setOnClickListener {
-            presenter.setupPin(
-                    layout_security_pin_input.text.toString(),
-                    layout_security_repeat_input.text.toString()
-            )
-        }
     }
 
     private fun showUnlockScreen() {
@@ -100,18 +115,12 @@ class SecurityActivity : BaseActivity() {
         layout_security_repeat_input.visibility = View.GONE
         layout_security_submit_button.visibility = View.VISIBLE
         layout_security_submit_button.text = getString(R.string.unlock)
-
-        layout_security_submit_button.setOnClickListener {
-            presenter.unlockPin(layout_security_pin_input.text.toString())
-        }
     }
 
     private fun showError() {
         layout_security_error_label.visibility = View.VISIBLE
         layout_security_input_container.visibility = View.GONE
         layout_security_submit_button.visibility = View.GONE
-
-        layout_security_submit_button.setOnClickListener(null)
     }
 
     private fun toggleLoading(loading: Boolean) {

@@ -71,12 +71,14 @@ dependencies {
     implementation project(":mnemonic")
     implementation project(":security")
 
+    implementation "android.arch.lifecycle:extensions:$versions.architecture_components"
+    kapt "android.arch.lifecycle:compiler:$versions.architecture_components"
     implementation "android.arch.persistence.room:runtime:$versions.architecture_components"
     kapt "android.arch.persistence.room:compiler:$versions.architecture_components"
     implementation "android.arch.persistence.room:rxjava2:$versions.architecture_components"
     implementation "com.android.support:multidex:$versions.multidex"
 
-    implementation "com.jakewharton.rxrelay2:rxrelay:$versions.rxrelay"
+    implementation "com.jakewharton.rxbinding2:rxbinding-kotlin:$versions.rxbinding"
 
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-moshi:$versions.retrofit"
