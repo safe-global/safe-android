@@ -1,9 +1,13 @@
 package pm.gnosis.heimdall.security.impls
 
+import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.common.PreferencesManager
+import pm.gnosis.heimdall.common.base.TrackingActivityLifecycleCallbacks
 import pm.gnosis.heimdall.common.util.edit
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.utils.generateRandomString
@@ -15,15 +19,37 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AesEncryptionManager @Inject constructor(val preferencesManager: PreferencesManager) : EncryptionManager {
+class AesEncryptionManager @Inject constructor(
+        application: Application,
+        private val preferencesManager: PreferencesManager
+) : EncryptionManager {
 
-    val ivSpec: IvParameterSpec
-    val keySpecLock = Any()
-    var keySpec: SecretKeySpec? = null
+    private val ivSpec: IvParameterSpec
+    private val keySpecLock = Any()
+    private val handler = Handler(Looper.getMainLooper())
+    private var keySpec: SecretKeySpec? = null
+    private var lockRunnabled: Runnable? = null
 
     init {
         val iv = preferencesManager.prefs.getString(PREF_KEY_INSTANCE_ID, null) ?: setupInstanceId()
         ivSpec = IvParameterSpec(iv.toByteArray())
+
+        application.registerActivityLifecycleCallbacks(object : TrackingActivityLifecycleCallbacks() {
+
+            override fun active() {
+                lockRunnabled?.let {
+                    handler.removeCallbacks(lockRunnabled)
+                }
+                lockRunnabled = null
+            }
+
+            override fun inactive() {
+                val runnable = Runnable { lock() }
+                handler.postDelayed(runnable, LOCK_DELAY_MS)
+                lockRunnabled = runnable
+            }
+
+        })
     }
 
     private fun setupInstanceId(): String {
@@ -122,6 +148,7 @@ class AesEncryptionManager @Inject constructor(val preferencesManager: Preferenc
     }
 
     companion object {
+        private const val LOCK_DELAY_MS = 5 * 60 * 1000L
         private const val KEY_SPEC_ALGORITHM = "AES"
         private const val CIPHER_TRANSFORMATION = "AES/CBC/PKCS5Padding"
         private const val PREF_KEY_INSTANCE_ID = "encryption_manager.string.instance_id"

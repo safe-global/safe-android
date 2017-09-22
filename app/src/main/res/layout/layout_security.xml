@@ -13,8 +13,11 @@
         android:background="@color/gnosisBlue"
         android:gravity="center"
         android:textColor="@color/white"
+        android:textSize="@dimen/primary_button_text_size"
+        android:textStyle="bold"
         android:visibility="gone"
-        tools:text="Save PIN" />
+        tools:text="Save PIN"
+        tools:visibility="visible" />
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/layout_security_content_container"
@@ -28,23 +31,30 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <EditText
                 android:id="@+id/layout_security_pin_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:hint="@string/enter_pin"
                 android:inputType="numberPassword"
-                android:minWidth="160dp" />
+                android:minWidth="160dp"
+                android:padding="8dp"
+                android:textSize="@dimen/pin_input_text_size" />
 
             <EditText
                 android:id="@+id/layout_security_repeat_input"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:hint="@string/repeat_pin"
                 android:inputType="numberPassword"
                 android:minWidth="160dp"
+                android:padding="8dp"
+                android:textSize="@dimen/pin_input_text_size"
                 android:visibility="gone" />
         </LinearLayout>
 

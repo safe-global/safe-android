@@ -29,7 +29,7 @@ object SecurityContract {
     }
 
     data class Notification(val message: String, private val maxDelay: Long = 500, private val displayAt: Long = SystemClock.elapsedRealtime()) {
-        fun shouldDisplay() = displayAt + maxDelay < SystemClock.elapsedRealtime()
+        fun shouldDisplay() = displayAt + maxDelay >= SystemClock.elapsedRealtime()
     }
 
     class ViewModelHolder(vm: ViewModel) : BaseContract.ViewModelHolder<BaseContract.UiEvent, ViewState, ViewModel>(vm)
