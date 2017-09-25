@@ -5,7 +5,7 @@ import dagger.Module
 import dagger.Provides
 import org.ethereum.geth.Geth
 import org.ethereum.geth.KeyStore
-import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.common.di.ApplicationContext
 import javax.inject.Singleton
 
 @Module

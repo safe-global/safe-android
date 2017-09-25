@@ -2,9 +2,11 @@ package pm.gnosis.heimdall.accounts.repositories.impl
 
 import org.ethereum.geth.Account
 import org.ethereum.geth.KeyStore
-import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.heimdall.util.edit
 import pm.gnosis.heimdall.app.core.BuildConfig
+import pm.gnosis.heimdall.common.PreferencesManager
+import pm.gnosis.heimdall.common.util.edit
+import pm.gnosis.heimdall.common.util.test.TestRPC
+import pm.gnosis.utils.generateRandomString
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,12 +37,12 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
     fun getAccountPassphrase(): String {
         @Suppress("ConstantConditionIf")
         (return if (BuildConfig.PRIVATE_TEST_NET) {
-            pm.gnosis.heimdall.util.test.TestRPC.accounts[getActiveAccount().address.hex]?.second!!
+            TestRPC.accounts[getActiveAccount().address.hex]?.second!!
         } else {
             var passphrase = preferencesManager.prefs.getString(PreferencesManager.Companion.PASSPHRASE_KEY, "")
             if (passphrase.isEmpty()) {
                 preferencesManager.prefs.edit {
-                    passphrase = pm.gnosis.heimdall.util.generateRandomString()
+                    passphrase = generateRandomString()
                     putString(PreferencesManager.Companion.PASSPHRASE_KEY, passphrase)
                 }
             }

@@ -12,8 +12,8 @@ import pm.gnosis.heimdall.data.db.MultisigWallet
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.TransactionDetails
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.heimdall.di.ForView
-import pm.gnosis.heimdall.util.asEthereumAddressString
+import pm.gnosis.heimdall.common.di.ForView
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
 import javax.inject.Inject

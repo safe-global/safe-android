@@ -12,9 +12,9 @@ import pm.gnosis.heimdall.accounts.repositories.impl.models.db.AccountDb
 import pm.gnosis.heimdall.accounts.utils.hash
 import pm.gnosis.heimdall.accounts.utils.rlp
 import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.heimdall.util.asEthereumAddressString
-import pm.gnosis.heimdall.util.edit
-import pm.gnosis.heimdall.util.hexAsBigInteger
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.heimdall.common.util.edit
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.crypto.KeyGenerator
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.mnemonic.Bip39

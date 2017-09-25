@@ -4,7 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
-import pm.gnosis.heimdall.di.ForView
+import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.mnemonic.Bip39
 import javax.inject.Inject
 

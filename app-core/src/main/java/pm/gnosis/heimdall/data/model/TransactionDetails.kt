@@ -2,7 +2,7 @@ package pm.gnosis.heimdall.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
-import pm.gnosis.heimdall.util.*
+import pm.gnosis.utils.*
 import java.math.BigInteger
 
 data class TransactionDetails(val address: BigInteger,

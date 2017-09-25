@@ -11,10 +11,10 @@ import pm.gnosis.heimdall.accounts.models.Account
 import pm.gnosis.heimdall.accounts.models.Transaction
 import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.heimdall.util.asEthereumAddressString
-import pm.gnosis.heimdall.util.edit
-import pm.gnosis.heimdall.util.generateRandomString
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.heimdall.common.util.edit
 import pm.gnosis.crypto.KeyGenerator
+import pm.gnosis.utils.generateRandomString
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 import javax.inject.Singleton

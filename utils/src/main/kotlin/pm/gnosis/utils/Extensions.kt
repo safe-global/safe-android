@@ -2,9 +2,14 @@ package pm.gnosis.utils
 
 import okio.ByteString
 import java.math.BigInteger
+import java.security.SecureRandom
 import kotlin.experimental.and
 
 private val hexArray = "0123456789abcdef".toCharArray()
+
+fun generateRandomString(numBits: Int = 130, radix: Int = 32): String {
+    return BigInteger(numBits, SecureRandom()).toString(radix)
+}
 
 fun ByteArray.toHexString(): String {
     val hexChars = CharArray(this.size * 2)
@@ -18,6 +23,10 @@ fun ByteArray.toHexString(): String {
 
 fun ByteString.bigInt(): BigInteger {
     return BigInteger(1, toByteArray())
+}
+
+fun ByteArray.utf8String(): String {
+    return String(this)
 }
 
 /**
@@ -63,6 +72,8 @@ fun String.hexStringToByteArray(): ByteArray {
 }
 
 fun String.addAddressPrefix() = if (!this.startsWith("0x")) "0x$this" else this
+
+fun String.asEthereumAddressString() = this.padStart(40, '0').addAddressPrefix()
 
 fun String.isSolidityMethod(methodId: String) = this.removePrefix("0x").startsWith(methodId.removePrefix("0x"))
 fun String.removeSolidityMethodPrefix(methodId: String) = this.removePrefix("0x").removePrefix(methodId)

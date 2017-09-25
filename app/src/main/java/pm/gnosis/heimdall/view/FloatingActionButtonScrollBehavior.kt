@@ -5,7 +5,7 @@ import android.support.design.widget.CoordinatorLayout
 import android.util.AttributeSet
 import android.view.View
 import com.github.clans.fab.FloatingActionMenu
-import pm.gnosis.heimdall.util.sameSign
+import pm.gnosis.utils.sameSign
 
 
 class FloatingActionButtonScrollBehavior(context: Context, attrs: AttributeSet) : CoordinatorLayout.Behavior<FloatingActionMenu>() {

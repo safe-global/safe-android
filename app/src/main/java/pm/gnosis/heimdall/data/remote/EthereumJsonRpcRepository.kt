@@ -8,10 +8,10 @@ import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.model.JsonRpcRequest
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.Wei
-import pm.gnosis.heimdall.util.ERC20
-import pm.gnosis.heimdall.util.asEthereumAddressString
-import pm.gnosis.heimdall.util.hexAsBigInteger
-import pm.gnosis.heimdall.util.hexAsBigIntegerOrNull
+import pm.gnosis.heimdall.common.util.ERC20
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.hexAsBigIntegerOrNull
 import pm.gnosis.utils.toAlfaNumericAscii
 import timber.log.Timber
 import java.math.BigInteger

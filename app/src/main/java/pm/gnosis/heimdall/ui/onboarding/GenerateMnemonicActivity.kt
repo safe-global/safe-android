@@ -2,24 +2,21 @@ package pm.gnosis.heimdall.ui.onboarding
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_generate_mnemonic.*
 import pm.gnosis.heimdall.GnosisAuthenticatorApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.di.module.ViewModule
+import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.ui.MainActivity
+import pm.gnosis.heimdall.ui.base.BaseActivity
 import timber.log.Timber
 import javax.inject.Inject
 
-class GenerateMnemonicActivity : AppCompatActivity() {
+class GenerateMnemonicActivity : BaseActivity() {
     @Inject lateinit var presenter: GenerateMnemonicPresenter
-
-    private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,11 +66,6 @@ class GenerateMnemonicActivity : AppCompatActivity() {
 
     private fun onSavedAccountWithMnemonicWithError(throwable: Throwable) {
         Timber.e(throwable)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        disposables.clear()
     }
 
     private fun inject() {
