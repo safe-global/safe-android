@@ -45,7 +45,7 @@ class SecurityViewModel @Inject constructor(@ApplicationContext val context: Con
     override fun initialViewState() = ViewState.initial()
 
     override fun updateViewState(currentState: ViewState, data: State) =
-            (when (data) {
+            when (data) {
                 State.LOADING -> currentState.copy(loading = true)
                 State.FATAL_ERROR -> ViewState.error()
 
@@ -55,14 +55,14 @@ class SecurityViewModel @Inject constructor(@ApplicationContext val context: Con
 
                 State.CHECK_PIN_NOTIFICATION -> currentState.copy(notification = notification(R.string.error_wrong_credentials), loading = false)
                 State.NOT_SAME_PINS_NOTIFICATION -> currentState.copy(notification = notification(R.string.pin_repeat_wrong), loading = false)
-            })
+            }
 
     override fun handleEvent(event: BaseContract.UiEvent) =
-            (when (event) {
+            when (event) {
                 is SecurityContract.SetupPin -> setupPin(event)
                 is SecurityContract.Unlock -> unlockPin(event)
                 else -> Observable.empty()
-            })
+            }
 
     private fun notification(@StringRes messageResId: Int): SecurityContract.Notification {
         return SecurityContract.Notification(context.getString(messageResId))

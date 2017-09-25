@@ -28,7 +28,7 @@ class AesEncryptionManager @Inject constructor(
     private val keySpecLock = Any()
     private val handler = Handler(Looper.getMainLooper())
     private var keySpec: SecretKeySpec? = null
-    private var lockRunnabled: Runnable? = null
+    private var lockRunnable: Runnable? = null
 
     init {
         val iv = preferencesManager.prefs.getString(PREF_KEY_INSTANCE_ID, null) ?: setupInstanceId()
@@ -37,16 +37,16 @@ class AesEncryptionManager @Inject constructor(
         application.registerActivityLifecycleCallbacks(object : TrackingActivityLifecycleCallbacks() {
 
             override fun active() {
-                lockRunnabled?.let {
-                    handler.removeCallbacks(lockRunnabled)
+                lockRunnable?.let {
+                    handler.removeCallbacks(lockRunnable)
                 }
-                lockRunnabled = null
+                lockRunnable = null
             }
 
             override fun inactive() {
                 val runnable = Runnable { lock() }
                 handler.postDelayed(runnable, LOCK_DELAY_MS)
-                lockRunnabled = runnable
+                lockRunnable = runnable
             }
 
         })
