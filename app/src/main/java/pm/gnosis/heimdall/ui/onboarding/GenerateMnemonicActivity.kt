@@ -1,5 +1,7 @@
 package pm.gnosis.heimdall.ui.onboarding
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.text.Html
@@ -72,7 +74,7 @@ class GenerateMnemonicActivity : BaseActivity() {
 
 
     private fun onSavedAccountWithMnemonic() {
-        startActivity(MainActivity::class)
+        startActivity(MainActivity.createIntent(this), noHistory = true)
     }
 
     private fun onSavedAccountWithMnemonicWithError(throwable: Throwable) {
@@ -84,5 +86,9 @@ class GenerateMnemonicActivity : BaseActivity() {
                 .applicationComponent(HeimdallApplication[this].component)
                 .viewModule(ViewModule(this))
                 .build().inject(this)
+    }
+
+    companion object {
+        fun createIntent(context: Context) = Intent(context, GenerateMnemonicActivity::class.java)
     }
 }

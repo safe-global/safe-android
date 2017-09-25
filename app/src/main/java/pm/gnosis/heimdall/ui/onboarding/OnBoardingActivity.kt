@@ -1,5 +1,7 @@
 package pm.gnosis.heimdall.ui.onboarding
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_onboarding.*
 import pm.gnosis.heimdall.R
@@ -12,11 +14,15 @@ class OnBoardingActivity : BaseActivity() {
         setContentView(R.layout.layout_onboarding)
 
         layout_onboarding_create.setOnClickListener {
-            startActivity(GenerateMnemonicActivity::class)
+            startActivity(GenerateMnemonicActivity.createIntent(this))
         }
 
         layout_onboarding_restore.setOnClickListener {
-            startActivity(RestoreAccountActivity::class)
+            startActivity(RestoreAccountActivity.createIntent(this))
         }
+    }
+
+    companion object {
+        fun createIntent(context: Context) = Intent(context, OnBoardingActivity::class.java)
     }
 }

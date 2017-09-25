@@ -6,10 +6,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
-import kotlin.reflect.KClass
 
 
 fun Context.toast(text: CharSequence, duration: Int = Toast.LENGTH_LONG) {
@@ -33,8 +31,7 @@ fun Context.shareExternalText(text: String, dialogTitle: String = "") {
     startActivity(Intent.createChooser(sendIntent, dialogTitle))
 }
 
-fun <T : AppCompatActivity> Activity.startActivity(activity: KClass<T>, noHistory: Boolean = false) {
-    val i = Intent(this, activity.java)
+fun Activity.startActivity(i: Intent, noHistory: Boolean = false) {
     if (noHistory) {
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

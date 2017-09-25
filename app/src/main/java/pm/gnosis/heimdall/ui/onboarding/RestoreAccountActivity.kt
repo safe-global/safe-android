@@ -1,5 +1,7 @@
 package pm.gnosis.heimdall.ui.onboarding
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -69,7 +71,7 @@ class RestoreAccountActivity : BaseActivity() {
                     .subscribeBy(onComplete = this::onAccountSaved, onError = this::onAccountSaveError)
 
     private fun onAccountSaved() {
-        startActivity(MainActivity::class, noHistory = false)
+        startActivity(MainActivity.createIntent(this), noHistory = false)
     }
 
     private fun onAccountSaveError(throwable: Throwable) {
@@ -86,5 +88,9 @@ class RestoreAccountActivity : BaseActivity() {
                 .applicationComponent(HeimdallApplication[this].component)
                 .viewModule(ViewModule(this))
                 .build().inject(this)
+    }
+
+    companion object {
+        fun createIntent(context: Context) = Intent(context, RestoreAccountActivity::class.java)
     }
 }

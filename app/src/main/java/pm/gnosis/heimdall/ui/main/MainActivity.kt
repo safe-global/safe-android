@@ -1,5 +1,7 @@
 package pm.gnosis.heimdall.ui.main
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import kotlinx.android.synthetic.main.layout_main.*
@@ -36,5 +38,9 @@ class MainActivity : BaseActivity() {
 
     private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(R.id.layout_main_content, fragment).commit()
+    }
+
+    companion object {
+        fun createIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 }

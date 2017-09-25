@@ -3,7 +3,7 @@
     <string name="scan_instructions">
         <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Reminder:</b> The account of this application (found in the account section) must be one of the owners of the Multisig Wallet. The number of confirmations should be adjusted accordingly.
     </string>
-    <string name="error_try_again">An error occured. Please try again!</string>
+    <string name="error_try_again">An error occurred. Please try again!</string>
     <string name="pin_repeat_wrong">The two PINs are not the same!</string>
     <string name="error_wrong_credentials">The entered credentials are wrong.</string>
     <string name="enter_pin">Enter PIN</string>
@@ -11,7 +11,7 @@
     <string name="fatal_error">An error occurred that prevents the app from working. Please restart the app and try again!</string>
     <string name="save_pin">Save PIN</string>
     <string name="unlock">Unlock</string>
-    <string name="generate_mnemonic_activity_dialog">The mnemonic &lt;font color="#00a6c4">&lt;b>\%1$s\&lt;/b>&lt;/font> is going to be used to generate your account. &lt;br/>&lt;br/>Have you saved it in a safe place?</string>
+    <string name="generate_mnemonic_activity_dialog"><![CDATA[The mnemonic <font color="#00a6c4"><b>%1$s</b></font> is going to be used to generate your account. <br/><br/>Have you saved it in a safe place? ]]></string>
     <string name="dialog_title_save_mnemonic">Save mnemonic</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

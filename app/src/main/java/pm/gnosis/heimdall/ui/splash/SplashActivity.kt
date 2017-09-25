@@ -35,13 +35,13 @@ class SplashActivity : BaseActivity() {
     }
 
     private fun startApplication() {
-        startActivity(MainActivity::class, noHistory = true)
+        startActivity(MainActivity.createIntent(this), noHistory = true)
     }
 
     private fun onError(throwable: Throwable) {
         //TODO: when refactoring the model of the application add common exception for NoAccount
         if (throwable is EmptyResultSetException || throwable is NoSuchElementException) {
-            startActivity(OnBoardingActivity::class, noHistory = true)
+            startActivity(OnBoardingActivity.createIntent(this), noHistory = true)
         } else {
             startApplication()
         }
