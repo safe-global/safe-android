@@ -9,7 +9,6 @@ import dagger.Module
 import dagger.Provides
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
-import pm.gnosis.heimdall.ui.base.BaseContract
 
 @Module
 class ViewModule(val context: Context) {

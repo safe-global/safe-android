@@ -4,12 +4,10 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
-import pm.gnosis.heimdall.common.di.ForView
 import java.lang.RuntimeException
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
-import kotlin.reflect.KClass
 
 
 object BaseContract {
@@ -29,7 +27,7 @@ object BaseContract {
         }
     }
 
-    @ForView
+    @Singleton
     class ViewModelFactory @Inject constructor(
             private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
     ) : ViewModelProvider.Factory {

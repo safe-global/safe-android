@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_onboarding.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.util.startActivity
 import pm.gnosis.heimdall.ui.base.BaseActivity
 
 class OnBoardingActivity : BaseActivity() {

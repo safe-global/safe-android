@@ -3,9 +3,9 @@ package pm.gnosis.heimdall.ui.multisig
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.MultisigWallet
-import pm.gnosis.heimdall.common.di.ForView
 import javax.inject.Inject
 
 @ForView

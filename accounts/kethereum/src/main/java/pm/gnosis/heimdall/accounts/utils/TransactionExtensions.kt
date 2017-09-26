@@ -4,9 +4,9 @@ import org.kethereum.functions.rlp.RLPElement
 import org.kethereum.functions.rlp.RLPList
 import org.kethereum.functions.rlp.encode
 import org.kethereum.functions.rlp.toRLP
-import pm.gnosis.heimdall.accounts.models.Transaction
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.utils.Sha3Utils
+import pm.gnosis.heimdall.accounts.models.Transaction
 
 fun Transaction.rlp(signature: ECDSASignature? = null): ByteArray {
     val items = ArrayList<RLPElement>()

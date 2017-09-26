@@ -4,6 +4,8 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okio.ByteString
+import pm.gnosis.crypto.KeyGenerator
+import pm.gnosis.crypto.KeyPair
 import pm.gnosis.heimdall.accounts.data.db.AccountsDatabase
 import pm.gnosis.heimdall.accounts.models.Account
 import pm.gnosis.heimdall.accounts.models.Transaction
@@ -12,12 +14,10 @@ import pm.gnosis.heimdall.accounts.repositories.impl.models.db.AccountDb
 import pm.gnosis.heimdall.accounts.utils.hash
 import pm.gnosis.heimdall.accounts.utils.rlp
 import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.heimdall.common.util.edit
-import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.crypto.KeyGenerator
-import pm.gnosis.crypto.KeyPair
 import pm.gnosis.mnemonic.Bip39
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 import javax.inject.Singleton

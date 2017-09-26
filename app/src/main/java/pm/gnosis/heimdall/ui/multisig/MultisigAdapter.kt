@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_multisig_item.view.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.db.MultisigWallet
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.common.util.shareExternalText
+import pm.gnosis.heimdall.data.db.MultisigWallet
 import javax.inject.Inject
 
 

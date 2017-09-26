@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.common.di.component
 
 import dagger.Component
 import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.common.di.module.ViewModelBindingsModule
 import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.ui.account.AccountFragment
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
@@ -18,7 +17,7 @@ import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity
 @ForView
 @Component(
         dependencies = arrayOf(ApplicationComponent::class),
-        modules = arrayOf(ViewModule::class, ViewModelBindingsModule::class)
+        modules = arrayOf(ViewModule::class)
 )
 interface ViewComponent {
     // Fragments
