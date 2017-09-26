@@ -2,12 +2,12 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_tokens_coordinator_layout"
+    android:id="@+id/layout_tokens_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-        android:id="@+id/fragment_tokens_progress_bar"
+        android:id="@+id/layout_tokens_progress_bar"
         style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="4dp"
@@ -18,19 +18,19 @@
         tools:visibility="visible" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/fragment_tokens_list"
+        android:id="@+id/layout_tokens_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <TextView
-        android:id="@+id/fragment_tokens_empty_view"
+        android:id="@+id/layout_tokens_empty_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="No tokens added" />
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fragment_tokens_fab"
+        android:id="@+id/layout_tokens_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
@@ -40,7 +40,7 @@
         app:layout_behavior="pm.gnosis.heimdall.view.FloatingActionButtonScrollBehavior">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fragment_tokens_scan_qr_code"
+            android:id="@+id/layout_tokens_scan_qr_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_qrcode_scan_white_24dp"
@@ -49,7 +49,7 @@
 
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fragment_tokens_input_address"
+            android:id="@+id/layout_tokens_input_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_text_input_white"

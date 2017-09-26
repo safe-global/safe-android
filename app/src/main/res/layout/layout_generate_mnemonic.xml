@@ -15,9 +15,18 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/activity_generate_mnemonic_mnemonic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Create new Account"
+            android:textColor="@color/white"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/layout_generate_mnemonic_mnemonic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:gravity="center"
             android:minLines="3"
             android:textColor="@color/gnosisBlue"
@@ -26,10 +35,11 @@
             tools:text="abstract inspire axis monster urban order rookie over volume poverty horse rack" />
 
         <ImageView
-            android:id="@+id/activity_generate_mnemonic_regenerate_button"
+            android:id="@+id/layout_generate_mnemonic_regenerate_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:background="?selectableItemBackgroundBorderless"
             android:padding="8dp"
             app:srcCompat="@drawable/ic_refresh_24dp" />
 
@@ -39,18 +49,15 @@
             android:layout_marginTop="24dp"
             android:gravity="center"
             android:text="Write the words above in a secure place. They'll be user to generate your account."
-            android:textColor="@android:color/white" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/activity_generate_mnemonic_save"
+        android:id="@+id/layout_generate_mnemonic_save"
+        style="@style/PrimaryButtonFullWidth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="24dp"
-        android:background="@color/gnosisBlue"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="I've securely stored the words"
-        android:textColor="@android:color/white" />
+        android:text="I've securely stored the words" />
 </RelativeLayout>

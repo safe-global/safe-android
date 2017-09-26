@@ -1,32 +1,23 @@
-package pm.gnosis.heimdall.ui
+package pm.gnosis.heimdall.ui.main
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import kotlinx.android.synthetic.main.activity_main.*
-import pm.gnosis.heimdall.GnosisAuthenticatorApplication
+import kotlinx.android.synthetic.main.layout_main.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
-import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.ui.account.AccountFragment
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.multisig.MultisigFragment
 import pm.gnosis.heimdall.ui.tokens.TokensFragment
-import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
-
-
-    @Inject
-    lateinit var accountsRepository: AccountsRepository
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        inject()
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.layout_main)
 
-        bottom_navigation.setOnNavigationItemSelectedListener {
+        layout_main_bottom_navigation.setOnNavigationItemSelectedListener {
             val fragment = when (it.itemId) {
                 R.id.action_authenticate -> AuthenticateFragment()
                 R.id.action_account -> AccountFragment()
@@ -42,17 +33,14 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        bottom_navigation.selectedItemId = R.id.action_authenticate
+        layout_main_bottom_navigation.selectedItemId = R.id.action_authenticate
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.main_content, fragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.layout_main_content, fragment).commit()
     }
 
-    fun inject() {
-        DaggerViewComponent.builder()
-                .applicationComponent(GnosisAuthenticatorApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+    companion object {
+        fun createIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 }

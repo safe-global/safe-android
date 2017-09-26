@@ -14,7 +14,7 @@
         android:orientation="horizontal">
 
         <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/activity_transaction_details_token_transfer_amount"
+            android:id="@+id/layout_transaction_details_transfer_amount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -24,16 +24,14 @@
             android:textSize="42sp"
             app:autoSizeMinTextSize="18sp"
             app:autoSizeTextType="uniform"
-            tools:text="12" />
+            tools:text="1.21341" />
 
         <TextView
-            android:id="@+id/activity_transaction_details_token_transfer_symbol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:gravity="end|bottom"
-            android:text="GNO"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:text="ETH"
             android:textColor="@color/colorPrimary"
             android:textSize="32sp" />
     </LinearLayout>
@@ -48,7 +46,7 @@
         android:textSize="24sp" />
 
     <TextView
-        android:id="@+id/activity_transaction_details_token_transfer_recipient"
+        android:id="@+id/layout_transaction_details_transfer_recipient"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

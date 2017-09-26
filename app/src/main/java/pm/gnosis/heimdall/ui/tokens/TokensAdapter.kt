@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.fragment_tokens_item.view.*
+import kotlinx.android.synthetic.main.layout_tokens_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ERC20Token
 import pm.gnosis.heimdall.common.di.ForView
@@ -22,7 +22,7 @@ class TokensAdapter @Inject constructor(@ViewContext private val context: Contex
     var itemsClickable = true
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.fragment_tokens_item, parent, false)
+        val view = LayoutInflater.from(parent?.context).inflate(R.layout.layout_tokens_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -41,14 +41,14 @@ class TokensAdapter @Inject constructor(@ViewContext private val context: Contex
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
-            itemView.fragment_tokens_item_delete.setOnClickListener {
+            itemView.layout_tokens_item_delete.setOnClickListener {
                 tokenRemovalSubject.onNext(items[adapterPosition])
             }
         }
 
         fun bind(item: ERC20Token) {
-            itemView.fragment_tokens_item_name.text = if (item.name.isNullOrEmpty()) item.address else item.name
-            itemView.fragment_tokens_item_delete.visibility = if (item.verified) View.GONE else View.VISIBLE
+            itemView.layout_tokens_item_name.text = if (item.name.isNullOrEmpty()) item.address else item.name
+            itemView.layout_tokens_item_delete.visibility = if (item.verified) View.GONE else View.VISIBLE
         }
 
         override fun onClick(v: View?) {

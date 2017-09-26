@@ -12,7 +12,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.dialog_show_qr_code.view.*
-import kotlinx.android.synthetic.main.fragment_account.*
+import kotlinx.android.synthetic.main.layout_account.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.common.di.component.ApplicationComponent
@@ -34,7 +34,7 @@ class AccountFragment : BaseFragment() {
     private var balanceIsLoading = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_account, container, false)
+        return inflater?.inflate(R.layout.layout_account, container, false)
     }
 
     override fun onStart() {
@@ -42,17 +42,17 @@ class AccountFragment : BaseFragment() {
         disposables += accountBalanceDisposable()
         disposables += accountAddressDisposable()
 
-        fragment_account_clipboard.setOnClickListener {
-            context.copyToClipboard("address", fragment_account_address.text.toString())
-            snackbar(fragment_account_coordinator_layout, "Address copied to clipboard")
+        layout_account_clipboard.setOnClickListener {
+            context.copyToClipboard("address", layout_account_address.text.toString())
+            snackbar(layout_account_coordinator_layout, "Address copied to clipboard")
         }
 
-        fragment_account_share.setOnClickListener {
-            context.shareExternalText(fragment_account_address.text.toString(), "Share your address")
+        layout_account_share.setOnClickListener {
+            context.shareExternalText(layout_account_address.text.toString(), "Share your address")
         }
 
-        fragment_account_qrcode.setOnClickListener {
-            disposables += generateQrCodeDisposable(fragment_account_address.text.toString())
+        layout_account_qrcode.setOnClickListener {
+            disposables += generateQrCodeDisposable(layout_account_address.text.toString())
         }
     }
 
@@ -61,7 +61,7 @@ class AccountFragment : BaseFragment() {
             .doOnSubscribe { onAccountBalanceLoading(true) }
             .doAfterTerminate { onAccountBalanceLoading(isLoading = false) }
             .subscribeBy(onSuccess = {
-                fragment_account_address.text = it.address
+                layout_account_address.text = it.address
             }, onError = this::onAccountBalanceError)
 
     private fun accountBalanceDisposable() = presenter.getAccountBalance()
@@ -80,7 +80,7 @@ class AccountFragment : BaseFragment() {
 
     private fun onAccountBalance(wei: Wei) {
         val etherBalance = wei.toEther()
-        fragment_account_balance.text = if (etherBalance.compareTo(BigDecimal.ZERO) == 0) "0 Ξ" else etherBalance.stripTrailingZeros().toPlainString() + " Ξ"
+        layout_account_balance.text = if (etherBalance.compareTo(BigDecimal.ZERO) == 0) "0 Ξ" else etherBalance.stripTrailingZeros().toPlainString() + " Ξ"
     }
 
     private fun onAccountBalanceLoading(isLoading: Boolean) {
@@ -110,7 +110,7 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun updateProgressView() {
-        fragment_account_progress_bar.visibility =
+        layout_account_progress_bar.visibility =
                 if (qrCodeIsLoading || balanceIsLoading) View.VISIBLE else View.INVISIBLE
     }
 

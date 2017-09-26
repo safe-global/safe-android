@@ -8,16 +8,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.activity_transaction_details.*
-import kotlinx.android.synthetic.main.activity_transaction_details_add_owner.view.*
-import kotlinx.android.synthetic.main.activity_transaction_details_change_confirmations.view.*
-import kotlinx.android.synthetic.main.activity_transaction_details_change_daily_limit.view.*
-import kotlinx.android.synthetic.main.activity_transaction_details_remove_owner.view.*
-import kotlinx.android.synthetic.main.activity_transaction_details_replace_owner.view.*
-import kotlinx.android.synthetic.main.activity_transaction_details_token_transfer.*
-import kotlinx.android.synthetic.main.activity_transaction_details_transfer.view.*
 import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
-import pm.gnosis.heimdall.GnosisAuthenticatorApplication
+import kotlinx.android.synthetic.main.layout_transaction_details.*
+import kotlinx.android.synthetic.main.layout_transaction_details_add_owner.view.*
+import kotlinx.android.synthetic.main.layout_transaction_details_change_confirmations.view.*
+import kotlinx.android.synthetic.main.layout_transaction_details_change_daily_limit.view.*
+import kotlinx.android.synthetic.main.layout_transaction_details_remove_owner.view.*
+import kotlinx.android.synthetic.main.layout_transaction_details_replace_owner.view.*
+import kotlinx.android.synthetic.main.layout_transaction_details_token_transfer.*
+import kotlinx.android.synthetic.main.layout_transaction_details_transfer.view.*
+import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
@@ -46,7 +46,7 @@ class TransactionDetailsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
-        setContentView(R.layout.activity_transaction_details)
+        setContentView(R.layout.layout_transaction_details)
 
         val t: TransactionDetails? = intent.extras?.getParcelable(TRANSACTION_EXTRA)
         if (t?.data == null) {
@@ -58,31 +58,31 @@ class TransactionDetailsActivity : BaseActivity() {
 
         when {
             t.data!!.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID) -> {
-                activity_transaction_details_button.text = "Confirm Transaction"
+                layout_transaction_details_button.text = "Confirm Transaction"
                 val argument = t.data!!.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID)
-                activity_transaction_details_transaction_id.text = MultiSigWalletWithDailyLimit.ConfirmTransaction.decodeArguments(argument).transactionid.value.asDecimalString() ?: "-"
+                layout_transaction_details_transaction_id.text = MultiSigWalletWithDailyLimit.ConfirmTransaction.decodeArguments(argument).transactionid.value.asDecimalString() ?: "-"
             }
             t.data!!.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID) -> {
-                activity_transaction_details_button.text = "Revoke Transaction"
+                layout_transaction_details_button.text = "Revoke Transaction"
                 val argument = t.data!!.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID)
-                activity_transaction_details_transaction_id.text = MultiSigWalletWithDailyLimit.RevokeConfirmation.decodeArguments(argument).transactionid.value.asDecimalString() ?: "-"
+                layout_transaction_details_transaction_id.text = MultiSigWalletWithDailyLimit.RevokeConfirmation.decodeArguments(argument).transactionid.value.asDecimalString() ?: "-"
             }
-            else -> activity_transaction_details_button.visibility = View.GONE
+            else -> layout_transaction_details_button.visibility = View.GONE
         }
-        activity_transaction_details_wallet_address.text = t.address.asEthereumAddressString()
+        layout_transaction_details_wallet_address.text = t.address.asEthereumAddressString()
     }
 
     override fun onStart() {
         super.onStart()
-        activity_transaction_details_button.setOnClickListener {
+        layout_transaction_details_button.setOnClickListener {
             disposables += signTransactionDisposable()
         }
 
-        activity_transaction_details_add_wallet.setOnClickListener {
+        layout_transaction_details_add_wallet.setOnClickListener {
             showAddWalletDialog()
         }
 
-        activity_transaction_details_transaction_id.text.toString().decimalAsBigIntegerOrNull()?.let {
+        layout_transaction_details_transaction_id.text.toString().decimalAsBigIntegerOrNull()?.let {
             presenter.getTransactionDetails(transaction.address.asEthereumAddressString(), it)
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { onTransactionDetailsLoading(true) }
@@ -108,41 +108,41 @@ class TransactionDetailsActivity : BaseActivity() {
     }
 
     private fun onTransfer(transaction: GnosisMultisigWrapper.Transfer) {
-        val view = layoutInflater.inflate(R.layout.activity_transaction_details_transfer, activity_transaction_details_coordinator, false)
-        activity_transaction_details_action_container.addView(view)
-        view.activity_transaction_details_transfer_amount.text = transaction.value.toEther().stripTrailingZeros().toPlainString()
-        view.activity_transaction_details_transfer_recipient.text = transaction.address.asEthereumAddressString()
+        val view = layoutInflater.inflate(R.layout.layout_transaction_details_transfer, layout_transaction_details_coordinator, false)
+        layout_transaction_details_action_container.addView(view)
+        view.layout_transaction_details_transfer_amount.text = transaction.value.toEther().stripTrailingZeros().toPlainString()
+        view.layout_transaction_details_transfer_recipient.text = transaction.address.asEthereumAddressString()
     }
 
     private fun onAddOwner(transaction: GnosisMultisigWrapper.AddOwner) {
-        val view = layoutInflater.inflate(R.layout.activity_transaction_details_add_owner, activity_transaction_details_coordinator, false)
-        activity_transaction_details_action_container.addView(view)
-        view.activity_transaction_details_add_owner_address.text = transaction.owner.asEthereumAddressString()
+        val view = layoutInflater.inflate(R.layout.layout_transaction_details_add_owner, layout_transaction_details_coordinator, false)
+        layout_transaction_details_action_container.addView(view)
+        view.layout_transaction_details_add_owner_address.text = transaction.owner.asEthereumAddressString()
     }
 
     private fun onRemoveOwner(transaction: GnosisMultisigWrapper.RemoveOwner) {
-        val view = layoutInflater.inflate(R.layout.activity_transaction_details_remove_owner, activity_transaction_details_coordinator, false)
-        activity_transaction_details_action_container.addView(view)
-        view.activity_transaction_details_remove_owner_address.text = transaction.owner.asEthereumAddressString()
+        val view = layoutInflater.inflate(R.layout.layout_transaction_details_remove_owner, layout_transaction_details_coordinator, false)
+        layout_transaction_details_action_container.addView(view)
+        view.layout_transaction_details_remove_owner_address.text = transaction.owner.asEthereumAddressString()
     }
 
     private fun onChangeConfirmations(transaction: GnosisMultisigWrapper.ChangeConfirmations) {
-        val view = layoutInflater.inflate(R.layout.activity_transaction_details_change_confirmations, activity_transaction_details_coordinator, false)
-        activity_transaction_details_action_container.addView(view)
-        view.activity_transaction_details_change_confirmations_number.text = transaction.newConfirmations.asDecimalString()
+        val view = layoutInflater.inflate(R.layout.layout_transaction_details_change_confirmations, layout_transaction_details_coordinator, false)
+        layout_transaction_details_action_container.addView(view)
+        view.layout_transaction_details_change_confirmations_number.text = transaction.newConfirmations.asDecimalString()
     }
 
     private fun onChangeDailyLimit(transaction: GnosisMultisigWrapper.ChangeDailyLimit) {
-        val view = layoutInflater.inflate(R.layout.activity_transaction_details_change_daily_limit, activity_transaction_details_coordinator, false)
-        activity_transaction_details_action_container.addView(view)
-        view.activity_transaction_details_change_daily_limit_value.text = Wei(transaction.newDailyLimit).toEther().stripTrailingZeros().toPlainString()
+        val view = layoutInflater.inflate(R.layout.layout_transaction_details_change_daily_limit, layout_transaction_details_coordinator, false)
+        layout_transaction_details_action_container.addView(view)
+        view.layout_transaction_details_change_daily_limit_value.text = Wei(transaction.newDailyLimit).toEther().stripTrailingZeros().toPlainString()
     }
 
     private fun onReplaceOwner(transaction: GnosisMultisigWrapper.ReplaceOwner) {
-        val view = layoutInflater.inflate(R.layout.activity_transaction_details_replace_owner, activity_transaction_details_coordinator, false)
-        activity_transaction_details_action_container.addView(view)
-        view.activity_transaction_details_replace_owner_old_owner.text = transaction.owner.asEthereumAddressString()
-        view.activity_transaction_details_replace_owner_new_owner.text = transaction.newOwner.asEthereumAddressString()
+        val view = layoutInflater.inflate(R.layout.layout_transaction_details_replace_owner, layout_transaction_details_coordinator, false)
+        layout_transaction_details_action_container.addView(view)
+        view.layout_transaction_details_replace_owner_old_owner.text = transaction.owner.asEthereumAddressString()
+        view.layout_transaction_details_replace_owner_new_owner.text = transaction.newOwner.asEthereumAddressString()
     }
 
     private fun onTokenTransfer(transaction: GnosisMultisigWrapper.TokenTransfer) {
@@ -154,18 +154,18 @@ class TransactionDetailsActivity : BaseActivity() {
     private fun onTokenTransferInfo(transaction: GnosisMultisigWrapper.TokenTransfer, token: ERC20.Token) {
         if (token.decimals == null) return
 
-        val view = layoutInflater.inflate(R.layout.activity_transaction_details_token_transfer, activity_transaction_details_coordinator, false)
-        activity_transaction_details_action_container.addView(view)
-        activity_transaction_details_token_transfer_symbol.text = token.symbol ?: "Tokens"
-        activity_transaction_details_token_transfer_recipient.text = transaction.recipient.asEthereumAddressString()
+        val view = layoutInflater.inflate(R.layout.layout_transaction_details_token_transfer, layout_transaction_details_coordinator, false)
+        layout_transaction_details_action_container.addView(view)
+        layout_transaction_details_token_transfer_symbol.text = token.symbol ?: "Tokens"
+        layout_transaction_details_token_transfer_recipient.text = transaction.recipient.asEthereumAddressString()
 
         val tokens = BigDecimal(transaction.tokens, token.decimals!!.toInt())
-        activity_transaction_details_token_transfer_amount.text = tokens.stripTrailingZeros().toPlainString()
+        layout_transaction_details_token_transfer_amount.text = tokens.stripTrailingZeros().toPlainString()
     }
 
     private fun onTransactionDetailsLoading(isLoading: Boolean) {
-        activity_transaction_details_button.isEnabled = !isLoading
-        activity_transaction_details_progress_bar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        layout_transaction_details_button.isEnabled = !isLoading
+        layout_transaction_details_progress_bar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun showAddWalletDialog() {
@@ -200,17 +200,17 @@ class TransactionDetailsActivity : BaseActivity() {
                     .subscribeBy(onComplete = this::onMultisigWalletAdded, onError = this::onMultisigWalletAddError)
 
     private fun onMultisigWalletAdded() {
-        snackbar(activity_transaction_details_coordinator, "Added MultisigWallet")
+        snackbar(layout_transaction_details_coordinator, "Added MultisigWallet")
     }
 
     private fun onMultisigWalletAddError(throwable: Throwable) {
         Timber.e(throwable)
-        snackbar(activity_transaction_details_coordinator, "Could not add MultisigWallet")
+        snackbar(layout_transaction_details_coordinator, "Could not add MultisigWallet")
     }
 
     private fun onMultisigWallet(multisigWallet: MultisigWallet) {
-        activity_transaction_details_wallet_name.text = if (multisigWallet.name.isNullOrEmpty()) "Multisig Address" else multisigWallet.name
-        activity_transaction_details_add_wallet.visibility = View.GONE
+        layout_transaction_details_wallet_name.text = if (multisigWallet.name.isNullOrEmpty()) "Multisig Address" else multisigWallet.name
+        layout_transaction_details_add_wallet.visibility = View.GONE
     }
 
     private fun onMultisigWalletError(throwable: Throwable) {
@@ -236,17 +236,17 @@ class TransactionDetailsActivity : BaseActivity() {
 
     private fun onSendTransactionError(throwable: Throwable) {
         Timber.e(throwable)
-        snackbar(activity_transaction_details_coordinator, "Something went wrong. Transaction not completed.")
+        snackbar(layout_transaction_details_coordinator, "Something went wrong. Transaction not completed.")
     }
 
     private fun onSendTransactionLoading(isLoading: Boolean) {
-        activity_transaction_details_button.isEnabled = !isLoading
-        activity_transaction_details_progress_bar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        layout_transaction_details_button.isEnabled = !isLoading
+        layout_transaction_details_progress_bar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(GnosisAuthenticatorApplication[this].component)
+                .applicationComponent(HeimdallApplication[this].component)
                 .viewModule(ViewModule(this))
                 .build()
                 .inject(this)

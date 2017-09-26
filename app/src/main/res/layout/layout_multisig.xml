@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_multisig_coordinator_layout"
+    android:id="@+id/layout_multisig_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/fragment_multisig_wallets"
+        android:id="@+id/layout_multisig_wallets"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <TextView
-        android:id="@+id/fragment_multisig_empty_view"
+        android:id="@+id/layout_multisig_empty_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="No multisig wallets" />
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fragment_multisig_fab"
+        android:id="@+id/layout_multisig_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
@@ -28,7 +28,7 @@
         app:layout_behavior="pm.gnosis.heimdall.view.FloatingActionButtonScrollBehavior">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fragment_multisig_scan_qr_code"
+            android:id="@+id/layout_multisig_scan_qr_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_qrcode_scan_white_24dp"
@@ -36,13 +36,11 @@
             app:fab_size="normal" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fragment_multisig_input_address"
+            android:id="@+id/layout_multisig_input_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_text_input_white"
             app:fab_label="Write MultiSig Address"
             app:fab_size="normal" />
-
-
     </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

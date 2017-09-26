@@ -85,8 +85,7 @@ class SecurityViewModel @Inject constructor(@ApplicationContext val context: Con
         return encryptionManager.setup(data.pin.toByteArray())
                 .map {
                     if (it) {
-                        // User should unlock screen after setup
-                        State.LOCKED
+                        State.UNLOCKED
                     } else {
                         throw IllegalArgumentException()
                     }

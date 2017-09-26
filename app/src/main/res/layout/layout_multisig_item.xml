@@ -14,13 +14,13 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/fragment_multisig_item_share"
-        android:layout_toStartOf="@+id/fragment_multisig_item_share"
+        android:layout_toLeftOf="@+id/layout_multisig_item_share"
+        android:layout_toStartOf="@+id/layout_multisig_item_share"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/fragment_multisig_item_name"
+            android:id="@+id/layout_multisig_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -30,7 +30,7 @@
             tools:text="My Multisig Wallet" />
 
         <TextView
-            android:id="@+id/fragment_multisig_item_address"
+            android:id="@+id/layout_multisig_item_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -39,7 +39,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/fragment_multisig_item_share"
+        android:id="@+id/layout_multisig_item_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

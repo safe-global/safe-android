@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_authenticate.*
+import kotlinx.android.synthetic.main.layout_authenticate.*
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.ApplicationComponent
@@ -21,11 +21,11 @@ import pm.gnosis.utils.isSolidityMethod
 
 class AuthenticateFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?) =
-            inflater?.inflate(R.layout.fragment_authenticate, container, false)
+            inflater?.inflate(R.layout.layout_authenticate, container, false)
 
     override fun onStart() {
         super.onStart()
-        fragment_authenticate_scan.setOnClickListener {
+        layout_authenticate_scan.setOnClickListener {
             scanQrCode()
         }
     }
@@ -36,7 +36,7 @@ class AuthenticateFragment : BaseFragment() {
             if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)) {
                 validateQrCode(data.getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA))
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                snackbar(fragment_scan_coordinator, "Cancelled by the user")
+                snackbar(layout_scan_coordinator, "Cancelled by the user")
             }
         }
     }
@@ -51,10 +51,10 @@ class AuthenticateFragment : BaseFragment() {
                 intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transaction)
                 startActivity(intent)
             } else {
-                snackbar(fragment_scan_coordinator, "Not Confirm or Revoke")
+                snackbar(layout_scan_coordinator, "Not Confirm or Revoke")
             }
         } else {
-            snackbar(fragment_scan_coordinator, "Not a valid ERC67 transaction")
+            snackbar(layout_scan_coordinator, "Not a valid ERC67 transaction")
         }
     }
 

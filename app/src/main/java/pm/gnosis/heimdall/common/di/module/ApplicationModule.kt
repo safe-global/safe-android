@@ -8,12 +8,12 @@ import dagger.Provides
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import pm.gnosis.heimdall.app.core.BuildConfig
+import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.model.HexNumberAdapter
 import pm.gnosis.heimdall.data.model.WeiAdapter
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.app.core.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory

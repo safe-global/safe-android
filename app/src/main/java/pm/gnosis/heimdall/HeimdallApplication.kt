@@ -3,15 +3,15 @@ package pm.gnosis.heimdall
 import android.content.Context
 import android.support.multidex.MultiDexApplication
 import org.spongycastle.jce.provider.BouncyCastleProvider
+import pm.gnosis.crypto.LinuxSecureRandom
 import pm.gnosis.heimdall.common.di.component.ApplicationComponent
 import pm.gnosis.heimdall.common.di.component.DaggerApplicationComponent
 import pm.gnosis.heimdall.common.di.module.CoreModule
-import pm.gnosis.crypto.LinuxSecureRandom
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import java.security.Security
 
-class GnosisAuthenticatorApplication : MultiDexApplication() {
+class HeimdallApplication : MultiDexApplication() {
     val component: ApplicationComponent = DaggerApplicationComponent.builder()
             .coreModule(CoreModule(this))
             .build()
@@ -31,8 +31,8 @@ class GnosisAuthenticatorApplication : MultiDexApplication() {
     }
 
     companion object {
-        operator fun get(context: Context): GnosisAuthenticatorApplication {
-            return context.applicationContext as GnosisAuthenticatorApplication
+        operator fun get(context: Context): HeimdallApplication {
+            return context.applicationContext as HeimdallApplication
         }
     }
 }

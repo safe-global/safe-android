@@ -16,7 +16,7 @@
         android:textSize="24sp" />
 
     <TextView
-        android:id="@+id/activity_transaction_details_replace_owner_old_owner"
+        android:id="@+id/layout_transaction_details_replace_owner_old_owner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -34,7 +34,7 @@
         android:textSize="24sp" />
 
     <TextView
-        android:id="@+id/activity_transaction_details_replace_owner_new_owner"
+        android:id="@+id/layout_transaction_details_replace_owner_new_owner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

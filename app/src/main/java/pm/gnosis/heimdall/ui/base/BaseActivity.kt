@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import pm.gnosis.heimdall.GnosisAuthenticatorApplication
+import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.security.SecurityActivity
 import timber.log.Timber
@@ -22,7 +22,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        GnosisAuthenticatorApplication[this].component.inject(this)
+        HeimdallApplication[this].component.inject(this)
     }
 
     override fun onStart() {

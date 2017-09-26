@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.common.util
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -28,4 +29,13 @@ fun Context.shareExternalText(text: String, dialogTitle: String = "") {
     sendIntent.putExtra(Intent.EXTRA_TEXT, text)
     sendIntent.type = "text/plain"
     startActivity(Intent.createChooser(sendIntent, dialogTitle))
+}
+
+fun Activity.startActivity(i: Intent, noHistory: Boolean = false) {
+    if (noHistory) {
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+    }
+    startActivity(i)
+    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
 }

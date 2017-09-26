@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.fragment_multisig_item.view.*
+import kotlinx.android.synthetic.main.layout_multisig_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.MultisigWallet
 import pm.gnosis.heimdall.common.di.ForView
@@ -21,7 +21,7 @@ class MultisigAdapter @Inject constructor(@ViewContext private val context: Cont
     val multisigSelection: PublishSubject<MultisigWallet> = PublishSubject.create<MultisigWallet>()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.fragment_multisig_item, parent, false)
+        val view = LayoutInflater.from(parent?.context).inflate(R.layout.layout_multisig_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -40,7 +40,7 @@ class MultisigAdapter @Inject constructor(@ViewContext private val context: Cont
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
-            itemView.fragment_multisig_item_share.setOnClickListener {
+            itemView.layout_multisig_item_share.setOnClickListener {
                 items[adapterPosition].address?.let {
                     context.shareExternalText(it, "Sharing ${items[adapterPosition].name ?: ""}")
                 }
@@ -48,9 +48,9 @@ class MultisigAdapter @Inject constructor(@ViewContext private val context: Cont
         }
 
         fun bind(item: MultisigWallet) {
-            itemView.fragment_multisig_item_address.text = item.address
-            itemView.fragment_multisig_item_name.text = item.name
-            itemView.fragment_multisig_item_name.visibility = if (item.name.isNullOrEmpty()) View.GONE else View.VISIBLE
+            itemView.layout_multisig_item_address.text = item.address
+            itemView.layout_multisig_item_name.text = item.name
+            itemView.layout_multisig_item_name.visibility = if (item.name.isNullOrEmpty()) View.GONE else View.VISIBLE
         }
 
         override fun onClick(v: View?) {
