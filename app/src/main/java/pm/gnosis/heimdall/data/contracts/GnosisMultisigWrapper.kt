@@ -7,10 +7,7 @@ import pm.gnosis.heimdall.data.exceptions.InvalidAddressException
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.utils.isValidEthereumAddress
-import pm.gnosis.utils.isSolidityMethod
-import pm.gnosis.utils.removeSolidityMethodPrefix
-import pm.gnosis.utils.toHex
+import pm.gnosis.utils.*
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,7 +21,7 @@ class GnosisMultisigWrapper @Inject constructor(private val ethereumJsonRpcRepos
             if (noPrefix.isEmpty() || noPrefix.length.rem(64) != 0) return null
 
             val transaction = MultiSigWalletWithDailyLimit.Transactions.decode(noPrefix)
-            val innerData = transaction.data.items.toHex()
+            val innerData = transaction.data.items.toHexString()
             return when {
                 innerData.isSolidityMethod(MultiSigWalletWithDailyLimit.ReplaceOwner.METHOD_ID) -> {
                     val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ReplaceOwner.METHOD_ID)
