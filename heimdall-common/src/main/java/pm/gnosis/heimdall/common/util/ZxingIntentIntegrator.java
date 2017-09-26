@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pm.gnosis.heimdall.utils.zxing;
+package pm.gnosis.heimdall.common.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;

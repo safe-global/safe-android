@@ -13,7 +13,7 @@ import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.common.util.startActivity
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.main.MainActivity
-import pm.gnosis.heimdall.ui.onboarding.OnBoardingActivity
+import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
@@ -41,7 +41,7 @@ class SplashActivity : BaseActivity() {
     private fun onError(throwable: Throwable) {
         //TODO: when refactoring the model of the application add common exception for NoAccount
         if (throwable is EmptyResultSetException || throwable is NoSuchElementException) {
-            startActivity(OnBoardingActivity.createIntent(this), noHistory = true)
+            startActivity(GenerateMnemonicActivity.createIntent(this), noHistory = true)
         } else {
             startApplication()
         }

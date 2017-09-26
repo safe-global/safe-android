@@ -5,7 +5,6 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
     implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
-    implementation "io.reactivex.rxjava2:rxkotlin:$versions.rxkotlin"
-    implementation "com.gojuno.koptional:koptional:$versions.koptional"
 }

@@ -22,9 +22,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.onboarding.OnBoardingActivity"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".ui.onboarding.GenerateMnemonicActivity"
             android:theme="@style/AppTheme" />
         <activity

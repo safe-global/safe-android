@@ -22,9 +22,9 @@ import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.toast
 import pm.gnosis.heimdall.data.db.MultisigWallet
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.utils.scanQrCode
-import pm.gnosis.heimdall.utils.zxing.ZxingIntentIntegrator.REQUEST_CODE
-import pm.gnosis.heimdall.utils.zxing.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
+import pm.gnosis.heimdall.common.util.scanQrCode
+import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator.REQUEST_CODE
+import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
 import pm.gnosis.utils.addAddressPrefix
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber

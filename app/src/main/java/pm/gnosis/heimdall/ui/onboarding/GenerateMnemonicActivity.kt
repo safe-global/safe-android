@@ -7,6 +7,7 @@ import android.support.v7.app.AlertDialog
 import android.text.Html
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_generate_mnemonic.*
@@ -14,7 +15,10 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
+import pm.gnosis.heimdall.common.util.copyToClipboard
+import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.startActivity
+import pm.gnosis.heimdall.common.util.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.main.MainActivity
 import timber.log.Timber
@@ -23,25 +27,35 @@ import javax.inject.Inject
 class GenerateMnemonicActivity : BaseActivity() {
     @Inject lateinit var presenter: GenerateMnemonicPresenter
 
+    private var mnemonicGeneratorDisposable: Disposable? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_generate_mnemonic)
+
+        layout_generate_mnemonic_restore.setOnClickListener {
+            startActivity(RestoreAccountActivity.createIntent(this), noHistory = false)
+        }
+        layout_generate_mnemonic_mnemonic.setOnLongClickListener {
+            copyToClipboard("mnemonic", layout_generate_mnemonic_mnemonic.text.toString())
+            snackbar(layout_generate_mnemonic_coordinator, getString(R.string.mnemonic_copied))
+            true
+        }
+        mnemonicGeneratorDisposable = generateMnemonicDisposable()
+        layout_generate_mnemonic_regenerate_button.callOnClick()
     }
 
     override fun onStart() {
         super.onStart()
-        disposables += generateMnemonicDisposable()
         disposables += saveAccountConfirmationDisposable()
-
-        layout_generate_mnemonic_regenerate_button.callOnClick()
     }
 
     private fun generateMnemonicDisposable() =
             layout_generate_mnemonic_regenerate_button.clicks()
                     .flatMap { presenter.generateMnemonic() }
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = this::onMnemonic, onError = this::onMnemonicError)
+                    .subscribeForResult(onNext = this::onMnemonic, onError = this::onMnemonicError)
 
     private fun onMnemonic(mnemonic: String) {
         layout_generate_mnemonic_mnemonic.text = mnemonic
@@ -79,6 +93,12 @@ class GenerateMnemonicActivity : BaseActivity() {
 
     private fun onSavedAccountWithMnemonicWithError(throwable: Throwable) {
         Timber.e(throwable)
+        snackbar(layout_generate_mnemonic_coordinator, getString(R.string.error_try_again))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mnemonicGeneratorDisposable?.dispose()
     }
 
     private fun inject() {

@@ -21,11 +21,15 @@ dependencies {
     implementation project(":app-core")
     implementation project(':heimdall-common')
     implementation project(":mnemonic")
-    api project(":crypto")
+    implementation project(":crypto")
+    implementation project(":utils")
 
+    //Dagger
+    implementation "com.google.dagger:dagger:$versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
 
-    api "com.github.walleth.kethereum:rlp:$versions.kethereum"
+    implementation "com.squareup.okio:okio:$versions.okio"
+    implementation "com.github.walleth.kethereum:rlp:$versions.kethereum"
 
     implementation "android.arch.persistence.room:runtime:$versions.architecture_components"
     kapt "android.arch.persistence.room:compiler:$versions.architecture_components"

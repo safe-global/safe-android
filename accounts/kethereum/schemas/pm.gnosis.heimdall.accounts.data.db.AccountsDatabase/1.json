@@ -2,17 +2,17 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8fae9ad4fd2c378ef8f2545f0f499da1",
+    "identityHash": "b9f0083825d55ce33e32bf0d44ceb76a",
     "entities": [
       {
         "tableName": "account",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`private_key` TEXT, PRIMARY KEY(`private_key`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`private_key` TEXT NOT NULL, PRIMARY KEY(`private_key`))",
         "fields": [
           {
             "fieldPath": "privateKey",
             "columnName": "private_key",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -27,7 +27,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"8fae9ad4fd2c378ef8f2545f0f499da1\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b9f0083825d55ce33e32bf0d44ceb76a\")"
     ]
   }
 }
