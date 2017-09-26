@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:maxLines="1"
-        android:text="@string/eth"
+        android:text="@string/currency_eth"
         android:textColor="@color/colorPrimary"
         android:textSize="25sp" />
 </LinearLayout>
