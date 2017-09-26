@@ -13,7 +13,7 @@
             android:id="@+id/dialog_add_multisig_text_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name" />
+            android:hint="@string/name" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -24,7 +24,7 @@
             android:id="@+id/dialog_add_multisig_text_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Address"
+            android:hint="@string/address"
             android:inputType="textNoSuggestions|textVisiblePassword" />
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

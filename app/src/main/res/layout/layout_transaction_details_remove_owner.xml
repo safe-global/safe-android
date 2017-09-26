@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="Remove"
+        android:text="@string/remove"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="from the list of owners"
+        android:text="@string/from_the_list_of_owners"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 </LinearLayout>

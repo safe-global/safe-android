@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="Add"
+        android:text="@string/add"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="as a Multisig Wallet owner"
+        android:text="@string/as_a_multisig_wallet_owner"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 </LinearLayout>

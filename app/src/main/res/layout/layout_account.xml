@@ -30,7 +30,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your account address"
+                android:text="@string/your_account_address"
                 android:textSize="22sp" />
 
             <TextView
@@ -85,7 +85,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Balance"
+                    android:text="@string/balance"
                     android:textSize="22sp" />
 
             </LinearLayout>

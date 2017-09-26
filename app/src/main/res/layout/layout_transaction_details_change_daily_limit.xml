@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="Change daily limit to"
+        android:text="@string/change_daily_limit_to"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:maxLines="1"
-        android:text="ETH"
+        android:text="@string/currency_eth"
         android:textColor="@color/colorPrimary"
         android:textSize="25sp" />
 </LinearLayout>

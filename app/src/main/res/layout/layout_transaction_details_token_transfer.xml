@@ -33,9 +33,9 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:gravity="end|bottom"
-            android:text="GNO"
             android:textColor="@color/colorPrimary"
-            android:textSize="32sp" />
+            android:textSize="32sp"
+            tools:text="GNO" />
     </LinearLayout>
 
     <TextView
@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="to"
+        android:text="@string/to"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 

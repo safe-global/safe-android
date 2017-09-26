@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="Replace owner"
+        android:text="@string/replace_owner"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="with"
+        android:text="@string/with"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 

@@ -3,19 +3,19 @@
     <item
         android:id="@+id/action_authenticate"
         android:icon="@drawable/ic_sign_24dp"
-        android:title="Authenticate" />
+        android:title="@string/authenticate" />
     <item
         android:id="@+id/action_account"
         android:icon="@drawable/ic_account_box_white_24dp"
-        android:title="Account" />
+        android:title="@string/account" />
 
     <item
         android:id="@+id/action_multisig"
         android:icon="@drawable/ic_account_balance_wallet_white_24dp"
-        android:title="MultiSig" />
+        android:title="@string/multisig" />
 
     <item
         android:id="@+id/action_tokens"
         android:icon="@drawable/ic_token_white_24dp"
-        android:title="Tokens" />
+        android:title="@string/tokens" />
 </menu>

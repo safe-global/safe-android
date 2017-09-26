@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:text="ETH"
+            android:text="@string/currency_eth"
             android:textColor="@color/colorPrimary"
             android:textSize="32sp" />
     </LinearLayout>
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="to"
+        android:text="@string/to"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 
