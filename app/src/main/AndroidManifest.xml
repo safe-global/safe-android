@@ -34,6 +34,9 @@
             android:name=".ui.main.MainActivity"
             android:launchMode="singleTop" />
         <activity
+            android:name=".ui.transactiondetails.TransactionDetailsActivity"
+            android:parentActivityName=".ui.main.MainActivity" />
+        <activity
             android:name=".ui.security.SecurityActivity"
             android:theme="@style/OnBoardingTheme" />
     </application>

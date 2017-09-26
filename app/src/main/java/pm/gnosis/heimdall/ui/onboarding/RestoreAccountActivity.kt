@@ -65,9 +65,9 @@ class RestoreAccountActivity : BaseActivity() {
 
     private fun saveAccountWithMnemonicDisposable(mnemonic: String) =
             presenter.saveAccountWithMnemonic(mnemonic)
+                    .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { onSavingAccount(isSaving = true) }
                     .doOnTerminate { onSavingAccount(isSaving = false) }
-                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onAccountSaved, onError = this::onAccountSaveError)
 
     private fun onAccountSaved() {
