@@ -20,7 +20,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesViewModelProvider(factory: BaseContract.ViewModelFactory): ViewModelProvider {
+    fun providesViewModelProvider(factory: ViewModelProvider.Factory): ViewModelProvider {
         return when (context) {
             is Fragment -> ViewModelProviders.of(context, factory)
             is FragmentActivity -> ViewModelProviders.of(context, factory)

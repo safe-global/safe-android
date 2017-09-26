@@ -5,15 +5,18 @@ import android.arch.lifecycle.ViewModelProvider
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.ui.security.SecurityContract
+import java.lang.RuntimeException
 import javax.inject.Inject
+import javax.inject.Provider
+import javax.inject.Singleton
+import kotlin.reflect.KClass
 
 
 object BaseContract {
 
     interface UiEvent
 
-    abstract class TransformerViewModel<I, O>: ViewModel() {
+    abstract class TransformerViewModel<I, O> : ViewModel() {
         abstract fun transformer(): ObservableTransformer<I, O>
 
         interface Builder<in I, D, O> {
@@ -28,13 +31,25 @@ object BaseContract {
 
     @ForView
     class ViewModelFactory @Inject constructor(
-            private val securityViewModel: SecurityContract.ViewModel
+            private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
     ) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(SecurityContract.ViewModel::class.java)) {
-                return modelClass.cast(securityViewModel)
+
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            var creator = creators[modelClass]
+            if (creator == null) {
+                for ((key, value) in creators) {
+                    if (modelClass.isAssignableFrom(key)) {
+                        creator = value
+                        break
+                    }
+                }
             }
-            throw IllegalStateException("Unknown model class $modelClass")
+            creator ?: throw IllegalArgumentException("Unknown model class $modelClass")
+            try {
+                return modelClass.cast(creator.get())
+            } catch (e: Exception) {
+                throw RuntimeException(e)
+            }
         }
     }
 

@@ -8,12 +8,12 @@ import pm.gnosis.heimdall.accounts.di.AccountsBindingModule
 import pm.gnosis.heimdall.accounts.di.AccountsModule
 import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.di.module.ApplicationModule
 import pm.gnosis.heimdall.common.di.module.CoreModule
+import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
+import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.di.SecurityBindingsModule
 import pm.gnosis.heimdall.ui.base.BaseActivity
