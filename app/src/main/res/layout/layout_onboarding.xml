@@ -12,7 +12,7 @@
         style="@style/PrimaryButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Restore account with mnemonic phrase" />
+        android:text="@string/onboarding_restore_option" />
 
     <TextView
         android:id="@+id/layout_onboarding_create"
@@ -20,6 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Create new account" />
+        android:text="@string/oboarding_create_option" />
 
 </LinearLayout>

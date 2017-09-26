@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Transaction ID"
+                android:text="@string/transaction_id"
                 android:textSize="22sp" />
 
             <TextView
@@ -59,7 +59,7 @@
                         android:id="@+id/layout_transaction_details_wallet_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Multisig Address"
+                        android:text="@string/multisig_address"
                         android:textColor="@color/gnosisBlue"
                         android:textSize="22sp" />
 
@@ -76,7 +76,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="Add Wallet" />
+                        android:text="@string/add_wallet" />
 
                 </LinearLayout>
 

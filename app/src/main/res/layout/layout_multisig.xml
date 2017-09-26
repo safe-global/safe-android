@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="No multisig wallets" />
+        android:text="@string/empty_multisig_wallets" />
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/layout_multisig_fab"

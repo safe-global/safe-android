@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Decimals:"
+            android:text="@string/decimals"
             android:textStyle="bold" />
 
         <TextView
@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Address:"
+            android:text="@string/address"
             android:textStyle="bold" />
 
         <TextView

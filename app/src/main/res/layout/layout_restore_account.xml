@@ -25,7 +25,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Restore Account"
+                    android:text="@string/restore_account"
                     android:textColor="@color/white"
                     android:textSize="26sp" />
 
@@ -40,7 +40,7 @@
                         android:id="@+id/layout_restore_account_mnemonic"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Mnemonic"
+                        android:hint="@string/mnemonic"
                         android:padding="16dp"
                         android:textColor="@color/white"
                         android:textColorHint="#c8ffffff" />
@@ -55,6 +55,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:text="Restore Account" />
+            android:text="@string/restore_account" />
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

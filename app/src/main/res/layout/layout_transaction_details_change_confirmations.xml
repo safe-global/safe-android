@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="Change number of confirmations to"
+        android:text="@string/change_number_of_confirmations_to"
         android:textColor="@color/colorPrimary"
         android:textSize="24sp" />
 
