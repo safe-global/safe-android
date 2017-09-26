@@ -51,7 +51,7 @@
 
         <TextView
             android:id="@+id/layout_restore_account_restore"
-            style="@style/PrimaryButtonFullWidth"
+            style="@style/PrimaryButton.FullWidth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

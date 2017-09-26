@@ -1,28 +1,100 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="OldAppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:editTextStyle">@style/Input</item>
+        <item name="android:textViewStyle">@style/Text</item>
+        <item name="editTextStyle">@style/Input</item>
     </style>
 
-    <style name="OnBoardingTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:editTextStyle">@style/Input</item>
+        <item name="android:textViewStyle">@style/Text</item>
+        <item name="editTextStyle">@style/Input</item>
     </style>
 
-    <style name="PrimaryButton" parent="Theme.AppCompat.Light">
-        <item name="android:background">@drawable/primary_button</item>
+    <!-- Start: Toolbar styles -->
+
+    <style name="AppBarLayout" parent="ThemeOverlay.AppCompat.Light">
+        <item name="toolbarStyle">@style/Toolbar</item>
+    </style>
+
+    <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextAppearance">@style/ToolbarTitle</item>
+    </style>
+
+    <style name="ToolbarTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+
+    </style>
+
+    <!-- End: Toolbar styles -->
+
+
+    <!-- Start: Button styles -->
+
+    <style name="PrimaryButton">
+        <item name="android:background">@drawable/primary_button_inline</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:padding">16dp</item>
+        <item name="android:textSize">@dimen/primary_button_text_size</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="PrimaryButtonFullWidth" parent="PrimaryButton">
+    <style name="PrimaryButton.FullWidth">
         <item name="android:background">@drawable/primary_button_full_width</item>
+        <item name="android:minHeight">@dimen/primary_button_height</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
     </style>
+
+    <style name="TextButton" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textColor">@color/gnosisBlue</item>
+        <item name="android:background">@drawable/selectable_background</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <!-- End: Button styles -->
+
+
+    <!-- Start: Text styles -->
+
+    <style name="Text" parent="TextAppearance.AppCompat">
+        <!--
+        Only use this to set font.
+        All other attributes will overwrite default values for EVERY view
+        -->
+    </style>
+
+    <style name="Content" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textColor">@color/light_text</item>
+    </style>
+
+    <style name="Label" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">@color/dark_text</item>
+    </style>
+
+    <style name="Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/dark_text</item>
+    </style>
+
+    <style name="Input" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/darker_text</item>
+        <item name="android:textColorHint">@color/lighter_text</item>
+    </style>
+
+    <!-- End: Button styles -->
 </resources>
