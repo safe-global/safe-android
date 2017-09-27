@@ -21,7 +21,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class RestoreAccountActivity : BaseActivity() {
-    @Inject lateinit var presenter: RestoreAccountPresenter
+    @Inject lateinit var viewModel: RestoreAccountViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,7 @@ class RestoreAccountActivity : BaseActivity() {
     private fun mnemonicValidatorDisposable() =
             layout_restore_account_restore.clicks()
                     .map { layout_restore_account_mnemonic.text.toString() }
-                    .flatMapSingle { presenter.isValidMnemonic(it) }
+                    .flatMapSingle { viewModel.isValidMnemonic(it) }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onNext = this::onMnemonicValidation, onError = this::onMnemonicValidationError)
 
@@ -64,7 +64,7 @@ class RestoreAccountActivity : BaseActivity() {
     }
 
     private fun saveAccountWithMnemonicDisposable(mnemonic: String) =
-            presenter.saveAccountWithMnemonic(mnemonic)
+            viewModel.saveAccountWithMnemonic(mnemonic)
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { onSavingAccount(isSaving = true) }
                     .doOnTerminate { onSavingAccount(isSaving = false) }

@@ -15,5 +15,4 @@ class TestCompletable : Completable() {
         callCount++
         s.onComplete()
     }
-
 }

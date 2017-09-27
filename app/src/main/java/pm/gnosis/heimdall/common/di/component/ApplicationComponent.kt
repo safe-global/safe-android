@@ -21,6 +21,8 @@ import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.di.SecurityBindingsModule
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.mnemonic.Bip39
+import pm.gnosis.mnemonic.di.Bip39BindingModule
 import javax.inject.Singleton
 
 @Singleton
@@ -29,6 +31,7 @@ import javax.inject.Singleton
         AccountsModule::class,
         ApplicationModule::class,
         ApplicationBindingsModule::class,
+        Bip39BindingModule::class,
         CoreModule::class,
         SecurityBindingsModule::class,
         ViewModelFactoryModule::class
@@ -53,6 +56,7 @@ interface ApplicationComponent {
     fun gnosisAuthenticatorDb(): GnosisAuthenticatorDb
 
     fun gnosisMultiSig(): GnosisMultisigWrapper
+    fun bip39(): Bip39
 
     // Base injects
     fun inject(activity: BaseActivity)

@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -9,13 +8,13 @@ android {
 
     defaultConfig {
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString("https://mainnet.infura.io")
-        buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY"))
+        buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
         buildConfigField javaTypes.BOOLEAN, "PRIVATE_TEST_NET", javaTypes.FALSE
     }
 
     buildTypes {
         chainTest {
-            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL"))
+            buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io"))
             buildConfigField javaTypes.BOOLEAN, "PRIVATE_TEST_NET", getKey("PRIVATE_TEST_NET", javaTypes.FALSE)
         }
 

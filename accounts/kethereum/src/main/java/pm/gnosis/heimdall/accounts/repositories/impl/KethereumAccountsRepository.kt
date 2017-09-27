@@ -24,7 +24,8 @@ import javax.inject.Singleton
 
 @Singleton
 class KethereumAccountsRepository @Inject internal constructor(private val accountsDatabase: AccountsDatabase,
-                                                               private val preferencesManager: PreferencesManager) : AccountsRepository {
+                                                               private val preferencesManager: PreferencesManager,
+                                                               private val bip39: Bip39) : AccountsRepository {
     override fun loadActiveAccount(): Single<Account> {
         return keyPairFromActiveAccount()
                 .map { it.address.toHexString().asEthereumAddressString() }
@@ -51,7 +52,7 @@ class KethereumAccountsRepository @Inject internal constructor(private val accou
             }.subscribeOn(Schedulers.io())
 
     override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable = Single.fromCallable {
-        val hdNode = KeyGenerator().masterNode(ByteString.of(*Bip39.mnemonicToSeed(mnemonic)))
+        val hdNode = KeyGenerator().masterNode(ByteString.of(*bip39.mnemonicToSeed(mnemonic)))
         hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
     }.flatMapCompletable {
         saveAccount(it.privKeyBytes ?: throw IllegalStateException("Private key must not be null"))
@@ -63,4 +64,8 @@ class KethereumAccountsRepository @Inject internal constructor(private val accou
             putString(PreferencesManager.MNEMONIC_KEY, mnemonic)
         }
     }
+
+    override fun generateMnemonic(): Single<String> = Single.just(bip39.generateMnemonic())
+
+    override fun validateMnemonic(mnemonic: String): Single<Boolean> = Single.just(bip39.validateMnemonic(mnemonic))
 }

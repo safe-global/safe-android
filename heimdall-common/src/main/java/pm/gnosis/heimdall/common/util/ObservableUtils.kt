@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.common.util
 
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import timber.log.Timber
 
@@ -25,6 +26,8 @@ fun <D> Observable<D>.mapToResult(): Observable<Result<D>> =
 fun <D> Flowable<D>.mapToResult(): Flowable<Result<D>> =
         this.map<Result<D>> { DataResult(it) }.onErrorReturn { ErrorResult(it) }
 
+fun <D> Single<D>.mapToResult(): Single<Result<D>> =
+        this.map<Result<D>> { DataResult(it) }.onErrorReturn { ErrorResult(it) }
 
 sealed class Result<out D> {
     fun handle(dataFun: ((D) -> Unit)?, errorFun: ((Throwable) -> Unit)?) {

@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 class GenerateMnemonicActivity : BaseActivity() {
     @Inject
-    lateinit var presenter: GenerateMnemonicContract
+    lateinit var viewModel: GenerateMnemonicContract
 
     private var mnemonicGeneratorDisposable: Disposable? = null
 
@@ -54,7 +54,7 @@ class GenerateMnemonicActivity : BaseActivity() {
 
     private fun generateMnemonicDisposable() =
             layout_generate_mnemonic_regenerate_button.clicks()
-                    .flatMap { presenter.generateMnemonic() }
+                    .flatMapSingle { viewModel.generateMnemonic() }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeForResult(onNext = this::onMnemonic, onError = this::onMnemonicError)
 
@@ -82,7 +82,7 @@ class GenerateMnemonicActivity : BaseActivity() {
     }
 
     private fun onMnemonicConfirmedDisposable() =
-            presenter.saveAccountWithMnemonic(layout_generate_mnemonic_mnemonic.text.toString())
+            viewModel.saveAccountWithMnemonic(layout_generate_mnemonic_mnemonic.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onSavedAccountWithMnemonic,
                             onError = this::onSavedAccountWithMnemonicWithError)
