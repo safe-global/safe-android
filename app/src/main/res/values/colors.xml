@@ -7,6 +7,7 @@
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="disabled_button">#9b9b9b</color>
     <color name="pressed_shade">#33000000</color>
     <color name="shadow_shade">#11000000</color>
     <color name="gnosisBlue">#00a6c4</color>
