@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -30,8 +29,9 @@ dependencies {
     implementation project(":heimdall-common")
     implementation project(":utils")
 
-    implementation "com.jakewharton.timber:timber:$versions.timber"
+    //Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
+
     //https://github.com/square/moshi/issues/315
     implementation "com.squareup.moshi:moshi:$versions.moshi"
-    implementation "com.gojuno.koptional:koptional:$versions.koptional"
 }

@@ -1,18 +1,22 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    implementation project(':heimdall-common')
     implementation project(":crypto")
+    implementation project(':heimdall-common')
     implementation project(":utils")
 
-    implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
+    //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
+
+    //Rx
+    implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
+
+    //Dagger
     implementation "com.google.dagger:dagger:$versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
 }
