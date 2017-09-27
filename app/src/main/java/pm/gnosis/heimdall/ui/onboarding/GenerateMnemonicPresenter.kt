@@ -11,8 +11,8 @@ import javax.inject.Inject
 class GenerateMnemonicPresenter @Inject constructor(private val accountsRepository: AccountsRepository) : GenerateMnemonicContract() {
     override fun generateMnemonic(): Observable<Result<String>> =
             Observable.fromCallable { Bip39.generateMnemonic() }
-                    .map { Result(data = it) }
-                    .onErrorReturn { Result(error = it) }
+                    .map(::Result)
+                    .onErrorReturn(::Result)
                     .subscribeOn(Schedulers.io())
 
     override fun saveAccountWithMnemonic(mnemonic: String): Completable =

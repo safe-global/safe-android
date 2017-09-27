@@ -20,4 +20,7 @@ data class Result<out D>(val data: D? = null, val error: Throwable? = null) {
             errorFun?.invoke(error)
         }
     }
+
+    constructor(data: D) : this(data, null)
+    constructor(error: Throwable) : this(null, error)
 }
