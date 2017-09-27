@@ -7,7 +7,6 @@ import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.base.BaseContract
 import pm.gnosis.heimdall.ui.base.buildTransformer
@@ -16,7 +15,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-@ForView
 class SecurityViewModel @Inject constructor(@ApplicationContext val context: Context, val encryptionManager: EncryptionManager) :
         SecurityContract.ViewModel(), BaseContract.TransformerViewModel.Builder<BaseContract.UiEvent, SecurityViewModel.State, ViewState> {
 

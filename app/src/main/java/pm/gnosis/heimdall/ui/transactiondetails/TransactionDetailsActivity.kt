@@ -5,7 +5,6 @@ import android.support.v7.app.AlertDialog
 import android.text.InputType
 import android.view.View
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*

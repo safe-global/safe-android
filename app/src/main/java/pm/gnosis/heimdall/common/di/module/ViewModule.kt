@@ -9,7 +9,6 @@ import dagger.Module
 import dagger.Provides
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
-import pm.gnosis.heimdall.ui.base.BaseContract
 
 @Module
 class ViewModule(val context: Context) {
@@ -20,7 +19,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesViewModelProvider(factory: BaseContract.ViewModelFactory): ViewModelProvider {
+    fun providesViewModelProvider(factory: ViewModelProvider.Factory): ViewModelProvider {
         return when (context) {
             is Fragment -> ViewModelProviders.of(context, factory)
             is FragmentActivity -> ViewModelProviders.of(context, factory)

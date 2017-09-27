@@ -6,13 +6,13 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.accounts.models.Transaction
 import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
+import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.MultisigWallet
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.TransactionDetails
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
