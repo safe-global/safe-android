@@ -17,7 +17,7 @@ ext {
             material_progressbar   : '1.4.2',
             moshi                  : '1.4.0',
             multidex               : '1.0.2',
-            okhttp                 : '3.8.1',
+            okhttp                 : '3.9.0',
             okio                   : '1.13.0',
             retrofit               : '2.3.0',
             room                   : '1.0.0-alpha8',
