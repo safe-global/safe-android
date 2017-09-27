@@ -14,7 +14,7 @@ import pm.gnosis.heimdall.ui.security.SecurityViewModel
 import javax.inject.Singleton
 
 @Module
-abstract class ViewModelBindingsModule {
+abstract class ViewModelFactoryModule {
     @Binds
     @IntoMap
     @ViewModelKey(SecurityContract.ViewModel::class)

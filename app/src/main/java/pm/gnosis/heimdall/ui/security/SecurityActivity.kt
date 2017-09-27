@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.security
 
-import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -21,13 +20,8 @@ import javax.inject.Inject
 
 
 class SecurityActivity : BaseActivity() {
-
     @Inject
-    lateinit var viewModelProvider: ViewModelProvider
-
-    private val viewModel by lazy {
-        viewModelProvider.get(SecurityContract.ViewModel::class.java)
-    }
+    lateinit var viewModel: SecurityContract.ViewModel
 
     private var currentSate = SecurityContract.State.UNKNOWN
 
