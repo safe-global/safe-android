@@ -4,12 +4,12 @@
     android:id="@+id/layout_restore_account_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -21,14 +21,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/restore_account"
-                    android:textColor="@color/white"
-                    android:textSize="26sp" />
-
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/layout_restore_account_mnemonic_input_layout"
                     android:layout_width="match_parent"
@@ -38,13 +30,14 @@
 
                     <EditText
                         android:id="@+id/layout_restore_account_mnemonic"
+                        style="@style/Input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/mnemonic"
                         android:padding="16dp"
-                        android:textColor="@color/white"
                         android:textColorHint="#c8ffffff" />
                 </android.support.design.widget.TextInputLayout>
+
             </LinearLayout>
 
         </ScrollView>

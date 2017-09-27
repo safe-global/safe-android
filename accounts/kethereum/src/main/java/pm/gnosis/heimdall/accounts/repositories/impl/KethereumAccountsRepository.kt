@@ -39,7 +39,7 @@ class KethereumAccountsRepository @Inject internal constructor(private val accou
     private fun keyPairFromActiveAccount(): Single<KeyPair> {
         return accountsDatabase.accountsDao().observeAccounts()
                 .subscribeOn(Schedulers.io())
-                .map { it.privateKey?.hexAsBigInteger() }
+                .map { it.privateKey!!.hexAsBigInteger() }
                 .map { KeyPair.fromPrivate(it) }
     }
 

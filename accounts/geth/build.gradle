@@ -14,7 +14,14 @@ dependencies {
     implementation project(':mnemonic')
     implementation project(":utils")
 
+    implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
+    implementation "io.reactivex.rxjava2:rxkotlin:$versions.rxkotlin"
+    implementation "com.gojuno.koptional:koptional:$versions.koptional"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
     api "org.ethereum:geth:$versions.geth"
+    implementation "com.squareup.okio:okio:$versions.okio"
 
+    //Dagger
+    implementation "com.google.dagger:dagger:$versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
 }

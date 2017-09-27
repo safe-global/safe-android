@@ -12,7 +12,7 @@ import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.di.module.ApplicationModule
 import pm.gnosis.heimdall.common.di.module.CoreModule
-import pm.gnosis.heimdall.common.di.module.ViewModelBindingsModule
+import pm.gnosis.heimdall.common.di.module.ViewModelFactoryModule
 import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
@@ -28,7 +28,7 @@ import javax.inject.Singleton
         ApplicationModule::class,
         CoreModule::class,
         SecurityBindingsModule::class,
-        ViewModelBindingsModule::class
+        ViewModelFactoryModule::class
 ))
 interface ApplicationComponent {
     fun application(): Application

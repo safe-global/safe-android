@@ -28,7 +28,7 @@
     <string name="confirm_multisig_transaction">Confirm Multisig Transaction</string>
     <string name="scan_confirmation">Scan confirmation</string>
     <string name="create_new_account">Create new Account</string>
-    <string name="mnemonic_generate_reminder">Write the words above in a secure place. They\'ll be user to generate your account.</string>
+    <string name="mnemonic_generate_reminder">Write the words below in a secure place. They\'ll be used to generate your account.</string>
     <string name="mnemonic_generate_save_action">I\'ve securely stored the words</string>
     <string name="empty_multisig_wallets">No multisig wallets</string>
     <string name="onboarding_restore_option">Restore account with mnemonic phrase</string>
@@ -48,4 +48,6 @@
     <string name="replace_owner">Replace owner</string>
     <string name="with">with</string>
     <string name="to">to</string>
+    <string name="no_account_restore_it_via_mnemonic_phrase"><b>No account?</b><br /> Restore it via mnemonic phrase</string>
+    <string name="mnemonic_copied">Mnemonic copied to clipboard</string>
 </resources>

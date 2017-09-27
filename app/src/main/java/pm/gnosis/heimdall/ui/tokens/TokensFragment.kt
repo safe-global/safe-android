@@ -25,8 +25,8 @@ import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.toast
 import pm.gnosis.heimdall.data.db.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.utils.scanQrCode
-import pm.gnosis.heimdall.utils.zxing.ZxingIntentIntegrator
+import pm.gnosis.heimdall.common.util.scanQrCode
+import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator
 import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber

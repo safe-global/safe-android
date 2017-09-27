@@ -18,11 +18,11 @@ import pm.gnosis.heimdall.common.di.component.ApplicationComponent
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.common.util.copyToClipboard
+import pm.gnosis.heimdall.common.util.generateQrCode
 import pm.gnosis.heimdall.common.util.shareExternalText
 import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.utils.generateQrCode
 import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
