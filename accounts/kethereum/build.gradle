@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -18,11 +17,15 @@ android {
 
 dependencies {
     implementation project(":accounts:base")
-    implementation project(":app-core")
+    implementation project(":crypto")
     implementation project(':heimdall-common')
     implementation project(":mnemonic")
-    implementation project(":crypto")
     implementation project(":utils")
+
+    //Android Architecture Components
+    implementation "android.arch.persistence.room:runtime:$versions.architecture_components"
+    kapt "android.arch.persistence.room:compiler:$versions.architecture_components"
+    implementation "android.arch.persistence.room:rxjava2:$versions.architecture_components"
 
     //Dagger
     implementation "com.google.dagger:dagger:$versions.dagger"
@@ -30,8 +33,4 @@ dependencies {
 
     implementation "com.squareup.okio:okio:$versions.okio"
     implementation "com.github.walleth.kethereum:rlp:$versions.kethereum"
-
-    implementation "android.arch.persistence.room:runtime:$versions.architecture_components"
-    kapt "android.arch.persistence.room:compiler:$versions.architecture_components"
-    implementation "android.arch.persistence.room:rxjava2:$versions.architecture_components"
 }

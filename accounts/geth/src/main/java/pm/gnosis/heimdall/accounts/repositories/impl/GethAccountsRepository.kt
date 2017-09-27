@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.accounts.models.Transaction
 import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.util.edit
+import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.generateRandomString
 import pm.gnosis.utils.toHexString
@@ -54,7 +55,7 @@ class GethAccountsRepository @Inject constructor(
 
     override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable =
             Single.fromCallable {
-                val hdNode = KeyGenerator().masterNode(ByteString.of(*pm.gnosis.mnemonic.Bip39.mnemonicToSeed(mnemonic)))
+                val hdNode = KeyGenerator().masterNode(ByteString.of(*Bip39.mnemonicToSeed(mnemonic)))
                 hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
             }.flatMapCompletable {
                 saveAccount(it.privKeyBytes ?: throw IllegalStateException("Private key must not be null"))
