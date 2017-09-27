@@ -6,8 +6,8 @@ ext {
             kotlin                 : '1.1.4-3',
 
             // Runtime dependencies
-            android_support        : '26.0.2',
-            architecture_components: '1.0.0-alpha9',
+            android_support        : '26.1.0',
+            architecture_components: '1.0.0-alpha9-1',
             bivrost                : 'v0.1.0',
             dagger                 : '2.11',
             floating_action_button : '1.6.4',

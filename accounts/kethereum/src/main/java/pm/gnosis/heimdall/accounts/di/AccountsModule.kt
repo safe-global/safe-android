@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.accounts.di
 
+import android.arch.persistence.room.Room
 import android.content.Context
 import dagger.Module
 import dagger.Provides
