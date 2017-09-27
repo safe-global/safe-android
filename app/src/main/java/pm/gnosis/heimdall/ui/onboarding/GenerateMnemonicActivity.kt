@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.onboarding
 
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -25,7 +26,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class GenerateMnemonicActivity : BaseActivity() {
-    @Inject lateinit var presenter: GenerateMnemonicPresenter
+    @Inject
+    lateinit var viewModelProvider: ViewModelProvider
+
+    private val presenter by lazy { viewModelProvider.get(GenerateMnemonicContract::class.java) }
 
     private var mnemonicGeneratorDisposable: Disposable? = null
 
