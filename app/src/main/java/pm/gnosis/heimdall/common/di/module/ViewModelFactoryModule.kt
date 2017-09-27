@@ -17,7 +17,7 @@ import javax.inject.Singleton
 abstract class ViewModelFactoryModule {
     @Binds
     @IntoMap
-    @ViewModelKey(SecurityContract.ViewModel::class)
+    @ViewModelKey(SecurityContract::class)
     abstract fun bindsSecurityViewModel(viewModel: SecurityViewModel): ViewModel
 
     @Binds

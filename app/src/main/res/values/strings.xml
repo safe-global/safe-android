@@ -50,4 +50,6 @@
     <string name="to">to</string>
     <string name="no_account_restore_it_via_mnemonic_phrase"><b>No account?</b><br /> Restore it via mnemonic phrase</string>
     <string name="mnemonic_copied">Mnemonic copied to clipboard</string>
+    <string name="pin_setup_failed">Pin setup failed. Please try again!</string>
+    <string name="pin_too_short">The pin is too short. It should have at least 6 digits!</string>
 </resources>

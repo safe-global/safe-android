@@ -1,24 +1,23 @@
 package pm.gnosis.heimdall.ui.security
 
 import android.content.Context
-import android.support.annotation.StringRes
 import io.reactivex.Observable
-import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
+import pm.gnosis.heimdall.common.util.Result
+import pm.gnosis.heimdall.common.util.mapToResult
 import pm.gnosis.heimdall.security.EncryptionManager
-import pm.gnosis.heimdall.ui.base.BaseContract
-import pm.gnosis.heimdall.ui.base.buildTransformer
-import pm.gnosis.heimdall.ui.security.SecurityContract.ViewState
-import timber.log.Timber
+import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import javax.inject.Inject
 
 
-class SecurityViewModel @Inject constructor(@ApplicationContext val context: Context, val encryptionManager: EncryptionManager) :
-        SecurityContract.ViewModel(), BaseContract.TransformerViewModel.Builder<BaseContract.UiEvent, SecurityViewModel.State, ViewState> {
+class SecurityViewModel @Inject constructor(
+        private @ApplicationContext val context: Context,
+        private val encryptionManager: EncryptionManager
+) : SecurityContract() {
 
-    private fun initialData() =
+    override fun checkState(): Observable<Result<SecurityContract.State>> =
             encryptionManager.unlocked()
                     .flatMap({
                         if (it)
@@ -30,77 +29,30 @@ class SecurityViewModel @Inject constructor(@ApplicationContext val context: Con
                                 else
                                     State.UNINITIALIZED
                             }
-                    }).toObservable()
-                    .onErrorReturn { t ->
-                        Timber.d(t)
-                        State.FATAL_ERROR
+                    }).toObservable().mapToResult()
+
+    override fun setupPin(pin: String, repeat: String): Observable<Result<State>> =
+            checkPins(pin, repeat)
+                    .flatMap {
+                        encryptionManager.setup(pin.toByteArray()).toObservable()
                     }
-                    .startWith(State.LOADING)
+                    .map {
+                        LocalizedException.assert(it, context, R.string.pin_setup_failed)
+                        State.UNLOCKED
+                    }
+                    .mapToResult()
 
-    override fun transformer(): ObservableTransformer<BaseContract.UiEvent, ViewState> =
-            buildTransformer(initialData())
-
-    override fun initialViewState() = ViewState.initial()
-
-    override fun updateViewState(currentState: ViewState, data: State) =
-            when (data) {
-                State.LOADING -> currentState.copy(loading = true)
-                State.FATAL_ERROR -> ViewState.error()
-
-                State.UNINITIALIZED -> ViewState.uninitialized()
-                State.LOCKED -> ViewState.locked()
-                State.UNLOCKED -> ViewState.unlocked()
-
-                State.CHECK_PIN_NOTIFICATION -> currentState.copy(notification = notification(R.string.error_wrong_credentials), loading = false)
-                State.NOT_SAME_PINS_NOTIFICATION -> currentState.copy(notification = notification(R.string.pin_repeat_wrong), loading = false)
+    private fun checkPins(pin: String, repeat: String) =
+            Observable.fromCallable {
+                LocalizedException.assert(pin.length >= 5, context, R.string.pin_too_short)
+                LocalizedException.assert(pin == repeat, context, R.string.pin_repeat_wrong)
+                pin
             }
 
-    override fun handleEvent(event: BaseContract.UiEvent) =
-            when (event) {
-                is SecurityContract.SetupPin -> setupPin(event)
-                is SecurityContract.Unlock -> unlockPin(event)
-                else -> Observable.empty()
-            }
-
-    private fun notification(@StringRes messageResId: Int): SecurityContract.Notification {
-        return SecurityContract.Notification(context.getString(messageResId))
-    }
-
-    private fun unlockPin(data: SecurityContract.Unlock): Observable<State> {
-        return encryptionManager.unlock(data.pin.toByteArray())
-                .map {
-                    if (it) {
+    override fun unlockPin(pin: String): Observable<Result<State>> =
+            encryptionManager.unlock(pin.toByteArray())
+                    .map {
+                        LocalizedException.assert(it, context, R.string.error_wrong_credentials)
                         State.UNLOCKED
-                    } else {
-                        throw IllegalArgumentException()
-                    }
-                }.toObservable()
-                .onErrorReturnItem(State.CHECK_PIN_NOTIFICATION)
-                .startWith(State.LOADING)
-    }
-
-    private fun setupPin(data: SecurityContract.SetupPin): Observable<State> {
-        return encryptionManager.setup(data.pin.toByteArray())
-                .map {
-                    if (it) {
-                        State.UNLOCKED
-                    } else {
-                        throw IllegalArgumentException()
-                    }
-                }.toObservable()
-                .onErrorReturnItem(State.NOT_SAME_PINS_NOTIFICATION)
-                .startWith(State.LOADING)
-    }
-
-    enum class State {
-        LOADING,
-        FATAL_ERROR,
-
-        UNINITIALIZED,
-        LOCKED,
-        UNLOCKED,
-
-        CHECK_PIN_NOTIFICATION,
-        NOT_SAME_PINS_NOTIFICATION,
-    }
+                    }.toObservable().mapToResult()
 }
