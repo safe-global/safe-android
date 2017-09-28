@@ -4,8 +4,8 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.heimdall.accounts.models.Transaction
-import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
+import pm.gnosis.heimdall.accounts.base.models.Transaction
+import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb

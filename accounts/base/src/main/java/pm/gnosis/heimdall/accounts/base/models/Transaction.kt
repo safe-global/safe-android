@@ -1,6 +1,6 @@
-package pm.gnosis.heimdall.accounts.models
+package pm.gnosis.heimdall.accounts.base.models
 
-import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
+import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import java.math.BigDecimal
 import java.math.BigInteger
 

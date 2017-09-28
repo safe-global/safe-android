@@ -6,10 +6,10 @@ import io.reactivex.schedulers.Schedulers
 import okio.ByteString
 import pm.gnosis.crypto.KeyGenerator
 import pm.gnosis.crypto.KeyPair
+import pm.gnosis.heimdall.accounts.base.models.Account
+import pm.gnosis.heimdall.accounts.base.models.Transaction
+import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.accounts.data.db.AccountsDatabase
-import pm.gnosis.heimdall.accounts.models.Account
-import pm.gnosis.heimdall.accounts.models.Transaction
-import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
 import pm.gnosis.heimdall.accounts.repositories.impl.models.db.AccountDb
 import pm.gnosis.heimdall.accounts.utils.hash
 import pm.gnosis.heimdall.accounts.utils.rlp
