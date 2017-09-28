@@ -12,6 +12,9 @@ fun <D> Observable<Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onError
             onError?.invoke(it)
         })
 
+fun <D> Observable<D>.mapToResult(): Observable<Result<D>> =
+        this.map(::Result).onErrorReturn(::Result)
+
 data class Result<out D>(val data: D? = null, val error: Throwable? = null) {
     fun handle(dataFun: ((D) -> Unit)?, errorFun: ((Throwable) -> Unit)?) {
         if (error == null) {

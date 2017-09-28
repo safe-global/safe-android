@@ -21,7 +21,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesSecurityViewModel(provider: ViewModelProvider) = provider[SecurityContract.ViewModel::class.java]!!
+    fun providesSecurityViewModel(provider: ViewModelProvider) = provider[SecurityContract::class.java]!!
 
     @Provides
     @ForView
