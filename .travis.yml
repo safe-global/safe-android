@@ -27,6 +27,9 @@ script:
   - . ./ci/prepare_env.sh
   - ./ci/build_debug.sh
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -f app/build/reports/jacoco/*/*.xml
+
 deploy:
   provider: releases
   api_key: "${GITHUB_API_KEY}"
