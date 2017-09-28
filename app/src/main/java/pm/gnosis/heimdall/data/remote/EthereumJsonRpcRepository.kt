@@ -4,7 +4,7 @@ import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
 import io.reactivex.Observable
 import io.reactivex.functions.Function3
-import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
+import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.util.ERC20
 import pm.gnosis.heimdall.data.model.JsonRpcRequest
 import pm.gnosis.heimdall.data.model.TransactionCallParams

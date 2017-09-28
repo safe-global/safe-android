@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.splash
 
 import io.reactivex.Completable
-import pm.gnosis.heimdall.accounts.repositories.AccountsRepository
+import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.util.ERC20
