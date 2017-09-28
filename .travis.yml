@@ -28,7 +28,7 @@ script:
   - ./ci/build_debug.sh
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash) -f app/build/reports/jacoco/*/*.xml
 
 deploy:
   provider: releases
