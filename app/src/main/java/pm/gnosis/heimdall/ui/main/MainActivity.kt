@@ -13,12 +13,13 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.account.AccountFragment
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.multisig.MultisigFragment
 import pm.gnosis.heimdall.ui.tokens.TokensFragment
 
 class MainActivity : BaseActivity() {
 
-    val items = listOf(R.id.action_authenticate, R.id.action_account, R.id.action_multisig, R.id.action_tokens)
+    private val items = listOf(R.id.action_authenticate, R.id.action_account, R.id.action_multisig, R.id.action_tokens)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,37 +44,23 @@ class MainActivity : BaseActivity() {
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
 
-    private fun pagerAdapter() = object : FragmentPagerAdapter(supportFragmentManager) {
-        private val fragments: SparseArray<Fragment> = SparseArray()
-
-        override fun getItem(position: Int): Fragment {
-            var fragment = fragments.get(position)
-            if (fragment == null) {
-                fragment = createFragment(position)
-                fragments.put(position, fragment)
+    private fun pagerAdapter() = FactoryPagerAdapter(supportFragmentManager, FactoryPagerAdapter.Factory(items.size, {
+        when (positionToId(it)) {
+            R.id.action_authenticate -> {
+                AuthenticateFragment()
             }
-            return fragment
+            R.id.action_account -> {
+                AccountFragment()
+            }
+            R.id.action_multisig -> {
+                MultisigFragment()
+            }
+            R.id.action_tokens -> {
+                TokensFragment()
+            }
+            else -> throw IllegalStateException("Unhandled tab position")
         }
-
-        private fun createFragment(position: Int) =
-                when (positionToId(position)) {
-                    R.id.action_authenticate -> {
-                        AuthenticateFragment()
-                    }
-                    R.id.action_account -> {
-                        AccountFragment()
-                    }
-                    R.id.action_multisig -> {
-                        MultisigFragment()
-                    }
-                    R.id.action_tokens -> {
-                        TokensFragment()
-                    }
-                    else -> throw IllegalStateException("Unhandled tab position")
-                }
-
-        override fun getCount() = items.size
-    }
+    }))
 
     companion object {
         fun createIntent(context: Context) = Intent(context, MainActivity::class.java)
