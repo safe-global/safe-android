@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.accounts.di.AccountsBindingModule
 import pm.gnosis.heimdall.accounts.di.AccountsModule
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.di.ApplicationContext
+import pm.gnosis.heimdall.common.di.module.ApplicationBindingsModule
 import pm.gnosis.heimdall.common.di.module.ApplicationModule
 import pm.gnosis.heimdall.common.di.module.CoreModule
 import pm.gnosis.heimdall.common.di.module.ViewModelFactoryModule
@@ -26,6 +27,7 @@ import javax.inject.Singleton
         AccountsBindingModule::class,
         AccountsModule::class,
         ApplicationModule::class,
+        ApplicationBindingsModule::class,
         CoreModule::class,
         SecurityBindingsModule::class,
         ViewModelFactoryModule::class

@@ -54,4 +54,5 @@
     <string name="pin_too_short">The pin is too short. It should have at least 6 digits!</string>
     <string name="invalid_erc67">Not a valid ERC67 transaction</string>
     <string name="unknown_wallet_action">Not Confirm or Revoke</string>
+    <string name="no_account_available">No account available. Please restart the app!</string>
 </resources>
