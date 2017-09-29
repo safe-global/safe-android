@@ -12,7 +12,7 @@
         android:gravity="center"
         android:padding="8dp"
         android:text="@string/change_number_of_confirmations_to"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/color_primary"
         android:textSize="24sp" />
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="@color/gnosisBlue"
+        android:textColor="@color/gnosis_blue"
         android:textSize="48sp"
         android:textStyle="bold"
         tools:text="3" />

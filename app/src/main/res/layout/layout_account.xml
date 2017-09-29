@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/color_primary"
                 android:textSize="18sp"
                 tools:text="0x01ca023012ab3123" />
 
@@ -94,7 +94,7 @@
                 android:id="@+id/layout_account_balance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/color_primary"
                 android:textSize="42sp"
                 tools:text="42 Ξ" />
 
