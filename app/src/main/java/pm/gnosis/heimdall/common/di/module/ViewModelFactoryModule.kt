@@ -7,6 +7,8 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import pm.gnosis.heimdall.common.di.ViewModelFactory
 import pm.gnosis.heimdall.common.di.ViewModelKey
+import pm.gnosis.heimdall.ui.account.AccountContract
+import pm.gnosis.heimdall.ui.account.AccountViewModel
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
@@ -17,20 +19,26 @@ import javax.inject.Singleton
 
 @Module
 abstract class ViewModelFactoryModule {
-    @Binds
-    @IntoMap
-    @ViewModelKey(SecurityContract::class)
-    abstract fun bindsSecurityViewModel(viewModel: SecurityViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(GenerateMnemonicContract::class)
-    abstract fun bindsGenerateMnemonicPresenter(viewModel: GenerateMnemonicPresenter): ViewModel
+    @ViewModelKey(AccountContract::class)
+    abstract fun bindsAccountContract(viewModel: AccountViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(AuthenticateContract::class)
-    abstract fun bindsAuthenticateViewModel(viewModel: AuthenticateViewModel): ViewModel
+    abstract fun bindsAuthenticateContract(viewModel: AuthenticateViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GenerateMnemonicContract::class)
+    abstract fun bindsGenerateMnemonicContract(viewModel: GenerateMnemonicPresenter): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SecurityContract::class)
+    abstract fun bindsSecurityContract(viewModel: SecurityViewModel): ViewModel
 
     @Binds
     @Singleton
