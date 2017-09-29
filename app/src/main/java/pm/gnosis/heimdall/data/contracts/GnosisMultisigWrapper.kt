@@ -7,7 +7,10 @@ import pm.gnosis.heimdall.data.exceptions.InvalidAddressException
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.utils.*
+import pm.gnosis.utils.isSolidityMethod
+import pm.gnosis.utils.isValidEthereumAddress
+import pm.gnosis.utils.removeSolidityMethodPrefix
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -4,10 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.IdRes
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
-import android.util.SparseArray
 import kotlinx.android.synthetic.main.layout_main.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.account.AccountFragment
