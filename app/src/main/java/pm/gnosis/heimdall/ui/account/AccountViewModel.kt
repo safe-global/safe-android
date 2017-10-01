@@ -4,6 +4,7 @@ import android.arch.persistence.room.EmptyResultSetException
 import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.functions.Function
+import io.reactivex.functions.Predicate
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
@@ -21,6 +22,10 @@ class AccountViewModel @Inject constructor(
         private val qrCodeGenerator: QrCodeGenerator
 ) : AccountContract() {
 
+    private val errorHandler = LocalizedException.Handler.Builder(context)
+            .add({ it is EmptyResultSetException }, R.string.no_account_available)
+            .build()
+
     override fun getQrCode(contents: String) =
             qrCodeGenerator.generateQrCode(contents)
                     .mapToResult()
@@ -28,12 +33,7 @@ class AccountViewModel @Inject constructor(
     override fun getAccountAddress() =
             accountsRepository.loadActiveAccount()
                     .toObservable()
-                    .onErrorResumeNext(Function { throwable ->
-                        Observable.error<Account>(if (throwable is EmptyResultSetException)
-                            LocalizedException(context.getString(R.string.no_account_available))
-                        else
-                            throwable)
-                    })
+                    .onErrorResumeNext(Function { errorHandler.observable<Account>(it) })
                     .mapToResult()
 
     override fun getAccountBalance() =
