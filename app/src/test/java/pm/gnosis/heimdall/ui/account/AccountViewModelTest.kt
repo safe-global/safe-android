@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
+import okhttp3.ResponseBody
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,10 +20,14 @@ import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.util.QrCodeGenerator
 import pm.gnosis.heimdall.common.util.Result
+import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
+import retrofit2.HttpException
+import retrofit2.Response
+import java.math.BigInteger
 import org.mockito.Mockito.`when` as given
 
 @RunWith(MockitoJUnitRunner::class)
@@ -132,7 +137,54 @@ class AccountViewModelTest {
     }
 
     @Test
-    fun getAccountBalance() {
+    fun getAccountBalanceError() {
+        val viewModel = createViewModel()
+        val observer = createObserver<Wei>()
+
+        val exception = IllegalStateException()
+        given(ethereumJsonRpcRepository.getBalance()).thenReturn(Observable.error<Wei>(exception))
+        viewModel.getAccountBalance().subscribe(observer)
+
+        observer.assertNoErrors()
+        observer.assertComplete()
+        observer.assertValueCount(1)
+        observer.assertValue(Result(exception))
+        verifyNoMoreInteractions(context)
+
+    }
+
+    @Test
+    fun getAccountBalanceNetworkError() {
+        val viewModel = createViewModel()
+        val observer = createObserver<Wei>()
+        val response = Response.error<Any>(401, mock(ResponseBody::class.java))
+
+        given(ethereumJsonRpcRepository.getBalance()).thenReturn(Observable.error<Wei>(HttpException(response)))
+        viewModel.getAccountBalance().subscribe(observer)
+
+        observer.assertNoErrors()
+        observer.assertComplete()
+        observer.assertValueCount(1)
+        observer.assertValue(Result(LocalizedException(TEST_STRING)))
+
+        verify(context).getString(R.string.error_not_authorized_for_action)
+    }
+
+    @Test
+    fun getAccountBalanceSuccess() {
+        val viewModel = createViewModel()
+        val observer = createObserver<Wei>()
+
+        val balance = Wei(BigInteger.valueOf(1000))
+        given(ethereumJsonRpcRepository.getBalance()).thenReturn(Observable.just(balance))
+        viewModel.getAccountBalance().subscribe(observer)
+
+        observer.assertNoErrors()
+        observer.assertComplete()
+        observer.assertValueCount(1)
+        observer.assertValue(Result(balance))
+        verifyNoMoreInteractions(context)
+
     }
 
     private fun <D> createObserver() =

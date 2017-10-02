@@ -24,7 +24,6 @@ import pm.gnosis.heimdall.common.util.subscribeForResult
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
-import timber.log.Timber
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -104,7 +103,6 @@ class AccountFragment : BaseFragment() {
     }
 
     private fun handleError(throwable: Throwable) {
-        Timber.e(throwable)
         errorSnackbar(layout_account_coordinator_layout, throwable)
     }
 
