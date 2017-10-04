@@ -7,6 +7,8 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import pm.gnosis.heimdall.common.di.ViewModelFactory
 import pm.gnosis.heimdall.common.di.ViewModelKey
+import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
+import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicPresenter
 import pm.gnosis.heimdall.ui.security.SecurityContract
@@ -24,6 +26,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(GenerateMnemonicContract::class)
     abstract fun bindsGenerateMnemonicPresenter(viewModel: GenerateMnemonicPresenter): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AuthenticateContract::class)
+    abstract fun bindsAuthenticateViewModel(viewModel: AuthenticateViewModel): ViewModel
 
     @Binds
     @Singleton

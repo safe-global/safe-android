@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.filterEditorActions
 import timber.log.Timber
 import javax.inject.Inject
@@ -140,8 +141,7 @@ class SecurityActivity : BaseActivity() {
             return
         }
 
-        val message = (throwable as? LocalizedException)?.message ?: getString(R.string.error_try_again)
-        snackbar(layout_security_content_container, message)
+        errorSnackbar(layout_security_content_container, throwable)
     }
 
     companion object {
