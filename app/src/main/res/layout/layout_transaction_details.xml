@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textColor="@color/gnosisBlue"
+                android:textColor="@color/gnosis_blue"
                 android:textSize="106sp"
                 tools:text="1" />
 
@@ -60,7 +60,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/multisig_address"
-                        android:textColor="@color/gnosisBlue"
+                        android:textColor="@color/gnosis_blue"
                         android:textSize="22sp" />
 
                     <TextView

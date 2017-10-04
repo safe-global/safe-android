@@ -11,30 +11,26 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/OldAppTheme">
+        android:theme="@style/AppTheme">
         <activity
             android:name="pm.gnosis.heimdall.ui.splash.SplashActivity"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme">
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.onboarding.GenerateMnemonicActivity"
-            android:theme="@style/AppTheme" />
+            android:name=".ui.onboarding.GenerateMnemonicActivity" />
         <activity
-            android:name=".ui.onboarding.RestoreAccountActivity"
-            android:theme="@style/AppTheme" />
+            android:name=".ui.onboarding.RestoreAccountActivity" />
         <activity
-            android:name=".ui.main.MainActivity"
-            android:launchMode="singleTop" />
+            android:name=".ui.main.MainActivity" />
         <activity
             android:name=".ui.transactiondetails.TransactionDetailsActivity"
+            android:theme="@style/OldAppTheme"
             android:parentActivityName=".ui.main.MainActivity" />
         <activity
-            android:name=".ui.security.SecurityActivity"
-            android:theme="@style/AppTheme" />
+            android:name=".ui.security.SecurityActivity" />
     </application>
 </manifest>

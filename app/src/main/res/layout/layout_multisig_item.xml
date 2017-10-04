@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/gnosisBlue"
+            android:textColor="@color/gnosis_blue"
             android:textStyle=""
             tools:text="My Multisig Wallet" />
 

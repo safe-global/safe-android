@@ -9,7 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@color/color_primary"
         android:gravity="center_horizontal">
 
         <ScrollView
@@ -40,7 +40,7 @@
                     android:background="?selectableItemBackground"
                     android:gravity="center"
                     android:minLines="3"
-                    android:textColor="@color/gnosisBlue"
+                    android:textColor="@color/gnosis_blue"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     tools:text="abstract inspire axis monster urban order rookie over volume poverty horse rack" />
@@ -72,7 +72,7 @@
                 android:gravity="center"
                 android:padding="16dp"
                 android:text="@string/no_account_restore_it_via_mnemonic_phrase"
-                android:textColor="@color/gnosisBlueDark"
+                android:textColor="@color/gnosis_blue_dark"
                 android:textSize="16sp" />
 
             <TextView

@@ -18,13 +18,13 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.ApplicationComponent
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
+import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator.REQUEST_CODE
+import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
+import pm.gnosis.heimdall.common.util.scanQrCode
 import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.toast
 import pm.gnosis.heimdall.data.db.MultisigWallet
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.common.util.scanQrCode
-import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator.REQUEST_CODE
-import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
 import pm.gnosis.utils.addAddressPrefix
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber

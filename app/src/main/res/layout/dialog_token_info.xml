@@ -10,7 +10,7 @@
         android:id="@+id/dialog_token_info_symbol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/gnosisBlue"
+        android:textColor="@color/gnosis_blue"
         android:textSize="28sp"
         tools:text="GNO" />
 

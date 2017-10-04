@@ -20,7 +20,7 @@
             android:layout_weight="1"
             android:gravity="end|bottom"
             android:maxLines="1"
-            android:textColor="@color/gnosisBlue"
+            android:textColor="@color/gnosis_blue"
             android:textSize="42sp"
             app:autoSizeMinTextSize="18sp"
             app:autoSizeTextType="uniform"
@@ -33,7 +33,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:gravity="end|bottom"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/color_primary"
             android:textSize="32sp"
             tools:text="GNO" />
     </LinearLayout>
@@ -44,7 +44,7 @@
         android:gravity="center"
         android:padding="8dp"
         android:text="@string/to"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/color_primary"
         android:textSize="24sp" />
 
     <TextView

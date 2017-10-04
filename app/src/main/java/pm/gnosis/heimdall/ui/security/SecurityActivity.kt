@@ -6,10 +6,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.widget.editorActions
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Predicate
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_security.*
 import pm.gnosis.heimdall.HeimdallApplication
