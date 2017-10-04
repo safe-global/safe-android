@@ -52,4 +52,6 @@
     <string name="mnemonic_copied">Mnemonic copied to clipboard</string>
     <string name="pin_setup_failed">Pin setup failed. Please try again!</string>
     <string name="pin_too_short">The pin is too short. It should have at least 6 digits!</string>
+    <string name="invalid_erc67">Not a valid ERC67 transaction</string>
+    <string name="unknown_wallet_action">Not Confirm or Revoke</string>
 </resources>

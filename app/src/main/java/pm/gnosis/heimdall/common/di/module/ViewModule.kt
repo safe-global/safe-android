@@ -9,6 +9,7 @@ import dagger.Module
 import dagger.Provides
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
+import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.security.SecurityContract
 
@@ -18,6 +19,10 @@ class ViewModule(val context: Context) {
     @ForView
     @ViewContext
     fun providesContext() = context
+
+    @Provides
+    @ForView
+    fun providesAuthenticateViewModel(provider: ViewModelProvider) = provider[AuthenticateContract::class.java]!!
 
     @Provides
     @ForView
