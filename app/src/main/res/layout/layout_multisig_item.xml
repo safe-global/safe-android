@@ -25,8 +25,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/gnosis_blue"
-            android:textStyle=""
+            style="@style/Title"
             tools:text="My Multisig Wallet" />
 
         <TextView
@@ -35,6 +34,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
+            style="@style/Label"
             tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
     </LinearLayout>
 
