@@ -91,7 +91,7 @@ class MultisigFragment : BaseFragment() {
     private fun showMultisigInputDialog(withAddress: String = "") {
         val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
 
-        if (!withAddress.isNullOrEmpty()) {
+        if (!withAddress.isEmpty()) {
             dialogView.dialog_add_multisig_text_address.setText(withAddress)
             dialogView.dialog_add_multisig_text_address.isEnabled = false
             dialogView.dialog_add_multisig_text_address.inputType = InputType.TYPE_NULL

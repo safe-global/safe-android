@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.common.di.module.ViewModelFactoryModule
 import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.di.SecurityBindingsModule
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -42,6 +43,8 @@ interface ApplicationComponent {
 
     fun accountsRepository(): AccountsRepository
     fun ethereumJsonRpcRepository(): EthereumJsonRpcRepository
+    fun multisigRepository(): MultisigRepository
+
     fun viewModelFactory(): ViewModelProvider.Factory
 
     fun preferencesManager(): PreferencesManager
