@@ -178,7 +178,6 @@ class AuthenticateViewModelTest {
         return builder.toString()
     }
 
-
     private fun createObserver() =
             TestObserver.create<Result<Intent>>()
 
