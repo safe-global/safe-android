@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils.eq
 import pm.gnosis.heimdall.test.utils.TestCompletable
+import pm.gnosis.heimdall.test.utils.TestListUpdateCallback
 import pm.gnosis.heimdall.ui.base.Adapter
 import org.mockito.Mockito.`when` as given
 
@@ -54,12 +55,39 @@ class MultisigViewModelTest {
                 .assertValue { it is DataResult && it.data.parentId == null && it.data.diff == null && it.data.entries.isEmpty() }
         val initialDataId = (subscriber.values().first() as DataResult).data.id
 
-        val results = listOf(MultisigWallet("0"))
+        val results = listOf(MultisigWallet("0"), MultisigWallet("1"))
         processor.offer(results)
         // Check that the results are emitted
         subscriber.assertNoErrors()
                 .assertValueCount(2)
                 .assertValueAt(1, { it is DataResult && it.data.parentId == initialDataId && it.data.diff != null && it.data.entries == results })
+
+        val firstData = (subscriber.values()[1] as DataResult).data
+        val firstDataId = firstData.id
+        val callback = TestListUpdateCallback()
+        callback.apply(firstData.diff!!)
+                .assertNoChanges().assertNoRemoves().assertNoMoves()
+                .assertInsertsCount(1).assertInsert(0)
+                .reset()
+
+        val moreResults = listOf(MultisigWallet("1"), MultisigWallet("0"), MultisigWallet("3"))
+        processor.offer(moreResults)
+        // Check that the diff are calculated correctly
+        subscriber.assertNoErrors()
+                .assertValueCount(3)
+                .assertValueAt(2, { it is DataResult && it.data.parentId == firstDataId && it.data.diff != null && it.data.entries == moreResults })
+
+        val secondData = (subscriber.values()[2] as DataResult).data
+        callback.apply(secondData.diff!!)
+                .assertNoRemoves()
+                // A remove might become a move (if it has an insert). So as "1" is "removed" it
+                // stays at the end of the list. Once all the removes and inserts are done the moves
+                // are calculated. Therefore it is a move from 2 to 0
+                .assertMovesCount(1).assertMove(TestListUpdateCallback.Move(2, 0))
+                .assertChangesCount(1).assertChange(0)
+                // Inserts are calculated from the back
+                .assertInsertsCount(1).assertInsert(1)
+                .reset()
     }
 
     @Test
