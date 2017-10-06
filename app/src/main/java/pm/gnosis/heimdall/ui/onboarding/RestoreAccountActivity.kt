@@ -17,6 +17,8 @@ import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.startActivity
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.main.MainActivity
+import pm.gnosis.mnemonic.*
+import pm.gnosis.mnemonic.wordlist.BIP39_WORDLISTS
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -50,12 +52,28 @@ class RestoreAccountActivity : BaseActivity() {
                             onNext = { layout_restore_account_mnemonic_input_layout.error = null },
                             onError = Timber::e)
 
-    private fun onMnemonicValidation(isValid: Boolean) {
-        if (isValid) {
-            layout_restore_account_mnemonic_input_layout.error = null
-            disposables += saveAccountWithMnemonicDisposable(layout_restore_account_mnemonic.text.toString())
-        } else {
-            layout_restore_account_mnemonic_input_layout.error = "Invalid mnemonic phrase"
+    private fun onMnemonicValidation(mnemonicResult: Bip39ValidationResult) {
+        when (mnemonicResult) {
+            is ValidMnemonic -> {
+                layout_restore_account_mnemonic_input_layout.error = null
+                disposables += saveAccountWithMnemonicDisposable(layout_restore_account_mnemonic.text.toString())
+            }
+            is InvalidEntropy -> {
+                layout_restore_account_mnemonic_input_layout.error = getString(R.string.invalid_mnemonic)
+            }
+            is InvalidChecksum -> {
+                layout_restore_account_mnemonic_input_layout.error = getString(R.string.invalid_mnemonic)
+            }
+            is MnemonicNotInWordlist -> {
+                val wordLists = BIP39_WORDLISTS.keys.joinToString()
+                layout_restore_account_mnemonic_input_layout.error = getString(R.string.invalid_mnemonic_supported_languages, wordLists)
+            }
+            is EmptyMnemonic -> {
+                layout_restore_account_mnemonic_input_layout.error = getString(R.string.invalid_mnemonic_no_words)
+            }
+            is UnknownMnemonicError -> {
+                layout_restore_account_mnemonic_input_layout.error = getString(R.string.invalid_mnemonic)
+            }
         }
     }
 

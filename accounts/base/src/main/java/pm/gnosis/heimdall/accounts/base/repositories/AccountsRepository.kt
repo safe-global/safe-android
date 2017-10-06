@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.models.Transaction
+import pm.gnosis.mnemonic.Bip39ValidationResult
 
 interface AccountsRepository {
     fun loadActiveAccount(): Single<Account>
@@ -18,7 +19,7 @@ interface AccountsRepository {
 
     fun generateMnemonic(): Single<String>
 
-    fun validateMnemonic(mnemonic: String): Single<Boolean>
+    fun validateMnemonic(mnemonic: String): Single<Bip39ValidationResult>
 
     companion object {
         const val CHAIN_ID_ANY = 0

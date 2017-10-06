@@ -15,6 +15,9 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.TestCompletable
+import pm.gnosis.mnemonic.Bip39ValidationResult
+import pm.gnosis.mnemonic.UnknownMnemonicError
+import pm.gnosis.mnemonic.ValidMnemonic
 
 @RunWith(MockitoJUnitRunner::class)
 class RestoreAccountViewModelTest {
@@ -36,39 +39,29 @@ class RestoreAccountViewModelTest {
 
     @Test
     fun isValidMnemonicWithValidMnemonic() {
-        val testObserver = TestObserver.create<Boolean>()
-        given(accountsRepository.validateMnemonic(anyString())).willReturn(Single.just(true))
+        val testObserver = TestObserver.create<Bip39ValidationResult>()
+        val result = ValidMnemonic(testMnemonic)
+        given(accountsRepository.validateMnemonic(anyString())).willReturn(Single.just(result))
 
         viewModel.isValidMnemonic(testMnemonic).subscribe(testObserver)
 
         then(accountsRepository).should().validateMnemonic(testMnemonic)
-        testObserver.assertValue(true)
-                .assertNoErrors()
-                .assertTerminated()
-    }
-
-    @Test
-    fun isValidMnemonicLess12Words() {
-        val testObserver = TestObserver.create<Boolean>()
-        val invalidMnemonic = "less than 12 words"
-
-        viewModel.isValidMnemonic(invalidMnemonic).subscribe(testObserver)
-
-        then(accountsRepository).should(never()).validateMnemonic(anyString())
-        testObserver.assertValue(false)
+        testObserver.assertValue(result)
                 .assertNoErrors()
                 .assertTerminated()
     }
 
     @Test
     fun isValidMnemonicWithInvalidMnemonic() {
-        val testObserver = TestObserver.create<Boolean>()
-        given(accountsRepository.validateMnemonic(anyString())).willReturn(Single.just(false))
+        val testObserver = TestObserver.create<Bip39ValidationResult>()
+        val result = UnknownMnemonicError(testMnemonic)
+
+        given(accountsRepository.validateMnemonic(anyString())).willReturn(Single.just(result))
 
         viewModel.isValidMnemonic(testMnemonic).subscribe(testObserver)
 
         then(accountsRepository).should().validateMnemonic(testMnemonic)
-        testObserver.assertValue(false)
+        testObserver.assertValue(result)
                 .assertNoErrors()
                 .assertTerminated()
     }

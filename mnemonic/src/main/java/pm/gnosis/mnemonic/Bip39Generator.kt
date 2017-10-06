@@ -7,7 +7,6 @@ import pm.gnosis.mnemonic.wordlist.WordList
 import pm.gnosis.utils.getIndexesAllMatching
 import pm.gnosis.utils.toBinaryString
 import pm.gnosis.utils.toHexString
-import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.security.spec.InvalidKeySpecException
@@ -20,7 +19,7 @@ import javax.inject.Singleton
 
 @Singleton
 class Bip39Generator @Inject constructor() : Bip39 {
-    class Hasher : PBEPBKDF2.PBKDF2withSHA512() {
+    private class Hasher : PBEPBKDF2.PBKDF2withSHA512() {
         fun generateSecret(keySpec: KeySpec): SecretKey {
             return engineGenerateSecret(keySpec)
         }
@@ -74,17 +73,17 @@ class Bip39Generator @Inject constructor() : Bip39 {
         return wordIndexes.joinToString(wordList.separator) { wordList.words[it] }
     }
 
-    override fun validateMnemonic(mnemonic: String): Boolean {
+    override fun validateMnemonic(mnemonic: String): Bip39ValidationResult {
         val words = mnemonic.split(Regex("\\s+"))
-        if (words.isEmpty()) return false
+        if (words.isEmpty() || words[0].isEmpty()) return EmptyMnemonic(mnemonic)
         val checksumNBits = (words.size * 11) / (Bip39.ENTROPY_MULTIPLE + 1)
         val entropyNBits = checksumNBits * 32
         if (entropyNBits % Bip39.ENTROPY_MULTIPLE != 0 || entropyNBits < Bip39.MIN_ENTROPY_BITS || entropyNBits > Bip39.MAX_ENTROPY_BITS) {
-            throw IllegalArgumentException("Invalid mnemonic")
+            return InvalidEntropy(mnemonic, entropyNBits)
         }
 
         val wordList = BIP39_WORDLISTS.values.firstOrNull { wordList -> wordList.words.contains(words[0]) } ?:
-                throw IllegalArgumentException("Invalid mnemonic")
+                return MnemonicNotInWordlist(mnemonic)
 
         val binaryIndexes = wordList.words.getIndexesAllMatching(words).joinToString("") { Integer.toBinaryString(it).padStart(11, '0') }
 
@@ -93,9 +92,9 @@ class Bip39Generator @Inject constructor() : Bip39 {
         val originalBytes = (0 until originalEntropy.length step 8).map { (Integer.valueOf((originalEntropy.subSequence(it, it + 8).toString()), 2) and 0xFF).toByte() }.toByteArray()
 
 
-        val digest = MessageDigest.getInstance("SHA-256")
+        val digest = SHA256.Digest()
         val sha256 = digest.digest(originalBytes)
         val generatedChecksum = sha256.toBinaryString().subSequence(0, checksumNBits)
-        return checksum == generatedChecksum
+        return if (checksum == generatedChecksum) ValidMnemonic(mnemonic) else InvalidChecksum(mnemonic, checksum, generatedChecksum)
     }
 }

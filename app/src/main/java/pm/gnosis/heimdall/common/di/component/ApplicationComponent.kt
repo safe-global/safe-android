@@ -56,7 +56,6 @@ interface ApplicationComponent {
     fun gnosisAuthenticatorDb(): GnosisAuthenticatorDb
 
     fun gnosisMultiSig(): GnosisMultisigWrapper
-    fun bip39(): Bip39
 
     // Base injects
     fun inject(activity: BaseActivity)
