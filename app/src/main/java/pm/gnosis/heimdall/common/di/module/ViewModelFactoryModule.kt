@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.common.di.module
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import android.preference.MultiSelectListPreference
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -13,7 +12,7 @@ import pm.gnosis.heimdall.ui.account.AccountViewModel
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
 import pm.gnosis.heimdall.ui.multisig.MultisigContract
-import pm.gnosis.heimdall.ui.multisig.MultisigPresenter
+import pm.gnosis.heimdall.ui.multisig.MultisigViewModel
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicPresenter
 import pm.gnosis.heimdall.ui.security.SecurityContract
@@ -41,7 +40,7 @@ abstract class ViewModelFactoryModule {
     @Binds
     @IntoMap
     @ViewModelKey(MultisigContract::class)
-    abstract fun bindsMultisigContract(viewModel: MultisigPresenter): ViewModel
+    abstract fun bindsMultisigContract(viewModel: MultisigViewModel): ViewModel
 
     @Binds
     @IntoMap

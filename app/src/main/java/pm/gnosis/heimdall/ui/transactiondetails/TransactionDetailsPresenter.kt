@@ -9,7 +9,7 @@ import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
-import pm.gnosis.heimdall.data.db.MultisigWallet
+import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.TransactionDetails
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
@@ -23,7 +23,7 @@ class TransactionDetailsPresenter @Inject constructor(private val ethereumJsonRp
                                                       private val accountsRepository: AccountsRepository,
                                                       private val gnosisAuthenticatorDb: GnosisAuthenticatorDb,
                                                       private val gnosisMultisigWrapper: GnosisMultisigWrapper) {
-    fun getMultisigWalletDetails(address: BigInteger): Flowable<MultisigWallet> =
+    fun getMultisigWalletDetails(address: BigInteger): Flowable<MultisigWalletDb> =
             gnosisAuthenticatorDb.multisigWalletDao().observeMultisigWallet(address.asEthereumAddressString())
                     .subscribeOn(Schedulers.io())
 
@@ -40,7 +40,7 @@ class TransactionDetailsPresenter @Inject constructor(private val ethereumJsonRp
                     .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
 
     fun addMultisigWallet(name: String = "", address: String) = Completable.fromCallable {
-        val multisigWallet = MultisigWallet()
+        val multisigWallet = MultisigWalletDb()
         multisigWallet.name = name
         multisigWallet.address = address
         gnosisAuthenticatorDb.multisigWalletDao().insertMultisigWallet(multisigWallet)

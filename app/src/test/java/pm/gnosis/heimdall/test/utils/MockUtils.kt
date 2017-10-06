@@ -19,6 +19,11 @@ object MockUtils {
         return MockUtil.createMock(creationSettings)
     }
 
+    fun <T> eq(value: T): T {
+        Mockito.eq(value)
+        return uninitialized()
+    }
+
     fun <T> any(): T {
         Mockito.any<T>()
         return uninitialized()

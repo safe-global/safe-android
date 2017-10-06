@@ -15,6 +15,8 @@ import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.common.util.DataResult
+import pm.gnosis.heimdall.common.util.ErrorResult
 import pm.gnosis.heimdall.common.util.Result
 import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
@@ -47,9 +49,7 @@ class AuthenticateViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver()
         viewModel.checkResult(AuthenticateContract.ActivityResults(UNHANDLED_REQUEST_CODE, Activity.RESULT_OK, intent)).subscribe(observer)
-        observer.assertNoErrors()
-        observer.assertNoValues()
-        observer.assertComplete()
+        observer.assertNoErrors().assertNoValues().assertComplete()
 
         verifyNoMoreInteractions(intent)
     }
@@ -62,9 +62,7 @@ class AuthenticateViewModelTest {
         val observer = createObserver()
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_CANCELED, intent))
                 .subscribe(observer)
-        observer.assertNoErrors()
-        observer.assertNoValues()
-        observer.assertComplete()
+        observer.assertNoErrors().assertNoValues().assertComplete()
 
         verifyNoMoreInteractions(intent)
     }
@@ -75,9 +73,7 @@ class AuthenticateViewModelTest {
         val observer = createObserver()
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, null))
                 .subscribe(observer)
-        observer.assertNoErrors()
-        observer.assertNoValues()
-        observer.assertComplete()
+        observer.assertNoErrors().assertNoValues().assertComplete()
     }
 
     @Test
@@ -88,9 +84,7 @@ class AuthenticateViewModelTest {
         val observer = createObserver()
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
                 .subscribe(observer)
-        observer.assertNoErrors()
-        observer.assertNoValues()
-        observer.assertComplete()
+        observer.assertNoErrors().assertNoValues().assertComplete()
     }
 
     @Test
@@ -101,9 +95,7 @@ class AuthenticateViewModelTest {
         val observer = createObserver()
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
                 .subscribe(observer)
-        observer.assertComplete()
-        observer.assertNoErrors()
-        observer.assertValue(Result(LocalizedException(TEST_STRING)))
+        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
 
         Mockito.verify(context).getString(R.string.invalid_erc67)
     }
@@ -116,9 +108,7 @@ class AuthenticateViewModelTest {
         val observer = createObserver()
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
                 .subscribe(observer)
-        observer.assertComplete()
-        observer.assertNoErrors()
-        observer.assertValue(Result(LocalizedException(TEST_STRING)))
+        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
 
         Mockito.verify(context).getString(R.string.unknown_wallet_action)
     }
@@ -131,9 +121,7 @@ class AuthenticateViewModelTest {
         val observer = createObserver()
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
                 .subscribe(observer)
-        observer.assertComplete()
-        observer.assertNoErrors()
-        observer.assertValue(Result(LocalizedException(TEST_STRING)))
+        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
 
         Mockito.verify(context).getString(R.string.unknown_wallet_action)
     }
@@ -146,9 +134,7 @@ class AuthenticateViewModelTest {
         val observer = createObserver()
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
                 .subscribe(observer)
-        observer.assertComplete()
-        observer.assertNoErrors()
-        observer.assertValue { it.error == null && it.data is Intent }
+        observer.assertComplete().assertNoErrors().assertValue { it is DataResult }
     }
 
     @Test
@@ -159,9 +145,7 @@ class AuthenticateViewModelTest {
         val observer = createObserver()
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
                 .subscribe(observer)
-        observer.assertComplete()
-        observer.assertNoErrors()
-        observer.assertValue { it.error == null && it.data is Intent }
+        observer.assertComplete().assertNoErrors().assertValue { it is DataResult }
     }
 
     private fun testIntent(result: String): Intent {

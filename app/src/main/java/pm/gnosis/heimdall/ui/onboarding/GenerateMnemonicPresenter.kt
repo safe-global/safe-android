@@ -5,14 +5,14 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.util.Result
+import pm.gnosis.heimdall.common.util.mapToResult
 import pm.gnosis.mnemonic.Bip39
 import javax.inject.Inject
 
 class GenerateMnemonicPresenter @Inject constructor(private val accountsRepository: AccountsRepository) : GenerateMnemonicContract() {
     override fun generateMnemonic(): Observable<Result<String>> =
             Observable.fromCallable { Bip39.generateMnemonic() }
-                    .map(::Result)
-                    .onErrorReturn(::Result)
+                    .mapToResult()
                     .subscribeOn(Schedulers.io())
 
     override fun saveAccountWithMnemonic(mnemonic: String): Completable =

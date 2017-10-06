@@ -18,6 +18,8 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.common.util.DataResult
+import pm.gnosis.heimdall.common.util.ErrorResult
 import pm.gnosis.heimdall.common.util.QrCodeGenerator
 import pm.gnosis.heimdall.common.util.Result
 import pm.gnosis.heimdall.data.model.Wei
@@ -64,10 +66,9 @@ class AccountViewModelTest {
 
         viewModel.getQrCode("DATA").subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertComplete()
-        observer.assertValueCount(1)
-        observer.assertValue { it.error == null && it.data == bitmap }
+        observer.assertNoErrors().assertComplete()
+                .assertValueCount(1)
+                .assertValue { it is DataResult && it.data == bitmap }
     }
 
     @Test
@@ -80,10 +81,9 @@ class AccountViewModelTest {
 
         viewModel.getQrCode("DATA").subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertComplete()
-        observer.assertValueCount(1)
-        observer.assertValue { it.data == null && it.error == exception }
+        observer.assertNoErrors().assertComplete()
+                .assertValueCount(1)
+                .assertValue { it is ErrorResult && it.error == exception }
     }
 
     @Test
@@ -94,10 +94,9 @@ class AccountViewModelTest {
         given(accountRepository.loadActiveAccount()).thenReturn(Single.error<Account>(EmptyResultSetException("")))
         viewModel.getAccountAddress().subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertComplete()
-        observer.assertValueCount(1)
-        observer.assertValue(Result(LocalizedException(TEST_STRING)))
+        observer.assertNoErrors().assertComplete()
+                .assertValueCount(1)
+                .assertValue(ErrorResult(LocalizedException(TEST_STRING)))
 
         verify(context).getString(R.string.no_account_available)
     }
@@ -111,10 +110,9 @@ class AccountViewModelTest {
         given(accountRepository.loadActiveAccount()).thenReturn(Single.error<Account>(exception))
         viewModel.getAccountAddress().subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertComplete()
-        observer.assertValueCount(1)
-        observer.assertValue(Result(exception))
+        observer.assertNoErrors().assertComplete()
+                .assertValueCount(1)
+                .assertValue(ErrorResult(exception))
 
         verifyNoMoreInteractions(context)
     }
@@ -128,10 +126,9 @@ class AccountViewModelTest {
         given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         viewModel.getAccountAddress().subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertComplete()
-        observer.assertValueCount(1)
-        observer.assertValue(Result(account))
+        observer.assertNoErrors().assertComplete()
+                .assertValueCount(1)
+                .assertValue(DataResult(account))
 
         verifyNoMoreInteractions(context)
     }
@@ -145,10 +142,9 @@ class AccountViewModelTest {
         given(ethereumJsonRpcRepository.getBalance()).thenReturn(Observable.error<Wei>(exception))
         viewModel.getAccountBalance().subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertComplete()
-        observer.assertValueCount(1)
-        observer.assertValue(Result(exception))
+        observer.assertNoErrors().assertComplete()
+                .assertValueCount(1)
+                .assertValue(ErrorResult(exception))
         verifyNoMoreInteractions(context)
 
     }
@@ -162,10 +158,9 @@ class AccountViewModelTest {
         given(ethereumJsonRpcRepository.getBalance()).thenReturn(Observable.error<Wei>(HttpException(response)))
         viewModel.getAccountBalance().subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertComplete()
-        observer.assertValueCount(1)
-        observer.assertValue(Result(LocalizedException(TEST_STRING)))
+        observer.assertNoErrors().assertComplete()
+                .assertValueCount(1)
+                .assertValue(ErrorResult(LocalizedException(TEST_STRING)))
 
         verify(context).getString(R.string.error_not_authorized_for_action)
     }
@@ -179,10 +174,9 @@ class AccountViewModelTest {
         given(ethereumJsonRpcRepository.getBalance()).thenReturn(Observable.just(balance))
         viewModel.getAccountBalance().subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertComplete()
-        observer.assertValueCount(1)
-        observer.assertValue(Result(balance))
+        observer.assertNoErrors().assertComplete()
+                .assertValueCount(1)
+                .assertValue(DataResult(balance))
         verifyNoMoreInteractions(context)
 
     }

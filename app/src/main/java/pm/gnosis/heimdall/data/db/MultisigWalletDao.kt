@@ -2,21 +2,22 @@ package pm.gnosis.heimdall.data.db
 
 import android.arch.persistence.room.*
 import io.reactivex.Flowable
+import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
 
 @Dao
 interface MultisigWalletDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMultisigWallet(multisigWallet: MultisigWallet)
+    fun insertMultisigWallet(multisigWallet: MultisigWalletDb)
 
-    @Query("SELECT * FROM ${MultisigWallet.TABLE_NAME}")
-    fun observeMultisigWallets(): Flowable<List<MultisigWallet>>
+    @Query("SELECT * FROM ${MultisigWalletDb.TABLE_NAME}")
+    fun observeMultisigWallets(): Flowable<List<MultisigWalletDb>>
 
-    @Query("SELECT * FROM ${MultisigWallet.TABLE_NAME} WHERE ${MultisigWallet.COL_ADDRESS} = :address")
-    fun observeMultisigWallet(address: String): Flowable<MultisigWallet>
+    @Query("SELECT * FROM ${MultisigWalletDb.TABLE_NAME} WHERE ${MultisigWalletDb.COL_ADDRESS} = :address")
+    fun observeMultisigWallet(address: String): Flowable<MultisigWalletDb>
 
-    @Delete
-    fun removeMultisigWallet(multisigWallet: MultisigWallet)
+    @Query("DELETE FROM ${MultisigWalletDb.TABLE_NAME} WHERE ${MultisigWalletDb.COL_ADDRESS} = :address")
+    fun removeMultisigWallet(address: String)
 
     @Update
-    fun updateMultisigWallet(multisigWallet: MultisigWallet)
+    fun updateMultisigWallet(multisigWallet: MultisigWalletDb)
 }

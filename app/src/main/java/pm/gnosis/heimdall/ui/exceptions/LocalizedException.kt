@@ -22,7 +22,7 @@ data class LocalizedException(override val message: String) : Exception(message)
                 Timber.e(exception)
             }
             translators.forEach {
-                if (it.checker(exception)) {
+                if (it.condition(exception)) {
                     return LocalizedException(it.writer(context, exception))
                 }
             }
@@ -37,7 +37,7 @@ data class LocalizedException(override val message: String) : Exception(message)
             return Observable.error<D>(translate(exception))
         }
 
-        private class Translator(val checker: (Throwable) -> Boolean, val writer: (Context, Throwable) -> String) {
+        private class Translator(val condition: (Throwable) -> Boolean, val writer: (Context, Throwable) -> String) {
             constructor(checker: (Throwable) -> Boolean, @StringRes messageId: Int) :
                     this(checker, { context, _ -> context.getString(messageId) })
         }

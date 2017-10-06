@@ -16,7 +16,7 @@ static def getKey(String name, String defaultValue = null) {
     return value
 }
 
-def getInt(String name, int defaultValue) {
+static def getInt(String name, int defaultValue) {
     def envValue = getKey(name)
     if (envValue == null) {
         return defaultValue
