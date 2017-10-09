@@ -5,7 +5,7 @@ import io.reactivex.Flowable
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.subscribers.TestSubscriber
-import junit.framework.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -111,7 +111,7 @@ class MultisigViewModelTest {
         given(repository.addMultisigWallet(anyString(), anyString())).thenReturn(completable)
 
         viewModel.addMultisigWallet("Test", "Test").subscribe(observer)
-        Assert.assertEquals(1, completable.callCount)
+        assertEquals(1, completable.callCount)
         observer.assertTerminated().assertNoErrors().assertNoValues()
     }
 
@@ -133,7 +133,7 @@ class MultisigViewModelTest {
         given(repository.removeMultisigWallet(eq("Test"))).thenReturn(completable)
 
         viewModel.removeMultisigWallet("Test").subscribe(observer)
-        Assert.assertEquals(1, completable.callCount)
+        assertEquals(1, completable.callCount)
         observer.assertTerminated().assertNoErrors().assertNoValues()
     }
 
@@ -155,7 +155,7 @@ class MultisigViewModelTest {
         given(repository.updateMultisigWalletName(eq("Test"), anyString())).thenReturn(completable)
 
         viewModel.updateMultisigWalletName("Test", "Foo").subscribe(observer)
-        Assert.assertEquals(1, completable.callCount)
+        assertEquals(1, completable.callCount)
         observer.assertTerminated().assertNoErrors().assertNoValues()
     }
 

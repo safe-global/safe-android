@@ -2,7 +2,8 @@ package pm.gnosis.heimdall.test.utils
 
 import android.support.v7.util.DiffUtil
 import android.support.v7.util.ListUpdateCallback
-import junit.framework.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 
 class TestListUpdateCallback : ListUpdateCallback {
 
@@ -39,7 +40,7 @@ class TestListUpdateCallback : ListUpdateCallback {
     }
 
     fun assertMovesCount(expected: Int): TestListUpdateCallback {
-        Assert.assertEquals(expected, moves.size)
+        assertEquals(expected, moves.size)
         return this
     }
 
@@ -48,11 +49,12 @@ class TestListUpdateCallback : ListUpdateCallback {
     }
 
     fun assertMove(expected: Move): TestListUpdateCallback {
-        Assert.assertTrue("Expected move at $expected not found", moves.contains(expected))
+        assertTrue("Expected move at $expected not found", moves.contains(expected))
         return this
     }
+
     fun assertChangesCount(expected: Int): TestListUpdateCallback {
-        Assert.assertEquals(expected, changes.size)
+        assertEquals(expected, changes.size)
         return this
     }
 
@@ -61,12 +63,12 @@ class TestListUpdateCallback : ListUpdateCallback {
     }
 
     fun assertChange(expected: Int): TestListUpdateCallback {
-        Assert.assertTrue("Expected change at $expected not found", changes.contains(expected))
+        assertTrue("Expected change at $expected not found", changes.contains(expected))
         return this
     }
 
     fun assertRemovesCount(expected: Int): TestListUpdateCallback {
-        Assert.assertEquals(expected, removes.size)
+        assertEquals(expected, removes.size)
         return this
     }
 
@@ -75,12 +77,12 @@ class TestListUpdateCallback : ListUpdateCallback {
     }
 
     fun assertRemove(expected: Int): TestListUpdateCallback {
-        Assert.assertTrue("Expected removal at $expected not found", removes.contains(expected))
+        assertTrue("Expected removal at $expected not found", removes.contains(expected))
         return this
     }
 
     fun assertInsertsCount(expected: Int): TestListUpdateCallback {
-        Assert.assertEquals(expected, inserts.size)
+        assertEquals(expected, inserts.size)
         return this
     }
 
@@ -89,7 +91,7 @@ class TestListUpdateCallback : ListUpdateCallback {
     }
 
     fun assertInsert(expected: Int): TestListUpdateCallback {
-        Assert.assertTrue("Expected insertion at $expected not found", inserts.contains(expected))
+        assertTrue("Expected insertion at $expected not found", inserts.contains(expected))
         return this
     }
 
