@@ -4,7 +4,6 @@ import android.content.Context
 import io.reactivex.observers.TestObserver
 import okhttp3.ResponseBody
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock

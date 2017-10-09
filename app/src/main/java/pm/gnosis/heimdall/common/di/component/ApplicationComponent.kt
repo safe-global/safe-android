@@ -21,7 +21,6 @@ import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.di.SecurityBindingsModule
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.di.Bip39BindingModule
 import javax.inject.Singleton
 

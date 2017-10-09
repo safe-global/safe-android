@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.*
@@ -22,7 +21,6 @@ import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
-import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity
 import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.utils.addAddressPrefix
 import org.mockito.Mockito.`when` as given

@@ -24,11 +24,9 @@ import pm.gnosis.heimdall.common.util.scanQrCode
 import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.subscribeForResult
 import pm.gnosis.heimdall.common.util.toast
-import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.utils.addAddressPrefix
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
