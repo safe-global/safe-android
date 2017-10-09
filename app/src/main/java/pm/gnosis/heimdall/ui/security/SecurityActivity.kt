@@ -134,8 +134,6 @@ class SecurityActivity : BaseActivity() {
     }
 
     private fun handleError(throwable: Throwable) {
-        Timber.d(throwable)
-
         if (currentSate == SecurityContract.State.UNKNOWN) {
             showError()
             return

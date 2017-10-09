@@ -12,6 +12,8 @@ import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.common.util.DataResult
+import pm.gnosis.heimdall.common.util.ErrorResult
 import pm.gnosis.heimdall.common.util.Result
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.TestCompletable
@@ -44,7 +46,7 @@ class GenerateMnemonicViewModelTest {
         then(accountsRepositoryMock).should().generateMnemonic()
         testObserver.assertNoErrors()
                 .assertComplete()
-                .assertValue { (data, error) -> data == testMnemonic && error == null }
+                .assertValue { it is DataResult && it.data == testMnemonic }
     }
 
     @Test
@@ -58,7 +60,7 @@ class GenerateMnemonicViewModelTest {
         then(accountsRepositoryMock).should().generateMnemonic()
         testObserver.assertNoErrors()
                 .assertComplete()
-                .assertValue { (data, error) -> data == null && error == exception }
+                .assertValue { it is ErrorResult && it.error == exception }
     }
 
     @Test

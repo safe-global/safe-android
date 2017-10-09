@@ -16,7 +16,6 @@ import pm.gnosis.heimdall.accounts.utils.rlp
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.util.edit
 import pm.gnosis.mnemonic.Bip39
-import pm.gnosis.mnemonic.Bip39ValidationResult
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.toHexString
@@ -66,7 +65,7 @@ class KethereumAccountsRepository @Inject internal constructor(private val accou
         }
     }
 
-    override fun generateMnemonic(): Single<String> = Single.just(bip39.generateMnemonic())
+    override fun generateMnemonic(): Single<String> = Single.fromCallable { bip39.generateMnemonic() }
 
-    override fun validateMnemonic(mnemonic: String): Single<Bip39ValidationResult> = Single.just(bip39.validateMnemonic(mnemonic))
+    override fun validateMnemonic(mnemonic: String): Single<String> = Single.fromCallable { bip39.validateMnemonic(mnemonic) }
 }

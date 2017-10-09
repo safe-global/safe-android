@@ -76,7 +76,7 @@ class GethAccountsRepository @Inject constructor(
                 gethKeyStore.importECDSAKey(privateKey, generateRandomString())
             }
 
-    override fun generateMnemonic(): Single<String> = Single.just(bip39.generateMnemonic())
+    override fun generateMnemonic(): Single<String> = Single.fromCallable { bip39.generateMnemonic() }
 
-    override fun validateMnemonic(mnemonic: String): Single<Bip39ValidationResult> = Single.just(bip39.validateMnemonic(mnemonic))
+    override fun validateMnemonic(mnemonic: String): Single<String> = Single.fromCallable { bip39.validateMnemonic(mnemonic) }
 }

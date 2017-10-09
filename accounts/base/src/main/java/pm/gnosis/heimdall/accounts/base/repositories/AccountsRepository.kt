@@ -19,7 +19,7 @@ interface AccountsRepository {
 
     fun generateMnemonic(): Single<String>
 
-    fun validateMnemonic(mnemonic: String): Single<Bip39ValidationResult>
+    fun validateMnemonic(mnemonic: String): Single<String>
 
     companion object {
         const val CHAIN_ID_ANY = 0

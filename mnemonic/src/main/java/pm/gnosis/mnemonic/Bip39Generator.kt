@@ -73,17 +73,19 @@ class Bip39Generator @Inject constructor() : Bip39 {
         return wordIndexes.joinToString(wordList.separator) { wordList.words[it] }
     }
 
-    override fun validateMnemonic(mnemonic: String): Bip39ValidationResult {
+    override fun validateMnemonic(mnemonic: String): String {
         val words = mnemonic.split(Regex("\\s+"))
-        if (words.isEmpty() || words[0].isEmpty()) return EmptyMnemonic(mnemonic)
+        if (words.isEmpty() || words[0].isEmpty()) {
+            throw EmptyMnemonic(mnemonic)
+        }
         val checksumNBits = (words.size * 11) / (Bip39.ENTROPY_MULTIPLE + 1)
         val entropyNBits = checksumNBits * 32
         if (entropyNBits % Bip39.ENTROPY_MULTIPLE != 0 || entropyNBits < Bip39.MIN_ENTROPY_BITS || entropyNBits > Bip39.MAX_ENTROPY_BITS) {
-            return InvalidEntropy(mnemonic, entropyNBits)
+            throw InvalidEntropy(mnemonic, entropyNBits)
         }
 
         val wordList = BIP39_WORDLISTS.values.firstOrNull { wordList -> wordList.words.contains(words[0]) } ?:
-                return MnemonicNotInWordlist(mnemonic)
+                throw MnemonicNotInWordlist(mnemonic)
 
         val binaryIndexes = wordList.words.getIndexesAllMatching(words).joinToString("") { Integer.toBinaryString(it).padStart(11, '0') }
 
@@ -95,6 +97,9 @@ class Bip39Generator @Inject constructor() : Bip39 {
         val digest = SHA256.Digest()
         val sha256 = digest.digest(originalBytes)
         val generatedChecksum = sha256.toBinaryString().subSequence(0, checksumNBits)
-        return if (checksum == generatedChecksum) ValidMnemonic(mnemonic) else InvalidChecksum(mnemonic, checksum, generatedChecksum)
+        if (checksum != generatedChecksum) {
+            throw InvalidChecksum(mnemonic, checksum, generatedChecksum)
+        }
+        return mnemonic
     }
 }
