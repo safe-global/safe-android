@@ -10,7 +10,6 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.common.util.shareExternalText
-import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.ui.base.Adapter
 import javax.inject.Inject

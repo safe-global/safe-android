@@ -1,17 +1,17 @@
 package pm.gnosis.heimdall.ui.onboarding
 
 import io.reactivex.Completable
-import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.util.Result
 import pm.gnosis.heimdall.common.util.mapToResult
-import pm.gnosis.mnemonic.Bip39
 import javax.inject.Inject
 
-class GenerateMnemonicPresenter @Inject constructor(private val accountsRepository: AccountsRepository) : GenerateMnemonicContract() {
-    override fun generateMnemonic(): Observable<Result<String>> =
-            Observable.fromCallable { Bip39.generateMnemonic() }
+
+class GenerateMnemonicViewModel @Inject constructor(private val accountsRepository: AccountsRepository) : GenerateMnemonicContract() {
+    override fun generateMnemonic(): Single<Result<String>> =
+            accountsRepository.generateMnemonic()
                     .mapToResult()
                     .subscribeOn(Schedulers.io())
 

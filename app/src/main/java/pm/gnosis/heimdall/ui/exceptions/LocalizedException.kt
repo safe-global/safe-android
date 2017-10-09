@@ -2,7 +2,9 @@ package pm.gnosis.heimdall.ui.exceptions
 
 import android.content.Context
 import android.support.annotation.StringRes
+import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.utils.HttpCodes
 import retrofit2.HttpException
@@ -35,6 +37,14 @@ data class LocalizedException(override val message: String) : Exception(message)
 
         fun <D> observable(exception: Throwable): Observable<D> {
             return Observable.error<D>(translate(exception))
+        }
+
+        fun <D> single(exception: Throwable): Single<D> {
+            return Single.error<D>(translate(exception))
+        }
+
+        fun completable(exception: Throwable): Completable {
+            return Completable.error(translate(exception))
         }
 
         private class Translator(val condition: (Throwable) -> Boolean, val writer: (Context, Throwable) -> String) {

@@ -2,9 +2,7 @@ package pm.gnosis.heimdall.ui.account
 
 import android.arch.persistence.room.EmptyResultSetException
 import android.content.Context
-import io.reactivex.Observable
 import io.reactivex.functions.Function
-import io.reactivex.functions.Predicate
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository

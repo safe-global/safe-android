@@ -14,13 +14,10 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.filterEditorActions
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -134,8 +131,6 @@ class SecurityActivity : BaseActivity() {
     }
 
     private fun handleError(throwable: Throwable) {
-        Timber.d(throwable)
-
         if (currentSate == SecurityContract.State.UNKNOWN) {
             showError()
             return

@@ -4,7 +4,6 @@ import android.support.v7.util.DiffUtil
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import pm.gnosis.heimdall.ui.base.Adapter
-import java.util.*
 
 
 fun <D> Flowable<List<D>>.scanToAdapterData(itemCheck: ((D, D) -> Boolean), contentCheck: ((D, D) -> Boolean)? = null): Flowable<Adapter.Data<D>> =

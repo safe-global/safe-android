@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.multisig.MultisigContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
+import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
 import pm.gnosis.heimdall.ui.security.SecurityContract
 
 @Module
@@ -42,6 +43,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesMultisigContract(provider: ViewModelProvider) = provider[MultisigContract::class.java]!!
+
+    @Provides
+    @ForView
+    fun providesRestoreAccountContract(provider: ViewModelProvider) = provider[RestoreAccountContract::class.java]!!
 
     @Provides
     @ForView

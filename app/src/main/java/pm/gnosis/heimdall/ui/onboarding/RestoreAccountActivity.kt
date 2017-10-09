@@ -13,15 +13,15 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.startActivity
+import pm.gnosis.heimdall.common.util.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.main.MainActivity
+import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import timber.log.Timber
 import javax.inject.Inject
 
 class RestoreAccountActivity : BaseActivity() {
-    @Inject lateinit var presenter: RestoreAccountPresenter
+    @Inject lateinit var viewModel: RestoreAccountViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +31,7 @@ class RestoreAccountActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
+        onSavingAccount(false)
         disposables += mnemonicValidatorDisposable()
         disposables += mnemonicChangesDisposable()
     }
@@ -38,9 +39,14 @@ class RestoreAccountActivity : BaseActivity() {
     private fun mnemonicValidatorDisposable() =
             layout_restore_account_restore.clicks()
                     .map { layout_restore_account_mnemonic.text.toString() }
-                    .flatMapSingle { presenter.isValidMnemonic(it) }
+                    .flatMap {
+                        viewModel.saveAccountWithMnemonic(it)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnSubscribe { onSavingAccount(isSaving = true) }
+                                .doAfterTerminate { onSavingAccount(isSaving = false) }
+                    }
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = this::onMnemonicValidation, onError = this::onMnemonicValidationError)
+                    .subscribeForResult(this::onAccountSaved, this::onAccountSaveError)
 
     private fun mnemonicChangesDisposable() =
             layout_restore_account_mnemonic.textChanges()
@@ -50,37 +56,17 @@ class RestoreAccountActivity : BaseActivity() {
                             onNext = { layout_restore_account_mnemonic_input_layout.error = null },
                             onError = Timber::e)
 
-    private fun onMnemonicValidation(isValid: Boolean) {
-        if (isValid) {
-            layout_restore_account_mnemonic_input_layout.error = null
-            disposables += saveAccountWithMnemonicDisposable(layout_restore_account_mnemonic.text.toString())
-        } else {
-            layout_restore_account_mnemonic_input_layout.error = "Invalid mnemonic phrase"
-        }
-    }
-
-    private fun onMnemonicValidationError(throwable: Throwable) {
-        Timber.e(throwable)
-    }
-
-    private fun saveAccountWithMnemonicDisposable(mnemonic: String) =
-            presenter.saveAccountWithMnemonic(mnemonic)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe { onSavingAccount(isSaving = true) }
-                    .doOnTerminate { onSavingAccount(isSaving = false) }
-                    .subscribeBy(onComplete = this::onAccountSaved, onError = this::onAccountSaveError)
-
-    private fun onAccountSaved() {
-        startActivity(MainActivity.createIntent(this), noHistory = false)
+    private fun onAccountSaved(intent: Intent) {
+        startActivity(intent, noHistory = false)
     }
 
     private fun onAccountSaveError(throwable: Throwable) {
-        Timber.e(throwable)
-        snackbar(layout_restore_account_coordinator, "Could not save account from mnemonic")
+        val message = (throwable as? LocalizedException)?.message ?: getString(R.string.error_try_again)
+        layout_restore_account_mnemonic_input_layout.error = message
     }
 
     private fun onSavingAccount(isSaving: Boolean) {
-        layout_restore_account_restore.isEnabled = isSaving
+        layout_restore_account_restore.isEnabled = !isSaving
     }
 
     private fun inject() {

@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.util.edit
 import pm.gnosis.mnemonic.Bip39
+import pm.gnosis.mnemonic.Bip39ValidationResult
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.generateRandomString
 import pm.gnosis.utils.toHexString
@@ -24,7 +25,8 @@ import javax.inject.Singleton
 class GethAccountsRepository @Inject constructor(
         private val gethAccountManager: GethAccountManager,
         private val gethKeyStore: KeyStore,
-        private val preferencesManager: PreferencesManager
+        private val preferencesManager: PreferencesManager,
+        private val bip39: Bip39
 ) : AccountsRepository {
     override fun loadActiveAccount(): Single<Account> {
         return Single.fromCallable {
@@ -55,7 +57,7 @@ class GethAccountsRepository @Inject constructor(
 
     override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable =
             Single.fromCallable {
-                val hdNode = KeyGenerator().masterNode(ByteString.of(*Bip39.mnemonicToSeed(mnemonic)))
+                val hdNode = KeyGenerator().masterNode(ByteString.of(*bip39.mnemonicToSeed(mnemonic)))
                 hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
             }.flatMapCompletable {
                 saveAccount(it.privKeyBytes ?: throw IllegalStateException("Private key must not be null"))
@@ -73,4 +75,8 @@ class GethAccountsRepository @Inject constructor(
             Completable.fromCallable {
                 gethKeyStore.importECDSAKey(privateKey, generateRandomString())
             }
+
+    override fun generateMnemonic(): Single<String> = Single.fromCallable { bip39.generateMnemonic() }
+
+    override fun validateMnemonic(mnemonic: String): Single<String> = Single.fromCallable { bip39.validateMnemonic(mnemonic) }
 }

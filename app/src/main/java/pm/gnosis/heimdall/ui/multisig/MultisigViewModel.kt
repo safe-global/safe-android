@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.multisig
 import io.reactivex.Flowable
 import pm.gnosis.heimdall.common.util.Result
 import pm.gnosis.heimdall.common.util.mapToResult
-import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.ui.base.Adapter
