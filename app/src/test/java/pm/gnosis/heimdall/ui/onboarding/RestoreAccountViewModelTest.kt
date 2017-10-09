@@ -65,17 +65,11 @@ class RestoreAccountViewModelTest {
     @Test
     fun saveAccountWithInvalidMnemonic() {
         val testObserver = TestObserver.create<Result<Intent>>()
-        val saveAccountFromMnemonicCompletable = TestCompletable()
-        val saveMnemonicCompletable = TestCompletable()
         given(accountsRepository.validateMnemonic(anyString())).willReturn(SingleError({ Exception() }))
-        given(accountsRepository.saveAccountFromMnemonic(anyString(), anyLong())).willReturn(saveAccountFromMnemonicCompletable)
-        given(accountsRepository.saveMnemonic(anyString())).willReturn(saveMnemonicCompletable)
 
         viewModel.saveAccountWithMnemonic(testMnemonic).subscribe(testObserver)
 
         then(accountsRepository).should().validateMnemonic(testMnemonic)
-        assertEquals(0, saveAccountFromMnemonicCompletable.callCount)
-        assertEquals(0, saveMnemonicCompletable.callCount)
         testObserver.assertValue({ it is ErrorResult })
                 .assertNoErrors()
                 .assertTerminated()
