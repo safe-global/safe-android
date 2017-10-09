@@ -12,6 +12,7 @@
 
     <TextView
         android:id="@+id/layout_multisig_empty_view"
+        style="@style/Content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

@@ -1,12 +1,12 @@
-package pm.gnosis.heimdall.data.db
+package pm.gnosis.heimdall.data.db.model
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import android.support.annotation.NonNull
 
-@Entity(tableName = MultisigWallet.TABLE_NAME)
-class MultisigWallet {
+@Entity(tableName = MultisigWalletDb.TABLE_NAME)
+class MultisigWalletDb {
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = COL_ADDRESS)

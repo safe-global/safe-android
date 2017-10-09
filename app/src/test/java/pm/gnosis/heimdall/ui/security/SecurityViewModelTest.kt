@@ -11,6 +11,8 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.common.util.DataResult
+import pm.gnosis.heimdall.common.util.ErrorResult
 import pm.gnosis.heimdall.common.util.Result
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
@@ -45,8 +47,7 @@ class SecurityViewModelTest {
         given(encryptionManager.unlocked()).thenReturn(Single.just(true))
         viewModel.checkState().subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(SecurityContract.State.UNLOCKED))
+        observer.assertNoErrors().assertValue(DataResult(SecurityContract.State.UNLOCKED))
     }
 
     @Test
@@ -58,8 +59,7 @@ class SecurityViewModelTest {
         given(encryptionManager.initialized()).thenReturn(Single.just(true))
         viewModel.checkState().subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(SecurityContract.State.LOCKED))
+        observer.assertNoErrors().assertValue(DataResult(SecurityContract.State.LOCKED))
     }
 
     @Test
@@ -71,8 +71,7 @@ class SecurityViewModelTest {
         given(encryptionManager.initialized()).thenReturn(Single.just(false))
         viewModel.checkState().subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(SecurityContract.State.UNINITIALIZED))
+        observer.assertNoErrors().assertValue(DataResult(SecurityContract.State.UNINITIALIZED))
     }
 
     @Test
@@ -84,8 +83,7 @@ class SecurityViewModelTest {
         given(encryptionManager.unlocked()).thenReturn(Single.error(exception))
         viewModel.checkState().subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(exception))
+        observer.assertNoErrors().assertValue(ErrorResult(exception))
     }
 
     @Test
@@ -95,8 +93,7 @@ class SecurityViewModelTest {
 
         viewModel.setupPin("", "").subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(LocalizedException(TEST_STRING)))
+        observer.assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
         verify(context).getString(R.string.pin_too_short, emptyArray<Any>())
     }
 
@@ -107,8 +104,7 @@ class SecurityViewModelTest {
 
         viewModel.setupPin("123456", "").subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(LocalizedException(TEST_STRING)))
+        observer.assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
         verify(context).getString(R.string.pin_repeat_wrong, emptyArray<Any>())
     }
 
@@ -121,8 +117,7 @@ class SecurityViewModelTest {
         given(encryptionManager.setup(MockUtils.any(), MockUtils.any())).thenReturn(Single.error(exception))
         viewModel.setupPin("123456", "123456").subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(exception))
+        observer.assertNoErrors().assertValue(ErrorResult(exception))
     }
 
     @Test
@@ -133,8 +128,7 @@ class SecurityViewModelTest {
         given(encryptionManager.setup(MockUtils.any(), MockUtils.any())).thenReturn(Single.just(false))
         viewModel.setupPin("123456", "123456").subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(LocalizedException(TEST_STRING)))
+        observer.assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
         verify(context).getString(R.string.pin_setup_failed, emptyArray<Any>())
     }
 
@@ -146,8 +140,7 @@ class SecurityViewModelTest {
         given(encryptionManager.setup(MockUtils.any(), MockUtils.any())).thenReturn(Single.just(true))
         viewModel.setupPin("123456", "123456").subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(SecurityContract.State.UNLOCKED))
+        observer.assertNoErrors().assertValue(DataResult(SecurityContract.State.UNLOCKED))
     }
 
     @Test
@@ -159,8 +152,7 @@ class SecurityViewModelTest {
         given(encryptionManager.unlock(MockUtils.any())).thenReturn(Single.error(exception))
         viewModel.unlockPin("123456").subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(exception))
+        observer.assertNoErrors().assertValue(ErrorResult(exception))
     }
 
     @Test
@@ -171,8 +163,7 @@ class SecurityViewModelTest {
         given(encryptionManager.unlock(MockUtils.any())).thenReturn(Single.just(false))
         viewModel.unlockPin("123456").subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(LocalizedException(TEST_STRING)))
+        observer.assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
         verify(context).getString(R.string.error_wrong_credentials, emptyArray<Any>())
     }
 
@@ -184,8 +175,7 @@ class SecurityViewModelTest {
         given(encryptionManager.unlock(MockUtils.any())).thenReturn(Single.just(true))
         viewModel.unlockPin("123456").subscribe(observer)
 
-        observer.assertNoErrors()
-        observer.assertValue(Result(SecurityContract.State.UNLOCKED))
+        observer.assertNoErrors().assertValue(DataResult(SecurityContract.State.UNLOCKED))
     }
 
     private fun createObserver() =

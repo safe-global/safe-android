@@ -22,25 +22,38 @@ import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator.REQUEST_CODE
 import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
 import pm.gnosis.heimdall.common.util.scanQrCode
 import pm.gnosis.heimdall.common.util.snackbar
+import pm.gnosis.heimdall.common.util.subscribeForResult
 import pm.gnosis.heimdall.common.util.toast
-import pm.gnosis.heimdall.data.db.MultisigWallet
+import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
+import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
+import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.utils.addAddressPrefix
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
 
 class MultisigFragment : BaseFragment() {
-    @Inject lateinit var presenter: MultisigPresenter
-    @Inject lateinit var adapter: MultisigAdapter
+    @Inject
+    lateinit var viewModel: MultisigViewModel
+    @Inject
+    lateinit var adapter: MultisigAdapter
+    @Inject
+    lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?) =
             inflater?.inflate(R.layout.layout_multisig, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        layout_multisig_wallets.layoutManager = LinearLayoutManager(context)
+        layout_multisig_wallets.layoutManager = layoutManager
         layout_multisig_wallets.adapter = adapter
+    }
+
+    override fun onDestroyView() {
+        layout_multisig_wallets.layoutManager = null
+        super.onDestroyView()
     }
 
     override fun onStart() {
@@ -55,9 +68,9 @@ class MultisigFragment : BaseFragment() {
             scanQrCode()
         }
 
-        disposables += presenter.observeMultisigWallets()
+        disposables += viewModel.observeMultisigWallets()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = this::onMultisigWallets, onError = this::onMultisigWalletsError)
+                .subscribeForResult(onNext = this::onMultisigWallets, onError = this::onMultisigWalletsError)
 
         disposables += adapter.multisigSelection
                 .subscribeBy(onNext = this::onMultisigSelection, onError = Timber::e)
@@ -79,9 +92,9 @@ class MultisigFragment : BaseFragment() {
         }
     }
 
-    private fun onMultisigWallets(wallets: List<MultisigWallet>) {
-        adapter.setItems(wallets)
-        layout_multisig_empty_view.visibility = if (wallets.isEmpty()) View.VISIBLE else View.GONE
+    private fun onMultisigWallets(data: Adapter.Data<MultisigWallet>) {
+        adapter.updateData(data)
+        layout_multisig_empty_view.visibility = if (data.entries.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun onMultisigWalletsError(throwable: Throwable) {
@@ -91,7 +104,7 @@ class MultisigFragment : BaseFragment() {
     private fun showMultisigInputDialog(withAddress: String = "") {
         val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
 
-        if (!withAddress.isNullOrEmpty()) {
+        if (!withAddress.isEmpty()) {
             dialogView.dialog_add_multisig_text_address.setText(withAddress)
             dialogView.dialog_add_multisig_text_address.isEnabled = false
             dialogView.dialog_add_multisig_text_address.inputType = InputType.TYPE_NULL
@@ -116,17 +129,17 @@ class MultisigFragment : BaseFragment() {
     }
 
     private fun addMultisigWalletDisposable(name: String, address: String) =
-            presenter.addMultisigWallet(name, address)
+            viewModel.addMultisigWallet(name, address)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletAdded, onError = this::onMultisigWalletAddError)
 
-    private fun removeMultisigWalletDisposable(multisigWallet: MultisigWallet) =
-            presenter.removeMultisigWallet(multisigWallet)
+    private fun removeMultisigWalletDisposable(address: String) =
+            viewModel.removeMultisigWallet(address)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletRemoved, onError = this::onMultisigWalletRemoveError)
 
     private fun updateMultisigWalletNameDisposable(address: String, newName: String) =
-            presenter.updateMultisigWalletName(address, newName)
+            viewModel.updateMultisigWalletName(address, newName)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletNameChange, onError = this::onMultisigWalletNameChangeError)
 
@@ -161,7 +174,7 @@ class MultisigFragment : BaseFragment() {
                 .setItems(arrayOf(nameUpdate, "Remove Multisig"), { dialog, which ->
                     when (which) {
                         0 -> showEditMultisigNameDialog(multisigWallet)
-                        1 -> disposables += removeMultisigWalletDisposable(multisigWallet)
+                        1 -> disposables += removeMultisigWalletDisposable(multisigWallet.address)
                     }
                 }).show()
     }
@@ -173,10 +186,8 @@ class MultisigFragment : BaseFragment() {
                 .setTitle(multisigWallet.name)
                 .setView(dialogView)
                 .setPositiveButton("Change name", { _, _ ->
-                    multisigWallet.address?.let {
-                        disposables += updateMultisigWalletNameDisposable(it,
-                                dialogView.dialog_add_multisig_text_name.text.toString())
-                    }
+                    disposables += updateMultisigWalletNameDisposable(multisigWallet.address,
+                            dialogView.dialog_add_multisig_text_name.text.toString())
                 })
                 .setNegativeButton("Cancel", { _, _ -> })
                 .show()

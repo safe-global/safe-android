@@ -5,12 +5,14 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.support.v7.widget.LinearLayoutManager
 import dagger.Module
 import dagger.Provides
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
+import pm.gnosis.heimdall.ui.multisig.MultisigContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.security.SecurityContract
 
@@ -23,6 +25,10 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
+    fun providesLinearLayoutManager() = LinearLayoutManager(context)
+
+    @Provides
+    @ForView
     fun providesAuthenticateContract(provider: ViewModelProvider) = provider[AuthenticateContract::class.java]!!
 
     @Provides
@@ -32,6 +38,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesGenerateMnemonicContract(provider: ViewModelProvider) = provider[GenerateMnemonicContract::class.java]!!
+
+    @Provides
+    @ForView
+    fun providesMultisigContract(provider: ViewModelProvider) = provider[MultisigContract::class.java]!!
 
     @Provides
     @ForView

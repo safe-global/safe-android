@@ -68,8 +68,7 @@ class LocalizedExceptionTest {
         val observer = TestObserver.create<Any>()
         assertEquals(expected, handler.translate(input))
         handler.observable<Any>(input).subscribe(observer)
-        observer.assertNoValues()
-        observer.assertError(expected)
+        observer.assertNoValues().assertError(expected)
     }
 
     private fun mockHttpException(statusCode: Int): HttpException {

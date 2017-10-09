@@ -25,7 +25,7 @@ import pm.gnosis.heimdall.common.util.ERC20
 import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.toast
 import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
-import pm.gnosis.heimdall.data.db.MultisigWallet
+import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
 import pm.gnosis.heimdall.data.model.TransactionDetails
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -199,15 +199,15 @@ class TransactionDetailsActivity : BaseActivity() {
                     .subscribeBy(onComplete = this::onMultisigWalletAdded, onError = this::onMultisigWalletAddError)
 
     private fun onMultisigWalletAdded() {
-        snackbar(layout_transaction_details_coordinator, "Added MultisigWallet")
+        snackbar(layout_transaction_details_coordinator, "Added MultisigWalletDb")
     }
 
     private fun onMultisigWalletAddError(throwable: Throwable) {
         Timber.e(throwable)
-        snackbar(layout_transaction_details_coordinator, "Could not add MultisigWallet")
+        snackbar(layout_transaction_details_coordinator, "Could not add MultisigWalletDb")
     }
 
-    private fun onMultisigWallet(multisigWallet: MultisigWallet) {
+    private fun onMultisigWallet(multisigWallet: MultisigWalletDb) {
         layout_transaction_details_wallet_name.text = if (multisigWallet.name.isNullOrEmpty()) "Multisig Address" else multisigWallet.name
         layout_transaction_details_add_wallet.visibility = View.GONE
     }
