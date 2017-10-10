@@ -34,6 +34,8 @@ Changes that are cosmetic in nature and do not add anything substantial to the s
 
 * Please make sure to follow our [Code of Conduct](CODE_OF_CONDUCT.md)
 
+* Wanna chat? Find us on [Gitter](https://gitter.im/gnosis/MultiSigWallet)
+
 Thanks! :rocket: :tada:
 
 Gnosis Team
