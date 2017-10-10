@@ -7,12 +7,13 @@ import pm.gnosis.heimdall.common.util.ZxingQrCodeGenerator
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.impl.SimpleEthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
+import pm.gnosis.heimdall.data.repositories.TokenRepository
+import pm.gnosis.heimdall.data.repositories.impls.RoomTokenRepository
 import pm.gnosis.heimdall.data.repositories.impls.SqliteMultisigRepository
 import javax.inject.Singleton
 
 @Module
 abstract class ApplicationBindingsModule {
-
     @Binds
     @Singleton
     abstract fun bindsEthereumJsonRepository(repository: SimpleEthereumJsonRpcRepository): EthereumJsonRpcRepository
@@ -24,4 +25,8 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsQrCodeGenerator(generator: ZxingQrCodeGenerator): QrCodeGenerator
+
+    @Binds
+    @Singleton
+    abstract fun bindsTokenRepository(repository: RoomTokenRepository): TokenRepository
 }

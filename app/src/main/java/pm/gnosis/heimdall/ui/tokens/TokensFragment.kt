@@ -124,7 +124,7 @@ class TokensFragment : BaseFragment() {
     private fun showTokenAddressInputDialog(withAddress: String = "") {
         val dialogView = layoutInflater.inflate(R.layout.dialog_token_add_input, null)
 
-        if (!withAddress.isNullOrEmpty()) {
+        if (!withAddress.isEmpty()) {
             dialogView.dialog_token_add_address.setText(withAddress)
             dialogView.dialog_token_add_address.isEnabled = false
             dialogView.dialog_token_add_address.inputType = InputType.TYPE_NULL
