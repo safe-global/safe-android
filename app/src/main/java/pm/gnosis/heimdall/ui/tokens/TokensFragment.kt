@@ -29,7 +29,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class TokensFragment : BaseFragment() {
-    @Inject lateinit var presenter: TokensPresenter
+    @Inject lateinit var viewModel: TokensContract
     @Inject lateinit var adapter: TokensAdapter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -70,16 +70,16 @@ class TokensFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        disposables += presenter.observeTokens()
+        disposables += viewModel.observeTokens()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onTokensList, onError = this::onTokensListError)
 
         disposables += adapter.tokensSelectionSubject
                 .flatMap {
-                    presenter.observeTokenInfo(it)
-                            ?.observeOn(AndroidSchedulers.mainThread())
-                            ?.doOnSubscribe { onTokenInfoLoading(true) }
-                            ?.doOnTerminate { onTokenInfoLoading(false) }
+                    viewModel.observeTokenInfo(it)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnSubscribe { onTokenInfoLoading(true) }
+                            .doOnTerminate { onTokenInfoLoading(false) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onTokenInfo, onError = this::onTokenInfoError)
@@ -160,7 +160,7 @@ class TokensFragment : BaseFragment() {
                 .show()
     }
 
-    private fun removeTokenDisposable(erC20Token: ERC20Token) = presenter.removeToken(erC20Token)
+    private fun removeTokenDisposable(erC20Token: ERC20Token) = viewModel.removeToken(erC20Token)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onComplete = this::onTokenRemoved, onError = this::onTokenRemoveError)
 
@@ -183,7 +183,7 @@ class TokensFragment : BaseFragment() {
     }
 
     private fun addTokenDisposable(address: String, name: String) =
-            presenter.addToken(address, name).observeOn(AndroidSchedulers.mainThread())
+            viewModel.addToken(address, name).observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onTokenAdded, onError = this::onTokenAddError)
 
     private fun onTokenAdded() {

@@ -19,6 +19,8 @@ import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountViewModel
 import pm.gnosis.heimdall.ui.security.SecurityContract
 import pm.gnosis.heimdall.ui.security.SecurityViewModel
+import pm.gnosis.heimdall.ui.tokens.TokensContract
+import pm.gnosis.heimdall.ui.tokens.TokensViewModel
 import javax.inject.Singleton
 
 @Module
@@ -52,6 +54,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SecurityContract::class)
     abstract fun bindsSecurityContract(viewModel: SecurityViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TokensContract::class)
+    abstract fun bindsTokensContract(viewModel: TokensViewModel): ViewModel
 
     @Binds
     @Singleton
