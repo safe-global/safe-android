@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
 import pm.gnosis.heimdall.ui.security.SecurityContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.TokensContract
+import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsContract
 
 @Module
 class ViewModule(val context: Context) {
@@ -66,6 +67,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesTokensContract(provider: ViewModelProvider) = provider[TokensContract::class.java]!!
+
+    @Provides
+    @ForView
+    fun providesTransactionDetailsContract(provider: ViewModelProvider) = provider[TransactionDetailsContract::class.java]!!
 
     @Provides
     @ForView

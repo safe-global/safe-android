@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
 
 interface MultisigRepository {
     fun observeMultisigWallets(): Flowable<List<MultisigWallet>>
+    fun observeMultisigWallet(address: String): Flowable<MultisigWallet>
     fun addMultisigWallet(address: String, name: String): Completable
     fun removeMultisigWallet(address: String): Completable
     fun updateMultisigWalletName(address: String, newName: String): Completable

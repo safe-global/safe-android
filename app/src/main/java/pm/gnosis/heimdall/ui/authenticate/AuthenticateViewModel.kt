@@ -37,9 +37,7 @@ class AuthenticateViewModel @Inject constructor(
         val data = transaction.data
         if (data != null && (data.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID) ||
                 data.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID))) {
-            val intent = Intent(context, TransactionDetailsActivity::class.java)
-            intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transaction)
-            return intent
+            return TransactionDetailsActivity.createIntent(context, transaction)
         } else {
             throw LocalizedException(context.getString(R.string.unknown_wallet_action))
         }

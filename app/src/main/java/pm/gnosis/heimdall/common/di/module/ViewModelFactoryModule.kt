@@ -25,6 +25,8 @@ import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.splash.SplashViewModel
 import pm.gnosis.heimdall.ui.tokens.TokensContract
 import pm.gnosis.heimdall.ui.tokens.TokensViewModel
+import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsContract
+import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsViewModel
 import javax.inject.Singleton
 
 @Module
@@ -73,6 +75,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(TokensContract::class)
     abstract fun bindsTokensContract(viewModel: TokensViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TransactionDetailsContract::class)
+    abstract fun bindsTransactionDetailsContract(viewModel: TransactionDetailsViewModel): ViewModel
 
     @Binds
     @Singleton

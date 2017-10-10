@@ -10,7 +10,14 @@ fun String.decimalAsBigIntegerOrNull() = nullOnThrow { this.decimalAsBigInteger(
 
 fun ByteArray.asBigInteger() = BigInteger(1, this)
 
-fun BigInteger.asEthereumAddressString() = "0x${this.toString(16).padStart(40, '0')}"
+fun BigInteger.asEthereumAddressStringOrNull() = nullOnThrow { this.asEthereumAddressString() }
+fun BigInteger.asEthereumAddressString(): String {
+    if (!isValidEthereumAddress()) throw IllegalArgumentException("Invalid ethereum address")
+    return "0x${this.toString(16).padStart(40, '0')}"
+}
+
+fun BigInteger.isValidEthereumAddress() = this <= BigInteger.valueOf(2).pow(160).minus(BigInteger.ONE)
+
 fun BigInteger.asDecimalString() = this.toString(10)
 
 fun BigDecimal.asNumberString() =

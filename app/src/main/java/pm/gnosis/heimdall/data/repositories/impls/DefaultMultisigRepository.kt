@@ -1,12 +1,14 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit.GetOwners
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit.Required
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
+import pm.gnosis.heimdall.data.db.model.fromDb
 import pm.gnosis.heimdall.data.model.JsonRpcRequest
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.Wei
@@ -32,6 +34,11 @@ class DefaultMultisigRepository @Inject constructor(
             multisigWalletDao.observeMultisigWallets()
                     .map { it.map { (address, name) -> MultisigWallet(address, name) } }
                     .subscribeOn(Schedulers.io())!!
+
+    override fun observeMultisigWallet(address: String): Flowable<MultisigWallet> =
+        multisigWalletDao.observeMultisigWallet(address)
+                .subscribeOn(Schedulers.io())
+                .map { it.fromDb() }
 
     override fun addMultisigWallet(address: String, name: String) =
             Completable.fromCallable {

@@ -6,6 +6,7 @@ import java.security.SecureRandom
 import kotlin.experimental.and
 
 private val hexArray = "0123456789abcdef".toCharArray()
+const val HEX_PREFIX = "0x"
 
 fun generateRandomString(numBits: Int = 130, radix: Int = 32): String {
     return BigInteger(numBits, SecureRandom()).toString(radix)
@@ -60,7 +61,7 @@ fun BigInteger.toAlfaNumericAscii(): String? {
 }
 
 fun String.hexStringToByteArray(): ByteArray {
-    val s = this.removePrefix("0x")
+    val s = this.removePrefix(HEX_PREFIX)
     val len = s.length
     val data = ByteArray(len / 2)
     var i = 0
@@ -71,12 +72,18 @@ fun String.hexStringToByteArray(): ByteArray {
     return data
 }
 
-fun String.addAddressPrefix() = if (!this.startsWith("0x")) "0x$this" else this
+fun String.addAddressPrefix() = if (!this.startsWith(HEX_PREFIX)) "$HEX_PREFIX$this" else this
 
-fun String.asEthereumAddressString() = this.padStart(40, '0').addAddressPrefix()
+fun String.asEthereumAddressString(): String {
+    val string = this.removePrefix(HEX_PREFIX)
+    val numericValue = BigInteger(string, 16)
+    if (!numericValue.isValidEthereumAddress()) throw IllegalArgumentException("Invalid ethereum address")
 
-fun String.isSolidityMethod(methodId: String) = this.removePrefix("0x").startsWith(methodId.removePrefix("0x"))
-fun String.removeSolidityMethodPrefix(methodId: String) = this.removePrefix("0x").removePrefix(methodId)
+    return numericValue.toString(16).padStart(40, '0').addAddressPrefix()
+}
+
+fun String.isSolidityMethod(methodId: String) = this.removePrefix(HEX_PREFIX).startsWith(methodId.removePrefix(HEX_PREFIX))
+fun String.removeSolidityMethodPrefix(methodId: String) = this.removePrefix(HEX_PREFIX).removePrefix(methodId)
 
 fun ByteArray.toBinaryString(): String {
     val sb = StringBuilder(this.size * java.lang.Byte.SIZE)

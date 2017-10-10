@@ -75,4 +75,25 @@
         <item quantity="one">%s Confirmation</item>
         <item quantity="other">%s Confirmations</item>
     </plurals>
+    <string name="confirm_transaction">Confirm Transaction</string>
+    <string name="revoke_transaction">Revoke Transaction</string>
+    <string name="cancel">Cancel</string>
+    <string name="invalid_ethereum_address">Invalid ethereum address</string>
+    <string name="added_multisig">Multisig Wallet Added</string>
+    <string name="not_added_multisig_wallet">Could not add Multisig Wallet</string>
+    <string name="transaction_confirmed">Transaction confirmed</string>
+    <string name="transaction_revoked">Transaction revoked</string>
+    <string name="transaction_error">Something went wrong. Transaction not completed.</string>
+    <string name="transaction_number">Transaction %1s</string>
+    <string name="change_number_of_confirmations">Change number of confirmations to</string>
+    <string name="add_multisig_wallet_owner">Add multisig wallet owner</string>
+    <string name="remove_multisig_wallet_owner">Remove multisig wallet owner</string>
+    <string name="replace_current_owner">Replace current owner</string>
+    <string name="with_new_owner">with new owner</string>
+    <string name="transfer">Transfer</string>
+    <string name="for_text">For</string>
+    <string name="action">Action</string>
+    <string name="confirmations">Confirmations</string>
+    <string name="multisig_wallet">Multisig Wallet</string>
+    <string name="transaction_details_error">Error fetching transaction details</string>
 </resources>

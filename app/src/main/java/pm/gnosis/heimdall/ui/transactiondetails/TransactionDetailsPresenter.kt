@@ -7,6 +7,7 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.accounts.base.models.Transaction
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.di.ForView
+import pm.gnosis.heimdall.data.contracts.GnosisMultisigTransaction
 import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
@@ -47,7 +48,7 @@ class TransactionDetailsPresenter @Inject constructor(private val ethereumJsonRp
         gnosisAuthenticatorDb.multisigWalletDao().insertMultisigWallet(multisigWallet)
     }.subscribeOn(Schedulers.io())
 
-    fun getTransactionDetails(address: String, transactionId: BigInteger): Observable<GnosisMultisigWrapper.WrapperTransaction> =
+    fun getTransactionDetails(address: String, transactionId: BigInteger): Observable<GnosisMultisigTransaction> =
             gnosisMultisigWrapper.getTransaction(address, transactionId)
 
     fun getTokenInfo(address: BigInteger) = ethereumJsonRpcRepository.getTokenInfo(address)
