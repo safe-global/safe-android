@@ -19,6 +19,7 @@
     <string name="account">Account</string>
     <string name="multisig">MultiSig</string>
     <string name="tokens">Tokens</string>
+    <string name="token">token</string>
     <string name="name">Name</string>
     <string name="address">Address</string>
     <string name="name_descriptive_and_optional">Name (descriptive and optional)</string>
@@ -96,4 +97,14 @@
     <string name="confirmations">Confirmations</string>
     <string name="multisig_wallet">Multisig Wallet</string>
     <string name="transaction_details_error">Error fetching transaction details</string>
+    <string name="token_add_error">Token is already verified</string>
+    <string name="token_remove_error">Could not remove token</string>
+    <string name="token_add_dialog_title">Add a new ERC20 Token</string>
+    <string name="token_information_error">Could not get token information</string>
+    <string name="qr_code_scan_cancel">Cancelled by the user</string>
+    <string name="token_remove_dialog_description">%1s will no longer be a verified token</string>
+    <string name="token_remove_dialog_title">Remove %1s?</string>
+    <string name="token_removed_message">Removed %1s from the verified tokens</string>
+    <string name="token_added_message_name">%1s is now a verified token</string>
+    <string name="token_added_message">Added verified token</string>
 </resources>

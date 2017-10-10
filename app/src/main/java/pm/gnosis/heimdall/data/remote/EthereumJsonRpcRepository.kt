@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.data.remote
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.Wei
-import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import java.math.BigInteger
 
 interface EthereumJsonRpcRepository {
@@ -29,8 +28,6 @@ interface EthereumJsonRpcRepository {
     fun getTransactionCount(address: String): Observable<BigInteger>
 
     fun getGasPrice(): Observable<BigInteger>
-
-    fun getTokenInfo(contractAddress: BigInteger): Observable<ERC20Token>
 
     fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger>
 

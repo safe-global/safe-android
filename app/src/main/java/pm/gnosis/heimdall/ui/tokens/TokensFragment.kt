@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.ui.tokens
 
 import android.app.Activity
 import android.content.Intent
-import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -10,9 +9,11 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.dialog_token_add_input.view.*
 import kotlinx.android.synthetic.main.dialog_token_info.view.*
 import kotlinx.android.synthetic.main.layout_tokens.*
@@ -23,6 +24,7 @@ import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.common.util.*
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
@@ -31,6 +33,9 @@ import javax.inject.Inject
 class TokensFragment : BaseFragment() {
     @Inject lateinit var viewModel: TokensContract
     @Inject lateinit var adapter: TokensAdapter
+
+    private val removeTokenClickEvent = PublishSubject.create<ERC20Token>()
+    private val addTokenClickEvent = PublishSubject.create<Pair<String, String?>>()
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater?.inflate(R.layout.layout_tokens, container, false)
@@ -42,16 +47,6 @@ class TokensFragment : BaseFragment() {
             View.VISIBLE
         } else {
             View.GONE
-        }
-
-        layout_tokens_input_address.setOnClickListener {
-            layout_tokens_fab.close(true)
-            showTokenAddressInputDialog()
-        }
-
-        layout_tokens_scan_qr_code.setOnClickListener {
-            layout_tokens_fab.close(true)
-            scanQrCode()
         }
 
         layout_tokens_list.layoutManager = LinearLayoutManager(context)
@@ -66,23 +61,38 @@ class TokensFragment : BaseFragment() {
                 if (scanResult.isValidEthereumAddress()) {
                     showTokenAddressInputDialog(scanResult)
                 } else {
-                    snackbar(layout_tokens_coordinator_layout, "Invalid address")
+                    snackbar(layout_tokens_coordinator_layout, R.string.invalid_ethereum_address)
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                snackbar(layout_tokens_coordinator_layout, "Cancelled by the user")
+                snackbar(layout_tokens_coordinator_layout, R.string.qr_code_scan_cancel)
             }
         }
     }
 
     override fun onStart() {
         super.onStart()
+        disposables += layout_tokens_input_address.clicks()
+                .subscribeBy(onNext = {
+                    layout_tokens_fab.close(true)
+                    showTokenAddressInputDialog()
+                }, onError = Timber::e)
+
+        disposables += layout_tokens_scan_qr_code.clicks()
+                .subscribeBy(onNext = {
+                    layout_tokens_fab.close(true)
+                    scanQrCode()
+                }, onError = Timber::e)
+
+        disposables += addTokenDisposable()
+        disposables += removeTokenDisposable()
+
         disposables += viewModel.observeTokens()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onTokensList, onError = this::onTokensListError)
 
         disposables += adapter.tokensSelectionSubject
                 .flatMap {
-                    viewModel.observeTokenInfo(it)
+                    viewModel.loadTokenInfo(it)
                             .observeOn(AndroidSchedulers.mainThread())
                             .doOnSubscribe { onTokenInfoLoading(true) }
                             .doOnTerminate { onTokenInfoLoading(false) }
@@ -106,7 +116,7 @@ class TokensFragment : BaseFragment() {
 
     private fun onTokenInfo(token: ERC20Token) {
         if (token.decimals == null && token.name == null && token.symbol == null) {
-            snackbar(layout_tokens_coordinator_layout, "Could not get token information")
+            snackbar(layout_tokens_coordinator_layout, R.string.token_information_error)
             return
         }
 
@@ -127,56 +137,56 @@ class TokensFragment : BaseFragment() {
                 .show()
     }
 
-    private fun showTokenAddressInputDialog(withAddress: String = "") {
+    private fun showTokenAddressInputDialog(withAddress: String? = null) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_token_add_input, null)
 
-        if (!withAddress.isEmpty()) {
+        if (withAddress != null) {
             dialogView.dialog_token_add_address.setText(withAddress)
             dialogView.dialog_token_add_address.isEnabled = false
             dialogView.dialog_token_add_address.inputType = InputType.TYPE_NULL
         }
 
         val dialog = AlertDialog.Builder(context)
-                .setTitle("Add a new ERC20 Token")
+                .setTitle(R.string.token_add_dialog_title)
                 .setView(dialogView)
-                .setNegativeButton("Cancel", { _, _ -> })
-                .setPositiveButton("Add", { _, _ -> })
+                .setNegativeButton(R.string.cancel, { _, _ -> })
+                .setPositiveButton(R.string.add, { _, _ -> })
                 .show()
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val address = dialogView.dialog_token_add_address.text.toString()
-            val name = dialogView.dialog_token_add_name.text.toString()
+            val name = dialogView.dialog_token_add_name.text.toString().let { if (it.isBlank()) null else it }
             if (address.isValidEthereumAddress()) {
-                disposables += addTokenDisposable(address, name)
+                addTokenClickEvent.onNext(address to name)
                 dialog.dismiss()
             } else {
-                context.toast("Invalid ethereum address")
+                context.toast(getString(R.string.invalid_ethereum_address))
             }
         }
     }
 
     private fun showTokenRemovalDialog(erC20Token: ERC20Token) {
         AlertDialog.Builder(context)
-                .setTitle("Remove ${erC20Token.name ?: "token"}?")
-                .setMessage("${if (erC20Token.name.isNullOrBlank()) "This token" else erC20Token.name} is going to be removed from the local database")
-                .setPositiveButton("Remove", { _, _ ->
-                    disposables += removeTokenDisposable(erC20Token)
-                })
-                .setNegativeButton("Cancel", { _, _ -> })
+                .setTitle(getString(R.string.token_remove_dialog_title, erC20Token.name ?: getString(R.string.token)))
+                .setMessage(getString(R.string.token_remove_dialog_description, if (erC20Token.name.isNullOrBlank()) erC20Token.address else erC20Token.name))
+                .setPositiveButton(R.string.remove, { _, _ -> removeTokenClickEvent.onNext(erC20Token) })
+                .setNegativeButton(R.string.cancel, { _, _ -> })
                 .show()
     }
 
-    private fun removeTokenDisposable(erC20Token: ERC20Token) = viewModel.removeToken(erC20Token)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onComplete = this::onTokenRemoved, onError = this::onTokenRemoveError)
+    private fun removeTokenDisposable() =
+            removeTokenClickEvent.flatMap { viewModel.removeToken(it) }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeForResult(onNext = this::onTokenRemoved, onError = this::onTokenRemoveError)
 
-    private fun onTokenRemoved() {
-        snackbar(layout_tokens_coordinator_layout, "Token removed")
+    private fun onTokenRemoved(erC20Token: ERC20Token) {
+        val tokenDescription = if (erC20Token.name.isNullOrBlank()) getString(R.string.token) else erC20Token.name
+        snackbar(layout_tokens_coordinator_layout, getString(R.string.token_removed_message, tokenDescription))
     }
 
     private fun onTokenRemoveError(throwable: Throwable) {
         Timber.e(throwable)
-        snackbar(layout_tokens_coordinator_layout, "Could not remove token")
+        snackbar(layout_tokens_coordinator_layout, R.string.token_remove_error)
     }
 
     private fun onTokenInfoLoading(isLoading: Boolean) {
@@ -186,21 +196,26 @@ class TokensFragment : BaseFragment() {
 
     private fun onTokenInfoError(throwable: Throwable) {
         Timber.e(throwable)
+        errorSnackbar(layout_tokens_coordinator_layout, throwable)
     }
 
-    private fun addTokenDisposable(address: String, name: String) =
-            viewModel.addToken(address, name).observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onComplete = this::onTokenAdded, onError = this::onTokenAddError)
+    private fun addTokenDisposable() = addTokenClickEvent
+            .flatMap { viewModel.addToken(it.first, it.second) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = this::onTokenAdded, onError = this::onTokenAddError)
 
-    private fun onTokenAdded() {
-        snackbar(layout_tokens_coordinator_layout, "Token added")
+    private fun onTokenAdded(erC20Token: ERC20Token) {
+        snackbar(layout_tokens_coordinator_layout,
+                if (erC20Token.name.isNullOrBlank()) {
+                    getString(R.string.token_added_message)
+                } else {
+                    getString(R.string.token_added_message_name, erC20Token.name)
+                })
     }
 
     private fun onTokenAddError(throwable: Throwable) {
         Timber.e(throwable)
-        if (throwable is SQLiteConstraintException) {
-            snackbar(layout_tokens_coordinator_layout, "Token already stored")
-        }
+        errorSnackbar(layout_tokens_coordinator_layout, throwable)
     }
 
     override fun inject(component: ApplicationComponent) {
@@ -211,12 +226,9 @@ class TokensFragment : BaseFragment() {
     }
 
     companion object {
-
         private const val ARGUMENT_ADDRESS = "argument.string.address"
 
         fun createInstance(address: String) =
-                TokensFragment().withArgs(
-                        Bundle().build { putString(ARGUMENT_ADDRESS, address) }
-                )
+                TokensFragment().withArgs(Bundle().build { putString(ARGUMENT_ADDRESS, address) })
     }
 }

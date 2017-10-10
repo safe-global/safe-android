@@ -7,6 +7,7 @@ import android.arch.persistence.room.PrimaryKey
 @Entity(tableName = ERC20TokenDb.TABLE_NAME)
 data class ERC20TokenDb(
         @PrimaryKey
+        @ColumnInfo(name = COL_ADDRESS)
         var address: String,
 
         @ColumnInfo(name = COL_NAME)

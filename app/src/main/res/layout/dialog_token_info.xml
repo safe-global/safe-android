@@ -8,6 +8,7 @@
 
     <TextView
         android:id="@+id/dialog_token_info_symbol"
+        style="@style/Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/gnosis_blue"
@@ -23,16 +24,18 @@
         android:orientation="horizontal">
 
         <TextView
+            style="@style/Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/decimals"
-            android:textStyle="bold" />
+            android:text="@string/decimals" />
 
         <TextView
             android:id="@+id/dialog_token_info_decimals"
+            style="@style/Content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             tools:text="18" />
     </LinearLayout>
 
@@ -44,17 +47,18 @@
         android:orientation="horizontal">
 
         <TextView
+            style="@style/Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/address"
-            android:textStyle="bold" />
+            android:text="@string/address" />
 
         <TextView
             android:id="@+id/dialog_token_info_address"
+            style="@style/Content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             tools:text="0x6810e776880c02933d47db1b9fc05908e5386b96" />
     </LinearLayout>
-
 </LinearLayout>

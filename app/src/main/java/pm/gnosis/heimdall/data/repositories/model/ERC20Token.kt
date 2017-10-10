@@ -11,3 +11,4 @@ data class ERC20Token(val address: String,
 
 fun ERC20Token.toDb() = ERC20TokenDb(address, name, verified)
 fun ERC20TokenDb.fromDb() = ERC20Token(address = address, name = name, verified = verified)
+

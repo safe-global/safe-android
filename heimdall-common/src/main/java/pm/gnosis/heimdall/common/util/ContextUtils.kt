@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.support.annotation.PluralsRes
+import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
 import android.view.View
 import android.widget.Toast
@@ -16,6 +17,10 @@ fun Context.toast(text: CharSequence, duration: Int = Toast.LENGTH_LONG) {
 }
 
 fun snackbar(view: View, text: CharSequence, duration: Int = Snackbar.LENGTH_LONG) {
+    Snackbar.make(view, text, duration).show()
+}
+
+fun snackbar(view: View, @StringRes text: Int, duration: Int = Snackbar.LENGTH_LONG) {
     Snackbar.make(view, text, duration).show()
 }
 

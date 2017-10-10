@@ -31,6 +31,7 @@ import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.TransactionDetails
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
+import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
@@ -59,6 +60,9 @@ class TransactionDetailsViewModelTest {
     @Mock
     lateinit var gnosisMultisigWrapperMock: GnosisMultisigWrapper
 
+    @Mock
+    lateinit var tokenRepositoryMock: TokenRepository
+
     lateinit var viewModel: TransactionDetailsViewModel
 
     private val testAddress = "0x0000000000000000000000000000000000000000"
@@ -68,7 +72,7 @@ class TransactionDetailsViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = TransactionDetailsViewModel(ethereumJsonRpcRepositoryMock, accountsRepositoryMock, multisigRepositoryMock, gnosisMultisigWrapperMock)
+        viewModel = TransactionDetailsViewModel(ethereumJsonRpcRepositoryMock, accountsRepositoryMock, multisigRepositoryMock, gnosisMultisigWrapperMock, tokenRepositoryMock)
     }
 
     @Test
@@ -343,11 +347,11 @@ class TransactionDetailsViewModelTest {
     fun getTokenInfo() {
         val token = ERC20Token(testAddress)
         val testObserver = TestObserver.create<ERC20Token>()
-        given(ethereumJsonRpcRepositoryMock.getTokenInfo(MockUtils.any())).willReturn(Observable.just(token))
+        given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(Observable.just(token))
 
         viewModel.loadTokenInfo(testAddress.hexAsBigInteger()).subscribe(testObserver)
 
-        then(ethereumJsonRpcRepositoryMock).should().getTokenInfo(testAddress.hexAsBigInteger())
+        then(tokenRepositoryMock).should().loadTokenInfo(testAddress.hexAsBigInteger())
         testObserver.assertValue(token).assertNoErrors().assertTerminated()
     }
 
@@ -355,11 +359,11 @@ class TransactionDetailsViewModelTest {
     fun getTokenInfoError() {
         val testObserver = TestObserver.create<ERC20Token>()
         val exception = Exception()
-        given(ethereumJsonRpcRepositoryMock.getTokenInfo(MockUtils.any())).willReturn(Observable.error(exception))
+        given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(Observable.error(exception))
 
         viewModel.loadTokenInfo(testAddress.hexAsBigInteger()).subscribe(testObserver)
 
-        then(ethereumJsonRpcRepositoryMock).should().getTokenInfo(testAddress.hexAsBigInteger())
+        then(tokenRepositoryMock).should().loadTokenInfo(testAddress.hexAsBigInteger())
         testObserver.assertNoValues().assertError(exception)
     }
 }
