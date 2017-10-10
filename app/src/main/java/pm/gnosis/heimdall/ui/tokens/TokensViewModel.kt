@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.tokens
 
 import io.reactivex.Flowable
-import pm.gnosis.heimdall.data.db.ERC20TokenDb
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import javax.inject.Inject
@@ -13,5 +12,5 @@ class TokensViewModel @Inject constructor(private val tokenRepository: TokenRepo
 
     override fun addToken(address: String, name: String) = tokenRepository.addToken(address, name)
 
-    override fun removeToken(token: ERC20Token) = tokenRepository.removeToken(token)
+    override fun removeToken(token: ERC20Token) = tokenRepository.removeToken(token.address)
 }

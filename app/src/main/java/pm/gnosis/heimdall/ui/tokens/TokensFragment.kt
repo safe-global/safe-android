@@ -20,8 +20,10 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.ApplicationComponent
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.*
-import pm.gnosis.heimdall.data.db.ERC20TokenDb
+import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator
+import pm.gnosis.heimdall.common.util.scanQrCode
+import pm.gnosis.heimdall.common.util.snackbar
+import pm.gnosis.heimdall.common.util.toast
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.utils.asDecimalString

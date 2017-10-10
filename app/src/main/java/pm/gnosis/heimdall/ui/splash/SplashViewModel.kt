@@ -1,43 +1,34 @@
 package pm.gnosis.heimdall.ui.splash
 
-import io.reactivex.Completable
+import android.arch.persistence.room.EmptyResultSetException
+import io.reactivex.Single
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.common.util.ERC20
-import pm.gnosis.heimdall.common.util.edit
-import pm.gnosis.heimdall.data.db.ERC20TokenDb
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
-import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.heimdall.data.repositories.TokenRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
-        private val preferencesManager: PreferencesManager,
-        private val gnosisAuthenticatorDb: GnosisAuthenticatorDb,
-        private val accountsRepository: AccountsRepository
+        private val accountsRepository: AccountsRepository,
+        private val tokenRepository: TokenRepository
 ) : SplashContract() {
     companion object {
-        const val DELAY_NOT_FIRST_LAUNCH = 1500L
-        const val DELAY_FIRST_LAUNCH = 2000L
+        const val LAUNCH_DELAY = 500L
     }
 
-    override fun initialSetup(): Completable {
-        val isFirstLaunch = preferencesManager.prefs.getBoolean(PreferencesManager.FIRST_LAUNCH_KEY, true)
-        return Completable.fromCallable {
-            if (isFirstLaunch) {
-                val tokens = ERC20.verifiedTokens.entries.map {
-                    val erc20Token = ERC20TokenDb()
-                    erc20Token.address = it.key.asEthereumAddressString()
-                    erc20Token.name = it.value
-                    erc20Token.verified = true
-                    return@map erc20Token
-                }.toList()
-                gnosisAuthenticatorDb.erc20TokenDao().insertERC20Tokens(tokens)
-                preferencesManager.prefs.edit { putBoolean(PreferencesManager.FIRST_LAUNCH_KEY, false) }
-            }
-        }.delay(if (isFirstLaunch) DELAY_FIRST_LAUNCH else DELAY_NOT_FIRST_LAUNCH, TimeUnit.MILLISECONDS)
+    override fun initialSetup(): Single<ViewAction> {
+        return tokenRepository.setup()
+                .onErrorComplete()
+                .andThen(accountsRepository.loadActiveAccount())
+                .map { StartMain() as ViewAction }
+                .onErrorReturn {
+                    when (it) {
+                        is EmptyResultSetException, is NoSuchElementException ->
+                            StartSetup()
+                        else ->
+                            StartMain()
+                    }
+                }
+                // We need a short delay to avoid weird flickering
+                .delay(LAUNCH_DELAY, TimeUnit.MILLISECONDS)
     }
-
-    override fun loadActiveAccount() = accountsRepository.loadActiveAccount()
 }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e3c283cc0694d6c2a51ec74b5e4f8e92",
+    "identityHash": "7a70f781c08ba971e53c965e203723b6",
     "entities": [
       {
         "tableName": "multisig_wallets",
@@ -32,7 +32,7 @@
       },
       {
         "tableName": "erc20_tokens",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT, `verified` INTEGER, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT, `verified` INTEGER NOT NULL, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "address",
@@ -50,7 +50,7 @@
             "fieldPath": "verified",
             "columnName": "verified",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -65,7 +65,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e3c283cc0694d6c2a51ec74b5e4f8e92\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"7a70f781c08ba971e53c965e203723b6\")"
     ]
   }
 }

@@ -23,9 +23,7 @@ class SqliteMultisigRepository @Inject constructor(
 
     override fun addMultisigWallet(address: String, name: String) =
             Completable.fromCallable {
-                val multisigWallet = MultisigWalletDb()
-                multisigWallet.name = name
-                multisigWallet.address = address
+                val multisigWallet = MultisigWalletDb(name, address)
                 multisigWalletDao.insertMultisigWallet(multisigWallet)
             }.subscribeOn(Schedulers.io())
 
@@ -36,9 +34,7 @@ class SqliteMultisigRepository @Inject constructor(
 
     override fun updateMultisigWalletName(address: String, newName: String) =
             Completable.fromCallable {
-                val multisigWallet = MultisigWalletDb()
-                multisigWallet.name = newName
-                multisigWallet.address = address
+                val multisigWallet = MultisigWalletDb(newName, address)
                 multisigWalletDao.updateMultisigWallet(multisigWallet)
             }.subscribeOn(Schedulers.io())
 }
