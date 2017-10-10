@@ -21,7 +21,8 @@ import pm.gnosis.heimdall.common.di.component.ApplicationComponent
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.common.util.*
-import pm.gnosis.heimdall.data.db.ERC20Token
+import pm.gnosis.heimdall.data.db.ERC20TokenDb
+import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.isValidEthereumAddress
@@ -98,7 +99,7 @@ class TokensFragment : BaseFragment() {
         Timber.e(throwable)
     }
 
-    private fun onTokenInfo(token: ERC20.Token) {
+    private fun onTokenInfo(token: ERC20Token) {
         if (token.decimals == null && token.name == null && token.symbol == null) {
             snackbar(layout_tokens_coordinator_layout, "Could not get token information")
             return
@@ -107,7 +108,7 @@ class TokensFragment : BaseFragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_token_info, null)
 
         if (token.decimals != null) {
-            dialogView.dialog_token_info_decimals.text = token.decimals?.asDecimalString()
+            dialogView.dialog_token_info_decimals.text = token.decimals.asDecimalString()
         } else {
             dialogView.dialog_token_info_decimals_container.visibility = View.GONE
         }

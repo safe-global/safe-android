@@ -6,7 +6,7 @@ import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.util.ERC20
 import pm.gnosis.heimdall.common.util.edit
-import pm.gnosis.heimdall.data.db.ERC20Token
+import pm.gnosis.heimdall.data.db.ERC20TokenDb
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.utils.asEthereumAddressString
 import java.util.concurrent.TimeUnit
@@ -26,7 +26,7 @@ class SplashPresenter @Inject constructor(private val preferencesManager: Prefer
         return Completable.fromCallable {
             if (isFirstLaunch) {
                 val tokens = ERC20.verifiedTokens.entries.map {
-                    val erc20Token = ERC20Token()
+                    val erc20Token = ERC20TokenDb()
                     erc20Token.address = it.key.asEthereumAddressString()
                     erc20Token.name = it.value
                     erc20Token.verified = true

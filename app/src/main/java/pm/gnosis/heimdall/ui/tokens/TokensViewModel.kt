@@ -1,8 +1,9 @@
 package pm.gnosis.heimdall.ui.tokens
 
 import io.reactivex.Flowable
-import pm.gnosis.heimdall.data.db.ERC20Token
+import pm.gnosis.heimdall.data.db.ERC20TokenDb
 import pm.gnosis.heimdall.data.repositories.TokenRepository
+import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import javax.inject.Inject
 
 class TokensViewModel @Inject constructor(private val tokenRepository: TokenRepository) : TokensContract() {

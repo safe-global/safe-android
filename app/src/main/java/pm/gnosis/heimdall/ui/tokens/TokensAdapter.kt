@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.layout_tokens_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
-import pm.gnosis.heimdall.data.db.ERC20Token
+import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import javax.inject.Inject
 
 
@@ -48,7 +48,7 @@ class TokensAdapter @Inject constructor(@ViewContext private val context: Contex
 
         fun bind(item: ERC20Token) {
             itemView.layout_tokens_item_name.text = if (item.name.isNullOrEmpty()) item.address else item.name
-            itemView.layout_tokens_item_delete.visibility = if (item.verified) View.GONE else View.VISIBLE
+            itemView.layout_tokens_item_delete.visibility = if (item.verified == true) View.GONE else View.VISIBLE
         }
 
         override fun onClick(v: View?) {

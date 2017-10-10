@@ -21,13 +21,13 @@ import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.ERC20
 import pm.gnosis.heimdall.common.util.snackbar
 import pm.gnosis.heimdall.common.util.toast
 import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
 import pm.gnosis.heimdall.data.model.TransactionDetails
 import pm.gnosis.heimdall.data.model.Wei
+import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.utils.*
 import timber.log.Timber
@@ -150,7 +150,7 @@ class TransactionDetailsActivity : BaseActivity() {
                 .subscribeBy(onNext = { onTokenTransferInfo(transaction, it) }, onError = Timber::e)
     }
 
-    private fun onTokenTransferInfo(transaction: GnosisMultisigWrapper.TokenTransfer, token: ERC20.Token) {
+    private fun onTokenTransferInfo(transaction: GnosisMultisigWrapper.TokenTransfer, token: ERC20Token) {
         if (token.decimals == null) return
 
         val view = layoutInflater.inflate(R.layout.layout_transaction_details_token_transfer, layout_transaction_details_coordinator, false)
@@ -158,7 +158,7 @@ class TransactionDetailsActivity : BaseActivity() {
         layout_transaction_details_token_transfer_symbol.text = token.symbol ?: "Tokens"
         layout_transaction_details_token_transfer_recipient.text = transaction.recipient.asEthereumAddressString()
 
-        val tokens = BigDecimal(transaction.tokens, token.decimals!!.toInt())
+        val tokens = BigDecimal(transaction.tokens, token.decimals.toInt())
         layout_transaction_details_token_transfer_amount.text = tokens.stripTrailingZeros().toPlainString()
     }
 

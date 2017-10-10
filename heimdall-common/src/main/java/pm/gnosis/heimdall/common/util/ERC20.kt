@@ -23,7 +23,6 @@ object ERC20 {
         return null
     }
 
-    data class Token(val address: String, val name: String?, val symbol: String?, val decimals: BigInteger?)
     data class TokenTransfer(val to: BigInteger, val value: BigInteger)
 
     val verifiedTokens = mapOf(
