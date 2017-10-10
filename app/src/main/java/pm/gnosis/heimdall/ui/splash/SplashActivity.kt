@@ -17,7 +17,7 @@ import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
-    @Inject lateinit var presenter: SplashPresenter
+    @Inject lateinit var viewModel: SplashViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
@@ -28,7 +28,7 @@ class SplashActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += presenter.initialSetup().andThen(presenter.loadActiveAccount())
+        disposables += viewModel.initialSetup().andThen(viewModel.loadActiveAccount())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = { startApplication() }, onError = this::onError)

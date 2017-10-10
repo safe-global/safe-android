@@ -12,16 +12,17 @@ import pm.gnosis.utils.asEthereumAddressString
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-@ForView
-class SplashPresenter @Inject constructor(private val preferencesManager: PreferencesManager,
-                                          private val gnosisAuthenticatorDb: GnosisAuthenticatorDb,
-                                          private val accountsRepository: AccountsRepository) {
+class SplashViewModel @Inject constructor(
+        private val preferencesManager: PreferencesManager,
+        private val gnosisAuthenticatorDb: GnosisAuthenticatorDb,
+        private val accountsRepository: AccountsRepository
+) : SplashContract() {
     companion object {
         const val DELAY_NOT_FIRST_LAUNCH = 1500L
         const val DELAY_FIRST_LAUNCH = 2000L
     }
 
-    fun initialSetup(): Completable {
+    override fun initialSetup(): Completable {
         val isFirstLaunch = preferencesManager.prefs.getBoolean(PreferencesManager.FIRST_LAUNCH_KEY, true)
         return Completable.fromCallable {
             if (isFirstLaunch) {
@@ -38,5 +39,5 @@ class SplashPresenter @Inject constructor(private val preferencesManager: Prefer
         }.delay(if (isFirstLaunch) DELAY_FIRST_LAUNCH else DELAY_NOT_FIRST_LAUNCH, TimeUnit.MILLISECONDS)
     }
 
-    fun loadActiveAccount() = accountsRepository.loadActiveAccount()
+    override fun loadActiveAccount() = accountsRepository.loadActiveAccount()
 }
