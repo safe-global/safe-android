@@ -16,7 +16,7 @@
 
 #### **Did you fix whitespace, format code, or make a purely cosmetic patch?**
 
-Changes that are cosmetic in nature and do not add anything substantial to the stability, functionality, or testability of Bivrost-Kotlin will generally not be accepted.
+Changes that are cosmetic in nature and do not add anything substantial to the stability, functionality, or testability of Heimdall Android will generally not be accepted.
 
 #### **Do you intend to add a new feature or change an existing one?**
 
