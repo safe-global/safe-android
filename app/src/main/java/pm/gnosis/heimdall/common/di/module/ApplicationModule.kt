@@ -71,5 +71,7 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun providesDb(@ApplicationContext context: Context) = Room.databaseBuilder(context, GnosisAuthenticatorDb::class.java, GnosisAuthenticatorDb.DB_NAME).build()
+    fun providesDb(@ApplicationContext context: Context) =
+            Room.databaseBuilder(context, GnosisAuthenticatorDb::class.java, GnosisAuthenticatorDb.DB_NAME)
+                    .build()
 }

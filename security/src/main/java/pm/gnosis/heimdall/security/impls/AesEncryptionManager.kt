@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.base.TrackingActivityLifecycleCallbacks
 import pm.gnosis.heimdall.common.util.edit
 import pm.gnosis.heimdall.security.EncryptionManager
+import pm.gnosis.heimdall.security.exceptions.DeviceIsLockedException
 import pm.gnosis.utils.generateRandomString
 import pm.gnosis.utils.toHexString
 import javax.crypto.Cipher
@@ -63,7 +64,7 @@ class AesEncryptionManager @Inject constructor(
     override fun initialized(): Single<Boolean> {
         return Single.fromCallable {
             preferencesManager.prefs.getString(PREF_KEY_CHECKSUM, null) != null
-        }.subscribeOn(Schedulers.io())
+        }
     }
 
     override fun setup(newKey: ByteArray, oldKey: ByteArray?): Single<Boolean> {
@@ -85,10 +86,10 @@ class AesEncryptionManager @Inject constructor(
 
     override fun unlocked(): Single<Boolean> {
         return Single.fromCallable {
-            synchronized(keySpecLock) {
+                synchronized(keySpecLock) {
                 keySpec != null
             }
-        }.subscribeOn(Schedulers.io())
+        }
     }
 
     override fun unlock(key: ByteArray): Single<Boolean> {
@@ -110,14 +111,14 @@ class AesEncryptionManager @Inject constructor(
 
     override fun decrypt(data: ByteArray): ByteArray {
         val keySpec = synchronized(keySpecLock) {
-            this.keySpec ?: throw IllegalStateException("Please unlock first!")
+            this.keySpec ?: throw DeviceIsLockedException()
         }
         return decrypt(keySpec, data)
     }
 
     override fun encrypt(data: ByteArray): ByteArray {
         val keySpec = synchronized(keySpecLock) {
-            this.keySpec ?: throw IllegalStateException("Please unlock first!")
+            this.keySpec ?: throw DeviceIsLockedException()
         }
         return encrypt(keySpec, data)
     }
