@@ -4,18 +4,21 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 
-@Entity(tableName = MultisigWalletDb.TABLE_NAME)
-data class MultisigWalletDb(
+@Entity(tableName = ERC20TokenDb.TABLE_NAME)
+data class ERC20TokenDb(
         @PrimaryKey
-        @ColumnInfo(name = COL_ADDRESS)
         var address: String,
 
         @ColumnInfo(name = COL_NAME)
-        var name: String?
+        var name: String?,
+
+        @ColumnInfo(name = COL_VERIFIED)
+        var verified: Boolean
 ) {
     companion object {
-        const val TABLE_NAME = "multisig_wallets"
+        const val TABLE_NAME = "erc20_tokens"
         const val COL_ADDRESS = "address"
         const val COL_NAME = "name"
+        const val COL_VERIFIED = "verified"
     }
 }

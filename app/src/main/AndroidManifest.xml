@@ -14,23 +14,20 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="pm.gnosis.heimdall.ui.splash.SplashActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.onboarding.GenerateMnemonicActivity" />
-        <activity
-            android:name=".ui.onboarding.RestoreAccountActivity" />
-        <activity
-            android:name=".ui.main.MainActivity" />
+        <activity android:name=".ui.onboarding.GenerateMnemonicActivity" />
+        <activity android:name=".ui.onboarding.RestoreAccountActivity" />
+        <activity android:name=".ui.main.MainActivity" />
         <activity
             android:name=".ui.transactiondetails.TransactionDetailsActivity"
-            android:theme="@style/OldAppTheme"
-            android:parentActivityName=".ui.main.MainActivity" />
-        <activity
-            android:name=".ui.security.SecurityActivity" />
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/OldAppTheme" />
+        <activity android:name=".ui.security.SecurityActivity" />
     </application>
 </manifest>
