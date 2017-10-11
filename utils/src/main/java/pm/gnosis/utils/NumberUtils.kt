@@ -7,6 +7,8 @@ fun String.hexAsBigIntegerOrNull() = nullOnThrow { this.hexAsBigInteger() }
 fun String.decimalAsBigInteger() = BigInteger(this, 10)
 fun String.decimalAsBigIntegerOrNull() = nullOnThrow { this.decimalAsBigInteger() }
 
+fun ByteArray.asBigInteger() = BigInteger(1, this)
+
 fun BigInteger.asEthereumAddressString() = "0x${this.toString(16).padStart(40, '0')}"
 fun BigInteger.asDecimalString() = this.toString(10)
 

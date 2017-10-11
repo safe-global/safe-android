@@ -15,17 +15,24 @@ import pm.gnosis.heimdall.accounts.utils.hash
 import pm.gnosis.heimdall.accounts.utils.rlp
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.util.edit
+import pm.gnosis.heimdall.security.EncryptionManager
+import pm.gnosis.heimdall.security.db.EncryptedByteArray
+import pm.gnosis.heimdall.security.db.EncryptedString
 import pm.gnosis.mnemonic.Bip39
-import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.toHexString
+import pm.gnosis.utils.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class KethereumAccountsRepository @Inject internal constructor(private val accountsDatabase: AccountsDatabase,
-                                                               private val preferencesManager: PreferencesManager,
-                                                               private val bip39: Bip39) : AccountsRepository {
+class KethereumAccountsRepository @Inject internal constructor(
+        private val accountsDatabase: AccountsDatabase,
+        private val encryptionManager: EncryptionManager,
+        private val preferencesManager: PreferencesManager,
+        private val bip39: Bip39
+) : AccountsRepository {
+
+    private val encryptedStringConverter = EncryptedString.Converter()
+
     override fun loadActiveAccount(): Single<Account> {
         return keyPairFromActiveAccount()
                 .map { it.address.toHexString().asEthereumAddressString() }
@@ -40,14 +47,13 @@ class KethereumAccountsRepository @Inject internal constructor(private val accou
     private fun keyPairFromActiveAccount(): Single<KeyPair> {
         return accountsDatabase.accountsDao().observeAccounts()
                 .subscribeOn(Schedulers.io())
-                .map { it.privateKey!!.hexAsBigInteger() }
+                .map { it.privateKey.value(encryptionManager).asBigInteger() }
                 .map { KeyPair.fromPrivate(it) }
     }
 
     override fun saveAccount(privateKey: ByteArray): Completable =
             Completable.fromCallable {
-                val account = AccountDb()
-                account.privateKey = privateKey.toHexString()
+                val account = AccountDb(EncryptedByteArray.create(encryptionManager, privateKey))
                 accountsDatabase.accountsDao().insertAccount(account)
             }.subscribeOn(Schedulers.io())
 
@@ -60,8 +66,8 @@ class KethereumAccountsRepository @Inject internal constructor(private val accou
 
     override fun saveMnemonic(mnemonic: String): Completable = Completable.fromCallable {
         preferencesManager.prefs.edit {
-            //TODO: in the future this needs to be encrypted
-            putString(PreferencesManager.MNEMONIC_KEY, mnemonic)
+            val encryptedString = EncryptedString.create(encryptionManager, mnemonic)
+            putString(PreferencesManager.MNEMONIC_KEY, encryptedStringConverter.toStorage(encryptedString))
         }
     }
 

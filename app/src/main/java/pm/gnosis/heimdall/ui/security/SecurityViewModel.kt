@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.security
 import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.util.Result
@@ -29,7 +30,9 @@ class SecurityViewModel @Inject constructor(
                                 else
                                     State.UNINITIALIZED
                             }
-                    }).toObservable().mapToResult()
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .toObservable().mapToResult()
 
     override fun setupPin(pin: String, repeat: String): Observable<Result<State>> =
             checkPins(pin, repeat)
