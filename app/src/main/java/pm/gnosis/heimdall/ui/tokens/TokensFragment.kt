@@ -20,8 +20,11 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.ApplicationComponent
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.*
-import pm.gnosis.heimdall.data.db.ERC20Token
+import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator
+import pm.gnosis.heimdall.common.util.scanQrCode
+import pm.gnosis.heimdall.common.util.snackbar
+import pm.gnosis.heimdall.common.util.toast
+import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.isValidEthereumAddress
@@ -29,7 +32,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class TokensFragment : BaseFragment() {
-    @Inject lateinit var presenter: TokensPresenter
+    @Inject lateinit var viewModel: TokensContract
     @Inject lateinit var adapter: TokensAdapter
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -70,16 +73,16 @@ class TokensFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        disposables += presenter.observeTokens()
+        disposables += viewModel.observeTokens()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onTokensList, onError = this::onTokensListError)
 
         disposables += adapter.tokensSelectionSubject
                 .flatMap {
-                    presenter.observeTokenInfo(it)
-                            ?.observeOn(AndroidSchedulers.mainThread())
-                            ?.doOnSubscribe { onTokenInfoLoading(true) }
-                            ?.doOnTerminate { onTokenInfoLoading(false) }
+                    viewModel.observeTokenInfo(it)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnSubscribe { onTokenInfoLoading(true) }
+                            .doOnTerminate { onTokenInfoLoading(false) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = this::onTokenInfo, onError = this::onTokenInfoError)
@@ -98,7 +101,7 @@ class TokensFragment : BaseFragment() {
         Timber.e(throwable)
     }
 
-    private fun onTokenInfo(token: ERC20.Token) {
+    private fun onTokenInfo(token: ERC20Token) {
         if (token.decimals == null && token.name == null && token.symbol == null) {
             snackbar(layout_tokens_coordinator_layout, "Could not get token information")
             return
@@ -107,7 +110,7 @@ class TokensFragment : BaseFragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_token_info, null)
 
         if (token.decimals != null) {
-            dialogView.dialog_token_info_decimals.text = token.decimals?.asDecimalString()
+            dialogView.dialog_token_info_decimals.text = token.decimals.asDecimalString()
         } else {
             dialogView.dialog_token_info_decimals_container.visibility = View.GONE
         }
@@ -124,7 +127,7 @@ class TokensFragment : BaseFragment() {
     private fun showTokenAddressInputDialog(withAddress: String = "") {
         val dialogView = layoutInflater.inflate(R.layout.dialog_token_add_input, null)
 
-        if (!withAddress.isNullOrEmpty()) {
+        if (!withAddress.isEmpty()) {
             dialogView.dialog_token_add_address.setText(withAddress)
             dialogView.dialog_token_add_address.isEnabled = false
             dialogView.dialog_token_add_address.inputType = InputType.TYPE_NULL
@@ -160,7 +163,7 @@ class TokensFragment : BaseFragment() {
                 .show()
     }
 
-    private fun removeTokenDisposable(erC20Token: ERC20Token) = presenter.removeToken(erC20Token)
+    private fun removeTokenDisposable(erC20Token: ERC20Token) = viewModel.removeToken(erC20Token)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onComplete = this::onTokenRemoved, onError = this::onTokenRemoveError)
 
@@ -183,7 +186,7 @@ class TokensFragment : BaseFragment() {
     }
 
     private fun addTokenDisposable(address: String, name: String) =
-            presenter.addToken(address, name).observeOn(AndroidSchedulers.mainThread())
+            viewModel.addToken(address, name).observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onTokenAdded, onError = this::onTokenAddError)
 
     private fun onTokenAdded() {

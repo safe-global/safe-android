@@ -11,6 +11,7 @@ import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexAsBigIntegerOrNull
@@ -24,7 +25,7 @@ import javax.inject.Singleton
 class SimpleEthereumJsonRpcRepository @Inject constructor(
         private val ethereumJsonRpcApi: EthereumJsonRpcApi,
         private val accountsRepository: AccountsRepository
-): EthereumJsonRpcRepository {
+) : EthereumJsonRpcRepository {
     companion object {
         const val DEFAULT_BLOCK_EARLIEST = "earliest"
         const val DEFAULT_BLOCK_LATEST = "latest"
@@ -77,12 +78,12 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
             call(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.DECIMALS_METHOD_ID}"))
                     .map { it.hexAsBigIntegerOrNull().toOptional() }
 
-    override fun getTokenInfo(contractAddress: BigInteger): Observable<ERC20.Token> =
+    override fun getTokenInfo(contractAddress: BigInteger): Observable<ERC20Token> =
             Observable.zip(
                     getTokenName(contractAddress),
                     getTokenSymbol(contractAddress),
                     getTokenDecimals(contractAddress),
-                    Function3 { name, symbol, decimals -> ERC20.Token(contractAddress.asEthereumAddressString(), name.toNullable(), symbol.toNullable(), decimals.toNullable()) })
+                    Function3 { name, symbol, decimals -> ERC20Token(contractAddress.asEthereumAddressString(), name.toNullable(), symbol.toNullable(), decimals.toNullable()) })
 
     override fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_estimateGas",

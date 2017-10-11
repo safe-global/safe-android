@@ -21,6 +21,10 @@
         <item name="editTextStyle">@style/Input</item>
     </style>
 
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
     <!-- Start: Toolbar styles -->
 
     <style name="AppBarLayout" parent="ThemeOverlay.AppCompat.Light">

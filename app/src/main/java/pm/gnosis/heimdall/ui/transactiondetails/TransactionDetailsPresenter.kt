@@ -40,9 +40,7 @@ class TransactionDetailsPresenter @Inject constructor(private val ethereumJsonRp
                     .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
 
     fun addMultisigWallet(name: String = "", address: String) = Completable.fromCallable {
-        val multisigWallet = MultisigWalletDb()
-        multisigWallet.name = name
-        multisigWallet.address = address
+        val multisigWallet = MultisigWalletDb(name, address)
         gnosisAuthenticatorDb.multisigWalletDao().insertMultisigWallet(multisigWallet)
     }.subscribeOn(Schedulers.io())
 
