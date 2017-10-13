@@ -11,6 +11,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.*
@@ -138,8 +139,10 @@ class AccountViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver<Wei>()
 
+        val account = Account("00000000000000000000000000000000")
+        given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         val exception = IllegalStateException()
-        given(ethereumJsonRpcRepository.getBalance()).thenReturn(Observable.error<Wei>(exception))
+        given(ethereumJsonRpcRepository.getBalance(anyString())).thenReturn(Observable.error<Wei>(exception))
         viewModel.getAccountBalance().subscribe(observer)
 
         observer.assertNoErrors().assertComplete()
@@ -153,9 +156,12 @@ class AccountViewModelTest {
     fun getAccountBalanceNetworkError() {
         val viewModel = createViewModel()
         val observer = createObserver<Wei>()
-        val response = Response.error<Any>(401, mock(ResponseBody::class.java))
 
-        given(ethereumJsonRpcRepository.getBalance()).thenReturn(Observable.error<Wei>(HttpException(response)))
+        val account = Account("00000000000000000000000000000000")
+        given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
+        val response = Response.error<Any>(401, mock(ResponseBody::class.java))
+        given(ethereumJsonRpcRepository.getBalance(anyString())).thenReturn(Observable.error<Wei>(HttpException(response)))
+
         viewModel.getAccountBalance().subscribe(observer)
 
         observer.assertNoErrors().assertComplete()
@@ -170,8 +176,10 @@ class AccountViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver<Wei>()
 
+        val account = Account("00000000000000000000000000000000")
+        given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         val balance = Wei(BigInteger.valueOf(1000))
-        given(ethereumJsonRpcRepository.getBalance()).thenReturn(Observable.just(balance))
+        given(ethereumJsonRpcRepository.getBalance(anyString())).thenReturn(Observable.just(balance))
         viewModel.getAccountBalance().subscribe(observer)
 
         observer.assertNoErrors().assertComplete()

@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig
+package pm.gnosis.heimdall.ui.multisig.overview
 
 import io.reactivex.Flowable
 import pm.gnosis.heimdall.common.util.Result
@@ -9,9 +9,9 @@ import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import javax.inject.Inject
 
-class MultisigViewModel @Inject constructor(
+class MultisigOverviewViewModel @Inject constructor(
         private val multisigRepository: MultisigRepository
-): MultisigContract() {
+): MultisigOverviewContract() {
     override fun observeMultisigWallets(): Flowable<Result<Adapter.Data<MultisigWallet>>> {
         return multisigRepository.observeMultisigWallets()
                 .scanToAdapterData({ (prevAddress), (newAddress) -> prevAddress == newAddress })

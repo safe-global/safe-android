@@ -13,4 +13,4 @@ fun ERC20Token.toDb(): ERC20TokenDb {
     return ERC20TokenDb(address, name, verified)
 }
 
-fun ERC20TokenDb.fromDb() = address?.let { ERC20Token(address = it, name = name, verified = verified) }
+fun ERC20TokenDb.fromDb() = ERC20Token(address = address, name = name, verified = verified)

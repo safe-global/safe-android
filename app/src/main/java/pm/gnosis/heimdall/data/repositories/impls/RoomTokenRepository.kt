@@ -31,7 +31,7 @@ class RoomTokenRepository @Inject constructor(
     override fun observeTokens(): Flowable<List<ERC20Token>> =
             erc20TokenDao.observeTokens()
                     .subscribeOn(Schedulers.io())
-                    .map { it.mapNotNull { it.fromDb() } }
+                    .map { it.map { it.fromDb() } }
 
 
     override fun observeTokenInfo(token: ERC20Token): Observable<ERC20Token> {

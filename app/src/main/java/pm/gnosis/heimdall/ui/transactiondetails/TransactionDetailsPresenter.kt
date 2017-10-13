@@ -28,16 +28,19 @@ class TransactionDetailsPresenter @Inject constructor(private val ethereumJsonRp
                     .subscribeOn(Schedulers.io())
 
     fun signTransaction(transactionDetails: TransactionDetails) =
-            ethereumJsonRpcRepository.getTransactionParameters(
-                    TransactionCallParams(
-                            to = transactionDetails.address.asEthereumAddressString(),
-                            data = transactionDetails.data))
-                    .flatMapSingle {
-                        val tx = Transaction(it.nonce, transactionDetails.address, transactionDetails.value?.value ?: BigInteger("0"),
-                                it.gas, it.gasPrice, transactionDetails.data?.hexToByteArray() ?: ByteArray(0))
-                        accountsRepository.signTransaction(tx)
-                    }
-                    .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
+            accountsRepository.loadActiveAccount().flatMapObservable {
+                ethereumJsonRpcRepository.getTransactionParameters(
+                        it.address,
+                        TransactionCallParams(
+                                to = transactionDetails.address.asEthereumAddressString(),
+                                data = transactionDetails.data))
+                        .flatMapSingle {
+                            val tx = Transaction(it.nonce, transactionDetails.address, transactionDetails.value?.value ?: BigInteger("0"),
+                                    it.gas, it.gasPrice, transactionDetails.data?.hexToByteArray() ?: ByteArray(0))
+                            accountsRepository.signTransaction(tx)
+                        }
+                        .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
+            }
 
     fun addMultisigWallet(name: String = "", address: String) = Completable.fromCallable {
         val multisigWallet = MultisigWalletDb(name, address)
