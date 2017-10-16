@@ -21,7 +21,6 @@ import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.asNumberString
-import java.util.*
 import javax.inject.Inject
 
 
@@ -45,10 +44,10 @@ class MultisigInfoFragment : BaseFragment() {
                 .startWith(false)
                 .flatMap {
                     viewModel.loadMultisigInfo(it)
-                            .doOnSubscribe { showLoading(true) }
-                            .doOnComplete { showLoading(false) }
                             .subscribeOn(AndroidSchedulers.mainThread())
                             .observeOn(AndroidSchedulers.mainThread())
+                            .doOnSubscribe { showLoading(true) }
+                            .doOnComplete { showLoading(false) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(this::updateInfo, this::handleError)
@@ -90,7 +89,6 @@ class MultisigInfoFragment : BaseFragment() {
         }
         val ownerLayout = layoutInflater.inflate(R.layout.layout_multisig_owner, layout_multisig_info_owners_container, false)
         ownerLayout.layout_multisig_owner_address.text = address
-        // TODO: Handle more menu
         layout_multisig_info_owners_container.addView(ownerLayout)
     }
 
