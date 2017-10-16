@@ -5,18 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import kotlinx.android.synthetic.main.layout_multisig_details.*
-import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
-import pm.gnosis.heimdall.ui.account.AccountFragment
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoFragment
-import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoViewModel
 import pm.gnosis.heimdall.ui.tokens.TokensFragment
-import javax.inject.Inject
 
 
 class MultisigDetailsActivity : BaseActivity() {

@@ -8,8 +8,8 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.impl.SimpleEthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.impls.RoomTokenRepository
 import pm.gnosis.heimdall.data.repositories.impls.DefaultMultisigRepository
+import pm.gnosis.heimdall.data.repositories.impls.RoomTokenRepository
 import javax.inject.Singleton
 
 @Module

@@ -6,7 +6,6 @@ import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.ui.account.AccountFragment
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.main.MainActivity
-import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsActivity
 import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoFragment
 import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewFragment
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity

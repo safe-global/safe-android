@@ -1,10 +1,8 @@
 package pm.gnosis.heimdall.ui.multisig.details.info
 
-import android.arch.persistence.room.EmptyResultSetException
 import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.functions.Function
-import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.util.mapToResult
 import pm.gnosis.heimdall.data.repositories.MultisigRepository

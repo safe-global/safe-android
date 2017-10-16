@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.common.util.subscribeForResult
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.utils.asNumberString
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -41,12 +42,12 @@ class AccountFragment : BaseFragment() {
         disposables += accountAddress()
 
         layout_account_clipboard.setOnClickListener {
-            context.copyToClipboard("address", layout_account_address.text.toString())
-            snackbar(layout_account_coordinator_layout, "Address copied to clipboard")
+            context.copyToClipboard(getString(R.string.address), layout_account_address.text.toString())
+            snackbar(layout_account_coordinator_layout, getString(R.string.address_clipboard_success))
         }
 
         layout_account_share.setOnClickListener {
-            context.shareExternalText(layout_account_address.text.toString(), "Share your address")
+            context.shareExternalText(layout_account_address.text.toString(), getString(R.string.share_address))
         }
 
         // We delay the initial value, else the progress bar is not visible
@@ -83,7 +84,7 @@ class AccountFragment : BaseFragment() {
 
     private fun onAccountBalance(wei: Wei) {
         val etherBalance = wei.toEther()
-        layout_account_balance.text = if (etherBalance.compareTo(BigDecimal.ZERO) == 0) "0 Ξ" else etherBalance.stripTrailingZeros().toPlainString() + " Ξ"
+        layout_account_balance.text = getString(R.string.x_ether, etherBalance.asNumberString())
     }
 
     private fun onAccountBalanceLoading(isLoading: Boolean) {
