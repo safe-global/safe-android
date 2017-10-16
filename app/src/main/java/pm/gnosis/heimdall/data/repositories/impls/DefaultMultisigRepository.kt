@@ -3,9 +3,8 @@ package pm.gnosis.heimdall.data.repositories.impls
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
-import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit.*
-import pm.gnosis.heimdall.common.util.ERC20
+import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit.GetOwners
+import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit.Required
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
 import pm.gnosis.heimdall.data.model.JsonRpcRequest
@@ -14,16 +13,10 @@ import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.remote.BulkRequest
 import pm.gnosis.heimdall.data.remote.BulkRequest.Call
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.heimdall.data.remote.impl.SimpleEthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
-import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
-import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.hexAsBigIntegerOrNull
-import pm.gnosis.utils.toAlfaNumericAscii
-import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 

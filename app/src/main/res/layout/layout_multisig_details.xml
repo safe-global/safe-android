@@ -11,6 +11,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/layout_multisig_details_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -20,26 +21,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:title="Multisig Wallet Name">
-
-            <ImageView
-                android:id="@+id/layout_multisig_details_info_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:background="@drawable/selectable_background"
-                android:gravity="center"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                app:srcCompat="@drawable/ic_info_outline_light_24dp" />
-        </android.support.v7.widget.Toolbar>
+            app:title="Multisig Wallet Name" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/layout_multisig_details_tabbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabIndicatorColor="@color/color_accent"
-            app:layout_scrollFlags="scroll|enterAlways">
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:tabIndicatorColor="@color/color_accent">
 
             <android.support.design.widget.TabItem
                 android:layout_width="match_parent"

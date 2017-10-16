@@ -70,8 +70,6 @@ class MultisigInfoFragment : BaseFragment() {
 
     private fun updateInfo(info: MultisigWalletInfo) {
         layout_multisig_info_balance.text = String.format(Locale.getDefault(), "%s ETH", info.balance.toEther())
-        layout_multisig_info_withdraw_btn.isEnabled = true
-        layout_multisig_info_deposit_btn.isEnabled = true
         layout_multisig_info_confirmations.text = context.getSimplePlural(R.plurals.x_confirmations, info.requiredConfirmations)
 
         setupOwners(info.owners)

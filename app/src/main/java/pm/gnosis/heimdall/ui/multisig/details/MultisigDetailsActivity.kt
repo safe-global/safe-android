@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.multisig.details
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import kotlinx.android.synthetic.main.layout_multisig_details.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -22,7 +23,7 @@ class MultisigDetailsActivity : BaseActivity() {
 
     private lateinit var multisigAddress: String
 
-    private val items = listOf(R.string.tab_title_info, R.string.tab_title_transactions, R.string.tab_title_tokens)
+    private val items = listOf(R.string.tab_title_info, R.string.tab_title_tokens)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +43,11 @@ class MultisigDetailsActivity : BaseActivity() {
         }
         layout_multisig_details_viewpager.adapter = pagerAdapter()
         layout_multisig_details_tabbar.setupWithViewPager(layout_multisig_details_viewpager)
+        layout_multisig_details_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+            override fun onPageSelected(position: Int) {
+                layout_multisig_details_appbar.setExpanded(true, true)
+            }
+        })
     }
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
@@ -51,11 +57,8 @@ class MultisigDetailsActivity : BaseActivity() {
             R.string.tab_title_info -> {
                 MultisigInfoFragment.createInstance(multisigAddress)
             }
-            R.string.tab_title_transactions -> {
-                AccountFragment()
-            }
             R.string.tab_title_tokens -> {
-                TokensFragment()
+                TokensFragment.createInstance(multisigAddress)
             }
             else -> throw IllegalStateException("Unhandled tab position")
         }

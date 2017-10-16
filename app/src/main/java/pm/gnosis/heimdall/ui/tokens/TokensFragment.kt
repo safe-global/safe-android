@@ -38,6 +38,12 @@ class TokensFragment : BaseFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        layout_tokens_fab.visibility = if (arguments?.getString(ARGUMENT_ADDRESS).isNullOrBlank()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+
         layout_tokens_input_address.setOnClickListener {
             layout_tokens_fab.close(true)
             showTokenAddressInputDialog()
@@ -202,5 +208,15 @@ class TokensFragment : BaseFragment() {
                 .applicationComponent(component)
                 .viewModule(ViewModule(this.context))
                 .build().inject(this)
+    }
+
+    companion object {
+
+        private const val ARGUMENT_ADDRESS = "argument.string.address"
+
+        fun createInstance(address: String) =
+                TokensFragment().withArgs(
+                        Bundle().build { putString(ARGUMENT_ADDRESS, address) }
+                )
     }
 }

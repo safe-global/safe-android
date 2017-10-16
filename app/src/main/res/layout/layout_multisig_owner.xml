@@ -1,29 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_multisig_owner_address"
+    style="@style/Title"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_centerVertical="true"
     android:gravity="right"
-    android:orientation="horizontal">
-
-    <ImageView
-        android:id="@+id/layout_multisig_owner_more_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="4dp"
-        android:padding="8dp"
-        app:srcCompat="@drawable/ic_more_vert_light_24dp" />
-
-    <TextView
-        android:id="@+id/layout_multisig_owner_address"
-        style="@style/Title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/layout_multisig_owner_more_btn"
-        android:gravity="right"
-        android:padding="8dp"
-        tools:text="0x38abe6109fc0f1938274672984737438923848" />
-</RelativeLayout>
+    android:padding="8dp"
+    tools:text="0x38abe6109fc0f1938274672984737438923848" />
