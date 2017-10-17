@@ -98,7 +98,7 @@ class TransactionDetailsActivity : BaseActivity() {
     }
 
     private fun transactionDetailsDisposable() =
-            viewModel.getTransactionDetails()
+            viewModel.loadTransactionDetails()
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { onTransactionDetailsLoading(true) }
                     .doOnTerminate { onTransactionDetailsLoading(false) }
@@ -168,7 +168,7 @@ class TransactionDetailsActivity : BaseActivity() {
 
     // Token Transfer
     private fun onTokenTransfer(transaction: MultisigTokenTransfer) {
-        disposables += viewModel.getTokenInfo(transaction.tokenAddress)
+        disposables += viewModel.loadTokenInfo(transaction.tokenAddress)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { onTokenInfoLoading(true) }
                 .doOnTerminate { onTokenInfoLoading(false) }
@@ -240,7 +240,7 @@ class TransactionDetailsActivity : BaseActivity() {
 
     // Multisig Wallet Details
     private fun multisigWalletDetailsDisposable() =
-            viewModel.getMultisigWalletDetails()
+            viewModel.observeMultisigWalletDetails()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onNext = this::onMultisigWallet, onError = this::onMultisigWalletError)
 

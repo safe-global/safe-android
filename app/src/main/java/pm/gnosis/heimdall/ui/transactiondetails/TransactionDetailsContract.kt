@@ -18,11 +18,11 @@ abstract class TransactionDetailsContract : ViewModel() {
     abstract fun getMultisigTransactionId(): BigInteger
     abstract fun getMultisigTransactionType(): MultisigTransactionType
 
-    abstract fun getMultisigWalletDetails(): Flowable<MultisigWallet>
+    abstract fun observeMultisigWalletDetails(): Flowable<MultisigWallet>
     abstract fun signTransaction(): Observable<Result<String>>
     abstract fun addMultisigWallet(address: String, name: String = ""): Single<Result<String>>
-    abstract fun getTransactionDetails(): Observable<GnosisMultisigTransaction>
-    abstract fun getTokenInfo(address: BigInteger): Observable<ERC20Token>
+    abstract fun loadTransactionDetails(): Observable<GnosisMultisigTransaction>
+    abstract fun loadTokenInfo(address: BigInteger): Observable<ERC20Token>
 }
 
 sealed class MultisigTransactionType

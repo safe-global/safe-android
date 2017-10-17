@@ -140,7 +140,7 @@ class TransactionDetailsViewModelTest {
         viewModel.setTransaction(transaction).subscribe()
         given(multisigRepositoryMock.observeMultisigWallet(anyString())).willReturn(Flowable.just(wallet))
 
-        viewModel.getMultisigWalletDetails().subscribe(testObserver)
+        viewModel.observeMultisigWalletDetails().subscribe(testObserver)
 
         then(multisigRepositoryMock).should().observeMultisigWallet(testAddress)
         testObserver.assertValue(wallet)
@@ -154,7 +154,7 @@ class TransactionDetailsViewModelTest {
         viewModel.setTransaction(transaction).subscribe()
         given(multisigRepositoryMock.observeMultisigWallet(anyString())).willReturn(Flowable.error(exception))
 
-        viewModel.getMultisigWalletDetails().subscribe(testObserver)
+        viewModel.observeMultisigWalletDetails().subscribe(testObserver)
 
         then(multisigRepositoryMock).should().observeMultisigWallet(testAddress)
         testObserver.assertError(exception)
@@ -319,7 +319,7 @@ class TransactionDetailsViewModelTest {
         viewModel.setTransaction(transactionDetails).subscribe()
         given(gnosisMultisigWrapperMock.getTransaction(anyString(), MockUtils.any())).willReturn(Observable.just(addOwnerTransaction))
 
-        viewModel.getTransactionDetails().subscribe(testObserver)
+        viewModel.loadTransactionDetails().subscribe(testObserver)
 
         then(gnosisMultisigWrapperMock).should().getTransaction(testAddress, viewModel.getMultisigTransactionId())
         testObserver.assertNoErrors().assertValue(addOwnerTransaction)
@@ -333,7 +333,7 @@ class TransactionDetailsViewModelTest {
         viewModel.setTransaction(transactionDetails).subscribe()
         given(gnosisMultisigWrapperMock.getTransaction(anyString(), MockUtils.any())).willReturn(Observable.error(exception))
 
-        viewModel.getTransactionDetails().subscribe(testObserver)
+        viewModel.loadTransactionDetails().subscribe(testObserver)
 
         then(gnosisMultisigWrapperMock).should().getTransaction(testAddress, viewModel.getMultisigTransactionId())
         testObserver.assertError(exception).assertNoValues()
@@ -345,7 +345,7 @@ class TransactionDetailsViewModelTest {
         val testObserver = TestObserver.create<ERC20Token>()
         given(ethereumJsonRpcRepositoryMock.getTokenInfo(MockUtils.any())).willReturn(Observable.just(token))
 
-        viewModel.getTokenInfo(testAddress.hexAsBigInteger()).subscribe(testObserver)
+        viewModel.loadTokenInfo(testAddress.hexAsBigInteger()).subscribe(testObserver)
 
         then(ethereumJsonRpcRepositoryMock).should().getTokenInfo(testAddress.hexAsBigInteger())
         testObserver.assertValue(token).assertNoErrors().assertTerminated()
@@ -357,7 +357,7 @@ class TransactionDetailsViewModelTest {
         val exception = Exception()
         given(ethereumJsonRpcRepositoryMock.getTokenInfo(MockUtils.any())).willReturn(Observable.error(exception))
 
-        viewModel.getTokenInfo(testAddress.hexAsBigInteger()).subscribe(testObserver)
+        viewModel.loadTokenInfo(testAddress.hexAsBigInteger()).subscribe(testObserver)
 
         then(ethereumJsonRpcRepositoryMock).should().getTokenInfo(testAddress.hexAsBigInteger())
         testObserver.assertNoValues().assertError(exception)

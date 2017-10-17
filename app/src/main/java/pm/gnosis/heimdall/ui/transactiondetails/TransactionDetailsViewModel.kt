@@ -58,7 +58,7 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
 
     override fun getTransaction() = transactionDetails
 
-    override fun getMultisigWalletDetails(): Flowable<MultisigWallet> =
+    override fun observeMultisigWalletDetails(): Flowable<MultisigWallet> =
             multisigRepository.observeMultisigWallet(transactionDetails.address.asEthereumAddressString())
 
     override fun signTransaction(): Observable<Result<String>> =
@@ -84,8 +84,8 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
     override fun addMultisigWallet(address: String, name: String): Single<Result<String>> =
             multisigRepository.addMultisigWallet(address, name).andThen(Single.just(address)).mapToResult()
 
-    override fun getTransactionDetails(): Observable<GnosisMultisigTransaction> =
+    override fun loadTransactionDetails(): Observable<GnosisMultisigTransaction> =
             gnosisMultisigWrapper.getTransaction(transactionDetails.address.asEthereumAddressString(), transactionId)
 
-    override fun getTokenInfo(address: BigInteger) = ethereumJsonRpcRepository.getTokenInfo(address)
+    override fun loadTokenInfo(address: BigInteger) = ethereumJsonRpcRepository.getTokenInfo(address)
 }
