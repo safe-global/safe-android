@@ -36,7 +36,9 @@ class AccountViewModel @Inject constructor(
                     .mapToResult()
 
     override fun getAccountBalance() =
-            ethereumJsonRpcRepository.getBalance()
-                    .onErrorResumeNext(Function { errorHandler.observable<Wei>(it) })
-                    .mapToResult()
+            accountsRepository.loadActiveAccount().flatMapObservable {
+                ethereumJsonRpcRepository.getBalance(it.address)
+                        .onErrorResumeNext(Function { errorHandler.observable<Wei>(it) })
+                        .mapToResult()
+            }
 }

@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.data.remote
 
-import com.gojuno.koptional.Optional
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.Wei
@@ -9,7 +8,17 @@ import java.math.BigInteger
 
 interface EthereumJsonRpcRepository {
 
-    fun getBalance(): Observable<Wei>
+    companion object {
+        const val DEFAULT_BLOCK_EARLIEST = "earliest"
+        const val DEFAULT_BLOCK_LATEST = "latest"
+        const val DEFAULT_BLOCK_PENDING = "pending"
+
+        const val FUNCTION_GET_BALANCE = "eth_getBalance"
+    }
+
+    fun <R : BulkRequest> bulk(request: R): Observable<R>
+
+    fun getBalance(address: String): Observable<Wei>
 
     fun getLatestBlock(): Observable<BigInteger>
 
@@ -17,21 +26,15 @@ interface EthereumJsonRpcRepository {
 
     fun sendRawTransaction(signedTransactionData: String): Observable<String>
 
-    fun getTransactionCount(): Observable<BigInteger>
+    fun getTransactionCount(address: String): Observable<BigInteger>
 
     fun getGasPrice(): Observable<BigInteger>
-
-    fun getTokenName(contractAddress: BigInteger): Observable<Optional<String>>
-
-    fun getTokenSymbol(contractAddress: BigInteger): Observable<Optional<String>>
-
-    fun getTokenDecimals(contractAddress: BigInteger): Observable<Optional<BigInteger>>
 
     fun getTokenInfo(contractAddress: BigInteger): Observable<ERC20Token>
 
     fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger>
 
-    fun getTransactionParameters(transactionCallParams: TransactionCallParams): Observable<TransactionParameters>
+    fun getTransactionParameters(address: String, transactionCallParams: TransactionCallParams): Observable<TransactionParameters>
 
     data class TransactionParameters(val gas: BigInteger, val gasPrice: BigInteger, val nonce: BigInteger)
 }

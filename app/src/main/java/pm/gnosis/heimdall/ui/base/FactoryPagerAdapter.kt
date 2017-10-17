@@ -27,5 +27,8 @@ class FactoryPagerAdapter(fragmentManager: FragmentManager, val factory: Factory
 
     override fun getCount() = factory.itemCount
 
-    class Factory(val itemCount: Int, val provider: ((Int) -> Fragment))
+    override fun getPageTitle(position: Int): CharSequence?
+        = factory.title?.invoke(position)
+
+    class Factory(val itemCount: Int, val provider: ((Int) -> Fragment), val title: ((Int) -> CharSequence)? = null)
 }

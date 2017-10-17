@@ -18,6 +18,8 @@
     <color name="dark_text">#4a4a4a</color>
     <color name="darker_text">#333333</color>
 
+    <color name="list_divider">#e4e3e3</color>
+
     <color name="unselected_tab">#9b9b9b</color>
     <color name="default_icon_color">#4a4a4a</color>
 

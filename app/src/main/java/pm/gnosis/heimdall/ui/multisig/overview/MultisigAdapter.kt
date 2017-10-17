@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig
+package pm.gnosis.heimdall.ui.multisig.overview
 
 import android.content.Context
 import android.view.LayoutInflater

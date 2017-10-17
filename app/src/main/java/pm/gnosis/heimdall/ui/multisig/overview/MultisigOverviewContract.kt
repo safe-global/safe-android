@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig
+package pm.gnosis.heimdall.ui.multisig.overview
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
@@ -8,7 +8,7 @@ import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.ui.base.Adapter
 
 
-abstract class MultisigContract: ViewModel() {
+abstract class MultisigOverviewContract : ViewModel() {
     abstract fun addMultisigWallet(name: String, address: String): Completable
     abstract fun removeMultisigWallet(address: String): Completable
     abstract fun updateMultisigWalletName(address: String, newName: String): Completable

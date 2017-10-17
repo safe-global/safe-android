@@ -8,8 +8,8 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.impl.SimpleEthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
+import pm.gnosis.heimdall.data.repositories.impls.DefaultMultisigRepository
 import pm.gnosis.heimdall.data.repositories.impls.RoomTokenRepository
-import pm.gnosis.heimdall.data.repositories.impls.SqliteMultisigRepository
 import javax.inject.Singleton
 
 @Module
@@ -20,7 +20,7 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsMultisigRepository(repository: SqliteMultisigRepository): MultisigRepository
+    abstract fun bindsMultisigRepository(repository: DefaultMultisigRepository): MultisigRepository
 
     @Binds
     @Singleton

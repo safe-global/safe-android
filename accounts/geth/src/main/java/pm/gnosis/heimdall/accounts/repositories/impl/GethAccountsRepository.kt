@@ -14,7 +14,6 @@ import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.util.edit
 import pm.gnosis.mnemonic.Bip39
-import pm.gnosis.mnemonic.Bip39ValidationResult
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.generateRandomString
 import pm.gnosis.utils.toHexString

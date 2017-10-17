@@ -20,10 +20,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.component.ApplicationComponent
 import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator
-import pm.gnosis.heimdall.common.util.scanQrCode
-import pm.gnosis.heimdall.common.util.snackbar
-import pm.gnosis.heimdall.common.util.toast
+import pm.gnosis.heimdall.common.util.*
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.utils.asDecimalString
@@ -40,6 +37,12 @@ class TokensFragment : BaseFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        layout_tokens_fab.visibility = if (arguments?.getString(ARGUMENT_ADDRESS).isNullOrBlank()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
 
         layout_tokens_input_address.setOnClickListener {
             layout_tokens_fab.close(true)
@@ -85,7 +88,7 @@ class TokensFragment : BaseFragment() {
                             .doOnTerminate { onTokenInfoLoading(false) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = this::onTokenInfo, onError = this::onTokenInfoError)
+                .subscribeForResult(onNext = this::onTokenInfo, onError = this::onTokenInfoError)
 
         disposables += adapter.tokenRemovalSubject
                 .observeOn(AndroidSchedulers.mainThread())
@@ -205,5 +208,15 @@ class TokensFragment : BaseFragment() {
                 .applicationComponent(component)
                 .viewModule(ViewModule(this.context))
                 .build().inject(this)
+    }
+
+    companion object {
+
+        private const val ARGUMENT_ADDRESS = "argument.string.address"
+
+        fun createInstance(address: String) =
+                TokensFragment().withArgs(
+                        Bundle().build { putString(ARGUMENT_ADDRESS, address) }
+                )
     }
 }
