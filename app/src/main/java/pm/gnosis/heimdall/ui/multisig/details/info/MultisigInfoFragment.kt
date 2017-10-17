@@ -27,7 +27,7 @@ import javax.inject.Inject
 class MultisigInfoFragment : BaseFragment() {
 
     @Inject
-    lateinit var viewModel: MultisigInfoViewModel
+    lateinit var viewModel: MultisigInfoContract
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

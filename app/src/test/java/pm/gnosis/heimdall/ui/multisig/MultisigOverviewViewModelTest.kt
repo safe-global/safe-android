@@ -23,12 +23,11 @@ import pm.gnosis.heimdall.test.utils.MockUtils.eq
 import pm.gnosis.heimdall.test.utils.TestCompletable
 import pm.gnosis.heimdall.test.utils.TestListUpdateCallback
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewContract
 import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewViewModel
 import org.mockito.Mockito.`when` as given
 
 @RunWith(MockitoJUnitRunner::class)
-class MultisigViewModelTest {
+class MultisigOverviewViewModelTest {
 
     @JvmField
     @Rule
@@ -37,7 +36,7 @@ class MultisigViewModelTest {
     @Mock
     lateinit var repository: MultisigRepository
 
-    lateinit var viewModel: MultisigOverviewContract
+    lateinit var viewModel: MultisigOverviewViewModel
 
     @Before
     fun setup() {

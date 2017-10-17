@@ -11,7 +11,7 @@ import pm.gnosis.heimdall.data.model.JsonRpcRequest
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.remote.BulkRequest
-import pm.gnosis.heimdall.data.remote.BulkRequest.Call
+import pm.gnosis.heimdall.data.remote.BulkRequest.SubRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
@@ -23,7 +23,7 @@ import javax.inject.Singleton
 @Singleton
 class DefaultMultisigRepository @Inject constructor(
         gnosisAuthenticatorDb: GnosisAuthenticatorDb,
-        val ethereumJsonRpcRepository: EthereumJsonRpcRepository
+        private val ethereumJsonRpcRepository: EthereumJsonRpcRepository
 ) : MultisigRepository {
 
     private val multisigWalletDao = gnosisAuthenticatorDb.multisigWalletDao()
@@ -52,14 +52,14 @@ class DefaultMultisigRepository @Inject constructor(
 
     override fun loadMultisigWalletInfo(address: String): Observable<MultisigWalletInfo> {
         val request = WalletInfoRequest(
-                Call(JsonRpcRequest(
+                SubRequest(JsonRpcRequest(
                         id = 0,
                         method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
                         params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
                         { Wei(it.result.hexAsBigInteger()) }),
-                Call(TransactionCallParams(to = address, data = Required.encode()).callRequest(1),
+                SubRequest(TransactionCallParams(to = address, data = Required.encode()).callRequest(1),
                         { Required.decode(it.result) }),
-                Call(TransactionCallParams(to = address, data = GetOwners.encode()).callRequest(2),
+                SubRequest(TransactionCallParams(to = address, data = GetOwners.encode()).callRequest(2),
                         { GetOwners.decode(it.result) })
         )
         return ethereumJsonRpcRepository.bulk(request)
@@ -72,8 +72,8 @@ class DefaultMultisigRepository @Inject constructor(
     }
 
     private class WalletInfoRequest(
-            val balance: Call<Wei>,
-            val requiredConfirmations: Call<Required.Return>,
-            val owners: Call<GetOwners.Return>
+            val balance: SubRequest<Wei>,
+            val requiredConfirmations: SubRequest<Required.Return>,
+            val owners: SubRequest<GetOwners.Return>
     ) : BulkRequest(balance, requiredConfirmations, owners)
 }
