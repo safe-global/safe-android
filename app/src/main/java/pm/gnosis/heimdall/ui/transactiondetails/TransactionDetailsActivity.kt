@@ -95,7 +95,6 @@ class TransactionDetailsActivity : BaseActivity() {
         //TODO change screen to error layout
         Timber.e(throwable)
         finish()
-        return
     }
 
     private fun transactionDetailsDisposable() =
@@ -236,7 +235,7 @@ class TransactionDetailsActivity : BaseActivity() {
 
     private fun onMultisigWalletAddError(throwable: Throwable) {
         Timber.e(throwable)
-        snackbar(layout_transaction_details_coordinator, getString(R.string.not_added_multisig_wallet))
+        snackbar(layout_transaction_details_coordinator, getString(R.string.add_multisig_wallet_error))
     }
 
     // Multisig Wallet Details
@@ -259,11 +258,12 @@ class TransactionDetailsActivity : BaseActivity() {
             layout_transaction_details_button.clicks()
                     .flatMap {
                         viewModel.signTransaction()
+                                .observeOn(AndroidSchedulers.mainThread())
                                 .doOnSubscribe { onTransactionSignLoading(true) }
                                 .doOnTerminate { onTransactionSignLoading(false) }
                     }
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = this::onTransactionSigned, onError = this::onTransactionSignError)
+                    .subscribeForResult(onNext = this::onTransactionSigned, onError = this::onTransactionSignError)
 
     private fun onTransactionSigned(transactionHash: String) {
         when (viewModel.getMultisigTransactionType()) {

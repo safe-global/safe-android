@@ -80,7 +80,7 @@
     <string name="cancel">Cancel</string>
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
     <string name="added_multisig">Multisig Wallet Added</string>
-    <string name="not_added_multisig_wallet">Could not add Multisig Wallet</string>
+    <string name="add_multisig_wallet_error">Could not add Multisig Wallet</string>
     <string name="transaction_confirmed">Transaction confirmed</string>
     <string name="transaction_revoked">Transaction revoked</string>
     <string name="transaction_error">Something went wrong. Transaction not completed.</string>
