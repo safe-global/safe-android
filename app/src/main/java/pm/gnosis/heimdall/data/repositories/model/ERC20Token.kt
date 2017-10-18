@@ -9,8 +9,5 @@ data class ERC20Token(val address: String,
                       val decimals: BigInteger? = null,
                       val verified: Boolean = false)
 
-fun ERC20Token.toDb(): ERC20TokenDb {
-    return ERC20TokenDb(address, name, verified)
-}
-
+fun ERC20Token.toDb() = ERC20TokenDb(address, name, verified)
 fun ERC20TokenDb.fromDb() = ERC20Token(address = address, name = name, verified = verified)

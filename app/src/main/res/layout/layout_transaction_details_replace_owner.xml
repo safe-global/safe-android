@@ -3,43 +3,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="8dp">
 
     <TextView
+        style="@style/Content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/replace_owner"
-        android:textColor="@color/color_primary"
-        android:textSize="24sp" />
+        android:text="@string/replace_current_owner" />
 
     <TextView
         android:id="@+id/layout_transaction_details_replace_owner_old_owner"
+        style="@style/Content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/color_primary"
-        android:textSize="16sp"
-        tools:text="0x76608a542b425cba81d277f6436007add848c0af" />
+        android:gravity="end"
+        android:textColor="@color/light_text"
+        tools:text="0x76608a542b425cba81d277f6436007add848c0ab" />
 
     <TextView
+        style="@style/Content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/with"
-        android:textColor="@color/color_primary"
-        android:textSize="24sp" />
+        android:layout_marginTop="16dp"
+        android:text="@string/with_new_owner" />
 
     <TextView
         android:id="@+id/layout_transaction_details_replace_owner_new_owner"
+        style="@style/Content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="end"
         android:textColor="@color/gnosis_blue"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        tools:text="0xa6308a095b425c4751d27783736007add848c483" />
+        tools:text="0x76608a542b425cba81d277f6436007add848c0af" />
 </LinearLayout>

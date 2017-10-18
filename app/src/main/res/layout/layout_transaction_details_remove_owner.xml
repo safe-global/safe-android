@@ -3,34 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
+        style="@style/Content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/remove"
-        android:textColor="@color/color_primary"
-        android:textSize="24sp" />
+        android:text="@string/remove_multisig_wallet_owner" />
 
     <TextView
         android:id="@+id/layout_transaction_details_remove_owner_address"
+        style="@style/Content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/gnosis_blue"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:gravity="end"
+        android:textColor="@color/dark_text"
         tools:text="0x76608a542b425cba81d277f6436007add848c0af" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/from_the_list_of_owners"
-        android:textColor="@color/color_primary"
-        android:textSize="24sp" />
 </LinearLayout>

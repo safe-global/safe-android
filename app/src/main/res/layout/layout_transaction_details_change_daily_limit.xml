@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
 
     <TextView
+        style="@style/Content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/change_daily_limit_to"
-        android:textColor="@color/color_primary"
-        android:textSize="24sp" />
+        android:text="@string/change_daily_limit_to" />
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/layout_transaction_details_change_daily_limit_value"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:maxLines="1"
-        android:textColor="@color/gnosis_blue"
-        android:textSize="42sp"
-        app:autoSizeMinTextSize="18sp"
-        app:autoSizeTextType="uniform"
-        tools:text="10" />
+        android:gravity="end"
+        android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="@string/currency_eth"
-        android:textColor="@color/color_primary"
-        android:textSize="25sp" />
+        <TextView
+            android:id="@+id/layout_transaction_details_change_daily_limit_value"
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:textColor="@color/gnosis_blue"
+            tools:text="10" />
+
+        <TextView
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="end"
+            android:text="@string/currency_eth" />
+    </LinearLayout>
 </LinearLayout>
