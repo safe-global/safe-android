@@ -20,8 +20,8 @@ fun snackbar(view: View, text: CharSequence, duration: Int = Snackbar.LENGTH_LON
     Snackbar.make(view, text, duration).show()
 }
 
-fun snackbar(view: View, @StringRes text: Int, duration: Int = Snackbar.LENGTH_LONG) {
-    Snackbar.make(view, text, duration).show()
+fun snackbar(view: View, @StringRes textId: Int, duration: Int = Snackbar.LENGTH_LONG) {
+    Snackbar.make(view, textId, duration).show()
 }
 
 fun Context.getSimplePlural(@PluralsRes stringId: Int, quantity: Long): String =

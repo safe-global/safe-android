@@ -15,6 +15,6 @@ interface ERC20TokenDao {
     @Query("SELECT * FROM ${ERC20TokenDb.TABLE_NAME} ORDER BY ${ERC20TokenDb.COL_NAME} ASC")
     fun observeTokens(): Flowable<List<ERC20TokenDb>>
 
-    @Delete
-    fun deleteToken(erC20Token: ERC20TokenDb)
+    @Query("DELETE FROM ${ERC20TokenDb.TABLE_NAME} WHERE ${ERC20TokenDb.COL_ADDRESS} = :address")
+    fun deleteToken(address: String)
 }

@@ -34,7 +34,7 @@ class TokensViewModel @Inject constructor(@ApplicationContext private val contex
                     .onErrorResumeNext(Function { errorHandler.observable(it) })
                     .mapToResult()
 
-    override fun removeToken(token: ERC20Token) = tokenRepository.removeToken(token)
+    override fun removeToken(token: ERC20Token) = tokenRepository.removeToken(token.address)
             .andThen(Observable.just(token))
             .onErrorResumeNext(Function { errorHandler.observable(it) })
             .mapToResult()

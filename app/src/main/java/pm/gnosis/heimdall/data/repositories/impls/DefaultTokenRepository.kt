@@ -52,8 +52,8 @@ class DefaultTokenRepository @Inject constructor(
         erc20TokenDao.insertERC20Token(token)
     }.subscribeOn(Schedulers.io())
 
-    override fun removeToken(token: ERC20Token): Completable = Completable.fromCallable {
-        erc20TokenDao.deleteToken(token.toDb())
+    override fun removeToken(address: String): Completable = Completable.fromCallable {
+        erc20TokenDao.deleteToken(address)
     }.subscribeOn(Schedulers.io())
 
     override fun setup(): Completable = Completable.fromCallable {

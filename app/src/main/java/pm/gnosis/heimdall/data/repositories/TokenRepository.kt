@@ -10,6 +10,6 @@ interface TokenRepository {
     fun observeTokens(): Flowable<List<ERC20Token>>
     fun loadTokenInfo(contractAddress: BigInteger): Observable<ERC20Token>
     fun addToken(address: String, name: String? = null): Completable
-    fun removeToken(token: ERC20Token): Completable
+    fun removeToken(address: String): Completable
     fun setup(): Completable
 }

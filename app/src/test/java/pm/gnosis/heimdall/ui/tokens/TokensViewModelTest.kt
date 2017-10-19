@@ -129,7 +129,7 @@ class TokensViewModelTest {
         viewModel.removeToken(token).subscribe(testObserver)
 
         assertEquals(1, testCompletable.callCount)
-        then(tokenRepositoryMock).should().removeToken(token)
+        then(tokenRepositoryMock).should().removeToken(testAddress)
         testObserver.assertNoErrors().assertValue(result)
     }
 
@@ -143,7 +143,7 @@ class TokensViewModelTest {
 
         viewModel.removeToken(token).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().removeToken(token)
+        then(tokenRepositoryMock).should().removeToken(testAddress)
         testObserver.assertNoErrors().assertValue(result)
     }
 }
