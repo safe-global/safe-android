@@ -4,8 +4,8 @@ import android.arch.lifecycle.ViewModel
 import android.graphics.Bitmap
 import io.reactivex.Observable
 import pm.gnosis.heimdall.accounts.base.models.Account
-import pm.gnosis.heimdall.common.util.Result
-import pm.gnosis.heimdall.data.model.Wei
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.data.models.Wei
 
 
 abstract class AccountContract: ViewModel() {

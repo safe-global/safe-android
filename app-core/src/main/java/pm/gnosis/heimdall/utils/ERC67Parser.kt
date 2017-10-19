@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.utils
 
-import pm.gnosis.heimdall.data.model.TransactionDetails
-import pm.gnosis.heimdall.data.model.Wei
+import pm.gnosis.heimdall.data.models.TransactionDetails
+import pm.gnosis.heimdall.data.models.Wei
 import pm.gnosis.utils.decimalAsBigInteger
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.nullOnThrow

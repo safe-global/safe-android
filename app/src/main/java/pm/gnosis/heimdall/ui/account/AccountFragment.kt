@@ -14,14 +14,14 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.dialog_show_qr_code.view.*
 import kotlinx.android.synthetic.main.layout_account.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.component.ApplicationComponent
-import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.copyToClipboard
-import pm.gnosis.heimdall.common.util.shareExternalText
-import pm.gnosis.heimdall.common.util.snackbar
-import pm.gnosis.heimdall.common.util.subscribeForResult
-import pm.gnosis.heimdall.data.model.Wei
+import pm.gnosis.heimdall.common.di.components.ApplicationComponent
+import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.copyToClipboard
+import pm.gnosis.heimdall.common.utils.shareExternalText
+import pm.gnosis.heimdall.common.utils.snackbar
+import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.data.models.Wei
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.asEthereumAddressString
@@ -33,21 +33,20 @@ class AccountFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: AccountContract
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.layout_account, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.layout_account, container, false)
 
     override fun onStart() {
         super.onStart()
         disposables += accountAddress()
 
         layout_account_clipboard.setOnClickListener {
-            context.copyToClipboard(getString(R.string.address), layout_account_address.text.toString())
+            context!!.copyToClipboard(getString(R.string.address), layout_account_address.text.toString())
             snackbar(layout_account_coordinator_layout, getString(R.string.address_clipboard_success))
         }
 
         layout_account_share.setOnClickListener {
-            context.shareExternalText(layout_account_address.text.toString(), getString(R.string.share_address))
+            context!!.shareExternalText(layout_account_address.text.toString(), getString(R.string.share_address))
         }
 
         // We delay the initial value, else the progress bar is not visible
@@ -94,7 +93,7 @@ class AccountFragment : BaseFragment() {
     private fun onQrCode(bitmap: Bitmap) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_show_qr_code, null)
         dialogView.dialog_qr_code_image.setImageBitmap(bitmap)
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(context!!)
                 .setView(dialogView)
                 .show()
     }
@@ -110,7 +109,7 @@ class AccountFragment : BaseFragment() {
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
                 .applicationComponent(component)
-                .viewModule(ViewModule(this.context))
+                .viewModule(ViewModule(context!!))
                 .build()
                 .inject(this)
     }

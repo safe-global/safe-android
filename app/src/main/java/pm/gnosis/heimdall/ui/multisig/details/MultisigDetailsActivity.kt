@@ -6,11 +6,12 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import kotlinx.android.synthetic.main.layout_multisig_details.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
+import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoFragment
 import pm.gnosis.heimdall.ui.tokens.overview.TokensFragment
+import pm.gnosis.utils.hexAsBigInteger
 
 
 class MultisigDetailsActivity : BaseActivity() {
@@ -66,7 +67,7 @@ class MultisigDetailsActivity : BaseActivity() {
         fun createIntent(context: Context, multisig: MultisigWallet): Intent {
             val intent = Intent(context, MultisigDetailsActivity::class.java)
             intent.putExtra(EXTRA_MULTISIG_NAME, multisig.name)
-            intent.putExtra(EXTRA_MULTISIG_ADDRESS, multisig.address)
+            intent.putExtra(EXTRA_MULTISIG_ADDRESS, multisig.address.toString(16))
             return intent
         }
     }

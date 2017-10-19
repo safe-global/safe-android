@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.data.exceptions
 
-import pm.gnosis.heimdall.data.model.JsonRpcError
+import pm.gnosis.heimdall.data.remote.JsonRpcError
 
 class JsonRpcException(val jsonRpcError: JsonRpcError) : Exception() {
     val errorCode: Int?

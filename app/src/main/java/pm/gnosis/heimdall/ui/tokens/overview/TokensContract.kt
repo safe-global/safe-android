@@ -2,8 +2,8 @@ package pm.gnosis.heimdall.ui.tokens.overview
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
-import pm.gnosis.heimdall.common.util.Result
-import pm.gnosis.heimdall.data.repositories.model.ERC20Token
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
 import java.math.BigInteger
 

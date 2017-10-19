@@ -17,11 +17,11 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_token_info.view.*
 import kotlinx.android.synthetic.main.layout_tokens.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.component.ApplicationComponent
-import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.*
-import pm.gnosis.heimdall.data.repositories.model.ERC20Token
+import pm.gnosis.heimdall.common.di.components.ApplicationComponent
+import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenActivity
@@ -38,10 +38,10 @@ class TokensFragment : BaseFragment() {
 
     private val removeTokenClickEvent = PublishSubject.create<ERC20Token>()
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater?.inflate(R.layout.layout_tokens, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.layout_tokens, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
 
@@ -61,7 +61,7 @@ class TokensFragment : BaseFragment() {
             if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)) {
                 val scanResult = data.getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
                 if (scanResult.isValidEthereumAddress()) {
-                    startActivity(AddTokenActivity.createIntent(activity, scanResult))
+                    startActivity(AddTokenActivity.createIntent(activity!!, scanResult))
                 } else {
                     snackbar(layout_tokens_coordinator_layout, R.string.invalid_ethereum_address)
                 }
@@ -76,7 +76,7 @@ class TokensFragment : BaseFragment() {
         disposables += layout_tokens_input_address.clicks()
                 .subscribeBy(onNext = {
                     layout_tokens_fab.close(true)
-                    startActivity(AddTokenActivity.createIntent(activity))
+                    startActivity(AddTokenActivity.createIntent(activity!!))
                 }, onError = Timber::e)
 
         disposables += layout_tokens_scan_qr_code.clicks()
@@ -127,14 +127,14 @@ class TokensFragment : BaseFragment() {
         dialogView.layout_token_info_name.text = token.address.asEthereumAddressString()
         dialogView.layout_token_info_symbol.text = token.symbol
 
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(context!!)
                 .setView(dialogView)
                 .setTitle(token.name)
                 .show()
     }
 
     private fun showTokenRemovalDialog(erC20Token: ERC20Token) {
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(context!!)
                 .setTitle(getString(R.string.token_remove_dialog_title, erC20Token.name ?: getString(R.string.token)))
                 .setMessage(getString(R.string.token_remove_dialog_description, if (erC20Token.name.isNullOrBlank()) erC20Token.address else erC20Token.name))
                 .setPositiveButton(R.string.remove, { _, _ -> removeTokenClickEvent.onNext(erC20Token) })
@@ -165,7 +165,7 @@ class TokensFragment : BaseFragment() {
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
                 .applicationComponent(component)
-                .viewModule(ViewModule(this.context))
+                .viewModule(ViewModule(context!!))
                 .build().inject(this)
     }
 

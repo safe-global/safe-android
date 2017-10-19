@@ -2,7 +2,7 @@ package pm.gnosis.heimdall.data.db
 
 import android.arch.persistence.room.*
 import io.reactivex.Flowable
-import pm.gnosis.heimdall.data.db.model.MultisigWalletDb
+import pm.gnosis.heimdall.data.db.models.MultisigWalletDb
 import java.math.BigInteger
 
 @Dao

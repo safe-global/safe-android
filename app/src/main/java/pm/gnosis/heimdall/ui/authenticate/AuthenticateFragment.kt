@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.authenticate
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -10,11 +11,11 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_authenticate.*
 import kotlinx.android.synthetic.main.layout_security.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.component.ApplicationComponent
-import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.scanQrCode
-import pm.gnosis.heimdall.common.util.subscribeForResult
+import pm.gnosis.heimdall.common.di.components.ApplicationComponent
+import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.scanQrCode
+import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
 import timber.log.Timber
@@ -27,8 +28,8 @@ class AuthenticateFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: AuthenticateContract
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?) =
-            inflater?.inflate(R.layout.layout_authenticate, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.layout_authenticate, container, false)
 
     override fun onStart() {
         super.onStart()
@@ -54,7 +55,7 @@ class AuthenticateFragment : BaseFragment() {
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
                 .applicationComponent(component)
-                .viewModule(ViewModule(this.context))
+                .viewModule(ViewModule(context!!))
                 .build().inject(this)
     }
 }

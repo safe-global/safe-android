@@ -1,7 +1,7 @@
 package pm.gnosis.mnemonic
 
-import pm.gnosis.mnemonic.wordlist.ENGLISH_WORD_LIST
-import pm.gnosis.mnemonic.wordlist.WordList
+import pm.gnosis.mnemonic.wordlists.ENGLISH_WORD_LIST
+import pm.gnosis.mnemonic.wordlists.WordList
 
 interface Bip39 {
     companion object {

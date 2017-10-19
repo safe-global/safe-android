@@ -7,9 +7,9 @@ import io.reactivex.Observable
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.util.Result
-import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator
-import pm.gnosis.heimdall.common.util.mapToResult
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator
+import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity
 import pm.gnosis.heimdall.utils.ERC67Parser

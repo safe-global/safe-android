@@ -33,7 +33,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        app:layout_behavior="pm.gnosis.heimdall.view.FloatingActionButtonScrollBehavior">
+        app:layout_behavior="pm.gnosis.heimdall.views.FloatingActionButtonScrollBehavior">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/layout_tokens_scan_qr_code"

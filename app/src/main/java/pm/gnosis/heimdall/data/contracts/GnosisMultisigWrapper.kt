@@ -3,8 +3,8 @@ package pm.gnosis.heimdall.data.contracts
 import io.reactivex.Observable
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.data.model.TransactionCallParams
-import pm.gnosis.heimdall.data.model.Wei
+import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
+import pm.gnosis.heimdall.data.models.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.utils.*
 import pm.gnosis.utils.exceptions.InvalidAddressException

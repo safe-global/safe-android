@@ -15,16 +15,16 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
 import kotlinx.android.synthetic.main.layout_multisig_overview.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.component.ApplicationComponent
-import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator.REQUEST_CODE
-import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
-import pm.gnosis.heimdall.common.util.scanQrCode
-import pm.gnosis.heimdall.common.util.snackbar
-import pm.gnosis.heimdall.common.util.subscribeForResult
-import pm.gnosis.heimdall.common.util.toast
-import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
+import pm.gnosis.heimdall.common.di.components.ApplicationComponent
+import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator.REQUEST_CODE
+import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
+import pm.gnosis.heimdall.common.utils.scanQrCode
+import pm.gnosis.heimdall.common.utils.snackbar
+import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsActivity
@@ -42,10 +42,10 @@ class MultisigOverviewFragment : BaseFragment() {
     @Inject
     lateinit var layoutManager: LinearLayoutManager
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?) =
-            inflater?.inflate(R.layout.layout_multisig_overview, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.layout_multisig_overview, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         layout_multisig_overview_wallets.layoutManager = layoutManager
         layout_multisig_overview_wallets.adapter = adapter
@@ -110,7 +110,7 @@ class MultisigOverviewFragment : BaseFragment() {
             dialogView.dialog_add_multisig_text_address.inputType = InputType.TYPE_NULL
         }
 
-        val dialog = AlertDialog.Builder(context)
+        val dialog = AlertDialog.Builder(context!!)
                 .setTitle("Add a Multisig Wallet")
                 .setView(dialogView)
                 .setPositiveButton("Add", { _, _ -> })
@@ -123,7 +123,7 @@ class MultisigOverviewFragment : BaseFragment() {
                 disposables += addMultisigWalletDisposable(name, address.hexAsBigInteger())
                 dialog.dismiss()
             } else {
-                context.toast("Invalid ethereum address")
+                context!!.toast("Invalid ethereum address")
             }
         }
     }
@@ -168,13 +168,13 @@ class MultisigOverviewFragment : BaseFragment() {
     }
 
     private fun onMultisigSelection(multisigWallet: MultisigWallet) {
-        startActivity(MultisigDetailsActivity.createIntent(context, multisigWallet))
+        startActivity(MultisigDetailsActivity.createIntent(context!!, multisigWallet))
     }
 
     private fun showEditMultisigNameDialog(multisigWallet: MultisigWallet) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
         dialogView.dialog_add_multisig_text_address.visibility = View.GONE
-        AlertDialog.Builder(context)
+        AlertDialog.Builder(context!!)
                 .setTitle(multisigWallet.name)
                 .setView(dialogView)
                 .setPositiveButton("Change name", { _, _ ->
@@ -189,7 +189,7 @@ class MultisigOverviewFragment : BaseFragment() {
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
                 .applicationComponent(component)
-                .viewModule(ViewModule(this.context))
+                .viewModule(ViewModule(context!!))
                 .build().inject(this)
     }
 }
