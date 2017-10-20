@@ -7,19 +7,16 @@ import pm.gnosis.heimdall.data.exceptions.InvalidAddressException
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.utils.isSolidityMethod
-import pm.gnosis.utils.isValidEthereumAddress
-import pm.gnosis.utils.removeSolidityMethodPrefix
-import pm.gnosis.utils.toHexString
+import pm.gnosis.utils.*
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GnosisMultisigWrapper @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository) {
-    fun getTransaction(address: String, transactionId: BigInteger): Observable<GnosisMultisigTransaction> {
+    fun getTransaction(address: BigInteger, transactionId: BigInteger): Observable<GnosisMultisigTransaction> {
         if (!address.isValidEthereumAddress()) return Observable.error(InvalidAddressException(address))
-        return ethereumJsonRpcRepository.call(TransactionCallParams(to = address,
+        return ethereumJsonRpcRepository.call(TransactionCallParams(to = address.asEthereumAddressString(),
                 data = "${MultiSigWalletWithDailyLimit.Transactions.METHOD_ID}${transactionId.toString(16).padStart(64, '0')}"))
                 .map { decodeTransactionResult(it)!! }
     }

@@ -1,3 +1,5 @@
 package pm.gnosis.heimdall.data.exceptions
 
-class InvalidAddressException(val address: String? = null) : Exception("Address invalid: $address")
+import java.math.BigInteger
+
+class InvalidAddressException(val address: BigInteger? = null) : Exception("Address invalid: $address")

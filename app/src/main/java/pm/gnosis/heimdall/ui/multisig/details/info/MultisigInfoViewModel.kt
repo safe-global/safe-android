@@ -8,6 +8,7 @@ import pm.gnosis.heimdall.common.util.mapToResult
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import java.math.BigInteger
 import javax.inject.Inject
 
 class MultisigInfoViewModel @Inject constructor(
@@ -20,9 +21,9 @@ class MultisigInfoViewModel @Inject constructor(
 
     private var cachedInfo: MultisigWalletInfo? = null
 
-    private var address: String? = null
+    private var address: BigInteger? = null
 
-    override fun setup(address: String) {
+    override fun setup(address: BigInteger) {
         if (this.address == address) {
             return
         }

@@ -25,8 +25,10 @@ import pm.gnosis.heimdall.common.util.Result
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
+import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
+import pm.gnosis.utils.hexAsBigInteger
 import retrofit2.HttpException
 import retrofit2.Response
 import java.math.BigInteger
@@ -34,7 +36,6 @@ import org.mockito.Mockito.`when` as given
 
 @RunWith(MockitoJUnitRunner::class)
 class AccountViewModelTest {
-
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -122,7 +123,7 @@ class AccountViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver<Account>()
 
-        val account = Account("00000000000000000000000000000000")
+        val account = Account("00000000000000000000000000000000".hexAsBigInteger())
         given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         viewModel.getAccountAddress().subscribe(observer)
 
@@ -138,10 +139,10 @@ class AccountViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver<Wei>()
 
-        val account = Account("00000000000000000000000000000000")
+        val account = Account("00000000000000000000000000000000".hexAsBigInteger())
         given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         val exception = IllegalStateException()
-        given(ethereumJsonRpcRepository.getBalance(anyString())).thenReturn(Observable.error<Wei>(exception))
+        given(ethereumJsonRpcRepository.getBalance(MockUtils.any())).thenReturn(Observable.error<Wei>(exception))
         viewModel.getAccountBalance().subscribe(observer)
 
         observer.assertNoErrors().assertComplete()
@@ -156,10 +157,10 @@ class AccountViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver<Wei>()
 
-        val account = Account("00000000000000000000000000000000")
+        val account = Account("00000000000000000000000000000000".hexAsBigInteger())
         given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         val response = Response.error<Any>(401, mock(ResponseBody::class.java))
-        given(ethereumJsonRpcRepository.getBalance(anyString())).thenReturn(Observable.error<Wei>(HttpException(response)))
+        given(ethereumJsonRpcRepository.getBalance(MockUtils.any())).thenReturn(Observable.error<Wei>(HttpException(response)))
 
         viewModel.getAccountBalance().subscribe(observer)
 
@@ -175,10 +176,10 @@ class AccountViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver<Wei>()
 
-        val account = Account("00000000000000000000000000000000")
+        val account = Account("00000000000000000000000000000000".hexAsBigInteger())
         given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         val balance = Wei(BigInteger.valueOf(1000))
-        given(ethereumJsonRpcRepository.getBalance(anyString())).thenReturn(Observable.just(balance))
+        given(ethereumJsonRpcRepository.getBalance(MockUtils.any())).thenReturn(Observable.just(balance))
         viewModel.getAccountBalance().subscribe(observer)
 
         observer.assertNoErrors().assertComplete()
@@ -197,5 +198,4 @@ class AccountViewModelTest {
     companion object {
         const val TEST_STRING = "TEST"
     }
-
 }

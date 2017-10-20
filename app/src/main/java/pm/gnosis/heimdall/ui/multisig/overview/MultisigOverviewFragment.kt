@@ -28,9 +28,10 @@ import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsActivity
-import pm.gnosis.utils.addAddressPrefix
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 class MultisigOverviewFragment : BaseFragment() {
@@ -119,7 +120,7 @@ class MultisigOverviewFragment : BaseFragment() {
             val name = dialogView.dialog_add_multisig_text_name.text.toString()
             val address = dialogView.dialog_add_multisig_text_address.text.toString()
             if (address.isValidEthereumAddress()) {
-                disposables += addMultisigWalletDisposable(name, address.addAddressPrefix())
+                disposables += addMultisigWalletDisposable(name, address.hexAsBigInteger())
                 dialog.dismiss()
             } else {
                 context.toast("Invalid ethereum address")
@@ -127,17 +128,17 @@ class MultisigOverviewFragment : BaseFragment() {
         }
     }
 
-    private fun addMultisigWalletDisposable(name: String, address: String) =
+    private fun addMultisigWalletDisposable(name: String, address: BigInteger) =
             viewModel.addMultisigWallet(name, address)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletAdded, onError = this::onMultisigWalletAddError)
 
-    private fun removeMultisigWalletDisposable(address: String) =
+    private fun removeMultisigWalletDisposable(address: BigInteger) =
             viewModel.removeMultisigWallet(address)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletRemoved, onError = this::onMultisigWalletRemoveError)
 
-    private fun updateMultisigWalletNameDisposable(address: String, newName: String) =
+    private fun updateMultisigWalletNameDisposable(address: BigInteger, newName: String) =
             viewModel.updateMultisigWalletName(address, newName)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletNameChange, onError = this::onMultisigWalletNameChangeError)
@@ -177,7 +178,8 @@ class MultisigOverviewFragment : BaseFragment() {
                 .setTitle(multisigWallet.name)
                 .setView(dialogView)
                 .setPositiveButton("Change name", { _, _ ->
-                    disposables += updateMultisigWalletNameDisposable(multisigWallet.address,
+                    disposables += updateMultisigWalletNameDisposable(
+                            multisigWallet.address,
                             dialogView.dialog_add_multisig_text_name.text.toString())
                 })
                 .setNegativeButton("Cancel", { _, _ -> })

@@ -20,7 +20,6 @@ import pm.gnosis.heimdall.security.db.EncryptedByteArray
 import pm.gnosis.heimdall.security.db.EncryptedString
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.utils.asBigInteger
-import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,8 +36,7 @@ class KethereumAccountsRepository @Inject internal constructor(
 
     override fun loadActiveAccount(): Single<Account> {
         return keyPairFromActiveAccount()
-                .map { it.address.toHexString().asEthereumAddressString() }
-                .map { Account(it) }
+                .map { Account(it.address.asBigInteger()) }
     }
 
     override fun signTransaction(transaction: Transaction): Single<String> {

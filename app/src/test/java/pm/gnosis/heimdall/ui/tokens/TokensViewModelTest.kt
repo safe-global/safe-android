@@ -13,6 +13,7 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.util.DataResult
 import pm.gnosis.heimdall.common.util.ErrorResult
 import pm.gnosis.heimdall.common.util.Result
@@ -28,15 +29,18 @@ class TokensViewModelTest {
     lateinit var contextMock: Context
 
     @Mock
+    lateinit var accountsRepositoryMock: AccountsRepository
+
+    @Mock
     lateinit var tokenRepositoryMock: TokenRepository
 
     private lateinit var viewModel: TokensViewModel
 
-    private val testAddress = "0x0000000000000000000000000000000000000000"
+    private val testAddress = "0x0000000000000000000000000000000000000000".hexAsBigInteger()
 
     @Before
     fun setUp() {
-        viewModel = TokensViewModel(contextMock, tokenRepositoryMock)
+        viewModel = TokensViewModel(contextMock, accountsRepositoryMock, tokenRepositoryMock)
     }
 
     @Test
@@ -72,7 +76,7 @@ class TokensViewModelTest {
 
         viewModel.loadTokenInfo(token).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().loadTokenInfo(testAddress.hexAsBigInteger())
+        then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
         testObserver.assertNoErrors().assertValue(result)
     }
 
@@ -86,7 +90,7 @@ class TokensViewModelTest {
 
         viewModel.loadTokenInfo(token).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().loadTokenInfo(testAddress.hexAsBigInteger())
+        then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
         testObserver.assertNoErrors().assertValue(result)
     }
 
@@ -96,7 +100,7 @@ class TokensViewModelTest {
         val result = DataResult(token)
         val testObserver = TestObserver<Result<ERC20Token>>()
         val testCompletable = TestCompletable()
-        given(tokenRepositoryMock.addToken(anyString(), any())).willReturn(testCompletable)
+        given(tokenRepositoryMock.addToken(MockUtils.any(), any())).willReturn(testCompletable)
 
         viewModel.addToken(testAddress).subscribe(testObserver)
 
@@ -110,7 +114,7 @@ class TokensViewModelTest {
         val exception = Exception()
         val result = ErrorResult<ERC20Token>(exception)
         val testObserver = TestObserver<Result<ERC20Token>>()
-        given(tokenRepositoryMock.addToken(anyString(), any())).willReturn(Completable.error(exception))
+        given(tokenRepositoryMock.addToken(MockUtils.any(), any())).willReturn(Completable.error(exception))
 
         viewModel.addToken(testAddress).subscribe(testObserver)
 

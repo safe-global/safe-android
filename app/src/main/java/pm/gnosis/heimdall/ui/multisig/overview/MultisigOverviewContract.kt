@@ -6,11 +6,11 @@ import io.reactivex.Flowable
 import pm.gnosis.heimdall.common.util.Result
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.ui.base.Adapter
-
+import java.math.BigInteger
 
 abstract class MultisigOverviewContract : ViewModel() {
-    abstract fun addMultisigWallet(name: String, address: String): Completable
-    abstract fun removeMultisigWallet(address: String): Completable
-    abstract fun updateMultisigWalletName(address: String, newName: String): Completable
+    abstract fun addMultisigWallet(name: String, address: BigInteger): Completable
+    abstract fun removeMultisigWallet(address: BigInteger): Completable
+    abstract fun updateMultisigWalletName(address: BigInteger, newName: String): Completable
     abstract fun observeMultisigWallets(): Flowable<Result<Adapter.Data<MultisigWallet>>>
 }

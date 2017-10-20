@@ -18,7 +18,9 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
+import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,43 +37,44 @@ class DefaultMultisigRepository @Inject constructor(
                     .map { it.map { (address, name) -> MultisigWallet(address, name) } }
                     .subscribeOn(Schedulers.io())!!
 
-    override fun observeMultisigWallet(address: String): Flowable<MultisigWallet> =
-        multisigWalletDao.observeMultisigWallet(address)
-                .subscribeOn(Schedulers.io())
-                .map { it.fromDb() }
+    override fun observeMultisigWallet(address: BigInteger): Flowable<MultisigWallet> =
+            multisigWalletDao.observeMultisigWallet(address)
+                    .subscribeOn(Schedulers.io())
+                    .map { it.fromDb() }
 
-    override fun addMultisigWallet(address: String, name: String) =
+    override fun addMultisigWallet(address: BigInteger, name: String?) =
             Completable.fromCallable {
                 val multisigWallet = MultisigWalletDb(address, name)
                 multisigWalletDao.insertMultisigWallet(multisigWallet)
             }.subscribeOn(Schedulers.io())!!
 
-    override fun removeMultisigWallet(address: String) =
+    override fun removeMultisigWallet(address: BigInteger) =
             Completable.fromCallable {
                 multisigWalletDao.removeMultisigWallet(address)
             }.subscribeOn(Schedulers.io())!!
 
-    override fun updateMultisigWalletName(address: String, newName: String) =
+    override fun updateMultisigWalletName(address: BigInteger, newName: String) =
             Completable.fromCallable {
                 val multisigWallet = MultisigWalletDb(address, newName)
                 multisigWalletDao.updateMultisigWallet(multisigWallet)
             }.subscribeOn(Schedulers.io())!!
 
-    override fun loadMultisigWalletInfo(address: String): Observable<MultisigWalletInfo> {
+    override fun loadMultisigWalletInfo(address: BigInteger): Observable<MultisigWalletInfo> {
+        val addressString = address.asEthereumAddressString()
         val request = WalletInfoRequest(
                 SubRequest(JsonRpcRequest(
                         id = 0,
                         method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
                         params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
                         { Wei(it.result.hexAsBigInteger()) }),
-                SubRequest(TransactionCallParams(to = address, data = Required.encode()).callRequest(1),
+                SubRequest(TransactionCallParams(to = addressString, data = Required.encode()).callRequest(1),
                         { Required.decode(it.result) }),
-                SubRequest(TransactionCallParams(to = address, data = GetOwners.encode()).callRequest(2),
+                SubRequest(TransactionCallParams(to = addressString, data = GetOwners.encode()).callRequest(2),
                         { GetOwners.decode(it.result) })
         )
         return ethereumJsonRpcRepository.bulk(request)
                 .map {
-                    MultisigWalletInfo(address,
+                    MultisigWalletInfo(addressString,
                             it.balance.value!!,
                             it.requiredConfirmations.value!!.param0.value.toLong(),
                             it.owners.value!!.param0.items.map { it.value.toString(16) })

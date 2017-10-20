@@ -1,8 +1,12 @@
 package pm.gnosis.heimdall.data.db
 
-import android.arch.persistence.room.*
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
+import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import pm.gnosis.heimdall.data.db.model.ERC20TokenDb
+import java.math.BigInteger
 
 @Dao
 interface ERC20TokenDao {
@@ -16,5 +20,5 @@ interface ERC20TokenDao {
     fun observeTokens(): Flowable<List<ERC20TokenDb>>
 
     @Query("DELETE FROM ${ERC20TokenDb.TABLE_NAME} WHERE ${ERC20TokenDb.COL_ADDRESS} = :address")
-    fun deleteToken(address: String)
+    fun deleteToken(address: BigInteger)
 }

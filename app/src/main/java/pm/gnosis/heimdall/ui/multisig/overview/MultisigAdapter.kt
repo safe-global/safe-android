@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.common.util.shareExternalText
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 
@@ -28,14 +29,14 @@ class MultisigAdapter @Inject constructor(@ViewContext private val context: Cont
         init {
             itemView.setOnClickListener(this)
             itemView.layout_multisig_item_share.setOnClickListener {
-                items[adapterPosition].address.let {
+                items[adapterPosition].address.asEthereumAddressString().let {
                     context.shareExternalText(it, "Sharing ${items[adapterPosition].name ?: ""}")
                 }
             }
         }
 
         override fun bind(item: MultisigWallet) {
-            itemView.layout_multisig_item_address.text = item.address
+            itemView.layout_multisig_item_address.text = item.address.asEthereumAddressString()
             itemView.layout_multisig_item_name.text = item.name
             itemView.layout_multisig_item_name.visibility = if (item.name.isNullOrEmpty()) View.GONE else View.VISIBLE
         }

@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
+import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class SplashViewModelTest {
@@ -39,7 +40,7 @@ class SplashViewModelTest {
     @Test
     fun initialSetupTokenSetupErrorWithAccount() {
         given(tokenRepository.setup()).willReturn(Completable.error(IllegalStateException()))
-        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account("0f")))
+        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account(BigInteger.ONE)))
         val observer = TestObserver.create<ViewAction>()
         viewModel.initialSetup().subscribe(observer)
         observer.assertNoErrors().assertTerminated()
@@ -77,7 +78,7 @@ class SplashViewModelTest {
     @Test
     fun initialSetupTokenSetupCompletedWithAccount() {
         given(tokenRepository.setup()).willReturn(Completable.complete())
-        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account("0f")))
+        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account(BigInteger.ONE)))
         val observer = TestObserver.create<ViewAction>()
         viewModel.initialSetup().subscribe(observer)
         observer.assertNoErrors().assertTerminated()
@@ -111,5 +112,4 @@ class SplashViewModelTest {
         observer.assertNoErrors().assertTerminated()
                 .assertValueCount(1).assertValue { it is StartMain }
     }
-
 }

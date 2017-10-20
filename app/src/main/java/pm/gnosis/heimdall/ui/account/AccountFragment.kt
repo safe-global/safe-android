@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.common.util.subscribeForResult
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asNumberString
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -68,7 +69,7 @@ class AccountFragment : BaseFragment() {
     private fun accountAddress() = viewModel.getAccountAddress()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult({
-                layout_account_address.text = it.address
+                layout_account_address.text = it.address.asEthereumAddressString()
             }, this::handleError)
 
     private fun accountBalance() = viewModel.getAccountBalance()

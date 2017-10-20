@@ -1,3 +1,5 @@
 package pm.gnosis.heimdall.data.repositories.model
 
-data class MultisigWallet(val address: String, val name: String? = null)
+import java.math.BigInteger
+
+data class MultisigWallet(val address: BigInteger, val name: String? = null)
