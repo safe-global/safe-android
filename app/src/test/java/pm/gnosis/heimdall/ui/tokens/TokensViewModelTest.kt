@@ -40,7 +40,7 @@ class TokensViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = TokensViewModel(contextMock, accountsRepositoryMock, tokenRepositoryMock)
+        viewModel = TokensViewModel(contextMock, tokenRepositoryMock)
     }
 
     @Test

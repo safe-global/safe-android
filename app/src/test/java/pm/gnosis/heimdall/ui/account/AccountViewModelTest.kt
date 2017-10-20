@@ -28,7 +28,6 @@ import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
-import pm.gnosis.utils.hexAsBigInteger
 import retrofit2.HttpException
 import retrofit2.Response
 import java.math.BigInteger
@@ -123,7 +122,7 @@ class AccountViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver<Account>()
 
-        val account = Account("00000000000000000000000000000000".hexAsBigInteger())
+        val account = Account(BigInteger.ZERO)
         given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         viewModel.getAccountAddress().subscribe(observer)
 
@@ -139,7 +138,7 @@ class AccountViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver<Wei>()
 
-        val account = Account("00000000000000000000000000000000".hexAsBigInteger())
+        val account = Account(BigInteger.ZERO)
         given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         val exception = IllegalStateException()
         given(ethereumJsonRpcRepository.getBalance(MockUtils.any())).thenReturn(Observable.error<Wei>(exception))
@@ -157,7 +156,7 @@ class AccountViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver<Wei>()
 
-        val account = Account("00000000000000000000000000000000".hexAsBigInteger())
+        val account = Account(BigInteger.ZERO)
         given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         val response = Response.error<Any>(401, mock(ResponseBody::class.java))
         given(ethereumJsonRpcRepository.getBalance(MockUtils.any())).thenReturn(Observable.error<Wei>(HttpException(response)))
@@ -176,7 +175,7 @@ class AccountViewModelTest {
         val viewModel = createViewModel()
         val observer = createObserver<Wei>()
 
-        val account = Account("00000000000000000000000000000000".hexAsBigInteger())
+        val account = Account(BigInteger.ZERO)
         given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         val balance = Wei(BigInteger.valueOf(1000))
         given(ethereumJsonRpcRepository.getBalance(MockUtils.any())).thenReturn(Observable.just(balance))

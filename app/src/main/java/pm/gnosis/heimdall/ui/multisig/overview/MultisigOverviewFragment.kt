@@ -129,7 +129,7 @@ class MultisigOverviewFragment : BaseFragment() {
     }
 
     private fun addMultisigWalletDisposable(name: String, address: BigInteger) =
-            viewModel.addMultisigWallet(name, address)
+            viewModel.addMultisigWallet(address, name)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletAdded, onError = this::onMultisigWalletAddError)
 

@@ -19,7 +19,7 @@ class MultisigOverviewViewModel @Inject constructor(
                 .mapToResult()
     }
 
-    override fun addMultisigWallet(name: String, address: BigInteger) =
+    override fun addMultisigWallet(address: BigInteger, name: String) =
             multisigRepository.addMultisigWallet(address, name)
 
     override fun removeMultisigWallet(address: BigInteger) =

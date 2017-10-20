@@ -9,6 +9,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.accounts.base.models.Account
@@ -42,24 +43,37 @@ class SplashViewModelTest {
         given(tokenRepository.setup()).willReturn(Completable.error(IllegalStateException()))
         given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account(BigInteger.ONE)))
         val observer = TestObserver.create<ViewAction>()
+
         viewModel.initialSetup().subscribe(observer)
+
+        then(tokenRepository).should().setup()
+        then(accountsRepository).should().loadActiveAccount()
         observer.assertNoErrors().assertTerminated()
                 .assertValueCount(1).assertValue { it is StartMain }
     }
 
     @Test
-    fun initialSetupTokenSetupErrorNoAccount() {
-        given(tokenRepository.setup()).willReturn(Completable.error(IllegalStateException()))
-
+    fun initialSetupTokenSetupErrorNoAccountNoSuchElement() {
         val observerNoSuchElement = TestObserver.create<ViewAction>()
         given(accountsRepository.loadActiveAccount()).willReturn(Single.error<Account>(NoSuchElementException()))
+        given(tokenRepository.setup()).willReturn(Completable.error(IllegalStateException()))
+
         viewModel.initialSetup().subscribe(observerNoSuchElement)
+
+        then(accountsRepository).should().loadActiveAccount()
         observerNoSuchElement.assertNoErrors().assertTerminated()
                 .assertValueCount(1).assertValue { it is StartSetup }
+    }
 
+    @Test
+    fun initialSetupTokenSetupErrorNoAccountEmptyResultSet() {
         val observerEmptyResult = TestObserver.create<ViewAction>()
         given(accountsRepository.loadActiveAccount()).willReturn(Single.error<Account>(EmptyResultSetException("")))
+        given(tokenRepository.setup()).willReturn(Completable.error(IllegalStateException()))
+
         viewModel.initialSetup().subscribe(observerEmptyResult)
+
+        then(accountsRepository).should().loadActiveAccount()
         observerEmptyResult.assertNoErrors().assertTerminated()
                 .assertValueCount(1).assertValue { it is StartSetup }
     }
@@ -68,9 +82,12 @@ class SplashViewModelTest {
     fun initialSetupTokenSetupErrorAccountError() {
         given(tokenRepository.setup()).willReturn(Completable.error(IllegalStateException()))
         given(accountsRepository.loadActiveAccount()).willReturn(Single.error<Account>(IllegalStateException()))
-
         val observer = TestObserver.create<ViewAction>()
+
         viewModel.initialSetup().subscribe(observer)
+
+        then(tokenRepository).should().setup()
+        then(accountsRepository).should().loadActiveAccount()
         observer.assertNoErrors().assertTerminated()
                 .assertValueCount(1).assertValue { it is StartMain }
     }
@@ -80,24 +97,38 @@ class SplashViewModelTest {
         given(tokenRepository.setup()).willReturn(Completable.complete())
         given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account(BigInteger.ONE)))
         val observer = TestObserver.create<ViewAction>()
+
         viewModel.initialSetup().subscribe(observer)
+
+        then(tokenRepository).should().setup()
+        then(accountsRepository).should().loadActiveAccount()
         observer.assertNoErrors().assertTerminated()
                 .assertValueCount(1).assertValue { it is StartMain }
     }
 
     @Test
-    fun initialSetupTokenSetupCompletedNoAccount() {
-        given(tokenRepository.setup()).willReturn(Completable.complete())
-
+    fun initialSetupTokenSetupCompletedNoAccountNoSuchElement() {
         val observerNoSuchElement = TestObserver.create<ViewAction>()
         given(accountsRepository.loadActiveAccount()).willReturn(Single.error<Account>(NoSuchElementException()))
+        given(tokenRepository.setup()).willReturn(Completable.complete())
+
         viewModel.initialSetup().subscribe(observerNoSuchElement)
+
+        then(accountsRepository).should().loadActiveAccount()
+        then(tokenRepository).should().setup()
         observerNoSuchElement.assertNoErrors().assertTerminated()
                 .assertValueCount(1).assertValue { it is StartSetup }
+    }
 
+    @Test
+    fun initialSetupTokenSetupCompletedNoAccountEmptyResultSet() {
         val observerEmptyResult = TestObserver.create<ViewAction>()
+        given(tokenRepository.setup()).willReturn(Completable.complete())
         given(accountsRepository.loadActiveAccount()).willReturn(Single.error<Account>(EmptyResultSetException("")))
+
         viewModel.initialSetup().subscribe(observerEmptyResult)
+
+        then(accountsRepository).should().loadActiveAccount()
         observerEmptyResult.assertNoErrors().assertTerminated()
                 .assertValueCount(1).assertValue { it is StartSetup }
     }
@@ -106,9 +137,12 @@ class SplashViewModelTest {
     fun initialSetupTokenSetupCompletedAccountError() {
         given(tokenRepository.setup()).willReturn(Completable.complete())
         given(accountsRepository.loadActiveAccount()).willReturn(Single.error<Account>(IllegalStateException()))
-
         val observer = TestObserver.create<ViewAction>()
+
         viewModel.initialSetup().subscribe(observer)
+
+        then(tokenRepository).should().setup()
+        then(accountsRepository).should().loadActiveAccount()
         observer.assertNoErrors().assertTerminated()
                 .assertValueCount(1).assertValue { it is StartMain }
     }
