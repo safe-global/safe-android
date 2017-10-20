@@ -11,6 +11,7 @@
 
         <EditText
             android:id="@+id/dialog_token_add_name"
+            style="@style/Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/name_descriptive_and_optional" />
@@ -22,6 +23,7 @@
 
         <EditText
             android:id="@+id/dialog_token_add_address"
+            style="@style/Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/address"

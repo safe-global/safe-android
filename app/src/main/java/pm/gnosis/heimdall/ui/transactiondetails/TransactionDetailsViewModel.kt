@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.TransactionDetails
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
+import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.utils.*
 import java.math.BigInteger
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
                                                       private val accountsRepository: AccountsRepository,
                                                       private val multisigRepository: MultisigRepository,
-                                                      private val gnosisMultisigWrapper: GnosisMultisigWrapper) : TransactionDetailsContract() {
+                                                      private val gnosisMultisigWrapper: GnosisMultisigWrapper,
+                                                      private val tokenRepository: TokenRepository) : TransactionDetailsContract() {
     private lateinit var transactionDetails: TransactionDetails
     private lateinit var transactionType: MultisigTransactionType
     private lateinit var transactionId: BigInteger
@@ -87,5 +89,5 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
     override fun loadTransactionDetails(): Observable<GnosisMultisigTransaction> =
             gnosisMultisigWrapper.getTransaction(transactionDetails.address.asEthereumAddressString(), transactionId)
 
-    override fun loadTokenInfo(address: BigInteger) = ethereumJsonRpcRepository.getTokenInfo(address)
+    override fun loadTokenInfo(address: BigInteger) = tokenRepository.loadTokenInfo(address)
 }

@@ -66,6 +66,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
+
     fun providesTokensContract(provider: ViewModelProvider) = provider[TokensContract::class.java]!!
 
     @Provides

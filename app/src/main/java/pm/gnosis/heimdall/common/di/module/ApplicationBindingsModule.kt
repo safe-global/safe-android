@@ -9,7 +9,7 @@ import pm.gnosis.heimdall.data.remote.impl.SimpleEthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.impls.DefaultMultisigRepository
-import pm.gnosis.heimdall.data.repositories.impls.RoomTokenRepository
+import pm.gnosis.heimdall.data.repositories.impls.DefaultTokenRepository
 import javax.inject.Singleton
 
 @Module
@@ -28,5 +28,5 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsTokenRepository(repository: RoomTokenRepository): TokenRepository
+    abstract fun bindsTokenRepository(repository: DefaultTokenRepository): TokenRepository
 }

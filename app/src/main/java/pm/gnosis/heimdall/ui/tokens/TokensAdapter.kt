@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.tokens
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,13 +8,12 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_tokens_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import javax.inject.Inject
 
 
 @ForView
-class TokensAdapter @Inject constructor(@ViewContext private val context: Context) : RecyclerView.Adapter<TokensAdapter.ViewHolder>() {
+class TokensAdapter @Inject constructor() : RecyclerView.Adapter<TokensAdapter.ViewHolder>() {
     private val items = mutableListOf<ERC20Token>()
     val tokensSelectionSubject: PublishSubject<ERC20Token> = PublishSubject.create()
     val tokenRemovalSubject: PublishSubject<ERC20Token> = PublishSubject.create()

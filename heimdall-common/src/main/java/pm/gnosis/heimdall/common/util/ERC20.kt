@@ -1,29 +1,11 @@
 package pm.gnosis.heimdall.common.util
 
 import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.isSolidityMethod
-import pm.gnosis.utils.removeSolidityMethodPrefix
-import java.math.BigInteger
 
 object ERC20 {
     const val DECIMALS_METHOD_ID = "313ce567"
-    const val TRANSFER_METHOD_ID = "a9059cbb"
     const val SYMBOL_METHOD_ID = "95d89b41"
     const val NAME_METHOD_ID = "06fdde03"
-
-    fun parseTransferData(data: String): TokenTransfer? {
-        if (data.isSolidityMethod(TRANSFER_METHOD_ID)) {
-            val arguments = data.removeSolidityMethodPrefix(TRANSFER_METHOD_ID)
-            if (arguments.length == 128) {
-                val to = arguments.substring(0, 64)
-                val value = arguments.substring(64, 128)
-                return TokenTransfer(to.hexAsBigInteger(), value.hexAsBigInteger())
-            }
-        }
-        return null
-    }
-
-    data class TokenTransfer(val to: BigInteger, val value: BigInteger)
 
     val verifiedTokens = mapOf(
             "0x9a642d6b3368ddc662CA244bAdf32cDA716005BC".hexAsBigInteger() to "Qtum",
