@@ -11,9 +11,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.models.Account
@@ -25,47 +25,49 @@ import pm.gnosis.heimdall.common.util.Result
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
+import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
 import retrofit2.HttpException
 import retrofit2.Response
 import java.math.BigInteger
-import org.mockito.Mockito.`when` as given
 
 @RunWith(MockitoJUnitRunner::class)
 class AccountViewModelTest {
-
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var context: Context
+    lateinit var contextMock: Context
 
     @Mock
-    lateinit var accountRepository: AccountsRepository
+    lateinit var accountRepositoryMock: AccountsRepository
 
     @Mock
-    lateinit var ethereumJsonRpcRepository: EthereumJsonRpcRepository
+    lateinit var ethereumJsonRpcRepositoryMock: EthereumJsonRpcRepository
 
     @Mock
-    lateinit var qrCodeGenerator: QrCodeGenerator
+    lateinit var qrCodeGeneratorMock: QrCodeGenerator
+
+    lateinit var viewModel: AccountViewModel
 
     @Before
     fun setup() {
-        given(context.getString(Mockito.anyInt())).thenReturn(SecurityViewModelTest.TEST_STRING)
+        viewModel = AccountViewModel(contextMock, accountRepositoryMock, ethereumJsonRpcRepositoryMock, qrCodeGeneratorMock)
+        given(contextMock.getString(Mockito.anyInt())).willReturn(SecurityViewModelTest.TEST_STRING)
     }
 
     @Test
     fun getQrCodeSuccess() {
-        val viewModel = createViewModel()
         val observer = createObserver<Bitmap>()
-
         val bitmap = mock(Bitmap::class.java)
-        given(qrCodeGenerator.generateQrCode(anyString(), anyInt(), anyInt())).thenReturn(Observable.just(bitmap))
+        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt())).willReturn(Observable.just(bitmap))
 
         viewModel.getQrCode("DATA").subscribe(observer)
 
+        then(qrCodeGeneratorMock).should().generateQrCode("DATA")
+        then(qrCodeGeneratorMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
                 .assertValue { it is DataResult && it.data == bitmap }
@@ -73,14 +75,14 @@ class AccountViewModelTest {
 
     @Test
     fun getQrCodeFailure() {
-        val viewModel = createViewModel()
         val observer = createObserver<Bitmap>()
-
         val exception = IllegalStateException()
-        given(qrCodeGenerator.generateQrCode(anyString(), anyInt(), anyInt())).thenReturn(Observable.error(exception))
+        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt())).willReturn(Observable.error(exception))
 
         viewModel.getQrCode("DATA").subscribe(observer)
 
+        then(qrCodeGeneratorMock).should().generateQrCode("DATA")
+        then(qrCodeGeneratorMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
                 .assertValue { it is ErrorResult && it.error == exception }
@@ -88,114 +90,114 @@ class AccountViewModelTest {
 
     @Test
     fun getAccountAddressNotAvailable() {
-        val viewModel = createViewModel()
         val observer = createObserver<Account>()
+        given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(EmptyResultSetException("")))
 
-        given(accountRepository.loadActiveAccount()).thenReturn(Single.error<Account>(EmptyResultSetException("")))
         viewModel.getAccountAddress().subscribe(observer)
 
+        then(accountRepositoryMock).should().loadActiveAccount()
+        then(accountRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
                 .assertValue(ErrorResult(LocalizedException(TEST_STRING)))
-
-        verify(context).getString(R.string.no_account_available)
+        verify(contextMock).getString(R.string.no_account_available)
     }
 
     @Test
     fun getAccountAddressError() {
-        val viewModel = createViewModel()
         val observer = createObserver<Account>()
-
         val exception = IllegalStateException()
-        given(accountRepository.loadActiveAccount()).thenReturn(Single.error<Account>(exception))
+        given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(exception))
+
         viewModel.getAccountAddress().subscribe(observer)
 
+        then(accountRepositoryMock).should().loadActiveAccount()
+        then(accountRepositoryMock).shouldHaveNoMoreInteractions()
+        then(contextMock).shouldHaveZeroInteractions()
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
                 .assertValue(ErrorResult(exception))
-
-        verifyNoMoreInteractions(context)
     }
 
     @Test
     fun getAccountAddressSuccess() {
-        val viewModel = createViewModel()
         val observer = createObserver<Account>()
+        val account = Account(BigInteger.ZERO)
+        given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
 
-        val account = Account("00000000000000000000000000000000")
-        given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
         viewModel.getAccountAddress().subscribe(observer)
 
+        then(contextMock).shouldHaveZeroInteractions()
+        then(accountRepositoryMock).should().loadActiveAccount()
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
                 .assertValue(DataResult(account))
-
-        verifyNoMoreInteractions(context)
     }
 
     @Test
     fun getAccountBalanceError() {
-        val viewModel = createViewModel()
         val observer = createObserver<Wei>()
-
-        val account = Account("00000000000000000000000000000000")
-        given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
+        val account = Account(BigInteger.ZERO)
         val exception = IllegalStateException()
-        given(ethereumJsonRpcRepository.getBalance(anyString())).thenReturn(Observable.error<Wei>(exception))
+        given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+        given(ethereumJsonRpcRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error<Wei>(exception))
+
         viewModel.getAccountBalance().subscribe(observer)
 
+        then(contextMock).shouldHaveZeroInteractions()
+        then(accountRepositoryMock).should().loadActiveAccount()
+        then(ethereumJsonRpcRepositoryMock).should().getBalance(account.address)
+        then(accountRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
                 .assertValue(ErrorResult(exception))
-        verifyNoMoreInteractions(context)
-
     }
 
     @Test
     fun getAccountBalanceNetworkError() {
-        val viewModel = createViewModel()
         val observer = createObserver<Wei>()
-
-        val account = Account("00000000000000000000000000000000")
-        given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
+        val account = Account(BigInteger.ZERO)
         val response = Response.error<Any>(401, mock(ResponseBody::class.java))
-        given(ethereumJsonRpcRepository.getBalance(anyString())).thenReturn(Observable.error<Wei>(HttpException(response)))
+        given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+        given(ethereumJsonRpcRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error<Wei>(HttpException(response)))
 
         viewModel.getAccountBalance().subscribe(observer)
 
+        then(contextMock).should().getString(R.string.error_not_authorized_for_action)
+        then(accountRepositoryMock).should().loadActiveAccount()
+        then(ethereumJsonRpcRepositoryMock).should().getBalance(account.address)
+        then(accountRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
                 .assertValue(ErrorResult(LocalizedException(TEST_STRING)))
-
-        verify(context).getString(R.string.error_not_authorized_for_action)
     }
 
     @Test
     fun getAccountBalanceSuccess() {
-        val viewModel = createViewModel()
         val observer = createObserver<Wei>()
-
-        val account = Account("00000000000000000000000000000000")
-        given(accountRepository.loadActiveAccount()).thenReturn(Single.just(account))
+        val account = Account(BigInteger.ZERO)
         val balance = Wei(BigInteger.valueOf(1000))
-        given(ethereumJsonRpcRepository.getBalance(anyString())).thenReturn(Observable.just(balance))
+        given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+        given(ethereumJsonRpcRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+
         viewModel.getAccountBalance().subscribe(observer)
 
+        then(contextMock).shouldHaveZeroInteractions()
+        then(accountRepositoryMock).should().loadActiveAccount()
+        then(ethereumJsonRpcRepositoryMock).should().getBalance(account.address)
+        then(accountRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
                 .assertValue(DataResult(balance))
-        verifyNoMoreInteractions(context)
-
     }
 
     private fun <D> createObserver() =
             TestObserver.create<Result<D>>()
 
-    private fun createViewModel() =
-            AccountViewModel(context, accountRepository, ethereumJsonRpcRepository, qrCodeGenerator)
-
     companion object {
         const val TEST_STRING = "TEST"
     }
-
 }

@@ -26,8 +26,11 @@ import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.asDecimalString
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 class TokensFragment : BaseFragment() {
@@ -35,7 +38,7 @@ class TokensFragment : BaseFragment() {
     @Inject lateinit var adapter: TokensAdapter
 
     private val removeTokenClickEvent = PublishSubject.create<ERC20Token>()
-    private val addTokenClickEvent = PublishSubject.create<Pair<String, String?>>()
+    private val addTokenClickEvent = PublishSubject.create<Pair<BigInteger, String?>>()
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater?.inflate(R.layout.layout_tokens, container, false)
@@ -128,7 +131,7 @@ class TokensFragment : BaseFragment() {
             dialogView.dialog_token_info_decimals_container.visibility = View.GONE
         }
 
-        dialogView.dialog_token_info_address.text = token.address
+        dialogView.dialog_token_info_address.text = token.address.asEthereumAddressString()
         dialogView.dialog_token_info_symbol.text = token.symbol
 
         AlertDialog.Builder(context)
@@ -157,7 +160,7 @@ class TokensFragment : BaseFragment() {
             val address = dialogView.dialog_token_add_address.text.toString()
             val name = dialogView.dialog_token_add_name.text.toString().let { if (it.isBlank()) null else it }
             if (address.isValidEthereumAddress()) {
-                addTokenClickEvent.onNext(address to name)
+                addTokenClickEvent.onNext(address.hexAsBigInteger() to name)
                 dialog.dismiss()
             } else {
                 context.toast(getString(R.string.invalid_ethereum_address))

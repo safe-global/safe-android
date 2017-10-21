@@ -6,6 +6,8 @@ import okhttp3.ResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
@@ -17,15 +19,13 @@ import java.lang.RuntimeException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLHandshakeException
-import org.mockito.Mockito.`when` as given
 
 @RunWith(MockitoJUnitRunner::class)
 class LocalizedExceptionTest {
-
     @Mock
-    lateinit var context: Context
+    lateinit var contextMock: Context
 
-    val handler: LocalizedException.Handler by lazy { LocalizedException.networkErrorHandlerBuilder(context).build(false) }
+    val handler: LocalizedException.Handler by lazy { LocalizedException.networkErrorHandlerBuilder(contextMock).build(false) }
 
     @Test
     fun handleSSLError() {
@@ -60,7 +60,7 @@ class LocalizedExceptionTest {
     fun doNotHandleUnknown() {
         val exception = IllegalStateException()
         check(exception, exception)
-        verifyNoMoreInteractions(context)
+        then(contextMock).shouldHaveNoMoreInteractions()
     }
 
     private fun check(expected: Throwable, input: Throwable) {
@@ -75,6 +75,6 @@ class LocalizedExceptionTest {
     }
 
     private fun mockString(stringRes: Int, content: String) {
-        given(context.getString(eq(stringRes))).thenReturn(content)
+        given(contextMock.getString(eq(stringRes))).willReturn(content)
     }
 }

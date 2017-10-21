@@ -21,17 +21,17 @@ import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.asNumberString
+import pm.gnosis.utils.hexAsBigInteger
 import javax.inject.Inject
 
 
 class MultisigInfoFragment : BaseFragment() {
-
     @Inject
     lateinit var viewModel: MultisigInfoContract
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.setup(arguments.getString(ARGUMENT_MULTISIG_ADDRESS)!!)
+        viewModel.setup(arguments.getString(ARGUMENT_MULTISIG_ADDRESS).hexAsBigInteger())
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View?
@@ -93,7 +93,6 @@ class MultisigInfoFragment : BaseFragment() {
     }
 
     companion object {
-
         private const val ARGUMENT_MULTISIG_ADDRESS = "argument.string.multisig_address"
 
         fun createInstance(address: String) =

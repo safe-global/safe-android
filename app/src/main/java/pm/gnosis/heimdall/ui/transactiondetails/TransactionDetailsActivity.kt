@@ -34,10 +34,7 @@ import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.utils.addAddressPrefix
-import pm.gnosis.utils.asDecimalString
-import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.isValidEthereumAddress
+import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -225,7 +222,7 @@ class TransactionDetailsActivity : BaseActivity() {
 
     private fun addMultisigWalletDisposable() =
             addWalletClickSubject
-                    .flatMapSingle { viewModel.addMultisigWallet(it.first, it.second) }
+                    .flatMapSingle { viewModel.addMultisigWallet(it.first.hexAsBigInteger(), it.second) }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeForResult(onNext = { onMultisigWalletAdded() }, onError = this::onMultisigWalletAddError)
 

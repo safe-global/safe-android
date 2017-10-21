@@ -15,7 +15,6 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.data.repositories.model.fromDb
-import pm.gnosis.heimdall.data.repositories.model.toDb
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import pm.gnosis.utils.toAlfaNumericAscii
@@ -44,15 +43,15 @@ class DefaultTokenRepository @Inject constructor(
                         { it.result.hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim() }),
                 BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.DECIMALS_METHOD_ID}").callRequest(2),
                         { it.result.hexAsBigIntegerOrNull() }))
-        return ethereumJsonRpcRepository.bulk(request).map { ERC20Token(contractAddress.asEthereumAddressString(), it.name.value, it.symbol.value, it.decimals.value) }
+        return ethereumJsonRpcRepository.bulk(request).map { ERC20Token(contractAddress, it.name.value, it.symbol.value, it.decimals.value) }
     }
 
-    override fun addToken(address: String, name: String?): Completable = Completable.fromCallable {
+    override fun addToken(address: BigInteger, name: String?): Completable = Completable.fromCallable {
         val token = ERC20TokenDb(address, name, false)
         erc20TokenDao.insertERC20Token(token)
     }.subscribeOn(Schedulers.io())
 
-    override fun removeToken(address: String): Completable = Completable.fromCallable {
+    override fun removeToken(address: BigInteger): Completable = Completable.fromCallable {
         erc20TokenDao.deleteToken(address)
     }.subscribeOn(Schedulers.io())
 
@@ -60,7 +59,7 @@ class DefaultTokenRepository @Inject constructor(
         val finishedTokensSetup = preferencesManager.prefs.getBoolean(PreferencesManager.FINISHED_TOKENS_SETUP, false)
         if (!finishedTokensSetup) {
             val tokens = ERC20.verifiedTokens.entries.map {
-                ERC20TokenDb(it.key.asEthereumAddressString(), it.value, true)
+                ERC20TokenDb(it.key, it.value, true)
             }.toList()
             erc20TokenDao.insertERC20Tokens(tokens)
             preferencesManager.prefs.edit { putBoolean(PreferencesManager.FINISHED_TOKENS_SETUP, true) }

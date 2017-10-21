@@ -4,12 +4,13 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
+import java.math.BigInteger
 
 @Entity(tableName = MultisigWalletDb.TABLE_NAME)
 data class MultisigWalletDb(
         @PrimaryKey
         @ColumnInfo(name = COL_ADDRESS)
-        var address: String,
+        var address: BigInteger,
 
         @ColumnInfo(name = COL_NAME)
         var name: String?

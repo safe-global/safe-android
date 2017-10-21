@@ -27,7 +27,7 @@ class GenerateMnemonicViewModelTest {
     @Mock
     lateinit var accountsRepositoryMock: AccountsRepository
 
-    lateinit var viewModel: GenerateMnemonicContract
+    lateinit var viewModel: GenerateMnemonicViewModel
 
     private val testMnemonic = "abstract inspire axis monster urban order rookie over volume poverty horse rack"
 
@@ -44,6 +44,7 @@ class GenerateMnemonicViewModelTest {
         viewModel.generateMnemonic().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().generateMnemonic()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors()
                 .assertComplete()
                 .assertValue { it is DataResult && it.data == testMnemonic }
@@ -58,6 +59,7 @@ class GenerateMnemonicViewModelTest {
         viewModel.generateMnemonic().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().generateMnemonic()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors()
                 .assertComplete()
                 .assertValue { it is ErrorResult && it.error == exception }
@@ -73,6 +75,9 @@ class GenerateMnemonicViewModelTest {
 
         viewModel.saveAccountWithMnemonic(testMnemonic).subscribe(testObserver)
 
+        then(accountsRepositoryMock).should().saveAccountFromMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().saveMnemonic(testMnemonic)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, saveAccountFromMnemonicCompletable.callCount)
         assertEquals(1, saveMnemonicCompletable.callCount)
         testObserver.assertNoErrors()
@@ -90,6 +95,9 @@ class GenerateMnemonicViewModelTest {
 
         viewModel.saveAccountWithMnemonic(testMnemonic).subscribe(testObserver)
 
+        then(accountsRepositoryMock).should().saveAccountFromMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().saveMnemonic(testMnemonic)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(0, saveMnemonicCompletable.callCount)
         testObserver.assertError(exception)
                 .assertTerminated()
@@ -106,6 +114,9 @@ class GenerateMnemonicViewModelTest {
 
         viewModel.saveAccountWithMnemonic(testMnemonic).subscribe(testObserver)
 
+        then(accountsRepositoryMock).should().saveAccountFromMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().saveMnemonic(testMnemonic)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, saveAccountFromMnemonicCompletable.callCount)
         testObserver.assertError(exception)
                 .assertTerminated()

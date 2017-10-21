@@ -38,7 +38,6 @@ import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.test.utils.TestCompletable
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
 
@@ -65,7 +64,7 @@ class TransactionDetailsViewModelTest {
 
     lateinit var viewModel: TransactionDetailsViewModel
 
-    private val testAddress = "0x0000000000000000000000000000000000000000"
+    private val testAddress = BigInteger.ZERO
     private val transactionId = "0000000000000000000000000000000000000000000000000000000000000000"
     private var confirmTransactionData = "0x${MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID}$transactionId"
     private var revokeTransactionData = "0x${MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID}$transactionId"
@@ -77,7 +76,7 @@ class TransactionDetailsViewModelTest {
 
     @Test
     fun setConfirmTransaction() {
-        val transaction = TransactionDetails(testAddress.hexAsBigInteger(), data = confirmTransactionData)
+        val transaction = TransactionDetails(testAddress, data = confirmTransactionData)
         val testObserver = TestObserver<Unit>()
 
         viewModel.setTransaction(transaction).subscribe(testObserver)
@@ -90,7 +89,7 @@ class TransactionDetailsViewModelTest {
 
     @Test
     fun setRevokeTransaction() {
-        val transaction = TransactionDetails(testAddress.hexAsBigInteger(), data = revokeTransactionData)
+        val transaction = TransactionDetails(testAddress, data = revokeTransactionData)
         val testObserver = TestObserver<Unit>()
 
         viewModel.setTransaction(transaction).subscribe(testObserver)
@@ -103,7 +102,7 @@ class TransactionDetailsViewModelTest {
 
     @Test
     fun setUnknownTransaction() {
-        val transaction = TransactionDetails(testAddress.hexAsBigInteger(), data = "")
+        val transaction = TransactionDetails(testAddress, data = "")
         val testObserver = TestObserver<Unit>()
 
         viewModel.setTransaction(transaction).subscribe(testObserver)
@@ -138,36 +137,38 @@ class TransactionDetailsViewModelTest {
 
     @Test
     fun getMultisigWalletDetails() {
-        val transaction = TransactionDetails(testAddress.hexAsBigInteger(), data = confirmTransactionData)
+        val transaction = TransactionDetails(testAddress, data = confirmTransactionData)
         val testObserver = TestSubscriber<MultisigWallet>()
         val wallet = MultisigWallet(testAddress)
         viewModel.setTransaction(transaction).subscribe()
-        given(multisigRepositoryMock.observeMultisigWallet(anyString())).willReturn(Flowable.just(wallet))
+        given(multisigRepositoryMock.observeMultisigWallet(MockUtils.any())).willReturn(Flowable.just(wallet))
 
         viewModel.observeMultisigWalletDetails().subscribe(testObserver)
 
         then(multisigRepositoryMock).should().observeMultisigWallet(testAddress)
+        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(wallet)
     }
 
     @Test
     fun getMultisigWalletDetailsError() {
-        val transaction = TransactionDetails(testAddress.hexAsBigInteger(), data = confirmTransactionData)
+        val transaction = TransactionDetails(testAddress, data = confirmTransactionData)
         val testObserver = TestSubscriber<MultisigWallet>()
         val exception = Exception()
         viewModel.setTransaction(transaction).subscribe()
-        given(multisigRepositoryMock.observeMultisigWallet(anyString())).willReturn(Flowable.error(exception))
+        given(multisigRepositoryMock.observeMultisigWallet(MockUtils.any())).willReturn(Flowable.error(exception))
 
         viewModel.observeMultisigWalletDetails().subscribe(testObserver)
 
         then(multisigRepositoryMock).should().observeMultisigWallet(testAddress)
+        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception)
     }
 
     @Test
     fun signTransaction() {
         val account = Account(testAddress)
-        val transactionDetails = TransactionDetails(testAddress.hexAsBigInteger(), data = confirmTransactionData)
+        val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         val transactionCallParams = TransactionCallParams(to = transactionDetails.address.asEthereumAddressString(), data = transactionDetails.data)
         val params = EthereumJsonRpcRepository.TransactionParameters(gas = BigInteger.ZERO, gasPrice = BigInteger.ZERO, nonce = BigInteger.ZERO)
         val transaction = Transaction(nonce = params.nonce,
@@ -181,7 +182,7 @@ class TransactionDetailsViewModelTest {
         val testObserver = TestObserver.create<Result<String>>()
         viewModel.setTransaction(transactionDetails).subscribe()
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
-        given(ethereumJsonRpcRepositoryMock.getTransactionParameters(anyString(), MockUtils.any())).willReturn(Observable.just(params))
+        given(ethereumJsonRpcRepositoryMock.getTransactionParameters(MockUtils.any(), MockUtils.any())).willReturn(Observable.just(params))
         given(accountsRepositoryMock.signTransaction(MockUtils.any())).willReturn(Single.just(signedTransaction))
         given(ethereumJsonRpcRepositoryMock.sendRawTransaction(anyString())).willReturn(Observable.just("hash"))
 
@@ -191,12 +192,14 @@ class TransactionDetailsViewModelTest {
         then(ethereumJsonRpcRepositoryMock).should().getTransactionParameters(testAddress, transactionCallParams)
         then(accountsRepositoryMock).should().signTransaction(transaction)
         then(ethereumJsonRpcRepositoryMock).should().sendRawTransaction(signedTransaction)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(dataResult)
     }
 
     @Test
     fun signTransactionErrorLoadAccount() {
-        val transactionDetails = TransactionDetails(testAddress.hexAsBigInteger(), data = confirmTransactionData)
+        val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         val exception = Exception()
         val errorResult = ErrorResult<String>(exception)
         val testObserver = TestObserver.create<Result<String>>()
@@ -206,32 +209,35 @@ class TransactionDetailsViewModelTest {
         viewModel.signTransaction().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(errorResult)
     }
 
     @Test
     fun signTransactionErrorGetTransactionParameters() {
         val account = Account(testAddress)
-        val transactionDetails = TransactionDetails(testAddress.hexAsBigInteger(), data = confirmTransactionData)
+        val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         val transactionCallParams = TransactionCallParams(to = transactionDetails.address.asEthereumAddressString(), data = transactionDetails.data)
         val testObserver = TestObserver.create<Result<String>>()
         val exception = Exception()
         val errorResult = ErrorResult<String>(exception)
         viewModel.setTransaction(transactionDetails).subscribe()
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
-        given(ethereumJsonRpcRepositoryMock.getTransactionParameters(anyString(), MockUtils.any())).willReturn(Observable.error(exception))
+        given(ethereumJsonRpcRepositoryMock.getTransactionParameters(MockUtils.any(), MockUtils.any())).willReturn(Observable.error(exception))
 
         viewModel.signTransaction().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(ethereumJsonRpcRepositoryMock).should().getTransactionParameters(testAddress, transactionCallParams)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(errorResult)
     }
 
     @Test
     fun signTransactionErrorSignTransaction() {
         val account = Account(testAddress)
-        val transactionDetails = TransactionDetails(testAddress.hexAsBigInteger(), data = confirmTransactionData)
+        val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         val transactionCallParams = TransactionCallParams(to = transactionDetails.address.asEthereumAddressString(), data = transactionDetails.data)
         val params = EthereumJsonRpcRepository.TransactionParameters(gas = BigInteger.ZERO, gasPrice = BigInteger.ZERO, nonce = BigInteger.ZERO)
         val transaction = Transaction(nonce = params.nonce,
@@ -245,7 +251,7 @@ class TransactionDetailsViewModelTest {
         val errorResult = ErrorResult<String>(exception)
         viewModel.setTransaction(transactionDetails).subscribe()
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
-        given(ethereumJsonRpcRepositoryMock.getTransactionParameters(anyString(), MockUtils.any())).willReturn(Observable.just(params))
+        given(ethereumJsonRpcRepositoryMock.getTransactionParameters(MockUtils.any(), MockUtils.any())).willReturn(Observable.just(params))
         given(accountsRepositoryMock.signTransaction(MockUtils.any())).willReturn(Single.error(exception))
 
         viewModel.signTransaction().subscribe(testObserver)
@@ -253,13 +259,15 @@ class TransactionDetailsViewModelTest {
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(ethereumJsonRpcRepositoryMock).should().getTransactionParameters(testAddress, transactionCallParams)
         then(accountsRepositoryMock).should().signTransaction(transaction)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(errorResult)
     }
 
     @Test
     fun signTransactionErrorSendRawTransaction() {
         val account = Account(testAddress)
-        val transactionDetails = TransactionDetails(testAddress.hexAsBigInteger(), data = confirmTransactionData)
+        val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         val transactionCallParams = TransactionCallParams(to = transactionDetails.address.asEthereumAddressString(), data = transactionDetails.data)
         val params = EthereumJsonRpcRepository.TransactionParameters(gas = BigInteger.ZERO, gasPrice = BigInteger.ZERO, nonce = BigInteger.ZERO)
         val transaction = Transaction(nonce = params.nonce,
@@ -274,7 +282,7 @@ class TransactionDetailsViewModelTest {
         val errorResult = ErrorResult<String>(exception)
         viewModel.setTransaction(transactionDetails).subscribe()
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
-        given(ethereumJsonRpcRepositoryMock.getTransactionParameters(anyString(), MockUtils.any())).willReturn(Observable.just(params))
+        given(ethereumJsonRpcRepositoryMock.getTransactionParameters(MockUtils.any(), MockUtils.any())).willReturn(Observable.just(params))
         given(accountsRepositoryMock.signTransaction(MockUtils.any())).willReturn(Single.just(signedTransaction))
         given(ethereumJsonRpcRepositoryMock.sendRawTransaction(anyString())).willReturn(Observable.error(exception))
 
@@ -284,6 +292,8 @@ class TransactionDetailsViewModelTest {
         then(ethereumJsonRpcRepositoryMock).should().getTransactionParameters(testAddress, transactionCallParams)
         then(accountsRepositoryMock).should().signTransaction(transaction)
         then(ethereumJsonRpcRepositoryMock).should().sendRawTransaction(signedTransaction)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(errorResult)
     }
 
@@ -292,12 +302,13 @@ class TransactionDetailsViewModelTest {
         val address = testAddress
         val name = "test wallet"
         val addMultisigWalletCompletable = TestCompletable()
-        val testObserver = TestObserver<Result<String>>()
-        given(multisigRepositoryMock.addMultisigWallet(anyString(), anyString())).willReturn(addMultisigWalletCompletable)
+        val testObserver = TestObserver<Result<BigInteger>>()
+        given(multisigRepositoryMock.addMultisigWallet(MockUtils.any(), anyString())).willReturn(addMultisigWalletCompletable)
 
         viewModel.addMultisigWallet(address, name).subscribe(testObserver)
 
         then(multisigRepositoryMock).should().addMultisigWallet(testAddress, name)
+        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(address)).assertNoErrors()
     }
 
@@ -305,27 +316,29 @@ class TransactionDetailsViewModelTest {
     fun addMultisigWalletError() {
         val address = testAddress
         val name = "test wallet"
-        val testObserver = TestObserver<Result<String>>()
+        val testObserver = TestObserver<Result<BigInteger>>()
         val exception = Exception()
-        given(multisigRepositoryMock.addMultisigWallet(anyString(), anyString())).willReturn(Completable.error(exception))
+        given(multisigRepositoryMock.addMultisigWallet(MockUtils.any(), anyString())).willReturn(Completable.error(exception))
 
         viewModel.addMultisigWallet(address, name).subscribe(testObserver)
 
         then(multisigRepositoryMock).should().addMultisigWallet(testAddress, name)
+        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(ErrorResult(exception)).assertNoErrors()
     }
 
     @Test
     fun getTransactionDetails() {
         val testObserver = TestObserver<GnosisMultisigTransaction>()
-        val addOwnerTransaction = MultisigAddOwner(testAddress.hexAsBigInteger())
-        val transactionDetails = TransactionDetails(testAddress.hexAsBigInteger(), data = confirmTransactionData)
+        val addOwnerTransaction = MultisigAddOwner(testAddress)
+        val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         viewModel.setTransaction(transactionDetails).subscribe()
-        given(gnosisMultisigWrapperMock.getTransaction(anyString(), MockUtils.any())).willReturn(Observable.just(addOwnerTransaction))
+        given(gnosisMultisigWrapperMock.getTransaction(MockUtils.any(), MockUtils.any())).willReturn(Observable.just(addOwnerTransaction))
 
         viewModel.loadTransactionDetails().subscribe(testObserver)
 
         then(gnosisMultisigWrapperMock).should().getTransaction(testAddress, viewModel.getMultisigTransactionId())
+        then(gnosisMultisigWrapperMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(addOwnerTransaction)
     }
 
@@ -333,13 +346,14 @@ class TransactionDetailsViewModelTest {
     fun getTransactionDetailsError() {
         val testObserver = TestObserver<GnosisMultisigTransaction>()
         val exception = Exception()
-        val transactionDetails = TransactionDetails(testAddress.hexAsBigInteger(), data = confirmTransactionData)
+        val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         viewModel.setTransaction(transactionDetails).subscribe()
-        given(gnosisMultisigWrapperMock.getTransaction(anyString(), MockUtils.any())).willReturn(Observable.error(exception))
+        given(gnosisMultisigWrapperMock.getTransaction(MockUtils.any(), MockUtils.any())).willReturn(Observable.error(exception))
 
         viewModel.loadTransactionDetails().subscribe(testObserver)
 
         then(gnosisMultisigWrapperMock).should().getTransaction(testAddress, viewModel.getMultisigTransactionId())
+        then(gnosisMultisigWrapperMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception).assertNoValues()
     }
 
@@ -349,9 +363,10 @@ class TransactionDetailsViewModelTest {
         val testObserver = TestObserver.create<ERC20Token>()
         given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(Observable.just(token))
 
-        viewModel.loadTokenInfo(testAddress.hexAsBigInteger()).subscribe(testObserver)
+        viewModel.loadTokenInfo(testAddress).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().loadTokenInfo(testAddress.hexAsBigInteger())
+        then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(token).assertNoErrors().assertTerminated()
     }
 
@@ -361,9 +376,10 @@ class TransactionDetailsViewModelTest {
         val exception = Exception()
         given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(Observable.error(exception))
 
-        viewModel.loadTokenInfo(testAddress.hexAsBigInteger()).subscribe(testObserver)
+        viewModel.loadTokenInfo(testAddress).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().loadTokenInfo(testAddress.hexAsBigInteger())
+        then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoValues().assertError(exception)
     }
 }

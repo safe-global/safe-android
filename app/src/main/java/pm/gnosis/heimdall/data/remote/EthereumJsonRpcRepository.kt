@@ -17,7 +17,7 @@ interface EthereumJsonRpcRepository {
 
     fun <R : BulkRequest> bulk(request: R): Observable<R>
 
-    fun getBalance(address: String): Observable<Wei>
+    fun getBalance(address: BigInteger): Observable<Wei>
 
     fun getLatestBlock(): Observable<BigInteger>
 
@@ -25,13 +25,13 @@ interface EthereumJsonRpcRepository {
 
     fun sendRawTransaction(signedTransactionData: String): Observable<String>
 
-    fun getTransactionCount(address: String): Observable<BigInteger>
+    fun getTransactionCount(address: BigInteger): Observable<BigInteger>
 
     fun getGasPrice(): Observable<BigInteger>
 
     fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger>
 
-    fun getTransactionParameters(address: String, transactionCallParams: TransactionCallParams): Observable<TransactionParameters>
+    fun getTransactionParameters(address: BigInteger, transactionCallParams: TransactionCallParams): Observable<TransactionParameters>
 
     data class TransactionParameters(val gas: BigInteger, val gasPrice: BigInteger, val nonce: BigInteger)
 }

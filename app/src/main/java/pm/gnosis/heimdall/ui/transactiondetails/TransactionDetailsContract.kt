@@ -20,7 +20,7 @@ abstract class TransactionDetailsContract : ViewModel() {
 
     abstract fun observeMultisigWalletDetails(): Flowable<MultisigWallet>
     abstract fun signTransaction(): Observable<Result<String>>
-    abstract fun addMultisigWallet(address: String, name: String = ""): Single<Result<String>>
+    abstract fun addMultisigWallet(address: BigInteger, name: String?): Single<Result<BigInteger>>
     abstract fun loadTransactionDetails(): Observable<GnosisMultisigTransaction>
     abstract fun loadTokenInfo(address: BigInteger): Observable<ERC20Token>
 }

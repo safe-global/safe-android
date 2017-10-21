@@ -29,18 +29,18 @@ class RestoreAccountViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var accountsRepository: AccountsRepository
+    lateinit var accountsRepositoryMock: AccountsRepository
 
     @Mock
-    lateinit var context: Context
+    lateinit var contextMock: Context
 
-    private lateinit var viewModel: RestoreAccountContract
+    private lateinit var viewModel: RestoreAccountViewModel
 
     private val testMnemonic = "abstract inspire axis monster urban order rookie over volume poverty horse rack"
 
     @Before
     fun setUp() {
-        viewModel = RestoreAccountViewModel(context, accountsRepository)
+        viewModel = RestoreAccountViewModel(contextMock, accountsRepositoryMock)
     }
 
     @Test
@@ -48,13 +48,16 @@ class RestoreAccountViewModelTest {
         val testObserver = TestObserver.create<Result<Intent>>()
         val saveAccountFromMnemonicCompletable = TestCompletable()
         val saveMnemonicCompletable = TestCompletable()
-        given(accountsRepository.validateMnemonic(anyString())).willReturn(Single.just(testMnemonic))
-        given(accountsRepository.saveAccountFromMnemonic(anyString(), anyLong())).willReturn(saveAccountFromMnemonicCompletable)
-        given(accountsRepository.saveMnemonic(anyString())).willReturn(saveMnemonicCompletable)
+        given(accountsRepositoryMock.validateMnemonic(anyString())).willReturn(Single.just(testMnemonic))
+        given(accountsRepositoryMock.saveAccountFromMnemonic(anyString(), anyLong())).willReturn(saveAccountFromMnemonicCompletable)
+        given(accountsRepositoryMock.saveMnemonic(anyString())).willReturn(saveMnemonicCompletable)
 
         viewModel.saveAccountWithMnemonic(testMnemonic).subscribe(testObserver)
 
-        then(accountsRepository).should().validateMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().validateMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().saveAccountFromMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().saveMnemonic(testMnemonic)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, saveAccountFromMnemonicCompletable.callCount)
         assertEquals(1, saveMnemonicCompletable.callCount)
         testObserver.assertValue({ it is DataResult })
@@ -65,11 +68,12 @@ class RestoreAccountViewModelTest {
     @Test
     fun saveAccountWithInvalidMnemonic() {
         val testObserver = TestObserver.create<Result<Intent>>()
-        given(accountsRepository.validateMnemonic(anyString())).willReturn(SingleError({ Exception() }))
+        given(accountsRepositoryMock.validateMnemonic(anyString())).willReturn(SingleError({ Exception() }))
 
         viewModel.saveAccountWithMnemonic(testMnemonic).subscribe(testObserver)
 
-        then(accountsRepository).should().validateMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().validateMnemonic(testMnemonic)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue({ it is ErrorResult })
                 .assertNoErrors()
                 .assertTerminated()
@@ -80,13 +84,16 @@ class RestoreAccountViewModelTest {
         val testObserver = TestObserver.create<Result<Intent>>()
         val saveMnemonicCompletable = TestCompletable()
         val exception = Exception()
-        given(accountsRepository.validateMnemonic(anyString())).willReturn(Single.just(testMnemonic))
-        given(accountsRepository.saveAccountFromMnemonic(anyString(), anyLong())).willReturn(CompletableError(exception))
-        given(accountsRepository.saveMnemonic(anyString())).willReturn(saveMnemonicCompletable)
+        given(accountsRepositoryMock.validateMnemonic(anyString())).willReturn(Single.just(testMnemonic))
+        given(accountsRepositoryMock.saveAccountFromMnemonic(anyString(), anyLong())).willReturn(CompletableError(exception))
+        given(accountsRepositoryMock.saveMnemonic(anyString())).willReturn(saveMnemonicCompletable)
 
         viewModel.saveAccountWithMnemonic(testMnemonic).subscribe(testObserver)
 
-        then(accountsRepository).should().validateMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().validateMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().saveAccountFromMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().saveMnemonic(testMnemonic)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(0, saveMnemonicCompletable.callCount)
         testObserver.assertValue({ it is ErrorResult })
                 .assertNoErrors()
@@ -98,13 +105,16 @@ class RestoreAccountViewModelTest {
         val testObserver = TestObserver.create<Result<Intent>>()
         val saveAccountFromMnemonicCompletable = TestCompletable()
         val exception = Exception()
-        given(accountsRepository.validateMnemonic(anyString())).willReturn(Single.just(testMnemonic))
-        given(accountsRepository.saveAccountFromMnemonic(anyString(), anyLong())).willReturn(saveAccountFromMnemonicCompletable)
-        given(accountsRepository.saveMnemonic(anyString())).willReturn(CompletableError(exception))
+        given(accountsRepositoryMock.validateMnemonic(anyString())).willReturn(Single.just(testMnemonic))
+        given(accountsRepositoryMock.saveAccountFromMnemonic(anyString(), anyLong())).willReturn(saveAccountFromMnemonicCompletable)
+        given(accountsRepositoryMock.saveMnemonic(anyString())).willReturn(CompletableError(exception))
 
         viewModel.saveAccountWithMnemonic(testMnemonic).subscribe(testObserver)
 
-        then(accountsRepository).should().validateMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().validateMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().saveAccountFromMnemonic(testMnemonic)
+        then(accountsRepositoryMock).should().saveMnemonic(testMnemonic)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, saveAccountFromMnemonicCompletable.callCount)
         testObserver.assertValue({ it is ErrorResult })
                 .assertNoErrors()

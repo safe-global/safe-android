@@ -24,7 +24,7 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
                 .map { request.parse(it); request }
     }
 
-    override fun getBalance(address: String): Observable<Wei> =
+    override fun getBalance(address: BigInteger): Observable<Wei> =
             ethereumJsonRpcApi.post(
                     JsonRpcRequest(
                             method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
@@ -45,7 +45,7 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
                     params = arrayListOf(signedTransactionData)))
                     .map { it.result }
 
-    override fun getTransactionCount(address: String): Observable<BigInteger> =
+    override fun getTransactionCount(address: BigInteger): Observable<BigInteger> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
                     params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)))
                     .map { it.result.hexAsBigInteger() }
@@ -63,7 +63,7 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
     class TransactionParametersRequest(val estimatedGas: SubRequest<BigInteger>, val gasPrice: SubRequest<BigInteger>, val transactionCount: SubRequest<BigInteger>) :
             BulkRequest(estimatedGas, gasPrice, transactionCount)
 
-    override fun getTransactionParameters(address: String, transactionCallParams: TransactionCallParams): Observable<EthereumJsonRpcRepository.TransactionParameters> {
+    override fun getTransactionParameters(address: BigInteger, transactionCallParams: TransactionCallParams): Observable<EthereumJsonRpcRepository.TransactionParameters> {
         val request = TransactionParametersRequest(
                 SubRequest(JsonRpcRequest(id = 0, method = "eth_estimateGas", params = arrayListOf(transactionCallParams)), { it.result.hexAsBigInteger() }),
                 SubRequest(JsonRpcRequest(id = 1, method = "eth_gasPrice"), { it.result.hexAsBigInteger() }),

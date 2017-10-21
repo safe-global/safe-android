@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.data.repositories.model
 import pm.gnosis.heimdall.data.db.model.ERC20TokenDb
 import java.math.BigInteger
 
-data class ERC20Token(val address: String,
+data class ERC20Token(val address: BigInteger,
                       val name: String? = null,
                       val symbol: String? = null,
                       val decimals: BigInteger? = null,

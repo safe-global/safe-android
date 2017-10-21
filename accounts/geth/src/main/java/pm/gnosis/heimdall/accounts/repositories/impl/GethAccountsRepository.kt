@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.common.util.edit
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.generateRandomString
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,7 +32,7 @@ class GethAccountsRepository @Inject constructor(
         return Single.fromCallable {
             gethAccountManager.getActiveAccount()
         }.map {
-            Account(it.address.hex)
+            Account(it.address.hex.hexAsBigInteger())
         }
     }
 
