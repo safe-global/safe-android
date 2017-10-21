@@ -13,7 +13,6 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.util.DataResult
 import pm.gnosis.heimdall.common.util.ErrorResult
 import pm.gnosis.heimdall.common.util.Result
@@ -21,7 +20,7 @@ import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.test.utils.TestCompletable
-import pm.gnosis.utils.hexAsBigInteger
+import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class TokensViewModelTest {
@@ -29,14 +28,11 @@ class TokensViewModelTest {
     lateinit var contextMock: Context
 
     @Mock
-    lateinit var accountsRepositoryMock: AccountsRepository
-
-    @Mock
     lateinit var tokenRepositoryMock: TokenRepository
 
     private lateinit var viewModel: TokensViewModel
 
-    private val testAddress = "0x0000000000000000000000000000000000000000".hexAsBigInteger()
+    private val testAddress = BigInteger.ZERO
 
     @Before
     fun setUp() {
@@ -52,6 +48,7 @@ class TokensViewModelTest {
         viewModel.observeTokens().subscribe(testSubscriber)
 
         then(tokenRepositoryMock).should().observeTokens()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testSubscriber.assertNoErrors().assertValue(items)
     }
 
@@ -64,6 +61,7 @@ class TokensViewModelTest {
         viewModel.observeTokens().subscribe(testSubscriber)
 
         then(tokenRepositoryMock).should().observeTokens()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testSubscriber.assertNoValues().assertError(exception)
     }
 
@@ -77,6 +75,7 @@ class TokensViewModelTest {
         viewModel.loadTokenInfo(token).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(result)
     }
 
@@ -91,6 +90,7 @@ class TokensViewModelTest {
         viewModel.loadTokenInfo(token).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(result)
     }
 
@@ -106,6 +106,7 @@ class TokensViewModelTest {
 
         assertEquals(1, testCompletable.callCount)
         then(tokenRepositoryMock).should().addToken(testAddress)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(result)
     }
 
@@ -119,6 +120,7 @@ class TokensViewModelTest {
         viewModel.addToken(testAddress).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().addToken(testAddress)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(result)
     }
 
@@ -134,6 +136,7 @@ class TokensViewModelTest {
 
         assertEquals(1, testCompletable.callCount)
         then(tokenRepositoryMock).should().removeToken(testAddress)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(result)
     }
 
@@ -148,6 +151,7 @@ class TokensViewModelTest {
         viewModel.removeToken(token).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().removeToken(testAddress)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(result)
     }
 }

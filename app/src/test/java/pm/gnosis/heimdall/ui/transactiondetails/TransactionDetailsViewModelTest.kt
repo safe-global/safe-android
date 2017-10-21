@@ -38,7 +38,6 @@ import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.test.utils.TestCompletable
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
 
@@ -65,7 +64,7 @@ class TransactionDetailsViewModelTest {
 
     lateinit var viewModel: TransactionDetailsViewModel
 
-    private val testAddress = "0x0000000000000000000000000000000000000000".hexAsBigInteger()
+    private val testAddress = BigInteger.ZERO
     private val transactionId = "0000000000000000000000000000000000000000000000000000000000000000"
     private var confirmTransactionData = "0x${MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID}$transactionId"
     private var revokeTransactionData = "0x${MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID}$transactionId"
@@ -147,6 +146,7 @@ class TransactionDetailsViewModelTest {
         viewModel.observeMultisigWalletDetails().subscribe(testObserver)
 
         then(multisigRepositoryMock).should().observeMultisigWallet(testAddress)
+        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(wallet)
     }
 
@@ -161,6 +161,7 @@ class TransactionDetailsViewModelTest {
         viewModel.observeMultisigWalletDetails().subscribe(testObserver)
 
         then(multisigRepositoryMock).should().observeMultisigWallet(testAddress)
+        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception)
     }
 
@@ -191,6 +192,8 @@ class TransactionDetailsViewModelTest {
         then(ethereumJsonRpcRepositoryMock).should().getTransactionParameters(testAddress, transactionCallParams)
         then(accountsRepositoryMock).should().signTransaction(transaction)
         then(ethereumJsonRpcRepositoryMock).should().sendRawTransaction(signedTransaction)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(dataResult)
     }
 
@@ -206,6 +209,7 @@ class TransactionDetailsViewModelTest {
         viewModel.signTransaction().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(errorResult)
     }
 
@@ -225,6 +229,8 @@ class TransactionDetailsViewModelTest {
 
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(ethereumJsonRpcRepositoryMock).should().getTransactionParameters(testAddress, transactionCallParams)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(errorResult)
     }
 
@@ -253,6 +259,8 @@ class TransactionDetailsViewModelTest {
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(ethereumJsonRpcRepositoryMock).should().getTransactionParameters(testAddress, transactionCallParams)
         then(accountsRepositoryMock).should().signTransaction(transaction)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(errorResult)
     }
 
@@ -284,6 +292,8 @@ class TransactionDetailsViewModelTest {
         then(ethereumJsonRpcRepositoryMock).should().getTransactionParameters(testAddress, transactionCallParams)
         then(accountsRepositoryMock).should().signTransaction(transaction)
         then(ethereumJsonRpcRepositoryMock).should().sendRawTransaction(signedTransaction)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(errorResult)
     }
 
@@ -298,6 +308,7 @@ class TransactionDetailsViewModelTest {
         viewModel.addMultisigWallet(address, name).subscribe(testObserver)
 
         then(multisigRepositoryMock).should().addMultisigWallet(testAddress, name)
+        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(address)).assertNoErrors()
     }
 
@@ -312,6 +323,7 @@ class TransactionDetailsViewModelTest {
         viewModel.addMultisigWallet(address, name).subscribe(testObserver)
 
         then(multisigRepositoryMock).should().addMultisigWallet(testAddress, name)
+        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(ErrorResult(exception)).assertNoErrors()
     }
 
@@ -326,6 +338,7 @@ class TransactionDetailsViewModelTest {
         viewModel.loadTransactionDetails().subscribe(testObserver)
 
         then(gnosisMultisigWrapperMock).should().getTransaction(testAddress, viewModel.getMultisigTransactionId())
+        then(gnosisMultisigWrapperMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(addOwnerTransaction)
     }
 
@@ -340,6 +353,7 @@ class TransactionDetailsViewModelTest {
         viewModel.loadTransactionDetails().subscribe(testObserver)
 
         then(gnosisMultisigWrapperMock).should().getTransaction(testAddress, viewModel.getMultisigTransactionId())
+        then(gnosisMultisigWrapperMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception).assertNoValues()
     }
 
@@ -352,6 +366,7 @@ class TransactionDetailsViewModelTest {
         viewModel.loadTokenInfo(testAddress).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(token).assertNoErrors().assertTerminated()
     }
 
@@ -364,6 +379,7 @@ class TransactionDetailsViewModelTest {
         viewModel.loadTokenInfo(testAddress).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoValues().assertError(exception)
     }
 }
