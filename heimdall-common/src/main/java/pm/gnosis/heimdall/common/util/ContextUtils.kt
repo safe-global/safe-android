@@ -9,6 +9,7 @@ import android.support.annotation.PluralsRes
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 
 
@@ -47,4 +48,12 @@ fun Activity.startActivity(i: Intent, noHistory: Boolean = false) {
     }
     startActivity(i)
     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+}
+
+fun Activity.hideSoftKeyboard() {
+    val view = this.currentFocus
+    if (view != null) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
 }

@@ -6,9 +6,8 @@ import java.math.BigInteger
 data class ERC20Token(val address: BigInteger,
                       val name: String? = null,
                       val symbol: String? = null,
-                      val decimals: BigInteger? = null,
+                      val decimals: Int,
                       val verified: Boolean = false)
 
-fun ERC20Token.toDb() = ERC20TokenDb(address, name, verified)
-fun ERC20TokenDb.fromDb() = ERC20Token(address = address, name = name, verified = verified)
-
+fun ERC20Token.toDb() = ERC20TokenDb(address, name, symbol, decimals, verified)
+fun ERC20TokenDb.fromDb() = ERC20Token(address, name, symbol, decimals, verified)

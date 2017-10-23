@@ -18,10 +18,12 @@ fun BigInteger.asEthereumAddressString(): String {
 
 fun BigInteger.isValidEthereumAddress() = this <= BigInteger.valueOf(2).pow(160).minus(BigInteger.ONE)
 
-fun BigInteger.asDecimalString() = this.toString(10)
-
-fun BigDecimal.asNumberString() =
-        if (this.compareTo(BigDecimal.ZERO) == 0) "0"
+fun BigInteger.asDecimalString(): String = this.toString(10)
+fun BigDecimal.withTokenScaleOrNull(decimals: Int) = nullOnThrow { withTokenScale(decimals) }
+fun BigDecimal.withTokenScale(decimals: Int) = this.setScale(decimals).div(BigDecimal.TEN.pow(decimals))
+fun BigDecimal.stringWithNoTrailingZeroes(): String =
+        //Issue: http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6480539
+        if (this.unscaledValue() == BigInteger.ZERO) "0"
         else this.stripTrailingZeros().toPlainString()
 
 fun String.isValidEthereumAddress() = this.removePrefix("0x").length == 40 &&

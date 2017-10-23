@@ -8,13 +8,20 @@ import timber.log.Timber
 
 class WhatTheFuck(cause: Throwable) : IllegalStateException(cause)
 
-fun <D> Observable<Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)?): Disposable =
+fun <D> Observable<D>.onErrorDefaultBeforeThrow(default: D): Observable<D> =
+        onErrorResumeNext { throwable: Throwable ->
+            Observable.just(default).thenThrow(throwable)
+        }
+
+fun <D> Observable<D>.thenThrow(throwable: Throwable): Observable<D> = this.concatWith(Observable.error(throwable))
+
+fun <D> Observable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)?): Disposable =
         subscribe({ it.handle(onNext, onError) }, {
             Timber.e(WhatTheFuck(it))
             onError?.invoke(it)
         })
 
-fun <D> Flowable<Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)?): Disposable =
+fun <D> Flowable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)?): Disposable =
         subscribe({ it.handle(onNext, onError) }, {
             Timber.e(WhatTheFuck(it))
             onError?.invoke(it)

@@ -20,8 +20,8 @@ import pm.gnosis.heimdall.common.util.withArgs
 import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.utils.asNumberString
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.stringWithNoTrailingZeroes
 import javax.inject.Inject
 
 
@@ -69,7 +69,7 @@ class MultisigInfoFragment : BaseFragment() {
     }
 
     private fun updateInfo(info: MultisigWalletInfo) {
-        layout_multisig_info_balance.text = getString(R.string.x_ether, info.balance.toEther().asNumberString())
+        layout_multisig_info_balance.text = getString(R.string.x_ether, info.balance.toEther().stringWithNoTrailingZeroes())
         layout_multisig_info_confirmations.text = context.getSimplePlural(R.plurals.x_confirmations, info.requiredConfirmations)
 
         setupOwners(info.owners)

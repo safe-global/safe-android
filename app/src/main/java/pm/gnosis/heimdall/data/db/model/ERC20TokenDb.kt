@@ -14,6 +14,12 @@ data class ERC20TokenDb(
         @ColumnInfo(name = COL_NAME)
         var name: String?,
 
+        @ColumnInfo(name = COL_SYMBOL)
+        var symbol: String?,
+
+        @ColumnInfo(name = COL_DECIMALS)
+        var decimals: Int,
+
         @ColumnInfo(name = COL_VERIFIED)
         var verified: Boolean
 ) {
@@ -21,6 +27,8 @@ data class ERC20TokenDb(
         const val TABLE_NAME = "erc20_tokens"
         const val COL_ADDRESS = "address"
         const val COL_NAME = "name"
+        const val COL_SYMBOL = "symbol"
+        const val COL_DECIMALS = "decimals"
         const val COL_VERIFIED = "verified"
     }
 }

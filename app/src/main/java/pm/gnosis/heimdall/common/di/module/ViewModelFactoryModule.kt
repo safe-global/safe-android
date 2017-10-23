@@ -23,6 +23,8 @@ import pm.gnosis.heimdall.ui.security.SecurityContract
 import pm.gnosis.heimdall.ui.security.SecurityViewModel
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.splash.SplashViewModel
+import pm.gnosis.heimdall.ui.tokens.AddTokenContract
+import pm.gnosis.heimdall.ui.tokens.AddTokenViewModel
 import pm.gnosis.heimdall.ui.tokens.TokensContract
 import pm.gnosis.heimdall.ui.tokens.TokensViewModel
 import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsContract
@@ -35,6 +37,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AccountContract::class)
     abstract fun bindsAccountContract(viewModel: AccountViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AddTokenContract::class)
+    abstract fun bindsAddTokenContract(viewModel: AddTokenViewModel): ViewModel
 
     @Binds
     @IntoMap

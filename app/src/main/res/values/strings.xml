@@ -36,7 +36,7 @@
     <string name="oboarding_create_option">Create new account</string>
     <string name="restore_account">Restore Account</string>
     <string name="mnemonic">Mnemonic</string>
-    <string name="empty_verified_tokens">No tokens added</string>
+    <string name="empty_verified_tokens">No balance in any of the verified tokens</string>
     <string name="transaction_id">Transaction ID</string>
     <string name="multisig_address">Multisig Address</string>
     <string name="add_wallet">Add Wallet</string>
@@ -107,4 +107,8 @@
     <string name="token_removed_message">Removed %1s from the verified tokens</string>
     <string name="token_added_message_name">%1s is now a verified token</string>
     <string name="token_added_message">Added verified token</string>
+    <string name="add_token">Add Token</string>
+    <string name="no_token_symbol">(No token symbol)</string>
+    <string name="no_token_name">(No token name)</string>
+    <string name="token_balance">Token Balance:</string>
 </resources>
