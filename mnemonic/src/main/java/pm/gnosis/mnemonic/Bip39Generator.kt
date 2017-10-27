@@ -2,8 +2,8 @@ package pm.gnosis.mnemonic
 
 import org.spongycastle.jcajce.provider.digest.SHA256
 import org.spongycastle.jcajce.provider.symmetric.PBEPBKDF2
-import pm.gnosis.mnemonic.wordlist.BIP39_WORDLISTS
-import pm.gnosis.mnemonic.wordlist.WordList
+import pm.gnosis.mnemonic.wordlists.BIP39_WORDLISTS
+import pm.gnosis.mnemonic.wordlists.WordList
 import pm.gnosis.utils.getIndexesAllMatching
 import pm.gnosis.utils.toBinaryString
 import pm.gnosis.utils.toHexString

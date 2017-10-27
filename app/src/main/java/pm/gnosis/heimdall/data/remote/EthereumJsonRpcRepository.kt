@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.data.remote
 
 import io.reactivex.Observable
-import pm.gnosis.heimdall.data.model.TransactionCallParams
-import pm.gnosis.heimdall.data.model.Wei
+import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
+import pm.gnosis.heimdall.data.models.Wei
 import java.math.BigInteger
 
 interface EthereumJsonRpcRepository {

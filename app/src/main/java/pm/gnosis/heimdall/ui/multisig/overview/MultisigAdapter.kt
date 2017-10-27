@@ -9,8 +9,8 @@ import kotlinx.android.synthetic.main.layout_multisig_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
-import pm.gnosis.heimdall.common.util.shareExternalText
-import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
+import pm.gnosis.heimdall.common.utils.shareExternalText
+import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject

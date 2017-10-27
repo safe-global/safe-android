@@ -8,6 +8,7 @@ android {
 
     defaultConfig {
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io"))
+        buildConfigField javaTypes.STRING, "IPFS_GATEWAY_URL", asString(getKey("IPFS_GATEWAY_URL", "https://ipfs.infura.io"))
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
         buildConfigField javaTypes.BOOLEAN, "PRIVATE_TEST_NET", javaTypes.FALSE
     }
@@ -30,6 +31,5 @@ dependencies {
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 
-    //https://github.com/square/moshi/issues/315
     implementation "com.squareup.moshi:moshi:$versions.moshi"
 }

@@ -4,9 +4,9 @@ import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.functions.Function
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.util.mapToResult
+import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
-import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
+import pm.gnosis.heimdall.data.repositories.models.MultisigWalletInfo
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import java.math.BigInteger
 import javax.inject.Inject

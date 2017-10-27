@@ -6,8 +6,8 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.util.Result
-import pm.gnosis.heimdall.common.util.mapToResult
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import javax.inject.Inject

@@ -7,7 +7,7 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_tokens_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.data.repositories.model.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.nullOnThrow

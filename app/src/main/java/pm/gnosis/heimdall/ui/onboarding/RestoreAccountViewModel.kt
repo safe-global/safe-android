@@ -7,12 +7,12 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.util.Result
-import pm.gnosis.heimdall.common.util.mapToResult
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.main.MainActivity
 import pm.gnosis.mnemonic.*
-import pm.gnosis.mnemonic.wordlist.BIP39_WORDLISTS
+import pm.gnosis.mnemonic.wordlists.BIP39_WORDLISTS
 import javax.inject.Inject
 
 class RestoreAccountViewModel @Inject constructor(

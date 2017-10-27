@@ -5,7 +5,7 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
-import pm.gnosis.heimdall.data.db.model.ERC20TokenDb
+import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import java.math.BigInteger
 
 @Dao

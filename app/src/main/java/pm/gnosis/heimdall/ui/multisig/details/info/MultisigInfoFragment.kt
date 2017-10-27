@@ -10,14 +10,14 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_multisig_info.*
 import kotlinx.android.synthetic.main.layout_multisig_owner.view.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.component.ApplicationComponent
-import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.build
-import pm.gnosis.heimdall.common.util.getSimplePlural
-import pm.gnosis.heimdall.common.util.subscribeForResult
-import pm.gnosis.heimdall.common.util.withArgs
-import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
+import pm.gnosis.heimdall.common.di.components.ApplicationComponent
+import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.build
+import pm.gnosis.heimdall.common.utils.getSimplePlural
+import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.common.utils.withArgs
+import pm.gnosis.heimdall.data.repositories.models.MultisigWalletInfo
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.hexAsBigInteger
@@ -31,13 +31,13 @@ class MultisigInfoFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.setup(arguments.getString(ARGUMENT_MULTISIG_ADDRESS).hexAsBigInteger())
+        viewModel.setup(arguments!!.getString(ARGUMENT_MULTISIG_ADDRESS).hexAsBigInteger())
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View?
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
             = layoutInflater?.inflate(R.layout.layout_multisig_info, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         disposables += layout_multisig_info_swipe_refresh.refreshes()
                 .map { true }
@@ -56,7 +56,7 @@ class MultisigInfoFragment : BaseFragment() {
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
                 .applicationComponent(component)
-                .viewModule(ViewModule(context))
+                .viewModule(ViewModule(context!!))
                 .build().inject(this)
     }
 
@@ -70,7 +70,7 @@ class MultisigInfoFragment : BaseFragment() {
 
     private fun updateInfo(info: MultisigWalletInfo) {
         layout_multisig_info_balance.text = getString(R.string.x_ether, info.balance.toEther().stringWithNoTrailingZeroes())
-        layout_multisig_info_confirmations.text = context.getSimplePlural(R.plurals.x_confirmations, info.requiredConfirmations)
+        layout_multisig_info_confirmations.text = context!!.getSimplePlural(R.plurals.x_confirmations, info.requiredConfirmations)
 
         setupOwners(info.owners)
     }

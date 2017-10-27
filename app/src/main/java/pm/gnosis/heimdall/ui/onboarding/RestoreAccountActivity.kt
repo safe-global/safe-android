@@ -11,10 +11,10 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_restore_account.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.component.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.module.ViewModule
-import pm.gnosis.heimdall.common.util.startActivity
-import pm.gnosis.heimdall.common.util.subscribeForResult
+import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.startActivity
+import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import timber.log.Timber

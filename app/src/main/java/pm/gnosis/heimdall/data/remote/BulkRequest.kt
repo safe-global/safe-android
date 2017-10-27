@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.data.remote
 
-import pm.gnosis.heimdall.data.model.JsonRpcRequest
-import pm.gnosis.heimdall.data.model.JsonRpcResult
+import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
 
 open class BulkRequest {
     private val callMap = HashMap<Int, SubRequest<out Any?>>()

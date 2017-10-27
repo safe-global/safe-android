@@ -2,8 +2,7 @@ package pm.gnosis.heimdall.data.remote
 
 import io.reactivex.Observable
 import pm.gnosis.heimdall.app.core.BuildConfig
-import pm.gnosis.heimdall.data.model.JsonRpcRequest
-import pm.gnosis.heimdall.data.model.JsonRpcResult
+import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
 import retrofit2.http.Body
 import retrofit2.http.POST
 

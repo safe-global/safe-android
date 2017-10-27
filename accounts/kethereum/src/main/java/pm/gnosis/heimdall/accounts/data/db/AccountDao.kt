@@ -2,7 +2,7 @@ package pm.gnosis.heimdall.accounts.data.db
 
 import android.arch.persistence.room.*
 import io.reactivex.Single
-import pm.gnosis.heimdall.accounts.repositories.impl.models.db.AccountDb
+import pm.gnosis.heimdall.accounts.repositories.impls.models.db.AccountDb
 
 @Dao
 interface AccountDao {

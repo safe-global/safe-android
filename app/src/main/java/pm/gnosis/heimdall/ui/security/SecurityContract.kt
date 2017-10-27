@@ -2,7 +2,7 @@ package pm.gnosis.heimdall.ui.security
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
-import pm.gnosis.heimdall.common.util.Result
+import pm.gnosis.heimdall.common.utils.Result
 
 
 abstract class SecurityContract : ViewModel() {

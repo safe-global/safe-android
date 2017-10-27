@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.accounts.di
 import dagger.Binds
 import dagger.Module
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.accounts.repositories.impl.KethereumAccountsRepository
+import pm.gnosis.heimdall.accounts.repositories.impls.KethereumAccountsRepository
 
 @Module
 abstract class AccountsBindingModule {

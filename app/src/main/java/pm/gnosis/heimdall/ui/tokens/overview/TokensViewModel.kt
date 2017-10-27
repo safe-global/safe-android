@@ -8,10 +8,10 @@ import io.reactivex.subjects.PublishSubject
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.util.Result
-import pm.gnosis.heimdall.common.util.mapToResult
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.model.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.utils.scanToAdapterDataResult

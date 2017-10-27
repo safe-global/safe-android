@@ -11,12 +11,12 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.common.util.DataResult
-import pm.gnosis.heimdall.common.util.ErrorResult
-import pm.gnosis.heimdall.common.util.Result
-import pm.gnosis.heimdall.data.model.Wei
+import pm.gnosis.heimdall.common.utils.DataResult
+import pm.gnosis.heimdall.common.utils.ErrorResult
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.data.models.Wei
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
-import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
+import pm.gnosis.heimdall.data.repositories.models.MultisigWalletInfo
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import java.math.BigInteger

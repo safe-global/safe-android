@@ -7,9 +7,9 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.util.QrCodeGenerator
-import pm.gnosis.heimdall.common.util.mapToResult
-import pm.gnosis.heimdall.data.model.Wei
+import pm.gnosis.heimdall.common.utils.QrCodeGenerator
+import pm.gnosis.heimdall.common.utils.mapToResult
+import pm.gnosis.heimdall.data.models.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import javax.inject.Inject

@@ -3,9 +3,8 @@ package pm.gnosis.heimdall.ui.tokens.addtoken
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.common.util.Result
-import pm.gnosis.heimdall.data.repositories.model.ERC20Token
-import java.math.BigInteger
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 
 abstract class AddTokenContract : ViewModel() {
     abstract fun addToken(): Single<Result<Unit>>

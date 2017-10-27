@@ -59,10 +59,9 @@ object Base58Utils {
         return encode(addChecksum(data))
     }
 
-    const val ZERO_BYTE = 0.toByte()
-    const val ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-    const val LEADER = ALPHABET.get(0)
+    private const val ZERO_BYTE = 0.toByte()
+    private const val ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+    private const val LEADER = ALPHABET.get(0)
 
-    val BASE = BigInteger.valueOf(ALPHABET.length.toLong())
-    val ALPHABET_MAP = ALPHABET.associateBy { ALPHABET.indexOf(it) }
+    private val BASE = BigInteger.valueOf(ALPHABET.length.toLong())!!
 }

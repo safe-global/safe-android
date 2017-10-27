@@ -3,8 +3,8 @@ package pm.gnosis.heimdall.data.repositories
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
-import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
+import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
+import pm.gnosis.heimdall.data.repositories.models.MultisigWalletInfo
 import java.math.BigInteger
 
 

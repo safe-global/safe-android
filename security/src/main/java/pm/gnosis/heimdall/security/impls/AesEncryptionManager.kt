@@ -8,7 +8,7 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.base.TrackingActivityLifecycleCallbacks
-import pm.gnosis.heimdall.common.util.edit
+import pm.gnosis.heimdall.common.utils.edit
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.exceptions.DeviceIsLockedException
 import pm.gnosis.utils.generateRandomString

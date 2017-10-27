@@ -15,10 +15,10 @@ import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.util.DataResult
-import pm.gnosis.heimdall.common.util.ErrorResult
-import pm.gnosis.heimdall.common.util.Result
-import pm.gnosis.heimdall.common.util.ZxingIntentIntegrator
+import pm.gnosis.heimdall.common.utils.DataResult
+import pm.gnosis.heimdall.common.utils.ErrorResult
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.security.SecurityViewModelTest

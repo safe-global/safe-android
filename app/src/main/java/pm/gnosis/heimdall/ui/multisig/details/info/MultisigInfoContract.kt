@@ -2,8 +2,8 @@ package pm.gnosis.heimdall.ui.multisig.details.info
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
-import pm.gnosis.heimdall.common.util.Result
-import pm.gnosis.heimdall.data.repositories.model.MultisigWalletInfo
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.data.repositories.models.MultisigWalletInfo
 import java.math.BigInteger
 
 
