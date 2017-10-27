@@ -11,7 +11,7 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoFragment
 import pm.gnosis.heimdall.ui.tokens.overview.TokensFragment
-import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.asEthereumAddressString
 
 
 class MultisigDetailsActivity : BaseActivity() {
@@ -67,7 +67,7 @@ class MultisigDetailsActivity : BaseActivity() {
         fun createIntent(context: Context, multisig: MultisigWallet): Intent {
             val intent = Intent(context, MultisigDetailsActivity::class.java)
             intent.putExtra(EXTRA_MULTISIG_NAME, multisig.name)
-            intent.putExtra(EXTRA_MULTISIG_ADDRESS, multisig.address.toString(16))
+            intent.putExtra(EXTRA_MULTISIG_ADDRESS, multisig.address.asEthereumAddressString())
             return intent
         }
     }
