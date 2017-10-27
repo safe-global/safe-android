@@ -12,7 +12,8 @@ import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountActivity
 import pm.gnosis.heimdall.ui.security.SecurityActivity
 import pm.gnosis.heimdall.ui.splash.SplashActivity
-import pm.gnosis.heimdall.ui.tokens.TokensFragment
+import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenActivity
+import pm.gnosis.heimdall.ui.tokens.overview.TokensFragment
 import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity
 
 @ForView
@@ -31,6 +32,7 @@ interface ViewComponent {
 
     // Activities
 
+    fun inject(activity: AddTokenActivity)
     fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: MainActivity)
     fun inject(activity: RestoreAccountActivity)

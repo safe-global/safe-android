@@ -7,19 +7,49 @@
     android:background="?attr/selectableItemBackground"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/layout_tokens_item_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/layout_tokens_item_delete"
         android:layout_toStartOf="@+id/layout_tokens_item_delete"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:textSize="18sp"
-        tools:text="Gnosis" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/layout_tokens_item_name"
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="Gnosis" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Content"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/token_balance" />
+
+            <TextView
+                android:id="@+id/layout_tokens_item_balance"
+                style="@style/Content"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/gnosis_blue"
+                tools:text="15" />
+
+        </LinearLayout>
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/layout_tokens_item_delete"

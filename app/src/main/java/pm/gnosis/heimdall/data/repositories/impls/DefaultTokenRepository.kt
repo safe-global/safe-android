@@ -1,10 +1,17 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
+import android.content.Context
+import com.squareup.moshi.Json
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.common.PreferencesManager
+import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.util.ERC20
 import pm.gnosis.heimdall.common.util.edit
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
@@ -15,9 +22,10 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.data.repositories.model.fromDb
-import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigIntegerOrNull
-import pm.gnosis.utils.toAlfaNumericAscii
+import pm.gnosis.heimdall.data.repositories.model.toDb
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.*
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,7 +34,9 @@ import javax.inject.Singleton
 class DefaultTokenRepository @Inject constructor(
         gnosisAuthenticatorDb: GnosisAuthenticatorDb,
         private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
-        private val preferencesManager: PreferencesManager
+        private val preferencesManager: PreferencesManager,
+        private val moshi: Moshi,
+        @ApplicationContext private val context: Context
 ) : TokenRepository {
     private val erc20TokenDao = gnosisAuthenticatorDb.erc20TokenDao()
 
@@ -36,6 +46,7 @@ class DefaultTokenRepository @Inject constructor(
                     .map { it.map { it.fromDb() } }
 
     override fun loadTokenInfo(contractAddress: BigInteger): Observable<ERC20Token> {
+        if (!contractAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(contractAddress))
         val request = TokenInfoRequest(
                 BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.NAME_METHOD_ID}").callRequest(0),
                         { it.result.hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim() }),
@@ -43,12 +54,29 @@ class DefaultTokenRepository @Inject constructor(
                         { it.result.hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim() }),
                 BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.DECIMALS_METHOD_ID}").callRequest(2),
                         { it.result.hexAsBigIntegerOrNull() }))
-        return ethereumJsonRpcRepository.bulk(request).map { ERC20Token(contractAddress, it.name.value, it.symbol.value, it.decimals.value) }
+        return ethereumJsonRpcRepository.bulk(request).map { ERC20Token(contractAddress, it.name.value, it.symbol.value, it.decimals.value?.toInt() ?: 0) }
     }
 
-    override fun addToken(address: BigInteger, name: String?): Completable = Completable.fromCallable {
-        val token = ERC20TokenDb(address, name, false)
-        erc20TokenDao.insertERC20Token(token)
+    override fun loadTokenBalances(ofAddress: BigInteger, erC20Tokens: List<ERC20Token>): Observable<List<Pair<ERC20Token, BigInteger?>>> {
+        if (!ofAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(ofAddress))
+        val requests = TokenBalancesRequest(
+                erC20Tokens.mapIndexed { index, token ->
+                    BulkRequest.SubRequest(TransactionCallParams(
+                            to = token.address.asEthereumAddressString(),
+                            data = StandardToken.BalanceOf.encode(Solidity.Address(ofAddress))).callRequest(index),
+                            { nullOnThrow { StandardToken.BalanceOf.decode(it.result).param0.value } })
+                }.toList())
+
+
+        return ethereumJsonRpcRepository.bulk(requests).map {
+            it.balancesRequest.mapIndexed { index, subRequest ->
+                erC20Tokens[index] to subRequest.value
+            }.toList()
+        }
+    }
+
+    override fun addToken(erC20Token: ERC20Token): Completable = Completable.fromCallable {
+        erc20TokenDao.insertERC20Token(erC20Token.toDb())
     }.subscribeOn(Schedulers.io())
 
     override fun removeToken(address: BigInteger): Completable = Completable.fromCallable {
@@ -58,14 +86,27 @@ class DefaultTokenRepository @Inject constructor(
     override fun setup(): Completable = Completable.fromCallable {
         val finishedTokensSetup = preferencesManager.prefs.getBoolean(PreferencesManager.FINISHED_TOKENS_SETUP, false)
         if (!finishedTokensSetup) {
-            val tokens = ERC20.verifiedTokens.entries.map {
-                ERC20TokenDb(it.key, it.value, true)
-            }.toList()
-            erc20TokenDao.insertERC20Tokens(tokens)
+            val verifiedTokensType = Types.newParameterizedType(List::class.java, VerifiedTokenJson::class.java)
+            val adapter = moshi.adapter<List<VerifiedTokenJson>>(verifiedTokensType)
+            val json = context.resources.openRawResource(R.raw.verified_tokens).bufferedReader().use { it.readText() }
+            val verifiedTokens = adapter.fromJson(json)
+
+            verifiedTokens.map {
+                ERC20TokenDb(address = it.address, name = it.name, symbol = it.symbol,
+                        decimals = it.decimals, verified = true)
+            }.let { erc20TokenDao.insertERC20Tokens(it) }
+
             preferencesManager.prefs.edit { putBoolean(PreferencesManager.FINISHED_TOKENS_SETUP, true) }
         }
     }
 
+    private data class VerifiedTokenJson(@Json(name = "address") val address: BigInteger,
+                                         @Json(name = "name") val name: String,
+                                         @Json(name = "symbol") val symbol: String,
+                                         @Json(name = "decimals") val decimals: Int)
+
     class TokenInfoRequest(val name: SubRequest<String?>, val symbol: SubRequest<String?>, val decimals: SubRequest<BigInteger?>) :
             BulkRequest(name, symbol, decimals)
+
+    class TokenBalancesRequest(val balancesRequest: List<BulkRequest.SubRequest<BigInteger?>>) : BulkRequest(balancesRequest)
 }

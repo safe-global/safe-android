@@ -359,7 +359,7 @@ class TransactionDetailsViewModelTest {
 
     @Test
     fun getTokenInfo() {
-        val token = ERC20Token(testAddress)
+        val token = ERC20Token(testAddress, decimals = 0)
         val testObserver = TestObserver.create<ERC20Token>()
         given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(Observable.just(token))
 

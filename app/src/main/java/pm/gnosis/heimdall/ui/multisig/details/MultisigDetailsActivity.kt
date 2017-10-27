@@ -10,7 +10,7 @@ import pm.gnosis.heimdall.data.repositories.model.MultisigWallet
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoFragment
-import pm.gnosis.heimdall.ui.tokens.TokensFragment
+import pm.gnosis.heimdall.ui.tokens.overview.TokensFragment
 
 
 class MultisigDetailsActivity : BaseActivity() {

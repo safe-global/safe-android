@@ -25,7 +25,7 @@ import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.asNumberString
+import pm.gnosis.utils.stringWithNoTrailingZeroes
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -84,7 +84,7 @@ class AccountFragment : BaseFragment() {
 
     private fun onAccountBalance(wei: Wei) {
         val etherBalance = wei.toEther()
-        layout_account_balance.text = getString(R.string.x_ether, etherBalance.asNumberString())
+        layout_account_balance.text = getString(R.string.x_ether, etherBalance.stringWithNoTrailingZeroes())
     }
 
     private fun onAccountBalanceLoading(isLoading: Boolean) {

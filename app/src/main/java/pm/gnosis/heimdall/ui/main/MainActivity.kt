@@ -12,7 +12,7 @@ import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewFragment
-import pm.gnosis.heimdall.ui.tokens.TokensFragment
+import pm.gnosis.heimdall.ui.tokens.overview.TokensFragment
 
 class MainActivity : BaseActivity() {
 
