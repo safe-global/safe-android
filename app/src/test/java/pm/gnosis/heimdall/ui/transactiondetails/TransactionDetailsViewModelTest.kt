@@ -24,14 +24,15 @@ import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.data.contracts.GnosisMultisigTransaction
-import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
-import pm.gnosis.heimdall.data.contracts.MultisigAddOwner
 import pm.gnosis.heimdall.data.models.TransactionDetails
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
+import pm.gnosis.heimdall.data.remote.models.TransactionParameters
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
+import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
+import pm.gnosis.heimdall.data.repositories.impls.GnosisMultisigTransaction
+import pm.gnosis.heimdall.data.repositories.impls.MultisigAddOwner
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
@@ -57,7 +58,7 @@ class TransactionDetailsViewModelTest {
     lateinit var multisigRepositoryMock: MultisigRepository
 
     @Mock
-    lateinit var gnosisMultisigWrapperMock: GnosisMultisigWrapper
+    lateinit var gnosisMultisigWrapperMock: TransactionDetailRepository
 
     @Mock
     lateinit var tokenRepositoryMock: TokenRepository
@@ -170,7 +171,7 @@ class TransactionDetailsViewModelTest {
         val account = Account(testAddress)
         val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         val transactionCallParams = TransactionCallParams(to = transactionDetails.address.asEthereumAddressString(), data = transactionDetails.data)
-        val params = EthereumJsonRpcRepository.TransactionParameters(gas = BigInteger.ZERO, gasPrice = BigInteger.ZERO, nonce = BigInteger.ZERO)
+        val params = TransactionParameters(gas = BigInteger.ZERO, gasPrice = BigInteger.ZERO, nonce = BigInteger.ZERO)
         val transaction = Transaction(nonce = params.nonce,
                 gasPrice = params.gasPrice,
                 startGas = params.gas,
@@ -239,7 +240,7 @@ class TransactionDetailsViewModelTest {
         val account = Account(testAddress)
         val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         val transactionCallParams = TransactionCallParams(to = transactionDetails.address.asEthereumAddressString(), data = transactionDetails.data)
-        val params = EthereumJsonRpcRepository.TransactionParameters(gas = BigInteger.ZERO, gasPrice = BigInteger.ZERO, nonce = BigInteger.ZERO)
+        val params = TransactionParameters(gas = BigInteger.ZERO, gasPrice = BigInteger.ZERO, nonce = BigInteger.ZERO)
         val transaction = Transaction(nonce = params.nonce,
                 gasPrice = params.gasPrice,
                 startGas = params.gas,
@@ -269,7 +270,7 @@ class TransactionDetailsViewModelTest {
         val account = Account(testAddress)
         val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         val transactionCallParams = TransactionCallParams(to = transactionDetails.address.asEthereumAddressString(), data = transactionDetails.data)
-        val params = EthereumJsonRpcRepository.TransactionParameters(gas = BigInteger.ZERO, gasPrice = BigInteger.ZERO, nonce = BigInteger.ZERO)
+        val params = TransactionParameters(gas = BigInteger.ZERO, gasPrice = BigInteger.ZERO, nonce = BigInteger.ZERO)
         val transaction = Transaction(nonce = params.nonce,
                 gasPrice = params.gasPrice,
                 startGas = params.gas,
@@ -333,11 +334,11 @@ class TransactionDetailsViewModelTest {
         val addOwnerTransaction = MultisigAddOwner(testAddress)
         val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         viewModel.setTransaction(transactionDetails).subscribe()
-        given(gnosisMultisigWrapperMock.getTransaction(MockUtils.any(), MockUtils.any())).willReturn(Observable.just(addOwnerTransaction))
+        given(gnosisMultisigWrapperMock.loadTransactionDetails(MockUtils.any(), MockUtils.any())).willReturn(Observable.just(addOwnerTransaction))
 
         viewModel.loadTransactionDetails().subscribe(testObserver)
 
-        then(gnosisMultisigWrapperMock).should().getTransaction(testAddress, viewModel.getMultisigTransactionId())
+        then(gnosisMultisigWrapperMock).should().loadTransactionDetails(testAddress, viewModel.getMultisigTransactionId())
         then(gnosisMultisigWrapperMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(addOwnerTransaction)
     }
@@ -348,11 +349,11 @@ class TransactionDetailsViewModelTest {
         val exception = Exception()
         val transactionDetails = TransactionDetails(testAddress, data = confirmTransactionData)
         viewModel.setTransaction(transactionDetails).subscribe()
-        given(gnosisMultisigWrapperMock.getTransaction(MockUtils.any(), MockUtils.any())).willReturn(Observable.error(exception))
+        given(gnosisMultisigWrapperMock.loadTransactionDetails(MockUtils.any(), MockUtils.any())).willReturn(Observable.error(exception))
 
         viewModel.loadTransactionDetails().subscribe(testObserver)
 
-        then(gnosisMultisigWrapperMock).should().getTransaction(testAddress, viewModel.getMultisigTransactionId())
+        then(gnosisMultisigWrapperMock).should().loadTransactionDetails(testAddress, viewModel.getMultisigTransactionId())
         then(gnosisMultisigWrapperMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception).assertNoValues()
     }

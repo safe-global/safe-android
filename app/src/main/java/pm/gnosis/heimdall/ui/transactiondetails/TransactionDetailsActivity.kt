@@ -28,9 +28,9 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
-import pm.gnosis.heimdall.data.contracts.*
 import pm.gnosis.heimdall.data.models.TransactionDetails
 import pm.gnosis.heimdall.data.models.Wei
+import pm.gnosis.heimdall.data.repositories.impls.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
 import pm.gnosis.heimdall.ui.base.BaseActivity

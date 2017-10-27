@@ -10,13 +10,13 @@ import pm.gnosis.heimdall.accounts.base.models.Transaction
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
-import pm.gnosis.heimdall.data.contracts.GnosisMultisigTransaction
-import pm.gnosis.heimdall.data.contracts.GnosisMultisigWrapper
 import pm.gnosis.heimdall.data.models.TransactionDetails
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
+import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
+import pm.gnosis.heimdall.data.repositories.impls.GnosisMultisigTransaction
 import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
 import pm.gnosis.utils.*
 import java.math.BigInteger
@@ -25,7 +25,7 @@ import javax.inject.Inject
 class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
                                                       private val accountsRepository: AccountsRepository,
                                                       private val multisigRepository: MultisigRepository,
-                                                      private val gnosisMultisigWrapper: GnosisMultisigWrapper,
+                                                      private val gnosisMultisigWrapper: TransactionDetailRepository,
                                                       private val tokenRepository: TokenRepository) : TransactionDetailsContract() {
     private lateinit var transactionDetails: TransactionDetails
     private lateinit var transactionType: MultisigTransactionType
@@ -87,7 +87,7 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
             multisigRepository.addMultisigWallet(address, name).andThen(Single.just(address)).mapToResult()
 
     override fun loadTransactionDetails(): Observable<GnosisMultisigTransaction> =
-            gnosisMultisigWrapper.getTransaction(transactionDetails.address, transactionId)
+            gnosisMultisigWrapper.loadTransactionDetails(transactionDetails.address, transactionId)
 
     override fun loadTokenInfo(address: BigInteger) = tokenRepository.loadTokenInfo(address)
 }

@@ -8,6 +8,7 @@ import pm.gnosis.heimdall.data.remote.BulkRequest
 import pm.gnosis.heimdall.data.remote.BulkRequest.SubRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.heimdall.data.remote.models.TransactionParameters
 import pm.gnosis.utils.hexAsBigInteger
 import timber.log.Timber
 import java.math.BigInteger
@@ -63,12 +64,12 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
     class TransactionParametersRequest(val estimatedGas: SubRequest<BigInteger>, val gasPrice: SubRequest<BigInteger>, val transactionCount: SubRequest<BigInteger>) :
             BulkRequest(estimatedGas, gasPrice, transactionCount)
 
-    override fun getTransactionParameters(address: BigInteger, transactionCallParams: TransactionCallParams): Observable<EthereumJsonRpcRepository.TransactionParameters> {
+    override fun getTransactionParameters(address: BigInteger, transactionCallParams: TransactionCallParams): Observable<TransactionParameters> {
         val request = TransactionParametersRequest(
                 SubRequest(JsonRpcRequest(id = 0, method = "eth_estimateGas", params = arrayListOf(transactionCallParams)), { it.result.hexAsBigInteger() }),
                 SubRequest(JsonRpcRequest(id = 1, method = "eth_gasPrice"), { it.result.hexAsBigInteger() }),
                 SubRequest(JsonRpcRequest(id = 2, method = "eth_getTransactionCount", params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)), { it.result.hexAsBigInteger() })
         )
-        return bulk(request).map { EthereumJsonRpcRepository.TransactionParameters(it.estimatedGas.value!!, it.gasPrice.value!!, it.transactionCount.value!!) }
+        return bulk(request).map { TransactionParameters(it.estimatedGas.value!!, it.gasPrice.value!!, it.transactionCount.value!!) }
     }
 }

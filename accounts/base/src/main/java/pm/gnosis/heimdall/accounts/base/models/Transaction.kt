@@ -5,8 +5,12 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.*
 
-data class Transaction(val nonce: BigInteger, val gasPrice: BigInteger, private val startGas: BigInteger,
-                       val to: BigInteger, val value: BigInteger, val data: ByteArray,
+data class Transaction(val nonce: BigInteger,
+                       val gasPrice: BigInteger,
+                       private val startGas: BigInteger,
+                       val to: BigInteger,
+                       val value: BigInteger,
+                       val data: ByteArray,
                        val chainId: Int = AccountsRepository.CHAIN_ID_ANY) {
     val adjustedStartGas: BigInteger by lazy {
         BigDecimal.valueOf(1.1).multiply(BigDecimal(startGas)).setScale(0, BigDecimal.ROUND_UP).unscaledValue()

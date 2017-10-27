@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.data.remote
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.models.Wei
+import pm.gnosis.heimdall.data.remote.models.TransactionParameters
 import java.math.BigInteger
 
 interface EthereumJsonRpcRepository {
@@ -33,5 +34,4 @@ interface EthereumJsonRpcRepository {
 
     fun getTransactionParameters(address: BigInteger, transactionCallParams: TransactionCallParams): Observable<TransactionParameters>
 
-    data class TransactionParameters(val gas: BigInteger, val gasPrice: BigInteger, val nonce: BigInteger)
 }
