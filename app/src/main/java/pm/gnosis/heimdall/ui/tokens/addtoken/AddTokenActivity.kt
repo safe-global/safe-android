@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.tokens
+package pm.gnosis.heimdall.ui.tokens.addtoken
 
 import android.content.Context
 import android.content.Intent
@@ -19,10 +19,10 @@ import pm.gnosis.heimdall.common.di.module.ViewModule
 import pm.gnosis.heimdall.common.util.hideSoftKeyboard
 import pm.gnosis.heimdall.common.util.subscribeForResult
 import pm.gnosis.heimdall.common.util.toast
-import pm.gnosis.heimdall.data.exceptions.InvalidAddressException
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
@@ -85,7 +85,6 @@ class AddTokenActivity : BaseActivity() {
     }
 
     private fun onTokenInfoError(throwable: Throwable) {
-        Timber.e(throwable)
         if (throwable is InvalidAddressException) {
             layout_add_token_address_input_layout.error = getString(R.string.invalid_ethereum_address)
         } else {
@@ -106,7 +105,6 @@ class AddTokenActivity : BaseActivity() {
     }
 
     private fun onTokenAddError(throwable: Throwable) {
-        Timber.e(throwable)
         errorSnackbar(layout_add_token_coordinator, throwable)
     }
 

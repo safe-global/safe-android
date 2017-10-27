@@ -18,8 +18,8 @@ import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
 import pm.gnosis.heimdall.ui.security.SecurityContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
-import pm.gnosis.heimdall.ui.tokens.AddTokenContract
-import pm.gnosis.heimdall.ui.tokens.TokensContract
+import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenContract
+import pm.gnosis.heimdall.ui.tokens.overview.TokensContract
 import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsContract
 
 @Module

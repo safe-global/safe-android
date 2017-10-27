@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.tokens
+package pm.gnosis.heimdall.ui.tokens.overview
 
 import android.view.LayoutInflater
 import android.view.View

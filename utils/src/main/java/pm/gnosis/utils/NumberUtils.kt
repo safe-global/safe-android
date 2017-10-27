@@ -1,7 +1,19 @@
 package pm.gnosis.utils
 
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigDecimal
 import java.math.BigInteger
+
+fun String.hexAsEthereumAddressOrNull() = nullOnThrow { this.hexStringToByteArray() }
+fun String.hexAsEthereumAddress(): BigInteger {
+    try {
+        val bigInt = hexAsBigInteger()
+        if (bigInt.isValidEthereumAddress()) return bigInt
+        else throw InvalidAddressException(this)
+    } catch (e: Exception) {
+        throw InvalidAddressException(this)
+    }
+}
 
 fun String.hexAsBigInteger() = BigInteger(this.removePrefix("0x"), 16)
 fun String.hexAsBigIntegerOrNull() = nullOnThrow { this.hexAsBigInteger() }
@@ -12,7 +24,7 @@ fun ByteArray.asBigInteger() = BigInteger(1, this)
 
 fun BigInteger.asEthereumAddressStringOrNull() = nullOnThrow { this.asEthereumAddressString() }
 fun BigInteger.asEthereumAddressString(): String {
-    if (!isValidEthereumAddress()) throw IllegalArgumentException("Invalid ethereum address")
+    if (!isValidEthereumAddress()) throw InvalidAddressException(this)
     return "0x${this.toString(16).padStart(40, '0')}"
 }
 

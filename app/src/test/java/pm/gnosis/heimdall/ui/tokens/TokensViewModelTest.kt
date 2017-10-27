@@ -25,6 +25,10 @@ import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.test.utils.TestCompletable
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.tokens.overview.TokensContract
+import pm.gnosis.heimdall.ui.tokens.overview.TokensViewModel
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -49,6 +53,7 @@ class TokensViewModelTest {
     @Before
     fun setUp() {
         viewModel = TokensViewModel(contextMock, accountsRepository, tokenRepositoryMock)
+        given(contextMock.getString(anyInt())).willReturn("")
     }
 
     @Test
@@ -64,14 +69,14 @@ class TokensViewModelTest {
         val tokensWithBalancesMapped = arrayListOf(TokensContract.ERC20TokenWithBalance(token, balance))
         given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.just(items))
         given(accountsRepository.loadActiveAccount()).willReturn(Single.just(account))
-        given(tokenRepositoryMock.loadTokensBalance(MockUtils.any(), anyList())).willReturn(Observable.just(tokensWithBalances))
+        given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), anyList())).willReturn(Observable.just(tokensWithBalances))
 
         viewModel.observeLoadingStatus().subscribe(loadingObserver)
         viewModel.observeTokens(refreshEvents).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().observeTokens()
         then(accountsRepository).should().loadActiveAccount()
-        then(tokenRepositoryMock).should().loadTokensBalance(account.address, items)
+        then(tokenRepositoryMock).should().loadTokenBalances(account.address, items)
         then(accountsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValueCount(2)
@@ -100,13 +105,14 @@ class TokensViewModelTest {
         val tokensWithBalances = arrayListOf(token to balance)
         val tokensWithBalancesMapped = arrayListOf(TokensContract.ERC20TokenWithBalance(token, balance))
         given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.just(items))
-        given(tokenRepositoryMock.loadTokensBalance(MockUtils.any(), anyList())).willReturn(Observable.just(tokensWithBalances))
+        given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), anyList())).willReturn(Observable.just(tokensWithBalances))
 
+        viewModel.setup(testAddress)
         viewModel.observeLoadingStatus().subscribe(loadingObserver)
-        viewModel.observeTokens(refreshEvents, testAddress).subscribe(testObserver)
+        viewModel.observeTokens(refreshEvents).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().observeTokens()
-        then(tokenRepositoryMock).should().loadTokensBalance(account.address, items)
+        then(tokenRepositoryMock).should().loadTokenBalances(account.address, items)
         then(accountsRepository).shouldHaveZeroInteractions()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValueCount(2)
@@ -186,14 +192,14 @@ class TokensViewModelTest {
         val errorResult = ErrorResult<List<TokensContract.ERC20TokenWithBalance>>(exception)
         given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.just(items))
         given(accountsRepository.loadActiveAccount()).willReturn(Single.just(account))
-        given(tokenRepositoryMock.loadTokensBalance(MockUtils.any(), anyList())).willReturn(Observable.error(exception))
+        given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), anyList())).willReturn(Observable.error(exception))
 
         viewModel.observeLoadingStatus().subscribe(loadingObserver)
         viewModel.observeTokens(refreshEvents).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().observeTokens()
         then(accountsRepository).should().loadActiveAccount()
-        then(tokenRepositoryMock).should().loadTokensBalance(account.address, items)
+        then(tokenRepositoryMock).should().loadTokenBalances(account.address, items)
         then(accountsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValueCount(2)
@@ -225,8 +231,7 @@ class TokensViewModelTest {
     @Test
     fun loadTokenInfoError() {
         val token = ERC20Token(testAddress, decimals = 0)
-        val exception = Exception()
-        val result = ErrorResult<ERC20Token>(exception)
+        val exception = InvalidAddressException()
         val testObserver = TestObserver<Result<ERC20Token>>()
         given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(Observable.error(exception))
 
@@ -234,7 +239,7 @@ class TokensViewModelTest {
 
         then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
-        testObserver.assertNoErrors().assertValue(result)
+        testObserver.assertNoErrors().assertValue { it is ErrorResult && it.error is LocalizedException }
     }
 
     @Test

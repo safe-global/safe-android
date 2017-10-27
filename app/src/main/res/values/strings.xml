@@ -111,4 +111,5 @@
     <string name="no_token_symbol">(No token symbol)</string>
     <string name="no_token_name">(No token name)</string>
     <string name="token_balance">Token Balance:</string>
+    <string name="no_token_loaded">There is no token to be added</string>
 </resources>

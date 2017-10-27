@@ -3,11 +3,11 @@ package pm.gnosis.heimdall.data.contracts
 import io.reactivex.Observable
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.data.exceptions.InvalidAddressException
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.model.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.utils.*
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -16,7 +16,6 @@ import pm.gnosis.heimdall.common.util.ERC20
 import pm.gnosis.heimdall.common.util.edit
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.model.ERC20TokenDb
-import pm.gnosis.heimdall.data.exceptions.InvalidAddressException
 import pm.gnosis.heimdall.data.model.TransactionCallParams
 import pm.gnosis.heimdall.data.remote.BulkRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
@@ -26,6 +25,7 @@ import pm.gnosis.heimdall.data.repositories.model.fromDb
 import pm.gnosis.heimdall.data.repositories.model.toDb
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.*
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -46,6 +46,7 @@ class DefaultTokenRepository @Inject constructor(
                     .map { it.map { it.fromDb() } }
 
     override fun loadTokenInfo(contractAddress: BigInteger): Observable<ERC20Token> {
+        if (!contractAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(contractAddress))
         val request = TokenInfoRequest(
                 BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.NAME_METHOD_ID}").callRequest(0),
                         { it.result.hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim() }),
@@ -56,17 +57,7 @@ class DefaultTokenRepository @Inject constructor(
         return ethereumJsonRpcRepository.bulk(request).map { ERC20Token(contractAddress, it.name.value, it.symbol.value, it.decimals.value?.toInt() ?: 0) }
     }
 
-    override fun loadTokenBalance(ofAddress: BigInteger, contractAddress: BigInteger): Observable<BigInteger> {
-        return if (!ofAddress.isValidEthereumAddress() || !contractAddress.isValidEthereumAddress())
-            Observable.error(InvalidAddressException())
-        else ethereumJsonRpcRepository
-                .call(TransactionCallParams(
-                        to = contractAddress.asEthereumAddressString(),
-                        data = StandardToken.BalanceOf.encode(Solidity.Address(ofAddress))))
-                .map { StandardToken.BalanceOf.decode(it).param0.value }
-    }
-
-    override fun loadTokensBalance(ofAddress: BigInteger, erC20Tokens: List<ERC20Token>): Observable<List<Pair<ERC20Token, BigInteger?>>> {
+    override fun loadTokenBalances(ofAddress: BigInteger, erC20Tokens: List<ERC20Token>): Observable<List<Pair<ERC20Token, BigInteger?>>> {
         if (!ofAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(ofAddress))
         val requests = TokenBalancesRequest(
                 erC20Tokens.mapIndexed { index, token ->
@@ -109,10 +100,10 @@ class DefaultTokenRepository @Inject constructor(
         }
     }
 
-    data class VerifiedTokenJson(@Json(name = "address") val address: BigInteger,
-                                 @Json(name = "name") val name: String,
-                                 @Json(name = "symbol") val symbol: String,
-                                 @Json(name = "decimals") val decimals: Int)
+    private data class VerifiedTokenJson(@Json(name = "address") val address: BigInteger,
+                                         @Json(name = "name") val name: String,
+                                         @Json(name = "symbol") val symbol: String,
+                                         @Json(name = "decimals") val decimals: Int)
 
     class TokenInfoRequest(val name: SubRequest<String?>, val symbol: SubRequest<String?>, val decimals: SubRequest<BigInteger?>) :
             BulkRequest(name, symbol, decimals)

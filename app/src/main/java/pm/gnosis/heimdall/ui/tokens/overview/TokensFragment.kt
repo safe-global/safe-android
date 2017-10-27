@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.tokens
+package pm.gnosis.heimdall.ui.tokens.overview
 
 import android.app.Activity
 import android.content.Intent
@@ -24,8 +24,10 @@ import pm.gnosis.heimdall.common.util.*
 import pm.gnosis.heimdall.data.repositories.model.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
@@ -42,9 +44,12 @@ class TokensFragment : BaseFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        val addressArgument = arguments?.getString(ARGUMENT_ADDRESS)
         layout_tokens_fab.visibility =
-                if (arguments?.getString(ARGUMENT_ADDRESS).isNullOrBlank()) View.VISIBLE
+                if (addressArgument.isNullOrBlank()) View.VISIBLE
                 else View.GONE
+        viewModel.setup(addressArgument?.hexAsBigInteger())
 
         layout_tokens_list.layoutManager = LinearLayoutManager(context)
         layout_tokens_list.adapter = adapter
@@ -108,7 +113,6 @@ class TokensFragment : BaseFragment() {
     }
 
     private fun onTokensListError(throwable: Throwable) {
-        Timber.e(throwable)
         errorSnackbar(layout_tokens_coordinator_layout, throwable)
     }
 

@@ -23,7 +23,7 @@ fun <D> Observable<Result<List<D>>>.scanToAdapterDataResult(itemCheck: ((D, D) -
             }
         }).map { it.result }
 
-fun <D> scanner(itemCheck: (D, D) -> Boolean, contentCheck: ((D, D) -> Boolean)?): (Adapter.Data<D>, List<D>) -> Adapter.Data<D> {
+private fun <D> scanner(itemCheck: (D, D) -> Boolean, contentCheck: ((D, D) -> Boolean)?): (Adapter.Data<D>, List<D>) -> Adapter.Data<D> {
     return { data, newEntries ->
         val diff = DiffUtil.calculateDiff(SimpleDiffCallback(data.entries, newEntries, itemCheck, contentCheck))
         Adapter.Data(data.id, newEntries, diff)
