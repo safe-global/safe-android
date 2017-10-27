@@ -8,12 +8,13 @@ import org.ethereum.geth.BigInt
 import org.ethereum.geth.Geth
 import org.ethereum.geth.KeyStore
 import pm.gnosis.crypto.KeyGenerator
+import pm.gnosis.heimdall.accounts.base.exceptions.InvalidTransactionParams
 import pm.gnosis.heimdall.accounts.base.models.Account
-import pm.gnosis.heimdall.accounts.base.models.Transaction
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.utils.edit
 import pm.gnosis.mnemonic.Bip39
+import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.generateRandomString
 import pm.gnosis.utils.hexAsBigInteger
@@ -39,13 +40,18 @@ class GethAccountsRepository @Inject constructor(
     override fun signTransaction(transaction: Transaction): Single<String> {
         return Single.fromCallable {
             val account = gethAccountManager.getActiveAccount()
+
+            if (!transaction.signable()) {
+                throw InvalidTransactionParams()
+            }
+
             val tx = Geth.newTransaction(
-                    transaction.nonce.toLong(),
-                    Address(transaction.to.asEthereumAddressString()),
-                    BigInt(transaction.value.toLong()),
-                    BigInt(transaction.adjustedStartGas.toLong()),
-                    BigInt(transaction.gasPrice.toLong()),
-                    transaction.data)
+                    transaction.nonce!!.toLong(),
+                    Address(transaction.address.asEthereumAddressString()),
+                    BigInt(transaction.value?.toLong() ?: 0),
+                    BigInt(transaction.adjustedGas.toLong()),
+                    BigInt(transaction.gasPrice!!.toLong()),
+                    transaction.data?.toByteArray() ?: ByteArray(0))
 
 
             val signed = gethKeyStore.signTxPassphrase(

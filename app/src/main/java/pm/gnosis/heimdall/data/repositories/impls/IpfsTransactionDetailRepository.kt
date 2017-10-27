@@ -5,10 +5,10 @@ import pm.gnosis.heimdall.DailyLimitException
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
-import pm.gnosis.heimdall.data.models.Wei
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
+import pm.gnosis.models.Wei
 import pm.gnosis.utils.*
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger

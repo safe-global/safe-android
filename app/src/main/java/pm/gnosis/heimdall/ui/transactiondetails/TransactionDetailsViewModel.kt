@@ -6,11 +6,9 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
-import pm.gnosis.heimdall.accounts.base.models.Transaction
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
-import pm.gnosis.heimdall.data.models.TransactionDetails
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
@@ -18,6 +16,7 @@ import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
 import pm.gnosis.heimdall.data.repositories.impls.GnosisMultisigTransaction
 import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
+import pm.gnosis.models.Transaction
 import pm.gnosis.utils.*
 import java.math.BigInteger
 import javax.inject.Inject
@@ -27,25 +26,25 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
                                                       private val multisigRepository: MultisigRepository,
                                                       private val gnosisMultisigWrapper: TransactionDetailRepository,
                                                       private val tokenRepository: TokenRepository) : TransactionDetailsContract() {
-    private lateinit var transactionDetails: TransactionDetails
+    private lateinit var transaction: Transaction
     private lateinit var transactionType: MultisigTransactionType
     private lateinit var transactionId: BigInteger
 
-    override fun setTransaction(transactionDetails: TransactionDetails?): Completable =
+    override fun setTransaction(transaction: Transaction?): Completable =
             Completable.fromCallable {
-                if (transactionDetails == null) throw IllegalStateException("Transaction is null")
-                if (!transactionDetails.address.isValidEthereumAddress()) throw IllegalStateException("Invalid wallet address")
-                this.transactionDetails = transactionDetails
+                if (transaction == null) throw IllegalStateException("Transaction is null")
+                if (!transaction.address.isValidEthereumAddress()) throw IllegalStateException("Invalid wallet address")
+                this.transaction = transaction
 
-                val data = transactionDetails.data ?: throw IllegalStateException("Transaction doesn't have any data")
+                val data = transaction.data ?: throw IllegalStateException("Transaction doesn't have any data")
                 when {
                     data.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID) -> {
-                        val argument = transactionDetails.data!!.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID)
+                        val argument = transaction.data!!.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID)
                         transactionId = MultiSigWalletWithDailyLimit.ConfirmTransaction.decodeArguments(argument).transactionid.value
                         transactionType = ConfirmMultisigTransaction()
                     }
                     data.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID) -> {
-                        val argument = transactionDetails.data!!.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID)
+                        val argument = transaction.data!!.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID)
                         transactionId = MultiSigWalletWithDailyLimit.RevokeConfirmation.decodeArguments(argument).transactionid.value
                         transactionType = RevokeMultisigTransaction()
                     }
@@ -58,27 +57,21 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
 
     override fun getMultisigTransactionId() = transactionId
 
-    override fun getTransaction() = transactionDetails
+    override fun getTransaction() = transaction
 
     override fun observeMultisigWalletDetails(): Flowable<MultisigWallet> =
-            multisigRepository.observeMultisigWallet(transactionDetails.address)
+            multisigRepository.observeMultisigWallet(transaction.address)
 
     override fun signTransaction(): Observable<Result<String>> =
             accountsRepository.loadActiveAccount()
                     .flatMapObservable {
                         ethereumJsonRpcRepository.getTransactionParameters(it.address,
                                 TransactionCallParams(
-                                        to = transactionDetails.address.asEthereumAddressString(),
-                                        data = transactionDetails.data))
+                                        to = transaction.address.asEthereumAddressString(),
+                                        data = transaction.data))
                     }
                     .flatMapSingle {
-                        val tx = Transaction(nonce = it.nonce,
-                                gasPrice = it.gasPrice,
-                                startGas = it.gas,
-                                to = transactionDetails.address,
-                                value = transactionDetails.value?.value ?: BigInteger("0"),
-                                data = transactionDetails.data?.hexToByteArray() ?: ByteArray(0))
-                        accountsRepository.signTransaction(tx)
+                        accountsRepository.signTransaction(transaction.copy(nonce = it.nonce, gas = it.gas, gasPrice = it.gasPrice))
                     }
                     .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
                     .mapToResult()
@@ -87,7 +80,7 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
             multisigRepository.addMultisigWallet(address, name).andThen(Single.just(address)).mapToResult()
 
     override fun loadTransactionDetails(): Observable<GnosisMultisigTransaction> =
-            gnosisMultisigWrapper.loadTransactionDetails(transactionDetails.address, transactionId)
+            gnosisMultisigWrapper.loadTransactionDetails(transaction.address, transactionId)
 
     override fun loadTokenInfo(address: BigInteger) = tokenRepository.loadTokenInfo(address)
 }

@@ -25,7 +25,9 @@ android {
 }
 
 dependencies {
+    implementation project(":accounts:base")
     implementation project(":heimdall-common")
+    api project(":models")
     implementation project(":utils")
 
     //Kotlin

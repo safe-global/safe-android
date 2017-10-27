@@ -28,12 +28,13 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
-import pm.gnosis.heimdall.data.models.TransactionDetails
-import pm.gnosis.heimdall.data.models.Wei
 import pm.gnosis.heimdall.data.repositories.impls.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.models.Transaction
+import pm.gnosis.models.TransactionParcelable
+import pm.gnosis.models.Wei
 import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigDecimal
@@ -41,9 +42,9 @@ import javax.inject.Inject
 
 class TransactionDetailsActivity : BaseActivity() {
     companion object {
-        fun createIntent(context: Context, transactionDetails: TransactionDetails): Intent {
+        fun createIntent(context: Context, transaction: Transaction): Intent {
             val intent = Intent(context, TransactionDetailsActivity::class.java)
-            intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transactionDetails)
+            intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transaction.parcelable())
             return intent
         }
 
@@ -65,7 +66,8 @@ class TransactionDetailsActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += viewModel.setTransaction(intent.extras?.getParcelable(TRANSACTION_EXTRA))
+        val transaction = intent.extras?.getParcelable<TransactionParcelable>(TRANSACTION_EXTRA)?.transaction
+        disposables += viewModel.setTransaction(transaction)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onComplete = this::onValidTransactionDetails, onError = this::onInvalidTransactionDetails)
     }

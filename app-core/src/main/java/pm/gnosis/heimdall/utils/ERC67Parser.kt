@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.utils
 
-import pm.gnosis.heimdall.data.models.TransactionDetails
-import pm.gnosis.heimdall.data.models.Wei
+import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
 import pm.gnosis.utils.decimalAsBigInteger
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.nullOnThrow
@@ -17,7 +17,7 @@ class ERC67Parser {
         const val NONCE_KEY = "nonce="
         const val SEPARATOR = "?"
 
-        fun parse(string: String): TransactionDetails? {
+        fun parse(string: String): Transaction? {
             if (string.startsWith(SCHEMA)) {
                 val noSchema = string.removePrefix(SCHEMA)
                 val tokens = noSchema.split(SEPARATOR)
@@ -39,7 +39,7 @@ class ERC67Parser {
                     }
                 }
                 address?.let {
-                    return TransactionDetails(it, value, gas, gasPrice, data, nonce)
+                    return Transaction(it, value, gas, gasPrice, data, nonce)
                 }
             }
             return null

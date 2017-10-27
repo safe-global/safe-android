@@ -6,16 +6,17 @@ import org.kethereum.functions.rlp.encode
 import org.kethereum.functions.rlp.toRLP
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.utils.Sha3Utils
-import pm.gnosis.heimdall.accounts.base.models.Transaction
+import pm.gnosis.models.Transaction
+import java.math.BigInteger
 
 fun Transaction.rlp(signature: ECDSASignature? = null): ByteArray {
     val items = ArrayList<RLPElement>()
-    items.add(nonce.toRLP())
-    items.add(gasPrice.toRLP())
-    items.add(adjustedStartGas.toRLP())
-    items.add(to.toRLP())
-    items.add(value.toRLP())
-    items.add(data.toRLP())
+    items.add(nonce!!.toRLP())
+    items.add(gasPrice!!.toRLP())
+    items.add(adjustedGas.toRLP())
+    items.add(address.toRLP())
+    items.add((value?.value ?: BigInteger.ZERO).toRLP())
+    items.add((data ?: "").toRLP())
 
     if (signature != null) {
         items.add(adjustV(signature.v).toRLP())

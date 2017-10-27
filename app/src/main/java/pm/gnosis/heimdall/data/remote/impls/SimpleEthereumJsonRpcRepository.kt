@@ -1,14 +1,14 @@
 package pm.gnosis.heimdall.data.remote.impls
 
 import io.reactivex.Observable
-import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
-import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
-import pm.gnosis.heimdall.data.models.Wei
 import pm.gnosis.heimdall.data.remote.BulkRequest
 import pm.gnosis.heimdall.data.remote.BulkRequest.SubRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
+import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.remote.models.TransactionParameters
+import pm.gnosis.models.Wei
 import pm.gnosis.utils.hexAsBigInteger
 import timber.log.Timber
 import java.math.BigInteger

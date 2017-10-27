@@ -5,12 +5,10 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    implementation project(":mnemonic")
-    implementation project(":models")
+    implementation project(":utils")
 
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 
-    //Rx
-    implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
+
 }

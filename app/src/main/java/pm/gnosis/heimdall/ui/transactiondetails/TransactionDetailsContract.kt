@@ -7,14 +7,14 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.impls.GnosisMultisigTransaction
-import pm.gnosis.heimdall.data.models.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
+import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
 abstract class TransactionDetailsContract : ViewModel() {
-    abstract fun setTransaction(transactionDetails: TransactionDetails?): Completable
-    abstract fun getTransaction(): TransactionDetails
+    abstract fun setTransaction(transaction: Transaction?): Completable
+    abstract fun getTransaction(): Transaction
     abstract fun getMultisigTransactionId(): BigInteger
     abstract fun getMultisigTransactionType(): MultisigTransactionType
 

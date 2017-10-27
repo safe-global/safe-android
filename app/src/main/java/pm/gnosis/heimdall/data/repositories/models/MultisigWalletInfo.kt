@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.models
 
-import pm.gnosis.heimdall.data.models.Wei
+import pm.gnosis.models.Wei
 
 
 data class MultisigWalletInfo(
