@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_multisig_details_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -21,7 +23,16 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:title="Multisig Wallet Name" />
+            app:title="Multisig Wallet Name">
+
+            <ProgressBar
+                android:id="@+id/layout_multisig_details_progress_bar"
+                android:layout_width="22dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                tools:visibility="visible" />
+
+        </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/layout_multisig_details_tabbar"
