@@ -11,6 +11,8 @@ import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.account.AccountViewModel
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
+import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsContract
+import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsViewModel
 import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoContract
 import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoViewModel
 import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewContract
@@ -55,8 +57,13 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(MultisigDetailsContract::class)
+    abstract fun bindsMultisigDetailsContract(viewModel: MultisigDetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(MultisigInfoContract::class)
-    abstract fun bindsMultisigDetailsContract(viewModel: MultisigInfoViewModel): ViewModel
+    abstract fun bindsMultisigInfoContract(viewModel: MultisigInfoViewModel): ViewModel
 
     @Binds
     @IntoMap

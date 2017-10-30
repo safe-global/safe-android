@@ -70,7 +70,9 @@
     <string name="tab_title_transactions">Transactions</string>
     <string name="tab_title_tokens">Tokens</string>
     <string name="address_clipboard_success">Address copied to clipboard</string>
-    <string name="share_address">Share your address</string>
+    <string name="share_your_address">Share your address</string>
+    <string name="share_address">Share address</string>
+    <string name="share_multisig_address">Share %1$s address</string>
     <string name="x_ether">%s Ξ</string>
     <plurals name="x_confirmations">
         <item quantity="one">%s Confirmation</item>
@@ -112,4 +114,6 @@
     <string name="no_token_name">(No token name)</string>
     <string name="token_balance">Token Balance:</string>
     <string name="no_token_loaded">There is no token to be added</string>
+    <string name="qrcode">QRCode</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
 </resources>

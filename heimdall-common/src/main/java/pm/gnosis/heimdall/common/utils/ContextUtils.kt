@@ -28,9 +28,10 @@ fun snackbar(view: View, @StringRes textId: Int, duration: Int = Snackbar.LENGTH
 fun Context.getSimplePlural(@PluralsRes stringId: Int, quantity: Long): String =
         resources.getQuantityString(stringId, quantity.toInt(), quantity)
 
-fun Context.copyToClipboard(label: String, text: String) {
+fun Context.copyToClipboard(label: String, text: String, onCopy: (String) -> Unit = {}) {
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     clipboard.primaryClip = ClipData.newPlainText(label, text)
+    onCopy(text)
 }
 
 fun Context.shareExternalText(text: String, dialogTitle: String = "") {
@@ -40,6 +41,9 @@ fun Context.shareExternalText(text: String, dialogTitle: String = "") {
     sendIntent.type = "text/plain"
     startActivity(Intent.createChooser(sendIntent, dialogTitle))
 }
+
+fun Context.shareExternalText(text: String, @StringRes stringId: Int) =
+        shareExternalText(text, getString(stringId))
 
 fun Activity.startActivity(i: Intent, noHistory: Boolean = false) {
     if (noHistory) {

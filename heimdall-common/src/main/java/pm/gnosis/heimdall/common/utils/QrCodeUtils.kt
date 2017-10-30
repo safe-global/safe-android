@@ -7,21 +7,20 @@ import android.support.v4.app.Fragment
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
-import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface QrCodeGenerator {
-    fun generateQrCode(contents: String, width: Int = 512, height: Int = 512): Observable<Bitmap>
+    fun generateQrCode(contents: String, width: Int = 512, height: Int = 512): Single<Bitmap>
     fun generateQrCodeSync(contents: String, width: Int, height: Int): Bitmap
 }
 
 @Singleton
 class ZxingQrCodeGenerator @Inject constructor() : QrCodeGenerator {
-
-    override fun generateQrCode(contents: String, width: Int, height: Int) =
-            Observable.fromCallable {
+    override fun generateQrCode(contents: String, width: Int, height: Int): Single<Bitmap> =
+            Single.fromCallable {
                 generateQrCodeSync(contents, width, height)
             }
                     .subscribeOn(Schedulers.computation())

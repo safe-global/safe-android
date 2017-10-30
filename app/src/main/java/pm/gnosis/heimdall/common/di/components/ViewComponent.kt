@@ -6,6 +6,7 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.account.AccountFragment
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.main.MainActivity
+import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsActivity
 import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoFragment
 import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewFragment
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
@@ -35,6 +36,7 @@ interface ViewComponent {
     fun inject(activity: AddTokenActivity)
     fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: MainActivity)
+    fun inject(activity: MultisigDetailsActivity)
     fun inject(activity: RestoreAccountActivity)
     fun inject(activity: SecurityActivity)
     fun inject(activity: SplashActivity)

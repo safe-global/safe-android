@@ -46,7 +46,7 @@ class AccountFragment : BaseFragment() {
         }
 
         layout_account_share.setOnClickListener {
-            context!!.shareExternalText(layout_account_address.text.toString(), getString(R.string.share_address))
+            context!!.shareExternalText(layout_account_address.text.toString(), getString(R.string.share_your_address))
         }
 
         // We delay the initial value, else the progress bar is not visible
@@ -61,7 +61,7 @@ class AccountFragment : BaseFragment() {
                 .subscribeForResult(this::onAccountBalance, this::handleError)
 
         disposables += layout_account_qrcode.clicks()
-                .flatMap { generateQrCode(layout_account_address.text.toString()) }
+                .flatMapSingle { generateQrCode(layout_account_address.text.toString()) }
                 .subscribeForResult(this::onQrCode, this::handleError)
     }
 

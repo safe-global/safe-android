@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
+import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsContract
 import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoContract
 import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
@@ -35,48 +36,51 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesAuthenticateContract(provider: ViewModelProvider) = provider[AuthenticateContract::class.java]!!
+    fun providesAuthenticateContract(provider: ViewModelProvider) = provider[AuthenticateContract::class.java]
 
     @Provides
     @ForView
-    fun providesAddTokenContract(provider: ViewModelProvider) = provider[AddTokenContract::class.java]!!
+    fun providesAddTokenContract(provider: ViewModelProvider) = provider[AddTokenContract::class.java]
 
     @Provides
     @ForView
-    fun providesAccountContract(provider: ViewModelProvider) = provider[AccountContract::class.java]!!
+    fun providesAccountContract(provider: ViewModelProvider) = provider[AccountContract::class.java]
 
     @Provides
     @ForView
-    fun providesGenerateMnemonicContract(provider: ViewModelProvider) = provider[GenerateMnemonicContract::class.java]!!
+    fun providesGenerateMnemonicContract(provider: ViewModelProvider) = provider[GenerateMnemonicContract::class.java]
 
     @Provides
     @ForView
-    fun providesMultisigDetailsContract(provider: ViewModelProvider) = provider[MultisigInfoContract::class.java]!!
+    fun providesMultisigDetailsContract(provider: ViewModelProvider) = provider[MultisigDetailsContract::class.java]
 
     @Provides
     @ForView
-    fun providesMultisigOverviewContract(provider: ViewModelProvider) = provider[MultisigOverviewContract::class.java]!!
+    fun providesMultisigInfoContract(provider: ViewModelProvider) = provider[MultisigInfoContract::class.java]
 
     @Provides
     @ForView
-    fun providesRestoreAccountContract(provider: ViewModelProvider) = provider[RestoreAccountContract::class.java]!!
+    fun providesMultisigOverviewContract(provider: ViewModelProvider) = provider[MultisigOverviewContract::class.java]
 
     @Provides
     @ForView
-    fun providesSecurityContract(provider: ViewModelProvider) = provider[SecurityContract::class.java]!!
+    fun providesRestoreAccountContract(provider: ViewModelProvider) = provider[RestoreAccountContract::class.java]
 
     @Provides
     @ForView
-    fun providesSplashContract(provider: ViewModelProvider) = provider[SplashContract::class.java]!!
+    fun providesSecurityContract(provider: ViewModelProvider) = provider[SecurityContract::class.java]
 
     @Provides
     @ForView
-
-    fun providesTokensContract(provider: ViewModelProvider) = provider[TokensContract::class.java]!!
+    fun providesSplashContract(provider: ViewModelProvider) = provider[SplashContract::class.java]
 
     @Provides
     @ForView
-    fun providesTransactionDetailsContract(provider: ViewModelProvider) = provider[TransactionDetailsContract::class.java]!!
+    fun providesTokensContract(provider: ViewModelProvider) = provider[TokensContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesTransactionDetailsContract(provider: ViewModelProvider) = provider[TransactionDetailsContract::class.java]
 
     @Provides
     @ForView
