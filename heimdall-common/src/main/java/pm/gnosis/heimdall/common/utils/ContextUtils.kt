@@ -17,6 +17,10 @@ fun Context.toast(text: CharSequence, duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, text, duration).show()
 }
 
+fun Context.toast(@StringRes text: Int, duration: Int = Toast.LENGTH_LONG) {
+    Toast.makeText(this, text, duration).show()
+}
+
 fun snackbar(view: View, text: CharSequence, duration: Int = Snackbar.LENGTH_LONG) {
     Snackbar.make(view, text, duration).show()
 }

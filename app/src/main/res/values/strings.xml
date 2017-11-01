@@ -116,4 +116,12 @@
     <string name="no_token_loaded">There is no token to be added</string>
     <string name="qrcode">QRCode</string>
     <string name="copy_to_clipboard">Copy to clipboard</string>
+    <string name="wallet_remove_error">Could not remove wallet from this device</string>
+    <string name="wallet_remove_success">Removed %1s from this device</string>
+    <string name="wallet_name_change_success">Changed multisig name</string>
+    <string name="wallet_name_change_error">Could not change multisig name</string>
+    <string name="remove_wallet_dialog_title">Remove multisig wallet?</string>
+    <string name="remove_wallet_dialog_description">Do you want to remove %1s from your device?</string>
+    <string name="change_name">Change name</string>
+    <string name="this_wallet">this wallet</string>
 </resources>
