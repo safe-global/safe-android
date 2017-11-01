@@ -13,7 +13,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
@@ -136,7 +136,7 @@ class AuthenticateViewModelTest {
 
     @Test
     fun checkResultConfirmAction() {
-        val intent = testIntent(createTransactionString(data = MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID.addAddressPrefix()))
+        val intent = testIntent(createTransactionString(data = GnosisSafe.ConfirmTransaction.METHOD_ID.addAddressPrefix()))
         val observer = createObserver()
 
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
@@ -150,7 +150,7 @@ class AuthenticateViewModelTest {
 
     @Test
     fun checkResultRevokeAction() {
-        val intent = testIntent(createTransactionString(data = MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID.addAddressPrefix()))
+        val intent = testIntent(createTransactionString(data = GnosisSafe.RevokeConfirmation.METHOD_ID.addAddressPrefix()))
         val observer = createObserver()
 
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))

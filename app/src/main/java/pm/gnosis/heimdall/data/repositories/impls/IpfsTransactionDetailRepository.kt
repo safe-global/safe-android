@@ -5,14 +5,14 @@ import okio.ByteString
 import pm.gnosis.crypto.utils.Base58Utils
 import pm.gnosis.heimdall.DailyLimitException
 import pm.gnosis.heimdall.GnosisSafe
-import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
 import pm.gnosis.models.Wei
-import pm.gnosis.utils.*
+import pm.gnosis.utils.isSolidityMethod
+import pm.gnosis.utils.removeSolidityMethodPrefix
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,24 +36,24 @@ class IpfsTransactionDetailRepository @Inject constructor(
         val innerData = description.data
         return when {
             innerData.isSolidityMethod(GnosisSafe.ReplaceOwner.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ReplaceOwner.METHOD_ID)
-                MultiSigWalletWithDailyLimit.ReplaceOwner.decodeArguments(arguments).let { SafeReplaceOwner(it.owner.value, it.newowner.value) }
+                val arguments = innerData.removeSolidityMethodPrefix(GnosisSafe.ReplaceOwner.METHOD_ID)
+                GnosisSafe.ReplaceOwner.decodeArguments(arguments).let { SafeReplaceOwner(it.oldowner.value, it.newowner.value) }
             }
             innerData.isSolidityMethod(GnosisSafe.AddOwner.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.AddOwner.METHOD_ID)
-                MultiSigWalletWithDailyLimit.AddOwner.decodeArguments(arguments).let { SafeAddOwner(it.owner.value) }
+                val arguments = innerData.removeSolidityMethodPrefix(GnosisSafe.AddOwner.METHOD_ID)
+                GnosisSafe.AddOwner.decodeArguments(arguments).let { SafeAddOwner(it.owner.value) }
             }
             innerData.isSolidityMethod(GnosisSafe.RemoveOwner.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.RemoveOwner.METHOD_ID)
-                MultiSigWalletWithDailyLimit.RemoveOwner.decodeArguments(arguments).let { SafeRemoveOwner(it.owner.value) }
+                val arguments = innerData.removeSolidityMethodPrefix(GnosisSafe.RemoveOwner.METHOD_ID)
+                GnosisSafe.RemoveOwner.decodeArguments(arguments).let { SafeRemoveOwner(it.owner.value) }
             }
             innerData.isSolidityMethod(GnosisSafe.ChangeRequired.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ChangeRequirement.METHOD_ID)
-                MultiSigWalletWithDailyLimit.ChangeRequirement.decodeArguments(arguments).let { SafeChangeConfirmations(it._required.value) }
+                val arguments = innerData.removeSolidityMethodPrefix(GnosisSafe.ChangeRequired.METHOD_ID)
+                GnosisSafe.ChangeRequired.decodeArguments(arguments).let { SafeChangeConfirmations(it._required.value) }
             }
             innerData.isSolidityMethod(DailyLimitException.ChangeDailyLimit.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ChangeDailyLimit.METHOD_ID)
-                MultiSigWalletWithDailyLimit.ChangeDailyLimit.decodeArguments(arguments).let { SafeChangeDailyLimit(it._dailylimit.value) }
+                val arguments = innerData.removeSolidityMethodPrefix(DailyLimitException.ChangeDailyLimit.METHOD_ID)
+                DailyLimitException.ChangeDailyLimit.decodeArguments(arguments).let { SafeChangeDailyLimit(it.dailylimit.value) }
             }
             innerData.isSolidityMethod(StandardToken.Transfer.METHOD_ID) -> {
                 val arguments = innerData.removeSolidityMethodPrefix(StandardToken.Transfer.METHOD_ID)
