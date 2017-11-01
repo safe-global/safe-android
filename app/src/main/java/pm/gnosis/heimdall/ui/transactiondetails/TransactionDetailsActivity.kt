@@ -42,13 +42,16 @@ import javax.inject.Inject
 
 class TransactionDetailsActivity : BaseActivity() {
     companion object {
-        fun createIntent(context: Context, transaction: Transaction): Intent {
+
+        private const val TRANSACTION_EXTRA = "extra.parcelable.transaction"
+        private const val DESCRIPTION_EXTRA = "extra.string.description"
+
+        fun createIntent(context: Context, transaction: Transaction, descriptionHash: String?): Intent {
             val intent = Intent(context, TransactionDetailsActivity::class.java)
-            intent.putExtra(TransactionDetailsActivity.TRANSACTION_EXTRA, transaction.parcelable())
+            intent.putExtra(TRANSACTION_EXTRA, transaction.parcelable())
+            intent.putExtra(DESCRIPTION_EXTRA, descriptionHash)
             return intent
         }
-
-        const val TRANSACTION_EXTRA = "extra.transaction"
     }
 
     @Inject lateinit var viewModel: TransactionDetailsContract
@@ -67,7 +70,8 @@ class TransactionDetailsActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         val transaction = intent.extras?.getParcelable<TransactionParcelable>(TRANSACTION_EXTRA)?.transaction
-        disposables += viewModel.setTransaction(transaction)
+        val descriptionHash = intent.extras?.getString(DESCRIPTION_EXTRA)
+        disposables += viewModel.setTransaction(transaction, descriptionHash)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onComplete = this::onValidTransactionDetails, onError = this::onInvalidTransactionDetails)
     }
@@ -80,13 +84,13 @@ class TransactionDetailsActivity : BaseActivity() {
         disposables += transactionDetailsDisposable()
         disposables += multisigWalletDetailsDisposable()
 
-        when (viewModel.getMultisigTransactionType()) {
+        when (viewModel.getTransactionType()) {
             is ConfirmMultisigTransaction -> layout_transaction_details_button.text = getString(R.string.confirm_transaction)
             is RevokeMultisigTransaction -> layout_transaction_details_button.text = getString(R.string.revoke_transaction)
         }
 
-        layout_transaction_details_transaction_id.text = getString(R.string.transaction_number,
-                viewModel.getMultisigTransactionId().asDecimalString() ?: "-")
+        val multisigTransactionHash = viewModel.getTransactionHash().subSequence(0, 6)
+        layout_transaction_details_transaction_id.text = getString(R.string.transaction_number, multisigTransactionHash)
         layout_transaction_details_wallet_address.text = viewModel.getTransaction().address.asEthereumAddressString()
     }
 
@@ -114,19 +118,19 @@ class TransactionDetailsActivity : BaseActivity() {
         snackbar(layout_transaction_details_coordinator, getString(R.string.transaction_details_error))
     }
 
-    private fun onTransactionDetails(multiSigTransaction: GnosisMultisigTransaction) {
+    private fun onTransactionDetails(multiSigTransaction: TransactionDetails) {
         when (multiSigTransaction) {
-            is MultisigTokenTransfer -> onTokenTransfer(multiSigTransaction)
-            is MultisigTransfer -> onTransfer(multiSigTransaction)
-            is MultisigChangeDailyLimit -> onChangeDailyLimit(multiSigTransaction)
-            is MultisigReplaceOwner -> onReplaceOwner(multiSigTransaction)
-            is MultisigAddOwner -> onAddOwner(multiSigTransaction)
-            is MultisigRemoveOwner -> onRemoveOwner(multiSigTransaction)
-            is MultisigChangeConfirmations -> onChangeConfirmations(multiSigTransaction)
+            is TokenTransfer -> onTokenTransfer(multiSigTransaction)
+            is EtherTransfer -> onTransfer(multiSigTransaction)
+            is SafeChangeDailyLimit -> onChangeDailyLimit(multiSigTransaction)
+            is SafeReplaceOwner -> onReplaceOwner(multiSigTransaction)
+            is SafeAddOwner -> onAddOwner(multiSigTransaction)
+            is SafeRemoveOwner -> onRemoveOwner(multiSigTransaction)
+            is SafeChangeConfirmations -> onChangeConfirmations(multiSigTransaction)
         }
     }
 
-    private fun onTransfer(transaction: MultisigTransfer) {
+    private fun onTransfer(transaction: EtherTransfer) {
         val view = layoutInflater.inflate(R.layout.layout_transaction_details_transfer, layout_transaction_details_coordinator, false)
         layout_transaction_details_action_container.addView(view)
         view.layout_transaction_details_transfer_amount.text = transaction.value.toEther().stripTrailingZeros().toPlainString()
@@ -134,31 +138,31 @@ class TransactionDetailsActivity : BaseActivity() {
         view.layout_transaction_details_transfer_recipient.text = transaction.address.asEthereumAddressString()
     }
 
-    private fun onAddOwner(transaction: MultisigAddOwner) {
+    private fun onAddOwner(transaction: SafeAddOwner) {
         val view = layoutInflater.inflate(R.layout.layout_transaction_details_add_owner, layout_transaction_details_coordinator, false)
         layout_transaction_details_action_container.addView(view)
         view.layout_transaction_details_add_owner_address.text = transaction.owner.asEthereumAddressString()
     }
 
-    private fun onRemoveOwner(transaction: MultisigRemoveOwner) {
+    private fun onRemoveOwner(transaction: SafeRemoveOwner) {
         val view = layoutInflater.inflate(R.layout.layout_transaction_details_remove_owner, layout_transaction_details_coordinator, false)
         layout_transaction_details_action_container.addView(view)
         view.layout_transaction_details_remove_owner_address.text = transaction.owner.asEthereumAddressString()
     }
 
-    private fun onChangeConfirmations(transaction: MultisigChangeConfirmations) {
+    private fun onChangeConfirmations(transaction: SafeChangeConfirmations) {
         val view = layoutInflater.inflate(R.layout.layout_transaction_details_change_confirmations, layout_transaction_details_coordinator, false)
         layout_transaction_details_action_container.addView(view)
         view.layout_transaction_details_change_confirmations_number.text = transaction.newConfirmations.asDecimalString()
     }
 
-    private fun onChangeDailyLimit(transaction: MultisigChangeDailyLimit) {
+    private fun onChangeDailyLimit(transaction: SafeChangeDailyLimit) {
         val view = layoutInflater.inflate(R.layout.layout_transaction_details_change_daily_limit, layout_transaction_details_coordinator, false)
         layout_transaction_details_action_container.addView(view)
         view.layout_transaction_details_change_daily_limit_value.text = Wei(transaction.newDailyLimit).toEther().stripTrailingZeros().toPlainString()
     }
 
-    private fun onReplaceOwner(transaction: MultisigReplaceOwner) {
+    private fun onReplaceOwner(transaction: SafeReplaceOwner) {
         val view = layoutInflater.inflate(R.layout.layout_transaction_details_replace_owner, layout_transaction_details_coordinator, false)
         layout_transaction_details_action_container.addView(view)
         view.layout_transaction_details_replace_owner_old_owner.text = transaction.owner.asEthereumAddressString()
@@ -166,7 +170,7 @@ class TransactionDetailsActivity : BaseActivity() {
     }
 
     // Token Transfer
-    private fun onTokenTransfer(transaction: MultisigTokenTransfer) {
+    private fun onTokenTransfer(transaction: TokenTransfer) {
         disposables += viewModel.loadTokenInfo(transaction.tokenAddress)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { onTokenInfoLoading(true) }
@@ -184,13 +188,11 @@ class TransactionDetailsActivity : BaseActivity() {
         snackbar(layout_transaction_details_coordinator, getString(R.string.transaction_details_error))
     }
 
-    private fun onTokenTransferInfo(transaction: MultisigTokenTransfer, token: ERC20Token) {
-        if (token.decimals == null) return
-
+    private fun onTokenTransferInfo(transaction: TokenTransfer, token: ERC20Token) {
         val view = layoutInflater.inflate(R.layout.layout_transaction_details_transfer, layout_transaction_details_coordinator, false)
         layout_transaction_details_action_container.addView(view)
 
-        val tokens = BigDecimal(transaction.tokens, token.decimals.toInt())
+        val tokens = BigDecimal(transaction.tokens, token.decimals)
         layout_transaction_details_transfer_amount.text = tokens.stripTrailingZeros().toPlainString()
         view.layout_transaction_details_transfer_token_symbol.text = token.symbol ?: getString(R.string.tokens)
         layout_transaction_details_transfer_recipient.text = transaction.recipient.asEthereumAddressString()
@@ -265,7 +267,7 @@ class TransactionDetailsActivity : BaseActivity() {
                     .subscribeForResult(onNext = this::onTransactionSigned, onError = this::onTransactionSignError)
 
     private fun onTransactionSigned(transactionHash: String) {
-        when (viewModel.getMultisigTransactionType()) {
+        when (viewModel.getTransactionType()) {
             is ConfirmMultisigTransaction -> toast(getString(R.string.transaction_confirmed))
             is RevokeMultisigTransaction -> toast(getString(R.string.transaction_revoked))
         }

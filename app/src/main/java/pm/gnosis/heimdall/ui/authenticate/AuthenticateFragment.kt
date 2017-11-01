@@ -10,6 +10,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_authenticate.*
 import kotlinx.android.synthetic.main.layout_security.*
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -17,8 +18,13 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.model.Solidity
+import pm.gnosis.models.Transaction
+import pm.gnosis.utils.hexToByteArray
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 class AuthenticateFragment : BaseFragment() {

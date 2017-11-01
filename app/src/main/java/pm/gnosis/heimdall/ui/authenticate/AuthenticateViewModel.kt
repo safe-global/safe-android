@@ -32,12 +32,12 @@ class AuthenticateViewModel @Inject constructor(
     }
 
     private fun validateQrCode(qrCodeData: String): Intent {
-        val transaction = ERC67Parser.parse(qrCodeData) ?:
+        val parsedData = ERC67Parser.parse(qrCodeData) ?:
                 throw LocalizedException(context.getString(R.string.invalid_erc67))
-        val data = transaction.data
+        val data = parsedData.transaction.data
         if (data != null && (data.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID) ||
                 data.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID))) {
-            return TransactionDetailsActivity.createIntent(context, transaction)
+            return TransactionDetailsActivity.createIntent(context, parsedData.transaction, parsedData.descriptionHash)
         } else {
             throw LocalizedException(context.getString(R.string.unknown_wallet_action))
         }

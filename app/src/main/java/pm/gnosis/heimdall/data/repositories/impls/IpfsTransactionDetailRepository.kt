@@ -1,75 +1,79 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Observable
+import okio.ByteString
+import pm.gnosis.crypto.utils.Base58Utils
 import pm.gnosis.heimdall.DailyLimitException
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
+import pm.gnosis.heimdall.data.remote.IpfsApi
+import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.*
-import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class IpfsTransactionDetailRepository @Inject constructor(
-        private val ethereumJsonRpcRepository: EthereumJsonRpcRepository
+        private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
+        private val ipfsApi: IpfsApi
 ) : TransactionDetailRepository {
-    override fun loadTransactionDetails(address: BigInteger, transactionId: BigInteger): Observable<GnosisMultisigTransaction> {
-        if (!address.isValidEthereumAddress()) return Observable.error(InvalidAddressException(address))
-        return ethereumJsonRpcRepository.call(TransactionCallParams(to = address.asEthereumAddressString(),
-                data = "${MultiSigWalletWithDailyLimit.Transactions.METHOD_ID}${transactionId.toString(16).padStart(64, '0')}"))
-                .map { decodeTransactionResult(it)!! }
+    override fun loadTransactionDetails(address: BigInteger, transactionHash: String, descriptionHash: String): Observable<TransactionDetails> {
+        return Observable.fromCallable {
+            Base58Utils.encode(ByteString.decodeHex("1220" + descriptionHash))
+        }.flatMap {
+            ipfsApi.transactionDescription(it)
+                    .map { decodeTransactionResult(it) }
+                    .onErrorReturnItem(UnknownTransactionDetails(it))
+        }
     }
 
-    private fun decodeTransactionResult(hex: String): GnosisMultisigTransaction? {
-        val noPrefix = hex.removePrefix("0x")
-        if (noPrefix.isEmpty() || noPrefix.length.rem(64) != 0) return null
-
-        val transaction = MultiSigWalletWithDailyLimit.Transactions.decode(noPrefix)
-        val innerData = transaction.data.items.toHexString()
+    private fun decodeTransactionResult(description: GnosisSafeTransactionDescription): TransactionDetails? {
+        val innerData = description.data
         return when {
             innerData.isSolidityMethod(GnosisSafe.ReplaceOwner.METHOD_ID) -> {
                 val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ReplaceOwner.METHOD_ID)
-                MultiSigWalletWithDailyLimit.ReplaceOwner.decodeArguments(arguments).let { MultisigReplaceOwner(it.owner.value, it.newowner.value) }
+                MultiSigWalletWithDailyLimit.ReplaceOwner.decodeArguments(arguments).let { SafeReplaceOwner(it.owner.value, it.newowner.value) }
             }
             innerData.isSolidityMethod(GnosisSafe.AddOwner.METHOD_ID) -> {
                 val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.AddOwner.METHOD_ID)
-                MultiSigWalletWithDailyLimit.AddOwner.decodeArguments(arguments).let { MultisigAddOwner(it.owner.value) }
+                MultiSigWalletWithDailyLimit.AddOwner.decodeArguments(arguments).let { SafeAddOwner(it.owner.value) }
             }
             innerData.isSolidityMethod(GnosisSafe.RemoveOwner.METHOD_ID) -> {
                 val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.RemoveOwner.METHOD_ID)
-                MultiSigWalletWithDailyLimit.RemoveOwner.decodeArguments(arguments).let { MultisigRemoveOwner(it.owner.value) }
+                MultiSigWalletWithDailyLimit.RemoveOwner.decodeArguments(arguments).let { SafeRemoveOwner(it.owner.value) }
             }
             innerData.isSolidityMethod(GnosisSafe.ChangeRequired.METHOD_ID) -> {
                 val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ChangeRequirement.METHOD_ID)
-                MultiSigWalletWithDailyLimit.ChangeRequirement.decodeArguments(arguments).let { MultisigChangeConfirmations(it._required.value) }
+                MultiSigWalletWithDailyLimit.ChangeRequirement.decodeArguments(arguments).let { SafeChangeConfirmations(it._required.value) }
             }
             innerData.isSolidityMethod(DailyLimitException.ChangeDailyLimit.METHOD_ID) -> {
                 val arguments = innerData.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ChangeDailyLimit.METHOD_ID)
-                MultiSigWalletWithDailyLimit.ChangeDailyLimit.decodeArguments(arguments).let { MultisigChangeDailyLimit(it._dailylimit.value) }
+                MultiSigWalletWithDailyLimit.ChangeDailyLimit.decodeArguments(arguments).let { SafeChangeDailyLimit(it._dailylimit.value) }
             }
             innerData.isSolidityMethod(StandardToken.Transfer.METHOD_ID) -> {
                 val arguments = innerData.removeSolidityMethodPrefix(StandardToken.Transfer.METHOD_ID)
-                StandardToken.Transfer.decodeArguments(arguments).let { MultisigTokenTransfer(transaction.destination.value, it.to.value, it.value.value) }
+                StandardToken.Transfer.decodeArguments(arguments).let { TokenTransfer(description.to, it.to.value, it.value.value) }
             }
-            transaction.value.value != BigInteger.ZERO -> {
-                MultisigTransfer(transaction.destination.value, Wei(transaction.value.value))
+            description.value.value != BigInteger.ZERO -> {
+                EtherTransfer(description.to, description.value)
             }
-            else -> null
+            else -> GenericTransactionDetails(description.to, description.value, description.data, description.operation, description.nonce)
         }
     }
 }
 
-sealed class GnosisMultisigTransaction
-data class MultisigTransfer(val address: BigInteger, val value: Wei) : GnosisMultisigTransaction()
-data class MultisigChangeDailyLimit(val newDailyLimit: BigInteger) : GnosisMultisigTransaction()
-data class MultisigTokenTransfer(val tokenAddress: BigInteger, val recipient: BigInteger, val tokens: BigInteger) : GnosisMultisigTransaction()
-data class MultisigReplaceOwner(val owner: BigInteger, val newOwner: BigInteger) : GnosisMultisigTransaction()
-data class MultisigAddOwner(val owner: BigInteger) : GnosisMultisigTransaction()
-data class MultisigRemoveOwner(val owner: BigInteger) : GnosisMultisigTransaction()
-data class MultisigChangeConfirmations(val newConfirmations: BigInteger) : GnosisMultisigTransaction()
+sealed class TransactionDetails
+data class UnknownTransactionDetails(val data: String?): TransactionDetails()
+data class GenericTransactionDetails(val to: BigInteger,  val value: Wei, val data: String, val operation: BigInteger, val nonce: BigInteger): TransactionDetails()
+data class EtherTransfer(val address: BigInteger, val value: Wei) : TransactionDetails()
+data class TokenTransfer(val tokenAddress: BigInteger, val recipient: BigInteger, val tokens: BigInteger) : TransactionDetails()
+data class SafeChangeDailyLimit(val newDailyLimit: BigInteger) : TransactionDetails()
+data class SafeReplaceOwner(val owner: BigInteger, val newOwner: BigInteger) : TransactionDetails()
+data class SafeAddOwner(val owner: BigInteger) : TransactionDetails()
+data class SafeRemoveOwner(val owner: BigInteger) : TransactionDetails()
+data class SafeChangeConfirmations(val newConfirmations: BigInteger) : TransactionDetails()

@@ -5,7 +5,7 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
@@ -14,7 +14,8 @@ import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.MultisigRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
-import pm.gnosis.heimdall.data.repositories.impls.GnosisMultisigTransaction
+import pm.gnosis.heimdall.data.repositories.impls.TransactionDetails
+import pm.gnosis.heimdall.data.repositories.impls.UnknownTransactionDetails
 import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.*
@@ -24,28 +25,31 @@ import javax.inject.Inject
 class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
                                                       private val accountsRepository: AccountsRepository,
                                                       private val multisigRepository: MultisigRepository,
-                                                      private val gnosisMultisigWrapper: TransactionDetailRepository,
+                                                      private val transactionDetailRepository: TransactionDetailRepository,
                                                       private val tokenRepository: TokenRepository) : TransactionDetailsContract() {
     private lateinit var transaction: Transaction
     private lateinit var transactionType: MultisigTransactionType
-    private lateinit var transactionId: BigInteger
+    private lateinit var transactionHash: String
 
-    override fun setTransaction(transaction: Transaction?): Completable =
+    private var descriptionHash: String? = null
+
+    override fun setTransaction(transaction: Transaction?, descriptionHash: String?): Completable =
             Completable.fromCallable {
+                this.descriptionHash = descriptionHash
                 if (transaction == null) throw IllegalStateException("Transaction is null")
                 if (!transaction.address.isValidEthereumAddress()) throw IllegalStateException("Invalid wallet address")
                 this.transaction = transaction
 
                 val data = transaction.data ?: throw IllegalStateException("Transaction doesn't have any data")
                 when {
-                    data.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID) -> {
-                        val argument = transaction.data!!.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID)
-                        transactionId = MultiSigWalletWithDailyLimit.ConfirmTransaction.decodeArguments(argument).transactionid.value
+                    data.isSolidityMethod(GnosisSafe.ConfirmTransaction.METHOD_ID) -> {
+                        val argument = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.ConfirmTransaction.METHOD_ID)
+                        transactionHash = GnosisSafe.ConfirmTransaction.decodeArguments(argument).transactionhash.bytes.toHexString()
                         transactionType = ConfirmMultisigTransaction()
                     }
-                    data.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID) -> {
-                        val argument = transaction.data!!.removeSolidityMethodPrefix(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID)
-                        transactionId = MultiSigWalletWithDailyLimit.RevokeConfirmation.decodeArguments(argument).transactionid.value
+                    data.isSolidityMethod(GnosisSafe.RevokeConfirmation.METHOD_ID) -> {
+                        val argument = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.RevokeConfirmation.METHOD_ID)
+                        transactionHash = GnosisSafe.RevokeConfirmation.decodeArguments(argument).transactionhash.bytes.toHexString()
                         transactionType = RevokeMultisigTransaction()
                     }
                     else -> throw IllegalStateException("Transaction it's neither a Confirm or Revoke")
@@ -53,9 +57,9 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
             }.subscribeOn(Schedulers.computation())
 
 
-    override fun getMultisigTransactionType() = transactionType
+    override fun getTransactionType() = transactionType
 
-    override fun getMultisigTransactionId() = transactionId
+    override fun getTransactionHash() = transactionHash
 
     override fun getTransaction() = transaction
 
@@ -79,8 +83,10 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
     override fun addMultisigWallet(address: BigInteger, name: String?): Single<Result<BigInteger>> =
             multisigRepository.addMultisigWallet(address, name).andThen(Single.just(address)).mapToResult()
 
-    override fun loadTransactionDetails(): Observable<GnosisMultisigTransaction> =
-            gnosisMultisigWrapper.loadTransactionDetails(transaction.address, transactionId)
+    override fun loadTransactionDetails(): Observable<TransactionDetails> {
+        val descriptionHash = this.descriptionHash ?: return Observable.just(UnknownTransactionDetails(null))
+        return transactionDetailRepository.loadTransactionDetails(transaction.address, transactionHash, descriptionHash)
+    }
 
     override fun loadTokenInfo(address: BigInteger) = tokenRepository.loadTokenInfo(address)
 }
