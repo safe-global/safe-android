@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
 import pm.gnosis.heimdall.data.repositories.impls.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.impls.UnknownTransactionDetails
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.*
 import java.math.BigInteger
@@ -62,7 +63,7 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
 
     override fun getTransaction() = transaction
 
-    override fun observeMultisigWalletDetails(): Flowable<pm.gnosis.heimdall.data.repositories.models.Safe> =
+    override fun observeSafeDetails(): Flowable<Safe> =
             multisigRepository.observeSafe(transaction.address)
 
     override fun signTransaction(): Observable<Result<String>> =
@@ -79,7 +80,7 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
                     .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
                     .mapToResult()
 
-    override fun addMultisigWallet(address: BigInteger, name: String?): Single<Result<BigInteger>> =
+    override fun addSafe(address: BigInteger, name: String?): Single<Result<BigInteger>> =
             multisigRepository.add(address, name).andThen(Single.just(address)).mapToResult()
 
     override fun loadTransactionDetails(): Observable<TransactionDetails> {

@@ -79,18 +79,18 @@ class TransactionDetailsActivity : BaseActivity() {
     private fun onValidTransactionDetails() {
         disposables += signTransactionDisposable()
         disposables += layout_transaction_details_add_wallet.clicks()
-                .subscribeBy(onNext = { showAddWalletDialog() }, onError = Timber::e)
-        disposables += addMultisigWalletDisposable()
+                .subscribeBy(onNext = { showAddSafeDialog() }, onError = Timber::e)
+        disposables += addSafeDisposable()
         disposables += transactionDetailsDisposable()
-        disposables += multisigWalletDetailsDisposable()
+        disposables += safeDetailsDisposable()
 
         when (viewModel.getTransactionType()) {
             is ConfirmMultisigTransaction -> layout_transaction_details_button.text = getString(R.string.confirm_transaction)
             is RevokeMultisigTransaction -> layout_transaction_details_button.text = getString(R.string.revoke_transaction)
         }
 
-        val multisigTransactionHash = viewModel.getTransactionHash().subSequence(0, 6)
-        layout_transaction_details_transaction_id.text = getString(R.string.transaction_number, multisigTransactionHash)
+        val shortTransactionHash = viewModel.getTransactionHash().subSequence(0, 6)
+        layout_transaction_details_transaction_id.text = getString(R.string.transaction_number, shortTransactionHash)
         layout_transaction_details_wallet_address.text = viewModel.getTransaction().address.asEthereumAddressString()
     }
 
@@ -118,15 +118,15 @@ class TransactionDetailsActivity : BaseActivity() {
         snackbar(layout_transaction_details_coordinator, getString(R.string.transaction_details_error))
     }
 
-    private fun onTransactionDetails(multiSigTransaction: TransactionDetails) {
-        when (multiSigTransaction) {
-            is TokenTransfer -> onTokenTransfer(multiSigTransaction)
-            is EtherTransfer -> onTransfer(multiSigTransaction)
-            is SafeChangeDailyLimit -> onChangeDailyLimit(multiSigTransaction)
-            is SafeReplaceOwner -> onReplaceOwner(multiSigTransaction)
-            is SafeAddOwner -> onAddOwner(multiSigTransaction)
-            is SafeRemoveOwner -> onRemoveOwner(multiSigTransaction)
-            is SafeChangeConfirmations -> onChangeConfirmations(multiSigTransaction)
+    private fun onTransactionDetails(transactionDetails: TransactionDetails) {
+        when (transactionDetails) {
+            is TokenTransfer -> onTokenTransfer(transactionDetails)
+            is EtherTransfer -> onTransfer(transactionDetails)
+            is SafeChangeDailyLimit -> onChangeDailyLimit(transactionDetails)
+            is SafeReplaceOwner -> onReplaceOwner(transactionDetails)
+            is SafeAddOwner -> onAddOwner(transactionDetails)
+            is SafeRemoveOwner -> onRemoveOwner(transactionDetails)
+            is SafeChangeConfirmations -> onChangeConfirmations(transactionDetails)
         }
     }
 
@@ -199,7 +199,7 @@ class TransactionDetailsActivity : BaseActivity() {
     }
 
     // Add Multisig Wallet
-    private fun showAddWalletDialog() {
+    private fun showAddSafeDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
 
         dialogView.dialog_add_multisig_text_address.setText(viewModel.getTransaction().address.asEthereumAddressString())
@@ -224,34 +224,30 @@ class TransactionDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun addMultisigWalletDisposable() =
+    private fun addSafeDisposable() =
             addWalletClickSubject
-                    .flatMapSingle { viewModel.addMultisigWallet(it.first.hexAsBigInteger(), it.second) }
+                    .flatMapSingle { viewModel.addSafe(it.first.hexAsBigInteger(), it.second) }
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeForResult(onNext = { onMultisigWalletAdded() }, onError = this::onMultisigWalletAddError)
+                    .subscribeForResult(onNext = { onSafeAdded() }, onError = this::onSafeAddError)
 
-    private fun onMultisigWalletAdded() {
+    private fun onSafeAdded() {
         snackbar(layout_transaction_details_coordinator, getString(R.string.added_multisig))
     }
 
-    private fun onMultisigWalletAddError(throwable: Throwable) {
+    private fun onSafeAddError(throwable: Throwable) {
         Timber.e(throwable)
         snackbar(layout_transaction_details_coordinator, getString(R.string.add_multisig_wallet_error))
     }
 
     // Multisig Wallet Details
-    private fun multisigWalletDetailsDisposable() =
-            viewModel.observeMultisigWalletDetails()
+    private fun safeDetailsDisposable() =
+            viewModel.observeSafeDetails()
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = this::onMultisigWallet, onError = this::onMultisigWalletError)
+                    .subscribeBy(onNext = this::displaySafeInfo, onError = Timber::e)
 
-    private fun onMultisigWallet(multisigWallet: Safe) {
-        layout_transaction_details_wallet_name.text = if (multisigWallet.name.isNullOrEmpty()) getString(R.string.multisig_address) else multisigWallet.name
+    private fun displaySafeInfo(safe: Safe) {
+        layout_transaction_details_wallet_name.text = if (safe.name.isNullOrEmpty()) getString(R.string.multisig_address) else safe.name
         layout_transaction_details_add_wallet.visibility = View.GONE
-    }
-
-    private fun onMultisigWalletError(throwable: Throwable) {
-        Timber.e(throwable)
     }
 
     // Signing Transaction

@@ -143,7 +143,7 @@ class TransactionDetailsViewModelTest {
         viewModel.setTransaction(testTransaction, null).subscribe()
         given(multisigRepositoryMock.observeSafe(MockUtils.any())).willReturn(Flowable.just(wallet))
 
-        viewModel.observeMultisigWalletDetails().subscribe(testObserver)
+        viewModel.observeSafeDetails().subscribe(testObserver)
 
         then(multisigRepositoryMock).should().observeSafe(testAddress)
         then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
@@ -157,7 +157,7 @@ class TransactionDetailsViewModelTest {
         viewModel.setTransaction(testTransaction, null).subscribe()
         given(multisigRepositoryMock.observeSafe(MockUtils.any())).willReturn(Flowable.error(exception))
 
-        viewModel.observeMultisigWalletDetails().subscribe(testObserver)
+        viewModel.observeSafeDetails().subscribe(testObserver)
 
         then(multisigRepositoryMock).should().observeSafe(testAddress)
         then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
@@ -284,7 +284,7 @@ class TransactionDetailsViewModelTest {
         val testObserver = TestObserver<Result<BigInteger>>()
         given(multisigRepositoryMock.add(MockUtils.any(), anyString())).willReturn(addMultisigWalletCompletable)
 
-        viewModel.addMultisigWallet(address, name).subscribe(testObserver)
+        viewModel.addSafe(address, name).subscribe(testObserver)
 
         then(multisigRepositoryMock).should().add(testAddress, name)
         then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
@@ -299,7 +299,7 @@ class TransactionDetailsViewModelTest {
         val exception = Exception()
         given(multisigRepositoryMock.add(MockUtils.any(), anyString())).willReturn(Completable.error(exception))
 
-        viewModel.addMultisigWallet(address, name).subscribe(testObserver)
+        viewModel.addSafe(address, name).subscribe(testObserver)
 
         then(multisigRepositoryMock).should().add(testAddress, name)
         then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
