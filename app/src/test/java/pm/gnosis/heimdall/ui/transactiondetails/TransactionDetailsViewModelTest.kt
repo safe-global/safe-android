@@ -29,8 +29,8 @@ import pm.gnosis.heimdall.data.remote.models.TransactionParameters
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
-import pm.gnosis.heimdall.data.repositories.impls.TransactionDetails
-import pm.gnosis.heimdall.data.repositories.impls.SafeAddOwner
+import pm.gnosis.heimdall.data.repositories.TransactionDetails
+import pm.gnosis.heimdall.data.repositories.SafeAddOwner
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils

@@ -14,9 +14,8 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
-import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.isSolidityMethod
@@ -132,14 +131,3 @@ class IpfsTransactionDetailRepository @Inject constructor(
         }
     }
 }
-
-sealed class TransactionDetails
-data class UnknownTransactionDetails(val data: String?) : TransactionDetails()
-data class GenericTransactionDetails(val to: BigInteger, val value: Wei, val data: String, val operation: BigInteger, val nonce: BigInteger) : TransactionDetails()
-data class EtherTransfer(val address: BigInteger, val value: Wei) : TransactionDetails()
-data class TokenTransfer(val tokenAddress: BigInteger, val recipient: BigInteger, val tokens: BigInteger) : TransactionDetails()
-data class SafeChangeDailyLimit(val newDailyLimit: BigInteger) : TransactionDetails()
-data class SafeReplaceOwner(val owner: BigInteger, val newOwner: BigInteger) : TransactionDetails()
-data class SafeAddOwner(val owner: BigInteger) : TransactionDetails()
-data class SafeRemoveOwner(val owner: BigInteger) : TransactionDetails()
-data class SafeChangeConfirmations(val newConfirmations: BigInteger) : TransactionDetails()

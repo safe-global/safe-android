@@ -28,7 +28,7 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
-import pm.gnosis.heimdall.data.repositories.impls.*
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -119,6 +119,7 @@ class TransactionDetailsActivity : BaseActivity() {
     }
 
     private fun onTransactionDetails(transactionDetails: TransactionDetails) {
+        layout_transaction_details_action_container.removeAllViews()
         when (transactionDetails) {
             is TokenTransfer -> onTokenTransfer(transactionDetails)
             is EtherTransfer -> onTransfer(transactionDetails)

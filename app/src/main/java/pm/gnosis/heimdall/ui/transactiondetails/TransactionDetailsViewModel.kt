@@ -14,8 +14,8 @@ import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
-import pm.gnosis.heimdall.data.repositories.impls.TransactionDetails
-import pm.gnosis.heimdall.data.repositories.impls.UnknownTransactionDetails
+import pm.gnosis.heimdall.data.repositories.TransactionDetails
+import pm.gnosis.heimdall.data.repositories.UnknownTransactionDetails
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.*
