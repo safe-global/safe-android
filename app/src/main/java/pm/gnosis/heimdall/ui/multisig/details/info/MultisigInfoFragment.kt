@@ -17,7 +17,7 @@ import pm.gnosis.heimdall.common.utils.build
 import pm.gnosis.heimdall.common.utils.getSimplePlural
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.withArgs
-import pm.gnosis.heimdall.data.repositories.models.MultisigWalletInfo
+import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.hexAsBigInteger
@@ -68,7 +68,7 @@ class MultisigInfoFragment : BaseFragment() {
         view?.let { errorSnackbar(it, throwable) }
     }
 
-    private fun updateInfo(info: MultisigWalletInfo) {
+    private fun updateInfo(info: SafeInfo) {
         layout_multisig_info_balance.text = getString(R.string.x_ether, info.balance.toEther().stringWithNoTrailingZeroes())
         layout_multisig_info_confirmations.text = context!!.getSimplePlural(R.plurals.x_confirmations, info.requiredConfirmations)
 

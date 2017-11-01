@@ -4,6 +4,7 @@ import pm.gnosis.models.Wei
 import java.math.BigInteger
 
 data class GnosisSafeTransactionDescription(
+        val safeAddress: BigInteger,
         val to: BigInteger,
         val value: Wei,
         val data: String,
@@ -11,5 +12,5 @@ data class GnosisSafeTransactionDescription(
         val nonce: BigInteger,
         val submittedAt: Long,
         val subject: String?,
-        val transactionHash: String?
+        val transactionHash: String
 )

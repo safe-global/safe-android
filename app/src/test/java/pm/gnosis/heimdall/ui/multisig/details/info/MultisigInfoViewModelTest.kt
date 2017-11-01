@@ -14,8 +14,8 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.data.repositories.MultisigRepository
-import pm.gnosis.heimdall.data.repositories.models.MultisigWalletInfo
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.models.Wei
@@ -31,7 +31,7 @@ class MultisigInfoViewModelTest {
     lateinit var contextMock: Context
 
     @Mock
-    lateinit var repositoryMock: MultisigRepository
+    lateinit var repositoryMock: GnosisSafeRepository
 
     lateinit var viewModel: MultisigInfoViewModel
 
@@ -40,29 +40,29 @@ class MultisigInfoViewModelTest {
         viewModel = MultisigInfoViewModel(contextMock, repositoryMock)
     }
 
-    private fun callSetupAndCheck(address: BigInteger, info: MultisigWalletInfo,
+    private fun callSetupAndCheck(address: BigInteger, info: SafeInfo,
                                   repositoryInvocations: Int = 1, totalInvocations: Int = repositoryInvocations,
                                   ignoreCached: Boolean = false) {
         // Setup with address
         viewModel.setup(address)
 
         // Verify that the repositoryMock is called and expected version is returned
-        val observer = TestObserver.create<Result<MultisigWalletInfo>>()
+        val observer = TestObserver.create<Result<SafeInfo>>()
         viewModel.loadMultisigInfo(ignoreCached).subscribe(observer)
         observer.assertNoErrors().assertValueCount(1).assertValue(DataResult(info))
-        Mockito.verify(repositoryMock, Mockito.times(repositoryInvocations)).loadMultisigWalletInfo(address)
-        Mockito.verify(repositoryMock, Mockito.times(totalInvocations)).loadMultisigWalletInfo(MockUtils.any())
+        Mockito.verify(repositoryMock, Mockito.times(repositoryInvocations)).loadInfo(address)
+        Mockito.verify(repositoryMock, Mockito.times(totalInvocations)).loadInfo(MockUtils.any())
     }
 
     @Test
     fun setupViewModelClearCache() {
         val address1 = BigInteger.ZERO
-        val info1 = MultisigWalletInfo("Test1", Wei(BigInteger.ONE), 0, emptyList())
-        given(repositoryMock.loadMultisigWalletInfo(address1)).willReturn(Observable.just(info1))
+        val info1 = SafeInfo("Test1", Wei(BigInteger.ONE), 0, emptyList())
+        given(repositoryMock.loadInfo(address1)).willReturn(Observable.just(info1))
 
         val address2 = BigInteger.ONE
-        val info2 = MultisigWalletInfo("Test2", Wei(BigInteger.ONE), 0, emptyList())
-        given(repositoryMock.loadMultisigWalletInfo(address2)).willReturn(Observable.just(info2))
+        val info2 = SafeInfo("Test2", Wei(BigInteger.ONE), 0, emptyList())
+        given(repositoryMock.loadInfo(address2)).willReturn(Observable.just(info2))
 
         callSetupAndCheck(address1, info1)
 
@@ -72,8 +72,8 @@ class MultisigInfoViewModelTest {
     @Test
     fun setupViewModelKeepCache() {
         val address = BigInteger.ZERO
-        val info = MultisigWalletInfo("Test", Wei(BigInteger.ONE), 0, emptyList())
-        given(repositoryMock.loadMultisigWalletInfo(MockUtils.any())).willReturn(Observable.just(info))
+        val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList())
+        given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(info))
 
         callSetupAndCheck(address, info)
 
@@ -83,8 +83,8 @@ class MultisigInfoViewModelTest {
     @Test
     fun loadMultisigInfoIgnoreCache() {
         val address = BigInteger.ZERO
-        val info = MultisigWalletInfo("Test", Wei(BigInteger.ONE), 0, emptyList())
-        given(repositoryMock.loadMultisigWalletInfo(address)).willReturn(Observable.just(info))
+        val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList())
+        given(repositoryMock.loadInfo(address)).willReturn(Observable.just(info))
 
         callSetupAndCheck(address, info)
 
@@ -96,9 +96,9 @@ class MultisigInfoViewModelTest {
         viewModel.setup(BigInteger.ZERO)
 
         val exception = IllegalStateException("test")
-        given(repositoryMock.loadMultisigWalletInfo(MockUtils.any())).willReturn(Observable.error(exception))
+        given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.error(exception))
 
-        val observer = TestObserver.create<Result<MultisigWalletInfo>>()
+        val observer = TestObserver.create<Result<SafeInfo>>()
         viewModel.loadMultisigInfo(true).subscribe(observer)
         observer.assertNoErrors().assertValueCount(1).assertValue(ErrorResult(exception))
     }

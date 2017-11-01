@@ -11,12 +11,11 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
-import pm.gnosis.heimdall.data.repositories.MultisigRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
 import pm.gnosis.heimdall.data.repositories.impls.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.impls.UnknownTransactionDetails
-import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.*
 import java.math.BigInteger
@@ -24,7 +23,7 @@ import javax.inject.Inject
 
 class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
                                                       private val accountsRepository: AccountsRepository,
-                                                      private val multisigRepository: MultisigRepository,
+                                                      private val multisigRepository: GnosisSafeRepository,
                                                       private val transactionDetailRepository: TransactionDetailRepository,
                                                       private val tokenRepository: TokenRepository) : TransactionDetailsContract() {
     private lateinit var transaction: Transaction
@@ -63,8 +62,8 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
 
     override fun getTransaction() = transaction
 
-    override fun observeMultisigWalletDetails(): Flowable<MultisigWallet> =
-            multisigRepository.observeMultisigWallet(transaction.address)
+    override fun observeMultisigWalletDetails(): Flowable<pm.gnosis.heimdall.data.repositories.models.Safe> =
+            multisigRepository.observeSafe(transaction.address)
 
     override fun signTransaction(): Observable<Result<String>> =
             accountsRepository.loadActiveAccount()
@@ -81,11 +80,11 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
                     .mapToResult()
 
     override fun addMultisigWallet(address: BigInteger, name: String?): Single<Result<BigInteger>> =
-            multisigRepository.addMultisigWallet(address, name).andThen(Single.just(address)).mapToResult()
+            multisigRepository.add(address, name).andThen(Single.just(address)).mapToResult()
 
     override fun loadTransactionDetails(): Observable<TransactionDetails> {
         val descriptionHash = this.descriptionHash ?: return Observable.just(UnknownTransactionDetails(null))
-        return transactionDetailRepository.loadTransactionDetails(transaction.address, transactionHash, descriptionHash)
+        return transactionDetailRepository.loadTransactionDetails(descriptionHash, transaction.address, transactionHash)
     }
 
     override fun loadTokenInfo(address: BigInteger) = tokenRepository.loadTokenInfo(address)

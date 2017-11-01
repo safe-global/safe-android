@@ -22,7 +22,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.*
-import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoFragment
@@ -42,7 +42,7 @@ class MultisigDetailsActivity : BaseActivity() {
     private val removeMultisigClicks = PublishSubject.create<Unit>()
     private val editMultisigClicks = PublishSubject.create<String>()
 
-    private var multisigWallet: MultisigWallet? = null
+    private var multisigWallet: Safe? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -223,7 +223,7 @@ class MultisigDetailsActivity : BaseActivity() {
         private const val EXTRA_MULTISIG_NAME = "extra.string.multisig_name"
         private const val EXTRA_MULTISIG_ADDRESS = "extra.string.multisig_address"
         private const val CLIPBOARD_ADDRESS_LABEL = "multisig.address"
-        fun createIntent(context: Context, multisig: MultisigWallet): Intent {
+        fun createIntent(context: Context, multisig: Safe): Intent {
             val intent = Intent(context, MultisigDetailsActivity::class.java)
             intent.putExtra(EXTRA_MULTISIG_NAME, multisig.name)
             intent.putExtra(EXTRA_MULTISIG_ADDRESS, multisig.address.asEthereumAddressString())

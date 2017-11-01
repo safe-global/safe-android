@@ -7,16 +7,16 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
 import pm.gnosis.heimdall.GnosisSafe.Required
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
-import pm.gnosis.heimdall.data.db.models.MultisigWalletDb
+import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
 import pm.gnosis.heimdall.data.remote.BulkRequest
 import pm.gnosis.heimdall.data.remote.BulkRequest.SubRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
-import pm.gnosis.heimdall.data.repositories.MultisigRepository
-import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
-import pm.gnosis.heimdall.data.repositories.models.MultisigWalletInfo
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
@@ -25,41 +25,41 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DefaultMultisigRepository @Inject constructor(
+class DefaultGnosisSafeRepository @Inject constructor(
         gnosisAuthenticatorDb: GnosisAuthenticatorDb,
         private val ethereumJsonRpcRepository: EthereumJsonRpcRepository
-) : MultisigRepository {
+) : GnosisSafeRepository {
 
-    private val multisigWalletDao = gnosisAuthenticatorDb.multisigWalletDao()
+    private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
 
-    override fun observeMultisigWallets() =
-            multisigWalletDao.observeMultisigWallets()
-                    .map { it.map { (address, name) -> MultisigWallet(address, name) } }
+    override fun observeSafes() =
+            safeDao.observeSafes()
+                    .map { it.map { (address, name) -> Safe(address, name) } }
                     .subscribeOn(Schedulers.io())!!
 
-    override fun observeMultisigWallet(address: BigInteger): Flowable<MultisigWallet> =
-            multisigWalletDao.observeMultisigWallet(address)
+    override fun observeSafe(address: BigInteger): Flowable<Safe> =
+            safeDao.observeSafe(address)
                     .subscribeOn(Schedulers.io())
                     .map { it.fromDb() }
 
-    override fun addMultisigWallet(address: BigInteger, name: String?) =
+    override fun add(address: BigInteger, name: String?) =
             Completable.fromCallable {
-                val multisigWallet = MultisigWalletDb(address, name)
-                multisigWalletDao.insertMultisigWallet(multisigWallet)
+                val multisigWallet = GnosisSafeDb(address, name)
+                safeDao.insertSafe(multisigWallet)
             }.subscribeOn(Schedulers.io())!!
 
-    override fun removeMultisigWallet(address: BigInteger) =
+    override fun remove(address: BigInteger) =
             Completable.fromCallable {
-                multisigWalletDao.removeMultisigWallet(address)
+                safeDao.removeSafe(address)
             }.subscribeOn(Schedulers.io())!!
 
-    override fun updateMultisigWalletName(address: BigInteger, newName: String) =
+    override fun updateName(address: BigInteger, newName: String) =
             Completable.fromCallable {
-                val multisigWallet = MultisigWalletDb(address, newName)
-                multisigWalletDao.updateMultisigWallet(multisigWallet)
+                val multisigWallet = GnosisSafeDb(address, newName)
+                safeDao.updateSafe(multisigWallet)
             }.subscribeOn(Schedulers.io())!!
 
-    override fun loadMultisigWalletInfo(address: BigInteger): Observable<MultisigWalletInfo> {
+    override fun loadInfo(address: BigInteger): Observable<SafeInfo> {
         val addressString = address.asEthereumAddressString()
         val request = WalletInfoRequest(
                 SubRequest(JsonRpcRequest(
@@ -74,7 +74,7 @@ class DefaultMultisigRepository @Inject constructor(
         )
         return ethereumJsonRpcRepository.bulk(request)
                 .map {
-                    MultisigWalletInfo(addressString,
+                    SafeInfo(addressString,
                             it.balance.value!!,
                             it.requiredConfirmations.value!!.param0.value.toLong(),
                             it.owners.value!!.param0.items.map { it.value.toString(16) })

@@ -5,5 +5,5 @@ import pm.gnosis.heimdall.data.repositories.impls.TransactionDetails
 import java.math.BigInteger
 
 interface TransactionDetailRepository {
-    fun loadTransactionDetails(address: BigInteger, transactionHash: String, descriptionHash: String): Observable<TransactionDetails>
+    fun loadTransactionDetails(descriptionHash: String, address: BigInteger, transactionHash: String?): Observable<TransactionDetails>
 }

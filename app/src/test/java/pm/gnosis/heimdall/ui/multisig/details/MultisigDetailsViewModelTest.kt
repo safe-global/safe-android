@@ -21,8 +21,8 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.data.repositories.MultisigRepository
-import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.test.utils.TestCompletable
@@ -40,7 +40,7 @@ class MultisigDetailsViewModelTest {
     private lateinit var contextMock: Context
 
     @Mock
-    private lateinit var multisigRepository: MultisigRepository
+    private lateinit var safeRepository: GnosisSafeRepository
 
     @Mock
     private lateinit var qrCodeGeneratorMock: QrCodeGenerator
@@ -53,24 +53,24 @@ class MultisigDetailsViewModelTest {
 
     @Before
     fun setup() {
-        viewModel = MultisigDetailsViewModel(contextMock, multisigRepository, qrCodeGeneratorMock)
+        viewModel = MultisigDetailsViewModel(contextMock, safeRepository, qrCodeGeneratorMock)
     }
 
     @Test
     fun testSetup() {
-        given(multisigRepository.observeMultisigWallet(MockUtils.any())).willReturn(Flowable.just(MultisigWallet(testAddress)))
+        given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.just(Safe(testAddress)))
 
         viewModel.setup(testAddress, testName)
         viewModel.observeMultisig().subscribe(TestSubscriber())
 
-        then(multisigRepository).should().observeMultisigWallet(testAddress)
+        then(safeRepository).should().observeSafe(testAddress)
     }
 
     @Test
     fun observeMultisig() {
-        val testSubscriber = TestSubscriber<MultisigWallet>()
-        val wallet = MultisigWallet(testAddress)
-        given(multisigRepository.observeMultisigWallet(MockUtils.any())).willReturn(Flowable.just(wallet))
+        val testSubscriber = TestSubscriber<Safe>()
+        val wallet = Safe(testAddress)
+        given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.just(wallet))
         viewModel.setup(testAddress, testName)
 
         viewModel.observeMultisig().subscribe(testSubscriber)
@@ -80,9 +80,9 @@ class MultisigDetailsViewModelTest {
 
     @Test
     fun observeMultisigError() {
-        val testSubscriber = TestSubscriber<MultisigWallet>()
+        val testSubscriber = TestSubscriber<Safe>()
         val exception = Exception()
-        given(multisigRepository.observeMultisigWallet(MockUtils.any())).willReturn(Flowable.error(exception))
+        given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.error(exception))
         viewModel.setup(testAddress, testName)
 
         viewModel.observeMultisig().subscribe(testSubscriber)
@@ -127,14 +127,14 @@ class MultisigDetailsViewModelTest {
     fun deleteMultisig() {
         val testCompletable = TestCompletable()
         val testObserver = TestObserver<Result<Unit>>()
-        given(multisigRepository.removeMultisigWallet(MockUtils.any())).willReturn(testCompletable)
+        given(safeRepository.remove(MockUtils.any())).willReturn(testCompletable)
         viewModel.setup(testAddress, testName)
 
         viewModel.deleteMultisig().subscribe(testObserver)
 
         assertEquals(1, testCompletable.callCount)
-        then(multisigRepository).should().removeMultisigWallet(testAddress)
-        then(multisigRepository).shouldHaveNoMoreInteractions()
+        then(safeRepository).should().remove(testAddress)
+        then(safeRepository).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(Unit)).assertNoErrors()
     }
 
@@ -142,13 +142,13 @@ class MultisigDetailsViewModelTest {
     fun deleteMultisigError() {
         val testObserver = TestObserver<Result<Unit>>()
         val exception = Exception()
-        given(multisigRepository.removeMultisigWallet(MockUtils.any())).willReturn(Completable.error(exception))
+        given(safeRepository.remove(MockUtils.any())).willReturn(Completable.error(exception))
         viewModel.setup(testAddress, testName)
 
         viewModel.deleteMultisig().subscribe(testObserver)
 
-        then(multisigRepository).should().removeMultisigWallet(testAddress)
-        then(multisigRepository).shouldHaveNoMoreInteractions()
+        then(safeRepository).should().remove(testAddress)
+        then(safeRepository).shouldHaveNoMoreInteractions()
         testObserver.assertValue(ErrorResult(exception)).assertNoErrors()
     }
 
@@ -157,14 +157,14 @@ class MultisigDetailsViewModelTest {
         val newName = "newName"
         val testCompletable = TestCompletable()
         val testObserver = TestObserver<Result<Unit>>()
-        given(multisigRepository.updateMultisigWalletName(MockUtils.any(), anyString())).willReturn(testCompletable)
+        given(safeRepository.updateName(MockUtils.any(), anyString())).willReturn(testCompletable)
         viewModel.setup(testAddress, testName)
 
         viewModel.changeMultisigName(newName).subscribe(testObserver)
 
         assertEquals(1, testCompletable.callCount)
-        then(multisigRepository).should().updateMultisigWalletName(testAddress, newName)
-        then(multisigRepository).shouldHaveNoMoreInteractions()
+        then(safeRepository).should().updateName(testAddress, newName)
+        then(safeRepository).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(Unit)).assertNoErrors()
     }
 
@@ -173,13 +173,13 @@ class MultisigDetailsViewModelTest {
         val newName = "newName"
         val exception = Exception()
         val testObserver = TestObserver<Result<Unit>>()
-        given(multisigRepository.updateMultisigWalletName(MockUtils.any(), anyString())).willReturn(Completable.error(exception))
+        given(safeRepository.updateName(MockUtils.any(), anyString())).willReturn(Completable.error(exception))
         viewModel.setup(testAddress, testName)
 
         viewModel.changeMultisigName(newName).subscribe(testObserver)
 
-        then(multisigRepository).should().updateMultisigWalletName(testAddress, newName)
-        then(multisigRepository).shouldHaveNoMoreInteractions()
+        then(safeRepository).should().updateName(testAddress, newName)
+        then(safeRepository).shouldHaveNoMoreInteractions()
         testObserver.assertValue(ErrorResult(exception)).assertNoErrors()
     }
 }

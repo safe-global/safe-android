@@ -30,7 +30,7 @@ import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.impls.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
-import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
@@ -245,7 +245,7 @@ class TransactionDetailsActivity : BaseActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onNext = this::onMultisigWallet, onError = this::onMultisigWalletError)
 
-    private fun onMultisigWallet(multisigWallet: MultisigWallet) {
+    private fun onMultisigWallet(multisigWallet: Safe) {
         layout_transaction_details_wallet_name.text = if (multisigWallet.name.isNullOrEmpty()) getString(R.string.multisig_address) else multisigWallet.name
         layout_transaction_details_add_wallet.visibility = View.GONE
     }

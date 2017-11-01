@@ -2,6 +2,7 @@ package pm.gnosis.heimdall
 
 import android.content.Context
 import android.support.multidex.MultiDexApplication
+import io.reactivex.plugins.RxJavaPlugins
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
@@ -21,6 +22,7 @@ class HeimdallApplication : MultiDexApplication() {
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
         }
+        RxJavaPlugins.setErrorHandler(Timber::e)
 
         try {
             LinuxSecureRandom()

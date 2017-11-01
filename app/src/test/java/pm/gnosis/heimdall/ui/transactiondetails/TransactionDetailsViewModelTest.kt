@@ -26,13 +26,12 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.remote.models.TransactionParameters
-import pm.gnosis.heimdall.data.repositories.MultisigRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
 import pm.gnosis.heimdall.data.repositories.impls.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.impls.SafeAddOwner
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
-import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.test.utils.TestCompletable
@@ -55,7 +54,7 @@ class TransactionDetailsViewModelTest {
     lateinit var accountsRepositoryMock: AccountsRepository
 
     @Mock
-    lateinit var multisigRepositoryMock: MultisigRepository
+    lateinit var multisigRepositoryMock: GnosisSafeRepository
 
     @Mock
     lateinit var transactionDetailRepositoryMock: TransactionDetailRepository
@@ -139,28 +138,28 @@ class TransactionDetailsViewModelTest {
 
     @Test
     fun getMultisigWalletDetails() {
-        val testObserver = TestSubscriber<MultisigWallet>()
-        val wallet = MultisigWallet(testAddress)
+        val testObserver = TestSubscriber<pm.gnosis.heimdall.data.repositories.models.Safe>()
+        val wallet = pm.gnosis.heimdall.data.repositories.models.Safe(testAddress)
         viewModel.setTransaction(testTransaction, null).subscribe()
-        given(multisigRepositoryMock.observeMultisigWallet(MockUtils.any())).willReturn(Flowable.just(wallet))
+        given(multisigRepositoryMock.observeSafe(MockUtils.any())).willReturn(Flowable.just(wallet))
 
         viewModel.observeMultisigWalletDetails().subscribe(testObserver)
 
-        then(multisigRepositoryMock).should().observeMultisigWallet(testAddress)
+        then(multisigRepositoryMock).should().observeSafe(testAddress)
         then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(wallet)
     }
 
     @Test
     fun getMultisigWalletDetailsError() {
-        val testObserver = TestSubscriber<MultisigWallet>()
+        val testObserver = TestSubscriber<pm.gnosis.heimdall.data.repositories.models.Safe>()
         val exception = Exception()
         viewModel.setTransaction(testTransaction, null).subscribe()
-        given(multisigRepositoryMock.observeMultisigWallet(MockUtils.any())).willReturn(Flowable.error(exception))
+        given(multisigRepositoryMock.observeSafe(MockUtils.any())).willReturn(Flowable.error(exception))
 
         viewModel.observeMultisigWalletDetails().subscribe(testObserver)
 
-        then(multisigRepositoryMock).should().observeMultisigWallet(testAddress)
+        then(multisigRepositoryMock).should().observeSafe(testAddress)
         then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception)
     }
@@ -283,11 +282,11 @@ class TransactionDetailsViewModelTest {
         val name = "test wallet"
         val addMultisigWalletCompletable = TestCompletable()
         val testObserver = TestObserver<Result<BigInteger>>()
-        given(multisigRepositoryMock.addMultisigWallet(MockUtils.any(), anyString())).willReturn(addMultisigWalletCompletable)
+        given(multisigRepositoryMock.add(MockUtils.any(), anyString())).willReturn(addMultisigWalletCompletable)
 
         viewModel.addMultisigWallet(address, name).subscribe(testObserver)
 
-        then(multisigRepositoryMock).should().addMultisigWallet(testAddress, name)
+        then(multisigRepositoryMock).should().add(testAddress, name)
         then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(address)).assertNoErrors()
     }
@@ -298,11 +297,11 @@ class TransactionDetailsViewModelTest {
         val name = "test wallet"
         val testObserver = TestObserver<Result<BigInteger>>()
         val exception = Exception()
-        given(multisigRepositoryMock.addMultisigWallet(MockUtils.any(), anyString())).willReturn(Completable.error(exception))
+        given(multisigRepositoryMock.add(MockUtils.any(), anyString())).willReturn(Completable.error(exception))
 
         viewModel.addMultisigWallet(address, name).subscribe(testObserver)
 
-        then(multisigRepositoryMock).should().addMultisigWallet(testAddress, name)
+        then(multisigRepositoryMock).should().add(testAddress, name)
         then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(ErrorResult(exception)).assertNoErrors()
     }
@@ -317,7 +316,7 @@ class TransactionDetailsViewModelTest {
 
         viewModel.loadTransactionDetails().subscribe(testObserver)
 
-        then(transactionDetailRepositoryMock).should().loadTransactionDetails(testAddress, viewModel.getTransactionHash(), descriptionHash)
+        then(transactionDetailRepositoryMock).should().loadTransactionDetails(descriptionHash, testAddress, viewModel.getTransactionHash())
         then(transactionDetailRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue(addOwnerTransaction)
     }
@@ -332,7 +331,7 @@ class TransactionDetailsViewModelTest {
 
         viewModel.loadTransactionDetails().subscribe(testObserver)
 
-        then(transactionDetailRepositoryMock).should().loadTransactionDetails(testAddress, viewModel.getTransactionHash(), descriptionHash)
+        then(transactionDetailRepositoryMock).should().loadTransactionDetails(descriptionHash, testAddress, viewModel.getTransactionHash())
         then(transactionDetailRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception).assertNoValues()
     }

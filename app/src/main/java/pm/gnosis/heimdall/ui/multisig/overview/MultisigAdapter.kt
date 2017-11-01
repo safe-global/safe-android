@@ -10,22 +10,22 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.common.utils.shareExternalText
-import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 
 @ForView
-class MultisigAdapter @Inject constructor(@ViewContext private val context: Context) : Adapter<MultisigWallet, MultisigAdapter.ViewHolder>() {
-    val multisigSelection = PublishSubject.create<MultisigWallet>()!!
+class MultisigAdapter @Inject constructor(@ViewContext private val context: Context) : Adapter<Safe, MultisigAdapter.ViewHolder>() {
+    val multisigSelection = PublishSubject.create<Safe>()!!
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.layout_multisig_item, parent, false)
         return ViewHolder(view)
     }
 
-    inner class ViewHolder(itemView: View) : Adapter.ViewHolder<MultisigWallet>(itemView), View.OnClickListener {
+    inner class ViewHolder(itemView: View) : Adapter.ViewHolder<Safe>(itemView), View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
             itemView.layout_multisig_item_share.setOnClickListener {
@@ -35,7 +35,7 @@ class MultisigAdapter @Inject constructor(@ViewContext private val context: Cont
             }
         }
 
-        override fun bind(item: MultisigWallet) {
+        override fun bind(item: Safe) {
             itemView.layout_multisig_item_address.text = item.address.asEthereumAddressString()
             itemView.layout_multisig_item_name.text = item.name
             itemView.layout_multisig_item_name.visibility = if (item.name.isNullOrEmpty()) View.GONE else View.VISIBLE

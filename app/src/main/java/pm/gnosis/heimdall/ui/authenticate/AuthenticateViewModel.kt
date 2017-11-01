@@ -13,7 +13,11 @@ import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity
 import pm.gnosis.heimdall.utils.ERC67Parser
+import pm.gnosis.model.Solidity
+import pm.gnosis.models.Transaction
+import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.isSolidityMethod
+import java.math.BigInteger
 import javax.inject.Inject
 
 

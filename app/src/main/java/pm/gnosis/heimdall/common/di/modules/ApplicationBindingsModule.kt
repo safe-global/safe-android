@@ -6,10 +6,10 @@ import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.common.utils.ZxingQrCodeGenerator
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.impls.SimpleEthereumJsonRpcRepository
-import pm.gnosis.heimdall.data.repositories.MultisigRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
-import pm.gnosis.heimdall.data.repositories.impls.DefaultMultisigRepository
+import pm.gnosis.heimdall.data.repositories.impls.DefaultGnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.impls.DefaultTokenRepository
 import pm.gnosis.heimdall.data.repositories.impls.IpfsTransactionDetailRepository
 import javax.inject.Singleton
@@ -26,7 +26,7 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsMultisigRepository(repository: DefaultMultisigRepository): MultisigRepository
+    abstract fun bindsMultisigRepository(repository: DefaultGnosisSafeRepository): GnosisSafeRepository
 
     @Binds
     @Singleton

@@ -24,7 +24,7 @@ import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
-import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsActivity
@@ -92,7 +92,7 @@ class MultisigOverviewFragment : BaseFragment() {
         }
     }
 
-    private fun onMultisigWallets(data: Adapter.Data<MultisigWallet>) {
+    private fun onMultisigWallets(data: Adapter.Data<Safe>) {
         adapter.updateData(data)
         layout_multisig_overview_empty_view.visibility = if (data.entries.isEmpty()) View.VISIBLE else View.GONE
     }
@@ -167,11 +167,11 @@ class MultisigOverviewFragment : BaseFragment() {
         Timber.e(throwable)
     }
 
-    private fun onMultisigSelection(multisigWallet: MultisigWallet) {
+    private fun onMultisigSelection(multisigWallet: Safe) {
         startActivity(MultisigDetailsActivity.createIntent(context!!, multisigWallet))
     }
 
-    private fun showEditMultisigNameDialog(multisigWallet: MultisigWallet) {
+    private fun showEditMultisigNameDialog(multisigWallet: Safe) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
         dialogView.dialog_add_multisig_text_address.visibility = View.GONE
         AlertDialog.Builder(context!!)

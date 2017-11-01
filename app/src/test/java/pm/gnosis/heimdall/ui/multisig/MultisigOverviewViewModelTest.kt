@@ -18,8 +18,8 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.data.repositories.MultisigRepository
-import pm.gnosis.heimdall.data.repositories.models.MultisigWallet
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.test.utils.TestCompletable
@@ -35,7 +35,7 @@ class MultisigOverviewViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var repositoryMock: MultisigRepository
+    lateinit var repositoryMock: GnosisSafeRepository
 
     lateinit var viewModel: MultisigOverviewViewModel
 
@@ -46,13 +46,13 @@ class MultisigOverviewViewModelTest {
 
     @Test
     fun observeMultisigWalletsResults() {
-        val processor = PublishProcessor.create<List<MultisigWallet>>()
+        val processor = PublishProcessor.create<List<Safe>>()
         val subscriber = createSubscriber()
-        given(repositoryMock.observeMultisigWallets()).willReturn(processor)
+        given(repositoryMock.observeSafes()).willReturn(processor)
 
         viewModel.observeMultisigWallets().subscribe(subscriber)
 
-        then(repositoryMock).should().observeMultisigWallets()
+        then(repositoryMock).should().observeSafes()
         then(repositoryMock).shouldHaveNoMoreInteractions()
         // Check that the initial value is emitted
         subscriber.assertNoErrors()
@@ -60,7 +60,7 @@ class MultisigOverviewViewModelTest {
                 .assertValue { it is DataResult && it.data.parentId == null && it.data.diff == null && it.data.entries.isEmpty() }
         val initialDataId = (subscriber.values().first() as DataResult).data.id
 
-        val results = listOf(MultisigWallet(BigInteger.ZERO), MultisigWallet(BigInteger.ONE))
+        val results = listOf(Safe(BigInteger.ZERO), Safe(BigInteger.ONE))
         processor.offer(results)
         // Check that the results are emitted
         subscriber.assertNoErrors()
@@ -75,7 +75,7 @@ class MultisigOverviewViewModelTest {
                 .assertInsertsCount(1).assertInsert(0)
                 .reset()
 
-        val moreResults = listOf(MultisigWallet(BigInteger.ONE), MultisigWallet(BigInteger.ZERO), MultisigWallet(BigInteger.valueOf(3)))
+        val moreResults = listOf(Safe(BigInteger.ONE), Safe(BigInteger.ZERO), Safe(BigInteger.valueOf(3)))
         processor.offer(moreResults)
         // Check that the diff are calculated correctly
         subscriber.assertNoErrors()
@@ -99,11 +99,11 @@ class MultisigOverviewViewModelTest {
     fun observeMultisigWalletsError() {
         val subscriber = createSubscriber()
         val error = IllegalStateException()
-        given(repositoryMock.observeMultisigWallets()).willReturn(Flowable.error(error))
+        given(repositoryMock.observeSafes()).willReturn(Flowable.error(error))
 
         viewModel.observeMultisigWallets().subscribe(subscriber)
 
-        then(repositoryMock).should().observeMultisigWallets()
+        then(repositoryMock).should().observeSafes()
         then(repositoryMock).shouldHaveNoMoreInteractions()
         // Check that the results are emitted
         subscriber.assertNoErrors()
@@ -116,11 +116,11 @@ class MultisigOverviewViewModelTest {
     fun addMultisigWalletSuccess() {
         val observer = TestObserver.create<Unit>()
         val completable = TestCompletable()
-        given(repositoryMock.addMultisigWallet(MockUtils.any(), anyString())).willReturn(completable)
+        given(repositoryMock.add(MockUtils.any(), anyString())).willReturn(completable)
 
         viewModel.addMultisigWallet(BigInteger.ZERO, "Test").subscribe(observer)
 
-        then(repositoryMock).should().addMultisigWallet(BigInteger.ZERO, "Test")
+        then(repositoryMock).should().add(BigInteger.ZERO, "Test")
         then(repositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, completable.callCount)
         observer.assertTerminated().assertNoErrors().assertNoValues()
@@ -130,11 +130,11 @@ class MultisigOverviewViewModelTest {
     fun addMultisigWalletError() {
         val observer = TestObserver.create<Unit>()
         val error = IllegalStateException()
-        given(repositoryMock.addMultisigWallet(MockUtils.any(), anyString())).willReturn(Completable.error(error))
+        given(repositoryMock.add(MockUtils.any(), anyString())).willReturn(Completable.error(error))
 
         viewModel.addMultisigWallet(BigInteger.ZERO, "Test").subscribe(observer)
 
-        then(repositoryMock).should().addMultisigWallet(BigInteger.ZERO, "Test")
+        then(repositoryMock).should().add(BigInteger.ZERO, "Test")
         then(repositoryMock).shouldHaveNoMoreInteractions()
         observer.assertTerminated().assertNoValues()
                 .assertError(error)
@@ -144,11 +144,11 @@ class MultisigOverviewViewModelTest {
     fun removeMultisigWalletSuccess() {
         val observer = TestObserver.create<Unit>()
         val completable = TestCompletable()
-        given(repositoryMock.removeMultisigWallet(MockUtils.any())).willReturn(completable)
+        given(repositoryMock.remove(MockUtils.any())).willReturn(completable)
 
         viewModel.removeMultisigWallet(BigInteger.ZERO).subscribe(observer)
 
-        then(repositoryMock).should().removeMultisigWallet(BigInteger.ZERO)
+        then(repositoryMock).should().remove(BigInteger.ZERO)
         then(repositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, completable.callCount)
         observer.assertTerminated().assertNoErrors().assertNoValues()
@@ -158,11 +158,11 @@ class MultisigOverviewViewModelTest {
     fun removeMultisigWalletError() {
         val observer = TestObserver.create<Unit>()
         val error = IllegalStateException()
-        given(repositoryMock.removeMultisigWallet(MockUtils.any())).willReturn(Completable.error(error))
+        given(repositoryMock.remove(MockUtils.any())).willReturn(Completable.error(error))
 
         viewModel.removeMultisigWallet(BigInteger.ZERO).subscribe(observer)
 
-        then(repositoryMock).should().removeMultisigWallet(BigInteger.ZERO)
+        then(repositoryMock).should().remove(BigInteger.ZERO)
         then(repositoryMock).shouldHaveNoMoreInteractions()
         observer.assertTerminated().assertNoValues()
                 .assertError(error)
@@ -172,11 +172,11 @@ class MultisigOverviewViewModelTest {
     fun updateMultisigWalletNameSuccess() {
         val observer = TestObserver.create<Unit>()
         val completable = TestCompletable()
-        given(repositoryMock.updateMultisigWalletName(MockUtils.any(), anyString())).willReturn(completable)
+        given(repositoryMock.updateName(MockUtils.any(), anyString())).willReturn(completable)
 
         viewModel.updateMultisigWalletName(BigInteger.ZERO, "Foo").subscribe(observer)
 
-        then(repositoryMock).should().updateMultisigWalletName(BigInteger.ZERO, "Foo")
+        then(repositoryMock).should().updateName(BigInteger.ZERO, "Foo")
         then(repositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, completable.callCount)
         observer.assertTerminated().assertNoErrors().assertNoValues()
@@ -186,15 +186,15 @@ class MultisigOverviewViewModelTest {
     fun updateMultisigWalletNameError() {
         val observer = TestObserver.create<Unit>()
         val error = IllegalStateException()
-        given(repositoryMock.updateMultisigWalletName(MockUtils.any(), anyString())).willReturn(Completable.error(error))
+        given(repositoryMock.updateName(MockUtils.any(), anyString())).willReturn(Completable.error(error))
 
         viewModel.updateMultisigWalletName(BigInteger.ZERO, "Foo").subscribe(observer)
 
-        then(repositoryMock).should().updateMultisigWalletName(BigInteger.ZERO, "Foo")
+        then(repositoryMock).should().updateName(BigInteger.ZERO, "Foo")
         then(repositoryMock).shouldHaveNoMoreInteractions()
         observer.assertTerminated().assertNoValues()
                 .assertError(error)
     }
 
-    private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<MultisigWallet>>>()
+    private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<Safe>>>()
 }
