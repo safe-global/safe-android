@@ -14,7 +14,9 @@
             style="@style/Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/name_descriptive_and_optional" />
+            android:hint="@string/name_descriptive_and_optional"
+            android:inputType="text"
+            android:maxLines="1" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
