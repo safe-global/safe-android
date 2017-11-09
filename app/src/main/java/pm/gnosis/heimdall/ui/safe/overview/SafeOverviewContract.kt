@@ -9,8 +9,8 @@ import pm.gnosis.heimdall.ui.base.Adapter
 import java.math.BigInteger
 
 abstract class SafeOverviewContract : ViewModel() {
-    abstract fun addMultisigWallet(address: BigInteger, name: String): Completable
-    abstract fun removeMultisigWallet(address: BigInteger): Completable
-    abstract fun updateMultisigWalletName(address: BigInteger, newName: String): Completable
-    abstract fun observeMultisigWallets(): Flowable<Result<Adapter.Data<Safe>>>
+    abstract fun addSafe(address: BigInteger, name: String): Completable
+    abstract fun removeSafe(address: BigInteger): Completable
+    abstract fun updateSafeName(address: BigInteger, newName: String): Completable
+    abstract fun observeSafes(): Flowable<Result<Adapter.Data<Safe>>>
 }

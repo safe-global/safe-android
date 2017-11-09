@@ -45,12 +45,12 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun observeMultisigWalletsResults() {
+    fun observeSafesResults() {
         val processor = PublishProcessor.create<List<Safe>>()
         val subscriber = createSubscriber()
         given(repositoryMock.observeSafes()).willReturn(processor)
 
-        viewModel.observeMultisigWallets().subscribe(subscriber)
+        viewModel.observeSafes().subscribe(subscriber)
 
         then(repositoryMock).should().observeSafes()
         then(repositoryMock).shouldHaveNoMoreInteractions()
@@ -89,19 +89,19 @@ class SafeOverviewViewModelTest {
                 // stays at the end of the list. Once all the removes and inserts are done the moves
                 // are calculated. Therefore it is a move from 2 to 0
                 .assertMovesCount(1).assertMove(TestListUpdateCallback.Move(2, 0))
-                .assertChangesCount(1).assertChange(0)
+                .assertChangesCount(0)
                 // Inserts are calculated from the back
                 .assertInsertsCount(1).assertInsert(1)
                 .reset()
     }
 
     @Test
-    fun observeMultisigWalletsError() {
+    fun observeSafesError() {
         val subscriber = createSubscriber()
         val error = IllegalStateException()
         given(repositoryMock.observeSafes()).willReturn(Flowable.error(error))
 
-        viewModel.observeMultisigWallets().subscribe(subscriber)
+        viewModel.observeSafes().subscribe(subscriber)
 
         then(repositoryMock).should().observeSafes()
         then(repositoryMock).shouldHaveNoMoreInteractions()
@@ -113,12 +113,12 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun addMultisigWalletSuccess() {
+    fun addSafeSuccess() {
         val observer = TestObserver.create<Unit>()
         val completable = TestCompletable()
         given(repositoryMock.add(MockUtils.any(), anyString())).willReturn(completable)
 
-        viewModel.addMultisigWallet(BigInteger.ZERO, "Test").subscribe(observer)
+        viewModel.addSafe(BigInteger.ZERO, "Test").subscribe(observer)
 
         then(repositoryMock).should().add(BigInteger.ZERO, "Test")
         then(repositoryMock).shouldHaveNoMoreInteractions()
@@ -127,12 +127,12 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun addMultisigWalletError() {
+    fun addSafeError() {
         val observer = TestObserver.create<Unit>()
         val error = IllegalStateException()
         given(repositoryMock.add(MockUtils.any(), anyString())).willReturn(Completable.error(error))
 
-        viewModel.addMultisigWallet(BigInteger.ZERO, "Test").subscribe(observer)
+        viewModel.addSafe(BigInteger.ZERO, "Test").subscribe(observer)
 
         then(repositoryMock).should().add(BigInteger.ZERO, "Test")
         then(repositoryMock).shouldHaveNoMoreInteractions()
@@ -141,12 +141,12 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun removeMultisigWalletSuccess() {
+    fun removeSafeSuccess() {
         val observer = TestObserver.create<Unit>()
         val completable = TestCompletable()
         given(repositoryMock.remove(MockUtils.any())).willReturn(completable)
 
-        viewModel.removeMultisigWallet(BigInteger.ZERO).subscribe(observer)
+        viewModel.removeSafe(BigInteger.ZERO).subscribe(observer)
 
         then(repositoryMock).should().remove(BigInteger.ZERO)
         then(repositoryMock).shouldHaveNoMoreInteractions()
@@ -155,12 +155,12 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun removeMultisigWalletError() {
+    fun removeSafeError() {
         val observer = TestObserver.create<Unit>()
         val error = IllegalStateException()
         given(repositoryMock.remove(MockUtils.any())).willReturn(Completable.error(error))
 
-        viewModel.removeMultisigWallet(BigInteger.ZERO).subscribe(observer)
+        viewModel.removeSafe(BigInteger.ZERO).subscribe(observer)
 
         then(repositoryMock).should().remove(BigInteger.ZERO)
         then(repositoryMock).shouldHaveNoMoreInteractions()
@@ -169,12 +169,12 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun updateMultisigWalletNameSuccess() {
+    fun updateSafeNameSuccess() {
         val observer = TestObserver.create<Unit>()
         val completable = TestCompletable()
         given(repositoryMock.updateName(MockUtils.any(), anyString())).willReturn(completable)
 
-        viewModel.updateMultisigWalletName(BigInteger.ZERO, "Foo").subscribe(observer)
+        viewModel.updateSafeName(BigInteger.ZERO, "Foo").subscribe(observer)
 
         then(repositoryMock).should().updateName(BigInteger.ZERO, "Foo")
         then(repositoryMock).shouldHaveNoMoreInteractions()
@@ -183,12 +183,12 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun updateMultisigWalletNameError() {
+    fun updateSafeNameError() {
         val observer = TestObserver.create<Unit>()
         val error = IllegalStateException()
         given(repositoryMock.updateName(MockUtils.any(), anyString())).willReturn(Completable.error(error))
 
-        viewModel.updateMultisigWalletName(BigInteger.ZERO, "Foo").subscribe(observer)
+        viewModel.updateSafeName(BigInteger.ZERO, "Foo").subscribe(observer)
 
         then(repositoryMock).should().updateName(BigInteger.ZERO, "Foo")
         then(repositoryMock).shouldHaveNoMoreInteractions()

@@ -13,18 +13,18 @@ import javax.inject.Inject
 class SafeOverviewViewModel @Inject constructor(
         private val multisigRepository: GnosisSafeRepository
 ) : SafeOverviewContract() {
-    override fun observeMultisigWallets(): Flowable<Result<Adapter.Data<Safe>>> {
+    override fun observeSafes(): Flowable<Result<Adapter.Data<Safe>>> {
         return multisigRepository.observeSafes()
                 .scanToAdapterData()
                 .mapToResult()
     }
 
-    override fun addMultisigWallet(address: BigInteger, name: String) =
+    override fun addSafe(address: BigInteger, name: String) =
             multisigRepository.add(address, name)
 
-    override fun removeMultisigWallet(address: BigInteger) =
+    override fun removeSafe(address: BigInteger) =
             multisigRepository.remove(address)
 
-    override fun updateMultisigWalletName(address: BigInteger, newName: String) =
+    override fun updateSafeName(address: BigInteger, newName: String) =
             multisigRepository.updateName(address, newName)
 }

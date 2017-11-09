@@ -68,7 +68,7 @@ class SafeOverviewFragment : BaseFragment() {
             scanQrCode()
         }
 
-        disposables += viewModel.observeMultisigWallets()
+        disposables += viewModel.observeSafes()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = this::onMultisigWallets, onError = this::onMultisigWalletsError)
 
@@ -129,17 +129,17 @@ class SafeOverviewFragment : BaseFragment() {
     }
 
     private fun addMultisigWalletDisposable(name: String, address: BigInteger) =
-            viewModel.addMultisigWallet(address, name)
+            viewModel.addSafe(address, name)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletAdded, onError = this::onMultisigWalletAddError)
 
     private fun removeMultisigWalletDisposable(address: BigInteger) =
-            viewModel.removeMultisigWallet(address)
+            viewModel.removeSafe(address)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletRemoved, onError = this::onMultisigWalletRemoveError)
 
     private fun updateMultisigWalletNameDisposable(address: BigInteger, newName: String) =
-            viewModel.updateMultisigWalletName(address, newName)
+            viewModel.updateSafeName(address, newName)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onComplete = this::onMultisigWalletNameChange, onError = this::onMultisigWalletNameChangeError)
 

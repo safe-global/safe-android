@@ -59,7 +59,7 @@ class SafeTransactionsFragment : BaseFragment() {
                 .map { true }
                 .startWith(false)
                 .flatMapSingle {
-                    viewModel.initTransaction(it).doOnSubscribe { moreDisposable?.dispose() }
+                    viewModel.initTransactions(it).doOnSubscribe { moreDisposable?.dispose() }
                             .observeOn(AndroidSchedulers.mainThread())
                             .doOnSubscribe {
                                 layout_safe_transactions_swipe_refresh.isRefreshing = true
@@ -79,7 +79,7 @@ class SafeTransactionsFragment : BaseFragment() {
 
     private fun setupMoreDisposable() {
         moreDisposable?.dispose()
-        moreDisposable = viewModel.observeTransaction(
+        moreDisposable = viewModel.observeTransactions(
                 layout_safe_transactions_list.scrollEvents()
                         .filter { loadMore && checkIfAtEnd(it.view()) }
                         .doOnNext { loadMore = false }

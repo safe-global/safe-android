@@ -17,7 +17,7 @@ class SafeTransactionsViewModel @Inject constructor(
 ) : SafeTransactionsContract() {
 
     companion object {
-        const val PAGE_SIZE = 8
+        const val PAGE_SIZE = 20
     }
 
     private var loadingMore: Boolean = false
@@ -31,7 +31,7 @@ class SafeTransactionsViewModel @Inject constructor(
         this.address = address
     }
 
-    override fun initTransaction(reload: Boolean): Single<Result<Int>> {
+    override fun initTransactions(reload: Boolean): Single<Result<Int>> {
         if (reload) {
             cachedResults = null
         }
@@ -43,7 +43,7 @@ class SafeTransactionsViewModel @Inject constructor(
                 .mapToResult()
     }
 
-    override fun observeTransaction(loadMoreEvents: Observable<Unit>): Observable<out Result<PaginatedTransactions>> {
+    override fun observeTransactions(loadMoreEvents: Observable<Unit>): Observable<out Result<PaginatedTransactions>> {
         val initialResults = mapResults(initialData())
         return loadMoreEvents
                 .filter { !loadingMore }
@@ -65,9 +65,6 @@ class SafeTransactionsViewModel @Inject constructor(
 
     private fun moreTransactions(): Maybe<Result<IndexedResults>> {
         val startIndex = (cachedResults?.endIndex ?: 0)
-        if (startIndex < 0) {
-            return Maybe.empty()
-        }
         return loadDescription(startIndex)
                 .mapToResult()
                 .toMaybe()

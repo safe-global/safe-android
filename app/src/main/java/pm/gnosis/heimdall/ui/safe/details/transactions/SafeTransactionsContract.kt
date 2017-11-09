@@ -11,9 +11,9 @@ import java.math.BigInteger
 abstract class SafeTransactionsContract: ViewModel() {
     abstract fun setup(address: BigInteger)
 
-    abstract fun initTransaction(reload: Boolean): Single<Result<Int>>
+    abstract fun initTransactions(reload: Boolean): Single<Result<Int>>
 
-    abstract fun observeTransaction(loadMoreEvents: Observable<Unit>): Observable<out Result<PaginatedTransactions>>
+    abstract fun observeTransactions(loadMoreEvents: Observable<Unit>): Observable<out Result<PaginatedTransactions>>
 
     data class PaginatedTransactions(val hasMore: Boolean, val data: Adapter.Data<String>)
 }

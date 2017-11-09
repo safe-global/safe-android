@@ -1,24 +1,24 @@
 package pm.gnosis.heimdall.ui.safe.details.transactions
 
-import android.content.Context
-import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
-import io.reactivex.subscribers.TestSubscriber
+import io.reactivex.subjects.PublishSubject
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.common.utils.DataResult
+import pm.gnosis.heimdall.common.utils.ErrorResult
+import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
-import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.heimdall.test.utils.TestSingleFactory
+import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract.PaginatedTransactions
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -33,12 +33,17 @@ class SafeTransactionsViewModelTest {
     private lateinit var viewModel: SafeTransactionsViewModel
 
     private var testAddress = BigInteger.ZERO
-    private var invalidAddress = "1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF".hexAsBigInteger()
-    private var testName = "testName"
+
+    private val testSingleFactory = TestSingleFactory<List<String>>()
 
     @Before
     fun setup() {
         viewModel = SafeTransactionsViewModel(safeRepository)
+    }
+
+    @After
+    fun tearDown() {
+        testSingleFactory.dispose()
     }
 
     @Test
@@ -46,11 +51,11 @@ class SafeTransactionsViewModelTest {
         given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Single.just(0))
 
         viewModel.setup(testAddress)
-        viewModel.initTransaction(false).subscribe(TestObserver())
+        viewModel.initTransactions(false).subscribe(TestObserver())
 
         // Setting the same address should keep the cache
         viewModel.setup(testAddress)
-        viewModel.initTransaction(false).subscribe(TestObserver())
+        viewModel.initTransactions(false).subscribe(TestObserver())
 
         then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
         then(safeRepository).shouldHaveNoMoreInteractions()
@@ -61,11 +66,11 @@ class SafeTransactionsViewModelTest {
         given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Single.just(0))
 
         viewModel.setup(testAddress)
-        viewModel.initTransaction(false).subscribe(TestObserver())
+        viewModel.initTransactions(false).subscribe(TestObserver())
 
         // Setting a different address should clear the cache
         viewModel.setup(BigInteger.TEN)
-        viewModel.initTransaction(false).subscribe(TestObserver())
+        viewModel.initTransactions(false).subscribe(TestObserver())
 
         then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
         then(safeRepository).should(times(1)).loadDescriptionCount(BigInteger.TEN)
@@ -73,11 +78,202 @@ class SafeTransactionsViewModelTest {
     }
 
     @Test
-    fun initTransaction() {
+    fun initTransactionsNoDescriptions() {
+        val testObserver = TestObserver<Result<Int>>()
+        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Single.just(0))
+
+        viewModel.setup(testAddress)
+        viewModel.initTransactions(false).subscribe(testObserver)
+
+        testObserver.assertValue(DataResult(0)).assertNoErrors()
+
+        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
+        then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
-    fun observeTransaction() {
+    fun initTransactionsError() {
+        val error = IllegalStateException()
+        val testObserver = TestObserver<Result<Int>>()
+        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Single.error(error))
+
+        viewModel.setup(testAddress)
+        viewModel.initTransactions(false).subscribe(testObserver)
+
+        testObserver.assertValue(ErrorResult(error)).assertNoErrors()
+
+        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun initTransactionsWithDescriptions() {
+        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Single.just(4))
+        given(safeRepository.loadDescriptions(testAddress, 0, 4)).willReturn(Single.just(generateList(to = 3)))
+
+        viewModel.setup(testAddress)
+        val initialObserver = TestObserver<Result<Int>>()
+        viewModel.initTransactions(false).subscribe(initialObserver)
+        initialObserver.assertValues(DataResult(4)).assertNoErrors()
+
+        // Check that cached version is returned
+        val reloadObserver = TestObserver<Result<Int>>()
+        viewModel.initTransactions(false).subscribe(reloadObserver)
+        reloadObserver.assertValues(DataResult(4)).assertNoErrors()
+
+
+        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
+        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 0, 4)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun initTransactionsReload() {
+        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Single.just(4))
+        given(safeRepository.loadDescriptions(testAddress, 0, 4)).willReturn(Single.just(generateList(to = 3)))
+
+        viewModel.setup(testAddress)
+        val initialObserver = TestObserver<Result<Int>>()
+        viewModel.initTransactions(false).subscribe(initialObserver)
+        initialObserver.assertValues(DataResult(4)).assertNoErrors()
+
+        // Check that cached version is returned
+        val reloadObserver = TestObserver<Result<Int>>()
+        viewModel.initTransactions(true).subscribe(reloadObserver)
+        reloadObserver.assertValues(DataResult(4)).assertNoErrors()
+
+
+        then(safeRepository).should(times(2)).loadDescriptionCount(testAddress)
+        then(safeRepository).should(times(2)).loadDescriptions(testAddress, 0, 4)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeTransactionsMore() {
+        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Single.just(28))
+        given(safeRepository.loadDescriptions(testAddress, 8, 28)).willReturn(Single.just(generateList(from = 8, to = 27)))
+        given(safeRepository.loadDescriptions(testAddress, 0, 8)).willReturn(Single.just(generateList(to = 7)))
+        viewModel.setup(testAddress)
+        viewModel.initTransactions(false).subscribe(TestObserver())
+
+        val subject = PublishSubject.create<Unit>()
+        val moreObserver = TestObserver<Result<PaginatedTransactions>>()
+        viewModel.observeTransactions(subject).subscribe(moreObserver)
+
+        moreObserver.assertValueCount(1).assertValueAt(0, {
+            it is DataResult && it.data.hasMore &&
+                    it.data.data.diff == null && it.data.data.entries == generateList(from = 27, to = 8, step = -1)
+        })
+
+        subject.onNext(Unit)
+
+        moreObserver.assertValueCount(2).assertValueAt(1, {
+            it is DataResult && !it.data.hasMore &&
+                    it.data.data.diff != null && it.data.data.entries == generateList(from = 27, step = -1)
+        })
+
+        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
+        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 8, 28)
+        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 0, 8)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeTransactionsMoreLoading() {
+        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Single.just(28))
+        given(safeRepository.loadDescriptions(testAddress, 8, 28)).willReturn(Single.just(generateList(from = 8, to = 27)))
+        given(safeRepository.loadDescriptions(testAddress, 0, 8)).willReturn(testSingleFactory.get())
+        viewModel.setup(testAddress)
+        viewModel.initTransactions(false).subscribe(TestObserver())
+
+        val subject = PublishSubject.create<Unit>()
+        val moreObserver = TestObserver<Result<PaginatedTransactions>>()
+        viewModel.observeTransactions(subject).subscribe(moreObserver)
+
+        moreObserver.assertValueCount(1).assertValueAt(0, {
+            it is DataResult && it.data.hasMore &&
+                    it.data.data.diff == null && it.data.data.entries == generateList(from = 27, to = 8, step = -1)
+        })
+
+        subject.onNext(Unit)
+
+        moreObserver.assertValueCount(1)
+
+        // Triggering load more again should not do anything while it is loading
+        subject.onNext(Unit)
+
+        testSingleFactory.success(generateList(to = 7))
+
+        moreObserver.assertValueCount(2).assertValueAt(1, {
+            it is DataResult && !it.data.hasMore &&
+                    it.data.data.diff != null && it.data.data.entries == generateList(from = 27, step = -1)
+        })
+
+        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
+        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 8, 28)
+        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 0, 8)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeTransactionsError() {
+        val error = IllegalStateException()
+        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Single.just(28))
+        given(safeRepository.loadDescriptions(testAddress, 8, 28)).willReturn(Single.just(generateList(from = 8, to = 27)))
+        given(safeRepository.loadDescriptions(testAddress, 0, 8)).willReturn(Single.error(error))
+        viewModel.setup(testAddress)
+        viewModel.initTransactions(false).subscribe(TestObserver())
+
+        val subject = PublishSubject.create<Unit>()
+        val moreObserver = TestObserver<Result<PaginatedTransactions>>()
+        viewModel.observeTransactions(subject).subscribe(moreObserver)
+
+        moreObserver.assertValueCount(1).assertValueAt(0, {
+            it is DataResult && it.data.hasMore &&
+                    it.data.data.diff == null && it.data.data.entries == generateList(from = 27, to = 8, step = -1)
+        })
+
+        subject.onNext(Unit)
+
+        moreObserver.assertValueCount(2).assertValueAt(1, {
+            it is ErrorResult && it.error == error
+        })
+
+        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
+        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 8, 28)
+        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 0, 8)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeTransactionsUninitialized() {
+        viewModel.setup(testAddress)
+
+        val subject = PublishSubject.create<Unit>()
+        val moreObserver = TestObserver<Result<PaginatedTransactions>>()
+        viewModel.observeTransactions(subject).subscribe(moreObserver)
+
+        moreObserver.assertValueCount(1).assertValueAt(0, {
+            it is DataResult && !it.data.hasMore &&
+                    it.data.data.diff == null && it.data.data.entries.isEmpty()
+        })
+
+        subject.onNext(Unit)
+
+        moreObserver.assertValueCount(2).assertValueAt(1, {
+            it is DataResult && !it.data.hasMore &&
+                    it.data.data.diff != null && it.data.data.entries.isEmpty()
+        })
+
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    private fun generateList(from: Int = 0, to: Int = 0, step: Int = 1): List<String> {
+        val list = ArrayList<String>(Math.abs(to - from))
+        for (i in LongProgression.fromClosedRange(from.toLong(), to.toLong(), step.toLong() )) {
+            list += "$i"
+        }
+        return list
     }
 
 }
