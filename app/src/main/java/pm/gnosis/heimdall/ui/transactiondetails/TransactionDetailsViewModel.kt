@@ -11,11 +11,7 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
-import pm.gnosis.heimdall.data.repositories.TransactionDetails
-import pm.gnosis.heimdall.data.repositories.UnknownTransactionDetails
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.*
@@ -84,7 +80,7 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
             multisigRepository.add(address, name).andThen(Single.just(address)).mapToResult()
 
     override fun loadTransactionDetails(): Observable<TransactionDetails> {
-        val descriptionHash = this.descriptionHash ?: return Observable.just(UnknownTransactionDetails(null))
+        val descriptionHash = this.descriptionHash ?: return Observable.just(TransactionDetails.unknown(""))
         return transactionDetailRepository.loadTransactionDetails(descriptionHash, transaction.address, transactionHash)
     }
 

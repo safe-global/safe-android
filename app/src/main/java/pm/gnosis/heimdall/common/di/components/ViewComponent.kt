@@ -6,11 +6,12 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.account.AccountFragment
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.main.MainActivity
-import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsActivity
-import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoFragment
-import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewFragment
+import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
+import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoFragment
+import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewFragment
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountActivity
+import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.security.SecurityActivity
 import pm.gnosis.heimdall.ui.splash.SplashActivity
 import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenActivity
@@ -27,8 +28,9 @@ interface ViewComponent {
 
     fun inject(fragment: AccountFragment)
     fun inject(fragment: AuthenticateFragment)
-    fun inject(fragment: MultisigInfoFragment)
-    fun inject(fragment: MultisigOverviewFragment)
+    fun inject(fragment: SafeInfoFragment)
+    fun inject(fragment: SafeOverviewFragment)
+    fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokensFragment)
 
     // Activities
@@ -36,8 +38,8 @@ interface ViewComponent {
     fun inject(activity: AddTokenActivity)
     fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: MainActivity)
-    fun inject(activity: MultisigDetailsActivity)
     fun inject(activity: RestoreAccountActivity)
+    fun inject(activity: SafeDetailsActivity)
     fun inject(activity: SecurityActivity)
     fun inject(activity: SplashActivity)
     fun inject(activity: TransactionDetailsActivity)

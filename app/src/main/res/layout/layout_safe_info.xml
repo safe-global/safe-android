@@ -29,7 +29,7 @@
                     android:text="@string/balance" />
 
                 <TextView
-                    android:id="@+id/layout_multisig_info_balance"
+                    android:id="@+id/layout_safe_info_balance"
                     style="@style/Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                     android:text="@string/required_confirmations" />
 
                 <TextView
-                    android:id="@+id/layout_multisig_info_confirmations"
+                    android:id="@+id/layout_safe_info_confirmations"
                     style="@style/Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
             android:layout_marginTop="8dp">
 
             <LinearLayout
-                android:id="@+id/layout_multisig_info_owners_container"
+                android:id="@+id/layout_safe_info_owners_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

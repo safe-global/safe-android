@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig.details
+package pm.gnosis.heimdall.ui.safe.details
 
 import android.arch.lifecycle.ViewModel
 import android.graphics.Bitmap
@@ -8,10 +8,10 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import java.math.BigInteger
 
-abstract class MultisigDetailsContract : ViewModel() {
+abstract class SafeDetailsContract : ViewModel() {
     abstract fun setup(address: BigInteger, name: String?)
     abstract fun loadQrCode(contents: String): Single<Result<Bitmap>>
-    abstract fun deleteMultisig(): Single<Result<Unit>>
-    abstract fun changeMultisigName(newName: String): Single<Result<Unit>>
+    abstract fun deleteSafe(): Single<Result<Unit>>
+    abstract fun changeSafeName(newName: String): Single<Result<Unit>>
     abstract fun observeMultisig(): Flowable<Safe>
 }

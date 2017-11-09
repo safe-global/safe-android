@@ -11,7 +11,7 @@ import pm.gnosis.heimdall.ui.account.AccountFragment
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
-import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewFragment
+import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewFragment
 import pm.gnosis.heimdall.ui.tokens.overview.TokensFragment
 
 class MainActivity : BaseActivity() {
@@ -50,7 +50,7 @@ class MainActivity : BaseActivity() {
                 AccountFragment()
             }
             R.id.action_multisig -> {
-                MultisigOverviewFragment()
+                SafeOverviewFragment()
             }
             R.id.action_tokens -> {
                 TokensFragment()

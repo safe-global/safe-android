@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layout_multisig_overview_coordinator_layout"
+    android:id="@+id/layout_safe_overview_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/layout_multisig_overview_wallets"
+        android:id="@+id/layout_safe_overview_wallets"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <TextView
-        android:id="@+id/layout_multisig_overview_empty_view"
+        android:id="@+id/layout_safe_overview_empty_view"
         style="@style/Content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         android:text="@string/empty_multisig_wallets" />
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/layout_multisig_overview_fab"
+        android:id="@+id/layout_safe_overview_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
@@ -29,7 +29,7 @@
         app:layout_behavior="pm.gnosis.heimdall.views.FloatingActionButtonScrollBehavior">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/layout_multisig_overview_scan_qr_code"
+            android:id="@+id/layout_safe_overview_scan_qr_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_qrcode_scan_white_24dp"
@@ -37,7 +37,7 @@
             app:fab_size="normal" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/layout_multisig_overview_input_address"
+            android:id="@+id/layout_safe_overview_input_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_text_input_white"

@@ -33,14 +33,14 @@ class IpfsTransactionDetailRepository @Inject constructor(
         private val ipfsApi: IpfsApi
 ) : TransactionDetailRepository {
 
-    val descriptionsDao = authenticatorDb.descriptionsDao()
+    private val descriptionsDao = authenticatorDb.descriptionsDao()
 
     private val detailRequests = ConcurrentHashMap<String, Observable<GnosisSafeTransactionDescription>>()
 
     override fun loadTransactionDetails(descriptionHash: String, address: BigInteger, transactionHash: String?): Observable<TransactionDetails> {
         return loadDescription(descriptionHash, address, transactionHash)
-                .map { decodeTransactionResult(it) }
-                .onErrorReturnItem(UnknownTransactionDetails(descriptionHash))
+                .map { decodeTransactionResult(descriptionHash, it) }
+                .onErrorReturnItem(TransactionDetails.unknown(descriptionHash))
     }
 
     private fun loadDescription(hash: String, address: BigInteger, transactionHash: String?): Observable<GnosisSafeTransactionDescription> {
@@ -97,9 +97,9 @@ class IpfsTransactionDetailRepository @Inject constructor(
                 Base58Utils.encode(ByteString.decodeHex("1220" + hash))
             }
 
-    private fun decodeTransactionResult(description: GnosisSafeTransactionDescription): TransactionDetails {
+    private fun decodeTransactionResult(descriptionHash: String, description: GnosisSafeTransactionDescription): TransactionDetails {
         val innerData = description.data
-        return when {
+        val type = when {
             innerData.isSolidityMethod(GnosisSafe.ReplaceOwner.METHOD_ID) -> {
                 val arguments = innerData.removeSolidityMethodPrefix(GnosisSafe.ReplaceOwner.METHOD_ID)
                 GnosisSafe.ReplaceOwner.decodeArguments(arguments).let { SafeReplaceOwner(it.oldowner.value, it.newowner.value) }
@@ -127,7 +127,8 @@ class IpfsTransactionDetailRepository @Inject constructor(
             description.value.value != BigInteger.ZERO -> {
                 EtherTransfer(description.to, description.value)
             }
-            else -> GenericTransactionDetails(description.to, description.value, description.data, description.operation, description.nonce)
+            else -> SafeTransaction(description.to, description.value, description.data, description.operation, description.nonce)
         }
+        return TransactionDetails(type, descriptionHash, description.transactionHash, description.subject, description.submittedAt)
     }
 }

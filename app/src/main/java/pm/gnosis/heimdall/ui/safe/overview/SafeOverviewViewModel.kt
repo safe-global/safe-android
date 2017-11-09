@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig.overview
+package pm.gnosis.heimdall.ui.safe.overview
 
 import io.reactivex.Flowable
 import pm.gnosis.heimdall.common.utils.Result
@@ -10,12 +10,12 @@ import pm.gnosis.heimdall.utils.scanToAdapterData
 import java.math.BigInteger
 import javax.inject.Inject
 
-class MultisigOverviewViewModel @Inject constructor(
+class SafeOverviewViewModel @Inject constructor(
         private val multisigRepository: GnosisSafeRepository
-) : MultisigOverviewContract() {
+) : SafeOverviewContract() {
     override fun observeMultisigWallets(): Flowable<Result<Adapter.Data<Safe>>> {
         return multisigRepository.observeSafes()
-                .scanToAdapterData({ (prevAddress), (newAddress) -> prevAddress == newAddress })
+                .scanToAdapterData()
                 .mapToResult()
     }
 

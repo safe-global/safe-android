@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig
+package pm.gnosis.heimdall.ui.safe
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -25,11 +25,11 @@ import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.test.utils.TestCompletable
 import pm.gnosis.heimdall.test.utils.TestListUpdateCallback
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewViewModel
+import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
-class MultisigOverviewViewModelTest {
+class SafeOverviewViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -37,11 +37,11 @@ class MultisigOverviewViewModelTest {
     @Mock
     lateinit var repositoryMock: GnosisSafeRepository
 
-    lateinit var viewModel: MultisigOverviewViewModel
+    lateinit var viewModel: SafeOverviewViewModel
 
     @Before
     fun setup() {
-        viewModel = MultisigOverviewViewModel(repositoryMock)
+        viewModel = SafeOverviewViewModel(repositoryMock)
     }
 
     @Test

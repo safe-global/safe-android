@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig.details.info
+package pm.gnosis.heimdall.ui.safe.details.info
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import com.jakewharton.rxbinding2.support.v4.widget.refreshes
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.layout_multisig_info.*
-import kotlinx.android.synthetic.main.layout_multisig_owner.view.*
+import kotlinx.android.synthetic.main.layout_safe_info.*
+import kotlinx.android.synthetic.main.layout_safe_owner.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -25,17 +25,17 @@ import pm.gnosis.utils.stringWithNoTrailingZeroes
 import javax.inject.Inject
 
 
-class MultisigInfoFragment : BaseFragment() {
+class SafeInfoFragment : BaseFragment() {
     @Inject
-    lateinit var viewModel: MultisigInfoContract
+    lateinit var viewModel: SafeInfoContract
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.setup(arguments!!.getString(ARGUMENT_MULTISIG_ADDRESS).hexAsBigInteger())
+        viewModel.setup(arguments!!.getString(ARGUMENT_SAFE_ADDRESS).hexAsBigInteger())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = layoutInflater?.inflate(R.layout.layout_multisig_info, container, false)
+            = layoutInflater?.inflate(R.layout.layout_safe_info, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,35 +69,35 @@ class MultisigInfoFragment : BaseFragment() {
     }
 
     private fun updateInfo(info: SafeInfo) {
-        layout_multisig_info_balance.text = getString(R.string.x_ether, info.balance.toEther().stringWithNoTrailingZeroes())
-        layout_multisig_info_confirmations.text = context!!.getSimplePlural(R.plurals.x_confirmations, info.requiredConfirmations)
+        layout_safe_info_balance.text = getString(R.string.x_ether, info.balance.toEther().stringWithNoTrailingZeroes())
+        layout_safe_info_confirmations.text = context!!.getSimplePlural(R.plurals.x_confirmations, info.requiredConfirmations)
 
         setupOwners(info.owners)
     }
 
     private fun setupOwners(owners: List<String>) {
-        for (i in layout_multisig_info_owners_container.childCount - 1 downTo 1) {
-            layout_multisig_info_owners_container.removeViewAt(i)
+        for (i in layout_safe_info_owners_container.childCount - 1 downTo 1) {
+            layout_safe_info_owners_container.removeViewAt(i)
         }
         owners.forEach { addOwner(it) }
     }
 
     private fun addOwner(address: String) {
-        if (layout_multisig_info_owners_container.childCount > 1) {
-            val divider = layoutInflater.inflate(R.layout.layout_list_divider, layout_multisig_info_owners_container, false)
-            layout_multisig_info_owners_container.addView(divider)
+        if (layout_safe_info_owners_container.childCount > 1) {
+            val divider = layoutInflater.inflate(R.layout.layout_list_divider, layout_safe_info_owners_container, false)
+            layout_safe_info_owners_container.addView(divider)
         }
-        val ownerLayout = layoutInflater.inflate(R.layout.layout_multisig_owner, layout_multisig_info_owners_container, false)
-        ownerLayout.layout_multisig_owner_address.text = address
-        layout_multisig_info_owners_container.addView(ownerLayout)
+        val ownerLayout = layoutInflater.inflate(R.layout.layout_safe_owner, layout_safe_info_owners_container, false)
+        ownerLayout.layout_safe_owner_address.text = address
+        layout_safe_info_owners_container.addView(ownerLayout)
     }
 
     companion object {
-        private const val ARGUMENT_MULTISIG_ADDRESS = "argument.string.multisig_address"
+        private const val ARGUMENT_SAFE_ADDRESS = "argument.string.safe_address"
 
         fun createInstance(address: String) =
-                MultisigInfoFragment().withArgs(
-                        Bundle().build { putString(ARGUMENT_MULTISIG_ADDRESS, address) }
+                SafeInfoFragment().withArgs(
+                        Bundle().build { putString(ARGUMENT_SAFE_ADDRESS, address) }
                 )
     }
 }

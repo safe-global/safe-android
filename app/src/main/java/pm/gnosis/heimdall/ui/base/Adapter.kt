@@ -16,11 +16,24 @@ abstract class Adapter<T, VH : Adapter.ViewHolder<T>> : RecyclerView.Adapter<VH>
 
     abstract override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH
 
+
+    override fun onBindViewHolder(holder: VH?, position: Int, payloads: List<Any>?) {
+        holder?.bind(items[position], payloads)
+    }
+
     override fun onBindViewHolder(holder: VH?, position: Int) {
-        holder?.bind(items[position])
+        onBindViewHolder(holder, position, null)
+    }
+
+    override fun onViewRecycled(holder: VH?) {
+        holder?.unbind()
     }
 
     fun updateData(data: Data<T>) {
+        if (currentDataId == data.id) {
+            // This update was already applied
+            return
+        }
         items.clear()
         items.addAll(data.entries)
         // Make sure that the parent is the one for which the diff was calculated
@@ -38,6 +51,8 @@ abstract class Adapter<T, VH : Adapter.ViewHolder<T>> : RecyclerView.Adapter<VH>
     }
 
     abstract class ViewHolder<in T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        abstract fun bind(data: T)
+        abstract fun bind(data: T, payloads: List<Any>?)
+
+        open fun unbind() {}
     }
 }

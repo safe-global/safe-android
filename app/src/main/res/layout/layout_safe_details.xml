@@ -7,23 +7,30 @@
     android:layout_height="match_parent">
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/layout_multisig_details_viewpager"
+        android:id="@+id/layout_safe_details_viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/layout_multisig_details_appbar"
+        android:id="@+id/layout_safe_details_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/layout_multisig_details_toolbar"
+            android:id="@+id/layout_safe_details_toolbar"
             style="@style/Toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
             app:layout_scrollFlags="scroll|enterAlways"
             app:title="Multisig Wallet Name">
+
+            <ProgressBar
+                android:id="@+id/layout_safe_details_progress_bar"
+                android:layout_width="22dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                tools:visibility="visible" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -40,7 +47,7 @@
             tools:visibility="visible" />
 
         <android.support.design.widget.TabLayout
-            android:id="@+id/layout_multisig_details_tabbar"
+            android:id="@+id/layout_safe_details_tabbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways"

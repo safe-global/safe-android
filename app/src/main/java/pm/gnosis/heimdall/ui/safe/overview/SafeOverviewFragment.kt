@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig.overview
+package pm.gnosis.heimdall.ui.safe.overview
 
 import android.app.Activity
 import android.content.Intent
@@ -13,7 +13,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
-import kotlinx.android.synthetic.main.layout_multisig_overview.*
+import kotlinx.android.synthetic.main.layout_safe_overview.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -27,44 +27,44 @@ import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsActivity
+import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
-class MultisigOverviewFragment : BaseFragment() {
+class SafeOverviewFragment : BaseFragment() {
     @Inject
-    lateinit var viewModel: MultisigOverviewViewModel
+    lateinit var viewModel: SafeOverviewViewModel
     @Inject
-    lateinit var adapter: MultisigAdapter
+    lateinit var adapter: SafeAdapter
     @Inject
     lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.layout_multisig_overview, container, false)
+            inflater.inflate(R.layout.layout_safe_overview, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        layout_multisig_overview_wallets.layoutManager = layoutManager
-        layout_multisig_overview_wallets.adapter = adapter
+        layout_safe_overview_wallets.layoutManager = layoutManager
+        layout_safe_overview_wallets.adapter = adapter
     }
 
     override fun onDestroyView() {
-        layout_multisig_overview_wallets.layoutManager = null
+        layout_safe_overview_wallets.layoutManager = null
         super.onDestroyView()
     }
 
     override fun onStart() {
         super.onStart()
-        layout_multisig_overview_input_address.setOnClickListener {
-            layout_multisig_overview_fab.close(true)
+        layout_safe_overview_input_address.setOnClickListener {
+            layout_safe_overview_fab.close(true)
             showMultisigInputDialog()
         }
 
-        layout_multisig_overview_scan_qr_code.setOnClickListener {
-            layout_multisig_overview_fab.close(true)
+        layout_safe_overview_scan_qr_code.setOnClickListener {
+            layout_safe_overview_fab.close(true)
             scanQrCode()
         }
 
@@ -84,17 +84,17 @@ class MultisigOverviewFragment : BaseFragment() {
                 if (scanResult.isValidEthereumAddress()) {
                     showMultisigInputDialog(scanResult)
                 } else {
-                    snackbar(layout_multisig_overview_coordinator_layout, "Invalid address")
+                    snackbar(layout_safe_overview_coordinator_layout, "Invalid address")
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                snackbar(layout_multisig_overview_coordinator_layout, "Cancelled by the user")
+                snackbar(layout_safe_overview_coordinator_layout, "Cancelled by the user")
             }
         }
     }
 
     private fun onMultisigWallets(data: Adapter.Data<Safe>) {
         adapter.updateData(data)
-        layout_multisig_overview_empty_view.visibility = if (data.entries.isEmpty()) View.VISIBLE else View.GONE
+        layout_safe_overview_empty_view.visibility = if (data.entries.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun onMultisigWalletsError(throwable: Throwable) {
@@ -144,7 +144,7 @@ class MultisigOverviewFragment : BaseFragment() {
                     .subscribeBy(onComplete = this::onMultisigWalletNameChange, onError = this::onMultisigWalletNameChangeError)
 
     private fun onMultisigWalletAdded() {
-        snackbar(layout_multisig_overview_coordinator_layout, "Added MultisigWallet")
+        snackbar(layout_safe_overview_coordinator_layout, "Added MultisigWallet")
     }
 
     private fun onMultisigWalletAddError(throwable: Throwable) {
@@ -152,7 +152,7 @@ class MultisigOverviewFragment : BaseFragment() {
     }
 
     private fun onMultisigWalletRemoved() {
-        snackbar(layout_multisig_overview_coordinator_layout, "Removed Multisigwallet")
+        snackbar(layout_safe_overview_coordinator_layout, "Removed Multisigwallet")
     }
 
     private fun onMultisigWalletRemoveError(throwable: Throwable) {
@@ -160,7 +160,7 @@ class MultisigOverviewFragment : BaseFragment() {
     }
 
     private fun onMultisigWalletNameChange() {
-        snackbar(layout_multisig_overview_coordinator_layout, "Changed MultisigWallet name")
+        snackbar(layout_safe_overview_coordinator_layout, "Changed MultisigWallet name")
     }
 
     private fun onMultisigWalletNameChangeError(throwable: Throwable) {
@@ -168,7 +168,7 @@ class MultisigOverviewFragment : BaseFragment() {
     }
 
     private fun onMultisigSelection(multisigWallet: Safe) {
-        startActivity(MultisigDetailsActivity.createIntent(context!!, multisigWallet))
+        startActivity(SafeDetailsActivity.createIntent(context!!, multisigWallet))
     }
 
     private fun showEditMultisigNameDialog(multisigWallet: Safe) {

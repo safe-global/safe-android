@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig.details
+package pm.gnosis.heimdall.ui.safe.details
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -31,7 +31,7 @@ import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
-class MultisigDetailsViewModelTest {
+class SafeDetailsViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -45,7 +45,7 @@ class MultisigDetailsViewModelTest {
     @Mock
     private lateinit var qrCodeGeneratorMock: QrCodeGenerator
 
-    private lateinit var viewModel: MultisigDetailsViewModel
+    private lateinit var viewModel: SafeDetailsViewModel
 
     private var testAddress = BigInteger.ZERO
     private var invalidAddress = "1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF".hexAsBigInteger()
@@ -53,7 +53,7 @@ class MultisigDetailsViewModelTest {
 
     @Before
     fun setup() {
-        viewModel = MultisigDetailsViewModel(contextMock, safeRepository, qrCodeGeneratorMock)
+        viewModel = SafeDetailsViewModel(contextMock, safeRepository, qrCodeGeneratorMock)
     }
 
     @Test
@@ -130,7 +130,7 @@ class MultisigDetailsViewModelTest {
         given(safeRepository.remove(MockUtils.any())).willReturn(testCompletable)
         viewModel.setup(testAddress, testName)
 
-        viewModel.deleteMultisig().subscribe(testObserver)
+        viewModel.deleteSafe().subscribe(testObserver)
 
         assertEquals(1, testCompletable.callCount)
         then(safeRepository).should().remove(testAddress)
@@ -145,7 +145,7 @@ class MultisigDetailsViewModelTest {
         given(safeRepository.remove(MockUtils.any())).willReturn(Completable.error(exception))
         viewModel.setup(testAddress, testName)
 
-        viewModel.deleteMultisig().subscribe(testObserver)
+        viewModel.deleteSafe().subscribe(testObserver)
 
         then(safeRepository).should().remove(testAddress)
         then(safeRepository).shouldHaveNoMoreInteractions()
@@ -160,7 +160,7 @@ class MultisigDetailsViewModelTest {
         given(safeRepository.updateName(MockUtils.any(), anyString())).willReturn(testCompletable)
         viewModel.setup(testAddress, testName)
 
-        viewModel.changeMultisigName(newName).subscribe(testObserver)
+        viewModel.changeSafeName(newName).subscribe(testObserver)
 
         assertEquals(1, testCompletable.callCount)
         then(safeRepository).should().updateName(testAddress, newName)
@@ -176,7 +176,7 @@ class MultisigDetailsViewModelTest {
         given(safeRepository.updateName(MockUtils.any(), anyString())).willReturn(Completable.error(exception))
         viewModel.setup(testAddress, testName)
 
-        viewModel.changeMultisigName(newName).subscribe(testObserver)
+        viewModel.changeSafeName(newName).subscribe(testObserver)
 
         then(safeRepository).should().updateName(testAddress, newName)
         then(safeRepository).shouldHaveNoMoreInteractions()

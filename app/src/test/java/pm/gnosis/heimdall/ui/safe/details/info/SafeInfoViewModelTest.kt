@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig.details.info
+package pm.gnosis.heimdall.ui.safe.details.info
 
 import android.content.Context
 import io.reactivex.Observable
@@ -22,7 +22,7 @@ import pm.gnosis.models.Wei
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
-class MultisigInfoViewModelTest {
+class SafeInfoViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -33,11 +33,11 @@ class MultisigInfoViewModelTest {
     @Mock
     lateinit var repositoryMock: GnosisSafeRepository
 
-    lateinit var viewModel: MultisigInfoViewModel
+    lateinit var viewModel: SafeInfoViewModel
 
     @Before
     fun setup() {
-        viewModel = MultisigInfoViewModel(contextMock, repositoryMock)
+        viewModel = SafeInfoViewModel(contextMock, repositoryMock)
     }
 
     private fun callSetupAndCheck(address: BigInteger, info: SafeInfo,

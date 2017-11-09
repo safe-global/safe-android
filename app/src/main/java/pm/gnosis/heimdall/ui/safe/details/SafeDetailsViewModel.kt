@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig.details
+package pm.gnosis.heimdall.ui.safe.details
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -14,11 +14,11 @@ import pm.gnosis.utils.isValidEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
 
-class MultisigDetailsViewModel @Inject constructor(
+class SafeDetailsViewModel @Inject constructor(
         @ApplicationContext private val context: Context,
         private val safeRepository: GnosisSafeRepository,
         private val qrCodeGenerator: QrCodeGenerator
-) : MultisigDetailsContract() {
+) : SafeDetailsContract() {
     private lateinit var address: BigInteger
 
     private val errorHandler = LocalizedException.networkErrorHandlerBuilder(context)
@@ -36,13 +36,13 @@ class MultisigDetailsViewModel @Inject constructor(
                     .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
                     .mapToResult()
 
-    override fun deleteMultisig() =
+    override fun deleteSafe() =
             safeRepository.remove(address)
                     .andThen(Single.just(Unit))
                     .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
                     .mapToResult()
 
-    override fun changeMultisigName(newName: String) =
+    override fun changeSafeName(newName: String) =
             safeRepository.updateName(address, newName)
                     .andThen(Single.just(Unit))
                     .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }

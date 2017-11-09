@@ -8,53 +8,82 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.ui.base.Adapter
 
+fun <D> Flowable<List<D>>.scanToAdapterData(idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null): Flowable<Adapter.Data<D>> =
+        scan(Adapter.Data(), scanner(idExtractor, payloadCalc))
 
-fun <D> Flowable<List<D>>.scanToAdapterData(itemCheck: ((D, D) -> Boolean), contentCheck: ((D, D) -> Boolean)? = null): Flowable<Adapter.Data<D>> =
-        scan(Adapter.Data(), scanner(itemCheck, contentCheck))
+fun <D> Observable<List<D>>.scanToAdapterData(idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null): Observable<Adapter.Data<D>> =
+        scan(Adapter.Data(), scanner(idExtractor, payloadCalc))
 
-fun <D> Observable<List<D>>.scanToAdapterData(itemCheck: ((D, D) -> Boolean), contentCheck: ((D, D) -> Boolean)? = null): Observable<Adapter.Data<D>> =
-        scan(Adapter.Data(), scanner(itemCheck, contentCheck))
+fun <D> Observable<Result<List<D>>>.scanToAdapterDataResult(idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null): Observable<out Result<Adapter.Data<D>>> {
+    val initialData = Adapter.Data<D>()
+    return mapScanToAdapterDataResult({ _, i -> i }, initialData, idExtractor, payloadCalc)
+}
 
-fun <D> Observable<Result<List<D>>>.scanToAdapterDataResult(itemCheck: ((D, D) -> Boolean), contentCheck: ((D, D) -> Boolean)? = null): Observable<out Result<Adapter.Data<D>>> =
-        scan<CachedScanResult<D>>(CachedScanResult.empty(), { old, new ->
-            when (new) {
-                is ErrorResult -> old.copy(result = ErrorResult(new.error))
-                is DataResult -> CachedScanResult.withData(scanner(itemCheck, contentCheck)(old.data, new.data))
-            }
-        }).map { it.result }
+fun <D> Observable<Result<List<D>>>.mapScanToAdapterDataResult(
+        inMapper: ((Adapter.Data<D>, List<D>) -> List<D>), initialData: Adapter.Data<D>,
+        idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null
+): Observable<out Result<Adapter.Data<D>>> {
+    return mapScanToMappedResult(inMapper, { _, o -> o }, initialData, initialData, idExtractor, payloadCalc)
+}
 
-private fun <D> scanner(itemCheck: (D, D) -> Boolean, contentCheck: ((D, D) -> Boolean)?): (Adapter.Data<D>, List<D>) -> Adapter.Data<D> {
+fun <I, O, D> Observable<Result<I>>.mapScanToMappedResult(
+        inMapper: ((Adapter.Data<D>, I) -> List<D>), outMapper: ((I, Adapter.Data<D>) -> O),
+        initialData: Adapter.Data<D>, initialOutput: O,
+        idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null
+): Observable<out Result<O>> =
+        scan<CachedScanResult<O, D>>(
+                CachedScanResult(initialData, DataResult(initialOutput)),
+                { old, new ->
+                    when (new) {
+                        is ErrorResult -> old.copy(result = ErrorResult(new.error))
+                        is DataResult -> {
+                            calculateCachedScanResults(inMapper, outMapper, idExtractor, payloadCalc, old.data, new.data)
+                        }
+                    }
+                }).map { it.result }
+
+private fun <D> defaultIdExtractor(): (D) -> Any = { entry -> entry as Any }
+
+private fun <I, O, D> calculateCachedScanResults(
+        inMapper: ((Adapter.Data<D>, I) -> List<D>), outMapper: ((I, Adapter.Data<D>) -> O),
+        idExtractor: ((D) -> Any), payloadCalc: ((D, D) -> Any?)?,
+        cachedData: Adapter.Data<D>, input: I
+): CachedScanResult<O, D> {
+    val mappedData = inMapper(cachedData, input)
+    val adapterData = scanner(idExtractor, payloadCalc)(cachedData, mappedData)
+    return CachedScanResult(adapterData, DataResult(outMapper(input, adapterData)))
+}
+
+private fun <D> scanner(idExtractor: ((D) -> Any), payloadCalc: ((D, D) -> Any?)?): (Adapter.Data<D>, List<D>) -> Adapter.Data<D> {
     return { data, newEntries ->
-        val diff = DiffUtil.calculateDiff(SimpleDiffCallback(data.entries, newEntries, itemCheck, contentCheck))
+        val diff = DiffUtil.calculateDiff(SimpleDiffCallback(data.entries, newEntries, idExtractor, payloadCalc))
         Adapter.Data(data.id, newEntries, diff)
     }
 }
 
-private data class CachedScanResult<out D>(val data: Adapter.Data<D>, val result: Result<Adapter.Data<D>>) {
-    companion object {
-        fun <D> empty() = withData(Adapter.Data<D>())
-        fun <D> withData(data: Adapter.Data<D>) = CachedScanResult(data, DataResult(data))
-    }
-}
+private data class CachedScanResult<out W, out D>(val data: Adapter.Data<D>, val result: Result<W>)
 
 private class SimpleDiffCallback<D>(
         private val prevEntries: List<D>, private val newEntries: List<D>,
-        private val itemCheck: ((D, D) -> Boolean), private val contentCheck: ((D, D) -> Boolean)?
+        private val idExtractor: ((D) -> Any), private val payloadCalc: ((D, D) -> Any?)?
 ) : DiffUtil.Callback() {
     override fun getOldListSize() = prevEntries.size
 
     override fun getNewListSize() = newEntries.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val prevEntry = prevEntries.getOrNull(oldItemPosition) ?: return false
-        val newEntry = newEntries.getOrNull(newItemPosition) ?: return false
-        return itemCheck(prevEntry, newEntry)
+        val prevId = prevEntries.getOrNull(oldItemPosition)?.let { idExtractor(it) }
+        val newId = newEntries.getOrNull(newItemPosition)?.let { idExtractor(it) }
+        return prevId == newId
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        contentCheck ?: return false
-        val prevEntry = prevEntries.getOrNull(oldItemPosition) ?: return false
-        val newEntry = newEntries.getOrNull(newItemPosition) ?: return false
-        return contentCheck.invoke(prevEntry, newEntry)
+        return getChangePayload(oldItemPosition, newItemPosition) != null
+    }
+
+    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+        val prevEntry = prevEntries.getOrNull(oldItemPosition) ?: return null
+        val newEntry = newEntries.getOrNull(newItemPosition) ?: return null
+        return payloadCalc?.invoke(prevEntry, newEntry) != null
     }
 }

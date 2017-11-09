@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.multisig.details.info
+package pm.gnosis.heimdall.ui.safe.details.info
 
 import android.content.Context
 import io.reactivex.Observable
@@ -11,10 +11,10 @@ import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import java.math.BigInteger
 import javax.inject.Inject
 
-class MultisigInfoViewModel @Inject constructor(
+class SafeInfoViewModel @Inject constructor(
         @ApplicationContext private val context: Context,
-        private val multisigRepository: GnosisSafeRepository
-) : MultisigInfoContract() {
+        private val safeRepository: GnosisSafeRepository
+) : SafeInfoContract() {
 
     private val errorHandler = LocalizedException.networkErrorHandlerBuilder(context)
             .build()
@@ -33,7 +33,7 @@ class MultisigInfoViewModel @Inject constructor(
 
     override fun loadMultisigInfo(ignoreCache: Boolean) =
             (fromCache(ignoreCache) ?:
-                    multisigRepository.loadInfo(address!!)
+                    safeRepository.loadInfo(address!!)
                             .onErrorResumeNext(Function { errorHandler.observable(it) })
                             .doOnNext { cachedInfo = it })
                     .mapToResult()

@@ -3,9 +3,11 @@ package pm.gnosis.heimdall.data.repositories.impls
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
 import pm.gnosis.heimdall.GnosisSafe.Required
+import pm.gnosis.heimdall.GnosisSafeWithDescriptions.*
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
@@ -17,9 +19,11 @@ import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -79,6 +83,26 @@ class DefaultGnosisSafeRepository @Inject constructor(
                             it.requiredConfirmations.value!!.param0.value.toLong(),
                             it.owners.value!!.param0.items.map { it.value.toString(16) })
                 }
+    }
+
+    override fun loadDescriptionCount(address: BigInteger): Single<Int> {
+        val addressString = address.asEthereumAddressString()
+        return ethereumJsonRpcRepository.call(TransactionCallParams(to = addressString, data = GetDescriptionCount.encode()))
+                .map { GetDescriptionCount.decode(it).param0.value.toInt() }
+                .singleOrError()
+    }
+
+    override fun loadDescriptions(address: BigInteger, from: Int, to: Int): Single<List<String>> {
+        val addressString = address.asEthereumAddressString()
+        val fromParam = Solidity.UInt256(BigInteger.valueOf(from.toLong()))
+        val toParam = Solidity.UInt256(BigInteger.valueOf(to.toLong()))
+        return ethereumJsonRpcRepository.call(TransactionCallParams(to = addressString, data = GetDescriptions.encode(fromParam, toParam)))
+                .map {
+                    GetDescriptions.decode(it)._descriptionhashes.items.map {
+                        it.bytes.toHexString()
+                    }
+                }
+                .singleOrError()
     }
 
     private class WalletInfoRequest(

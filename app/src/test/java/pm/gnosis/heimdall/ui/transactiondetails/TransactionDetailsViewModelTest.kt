@@ -26,11 +26,7 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.remote.models.TransactionParameters
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
-import pm.gnosis.heimdall.data.repositories.TransactionDetails
-import pm.gnosis.heimdall.data.repositories.SafeAddOwner
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
@@ -309,7 +305,7 @@ class TransactionDetailsViewModelTest {
     @Test
     fun getTransaction() {
         val testObserver = TestObserver<TransactionDetails>()
-        val addOwnerTransaction = SafeAddOwner(testAddress)
+        val addOwnerTransaction = TransactionDetails(SafeAddOwner(testAddress), descriptionHash, transactionHash, null)
         val transactionDetails = Transaction(testAddress, data = confirmTransactionData)
         viewModel.setTransaction(transactionDetails, descriptionHash).subscribe()
         given(transactionDetailRepositoryMock.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Observable.just(addOwnerTransaction))
