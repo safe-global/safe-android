@@ -109,7 +109,7 @@ class SafeDetailsActivity : BaseActivity() {
     }
 
     private fun onWalletRemoved() {
-        toast(getString(R.string.wallet_remove_success, safeAddress ?: R.string.multisig))
+        toast(getString(R.string.wallet_remove_success, safeAddress ?: R.string.safe))
         finish()
     }
 
@@ -170,7 +170,7 @@ class SafeDetailsActivity : BaseActivity() {
             item.itemId == R.id.multisig_details_menu_share -> {
                 safeAddress.let {
                     shareExternalText(it.asEthereumAddressString(),
-                            getString(R.string.share_multisig_address, safeName ?: getString(R.string.multisig)))
+                            getString(R.string.share_safe_address, safeName ?: getString(R.string.safe)))
                 }
             }
             else -> return false

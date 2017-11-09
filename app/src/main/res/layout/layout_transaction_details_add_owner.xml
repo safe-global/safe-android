@@ -9,7 +9,7 @@
         style="@style/Content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/add_multisig_wallet_owner" />
+        android:text="@string/add_safe_owner" />
 
     <TextView
         android:id="@+id/layout_transaction_details_add_owner_address"

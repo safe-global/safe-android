@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/empty_multisig_wallets" />
+        android:text="@string/empty_safes" />
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/layout_safe_overview_fab"

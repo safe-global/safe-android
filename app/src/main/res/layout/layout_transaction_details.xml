@@ -52,7 +52,7 @@
                         style="@style/Content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/multisig_wallet" />
+                        android:text="@string/safe" />
 
                     <TextView
                         android:id="@+id/layout_transaction_details_wallet_address"

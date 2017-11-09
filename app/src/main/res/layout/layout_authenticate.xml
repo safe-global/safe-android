@@ -19,7 +19,7 @@
                 style="@style/Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/confirm_multisig_transaction" />
+                android:text="@string/confirm_safe_transaction" />
 
             <TextView
                 style="@style/Content"

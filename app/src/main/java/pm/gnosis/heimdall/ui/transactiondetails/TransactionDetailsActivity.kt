@@ -232,12 +232,12 @@ class TransactionDetailsActivity : BaseActivity() {
                     .subscribeForResult(onNext = { onSafeAdded() }, onError = this::onSafeAddError)
 
     private fun onSafeAdded() {
-        snackbar(layout_transaction_details_coordinator, getString(R.string.added_multisig))
+        snackbar(layout_transaction_details_coordinator, getString(R.string.added_safe))
     }
 
     private fun onSafeAddError(throwable: Throwable) {
         Timber.e(throwable)
-        snackbar(layout_transaction_details_coordinator, getString(R.string.add_multisig_wallet_error))
+        snackbar(layout_transaction_details_coordinator, getString(R.string.add_safe_error))
     }
 
     // Multisig Wallet Details
@@ -247,7 +247,7 @@ class TransactionDetailsActivity : BaseActivity() {
                     .subscribeBy(onNext = this::displaySafeInfo, onError = Timber::e)
 
     private fun displaySafeInfo(safe: Safe) {
-        layout_transaction_details_wallet_name.text = if (safe.name.isNullOrEmpty()) getString(R.string.multisig_address) else safe.name
+        layout_transaction_details_wallet_name.text = if (safe.name.isNullOrEmpty()) getString(R.string.safe_address) else safe.name
         layout_transaction_details_add_wallet.visibility = View.GONE
     }
 
