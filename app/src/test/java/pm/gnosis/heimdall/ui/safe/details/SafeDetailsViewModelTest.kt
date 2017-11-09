@@ -61,7 +61,7 @@ class SafeDetailsViewModelTest {
         given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.just(Safe(testAddress)))
 
         viewModel.setup(testAddress, testName)
-        viewModel.observeMultisig().subscribe(TestSubscriber())
+        viewModel.observeSafe().subscribe(TestSubscriber())
 
         then(safeRepository).should().observeSafe(testAddress)
     }
@@ -73,7 +73,7 @@ class SafeDetailsViewModelTest {
         given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.just(wallet))
         viewModel.setup(testAddress, testName)
 
-        viewModel.observeMultisig().subscribe(testSubscriber)
+        viewModel.observeSafe().subscribe(testSubscriber)
 
         testSubscriber.assertValue(wallet).assertNoErrors()
     }
@@ -85,7 +85,7 @@ class SafeDetailsViewModelTest {
         given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.error(exception))
         viewModel.setup(testAddress, testName)
 
-        viewModel.observeMultisig().subscribe(testSubscriber)
+        viewModel.observeSafe().subscribe(testSubscriber)
 
         testSubscriber.assertError(exception)
     }

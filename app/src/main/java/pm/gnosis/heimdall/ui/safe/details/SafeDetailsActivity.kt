@@ -81,7 +81,7 @@ class SafeDetailsActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += viewModel.observeMultisig()
+        disposables += viewModel.observeSafe()
                 .subscribeBy(onNext = {
                     safeName = it.name
                     updateTitle()

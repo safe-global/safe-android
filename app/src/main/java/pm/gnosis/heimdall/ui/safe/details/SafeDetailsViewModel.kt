@@ -29,7 +29,7 @@ class SafeDetailsViewModel @Inject constructor(
         this.address = address
     }
 
-    override fun observeMultisig() = safeRepository.observeSafe(address)
+    override fun observeSafe() = safeRepository.observeSafe(address)
 
     override fun loadQrCode(contents: String): Single<Result<Bitmap>> =
             qrCodeGenerator.generateQrCode(contents)

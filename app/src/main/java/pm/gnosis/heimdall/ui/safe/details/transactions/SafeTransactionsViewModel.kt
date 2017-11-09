@@ -74,6 +74,9 @@ class SafeTransactionsViewModel @Inject constructor(
     }
 
     private fun loadDescription(startIndex: Int): Single<IndexedResults> {
+        if (startIndex == 0) {
+            return Single.just(IndexedResults(0, 0, Adapter.Data()))
+        }
         val endIndex = Math.max(0, startIndex - PAGE_SIZE)
         // We load reversed, because we want the oldest first
         return safeRepository.loadDescriptions(address!!, endIndex, startIndex)

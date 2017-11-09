@@ -13,5 +13,5 @@ abstract class SafeDetailsContract : ViewModel() {
     abstract fun loadQrCode(contents: String): Single<Result<Bitmap>>
     abstract fun deleteSafe(): Single<Result<Unit>>
     abstract fun changeSafeName(newName: String): Single<Result<Unit>>
-    abstract fun observeMultisig(): Flowable<Safe>
+    abstract fun observeSafe(): Flowable<Safe>
 }
