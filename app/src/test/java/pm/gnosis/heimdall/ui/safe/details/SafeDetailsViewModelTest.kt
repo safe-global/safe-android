@@ -69,13 +69,13 @@ class SafeDetailsViewModelTest {
     @Test
     fun observeSafe() {
         val testSubscriber = TestSubscriber<Safe>()
-        val wallet = Safe(testAddress)
-        given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.just(wallet))
+        val safe = Safe(testAddress)
+        given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.just(safe))
         viewModel.setup(testAddress, testName)
 
         viewModel.observeSafe().subscribe(testSubscriber)
 
-        testSubscriber.assertValue(wallet).assertNoErrors()
+        testSubscriber.assertValue(safe).assertNoErrors()
     }
 
     @Test

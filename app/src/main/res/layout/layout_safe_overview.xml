@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/layout_safe_overview_wallets"
+        android:id="@+id/layout_safe_overview_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

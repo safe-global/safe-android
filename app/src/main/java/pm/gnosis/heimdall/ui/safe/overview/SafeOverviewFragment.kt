@@ -47,12 +47,12 @@ class SafeOverviewFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        layout_safe_overview_wallets.layoutManager = layoutManager
-        layout_safe_overview_wallets.adapter = adapter
+        layout_safe_overview_list.layoutManager = layoutManager
+        layout_safe_overview_list.adapter = adapter
     }
 
     override fun onDestroyView() {
-        layout_safe_overview_wallets.layoutManager = null
+        layout_safe_overview_list.layoutManager = null
         super.onDestroyView()
     }
 
@@ -84,10 +84,10 @@ class SafeOverviewFragment : BaseFragment() {
                 if (scanResult.isValidEthereumAddress()) {
                     showSafeInputDialog(scanResult)
                 } else {
-                    snackbar(layout_safe_overview_coordinator_layout, "Invalid address")
+                    snackbar(layout_safe_overview_coordinator_layout, R.string.invalid_ethereum_address)
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                snackbar(layout_safe_overview_coordinator_layout, "Cancelled by the user")
+                snackbar(layout_safe_overview_coordinator_layout, R.string.user_canceled)
             }
         }
     }

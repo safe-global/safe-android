@@ -136,15 +136,15 @@ class TransactionDetailsViewModelTest {
     @Test
     fun getSafeDetails() {
         val testObserver = TestSubscriber<Safe>()
-        val wallet = Safe(testAddress)
+        val safe = Safe(testAddress)
         viewModel.setTransaction(testTransaction, null).subscribe()
-        given(safeRepositoryMock.observeSafe(MockUtils.any())).willReturn(Flowable.just(wallet))
+        given(safeRepositoryMock.observeSafe(MockUtils.any())).willReturn(Flowable.just(safe))
 
         viewModel.observeSafeDetails().subscribe(testObserver)
 
         then(safeRepositoryMock).should().observeSafe(testAddress)
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
-        testObserver.assertValue(wallet)
+        testObserver.assertValue(safe)
     }
 
     @Test
@@ -276,7 +276,7 @@ class TransactionDetailsViewModelTest {
     @Test
     fun addSafe() {
         val address = testAddress
-        val name = "test wallet"
+        val name = "test safe"
         val addSafeCompletable = TestCompletable()
         val testObserver = TestObserver<Result<BigInteger>>()
         given(safeRepositoryMock.add(MockUtils.any(), anyString())).willReturn(addSafeCompletable)
@@ -291,7 +291,7 @@ class TransactionDetailsViewModelTest {
     @Test
     fun addSafeError() {
         val address = testAddress
-        val name = "test wallet"
+        val name = "test safe"
         val testObserver = TestObserver<Result<BigInteger>>()
         val exception = Exception()
         given(safeRepositoryMock.add(MockUtils.any(), anyString())).willReturn(Completable.error(exception))

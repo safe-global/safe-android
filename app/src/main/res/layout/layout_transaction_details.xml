@@ -48,14 +48,14 @@
                     android:padding="8dp">
 
                     <TextView
-                        android:id="@+id/layout_transaction_details_wallet_name"
+                        android:id="@+id/layout_transaction_details_safe_name"
                         style="@style/Content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/safe" />
 
                     <TextView
-                        android:id="@+id/layout_transaction_details_wallet_address"
+                        android:id="@+id/layout_transaction_details_safe_address"
                         style="@style/Content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
                         tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
 
                     <Button
-                        android:id="@+id/layout_transaction_details_add_wallet"
+                        android:id="@+id/layout_transaction_details_add_safe"
                         style="@style/TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

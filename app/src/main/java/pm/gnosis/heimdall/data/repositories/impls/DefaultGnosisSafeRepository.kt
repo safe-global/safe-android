@@ -63,7 +63,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun loadInfo(address: BigInteger): Observable<SafeInfo> {
         val addressString = address.asEthereumAddressString()
-        val request = WalletInfoRequest(
+        val request = SafeInfoRequest(
                 SubRequest(JsonRpcRequest(
                         id = 0,
                         method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
@@ -101,7 +101,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 }
     }
 
-    private class WalletInfoRequest(
+    private class SafeInfoRequest(
             val balance: SubRequest<Wei>,
             val requiredConfirmations: SubRequest<Required.Return>,
             val owners: SubRequest<GetOwners.Return>

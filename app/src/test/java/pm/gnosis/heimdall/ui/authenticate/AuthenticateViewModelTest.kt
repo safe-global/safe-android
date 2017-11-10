@@ -120,7 +120,7 @@ class AuthenticateViewModelTest {
     }
 
     @Test
-    fun checkResultUnknownWalletAction() {
+    fun checkResultUnknownSafeAction() {
         val intent = testIntent(createTransactionString(data = "TEST_DATA"))
         val observer = createObserver()
 

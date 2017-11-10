@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.*
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -33,7 +34,7 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
             Completable.fromCallable {
                 this.descriptionHash = descriptionHash
                 if (transaction == null) throw IllegalStateException("Transaction is null")
-                if (!transaction.address.isValidEthereumAddress()) throw IllegalStateException("Invalid wallet address")
+                if (!transaction.address.isValidEthereumAddress()) throw InvalidAddressException(transaction.address)
                 this.transaction = transaction
 
                 val data = transaction.data ?: throw IllegalStateException("Transaction doesn't have any data")

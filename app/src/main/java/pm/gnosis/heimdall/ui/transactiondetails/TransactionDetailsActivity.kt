@@ -56,7 +56,7 @@ class TransactionDetailsActivity : BaseActivity() {
 
     @Inject lateinit var viewModel: TransactionDetailsContract
 
-    private val addWalletClickSubject = PublishSubject.create<Pair<String, String>>()
+    private val addSafeClickSubject = PublishSubject.create<Pair<String, String>>()
     private var transactionSigningInProgress = false
     private var transactionDetailsInProgress = false
     private var tokenInfoInProgress = false
@@ -78,7 +78,7 @@ class TransactionDetailsActivity : BaseActivity() {
 
     private fun onValidTransactionDetails() {
         disposables += signTransactionDisposable()
-        disposables += layout_transaction_details_add_wallet.clicks()
+        disposables += layout_transaction_details_add_safe.clicks()
                 .subscribeBy(onNext = { showAddSafeDialog() }, onError = Timber::e)
         disposables += addSafeDisposable()
         disposables += transactionDetailsDisposable()
@@ -91,7 +91,7 @@ class TransactionDetailsActivity : BaseActivity() {
 
         val shortTransactionHash = viewModel.getTransactionHash().subSequence(0, 6)
         layout_transaction_details_transaction_id.text = getString(R.string.transaction_number, shortTransactionHash)
-        layout_transaction_details_wallet_address.text = viewModel.getTransaction().address.asEthereumAddressString()
+        layout_transaction_details_safe_address.text = viewModel.getTransaction().address.asEthereumAddressString()
     }
 
     private fun onInvalidTransactionDetails(throwable: Throwable) {
@@ -217,7 +217,7 @@ class TransactionDetailsActivity : BaseActivity() {
             val name = dialogView.dialog_add_safe_text_name.text.toString()
             val address = dialogView.dialog_add_safe_text_address.text.toString()
             if (address.isValidEthereumAddress()) {
-                addWalletClickSubject.onNext(address.addAddressPrefix() to name)
+                addSafeClickSubject.onNext(address.addAddressPrefix() to name)
                 dialog.dismiss()
             } else {
                 dialog_add_safe_text_input_layout.error = getString(R.string.invalid_ethereum_address)
@@ -226,7 +226,7 @@ class TransactionDetailsActivity : BaseActivity() {
     }
 
     private fun addSafeDisposable() =
-            addWalletClickSubject
+            addSafeClickSubject
                     .flatMapSingle { viewModel.addSafe(it.first.hexAsBigInteger(), it.second) }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeForResult(onNext = { onSafeAdded() }, onError = this::onSafeAddError)
@@ -247,8 +247,8 @@ class TransactionDetailsActivity : BaseActivity() {
                     .subscribeBy(onNext = this::displaySafeInfo, onError = Timber::e)
 
     private fun displaySafeInfo(safe: Safe) {
-        layout_transaction_details_wallet_name.text = if (safe.name.isNullOrEmpty()) getString(R.string.safe_address) else safe.name
-        layout_transaction_details_add_wallet.visibility = View.GONE
+        layout_transaction_details_safe_name.text = if (safe.name.isNullOrEmpty()) getString(R.string.safe_address) else safe.name
+        layout_transaction_details_add_safe.visibility = View.GONE
     }
 
     // Signing Transaction
