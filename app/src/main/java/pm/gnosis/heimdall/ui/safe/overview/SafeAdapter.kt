@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @ForView
 class SafeAdapter @Inject constructor(@ViewContext private val context: Context) : Adapter<Safe, SafeAdapter.ViewHolder>() {
-    val multisigSelection = PublishSubject.create<Safe>()!!
+    val safeSelection = PublishSubject.create<Safe>()!!
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.layout_safe_item, parent, false)
@@ -43,7 +43,7 @@ class SafeAdapter @Inject constructor(@ViewContext private val context: Context)
         }
 
         override fun onClick(v: View?) {
-            multisigSelection.onNext(items[adapterPosition])
+            safeSelection.onNext(items[adapterPosition])
         }
     }
 }

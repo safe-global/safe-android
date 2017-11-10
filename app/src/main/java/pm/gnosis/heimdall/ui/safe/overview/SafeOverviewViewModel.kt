@@ -11,20 +11,20 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class SafeOverviewViewModel @Inject constructor(
-        private val multisigRepository: GnosisSafeRepository
+        private val safeRepository: GnosisSafeRepository
 ) : SafeOverviewContract() {
     override fun observeSafes(): Flowable<Result<Adapter.Data<Safe>>> {
-        return multisigRepository.observeSafes()
+        return safeRepository.observeSafes()
                 .scanToAdapterData()
                 .mapToResult()
     }
 
     override fun addSafe(address: BigInteger, name: String) =
-            multisigRepository.add(address, name)
+            safeRepository.add(address, name)
 
     override fun removeSafe(address: BigInteger) =
-            multisigRepository.remove(address)
+            safeRepository.remove(address)
 
     override fun updateSafeName(address: BigInteger, newName: String) =
-            multisigRepository.updateName(address, newName)
+            safeRepository.updateName(address, newName)
 }

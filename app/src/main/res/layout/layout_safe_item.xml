@@ -26,7 +26,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             style="@style/Title"
-            tools:text="My Multisig Wallet" />
+            tools:text="My Safe" />
 
         <TextView
             android:id="@+id/layout_safe_item_address"

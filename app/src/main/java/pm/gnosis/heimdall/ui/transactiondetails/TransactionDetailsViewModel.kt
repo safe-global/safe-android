@@ -20,11 +20,11 @@ import javax.inject.Inject
 
 class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
                                                       private val accountsRepository: AccountsRepository,
-                                                      private val multisigRepository: GnosisSafeRepository,
+                                                      private val safeRepository: GnosisSafeRepository,
                                                       private val transactionDetailRepository: TransactionDetailsRepository,
                                                       private val tokenRepository: TokenRepository) : TransactionDetailsContract() {
     private lateinit var transaction: Transaction
-    private lateinit var transactionType: MultisigTransactionType
+    private lateinit var transactionType: SafeTransactionType
     private lateinit var transactionHash: String
 
     private var descriptionHash: String? = null
@@ -41,12 +41,12 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
                     data.isSolidityMethod(GnosisSafe.ConfirmTransaction.METHOD_ID) -> {
                         val argument = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.ConfirmTransaction.METHOD_ID)
                         transactionHash = GnosisSafe.ConfirmTransaction.decodeArguments(argument).transactionhash.bytes.toHexString()
-                        transactionType = ConfirmMultisigTransaction()
+                        transactionType = ConfirmSafeTransaction()
                     }
                     data.isSolidityMethod(GnosisSafe.RevokeConfirmation.METHOD_ID) -> {
                         val argument = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.RevokeConfirmation.METHOD_ID)
                         transactionHash = GnosisSafe.RevokeConfirmation.decodeArguments(argument).transactionhash.bytes.toHexString()
-                        transactionType = RevokeMultisigTransaction()
+                        transactionType = RevokeSafeTransaction()
                     }
                     else -> throw IllegalStateException("Transaction it's neither a Confirm or Revoke")
                 }
@@ -60,7 +60,7 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
     override fun getTransaction() = transaction
 
     override fun observeSafeDetails(): Flowable<Safe> =
-            multisigRepository.observeSafe(transaction.address)
+            safeRepository.observeSafe(transaction.address)
 
     override fun signTransaction(): Observable<Result<String>> =
             accountsRepository.loadActiveAccount()
@@ -77,7 +77,7 @@ class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRp
                     .mapToResult()
 
     override fun addSafe(address: BigInteger, name: String?): Single<Result<BigInteger>> =
-            multisigRepository.add(address, name).andThen(Single.just(address)).mapToResult()
+            safeRepository.add(address, name).andThen(Single.just(address)).mapToResult()
 
     override fun loadTransactionDetails(): Observable<TransactionDetails> {
         val descriptionHash = this.descriptionHash ?: return Observable.just(TransactionDetails.unknown(""))

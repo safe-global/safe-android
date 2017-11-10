@@ -31,7 +31,7 @@ class SafeInfoViewModel @Inject constructor(
         cachedInfo = null
     }
 
-    override fun loadMultisigInfo(ignoreCache: Boolean) =
+    override fun loadSafeInfo(ignoreCache: Boolean) =
             (fromCache(ignoreCache) ?:
                     safeRepository.loadInfo(address!!)
                             .onErrorResumeNext(Function { errorHandler.observable(it) })

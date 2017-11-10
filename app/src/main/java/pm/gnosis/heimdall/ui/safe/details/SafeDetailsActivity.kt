@@ -61,7 +61,7 @@ class SafeDetailsActivity : BaseActivity() {
         updateTitle()
         viewModel.setup(safeAddress.hexAsEthereumAddress(), safeName)
 
-        layout_safe_details_viewpager.adapter = pagerAdapter(safeAddress)
+        layout_safe_details_viewpager.adapter = pagerAdapter()
         layout_safe_details_tabbar.setupWithViewPager(layout_safe_details_viewpager)
         layout_safe_details_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
@@ -114,15 +114,15 @@ class SafeDetailsActivity : BaseActivity() {
     }
 
     private fun onSafeRemoveError(throwable: Throwable) {
-        snackbar(layout_multisig_details_coordinator, R.string.safe_remove_error)
+        snackbar(layout_safe_details_coordinator, R.string.safe_remove_error)
     }
 
     private fun onNameChanged() {
-        snackbar(layout_multisig_details_coordinator, R.string.safe_name_change_success)
+        snackbar(layout_safe_details_coordinator, R.string.safe_name_change_success)
     }
 
     private fun onNameChangeError(throwable: Throwable) {
-        snackbar(layout_multisig_details_coordinator, R.string.safe_name_change_error)
+        snackbar(layout_safe_details_coordinator, R.string.safe_name_change_error)
     }
 
     private fun onQrCode(qrCode: Bitmap) {
@@ -142,32 +142,32 @@ class SafeDetailsActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.multisig_details_menu, menu)
+        menuInflater.inflate(R.menu.safe_details_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.itemId ?: return false
         when {
-            item.itemId == R.id.multisig_details_menu_delete -> {
+            item.itemId == R.id.safe_details_menu_delete -> {
                 showRemoveDialog()
             }
-            item.itemId == R.id.multisig_details_menu_change_name -> {
+            item.itemId == R.id.safe_details_menu_change_name -> {
                 showEditDialog()
             }
-            item.itemId == R.id.multisig_details_menu_qr_code -> {
+            item.itemId == R.id.safe_details_menu_qr_code -> {
                 safeAddress.let {
                     generateQrCodeClicks.onNext(it.asEthereumAddressString())
                 }
             }
-            item.itemId == R.id.multisig_details_menu_clipboard -> {
+            item.itemId == R.id.safe_details_menu_clipboard -> {
                 safeAddress.let {
                     copyToClipboard(CLIPBOARD_ADDRESS_LABEL, it.asEthereumAddressString(), {
-                        snackbar(layout_multisig_details_coordinator, R.string.address_clipboard_success)
+                        snackbar(layout_safe_details_coordinator, R.string.address_clipboard_success)
                     })
                 }
             }
-            item.itemId == R.id.multisig_details_menu_share -> {
+            item.itemId == R.id.safe_details_menu_share -> {
                 safeAddress.let {
                     shareExternalText(it.asEthereumAddressString(),
                             getString(R.string.share_safe_address, safeName ?: getString(R.string.safe)))
@@ -204,16 +204,16 @@ class SafeDetailsActivity : BaseActivity() {
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
 
-    private fun pagerAdapter(multisigAddress: String) = FactoryPagerAdapter(supportFragmentManager, FactoryPagerAdapter.Factory(items.size, {
+    private fun pagerAdapter() = FactoryPagerAdapter(supportFragmentManager, FactoryPagerAdapter.Factory(items.size, {
         when (positionToId(it)) {
             R.string.tab_title_info -> {
-                SafeInfoFragment.createInstance(multisigAddress.asEthereumAddressString())
+                SafeInfoFragment.createInstance(safeAddress.asEthereumAddressString())
             }
             R.string.tab_title_tokens -> {
-                TokensFragment.createInstance(multisigAddress.asEthereumAddressString())
+                TokensFragment.createInstance(safeAddress.asEthereumAddressString())
             }
             R.string.tab_title_transactions -> {
-                SafeTransactionsFragment.createInstance(multisigAddress.asEthereumAddressString())
+                SafeTransactionsFragment.createInstance(safeAddress.asEthereumAddressString())
             }
             else -> throw IllegalStateException("Unhandled tab position")
         }
@@ -233,10 +233,10 @@ class SafeDetailsActivity : BaseActivity() {
         private const val EXTRA_SAFE_NAME = "extra.string.safe_name"
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val CLIPBOARD_ADDRESS_LABEL = "safe.address"
-        fun createIntent(context: Context, multisig: Safe): Intent {
+        fun createIntent(context: Context, safe: Safe): Intent {
             val intent = Intent(context, SafeDetailsActivity::class.java)
-            intent.putExtra(EXTRA_SAFE_NAME, multisig.name)
-            intent.putExtra(EXTRA_SAFE_ADDRESS, multisig.address.asEthereumAddressString())
+            intent.putExtra(EXTRA_SAFE_NAME, safe.name)
+            intent.putExtra(EXTRA_SAFE_ADDRESS, safe.address.asEthereumAddressString())
             return intent
         }
     }

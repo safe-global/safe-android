@@ -16,7 +16,7 @@ import pm.gnosis.heimdall.ui.tokens.overview.TokensFragment
 
 class MainActivity : BaseActivity() {
 
-    private val items = listOf(R.id.action_authenticate, R.id.action_account, R.id.action_multisig, R.id.action_tokens)
+    private val items = listOf(R.id.action_authenticate, R.id.action_account, R.id.action_safe, R.id.action_tokens)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +49,7 @@ class MainActivity : BaseActivity() {
             R.id.action_account -> {
                 AccountFragment()
             }
-            R.id.action_multisig -> {
+            R.id.action_safe -> {
                 SafeOverviewFragment()
             }
             R.id.action_tokens -> {

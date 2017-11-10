@@ -2,23 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/multisig_details_menu_delete"
-        android:title="Remove from device"
+        android:id="@+id/safe_details_menu_delete"
+        android:title="@string/remove_from_device"
         app:showAsAction="never" />
     <item
-        android:id="@+id/multisig_details_menu_change_name"
-        android:title="Change name"
+        android:id="@+id/safe_details_menu_change_name"
+        android:title="@string/change_name"
         app:showAsAction="never" />
     <item
-        android:id="@+id/multisig_details_menu_qr_code"
+        android:id="@+id/safe_details_menu_qr_code"
         android:title="@string/qrcode"
         app:showAsAction="never" />
     <item
-        android:id="@+id/multisig_details_menu_clipboard"
+        android:id="@+id/safe_details_menu_clipboard"
         android:title="@string/copy_to_clipboard"
         app:showAsAction="never" />
     <item
-        android:id="@+id/multisig_details_menu_share"
+        android:id="@+id/safe_details_menu_share"
         android:title="@string/share_address"
         app:showAsAction="never" />
 </menu>

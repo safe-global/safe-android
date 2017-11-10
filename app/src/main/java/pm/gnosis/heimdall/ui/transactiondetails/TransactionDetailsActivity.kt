@@ -85,8 +85,8 @@ class TransactionDetailsActivity : BaseActivity() {
         disposables += safeDetailsDisposable()
 
         when (viewModel.getTransactionType()) {
-            is ConfirmMultisigTransaction -> layout_transaction_details_button.text = getString(R.string.confirm_transaction)
-            is RevokeMultisigTransaction -> layout_transaction_details_button.text = getString(R.string.revoke_transaction)
+            is ConfirmSafeTransaction -> layout_transaction_details_button.text = getString(R.string.confirm_transaction)
+            is RevokeSafeTransaction -> layout_transaction_details_button.text = getString(R.string.revoke_transaction)
         }
 
         val shortTransactionHash = viewModel.getTransactionHash().subSequence(0, 6)
@@ -199,7 +199,7 @@ class TransactionDetailsActivity : BaseActivity() {
         layout_transaction_details_transfer_recipient.text = transaction.recipient.asEthereumAddressString()
     }
 
-    // Add Multisig Wallet
+    // Add Safe
     private fun showAddSafeDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_safe_add_input, null)
 
@@ -240,7 +240,7 @@ class TransactionDetailsActivity : BaseActivity() {
         snackbar(layout_transaction_details_coordinator, getString(R.string.add_safe_error))
     }
 
-    // Multisig Wallet Details
+    // Safe Details
     private fun safeDetailsDisposable() =
             viewModel.observeSafeDetails()
                     .observeOn(AndroidSchedulers.mainThread())
@@ -265,8 +265,8 @@ class TransactionDetailsActivity : BaseActivity() {
 
     private fun onTransactionSigned(transactionHash: String) {
         when (viewModel.getTransactionType()) {
-            is ConfirmMultisigTransaction -> toast(getString(R.string.transaction_confirmed))
-            is RevokeMultisigTransaction -> toast(getString(R.string.transaction_revoked))
+            is ConfirmSafeTransaction -> toast(getString(R.string.transaction_confirmed))
+            is RevokeSafeTransaction -> toast(getString(R.string.transaction_revoked))
         }
         finish()
     }

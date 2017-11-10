@@ -39,11 +39,11 @@ class SafeInfoFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        disposables += layout_multisig_info_swipe_refresh.refreshes()
+        disposables += layout_safe_info_swipe_refresh.refreshes()
                 .map { true }
                 .startWith(false)
                 .flatMap {
-                    viewModel.loadMultisigInfo(it)
+                    viewModel.loadSafeInfo(it)
                             .subscribeOn(AndroidSchedulers.mainThread())
                             .observeOn(AndroidSchedulers.mainThread())
                             .doOnSubscribe { showLoading(true) }
@@ -61,7 +61,7 @@ class SafeInfoFragment : BaseFragment() {
     }
 
     private fun showLoading(loading: Boolean) {
-        layout_multisig_info_swipe_refresh.isRefreshing = loading
+        layout_safe_info_swipe_refresh.isRefreshing = loading
     }
 
     private fun handleError(throwable: Throwable) {

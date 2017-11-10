@@ -9,5 +9,5 @@ import java.math.BigInteger
 
 abstract class SafeInfoContract : ViewModel() {
     abstract fun setup(address: BigInteger)
-    abstract fun loadMultisigInfo(ignoreCache: Boolean): Observable<Result<SafeInfo>>
+    abstract fun loadSafeInfo(ignoreCache: Boolean): Observable<Result<SafeInfo>>
 }

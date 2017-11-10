@@ -48,7 +48,7 @@ class SafeInfoViewModelTest {
 
         // Verify that the repositoryMock is called and expected version is returned
         val observer = TestObserver.create<Result<SafeInfo>>()
-        viewModel.loadMultisigInfo(ignoreCached).subscribe(observer)
+        viewModel.loadSafeInfo(ignoreCached).subscribe(observer)
         observer.assertNoErrors().assertValueCount(1).assertValue(DataResult(info))
         Mockito.verify(repositoryMock, Mockito.times(repositoryInvocations)).loadInfo(address)
         Mockito.verify(repositoryMock, Mockito.times(totalInvocations)).loadInfo(MockUtils.any())
@@ -81,7 +81,7 @@ class SafeInfoViewModelTest {
     }
 
     @Test
-    fun loadMultisigInfoIgnoreCache() {
+    fun loadSafeInfoIgnoreCache() {
         val address = BigInteger.ZERO
         val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList())
         given(repositoryMock.loadInfo(address)).willReturn(Observable.just(info))
@@ -92,14 +92,14 @@ class SafeInfoViewModelTest {
     }
 
     @Test
-    fun loadMultisigInfoError() {
+    fun loadSafeInfoError() {
         viewModel.setup(BigInteger.ZERO)
 
         val exception = IllegalStateException("test")
         given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.error(exception))
 
         val observer = TestObserver.create<Result<SafeInfo>>()
-        viewModel.loadMultisigInfo(true).subscribe(observer)
+        viewModel.loadSafeInfo(true).subscribe(observer)
         observer.assertNoErrors().assertValueCount(1).assertValue(ErrorResult(exception))
     }
 }

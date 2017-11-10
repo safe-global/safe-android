@@ -28,6 +28,7 @@ import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.remote.models.TransactionParameters
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.test.utils.TestCompletable
@@ -50,7 +51,7 @@ class TransactionDetailsViewModelTest {
     lateinit var accountsRepositoryMock: AccountsRepository
 
     @Mock
-    lateinit var multisigRepositoryMock: GnosisSafeRepository
+    lateinit var safeRepositoryMock: GnosisSafeRepository
 
     @Mock
     lateinit var transactionDetailRepositoryMock: TransactionDetailsRepository
@@ -69,7 +70,7 @@ class TransactionDetailsViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = TransactionDetailsViewModel(ethereumJsonRpcRepositoryMock, accountsRepositoryMock, multisigRepositoryMock, transactionDetailRepositoryMock, tokenRepositoryMock)
+        viewModel = TransactionDetailsViewModel(ethereumJsonRpcRepositoryMock, accountsRepositoryMock, safeRepositoryMock, transactionDetailRepositoryMock, tokenRepositoryMock)
     }
 
     @Test
@@ -79,7 +80,7 @@ class TransactionDetailsViewModelTest {
         viewModel.setTransaction(testTransaction, descriptionHash).subscribe(testObserver)
 
         assertEquals(transactionHash, viewModel.getTransactionHash())
-        assertTrue(viewModel.getTransactionType() is ConfirmMultisigTransaction)
+        assertTrue(viewModel.getTransactionType() is ConfirmSafeTransaction)
         assertEquals(testTransaction, viewModel.getTransaction())
         testObserver.assertTerminated().assertNoErrors()
     }
@@ -92,7 +93,7 @@ class TransactionDetailsViewModelTest {
         viewModel.setTransaction(transaction, descriptionHash).subscribe(testObserver)
 
         assertEquals(transactionHash, viewModel.getTransactionHash())
-        assertTrue(viewModel.getTransactionType() is RevokeMultisigTransaction)
+        assertTrue(viewModel.getTransactionType() is RevokeSafeTransaction)
         assertEquals(transaction, viewModel.getTransaction())
         testObserver.assertTerminated().assertNoErrors()
     }
@@ -121,7 +122,7 @@ class TransactionDetailsViewModelTest {
     }
 
     @Test
-    fun setTransactionWithInvalidMultisigAddress() {
+    fun setTransactionWithInvalidSafeAddress() {
         val transaction =  testTransaction.copy(BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 16))
         val testObserver = TestObserver<Unit>()
 
@@ -133,30 +134,30 @@ class TransactionDetailsViewModelTest {
     }
 
     @Test
-    fun getMultisigWalletDetails() {
-        val testObserver = TestSubscriber<pm.gnosis.heimdall.data.repositories.models.Safe>()
-        val wallet = pm.gnosis.heimdall.data.repositories.models.Safe(testAddress)
+    fun getSafeDetails() {
+        val testObserver = TestSubscriber<Safe>()
+        val wallet = Safe(testAddress)
         viewModel.setTransaction(testTransaction, null).subscribe()
-        given(multisigRepositoryMock.observeSafe(MockUtils.any())).willReturn(Flowable.just(wallet))
+        given(safeRepositoryMock.observeSafe(MockUtils.any())).willReturn(Flowable.just(wallet))
 
         viewModel.observeSafeDetails().subscribe(testObserver)
 
-        then(multisigRepositoryMock).should().observeSafe(testAddress)
-        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).should().observeSafe(testAddress)
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(wallet)
     }
 
     @Test
-    fun getMultisigWalletDetailsError() {
-        val testObserver = TestSubscriber<pm.gnosis.heimdall.data.repositories.models.Safe>()
+    fun getSafeDetailsError() {
+        val testObserver = TestSubscriber<Safe>()
         val exception = Exception()
         viewModel.setTransaction(testTransaction, null).subscribe()
-        given(multisigRepositoryMock.observeSafe(MockUtils.any())).willReturn(Flowable.error(exception))
+        given(safeRepositoryMock.observeSafe(MockUtils.any())).willReturn(Flowable.error(exception))
 
         viewModel.observeSafeDetails().subscribe(testObserver)
 
-        then(multisigRepositoryMock).should().observeSafe(testAddress)
-        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).should().observeSafe(testAddress)
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception)
     }
 
@@ -273,32 +274,32 @@ class TransactionDetailsViewModelTest {
     }
 
     @Test
-    fun addMultisigWallet() {
+    fun addSafe() {
         val address = testAddress
         val name = "test wallet"
-        val addMultisigWalletCompletable = TestCompletable()
+        val addSafeCompletable = TestCompletable()
         val testObserver = TestObserver<Result<BigInteger>>()
-        given(multisigRepositoryMock.add(MockUtils.any(), anyString())).willReturn(addMultisigWalletCompletable)
+        given(safeRepositoryMock.add(MockUtils.any(), anyString())).willReturn(addSafeCompletable)
 
         viewModel.addSafe(address, name).subscribe(testObserver)
 
-        then(multisigRepositoryMock).should().add(testAddress, name)
-        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).should().add(testAddress, name)
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(address)).assertNoErrors()
     }
 
     @Test
-    fun addMultisigWalletError() {
+    fun addSafeError() {
         val address = testAddress
         val name = "test wallet"
         val testObserver = TestObserver<Result<BigInteger>>()
         val exception = Exception()
-        given(multisigRepositoryMock.add(MockUtils.any(), anyString())).willReturn(Completable.error(exception))
+        given(safeRepositoryMock.add(MockUtils.any(), anyString())).willReturn(Completable.error(exception))
 
         viewModel.addSafe(address, name).subscribe(testObserver)
 
-        then(multisigRepositoryMock).should().add(testAddress, name)
-        then(multisigRepositoryMock).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).should().add(testAddress, name)
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(ErrorResult(exception)).assertNoErrors()
     }
 

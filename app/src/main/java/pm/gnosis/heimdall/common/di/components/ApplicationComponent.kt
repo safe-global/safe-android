@@ -46,7 +46,7 @@ interface ApplicationComponent {
 
     fun accountsRepository(): AccountsRepository
     fun ethereumJsonRpcRepository(): EthereumJsonRpcRepository
-    fun multisigRepository(): GnosisSafeRepository
+    fun safeRepository(): GnosisSafeRepository
     fun tokenRepository(): TokenRepository
     fun transactionDetailRepository(): TransactionDetailsRepository
 

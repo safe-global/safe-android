@@ -67,7 +67,7 @@ class SafeDetailsViewModelTest {
     }
 
     @Test
-    fun observeMultisig() {
+    fun observeSafe() {
         val testSubscriber = TestSubscriber<Safe>()
         val wallet = Safe(testAddress)
         given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.just(wallet))
@@ -79,7 +79,7 @@ class SafeDetailsViewModelTest {
     }
 
     @Test
-    fun observeMultisigError() {
+    fun observeSafeError() {
         val testSubscriber = TestSubscriber<Safe>()
         val exception = Exception()
         given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.error(exception))
@@ -124,7 +124,7 @@ class SafeDetailsViewModelTest {
     }
 
     @Test
-    fun deleteMultisig() {
+    fun deleteSafe() {
         val testCompletable = TestCompletable()
         val testObserver = TestObserver<Result<Unit>>()
         given(safeRepository.remove(MockUtils.any())).willReturn(testCompletable)
@@ -139,7 +139,7 @@ class SafeDetailsViewModelTest {
     }
 
     @Test
-    fun deleteMultisigError() {
+    fun deleteSafeError() {
         val testObserver = TestObserver<Result<Unit>>()
         val exception = Exception()
         given(safeRepository.remove(MockUtils.any())).willReturn(Completable.error(exception))
@@ -153,7 +153,7 @@ class SafeDetailsViewModelTest {
     }
 
     @Test
-    fun changeMultisigName() {
+    fun changeSafeName() {
         val newName = "newName"
         val testCompletable = TestCompletable()
         val testObserver = TestObserver<Result<Unit>>()
@@ -169,7 +169,7 @@ class SafeDetailsViewModelTest {
     }
 
     @Test
-    fun changeMultisigNameError() {
+    fun changeSafeNameError() {
         val newName = "newName"
         val exception = Exception()
         val testObserver = TestObserver<Result<Unit>>()

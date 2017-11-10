@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_action_text_input_white"
-            app:fab_label="Write MultiSig Address"
+            app:fab_label="@string/write_safe_address"
             app:fab_size="normal" />
     </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

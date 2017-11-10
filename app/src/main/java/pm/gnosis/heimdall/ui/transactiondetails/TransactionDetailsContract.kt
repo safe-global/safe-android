@@ -7,7 +7,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.TransactionDetails
-import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.models.Transaction
@@ -17,7 +16,7 @@ abstract class TransactionDetailsContract : ViewModel() {
     abstract fun setTransaction(transaction: Transaction?, descriptionHash: String?): Completable
     abstract fun getTransaction(): Transaction
     abstract fun getTransactionHash(): String
-    abstract fun getTransactionType(): MultisigTransactionType
+    abstract fun getTransactionType(): SafeTransactionType
 
     abstract fun observeSafeDetails(): Flowable<Safe>
     abstract fun signTransaction(): Observable<Result<String>>
@@ -26,6 +25,6 @@ abstract class TransactionDetailsContract : ViewModel() {
     abstract fun loadTokenInfo(address: BigInteger): Observable<ERC20Token>
 }
 
-sealed class MultisigTransactionType
-class ConfirmMultisigTransaction : MultisigTransactionType()
-class RevokeMultisigTransaction : MultisigTransactionType()
+sealed class SafeTransactionType
+class ConfirmSafeTransaction : SafeTransactionType()
+class RevokeSafeTransaction : SafeTransactionType()

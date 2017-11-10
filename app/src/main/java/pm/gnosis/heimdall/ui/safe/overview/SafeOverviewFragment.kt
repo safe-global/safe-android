@@ -60,7 +60,7 @@ class SafeOverviewFragment : BaseFragment() {
         super.onStart()
         layout_safe_overview_input_address.setOnClickListener {
             layout_safe_overview_fab.close(true)
-            showMultisigInputDialog()
+            showSafeInputDialog()
         }
 
         layout_safe_overview_scan_qr_code.setOnClickListener {
@@ -70,10 +70,10 @@ class SafeOverviewFragment : BaseFragment() {
 
         disposables += viewModel.observeSafes()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = this::onMultisigWallets, onError = this::onMultisigWalletsError)
+                .subscribeForResult(onNext = this::onSafes, onError = this::onSafesError)
 
-        disposables += adapter.multisigSelection
-                .subscribeBy(onNext = this::onMultisigSelection, onError = Timber::e)
+        disposables += adapter.safeSelection
+                .subscribeBy(onNext = this::onSafeSelection, onError = Timber::e)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -82,7 +82,7 @@ class SafeOverviewFragment : BaseFragment() {
             if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(SCAN_RESULT_EXTRA)) {
                 val scanResult = data.getStringExtra(SCAN_RESULT_EXTRA)
                 if (scanResult.isValidEthereumAddress()) {
-                    showMultisigInputDialog(scanResult)
+                    showSafeInputDialog(scanResult)
                 } else {
                     snackbar(layout_safe_overview_coordinator_layout, "Invalid address")
                 }
@@ -92,16 +92,16 @@ class SafeOverviewFragment : BaseFragment() {
         }
     }
 
-    private fun onMultisigWallets(data: Adapter.Data<Safe>) {
+    private fun onSafes(data: Adapter.Data<Safe>) {
         adapter.updateData(data)
         layout_safe_overview_empty_view.visibility = if (data.entries.isEmpty()) View.VISIBLE else View.GONE
     }
 
-    private fun onMultisigWalletsError(throwable: Throwable) {
+    private fun onSafesError(throwable: Throwable) {
         Timber.e(throwable)
     }
 
-    private fun showMultisigInputDialog(withAddress: String = "") {
+    private fun showSafeInputDialog(withAddress: String = "") {
         val dialogView = layoutInflater.inflate(R.layout.dialog_safe_add_input, null)
 
         if (!withAddress.isEmpty()) {
@@ -111,79 +111,38 @@ class SafeOverviewFragment : BaseFragment() {
         }
 
         val dialog = AlertDialog.Builder(context!!)
-                .setTitle("Add a Multisig Wallet")
+                .setTitle(R.string.add_safe)
                 .setView(dialogView)
-                .setPositiveButton("Add", { _, _ -> })
-                .setNegativeButton("Cancel", { _, _ -> })
+                .setPositiveButton(R.string.add, { _, _ -> })
+                .setNegativeButton(R.string.cancel, { _, _ -> })
                 .show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val name = dialogView.dialog_add_safe_text_name.text.toString()
             val address = dialogView.dialog_add_safe_text_address.text.toString()
             if (address.isValidEthereumAddress()) {
-                disposables += addMultisigWalletDisposable(name, address.hexAsBigInteger())
+                disposables += addSafeDisposable(name, address.hexAsBigInteger())
                 dialog.dismiss()
             } else {
-                context!!.toast("Invalid ethereum address")
+                context!!.toast(R.string.invalid_ethereum_address)
             }
         }
     }
 
-    private fun addMultisigWalletDisposable(name: String, address: BigInteger) =
+    private fun addSafeDisposable(name: String, address: BigInteger) =
             viewModel.addSafe(address, name)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onComplete = this::onMultisigWalletAdded, onError = this::onMultisigWalletAddError)
+                    .subscribeBy(onComplete = this::onSafeAdded, onError = this::onAddSafeError)
 
-    private fun removeMultisigWalletDisposable(address: BigInteger) =
-            viewModel.removeSafe(address)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onComplete = this::onMultisigWalletRemoved, onError = this::onMultisigWalletRemoveError)
-
-    private fun updateMultisigWalletNameDisposable(address: BigInteger, newName: String) =
-            viewModel.updateSafeName(address, newName)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onComplete = this::onMultisigWalletNameChange, onError = this::onMultisigWalletNameChangeError)
-
-    private fun onMultisigWalletAdded() {
-        snackbar(layout_safe_overview_coordinator_layout, "Added MultisigWallet")
+    private fun onSafeAdded() {
+        snackbar(layout_safe_overview_coordinator_layout, R.string.added_safe)
     }
 
-    private fun onMultisigWalletAddError(throwable: Throwable) {
+    private fun onAddSafeError(throwable: Throwable) {
         Timber.e(throwable)
     }
 
-    private fun onMultisigWalletRemoved() {
-        snackbar(layout_safe_overview_coordinator_layout, "Removed Multisigwallet")
-    }
-
-    private fun onMultisigWalletRemoveError(throwable: Throwable) {
-        Timber.e(throwable)
-    }
-
-    private fun onMultisigWalletNameChange() {
-        snackbar(layout_safe_overview_coordinator_layout, "Changed MultisigWallet name")
-    }
-
-    private fun onMultisigWalletNameChangeError(throwable: Throwable) {
-        Timber.e(throwable)
-    }
-
-    private fun onMultisigSelection(multisigWallet: Safe) {
-        startActivity(SafeDetailsActivity.createIntent(context!!, multisigWallet))
-    }
-
-    private fun showEditMultisigNameDialog(multisigWallet: Safe) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_safe_add_input, null)
-        dialogView.dialog_add_safe_text_address.visibility = View.GONE
-        AlertDialog.Builder(context!!)
-                .setTitle(multisigWallet.name)
-                .setView(dialogView)
-                .setPositiveButton("Change name", { _, _ ->
-                    disposables += updateMultisigWalletNameDisposable(
-                            multisigWallet.address,
-                            dialogView.dialog_add_safe_text_name.text.toString())
-                })
-                .setNegativeButton("Cancel", { _, _ -> })
-                .show()
+    private fun onSafeSelection(safe: Safe) {
+        startActivity(SafeDetailsActivity.createIntent(context!!, safe))
     }
 
     override fun inject(component: ApplicationComponent) {

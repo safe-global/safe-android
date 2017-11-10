@@ -126,4 +126,6 @@
     <string name="this_safe">this wallet</string>
     <string name="loading">Loading …</string>
     <string name="sharing_x">Sharing %s</string>
+    <string name="write_safe_address">Write Safe Address</string>
+    <string name="remove_from_device">Remove from device</string>
 </resources>
