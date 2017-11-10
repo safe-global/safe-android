@@ -35,6 +35,7 @@ import pm.gnosis.heimdall.test.utils.TestCompletable
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
 
@@ -123,13 +124,13 @@ class TransactionDetailsViewModelTest {
 
     @Test
     fun setTransactionWithInvalidSafeAddress() {
-        val transaction =  testTransaction.copy(BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 16))
+        val transaction = testTransaction.copy(BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", 16))
         val testObserver = TestObserver<Unit>()
 
         viewModel.setTransaction(transaction, null).subscribe(testObserver)
 
         testObserver
-                .assertError { it is IllegalStateException }
+                .assertError { it is InvalidAddressException }
                 .assertTerminated()
     }
 
