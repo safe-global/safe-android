@@ -12,11 +12,12 @@ import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
-import pm.gnosis.heimdall.ui.multisig.details.MultisigDetailsContract
-import pm.gnosis.heimdall.ui.multisig.details.info.MultisigInfoContract
-import pm.gnosis.heimdall.ui.multisig.overview.MultisigOverviewContract
+import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
+import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
+import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
+import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.security.SecurityContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenContract
@@ -52,15 +53,19 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesMultisigDetailsContract(provider: ViewModelProvider) = provider[MultisigDetailsContract::class.java]
+    fun providesSafeDetailsContract(provider: ViewModelProvider) = provider[SafeDetailsContract::class.java]
 
     @Provides
     @ForView
-    fun providesMultisigInfoContract(provider: ViewModelProvider) = provider[MultisigInfoContract::class.java]
+    fun providesSafeInfoContract(provider: ViewModelProvider) = provider[SafeInfoContract::class.java]
 
     @Provides
     @ForView
-    fun providesMultisigOverviewContract(provider: ViewModelProvider) = provider[MultisigOverviewContract::class.java]
+    fun providesSafeOverviewContract(provider: ViewModelProvider) = provider[SafeOverviewContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesSafeTransactionsContract(provider: ViewModelProvider) = provider[SafeTransactionsContract::class.java]
 
     @Provides
     @ForView

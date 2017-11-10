@@ -20,6 +20,7 @@ dependencies {
     implementation project(":crypto")
     implementation project(':heimdall-common')
     implementation project(":mnemonic")
+    implementation project(':models')
     implementation project(":security")
     implementation project(":utils")
 

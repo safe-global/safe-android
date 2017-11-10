@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Gnosis Authenticator</string>
     <string name="scan_instructions">
-        <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Reminder:</b> The account of this application (found in the account section) must be one of the owners of the Multisig Wallet. The number of confirmations should be adjusted accordingly.
+        <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Reminder:</b> The account of this application (found in the account section) must be one of the owners of the Safe. The number of confirmations should be adjusted accordingly.
     </string>
     <string name="error_try_again">An error occurred. Please try again!</string>
     <string name="pin_repeat_wrong">The two PINs are not the same!</string>
@@ -17,7 +17,7 @@
     <string name="no">No</string>
     <string name="authenticate">Authenticate</string>
     <string name="account">Account</string>
-    <string name="multisig">MultiSig</string>
+    <string name="safe">Safe</string>
     <string name="tokens">Tokens</string>
     <string name="token">token</string>
     <string name="name">Name</string>
@@ -26,22 +26,23 @@
     <string name="decimals">Decimals</string>
     <string name="your_account_address">Your account address</string>
     <string name="balance">Balance</string>
-    <string name="confirm_multisig_transaction">Confirm Multisig Transaction</string>
+    <string name="confirm_safe_transaction">Confirm Safe Transaction</string>
     <string name="scan_confirmation">Scan confirmation</string>
     <string name="create_new_account">Create new Account</string>
     <string name="mnemonic_generate_reminder">Write the words below in a secure place. They\'ll be used to generate your account.</string>
     <string name="mnemonic_generate_save_action">I\'ve securely stored the words</string>
-    <string name="empty_multisig_wallets">No multisig wallets</string>
+    <string name="empty_safes">No safes</string>
     <string name="onboarding_restore_option">Restore account with mnemonic phrase</string>
     <string name="oboarding_create_option">Create new account</string>
     <string name="restore_account">Restore Account</string>
     <string name="mnemonic">Mnemonic</string>
     <string name="empty_verified_tokens">No balance in any of the verified tokens</string>
+    <string name="empty_safe_transactions">No transactions in safe history</string>
     <string name="transaction_id">Transaction ID</string>
-    <string name="multisig_address">Multisig Address</string>
-    <string name="add_wallet">Add Wallet</string>
+    <string name="safe_address">Safe Address</string>
+    <string name="add_safe">Add safe</string>
     <string name="add">Add</string>
-    <string name="as_a_multisig_wallet_owner">as a Multisig Wallet owner</string>
+    <string name="as_a_safe_owner">as a Safe owner</string>
     <string name="change_number_of_confirmations_to">Change number of confirmations to</string>
     <string name="change_daily_limit_to">Change daily limit to</string>
     <string name="remove">Remove</string>
@@ -54,7 +55,7 @@
     <string name="pin_setup_failed">Pin setup failed. Please try again!</string>
     <string name="pin_too_short">The pin is too short. It should have at least 6 digits!</string>
     <string name="invalid_erc67">Not a valid ERC67 transaction</string>
-    <string name="unknown_wallet_action">Not Confirm or Revoke</string>
+    <string name="unknown_safe_action">Not Confirm or Revoke</string>
     <string name="no_account_available">No account available. Please restart the app!</string>
     <string name="error_not_authorized_for_action">You are not authorized to perform this action.</string>
     <string name="error_check_internet_connection">Please make sure to have an internet connection.</string>
@@ -72,7 +73,7 @@
     <string name="address_clipboard_success">Address copied to clipboard</string>
     <string name="share_your_address">Share your address</string>
     <string name="share_address">Share address</string>
-    <string name="share_multisig_address">Share %1$s address</string>
+    <string name="share_safe_address">Share %1$s address</string>
     <string name="x_ether">%s Ξ</string>
     <plurals name="x_confirmations">
         <item quantity="one">%s Confirmation</item>
@@ -82,22 +83,21 @@
     <string name="revoke_transaction">Revoke Transaction</string>
     <string name="cancel">Cancel</string>
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
-    <string name="added_multisig">Multisig Wallet Added</string>
-    <string name="add_multisig_wallet_error">Could not add Multisig Wallet</string>
+    <string name="added_safe">Safe Added</string>
+    <string name="add_safe_error">Could not add Safe</string>
     <string name="transaction_confirmed">Transaction confirmed</string>
     <string name="transaction_revoked">Transaction revoked</string>
     <string name="transaction_error">Something went wrong. Transaction not completed.</string>
     <string name="transaction_number">Transaction %1s</string>
     <string name="change_number_of_confirmations">Change number of confirmations to</string>
-    <string name="add_multisig_wallet_owner">Add multisig wallet owner</string>
-    <string name="remove_multisig_wallet_owner">Remove multisig wallet owner</string>
+    <string name="add_safe_owner">Add safe owner</string>
+    <string name="remove_safe_owner">Remove safe owner</string>
     <string name="replace_current_owner">Replace current owner</string>
     <string name="with_new_owner">with new owner</string>
     <string name="transfer">Transfer</string>
     <string name="for_text">For</string>
     <string name="action">Action</string>
     <string name="confirmations">Confirmations</string>
-    <string name="multisig_wallet">Multisig Wallet</string>
     <string name="transaction_details_error">Error fetching transaction details</string>
     <string name="token_add_error">Token is already verified</string>
     <string name="token_remove_error">Could not remove token</string>
@@ -116,12 +116,17 @@
     <string name="no_token_loaded">There is no token to be added</string>
     <string name="qrcode">QRCode</string>
     <string name="copy_to_clipboard">Copy to clipboard</string>
-    <string name="wallet_remove_error">Could not remove wallet from this device</string>
-    <string name="wallet_remove_success">Removed %1s from this device</string>
-    <string name="wallet_name_change_success">Changed multisig name</string>
-    <string name="wallet_name_change_error">Could not change multisig name</string>
-    <string name="remove_wallet_dialog_title">Remove multisig wallet?</string>
-    <string name="remove_wallet_dialog_description">Do you want to remove %1s from your device?</string>
+    <string name="safe_remove_error">Could not remove safe from this device</string>
+    <string name="safe_remove_success">Removed %1s from this device</string>
+    <string name="safe_name_change_success">Changed safe name</string>
+    <string name="safe_name_change_error">Could not change safe name</string>
+    <string name="remove_safe_dialog_title">Remove safe?</string>
+    <string name="remove_safe_dialog_description">Do you want to remove %1s from your device?</string>
     <string name="change_name">Change name</string>
-    <string name="this_wallet">this wallet</string>
+    <string name="this_safe">this safe</string>
+    <string name="loading">Loading …</string>
+    <string name="sharing_x">Sharing %s</string>
+    <string name="write_safe_address">Write Safe Address</string>
+    <string name="remove_from_device">Remove from device</string>
+    <string name="user_canceled">Cancelled by the user</string>
 </resources>

@@ -48,7 +48,7 @@ class TokensViewModel @Inject constructor(@ApplicationContext private val contex
                                 .flatMapObservable { loadTokenBalances(it.address, tokens) }
                     }.mapToResult()
                 }
-                .scanToAdapterDataResult(itemCheck = { (prevToken), (newToken) -> prevToken.address == newToken.address })
+                .scanToAdapterDataResult({ it.token.address })
     }
 
     private fun loadTokenBalances(ofAddress: BigInteger, tokens: List<ERC20Token>) =

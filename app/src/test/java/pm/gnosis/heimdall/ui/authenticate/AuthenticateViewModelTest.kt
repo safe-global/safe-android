@@ -13,7 +13,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
@@ -116,11 +116,11 @@ class AuthenticateViewModelTest {
         then(intent).should().getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
         then(intent).shouldHaveNoMoreInteractions()
         observer.assertComplete().assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
-        then(contextMock).should().getString(R.string.unknown_wallet_action)
+        then(contextMock).should().getString(R.string.unknown_safe_action)
     }
 
     @Test
-    fun checkResultUnknownWalletAction() {
+    fun checkResultUnknownSafeAction() {
         val intent = testIntent(createTransactionString(data = "TEST_DATA"))
         val observer = createObserver()
 
@@ -131,12 +131,12 @@ class AuthenticateViewModelTest {
         then(intent).should().getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
         then(intent).shouldHaveNoMoreInteractions()
         observer.assertComplete().assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
-        then(contextMock).should().getString(R.string.unknown_wallet_action)
+        then(contextMock).should().getString(R.string.unknown_safe_action)
     }
 
     @Test
     fun checkResultConfirmAction() {
-        val intent = testIntent(createTransactionString(data = MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID.addAddressPrefix()))
+        val intent = testIntent(createTransactionString(data = GnosisSafe.ConfirmTransaction.METHOD_ID.addAddressPrefix()))
         val observer = createObserver()
 
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
@@ -150,7 +150,7 @@ class AuthenticateViewModelTest {
 
     @Test
     fun checkResultRevokeAction() {
-        val intent = testIntent(createTransactionString(data = MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID.addAddressPrefix()))
+        val intent = testIntent(createTransactionString(data = GnosisSafe.RevokeConfirmation.METHOD_ID.addAddressPrefix()))
         val observer = createObserver()
 
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))

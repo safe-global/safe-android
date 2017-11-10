@@ -21,9 +21,9 @@ import pm.gnosis.heimdall.common.utils.copyToClipboard
 import pm.gnosis.heimdall.common.utils.shareExternalText
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
-import pm.gnosis.heimdall.data.models.Wei
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.stringWithNoTrailingZeroes
 import java.util.concurrent.TimeUnit

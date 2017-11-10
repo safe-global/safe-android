@@ -6,6 +6,7 @@ include ':app-core'
 include ':crypto'
 include ':heimdall-common'
 include ':mnemonic'
+include ':models'
 include ':security'
 include ':utils'
 

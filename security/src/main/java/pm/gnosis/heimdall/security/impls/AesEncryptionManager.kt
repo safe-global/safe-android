@@ -12,7 +12,9 @@ import pm.gnosis.heimdall.common.utils.edit
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.exceptions.DeviceIsLockedException
 import pm.gnosis.utils.generateRandomString
+import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.toHexString
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -33,7 +35,7 @@ class AesEncryptionManager @Inject constructor(
 
     init {
         val iv = preferencesManager.prefs.getString(PREF_KEY_INSTANCE_ID, null) ?: setupInstanceId()
-        ivSpec = IvParameterSpec(iv.toByteArray())
+        ivSpec = IvParameterSpec(iv.hexStringToByteArray())
 
         application.registerActivityLifecycleCallbacks(object : TrackingActivityLifecycleCallbacks() {
 
@@ -54,7 +56,9 @@ class AesEncryptionManager @Inject constructor(
     }
 
     private fun setupInstanceId(): String {
-        val instanceId = generateRandomString(80)
+        val randomBytes = ByteArray(16)
+        SecureRandom().nextBytes(randomBytes)
+        val instanceId = randomBytes.toHexString()
         preferencesManager.prefs.edit {
             putString(PREF_KEY_INSTANCE_ID, instanceId)
         }
@@ -86,7 +90,7 @@ class AesEncryptionManager @Inject constructor(
 
     override fun unlocked(): Single<Boolean> {
         return Single.fromCallable {
-                synchronized(keySpecLock) {
+            synchronized(keySpecLock) {
                 keySpec != null
             }
         }

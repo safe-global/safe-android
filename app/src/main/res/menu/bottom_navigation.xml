@@ -10,9 +10,9 @@
         android:title="@string/account" />
 
     <item
-        android:id="@+id/action_multisig"
+        android:id="@+id/action_safe"
         android:icon="@drawable/ic_account_balance_wallet_white_24dp"
-        android:title="@string/multisig" />
+        android:title="@string/safe" />
 
     <item
         android:id="@+id/action_tokens"

@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import io.reactivex.Observable
-import pm.gnosis.heimdall.MultiSigWalletWithDailyLimit
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
@@ -32,14 +32,14 @@ class AuthenticateViewModel @Inject constructor(
     }
 
     private fun validateQrCode(qrCodeData: String): Intent {
-        val transaction = ERC67Parser.parse(qrCodeData) ?:
+        val parsedData = ERC67Parser.parse(qrCodeData) ?:
                 throw LocalizedException(context.getString(R.string.invalid_erc67))
-        val data = transaction.data
-        if (data != null && (data.isSolidityMethod(MultiSigWalletWithDailyLimit.ConfirmTransaction.METHOD_ID) ||
-                data.isSolidityMethod(MultiSigWalletWithDailyLimit.RevokeConfirmation.METHOD_ID))) {
-            return TransactionDetailsActivity.createIntent(context, transaction)
+        val data = parsedData.transaction.data
+        if (data != null && (data.isSolidityMethod(GnosisSafe.ConfirmTransaction.METHOD_ID) ||
+                data.isSolidityMethod(GnosisSafe.RevokeConfirmation.METHOD_ID))) {
+            return TransactionDetailsActivity.createIntent(context, parsedData.transaction, parsedData.descriptionHash)
         } else {
-            throw LocalizedException(context.getString(R.string.unknown_wallet_action))
+            throw LocalizedException(context.getString(R.string.unknown_safe_action))
         }
     }
 }

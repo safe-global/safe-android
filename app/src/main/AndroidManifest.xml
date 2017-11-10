@@ -31,7 +31,7 @@
             android:parentActivityName=".ui.main.MainActivity"
             android:theme="@style/OldAppTheme" />
         <activity android:name=".ui.security.SecurityActivity" />
-        <activity android:name=".ui.multisig.details.MultisigDetailsActivity" />
+        <activity android:name=".ui.safe.details.SafeDetailsActivity" />
         <activity
             android:name=".ui.tokens.addtoken.AddTokenActivity"
             android:parentActivityName=".ui.main.MainActivity" />

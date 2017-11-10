@@ -6,7 +6,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.data.models.Wei
+import pm.gnosis.models.Wei
 
 
 abstract class AccountContract: ViewModel() {

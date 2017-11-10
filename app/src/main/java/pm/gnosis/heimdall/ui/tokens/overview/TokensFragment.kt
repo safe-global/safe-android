@@ -44,7 +44,6 @@ class TokensFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val addressArgument = arguments?.getString(ARGUMENT_ADDRESS)
         layout_tokens_fab.visibility =
                 if (addressArgument.isNullOrBlank()) View.VISIBLE

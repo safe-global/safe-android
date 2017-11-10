@@ -10,9 +10,9 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import pm.gnosis.heimdall.app.core.BuildConfig
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
+import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import retrofit2.Retrofit

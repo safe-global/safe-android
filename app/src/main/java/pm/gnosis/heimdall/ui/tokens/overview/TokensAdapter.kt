@@ -36,7 +36,7 @@ class TokensAdapter @Inject constructor() : Adapter<TokensContract.ERC20TokenWit
             }
         }
 
-        override fun bind(data: TokensContract.ERC20TokenWithBalance) {
+        override fun bind(data: TokensContract.ERC20TokenWithBalance, payloads: List<Any>?) {
             itemView.layout_tokens_item_name.text = if (data.token.name.isNullOrEmpty()) data.token.address.asEthereumAddressString() else data.token.name
             itemView.layout_tokens_item_delete.visibility = if (data.token.verified == true) View.GONE else View.VISIBLE
             val balance = nullOnThrow { BigDecimal(data.balance).withTokenScaleOrNull(data.token.decimals)?.stringWithNoTrailingZeroes() } ?: "-"

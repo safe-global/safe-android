@@ -6,8 +6,8 @@ import io.reactivex.schedulers.Schedulers
 import okio.ByteString
 import pm.gnosis.crypto.KeyGenerator
 import pm.gnosis.crypto.KeyPair
+import pm.gnosis.heimdall.accounts.base.exceptions.InvalidTransactionParams
 import pm.gnosis.heimdall.accounts.base.models.Account
-import pm.gnosis.heimdall.accounts.base.models.Transaction
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.accounts.data.db.AccountsDatabase
 import pm.gnosis.heimdall.accounts.repositories.impls.models.db.AccountDb
@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.db.EncryptedByteArray
 import pm.gnosis.heimdall.security.db.EncryptedString
 import pm.gnosis.mnemonic.Bip39
+import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
@@ -40,6 +41,7 @@ class KethereumAccountsRepository @Inject internal constructor(
     }
 
     override fun signTransaction(transaction: Transaction): Single<String> {
+        if (!transaction.signable()) return Single.error(InvalidTransactionParams())
         return keyPairFromActiveAccount()
                 .map { transaction.rlp(it.sign(transaction.hash())).toHexString() }
     }
