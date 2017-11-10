@@ -30,7 +30,8 @@ class SafeAdapter @Inject constructor(@ViewContext private val context: Context)
             itemView.setOnClickListener(this)
             itemView.layout_safe_item_share.setOnClickListener {
                 items[adapterPosition].address.asEthereumAddressString().let {
-                    context.shareExternalText(it, "Sharing ${items[adapterPosition].name ?: ""}")
+                    val title = context.getString(R.string.sharing_x, items[adapterPosition].name ?: "")
+                    context.shareExternalText(it, title)
                 }
             }
         }

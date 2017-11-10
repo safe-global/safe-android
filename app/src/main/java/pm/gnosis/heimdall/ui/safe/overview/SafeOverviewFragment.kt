@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
+import kotlinx.android.synthetic.main.dialog_safe_add_input.view.*
 import kotlinx.android.synthetic.main.layout_safe_overview.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
@@ -102,12 +102,12 @@ class SafeOverviewFragment : BaseFragment() {
     }
 
     private fun showMultisigInputDialog(withAddress: String = "") {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_safe_add_input, null)
 
         if (!withAddress.isEmpty()) {
-            dialogView.dialog_add_multisig_text_address.setText(withAddress)
-            dialogView.dialog_add_multisig_text_address.isEnabled = false
-            dialogView.dialog_add_multisig_text_address.inputType = InputType.TYPE_NULL
+            dialogView.dialog_add_safe_text_address.setText(withAddress)
+            dialogView.dialog_add_safe_text_address.isEnabled = false
+            dialogView.dialog_add_safe_text_address.inputType = InputType.TYPE_NULL
         }
 
         val dialog = AlertDialog.Builder(context!!)
@@ -117,8 +117,8 @@ class SafeOverviewFragment : BaseFragment() {
                 .setNegativeButton("Cancel", { _, _ -> })
                 .show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            val name = dialogView.dialog_add_multisig_text_name.text.toString()
-            val address = dialogView.dialog_add_multisig_text_address.text.toString()
+            val name = dialogView.dialog_add_safe_text_name.text.toString()
+            val address = dialogView.dialog_add_safe_text_address.text.toString()
             if (address.isValidEthereumAddress()) {
                 disposables += addMultisigWalletDisposable(name, address.hexAsBigInteger())
                 dialog.dismiss()
@@ -172,15 +172,15 @@ class SafeOverviewFragment : BaseFragment() {
     }
 
     private fun showEditMultisigNameDialog(multisigWallet: Safe) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
-        dialogView.dialog_add_multisig_text_address.visibility = View.GONE
+        val dialogView = layoutInflater.inflate(R.layout.dialog_safe_add_input, null)
+        dialogView.dialog_add_safe_text_address.visibility = View.GONE
         AlertDialog.Builder(context!!)
                 .setTitle(multisigWallet.name)
                 .setView(dialogView)
                 .setPositiveButton("Change name", { _, _ ->
                     disposables += updateMultisigWalletNameDisposable(
                             multisigWallet.address,
-                            dialogView.dialog_add_multisig_text_name.text.toString())
+                            dialogView.dialog_add_safe_text_name.text.toString())
                 })
                 .setNegativeButton("Cancel", { _, _ -> })
                 .show()

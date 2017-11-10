@@ -16,7 +16,7 @@ import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.data.repositories.EtherTransfer
 import pm.gnosis.heimdall.data.repositories.TokenTransfer
-import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
+import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetails
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.heimdall.utils.formatAsLongDate
@@ -27,7 +27,7 @@ import javax.inject.Inject
 @ForView
 class SafeTransactionsAdapter @Inject constructor(
         @ViewContext context: Context,
-        val transactionDetailRepository: TransactionDetailRepository
+        val transactionDetailRepository: TransactionDetailsRepository
 ) : LifecycleAdapter<String, SafeTransactionsAdapter.ViewHolder>(context) {
     lateinit var safeAddress: BigInteger
     val tokensSelectionSubject: PublishSubject<String> = PublishSubject.create()

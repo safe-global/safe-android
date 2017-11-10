@@ -4,7 +4,7 @@ import io.reactivex.Observable
 import pm.gnosis.models.Wei
 import java.math.BigInteger
 
-interface TransactionDetailRepository {
+interface TransactionDetailsRepository {
     fun loadTransactionDetails(descriptionHash: String, address: BigInteger, transactionHash: String?): Observable<TransactionDetails>
 }
 

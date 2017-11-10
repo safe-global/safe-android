@@ -18,7 +18,7 @@ import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TransactionDetailRepository
+import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.di.SecurityBindingsModule
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -48,7 +48,7 @@ interface ApplicationComponent {
     fun ethereumJsonRpcRepository(): EthereumJsonRpcRepository
     fun multisigRepository(): GnosisSafeRepository
     fun tokenRepository(): TokenRepository
-    fun transactionDetailRepository(): TransactionDetailRepository
+    fun transactionDetailRepository(): TransactionDetailsRepository
 
     fun viewModelFactory(): ViewModelProvider.Factory
 

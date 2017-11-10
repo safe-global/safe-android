@@ -11,8 +11,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.dialog_multisig_add_input.*
-import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
+import kotlinx.android.synthetic.main.dialog_safe_add_input.*
+import kotlinx.android.synthetic.main.dialog_safe_add_input.view.*
 import kotlinx.android.synthetic.main.layout_transaction_details.*
 import kotlinx.android.synthetic.main.layout_transaction_details_add_owner.view.*
 import kotlinx.android.synthetic.main.layout_transaction_details_change_confirmations.view.*
@@ -201,26 +201,26 @@ class TransactionDetailsActivity : BaseActivity() {
 
     // Add Multisig Wallet
     private fun showAddSafeDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_safe_add_input, null)
 
-        dialogView.dialog_add_multisig_text_address.setText(viewModel.getTransaction().address.asEthereumAddressString())
-        dialogView.dialog_add_multisig_text_address.isEnabled = false
-        dialogView.dialog_add_multisig_text_address.inputType = InputType.TYPE_NULL
+        dialogView.dialog_add_safe_text_address.setText(viewModel.getTransaction().address.asEthereumAddressString())
+        dialogView.dialog_add_safe_text_address.isEnabled = false
+        dialogView.dialog_add_safe_text_address.inputType = InputType.TYPE_NULL
 
         val dialog = AlertDialog.Builder(this)
-                .setTitle(R.string.add_wallet)
+                .setTitle(R.string.add_safe)
                 .setView(dialogView)
                 .setPositiveButton(R.string.add, { _, _ -> })
                 .setNegativeButton(R.string.cancel, { _, _ -> })
                 .show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            val name = dialogView.dialog_add_multisig_text_name.text.toString()
-            val address = dialogView.dialog_add_multisig_text_address.text.toString()
+            val name = dialogView.dialog_add_safe_text_name.text.toString()
+            val address = dialogView.dialog_add_safe_text_address.text.toString()
             if (address.isValidEthereumAddress()) {
                 addWalletClickSubject.onNext(address.addAddressPrefix() to name)
                 dialog.dismiss()
             } else {
-                dialog_add_multisig_text_input_layout.error = getString(R.string.invalid_ethereum_address)
+                dialog_add_safe_text_input_layout.error = getString(R.string.invalid_ethereum_address)
             }
         }
     }

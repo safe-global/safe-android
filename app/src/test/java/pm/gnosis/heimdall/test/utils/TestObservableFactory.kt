@@ -6,26 +6,26 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 
 
-class TestObservableactory<T> {
+class TestObservableFactory<T> {
     private val emitterList = ArrayList<ObservableEmitter<T>>()
 
     fun get(): Observable<T> {
         return Observable.create({ emitterList.add(it) })
     }
 
-    fun assertCount(count: Int): TestObservableactory<T> {
+    fun assertCount(count: Int): TestObservableFactory<T> {
         assertEquals(String.format("Should have %s subscription!", count), count, emitterList.size)
         return this
     }
 
-    fun assertAllSubscribed(): TestObservableactory<T> {
+    fun assertAllSubscribed(): TestObservableFactory<T> {
         for (emitter in emitterList) {
             assertTrue("Should be subscribed!", !emitter.isDisposed)
         }
         return this
     }
 
-    fun assertAllCanceled(): TestObservableactory<T> {
+    fun assertAllCanceled(): TestObservableFactory<T> {
         for (emitter in emitterList) {
             assertTrue("Should be disposed!", emitter.isDisposed)
         }

@@ -8,7 +8,7 @@ ext {
 
             // Runtime dependencies
             android_support        : '27.0.0',
-            architecture_components: '1.0.0-rc1',
+            architecture_components: '1.0.0',
             bivrost                : 'v0.5.0',
             dagger                 : '2.12',
             floating_action_button : '1.6.4',

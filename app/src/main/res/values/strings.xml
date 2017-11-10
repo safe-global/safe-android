@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Gnosis Authenticator</string>
     <string name="scan_instructions">
-        <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Reminder:</b> The account of this application (found in the account section) must be one of the owners of the Multisig Wallet. The number of confirmations should be adjusted accordingly.
+        <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Reminder:</b> The account of this application (found in the account section) must be one of the owners of the Safe. The number of confirmations should be adjusted accordingly.
     </string>
     <string name="error_try_again">An error occurred. Please try again!</string>
     <string name="pin_repeat_wrong">The two PINs are not the same!</string>
@@ -37,9 +37,10 @@
     <string name="restore_account">Restore Account</string>
     <string name="mnemonic">Mnemonic</string>
     <string name="empty_verified_tokens">No balance in any of the verified tokens</string>
+    <string name="empty_safe_transactions">No transactions in safe history</string>
     <string name="transaction_id">Transaction ID</string>
     <string name="safe_address">Safe Address</string>
-    <string name="add_wallet">Add safe</string>
+    <string name="add_safe">Add safe</string>
     <string name="add">Add</string>
     <string name="as_a_safe_owner">as a Safe owner</string>
     <string name="change_number_of_confirmations_to">Change number of confirmations to</string>
@@ -54,7 +55,7 @@
     <string name="pin_setup_failed">Pin setup failed. Please try again!</string>
     <string name="pin_too_short">The pin is too short. It should have at least 6 digits!</string>
     <string name="invalid_erc67">Not a valid ERC67 transaction</string>
-    <string name="unknown_wallet_action">Not Confirm or Revoke</string>
+    <string name="unknown_safe_action">Not Confirm or Revoke</string>
     <string name="no_account_available">No account available. Please restart the app!</string>
     <string name="error_not_authorized_for_action">You are not authorized to perform this action.</string>
     <string name="error_check_internet_connection">Please make sure to have an internet connection.</string>
@@ -115,13 +116,14 @@
     <string name="no_token_loaded">There is no token to be added</string>
     <string name="qrcode">QRCode</string>
     <string name="copy_to_clipboard">Copy to clipboard</string>
-    <string name="wallet_remove_error">Could not remove safe from this device</string>
-    <string name="wallet_remove_success">Removed %1s from this device</string>
-    <string name="wallet_name_change_success">Changed safe name</string>
-    <string name="wallet_name_change_error">Could not change safe name</string>
-    <string name="remove_wallet_dialog_title">Remove safe?</string>
-    <string name="remove_wallet_dialog_description">Do you want to remove %1s from your device?</string>
+    <string name="safe_remove_error">Could not remove safe from this device</string>
+    <string name="safe_remove_success">Removed %1s from this device</string>
+    <string name="safe_name_change_success">Changed safe name</string>
+    <string name="safe_name_change_error">Could not change safe name</string>
+    <string name="remove_safe_dialog_title">Remove safe?</string>
+    <string name="remove_safe_dialog_description">Do you want to remove %1s from your device?</string>
     <string name="change_name">Change name</string>
-    <string name="this_wallet">this wallet</string>
+    <string name="this_safe">this wallet</string>
     <string name="loading">Loading …</string>
+    <string name="sharing_x">Sharing %s</string>
 </resources>

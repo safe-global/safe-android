@@ -14,7 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.dialog_multisig_add_input.view.*
+import kotlinx.android.synthetic.main.dialog_safe_add_input.view.*
 import kotlinx.android.synthetic.main.dialog_show_qr_code.view.*
 import kotlinx.android.synthetic.main.layout_safe_details.*
 import pm.gnosis.heimdall.HeimdallApplication
@@ -40,8 +40,8 @@ class SafeDetailsActivity : BaseActivity() {
 
     private val items = listOf(R.string.tab_title_info, R.string.tab_title_transactions, R.string.tab_title_tokens)
     private val generateQrCodeClicks = PublishSubject.create<String>()
-    private val removeMultisigClicks = PublishSubject.create<Unit>()
-    private val editMultisigClicks = PublishSubject.create<String>()
+    private val removeSafeClicks = PublishSubject.create<Unit>()
+    private val editSafeClicks = PublishSubject.create<String>()
 
     private lateinit var safeAddress: String
     private var safeName: String? = null
@@ -56,8 +56,8 @@ class SafeDetailsActivity : BaseActivity() {
             onBackPressed()
         }
 
-        safeAddress = intent.getStringExtra(EXTRA_MULTISIG_ADDRESS)!!
-        safeName = intent.getStringExtra(EXTRA_MULTISIG_NAME)
+        safeAddress = intent.getStringExtra(EXTRA_SAFE_ADDRESS)!!
+        safeName = intent.getStringExtra(EXTRA_SAFE_NAME)
         updateTitle()
         viewModel.setup(safeAddress.hexAsEthereumAddress(), safeName)
 
@@ -97,32 +97,32 @@ class SafeDetailsActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = this::onQrCode, onError = this::onQrCodeError)
 
-        disposables += removeMultisigClicks
+        disposables += removeSafeClicks
                 .flatMapSingle { viewModel.deleteSafe() }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = { onWalletRemoved() }, onError = this::onWalletRemoveError)
+                .subscribeForResult(onNext = { onSafeRemoved() }, onError = this::onSafeRemoveError)
 
-        disposables += editMultisigClicks
+        disposables += editSafeClicks
                 .flatMapSingle { viewModel.changeSafeName(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = { onNameChanged() }, onError = this::onNameChangeError)
     }
 
-    private fun onWalletRemoved() {
-        toast(getString(R.string.wallet_remove_success, safeAddress ?: R.string.safe))
+    private fun onSafeRemoved() {
+        toast(getString(R.string.safe_remove_success, safeName ?: R.string.safe))
         finish()
     }
 
-    private fun onWalletRemoveError(throwable: Throwable) {
-        snackbar(layout_multisig_details_coordinator, R.string.wallet_remove_error)
+    private fun onSafeRemoveError(throwable: Throwable) {
+        snackbar(layout_multisig_details_coordinator, R.string.safe_remove_error)
     }
 
     private fun onNameChanged() {
-        snackbar(layout_multisig_details_coordinator, R.string.wallet_name_change_success)
+        snackbar(layout_multisig_details_coordinator, R.string.safe_name_change_success)
     }
 
     private fun onNameChangeError(throwable: Throwable) {
-        snackbar(layout_multisig_details_coordinator, R.string.wallet_name_change_error)
+        snackbar(layout_multisig_details_coordinator, R.string.safe_name_change_error)
     }
 
     private fun onQrCode(qrCode: Bitmap) {
@@ -180,23 +180,23 @@ class SafeDetailsActivity : BaseActivity() {
 
     private fun showRemoveDialog() {
         AlertDialog.Builder(this)
-                .setTitle(R.string.remove_wallet_dialog_title)
-                .setMessage(getString(R.string.remove_wallet_dialog_description, safeName ?: getString(R.string.this_wallet)))
-                .setPositiveButton(R.string.remove, { _, _ -> removeMultisigClicks.onNext(Unit) })
+                .setTitle(R.string.remove_safe_dialog_title)
+                .setMessage(getString(R.string.remove_safe_dialog_description, safeName ?: getString(R.string.this_safe)))
+                .setPositiveButton(R.string.remove, { _, _ -> removeSafeClicks.onNext(Unit) })
                 .setNegativeButton(R.string.cancel, { _, _ -> })
                 .show()
     }
 
     private fun showEditDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_multisig_add_input, null)
-        safeName?.let { dialogView.dialog_add_multisig_text_name.setText(it) }
-        dialogView.dialog_add_multisig_text_input_layout.visibility = View.GONE
+        val dialogView = layoutInflater.inflate(R.layout.dialog_safe_add_input, null)
+        safeName?.let { dialogView.dialog_add_safe_text_name.setText(it) }
+        dialogView.dialog_add_safe_text_input_layout.visibility = View.GONE
 
         AlertDialog.Builder(this)
                 .setTitle(R.string.change_name)
                 .setView(dialogView)
                 .setPositiveButton(R.string.change_name, { _, _ ->
-                    editMultisigClicks.onNext(dialogView.dialog_add_multisig_text_name.text.toString())
+                    editSafeClicks.onNext(dialogView.dialog_add_safe_text_name.text.toString())
                 })
                 .setNegativeButton(R.string.cancel, { _, _ -> })
                 .show()
@@ -230,13 +230,13 @@ class SafeDetailsActivity : BaseActivity() {
     }
 
     companion object {
-        private const val EXTRA_MULTISIG_NAME = "extra.string.multisig_name"
-        private const val EXTRA_MULTISIG_ADDRESS = "extra.string.multisig_address"
-        private const val CLIPBOARD_ADDRESS_LABEL = "multisig.address"
+        private const val EXTRA_SAFE_NAME = "extra.string.safe_name"
+        private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
+        private const val CLIPBOARD_ADDRESS_LABEL = "safe.address"
         fun createIntent(context: Context, multisig: Safe): Intent {
             val intent = Intent(context, SafeDetailsActivity::class.java)
-            intent.putExtra(EXTRA_MULTISIG_NAME, multisig.name)
-            intent.putExtra(EXTRA_MULTISIG_ADDRESS, multisig.address.asEthereumAddressString())
+            intent.putExtra(EXTRA_SAFE_NAME, multisig.name)
+            intent.putExtra(EXTRA_SAFE_ADDRESS, multisig.address.asEthereumAddressString())
             return intent
         }
     }

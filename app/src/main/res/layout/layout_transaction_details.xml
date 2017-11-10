@@ -70,7 +70,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:text="@string/add_wallet" />
+                        android:text="@string/add_safe" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 

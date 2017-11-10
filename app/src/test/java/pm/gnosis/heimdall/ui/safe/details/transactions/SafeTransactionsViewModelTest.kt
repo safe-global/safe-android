@@ -18,7 +18,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
 import pm.gnosis.heimdall.test.utils.TestListUpdateCallback
-import pm.gnosis.heimdall.test.utils.TestObservableactory
+import pm.gnosis.heimdall.test.utils.TestObservableFactory
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract.PaginatedTransactions
 import java.math.BigInteger
 
@@ -35,7 +35,7 @@ class SafeTransactionsViewModelTest {
 
     private var testAddress = BigInteger.ZERO
 
-    private val testObservableFactory = TestObservableactory<List<String>>()
+    private val testObservableFactory = TestObservableFactory<List<String>>()
 
     @Before
     fun setup() {

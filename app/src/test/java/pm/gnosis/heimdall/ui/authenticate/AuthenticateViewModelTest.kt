@@ -116,7 +116,7 @@ class AuthenticateViewModelTest {
         then(intent).should().getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
         then(intent).shouldHaveNoMoreInteractions()
         observer.assertComplete().assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
-        then(contextMock).should().getString(R.string.unknown_wallet_action)
+        then(contextMock).should().getString(R.string.unknown_safe_action)
     }
 
     @Test
@@ -131,7 +131,7 @@ class AuthenticateViewModelTest {
         then(intent).should().getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
         then(intent).shouldHaveNoMoreInteractions()
         observer.assertComplete().assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
-        then(contextMock).should().getString(R.string.unknown_wallet_action)
+        then(contextMock).should().getString(R.string.unknown_safe_action)
     }
 
     @Test

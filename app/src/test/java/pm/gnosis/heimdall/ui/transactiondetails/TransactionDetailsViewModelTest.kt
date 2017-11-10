@@ -53,7 +53,7 @@ class TransactionDetailsViewModelTest {
     lateinit var multisigRepositoryMock: GnosisSafeRepository
 
     @Mock
-    lateinit var transactionDetailRepositoryMock: TransactionDetailRepository
+    lateinit var transactionDetailRepositoryMock: TransactionDetailsRepository
 
     @Mock
     lateinit var tokenRepositoryMock: TokenRepository

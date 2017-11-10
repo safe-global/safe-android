@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.common.utils.build
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.withArgs
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.utils.isAtEnd
 import pm.gnosis.utils.hexAsBigInteger
 import timber.log.Timber
 import javax.inject.Inject
@@ -47,7 +48,6 @@ class SafeTransactionsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        layout_safe_transactions_list.itemAnimator
         layout_safe_transactions_list.layoutManager = LinearLayoutManager(context)
         layout_safe_transactions_list.adapter = adapter
     }
@@ -81,25 +81,12 @@ class SafeTransactionsFragment : BaseFragment() {
         moreDisposable?.dispose()
         moreDisposable = viewModel.observeTransactions(
                 layout_safe_transactions_list.scrollEvents()
-                        .filter { loadMore && checkIfAtEnd(it.view()) }
+                        .filter { loadMore && it.view().isAtEnd(LOADING_THRESHOLD) }
                         .doOnNext { loadMore = false }
                         .map { Unit }
         )
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(this::displayTransactions, Timber::e)
-    }
-
-    private fun checkIfAtEnd(recyclerView: RecyclerView): Boolean {
-        val layoutManager = getLayoutManager(recyclerView) ?: return false
-        val itemCount = layoutManager.itemCount
-        val visibleItemCount = layoutManager.childCount
-        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-
-        return firstVisiblePosition + visibleItemCount > itemCount - LOADING_THRESHOLD
-    }
-
-    private fun getLayoutManager(recyclerView: RecyclerView?): LinearLayoutManager? {
-        return recyclerView?.layoutManager as? LinearLayoutManager
     }
 
     private fun displayTransactions(transactions: SafeTransactionsContract.PaginatedTransactions) {

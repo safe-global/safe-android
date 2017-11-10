@@ -21,7 +21,7 @@ import javax.inject.Inject
 class TransactionDetailsViewModel @Inject constructor(private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
                                                       private val accountsRepository: AccountsRepository,
                                                       private val multisigRepository: GnosisSafeRepository,
-                                                      private val transactionDetailRepository: TransactionDetailRepository,
+                                                      private val transactionDetailRepository: TransactionDetailsRepository,
                                                       private val tokenRepository: TokenRepository) : TransactionDetailsContract() {
     private lateinit var transaction: Transaction
     private lateinit var transactionType: MultisigTransactionType

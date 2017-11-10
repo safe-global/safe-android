@@ -72,7 +72,7 @@ class SafeOverviewViewModelTest {
         val callback = TestListUpdateCallback()
         callback.apply(firstData.diff!!)
                 .assertNoChanges().assertNoRemoves().assertNoMoves()
-                .assertInsertsCount(1).assertInsert(0)
+                .assertInsertsCount(2).assertInserts(0, 2)
                 .reset()
 
         val moreResults = listOf(Safe(BigInteger.ONE), Safe(BigInteger.ZERO), Safe(BigInteger.valueOf(3)))

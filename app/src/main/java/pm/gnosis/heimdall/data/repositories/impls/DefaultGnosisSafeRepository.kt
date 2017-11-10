@@ -38,7 +38,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun observeSafes() =
             safeDao.observeSafes()
-                    .map { it.map { (address, name) -> Safe(address, name) } }
+                    .map { it.map { it.fromDb() } }
                     .subscribeOn(Schedulers.io())!!
 
     override fun observeSafe(address: BigInteger): Flowable<Safe> =
@@ -48,8 +48,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun add(address: BigInteger, name: String?) =
             Completable.fromCallable {
-                val multisigWallet = GnosisSafeDb(address, name)
-                safeDao.insertSafe(multisigWallet)
+                safeDao.insertSafe(GnosisSafeDb(address, name))
             }.subscribeOn(Schedulers.io())!!
 
     override fun remove(address: BigInteger) =
@@ -59,8 +58,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun updateName(address: BigInteger, newName: String) =
             Completable.fromCallable {
-                val multisigWallet = GnosisSafeDb(address, newName)
-                safeDao.updateSafe(multisigWallet)
+                safeDao.updateSafe(GnosisSafeDb(address, newName))
             }.subscribeOn(Schedulers.io())!!
 
     override fun loadInfo(address: BigInteger): Observable<SafeInfo> {

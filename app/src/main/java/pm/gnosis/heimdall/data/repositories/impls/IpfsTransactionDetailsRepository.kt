@@ -27,11 +27,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class IpfsTransactionDetailRepository @Inject constructor(
+class IpfsTransactionDetailsRepository @Inject constructor(
         authenticatorDb: GnosisAuthenticatorDb,
         private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
         private val ipfsApi: IpfsApi
-) : TransactionDetailRepository {
+) : TransactionDetailsRepository {
+
+    companion object {
+        private const val IPFS_HASH_PREFIX = "1220"
+    }
 
     private val descriptionsDao = authenticatorDb.descriptionsDao()
 
@@ -70,9 +74,8 @@ class IpfsTransactionDetailRepository @Inject constructor(
 
     private fun verifyDescription(address: BigInteger, transactionHash: String?, description: GnosisSafeTransactionDescription): Observable<GnosisSafeTransactionDescription> {
         return Observable.fromCallable<String> {
-            if (address != description.safeAddress ||
-                    transactionHash != null && description.transactionHash.removePrefix("0x") != transactionHash.removePrefix("0x")) {
-                Timber.w(IllegalStateException("Invalid description data!"))
+            if (transactionHash != null && description.transactionHash.removePrefix("0x") != transactionHash.removePrefix("0x")) {
+                throw IllegalStateException("Invalid description data!")
             }
             val to = Solidity.Address(description.to)
             val value = Solidity.UInt256(description.value.value)
@@ -94,7 +97,7 @@ class IpfsTransactionDetailRepository @Inject constructor(
 
     private fun createIpfsIdentifier(hash: String) =
             Observable.fromCallable {
-                Base58Utils.encode(ByteString.decodeHex("1220" + hash))
+                Base58Utils.encode(ByteString.decodeHex(IPFS_HASH_PREFIX + hash))
             }
 
     private fun decodeTransactionResult(descriptionHash: String, description: GnosisSafeTransactionDescription): TransactionDetails {
