@@ -2,7 +2,7 @@
 # fail if any commands fails
 set -e
 
-git branch
+git tag
 
 # write your script here
 export APP_VERSION_CODE=$TRAVIS_BUILD_NUMBER
