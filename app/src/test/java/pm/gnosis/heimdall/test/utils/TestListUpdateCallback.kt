@@ -13,9 +13,7 @@ class TestListUpdateCallback : ListUpdateCallback {
     private val moves = HashSet<Move>()
 
     override fun onChanged(position: Int, count: Int, payload: Any?) {
-        for (i in position..position + count) {
-            changes.add(position)
-        }
+        changes += position until position + count
     }
 
     override fun onMoved(fromPosition: Int, toPosition: Int) {
@@ -23,15 +21,11 @@ class TestListUpdateCallback : ListUpdateCallback {
     }
 
     override fun onInserted(position: Int, count: Int) {
-        for (i in position..position + count) {
-            inserts.add(position)
-        }
+        inserts += position until position + count
     }
 
     override fun onRemoved(position: Int, count: Int) {
-        for (i in position..position + count) {
-            removes.add(position)
-        }
+        removes += position until position + count
     }
 
     fun apply(result: DiffUtil.DiffResult): TestListUpdateCallback {
@@ -92,6 +86,13 @@ class TestListUpdateCallback : ListUpdateCallback {
 
     fun assertInsert(expected: Int): TestListUpdateCallback {
         assertTrue("Expected insertion at $expected not found", inserts.contains(expected))
+        return this
+    }
+
+    fun assertInserts(start: Int, range: Int): TestListUpdateCallback {
+        for (expected in start until start + range) {
+            assertTrue("Expected insertion at $expected not found", inserts.contains(expected))
+        }
         return this
     }
 

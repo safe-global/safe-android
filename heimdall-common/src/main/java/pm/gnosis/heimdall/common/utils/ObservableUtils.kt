@@ -8,8 +8,9 @@ import timber.log.Timber
 
 class WhatTheFuck(cause: Throwable) : IllegalStateException(cause)
 
-fun <D> Observable<D>.onErrorDefaultBeforeThrow(default: D): Observable<D> =
+fun <D> Observable<D>.onErrorDefaultBeforeThrow(default: D?): Observable<D> =
         onErrorResumeNext { throwable: Throwable ->
+            default ?: return@onErrorResumeNext Observable.error(throwable)
             Observable.just(default).thenThrow(throwable)
         }
 

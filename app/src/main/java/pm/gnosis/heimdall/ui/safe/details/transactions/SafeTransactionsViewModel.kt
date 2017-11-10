@@ -1,10 +1,9 @@
 package pm.gnosis.heimdall.ui.safe.details.transactions
 
-import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.Single
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
+import pm.gnosis.heimdall.common.utils.onErrorDefaultBeforeThrow
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.utils.mapScanToMappedResult
@@ -31,14 +30,17 @@ class SafeTransactionsViewModel @Inject constructor(
         this.address = address
     }
 
-    override fun initTransactions(reload: Boolean): Single<Result<Int>> {
+    override fun initTransactions(reload: Boolean): Observable<Result<Int>> {
+        val fallbackResult = cachedResults
         if (reload) {
             cachedResults = null
         }
-        return (cachedResults?.let { Single.just(it) } ?:
+        return (cachedResults?.let { Observable.just(it) } ?:
                 safeRepository.loadDescriptionCount(address!!)
                         .flatMap(this::loadDescription)
-                        .doOnSuccess { cachedResults = it })
+                        .doOnNext { cachedResults = it }
+                        .onErrorDefaultBeforeThrow(fallbackResult)
+                )
                 .map({ it.data.entries.size })
                 .mapToResult()
     }
@@ -47,7 +49,7 @@ class SafeTransactionsViewModel @Inject constructor(
         val initialResults = mapResults(initialData())
         return loadMoreEvents
                 .filter { !loadingMore }
-                .flatMapMaybe { moreTransactions().doOnSubscribe { loadingMore = true }.doAfterTerminate { loadingMore = false } }
+                .flatMap { moreTransactions().doOnSubscribe { loadingMore = true }.doAfterTerminate { loadingMore = false } }
                 .mapScanToMappedResult(
                         { previous: Adapter.Data<String>, new -> previous.entries + new.data.entries },
                         { new, data ->
@@ -63,16 +65,15 @@ class SafeTransactionsViewModel @Inject constructor(
 
     private fun initialData() = cachedResults ?: IndexedResults(-1, -1, Adapter.Data())
 
-    private fun moreTransactions(): Maybe<Result<IndexedResults>> {
+    private fun moreTransactions(): Observable<Result<IndexedResults>> {
         val startIndex = (cachedResults?.endIndex ?: 0)
         return loadDescription(startIndex)
                 .mapToResult()
-                .toMaybe()
     }
 
-    private fun loadDescription(startIndex: Int): Single<IndexedResults> {
+    private fun loadDescription(startIndex: Int): Observable<IndexedResults> {
         if (startIndex == 0) {
-            return Single.just(IndexedResults(0, 0, Adapter.Data()))
+            return Observable.just(IndexedResults(0, 0, Adapter.Data()))
         }
         val endIndex = Math.max(0, startIndex - PAGE_SIZE)
         // We load reversed, because we want the oldest first

@@ -3,11 +3,11 @@ package pm.gnosis.heimdall.data.repositories.impls
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
 import pm.gnosis.heimdall.GnosisSafe.Required
-import pm.gnosis.heimdall.GnosisSafeWithDescriptions.*
+import pm.gnosis.heimdall.GnosisSafeWithDescriptions.GetDescriptionCount
+import pm.gnosis.heimdall.GnosisSafeWithDescriptions.GetDescriptions
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
@@ -85,14 +85,13 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 }
     }
 
-    override fun loadDescriptionCount(address: BigInteger): Single<Int> {
+    override fun loadDescriptionCount(address: BigInteger): Observable<Int> {
         val addressString = address.asEthereumAddressString()
         return ethereumJsonRpcRepository.call(TransactionCallParams(to = addressString, data = GetDescriptionCount.encode()))
                 .map { GetDescriptionCount.decode(it).param0.value.toInt() }
-                .singleOrError()
     }
 
-    override fun loadDescriptions(address: BigInteger, from: Int, to: Int): Single<List<String>> {
+    override fun loadDescriptions(address: BigInteger, from: Int, to: Int): Observable<List<String>> {
         val addressString = address.asEthereumAddressString()
         val fromParam = Solidity.UInt256(BigInteger.valueOf(from.toLong()))
         val toParam = Solidity.UInt256(BigInteger.valueOf(to.toLong()))
@@ -102,7 +101,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
                         it.bytes.toHexString()
                     }
                 }
-                .singleOrError()
     }
 
     private class WalletInfoRequest(

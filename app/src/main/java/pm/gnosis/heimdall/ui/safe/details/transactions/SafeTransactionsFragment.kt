@@ -58,7 +58,7 @@ class SafeTransactionsFragment : BaseFragment() {
         disposables += layout_safe_transactions_swipe_refresh.refreshes()
                 .map { true }
                 .startWith(false)
-                .flatMapSingle {
+                .flatMap {
                     viewModel.initTransactions(it).doOnSubscribe { moreDisposable?.dispose() }
                             .observeOn(AndroidSchedulers.mainThread())
                             .doOnSubscribe {

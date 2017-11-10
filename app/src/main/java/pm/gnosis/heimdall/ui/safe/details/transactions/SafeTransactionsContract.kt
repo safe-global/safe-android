@@ -11,7 +11,7 @@ import java.math.BigInteger
 abstract class SafeTransactionsContract: ViewModel() {
     abstract fun setup(address: BigInteger)
 
-    abstract fun initTransactions(reload: Boolean): Single<Result<Int>>
+    abstract fun initTransactions(reload: Boolean): Observable<Result<Int>>
 
     abstract fun observeTransactions(loadMoreEvents: Observable<Unit>): Observable<out Result<PaginatedTransactions>>
 

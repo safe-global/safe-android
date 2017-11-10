@@ -6,26 +6,26 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 
 
-class TestSingleFactory<T> {
-    private val emitterList = ArrayList<SingleEmitter<T>>()
+class TestObservableactory<T> {
+    private val emitterList = ArrayList<ObservableEmitter<T>>()
 
-    fun get(): Single<T> {
-        return Single.create({ emitterList.add(it) })
+    fun get(): Observable<T> {
+        return Observable.create({ emitterList.add(it) })
     }
 
-    fun assertCount(count: Int): TestSingleFactory<T> {
+    fun assertCount(count: Int): TestObservableactory<T> {
         assertEquals(String.format("Should have %s subscription!", count), count, emitterList.size)
         return this
     }
 
-    fun assertAllSubscribed(): TestSingleFactory<T> {
+    fun assertAllSubscribed(): TestObservableactory<T> {
         for (emitter in emitterList) {
             assertTrue("Should be subscribed!", !emitter.isDisposed)
         }
         return this
     }
 
-    fun assertAllCanceled(): TestSingleFactory<T> {
+    fun assertAllCanceled(): TestObservableactory<T> {
         for (emitter in emitterList) {
             assertTrue("Should be disposed!", emitter.isDisposed)
         }
@@ -34,7 +34,7 @@ class TestSingleFactory<T> {
 
     fun success(t: T) {
         for (emitter in emitterList) {
-            emitter.onSuccess(t)
+            emitter.onNext(t)
         }
         emitterList.clear()
     }
@@ -46,7 +46,10 @@ class TestSingleFactory<T> {
         emitterList.clear()
     }
 
-    fun dispose() {
+    fun complete() {
+        for (emitter in emitterList) {
+            emitter.onComplete()
+        }
         emitterList.clear()
     }
 }
