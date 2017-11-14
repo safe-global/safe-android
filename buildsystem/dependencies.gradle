@@ -1,19 +1,19 @@
 ext {
     versions = [
             // Plug-Ins
-            android_tools          : '3.1.0-alpha02',
+            android_tools          : '3.1.0-alpha03',
             google_services        : '3.1.0',
-            kotlin                 : '1.1.51',
+            kotlin                 : '1.1.60',
             jacoco                 : '0.7.8',
 
             // Runtime dependencies
-            android_support        : '27.0.0',
+            android_support        : '27.0.1',
             architecture_components: '1.0.0',
-            bivrost                : 'v0.5.0',
+            bivrost                : 'v0.6.0',
             dagger                 : '2.12',
             floating_action_button : '1.6.4',
-            geth                   : '1.6.6',
-            kethereum              : '0.20',
+            geth                   : '1.7.1',
+            kethereum              : '0.32',
             koptional              : '1.2.0',
             material_progressbar   : '1.4.2',
             moshi                  : '1.4.0', //https://github.com/square/moshi/issues/315
@@ -26,12 +26,12 @@ ext {
             rxjava                 : '2.1.6',
             rxkotlin               : '2.1.0',
             spongycastle           : '1.58.0.0',
-            timber                 : '4.5.1',
-            zxing                  : '3.3.0',
+            timber                 : '4.6.0',
+            zxing                  : '3.3.1',
 
             // Test dependencies
             espresso               : '3.0.0',
             junit                  : '4.12',
-            mockito                : '2.8.47',
+            mockito                : '2.12.0',
     ]
 }
