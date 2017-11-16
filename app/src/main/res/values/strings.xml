@@ -129,4 +129,7 @@
     <string name="write_safe_address">Write Safe Address</string>
     <string name="remove_from_device">Remove from device</string>
     <string name="user_canceled">Cancelled by the user</string>
+    <string name="error_invalid_url_path">The URL should not contain a path!</string>
+    <string name="error_invalid_url_scheme">Scheme of the URL should be https or http!</string>
+    <string name="error_invalid_url">Invalid URL provided!</string>
 </resources>

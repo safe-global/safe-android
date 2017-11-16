@@ -8,7 +8,6 @@ import dagger.Provides
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import pm.gnosis.heimdall.app.core.BuildConfig
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
@@ -24,7 +23,6 @@ import javax.inject.Singleton
 @Module
 class ApplicationModule {
     companion object {
-        const val INFURA_API_KEY_INTERCEPTOR = "infuraApiKeyInterceptor"
         const val REST_CLIENT = "restClient"
     }
 
@@ -65,23 +63,12 @@ class ApplicationModule {
     @Provides
     @Singleton
     @Named(REST_CLIENT)
-    fun providesOkHttpClient(@Named(INFURA_API_KEY_INTERCEPTOR) interceptor: Interceptor): OkHttpClient {
-        return OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build()
-    }
-
-    @Provides
-    @Singleton
-    @Named(INFURA_API_KEY_INTERCEPTOR)
-    fun providesApiKeyInterceptor(): Interceptor {
-        return Interceptor {
-            var request = it.request()
-            val builder = request.url().newBuilder()
-            val url = builder.addQueryParameter("token", BuildConfig.INFURA_API_KEY).build()
-            request = request.newBuilder().url(url).build()
-            it.proceed(request)
-        }
+    fun providesOkHttpClient(@Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>): OkHttpClient {
+        return OkHttpClient.Builder().apply {
+            interceptors.forEach {
+                addInterceptor(it)
+            }
+        }.build()
     }
 
     @Provides
