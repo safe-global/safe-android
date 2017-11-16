@@ -4,6 +4,9 @@ import dagger.Component
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.account.AccountFragment
+import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
+import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
+import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.main.MainActivity
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
@@ -36,6 +39,9 @@ interface ViewComponent {
 
     // Activities
 
+    fun inject(activity: AddressBookActivity)
+    fun inject(activity: AddressBookAddEntryActivity)
+    fun inject(activity: AddressBookEntryDetailsActivity)
     fun inject(activity: AddTokenActivity)
     fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: MainActivity)

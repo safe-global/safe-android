@@ -65,5 +65,4 @@ abstract class BaseActivity : AppCompatActivity() {
         Timber.d(throwable)
         // Show blocker screen. No auth -> no app usage
     }
-
 }

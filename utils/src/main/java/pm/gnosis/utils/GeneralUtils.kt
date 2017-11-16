@@ -8,3 +8,5 @@ fun <T> nullOnThrow(func: () -> T): T? = try {
 }
 
 fun sameSign(a: Int, b: Int) = (a * b) > 0
+
+fun String.trimWhitespace() = trim().replace("\\s+".toRegex(), " ")

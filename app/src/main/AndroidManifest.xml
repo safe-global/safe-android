@@ -36,5 +36,14 @@
             android:name=".ui.tokens.addtoken.AddTokenActivity"
             android:parentActivityName=".ui.main.MainActivity" />
         <activity android:name=".ui.settings.SettingsActivity" />
+        <activity
+            android:name=".ui.addressbook.list.AddressBookActivity"
+            android:parentActivityName=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.addressbook.add.AddressBookAddEntryActivity"
+            android:parentActivityName=".ui.addressbook.list.AddressBookActivity" />
+        <activity
+            android:name=".ui.addressbook.detail.AddressBookEntryDetailsActivity"
+            android:parentActivityName=".ui.addressbook.list.AddressBookActivity" />
     </application>
 </manifest>

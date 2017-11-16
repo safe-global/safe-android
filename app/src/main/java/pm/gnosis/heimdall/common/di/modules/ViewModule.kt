@@ -11,6 +11,7 @@ import dagger.Provides
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
+import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
@@ -38,7 +39,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesAuthenticateContract(provider: ViewModelProvider) = provider[AuthenticateContract::class.java]
+    fun providesAccountContract(provider: ViewModelProvider) = provider[AccountContract::class.java]
 
     @Provides
     @ForView
@@ -46,7 +47,11 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesAccountContract(provider: ViewModelProvider) = provider[AccountContract::class.java]
+    fun providesAddressBookContract(provider: ViewModelProvider) = provider[AddressBookContract::class.java]
+    
+    @Provides
+    @ForView
+    fun providesAuthenticateContract(provider: ViewModelProvider) = provider[AuthenticateContract::class.java]
 
     @Provides
     @ForView

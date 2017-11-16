@@ -62,7 +62,7 @@ class AccountViewModelTest {
     fun getQrCodeSuccess() {
         val observer = createObserver<Bitmap>()
         val bitmap = mock(Bitmap::class.java)
-        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt())).willReturn(Single.just(bitmap))
+        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.just(bitmap))
 
         viewModel.getQrCode("DATA").subscribe(observer)
 
@@ -77,7 +77,7 @@ class AccountViewModelTest {
     fun getQrCodeFailure() {
         val observer = createObserver<Bitmap>()
         val exception = IllegalStateException()
-        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt())).willReturn(Single.error(exception))
+        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.error(exception))
 
         viewModel.getQrCode("DATA").subscribe(observer)
 
