@@ -3,16 +3,12 @@ package pm.gnosis.heimdall.common.di.components
 import android.app.Application
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
-import com.squareup.moshi.Moshi
 import dagger.Component
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.accounts.di.AccountsBindingModule
 import pm.gnosis.heimdall.accounts.di.AccountsModule
-import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.di.modules.*
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository

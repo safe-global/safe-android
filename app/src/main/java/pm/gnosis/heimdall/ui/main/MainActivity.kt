@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewFragment
+import pm.gnosis.heimdall.ui.settings.SettingsActivity
 import pm.gnosis.heimdall.ui.tokens.overview.TokensFragment
 
 class MainActivity : BaseActivity() {
@@ -23,6 +24,13 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.layout_main)
 
         layout_main_toolbar.setTitle(R.string.app_name)
+        layout_main_toolbar.inflateMenu(R.menu.main_menu)
+        layout_main_toolbar.setOnMenuItemClickListener {
+            when(it.itemId) {
+                R.id.main_menu_settings -> startActivity(SettingsActivity.createIntent(this))
+            }
+            true
+        }
         layout_main_viewpager.adapter = pagerAdapter()
         layout_main_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
@@ -31,7 +39,7 @@ class MainActivity : BaseActivity() {
         })
         layout_main_bottom_navigation.setOnNavigationItemSelectedListener {
             layout_main_viewpager.currentItem = idToPosition(it.itemId)
-            return@setOnNavigationItemSelectedListener true
+            true
         }
 
         layout_main_bottom_navigation.selectedItemId = R.id.action_authenticate

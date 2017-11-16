@@ -1,7 +1,8 @@
 package pm.gnosis.heimdall.test.utils
 
 
-import io.reactivex.*
+import io.reactivex.Observable
+import io.reactivex.ObservableEmitter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 

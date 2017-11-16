@@ -132,4 +132,8 @@
     <string name="error_invalid_url_path">The URL should not contain a path!</string>
     <string name="error_invalid_url_scheme">Scheme of the URL should be https or http!</string>
     <string name="error_invalid_url">Invalid URL provided!</string>
+    <string name="settings_ipfs_url_hint">IPFS URL (e.g. https://ipfs.infura.io)</string>
+    <string name="settings_rpc_url_hint">RPC URL (e.g. https://mainnet.infura.io)</string>
+    <string name="settings">Settings</string>
+    <string name="success_update_url">Successfully updated url!</string>
 </resources>

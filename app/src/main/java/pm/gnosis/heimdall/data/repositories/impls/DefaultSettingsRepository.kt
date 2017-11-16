@@ -9,7 +9,7 @@ import javax.inject.Singleton
 @Singleton
 class DefaultSettingsRepository @Inject constructor(
         preferencesManager: PreferencesManager
-): SettingsRepository {
+) : SettingsRepository {
 
     companion object {
         private const val PREF_KEY_RPC_IS_HTTPS = "default_settings_repository_key.boolean.rpc_is_https"
@@ -55,13 +55,13 @@ class DefaultSettingsRepository @Inject constructor(
 
     private fun overrideUrlFromPreferences(isHttpsKey: String, hostKey: String, portKey: String): SettingsRepository.UrlOverride? {
         return preferences.let {
-            val host = it.getString(hostKey, null)
-            if (host.isBlank()) {
+            val host: String? = it.getString(hostKey, null)
+            if (host.isNullOrBlank()) {
                 return null
             }
             val isHttps = it.getBoolean(isHttpsKey, true)
             val port = it.getInt(portKey, -1)
-            SettingsRepository.UrlOverride(isHttps, host, if (port < 0) null else port)
+            SettingsRepository.UrlOverride(isHttps, host!!, if (port < 0) null else port)
         }
     }
 }

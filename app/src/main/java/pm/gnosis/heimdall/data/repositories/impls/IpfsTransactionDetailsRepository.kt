@@ -20,7 +20,6 @@ import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.isSolidityMethod
 import pm.gnosis.utils.removeSolidityMethodPrefix
-import timber.log.Timber
 import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject

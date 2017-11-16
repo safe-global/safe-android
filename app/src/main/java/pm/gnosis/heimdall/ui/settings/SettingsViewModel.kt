@@ -1,14 +1,14 @@
 package pm.gnosis.heimdall.ui.settings
 
 import android.content.Context
-import io.reactivex.Completable
 import io.reactivex.Single
 import okhttp3.HttpUrl
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
-import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
@@ -21,14 +21,15 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    override fun updateIpfsUrl(url: String): Completable {
-        return Completable.fromAction {
+    override fun updateIpfsUrl(url: String): Single<Result<String>> {
+        return Single.fromCallable {
             if (url.isBlank()) {
                 settingsRepository.setIpfsUrl(true, null, null)
             } else {
                 parseUrl(url).let { settingsRepository.setIpfsUrl(it.isHttps, it.host, it.port) }
             }
-        }
+            url
+        }.mapToResult()
     }
 
     override fun loadRpcUrl(): Single<String> {
@@ -37,14 +38,15 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    override fun updateRpcUrl(url: String): Completable {
-        return Completable.fromAction {
+    override fun updateRpcUrl(url: String): Single<Result<String>> {
+        return Single.fromCallable {
             if (url.isBlank()) {
                 settingsRepository.setEthereumRPCUrl(true, null, null)
             } else {
                 parseUrl(url).let { settingsRepository.setEthereumRPCUrl(it.isHttps, it.host, it.port) }
             }
-        }
+            url
+        }.mapToResult()
     }
 
     private fun parseUrl(url: String): SettingsRepository.UrlOverride {

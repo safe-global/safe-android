@@ -10,6 +10,9 @@ import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.common.utils.DataResult
+import pm.gnosis.heimdall.common.utils.ErrorResult
+import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
@@ -82,10 +85,13 @@ class SettingsViewModelTest {
     }
 
     private fun testUpdateIpfsUrlValid(input: String, isHttps: Boolean, host: String?, port: Int?) {
-        val testObserver = TestObserver<String>()
+        val testObserver = TestObserver<Result<String>>()
         viewModel.updateIpfsUrl(input).subscribe(testObserver)
 
         verify(repository).setIpfsUrl(isHttps, host, port)
+        testObserver.assertNoErrors().assertValue {
+            it is DataResult && it.data == input
+        }.assertComplete()
         verifyNoMoreInteractions(repository)
     }
 
@@ -102,10 +108,12 @@ class SettingsViewModelTest {
     }
 
     private fun testUpdateIpfsUrlError(input: String, msgId: Int) {
-        val testObserver = TestObserver<String>()
+        val testObserver = TestObserver<Result<String>>()
         viewModel.updateIpfsUrl(input).subscribe(testObserver)
 
-        testObserver.assertError { it is LocalizedException && it.localizedMessage == msgId.toString() }.assertTerminated()
+        testObserver.assertNoErrors().assertValue {
+            it is ErrorResult && it.error is LocalizedException && it.error.localizedMessage == msgId.toString()
+        }.assertTerminated()
         verifyNoMoreInteractions(repository)
     }
 
@@ -118,10 +126,13 @@ class SettingsViewModelTest {
     }
 
     private fun testUpdateRpcUrlValid(input: String, isHttps: Boolean, host: String?, port: Int?) {
-        val testObserver = TestObserver<String>()
+        val testObserver = TestObserver<Result<String>>()
         viewModel.updateRpcUrl(input).subscribe(testObserver)
 
         verify(repository).setEthereumRPCUrl(isHttps, host, port)
+        testObserver.assertNoErrors().assertValue {
+            it is DataResult && it.data == input
+        }.assertComplete()
         verifyNoMoreInteractions(repository)
     }
 
@@ -138,10 +149,12 @@ class SettingsViewModelTest {
     }
 
     private fun testUpdateRpcUrlError(input: String, msgId: Int) {
-        val testObserver = TestObserver<String>()
+        val testObserver = TestObserver<Result<String>>()
         viewModel.updateRpcUrl(input).subscribe(testObserver)
 
-        testObserver.assertError { it is LocalizedException && it.localizedMessage == msgId.toString() }.assertTerminated()
+        testObserver.assertNoErrors().assertValue {
+            it is ErrorResult && it.error is LocalizedException && it.error.localizedMessage == msgId.toString()
+        }.assertTerminated()
         verifyNoMoreInteractions(repository)
     }
 
