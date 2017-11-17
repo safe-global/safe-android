@@ -49,7 +49,6 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/layout_add_token_address_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp">
@@ -62,6 +61,20 @@
                         android:hint="@string/settings_rpc_url_hint"
                         android:inputType="textNoSuggestions|textVisiblePassword"
                         tools:text="BLA" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
+
+                    <EditText
+                        android:id="@+id/layout_settings_safe_factory_input"
+                        style="@style/Input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/settings_safe_factory_hint"
+                        android:inputType="textNoSuggestions|textVisiblePassword" />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
         </ScrollView>

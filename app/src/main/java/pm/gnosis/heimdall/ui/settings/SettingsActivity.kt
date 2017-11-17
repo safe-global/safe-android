@@ -55,6 +55,19 @@ class SettingsActivity : BaseActivity() {
         super.onStart()
         disposables += viewModel.loadIpfsUrl().subscribe(this::setupIpfsInput, this::handleSetupError)
         disposables += viewModel.loadRpcUrl().subscribe(this::setupRpcInput, this::handleSetupError)
+        disposables += viewModel.loadSafeFactoryAddress().subscribe(this::setupSafeFactoryInput, this::handleSetupError)
+    }
+
+    private fun setupSafeFactoryInput(address: String) {
+        layout_settings_safe_factory_input.setText(address)
+        disposables += layout_settings_safe_factory_input.textChanges()
+                .skipInitialValue()
+                .debounce(TIMEOUT, TIMEOUT_UNIT)
+                .flatMapSingle {
+                    viewModel.updateSafeFactoryAddress(it.toString())
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeForResult(this::handleSuccess, this::handleError)
     }
 
     private fun setupRpcInput(url: String) {
@@ -86,8 +99,8 @@ class SettingsActivity : BaseActivity() {
         snackbar(layout_settings_coordinator, R.string.error_try_again)
     }
 
-    private fun handleSuccess(url: String) {
-        snackbar(layout_settings_coordinator, R.string.success_update_url, Snackbar.LENGTH_SHORT)
+    private fun handleSuccess(result: String) {
+        snackbar(layout_settings_coordinator, R.string.success_update_settings, Snackbar.LENGTH_SHORT)
     }
 
     private fun handleError(throwable: Throwable) {

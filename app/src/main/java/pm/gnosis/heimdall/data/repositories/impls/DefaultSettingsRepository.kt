@@ -1,8 +1,13 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
+import pm.gnosis.heimdall.app.core.BuildConfig
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.utils.edit
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
+import pm.gnosis.utils.exceptions.InvalidAddressException
+import pm.gnosis.utils.hexAsEthereumAddress
+import pm.gnosis.utils.isValidEthereumAddress
+import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,6 +23,7 @@ class DefaultSettingsRepository @Inject constructor(
         private const val PREF_KEY_IPFS_IS_HTTPS = "default_settings_repository_key.boolean.ipfs_is_https"
         private const val PREF_KEY_IPFS_HOST = "default_settings_repository_key.string.ipfs_host"
         private const val PREF_KEY_IPFS_PORT = "default_settings_repository_key.int.ipfs_port"
+        private const val PREF_KEY_SAFE_FACTORY_ADDRESS = "default_settings_repository_key.string.safe_factory_address"
     }
 
     private val preferences = preferencesManager.prefs
@@ -42,6 +48,22 @@ class DefaultSettingsRepository @Inject constructor(
 
     override fun needsAuth(): Boolean {
         return true
+    }
+
+    override fun getSafeFactoryAddress(): BigInteger {
+        return (preferences.getString(PREF_KEY_SAFE_FACTORY_ADDRESS, null) ?: BuildConfig.SAFE_FACTORY_ADDRESS).hexAsEthereumAddress()
+    }
+
+    @Throws(InvalidAddressException::class)
+    override fun setSafeFactoryAddress(address: String?) {
+        val checkAddress = if (address.isNullOrBlank() ||
+                address?.removePrefix("0x") == BuildConfig.SAFE_FACTORY_ADDRESS.removePrefix("0x")) null else address
+        if (checkAddress?.isValidEthereumAddress() == false) {
+            throw InvalidAddressException()
+        }
+        preferences.edit {
+            putString(PREF_KEY_SAFE_FACTORY_ADDRESS, checkAddress)
+        }
     }
 
     private fun overrideUrlToPreferences(isHttpsKey: String, hostKey: String, portKey: String,

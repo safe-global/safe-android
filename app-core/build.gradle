@@ -7,6 +7,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 android {
 
     defaultConfig {
+        buildConfigField javaTypes.STRING, "SAFE_FACTORY_ADDRESS", asString(getKey("SAFE_FACTORY_ADDRESS", "0x13de59675d22fb7befd213324f3f829135c6e8f8"))
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io"))
         buildConfigField javaTypes.STRING, "IPFS_GATEWAY_URL", asString(getKey("IPFS_GATEWAY_URL", "https://ipfs.infura.io"))
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))

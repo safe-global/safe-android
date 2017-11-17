@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.utils.exceptions.InvalidAddressException
 
 @RunWith(MockitoJUnitRunner::class)
 class SettingsViewModelTest {
@@ -33,6 +34,7 @@ class SettingsViewModelTest {
 
     @Before
     fun setUp() {
+        given(context.getString(anyInt())).will { it.arguments.first().toString() }
         viewModel = SettingsViewModel(context, repository)
     }
 
@@ -119,7 +121,6 @@ class SettingsViewModelTest {
 
     @Test
     fun updateIpfsUrlFails() {
-        given(context.getString(anyInt())).will { it.arguments.first().toString() }
         testUpdateIpfsUrlError("ftp://test.example:1337/", R.string.error_invalid_url_scheme)
         testUpdateIpfsUrlError("http://hdsgfd 1337 a", R.string.error_invalid_url)
         testUpdateIpfsUrlError("https://test.example:1337/a", R.string.error_invalid_url_path)
@@ -160,10 +161,36 @@ class SettingsViewModelTest {
 
     @Test
     fun updateRpcUrlFails() {
-        given(context.getString(anyInt())).will { it.arguments.first().toString() }
         testUpdateRpcUrlError("ftp://test.example:1337/", R.string.error_invalid_url_scheme)
         testUpdateRpcUrlError("http://hdsgfd 1337 a", R.string.error_invalid_url)
         testUpdateRpcUrlError("https://test.example:1337/a", R.string.error_invalid_url_path)
+    }
+
+    @Test
+    fun updateSafeAddress() {
+        val testAddress = "0x0000000000000000000000000000000000000000"
+        val testObserver = TestObserver<Result<String>>()
+        viewModel.updateSafeFactoryAddress(testAddress).subscribe(testObserver)
+
+        verify(repository).setSafeFactoryAddress(testAddress)
+        testObserver.assertNoErrors().assertValue {
+            it is DataResult && it.data == testAddress
+        }.assertComplete()
+    }
+
+    @Test
+    fun updateSafeAddressFails() {
+        given(repository.setSafeFactoryAddress(anyString())).willThrow(InvalidAddressException())
+
+        val testAddress = "0x0000000000000000000000000000000000000000"
+        val testObserver = TestObserver<Result<String>>()
+        viewModel.updateSafeFactoryAddress(testAddress).subscribe(testObserver)
+
+        testObserver.assertNoErrors().assertValue {
+            it is ErrorResult && it.error is LocalizedException && it.error.localizedMessage == R.string.invalid_ethereum_address.toString()
+        }.assertTerminated()
+        verify(repository).setSafeFactoryAddress(testAddress)
+        verifyNoMoreInteractions(repository)
     }
 
 }
