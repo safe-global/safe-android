@@ -3,19 +3,12 @@ package pm.gnosis.heimdall.common.di.components
 import android.app.Application
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
-import com.squareup.moshi.Moshi
 import dagger.Component
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.accounts.di.AccountsBindingModule
 import pm.gnosis.heimdall.accounts.di.AccountsModule
-import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.di.modules.ApplicationBindingsModule
-import pm.gnosis.heimdall.common.di.modules.ApplicationModule
-import pm.gnosis.heimdall.common.di.modules.CoreModule
-import pm.gnosis.heimdall.common.di.modules.ViewModelFactoryModule
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.heimdall.common.di.modules.*
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
@@ -33,6 +26,7 @@ import javax.inject.Singleton
         ApplicationBindingsModule::class,
         Bip39BindingModule::class,
         CoreModule::class,
+        InterceptorsModule::class,
         SecurityBindingsModule::class,
         ViewModelFactoryModule::class
 ))
@@ -42,20 +36,14 @@ interface ApplicationComponent {
     @ApplicationContext
     fun context(): Context
 
-    fun moshi(): Moshi
-
     fun accountsRepository(): AccountsRepository
-    fun ethereumJsonRpcRepository(): EthereumJsonRpcRepository
     fun safeRepository(): GnosisSafeRepository
     fun tokenRepository(): TokenRepository
     fun transactionDetailRepository(): TransactionDetailsRepository
 
     fun viewModelFactory(): ViewModelProvider.Factory
 
-    fun preferencesManager(): PreferencesManager
     fun encryptionManager(): EncryptionManager
-
-    fun gnosisAuthenticatorDb(): GnosisAuthenticatorDb
 
     // Base injects
     fun inject(activity: BaseActivity)

@@ -16,8 +16,8 @@ import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.data.repositories.EtherTransfer
 import pm.gnosis.heimdall.data.repositories.TokenTransfer
-import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetails
+import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.heimdall.utils.formatAsLongDate
 import timber.log.Timber

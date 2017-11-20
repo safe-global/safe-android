@@ -12,13 +12,14 @@ import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
-import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
-import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
-import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
+import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
+import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
+import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.security.SecurityContract
+import pm.gnosis.heimdall.ui.settings.SettingsContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenContract
 import pm.gnosis.heimdall.ui.tokens.overview.TokensContract
@@ -74,6 +75,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesSecurityContract(provider: ViewModelProvider) = provider[SecurityContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesSettingsContract(provider: ViewModelProvider) = provider[SettingsContract::class.java]
 
     @Provides
     @ForView

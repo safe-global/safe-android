@@ -2,9 +2,6 @@ package pm.gnosis.heimdall.utils
 
 import android.content.Context
 import android.text.format.DateUtils
-import android.widget.TextView
-import com.jakewharton.rxbinding2.widget.editorActions
-import io.reactivex.Observable
 import pm.gnosis.heimdall.R
 
 

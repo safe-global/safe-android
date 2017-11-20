@@ -35,5 +35,6 @@
         <activity
             android:name=".ui.tokens.addtoken.AddTokenActivity"
             android:parentActivityName=".ui.main.MainActivity" />
+        <activity android:name=".ui.settings.SettingsActivity" />
     </application>
 </manifest>

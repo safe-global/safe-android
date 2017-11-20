@@ -11,20 +11,22 @@ import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.account.AccountViewModel
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
-import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
-import pm.gnosis.heimdall.ui.safe.details.SafeDetailsViewModel
-import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
-import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoViewModel
-import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
-import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicViewModel
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountViewModel
+import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
+import pm.gnosis.heimdall.ui.safe.details.SafeDetailsViewModel
+import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
+import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoViewModel
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsViewModel
+import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
+import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import pm.gnosis.heimdall.ui.security.SecurityContract
 import pm.gnosis.heimdall.ui.security.SecurityViewModel
+import pm.gnosis.heimdall.ui.settings.SettingsContract
+import pm.gnosis.heimdall.ui.settings.SettingsViewModel
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.splash.SplashViewModel
 import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenContract
@@ -86,6 +88,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SecurityContract::class)
     abstract fun bindsSecurityContract(viewModel: SecurityViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SettingsContract::class)
+    abstract fun bindsSettingsContract(viewModel: SettingsViewModel): ViewModel
 
     @Binds
     @IntoMap
