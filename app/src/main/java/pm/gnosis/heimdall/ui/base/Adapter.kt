@@ -16,7 +16,6 @@ abstract class Adapter<T, VH : Adapter.ViewHolder<T>> : RecyclerView.Adapter<VH>
 
     abstract override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH
 
-
     override fun onBindViewHolder(holder: VH?, position: Int, payloads: List<Any>?) {
         holder?.bind(items[position], payloads)
     }

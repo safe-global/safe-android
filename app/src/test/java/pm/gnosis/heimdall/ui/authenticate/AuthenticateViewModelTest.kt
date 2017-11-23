@@ -23,7 +23,7 @@ import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
 import pm.gnosis.heimdall.utils.ERC67Parser
-import pm.gnosis.utils.addAddressPrefix
+import pm.gnosis.utils.addHexPrefix
 
 @RunWith(MockitoJUnitRunner::class)
 class AuthenticateViewModelTest {
@@ -136,7 +136,7 @@ class AuthenticateViewModelTest {
 
     @Test
     fun checkResultConfirmAction() {
-        val intent = testIntent(createTransactionString(data = GnosisSafe.ConfirmTransaction.METHOD_ID.addAddressPrefix()))
+        val intent = testIntent(createTransactionString(data = GnosisSafe.ConfirmTransaction.METHOD_ID.addHexPrefix()))
         val observer = createObserver()
 
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
@@ -150,7 +150,7 @@ class AuthenticateViewModelTest {
 
     @Test
     fun checkResultRevokeAction() {
-        val intent = testIntent(createTransactionString(data = GnosisSafe.RevokeConfirmation.METHOD_ID.addAddressPrefix()))
+        val intent = testIntent(createTransactionString(data = GnosisSafe.RevokeConfirmation.METHOD_ID.addHexPrefix()))
         val observer = createObserver()
 
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))

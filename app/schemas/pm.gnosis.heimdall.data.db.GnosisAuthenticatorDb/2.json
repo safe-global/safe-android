@@ -1,41 +1,9 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "2b1f0b34c11ae49b02194e50892bfa85",
+    "version": 2,
+    "identityHash": "9fe2479d4361e2ca6ce043cbd8df21fb",
     "entities": [
-      {
-        "tableName": "address_book",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT NOT NULL, PRIMARY KEY(`address`))",
-        "fields": [
-          {
-            "fieldPath": "address",
-            "columnName": "address",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "description",
-            "columnName": "description",
-            "affinity": "TEXT",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "address"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
       {
         "tableName": "gnosis_safes",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`address`))",
@@ -209,7 +177,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2b1f0b34c11ae49b02194e50892bfa85\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9fe2479d4361e2ca6ce043cbd8df21fb\")"
     ]
   }
 }

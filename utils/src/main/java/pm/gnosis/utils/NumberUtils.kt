@@ -30,6 +30,13 @@ fun BigInteger.asEthereumAddressString(): String {
 
 fun BigInteger.isValidEthereumAddress() = this <= BigInteger.valueOf(2).pow(160).minus(BigInteger.ONE)
 
+fun BigInteger.asTransactionHash(): String {
+    if (!isValidTransactionHash()) throw InvalidAddressException(this)
+    return "0x${this.toString(16).padStart(64, '0')}"
+}
+
+fun BigInteger.isValidTransactionHash() = this <= BigInteger.valueOf(2).pow(256).minus(BigInteger.ONE)
+
 fun BigInteger.asDecimalString(): String = this.toString(10)
 fun BigDecimal.withTokenScaleOrNull(decimals: Int) = nullOnThrow { withTokenScale(decimals) }
 fun BigDecimal.withTokenScale(decimals: Int) = this.setScale(decimals).div(BigDecimal.TEN.pow(decimals))

@@ -2,4 +2,8 @@ package pm.gnosis.heimdall.data.repositories.models
 
 import java.math.BigInteger
 
-data class Safe(val address: BigInteger, val name: String? = null)
+sealed class AbstractSafe
+
+data class Safe(val address: BigInteger, val name: String? = null): AbstractSafe()
+
+data class PendingSafe(val hash: BigInteger, val name: String? = null): AbstractSafe()

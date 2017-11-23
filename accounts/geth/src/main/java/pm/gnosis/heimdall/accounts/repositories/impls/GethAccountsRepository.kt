@@ -49,10 +49,9 @@ class GethAccountsRepository @Inject constructor(
                     transaction.nonce!!.toLong(),
                     Address(transaction.address.asEthereumAddressString()),
                     BigInt(transaction.value?.toLong() ?: 0),
-                    BigInt(transaction.adjustedGas.toLong()),
+                    BigInt(transaction.gas!!.toLong()),
                     BigInt(transaction.gasPrice!!.toLong()),
                     transaction.data?.toByteArray() ?: ByteArray(0))
-
 
             val signed = gethKeyStore.signTxPassphrase(
                     account, gethAccountManager.getAccountPassphrase(), tx, BigInt(transaction.chainId.toLong()))
@@ -79,7 +78,7 @@ class GethAccountsRepository @Inject constructor(
 
     override fun saveAccount(privateKey: ByteArray): Completable =
             Completable.fromCallable {
-                gethKeyStore.importECDSAKey(privateKey, generateRandomString())
+                gethKeyStore.importECDSAKey(privateKey, gethAccountManager.getAccountPassphrase())
             }
 
     override fun generateMnemonic(): Single<String> = Single.fromCallable { bip39.generateMnemonic() }

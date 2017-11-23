@@ -16,6 +16,10 @@ android {
 }
 
 dependencies {
+    // We specify junit before anything else to make sure that this version is prioritized over the
+    // one bundled in the android.jar
+    testImplementation "junit:junit:$versions.junit"
+
     implementation project(":accounts:base")
     implementation project(":crypto")
     implementation project(':heimdall-common')
@@ -35,4 +39,7 @@ dependencies {
 
     implementation "com.squareup.okio:okio:$versions.okio"
     implementation "com.github.walleth.kethereum:rlp:$versions.kethereum"
+
+    testImplementation "org.mockito:mockito-core:$versions.mockito"
+    testImplementation "org.mockito:mockito-inline:$versions.mockito"
 }

@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.security.db.EncryptedByteArray
 import pm.gnosis.heimdall.security.db.EncryptedString
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
+import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
@@ -43,7 +44,7 @@ class KethereumAccountsRepository @Inject internal constructor(
     override fun signTransaction(transaction: Transaction): Single<String> {
         if (!transaction.signable()) return Single.error(InvalidTransactionParams())
         return keyPairFromActiveAccount()
-                .map { transaction.rlp(it.sign(transaction.hash())).toHexString() }
+                .map { transaction.rlp(it.sign(transaction.hash())).toHexString().addHexPrefix() }
     }
 
     private fun keyPairFromActiveAccount(): Single<KeyPair> {

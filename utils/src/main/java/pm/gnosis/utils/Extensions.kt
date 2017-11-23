@@ -3,11 +3,10 @@ package pm.gnosis.utils
 import okio.ByteString
 import java.math.BigInteger
 import java.security.SecureRandom
-import java.util.*
 import kotlin.experimental.and
 
 private val hexArray = "0123456789abcdef".toCharArray()
-const val HEX_PREFIX = "0x"
+private const val HEX_PREFIX = "0x"
 
 fun generateRandomString(numBits: Int = 130, radix: Int = 32): String {
     return BigInteger(numBits, SecureRandom()).toString(radix)
@@ -73,14 +72,14 @@ fun String.hexStringToByteArray(): ByteArray {
     return data
 }
 
-fun String.addAddressPrefix() = if (!this.startsWith(HEX_PREFIX)) "$HEX_PREFIX$this" else this
+fun String.addHexPrefix() = if (!this.startsWith(HEX_PREFIX)) "$HEX_PREFIX$this" else this
 
 fun String.asEthereumAddressString(): String {
     val string = this.removePrefix(HEX_PREFIX)
     val numericValue = BigInteger(string, 16)
     if (!numericValue.isValidEthereumAddress()) throw IllegalArgumentException("Invalid ethereum address")
 
-    return numericValue.toString(16).padStart(40, '0').addAddressPrefix()
+    return numericValue.toString(16).padStart(40, '0').addHexPrefix()
 }
 
 fun String.isSolidityMethod(methodId: String) = this.removePrefix(HEX_PREFIX).startsWith(methodId.removePrefix(HEX_PREFIX))

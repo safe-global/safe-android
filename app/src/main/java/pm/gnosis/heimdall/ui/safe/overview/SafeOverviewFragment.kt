@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
@@ -92,7 +93,7 @@ class SafeOverviewFragment : BaseFragment() {
         }
     }
 
-    private fun onSafes(data: Adapter.Data<Safe>) {
+    private fun onSafes(data: Adapter.Data<AbstractSafe>) {
         adapter.updateData(data)
         layout_safe_overview_empty_view.visibility = if (data.entries.isEmpty()) View.VISIBLE else View.GONE
     }
@@ -119,7 +120,12 @@ class SafeOverviewFragment : BaseFragment() {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val name = dialogView.dialog_add_safe_text_name.text.toString()
             val address = dialogView.dialog_add_safe_text_address.text.toString()
-            if (address.isValidEthereumAddress()) {
+            if (address.isNullOrBlank()) {
+                disposables += viewModel.createSafe(name)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(onComplete = this::onSafeAdded, onError = this::onAddSafeError)
+                dialog.dismiss()
+            } else if (address.isValidEthereumAddress()) {
                 disposables += addSafeDisposable(name, address.hexAsBigInteger())
                 dialog.dismiss()
             } else {

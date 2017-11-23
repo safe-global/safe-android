@@ -3,42 +3,61 @@ package pm.gnosis.heimdall.data.repositories.impls
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
 import pm.gnosis.heimdall.GnosisSafe.Required
 import pm.gnosis.heimdall.GnosisSafeWithDescriptions.GetDescriptionCount
 import pm.gnosis.heimdall.GnosisSafeWithDescriptions.GetDescriptions
+import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory
+import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory.Events.GnosisSafeWithDescriptionsCreation
+import pm.gnosis.heimdall.accounts.base.models.Account
+import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.common.utils.getSharedObservable
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
+import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
 import pm.gnosis.heimdall.data.remote.BulkRequest
 import pm.gnosis.heimdall.data.remote.BulkRequest.SubRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
+import pm.gnosis.heimdall.data.remote.models.TransactionReceipt
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.model.Solidity
+import pm.gnosis.model.SolidityBase
+import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class DefaultGnosisSafeRepository @Inject constructor(
         gnosisAuthenticatorDb: GnosisAuthenticatorDb,
-        private val ethereumJsonRpcRepository: EthereumJsonRpcRepository
+        private val accountsRepository: AccountsRepository,
+        private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
+        private val settingsRepository: SettingsRepository
 ) : GnosisSafeRepository {
 
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
 
+    private val deployStatusRequests = ConcurrentHashMap<String, Observable<String>>()
+
     override fun observeSafes() =
-            safeDao.observeSafes()
-                    .map { it.map { it.fromDb() } }
+            Flowable.combineLatest(safeDao.observePendingSafes(), safeDao.observeSafes(),
+                    BiFunction { pendingSafes: List<PendingGnosisSafeDb>, safes: List<GnosisSafeDb> ->
+                        pendingSafes.map { it.fromDb() } + safes.map { it.fromDb() }
+                    })
                     .subscribeOn(Schedulers.io())!!
 
     override fun observeSafe(address: BigInteger): Flowable<Safe> =
@@ -50,6 +69,65 @@ class DefaultGnosisSafeRepository @Inject constructor(
             Completable.fromCallable {
                 safeDao.insertSafe(GnosisSafeDb(address, name))
             }.subscribeOn(Schedulers.io())!!
+
+    override fun deploy(name: String?, devices: List<BigInteger>, requiredConfirmations: Int): Completable {
+        return accountsRepository.loadActiveAccount()
+                .map {
+                    it to settingsRepository.getSafeFactoryAddress()
+                }
+                .flatMapObservable {
+                    val owners = SolidityBase.Vector(listOf(Solidity.Address(it.first.address)))
+                    val data = GnosisSafeWithDescriptionsFactory.Create.encode(owners, Solidity.UInt8(BigInteger.ONE))
+                    deploySafeTransaction(it.first, it.second, data)
+                }
+                .flatMapCompletable {
+                    Completable.fromAction {
+                        safeDao.insertPendingSafe(PendingGnosisSafeDb(it.hexAsBigInteger(), name))
+                    }
+                }
+    }
+
+    private fun deploySafeTransaction(account: Account, factoryAddress: BigInteger, data: String): Observable<String> =
+            ethereumJsonRpcRepository.getTransactionParameters(account.address, TransactionCallParams(to = factoryAddress.asEthereumAddressString(), data = data))
+                    .flatMapSingle {
+                        val transaction = Transaction(address = factoryAddress, data = data, nonce = it.nonce, gas = it.gas, gasPrice = it.gasPrice)
+                        accountsRepository.signTransaction(transaction)
+                    }
+                    .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
+
+    override fun observeDeployStatus(hash: String): Observable<String> {
+        return deployStatusRequests.getSharedObservable(hash, ethereumJsonRpcRepository.getTransactionReceipt(hash)
+                .flatMap {
+                    it.logs.forEach {
+                        decodeCreationEventOrNull(it)?.let {
+                            return@flatMap Observable.just(it.gnosissafe.value)
+                        }
+                    }
+                    Observable.error<BigInteger>(IllegalStateException())
+                }
+                .retryWhen {
+                    it.zipWith(Observable.range(1, 3), BiFunction { _: Throwable, i: Int -> i })
+                            .flatMap { Observable.timer(5, TimeUnit.SECONDS) }
+                }
+                .flatMapSingle { safeAddress ->
+                    safeDao.loadPendingSafe(hash.hexAsBigInteger()).map { pendingSafe ->
+                        safeAddress to pendingSafe
+                    }
+                }
+                .map {
+                    safeDao.removePendingSafe(hash.hexAsBigInteger())
+                    safeDao.insertSafe(GnosisSafeDb(it.first, it.second.name))
+                    it.first.asEthereumAddressString()
+                }
+        )
+    }
+
+    private fun decodeCreationEventOrNull(event: TransactionReceipt.Event) =
+            try {
+                GnosisSafeWithDescriptionsCreation.decode(event.topics, event.data)
+            } catch (e: Exception) {
+                null
+            }
 
     override fun remove(address: BigInteger) =
             Completable.fromCallable {

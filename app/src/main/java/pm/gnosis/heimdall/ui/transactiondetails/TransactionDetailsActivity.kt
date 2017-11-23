@@ -217,7 +217,7 @@ class TransactionDetailsActivity : BaseActivity() {
             val name = dialogView.dialog_add_safe_text_name.text.toString()
             val address = dialogView.dialog_add_safe_text_address.text.toString()
             if (address.isValidEthereumAddress()) {
-                addSafeClickSubject.onNext(address.addAddressPrefix() to name)
+                addSafeClickSubject.onNext(address.addHexPrefix() to name)
                 dialog.dismiss()
             } else {
                 dialog_add_safe_text_input_layout.error = getString(R.string.invalid_ethereum_address)

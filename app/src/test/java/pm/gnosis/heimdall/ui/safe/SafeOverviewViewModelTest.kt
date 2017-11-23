@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
@@ -46,7 +47,7 @@ class SafeOverviewViewModelTest {
 
     @Test
     fun observeSafesResults() {
-        val processor = PublishProcessor.create<List<Safe>>()
+        val processor = PublishProcessor.create<List<AbstractSafe>>()
         val subscriber = createSubscriber()
         given(repositoryMock.observeSafes()).willReturn(processor)
 
@@ -196,5 +197,5 @@ class SafeOverviewViewModelTest {
                 .assertError(error)
     }
 
-    private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<Safe>>>()
+    private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<AbstractSafe>>>()
 }
