@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
@@ -23,6 +24,7 @@ import pm.gnosis.heimdall.data.remote.BulkRequest.SubRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
+import pm.gnosis.heimdall.data.remote.models.TransactionParameters
 import pm.gnosis.heimdall.data.remote.models.TransactionReceipt
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
@@ -70,30 +72,41 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 safeDao.insertSafe(GnosisSafeDb(address, name))
             }.subscribeOn(Schedulers.io())!!
 
-    override fun deploy(name: String?, devices: List<BigInteger>, requiredConfirmations: Int): Completable {
+    private fun loadSafeDeployParams(devices: Set<BigInteger>, requiredConfirmations: Int): Single<SafeDeployParams> {
         return accountsRepository.loadActiveAccount()
                 .map {
                     it to settingsRepository.getSafeFactoryAddress()
                 }
-                .flatMapObservable {
-                    val owners = SolidityBase.Vector(listOf(Solidity.Address(it.first.address)))
-                    val data = GnosisSafeWithDescriptionsFactory.Create.encode(owners, Solidity.UInt8(BigInteger.ONE))
-                    deploySafeTransaction(it.first, it.second, data)
+                .flatMapObservable { (account, factoryAddress) ->
+                    val owners = SolidityBase.Vector((devices + account.address).map { Solidity.Address(it) })
+                    val confirmations = Math.max(1, Math.min(requiredConfirmations, devices.size))
+                    val data = GnosisSafeWithDescriptionsFactory.Create.encode(owners, Solidity.UInt8(BigInteger.valueOf(confirmations.toLong())))
+                    ethereumJsonRpcRepository.getTransactionParameters(account.address, TransactionCallParams(to = factoryAddress.asEthereumAddressString(), data = data)).map {
+                        SafeDeployParams(account, factoryAddress, data, it)
+                    }
                 }
+                .singleOrError()
+    }
+
+    override fun estimateDeployCosts(devices: Set<BigInteger>, requiredConfirmations: Int): Single<Wei> {
+        return loadSafeDeployParams(devices, requiredConfirmations)
+                .map { Wei(it.transactionParameters.gas) }
+    }
+
+    override fun deploy(name: String?, devices: Set<BigInteger>, requiredConfirmations: Int): Completable {
+        return loadSafeDeployParams(devices, requiredConfirmations)
+                .flatMap {
+                    val params = it.transactionParameters
+                    val transaction = Transaction(address = it.factoryAddress, data = it.data, nonce = params.nonce, gas = params.gas, gasPrice = params.gasPrice)
+                    accountsRepository.signTransaction(transaction)
+                }
+                .flatMapObservable { ethereumJsonRpcRepository.sendRawTransaction(it) }
                 .flatMapCompletable {
                     Completable.fromAction {
                         safeDao.insertPendingSafe(PendingGnosisSafeDb(it.hexAsBigInteger(), name))
                     }
                 }
     }
-
-    private fun deploySafeTransaction(account: Account, factoryAddress: BigInteger, data: String): Observable<String> =
-            ethereumJsonRpcRepository.getTransactionParameters(account.address, TransactionCallParams(to = factoryAddress.asEthereumAddressString(), data = data))
-                    .flatMapSingle {
-                        val transaction = Transaction(address = factoryAddress, data = data, nonce = it.nonce, gas = it.gas, gasPrice = it.gasPrice)
-                        accountsRepository.signTransaction(transaction)
-                    }
-                    .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
 
     override fun observeDeployStatus(hash: String): Observable<String> {
         return deployStatusRequests.getSharedObservable(hash, ethereumJsonRpcRepository.getTransactionReceipt(hash)
@@ -184,4 +197,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
             val requiredConfirmations: SubRequest<Required.Return>,
             val owners: SubRequest<GetOwners.Return>
     ) : BulkRequest(balance, requiredConfirmations, owners)
+
+    private data class SafeDeployParams(val account: Account, val factoryAddress: BigInteger, val data: String, val transactionParameters: TransactionParameters)
 }

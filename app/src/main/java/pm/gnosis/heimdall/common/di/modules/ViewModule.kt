@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
+import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
@@ -40,6 +41,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesAccountContract(provider: ViewModelProvider) = provider[AccountContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesAddSafeContract(provider: ViewModelProvider) = provider[AddSafeContract::class.java]
 
     @Provides
     @ForView

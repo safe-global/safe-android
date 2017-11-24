@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
+import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewFragment
 import pm.gnosis.heimdall.ui.settings.SettingsActivity
 import pm.gnosis.heimdall.ui.tokens.overview.TokensFragment
@@ -32,6 +33,7 @@ class MainActivity : BaseActivity() {
             when(it.itemId) {
                 R.id.main_menu_settings -> startActivity(SettingsActivity.createIntent(this))
                 R.id.main_menu_address_book -> startActivity(AddressBookActivity.createIntent(this))
+                R.id.main_menu_add_safe -> startActivity(AddSafeActivity.createIntent(this))
             }
             true
         }

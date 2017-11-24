@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_primary">@color/white</color>
-    <color name="color_primary_dark">#9e9e9e</color>
-    <color name="color_accent">@color/gnosis_blue</color>
+    <color name="primary">@color/white</color>
+    <color name="primary_dark">#9e9e9e</color>
+    <color name="accent">@color/gnosis_blue</color>
     <color name="window_background">#f9f9f9</color>
 
     <color name="white">#ffffff</color>
@@ -18,10 +18,13 @@
     <color name="dark_text">#4a4a4a</color>
     <color name="darker_text">#333333</color>
 
+    <color name="default_text">#21435a</color>
+
     <color name="list_divider">#e4e3e3</color>
 
     <color name="unselected_tab">#9b9b9b</color>
-    <color name="default_icon_color">#4a4a4a</color>
+    <color name="default_icon">#4a4a4a</color>
 
     <color name="background">#f9f9f9</color>
+    <color name="divider">#e3e5ec</color>
 </resources>

@@ -10,9 +10,7 @@ import pm.gnosis.heimdall.ui.base.Adapter
 import java.math.BigInteger
 
 abstract class SafeOverviewContract : ViewModel() {
-    abstract fun addSafe(address: BigInteger, name: String): Completable
     abstract fun removeSafe(address: BigInteger): Completable
     abstract fun updateSafeName(address: BigInteger, newName: String): Completable
     abstract fun observeSafes(): Flowable<Result<Adapter.Data<AbstractSafe>>>
-    abstract fun createSafe(name: String): Completable
 }

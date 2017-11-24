@@ -17,6 +17,8 @@ import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicViewModel
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountViewModel
+import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
+import pm.gnosis.heimdall.ui.safe.add.AddSafeViewModel
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsViewModel
 import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
@@ -48,13 +50,18 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(AddTokenContract::class)
-    abstract fun bindsAddTokenContract(viewModel: AddTokenViewModel): ViewModel
+    @ViewModelKey(AddressBookContract::class)
+    abstract fun bindsAddressBookContract(viewModel: AddressBookViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(AddressBookContract::class)
-    abstract fun bindsAddressBookContract(viewModel: AddressBookViewModel): ViewModel
+    @ViewModelKey(AddSafeContract::class)
+    abstract fun bindsAddSafeContract(viewModel: AddSafeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AddTokenContract::class)
+    abstract fun bindsAddTokenContract(viewModel: AddTokenViewModel): ViewModel
 
     @Binds
     @IntoMap

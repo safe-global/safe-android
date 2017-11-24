@@ -20,12 +20,6 @@ class SafeOverviewViewModel @Inject constructor(
                 .mapToResult()
     }
 
-    override fun addSafe(address: BigInteger, name: String) =
-            safeRepository.add(address, name)
-
-    override fun createSafe(name: String) =
-            safeRepository.deploy(name, listOf(), 0)
-
     override fun removeSafe(address: BigInteger) =
             safeRepository.remove(address)
 

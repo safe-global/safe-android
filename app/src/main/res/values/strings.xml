@@ -152,4 +152,11 @@
     <string name="address_book_entry_delete_error">Error deleting entry</string>
     <string name="success_update_settings">Successfully updated settings!</string>
     <string name="settings_safe_factory_hint">Safe Factory Address (e.g. 0x13de59675d22fb7befd213324f3f829135c6e8f8)</string>
+    <string name="safe_name_hint">Safe Name</string>
+    <string name="deploy_new_safe">Deploy New Safe</string>
+    <string name="estimated_transaction_fee">Estimated Transaction Fee</string>
+    <string name="add_existing_safe">Add existing safe</string>
+    <string name="x_wei">%s Wei</string>
+    <string name="tab_title_add_existing">add existing</string>
+    <string name="tab_title_create_new">create new</string>
 </resources>
