@@ -57,7 +57,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
 
         setContentView(R.layout.layout_address_book_entry_details)
         layout_address_book_entry_details_toolbar.inflateMenu(R.menu.address_book_entry_details_menu)
-        layout_address_book_entry_details_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
+        layout_address_book_entry_details_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
         layout_address_book_entry_details_toolbar.setNavigationOnClickListener { onBackPressed() }
         layout_address_book_entry_details_toolbar.setOnMenuItemClickListener {
             when (it.itemId) {

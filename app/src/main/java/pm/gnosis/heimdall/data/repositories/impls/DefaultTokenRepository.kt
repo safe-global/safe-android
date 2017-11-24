@@ -45,6 +45,11 @@ class DefaultTokenRepository @Inject constructor(
                     .subscribeOn(Schedulers.io())
                     .map { it.map { it.fromDb() } }
 
+    override fun observeToken(address: BigInteger): Flowable<ERC20Token> =
+            erc20TokenDao.observeToken(address)
+                    .map { it.fromDb() }
+                    .subscribeOn(Schedulers.io())
+
     override fun loadTokenInfo(contractAddress: BigInteger): Observable<ERC20Token> {
         if (!contractAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(contractAddress))
         val request = TokenInfoRequest(

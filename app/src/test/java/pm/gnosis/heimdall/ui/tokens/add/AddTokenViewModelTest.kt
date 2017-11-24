@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.tokens
+package pm.gnosis.heimdall.ui.tokens.add
 
 import android.content.Context
 import io.reactivex.Observable
@@ -20,7 +20,7 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
-import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenViewModel
+import pm.gnosis.heimdall.ui.tokens.add.AddTokenViewModel
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 

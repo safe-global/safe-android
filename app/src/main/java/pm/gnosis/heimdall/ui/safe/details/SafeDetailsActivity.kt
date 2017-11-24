@@ -27,7 +27,7 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoFragment
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
-import pm.gnosis.heimdall.ui.tokens.overview.TokensFragment
+import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsEthereumAddress
 import timber.log.Timber
@@ -210,7 +210,7 @@ class SafeDetailsActivity : BaseActivity() {
                 SafeInfoFragment.createInstance(safeAddress.asEthereumAddressString())
             }
             R.string.tab_title_tokens -> {
-                TokensFragment.createInstance(safeAddress.asEthereumAddressString())
+                TokenBalancesFragment.createInstance(safeAddress.asEthereumAddressString())
             }
             R.string.tab_title_transactions -> {
                 SafeTransactionsFragment.createInstance(safeAddress.asEthereumAddressString())

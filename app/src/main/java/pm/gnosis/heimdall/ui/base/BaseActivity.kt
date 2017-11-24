@@ -8,6 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.HeimdallApplication
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.security.SecurityActivity
 import timber.log.Timber
@@ -45,13 +46,8 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     protected fun registerToolbar(toolbar: Toolbar) {
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
-        toolbar.setNavigationOnClickListener {
-            onBackPressed()
-        }
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
     protected fun skipSecurityCheck() {

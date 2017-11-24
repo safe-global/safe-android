@@ -1,11 +1,11 @@
-package pm.gnosis.heimdall.ui.settings
+package pm.gnosis.heimdall.ui.settings.network
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Single
 import pm.gnosis.heimdall.common.utils.Result
 
 
-abstract class SettingsContract: ViewModel() {
+abstract class NetworkSettingsContract : ViewModel() {
     abstract fun loadIpfsUrl(): Single<String>
     abstract fun updateIpfsUrl(url: String): Single<Result<String>>
     

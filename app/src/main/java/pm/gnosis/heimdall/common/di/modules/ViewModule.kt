@@ -21,10 +21,12 @@ import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.security.SecurityContract
-import pm.gnosis.heimdall.ui.settings.SettingsContract
+import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
+import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
-import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenContract
-import pm.gnosis.heimdall.ui.tokens.overview.TokensContract
+import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
+import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
+import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
 import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsContract
 
 @Module
@@ -53,7 +55,7 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesAddressBookContract(provider: ViewModelProvider) = provider[AddressBookContract::class.java]
-    
+
     @Provides
     @ForView
     fun providesAuthenticateContract(provider: ViewModelProvider) = provider[AuthenticateContract::class.java]
@@ -61,6 +63,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesGenerateMnemonicContract(provider: ViewModelProvider) = provider[GenerateMnemonicContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesNetworkSettingsContract(provider: ViewModelProvider) = provider[NetworkSettingsContract::class.java]
 
     @Provides
     @ForView
@@ -88,15 +94,19 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesSettingsContract(provider: ViewModelProvider) = provider[SettingsContract::class.java]
-
-    @Provides
-    @ForView
     fun providesSplashContract(provider: ViewModelProvider) = provider[SplashContract::class.java]
 
     @Provides
     @ForView
-    fun providesTokensContract(provider: ViewModelProvider) = provider[TokensContract::class.java]
+    fun providesTokenBalancesContract(provider: ViewModelProvider) = provider[TokenBalancesContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesTokenInfoContract(provider: ViewModelProvider) = provider[TokenInfoContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesTokenManagementContract(provider: ViewModelProvider) = provider[TokenManagementContract::class.java]
 
     @Provides
     @ForView

@@ -46,19 +46,36 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/layout_add_token_address_input_layout"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                    <EditText
-                        android:id="@+id/layout_add_token_address"
-                        style="@style/Input"
-                        android:layout_width="match_parent"
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/layout_add_token_address_input_layout"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:hint="@string/address"
-                        android:inputType="textNoSuggestions|textVisiblePassword" />
-                </android.support.design.widget.TextInputLayout>
+                        android:layout_weight="1">
+
+                        <EditText
+                            android:id="@+id/layout_add_token_address"
+                            style="@style/Input"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/address"
+                            android:inputType="textNoSuggestions|textVisiblePassword" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <ImageView
+                        android:id="@+id/layout_add_token_scan_qr_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/selectable_circle_background"
+                        android:padding="8dp"
+                        app:srcCompat="@drawable/ic_qrcode_scan_dark" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/layout_add_token_load_info_button"
@@ -66,7 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Get Token Info" />
+                    android:text="@string/get_token_info" />
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/layout_add_token_info"
@@ -76,7 +93,55 @@
                     android:visibility="gone"
                     tools:visibility="visible">
 
-                    <include layout="@layout/layout_token_info" />
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/layout_token_info_symbol"
+                            style="@style/Title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/gnosis_blue"
+                            android:textSize="28sp"
+                            tools:text="GNO" />
+
+                        <TextView
+                            android:id="@+id/layout_token_info_name"
+                            style="@style/Title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            tools:text="Gnosis Token" />
+
+                        <LinearLayout
+                            android:id="@+id/layout_token_info_decimals_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/Title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/decimals" />
+
+                            <TextView
+                                android:id="@+id/layout_token_info_decimals"
+                                style="@style/Content"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginStart="8dp"
+                                tools:text="18" />
+                        </LinearLayout>
+                    </LinearLayout>
+
                 </android.support.v7.widget.CardView>
 
             </LinearLayout>
@@ -89,7 +154,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:enabled="false"
-            android:text="Save token" />
+            android:text="@string/save_token" />
 
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

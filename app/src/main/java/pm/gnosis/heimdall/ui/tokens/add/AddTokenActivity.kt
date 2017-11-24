@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.tokens.addtoken
+package pm.gnosis.heimdall.ui.tokens.add
 
 import android.content.Context
 import android.content.Intent
@@ -11,17 +11,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_add_token.*
-import kotlinx.android.synthetic.main.layout_token_info.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.hideSoftKeyboard
-import pm.gnosis.heimdall.common.utils.subscribeForResult
-import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
@@ -37,6 +36,8 @@ class AddTokenActivity : BaseActivity() {
         inject()
         registerToolbar(layout_add_token_toolbar)
         layout_add_token_toolbar.title = getString(R.string.add_token)
+
+        layout_add_token_scan_qr_code.setOnClickListener { scanQrCode() }
     }
 
     override fun onStart() {
@@ -73,6 +74,17 @@ class AddTokenActivity : BaseActivity() {
                 layout_add_token_load_info_button.callOnClick()
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        handleQrCodeActivityResult(requestCode, resultCode, data, { contents ->
+            if (contents.isValidEthereumAddress()) {
+                layout_add_token_address.setText(contents.asEthereumAddressString())
+            } else {
+                snackbar(layout_add_token_coordinator, R.string.invalid_ethereum_address)
+            }
+        }, { snackbar(layout_add_token_coordinator, R.string.qr_code_scan_cancel) })
     }
 
     private fun onTokenInfo(erC20Token: ERC20Token) {

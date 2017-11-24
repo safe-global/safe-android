@@ -8,6 +8,7 @@ import java.math.BigInteger
 
 interface TokenRepository {
     fun observeTokens(): Flowable<List<ERC20Token>>
+    fun observeToken(address: BigInteger): Flowable<ERC20Token>
     fun loadTokenInfo(contractAddress: BigInteger): Observable<ERC20Token>
     fun loadTokenBalances(ofAddress: BigInteger, erC20Tokens: List<ERC20Token>): Observable<List<Pair<ERC20Token, BigInteger?>>>
     fun addToken(erC20Token: ERC20Token): Completable

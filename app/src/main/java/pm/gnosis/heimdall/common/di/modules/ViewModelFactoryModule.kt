@@ -29,14 +29,18 @@ import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import pm.gnosis.heimdall.ui.security.SecurityContract
 import pm.gnosis.heimdall.ui.security.SecurityViewModel
-import pm.gnosis.heimdall.ui.settings.SettingsContract
-import pm.gnosis.heimdall.ui.settings.SettingsViewModel
+import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
+import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsViewModel
+import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
+import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementViewModel
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.splash.SplashViewModel
-import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenContract
-import pm.gnosis.heimdall.ui.tokens.addtoken.AddTokenViewModel
-import pm.gnosis.heimdall.ui.tokens.overview.TokensContract
-import pm.gnosis.heimdall.ui.tokens.overview.TokensViewModel
+import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
+import pm.gnosis.heimdall.ui.tokens.info.TokenInfoViewModel
+import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
+import pm.gnosis.heimdall.ui.tokens.add.AddTokenViewModel
+import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
+import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesViewModel
 import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsViewModel
 import javax.inject.Singleton
@@ -105,8 +109,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SettingsContract::class)
-    abstract fun bindsSettingsContract(viewModel: SettingsViewModel): ViewModel
+    @ViewModelKey(NetworkSettingsContract::class)
+    abstract fun bindsSettingsContract(viewModel: NetworkSettingsViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -115,8 +119,18 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(TokensContract::class)
-    abstract fun bindsTokensContract(viewModel: TokensViewModel): ViewModel
+    @ViewModelKey(TokenBalancesContract::class)
+    abstract fun bindsTokensContract(viewModel: TokenBalancesViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TokenInfoContract::class)
+    abstract fun bindsTokensInfoContract(viewModel: TokenInfoViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TokenManagementContract::class)
+    abstract fun bindsTokenManagementContract(viewModel: TokenManagementViewModel): ViewModel
 
     @Binds
     @IntoMap

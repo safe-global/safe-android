@@ -2,17 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/main_menu_address_book"
-        android:icon="@drawable/ic_group_black_24dp"
-        android:title="@string/address_book"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/main_menu_settings"
+        android:id="@+id/safes_overview_menu_settings"
         android:icon="@drawable/ic_settings_24dp"
         android:title="@string/settings"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+
     <item
-        android:id="@+id/main_menu_add_safe"
+        android:id="@+id/safes_overview_menu_add_safe"
         android:title="@string/add_safe"
         app:showAsAction="never" />
 </menu>

@@ -16,8 +16,9 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="authenticate">Authenticate</string>
-    <string name="account">Account</string>
+    <string name="my_account">My Account</string>
     <string name="safe">Safe</string>
+    <string name="safes">Safes</string>
     <string name="tokens">Tokens</string>
     <string name="token">token</string>
     <string name="name">Name</string>
@@ -160,4 +161,15 @@
     <string name="tab_title_add_existing">add existing</string>
     <string name="tab_title_create_new">create new</string>
     <string name="error_blank_name">Name should not be blank!</string>
+    <string name="token_info">Token Info</string>
+    <string name="dialog_remove_token_message">Remove token from the verified tokens\' list?</string>
+    <string name="get_token_info">Get Token Info</string>
+    <string name="save_token">Save token</string>
+    <string name="manage_verified_tokens">Manage Verified Tokens</string>
+    <string name="network">Network</string>
+    <string name="token_name">Token Name</string>
+    <string name="token_symbol">Token Symbol</string>
+    <string name="token_decimals">Token Decimals</string>
+    <string name="token_contract_address">Token Contract Address</string>
+    <string name="tokens_list_error">Could not get list of tokens</string>
 </resources>
