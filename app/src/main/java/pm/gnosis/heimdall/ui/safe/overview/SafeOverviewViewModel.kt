@@ -22,7 +22,4 @@ class SafeOverviewViewModel @Inject constructor(
 
     override fun removeSafe(address: BigInteger) =
             safeRepository.remove(address)
-
-    override fun updateSafeName(address: BigInteger, newName: String) =
-            safeRepository.updateName(address, newName)
 }

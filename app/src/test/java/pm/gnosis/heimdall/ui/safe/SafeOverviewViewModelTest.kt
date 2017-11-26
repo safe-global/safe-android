@@ -114,34 +114,6 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun addSafeSuccess() {
-        val observer = TestObserver.create<Unit>()
-        val completable = TestCompletable()
-        given(repositoryMock.add(MockUtils.any(), anyString())).willReturn(completable)
-
-        viewModel.addSafe(BigInteger.ZERO, "Test").subscribe(observer)
-
-        then(repositoryMock).should().add(BigInteger.ZERO, "Test")
-        then(repositoryMock).shouldHaveNoMoreInteractions()
-        assertEquals(1, completable.callCount)
-        observer.assertTerminated().assertNoErrors().assertNoValues()
-    }
-
-    @Test
-    fun addSafeError() {
-        val observer = TestObserver.create<Unit>()
-        val error = IllegalStateException()
-        given(repositoryMock.add(MockUtils.any(), anyString())).willReturn(Completable.error(error))
-
-        viewModel.addSafe(BigInteger.ZERO, "Test").subscribe(observer)
-
-        then(repositoryMock).should().add(BigInteger.ZERO, "Test")
-        then(repositoryMock).shouldHaveNoMoreInteractions()
-        observer.assertTerminated().assertNoValues()
-                .assertError(error)
-    }
-
-    @Test
     fun removeSafeSuccess() {
         val observer = TestObserver.create<Unit>()
         val completable = TestCompletable()
@@ -164,34 +136,6 @@ class SafeOverviewViewModelTest {
         viewModel.removeSafe(BigInteger.ZERO).subscribe(observer)
 
         then(repositoryMock).should().remove(BigInteger.ZERO)
-        then(repositoryMock).shouldHaveNoMoreInteractions()
-        observer.assertTerminated().assertNoValues()
-                .assertError(error)
-    }
-
-    @Test
-    fun updateSafeNameSuccess() {
-        val observer = TestObserver.create<Unit>()
-        val completable = TestCompletable()
-        given(repositoryMock.updateName(MockUtils.any(), anyString())).willReturn(completable)
-
-        viewModel.updateSafeName(BigInteger.ZERO, "Foo").subscribe(observer)
-
-        then(repositoryMock).should().updateName(BigInteger.ZERO, "Foo")
-        then(repositoryMock).shouldHaveNoMoreInteractions()
-        assertEquals(1, completable.callCount)
-        observer.assertTerminated().assertNoErrors().assertNoValues()
-    }
-
-    @Test
-    fun updateSafeNameError() {
-        val observer = TestObserver.create<Unit>()
-        val error = IllegalStateException()
-        given(repositoryMock.updateName(MockUtils.any(), anyString())).willReturn(Completable.error(error))
-
-        viewModel.updateSafeName(BigInteger.ZERO, "Foo").subscribe(observer)
-
-        then(repositoryMock).should().updateName(BigInteger.ZERO, "Foo")
         then(repositoryMock).shouldHaveNoMoreInteractions()
         observer.assertTerminated().assertNoValues()
                 .assertError(error)

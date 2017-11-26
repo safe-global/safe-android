@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.test.utils
+package pm.gnosis.heimdall.accounts.test.utils
 
 import org.mockito.Mockito
 

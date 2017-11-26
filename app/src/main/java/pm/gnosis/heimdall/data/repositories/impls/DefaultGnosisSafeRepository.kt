@@ -90,7 +90,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun estimateDeployCosts(devices: Set<BigInteger>, requiredConfirmations: Int): Single<Wei> {
         return loadSafeDeployParams(devices, requiredConfirmations)
-                .map { Wei(it.transactionParameters.gas) }
+                .map { Wei(it.transactionParameters.gas.multiply(it.transactionParameters.gasPrice)) }
     }
 
     override fun deploy(name: String?, devices: Set<BigInteger>, requiredConfirmations: Int): Completable {

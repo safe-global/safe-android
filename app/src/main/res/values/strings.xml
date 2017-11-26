@@ -159,4 +159,5 @@
     <string name="x_wei">%s Wei</string>
     <string name="tab_title_add_existing">add existing</string>
     <string name="tab_title_create_new">create new</string>
+    <string name="error_blank_name">Name should not be blank!</string>
 </resources>

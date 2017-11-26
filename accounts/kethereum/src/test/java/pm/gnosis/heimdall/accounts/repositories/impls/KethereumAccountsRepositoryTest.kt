@@ -19,7 +19,7 @@ import pm.gnosis.heimdall.accounts.utils.rlp
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.db.EncryptedByteArray
-import pm.gnosis.heimdall.test.utils.MockUtils
+import pm.gnosis.heimdall.accounts.test.utils.MockUtils
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei

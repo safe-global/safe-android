@@ -11,6 +11,5 @@ import java.math.BigInteger
 
 abstract class SafeOverviewContract : ViewModel() {
     abstract fun removeSafe(address: BigInteger): Completable
-    abstract fun updateSafeName(address: BigInteger, newName: String): Completable
     abstract fun observeSafes(): Flowable<Result<Adapter.Data<AbstractSafe>>>
 }

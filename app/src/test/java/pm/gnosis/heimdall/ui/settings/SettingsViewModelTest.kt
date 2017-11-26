@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
+import pm.gnosis.heimdall.test.utils.mockGetString
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.utils.exceptions.InvalidAddressException
 
@@ -34,7 +35,7 @@ class SettingsViewModelTest {
 
     @Before
     fun setUp() {
-        given(context.getString(anyInt())).will { it.arguments.first().toString() }
+        context.mockGetString()
         viewModel = SettingsViewModel(context, repository)
     }
 
