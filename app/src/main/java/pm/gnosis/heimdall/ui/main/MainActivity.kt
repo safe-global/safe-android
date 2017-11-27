@@ -71,16 +71,6 @@ class MainActivity : BaseActivity() {
         }
     }))
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        item?.itemId ?: return false
-        return true
-    }
-
     companion object {
         fun createIntent(context: Context) = Intent(context, MainActivity::class.java)
     }

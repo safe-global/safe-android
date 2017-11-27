@@ -18,8 +18,7 @@ class AddressBookViewModel @Inject constructor(
         private val qrCodeGenerator: QrCodeGenerator
 ) : AddressBookContract() {
     override fun observeAddressBook() = addressBookRepository
-            .observeAddressBook().map { it.sortedBy { it.name } }
-            .scanToAdapterData({ it.address })
+            .observeAddressBook().scanToAdapterData({ it.address })
 
     override fun observeAddressBookEntry(address: BigInteger) =
             addressBookRepository.observeAddressBookEntry(address)

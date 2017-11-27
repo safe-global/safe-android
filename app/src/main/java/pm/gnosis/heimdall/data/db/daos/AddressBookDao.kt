@@ -13,7 +13,7 @@ interface AddressBookDao {
     @Insert(onConflict = OnConflictStrategy.FAIL)
     fun insertAddressBookEntry(addressBookEntryDb: AddressBookEntryDb)
 
-    @Query("SELECT * FROM ${AddressBookEntryDb.TABLE_NAME}")
+    @Query("SELECT * FROM ${AddressBookEntryDb.TABLE_NAME} ORDER BY ${AddressBookEntryDb.COL_NAME}")
     fun observeAddressBook(): Flowable<List<AddressBookEntryDb>>
 
     @Query("SELECT * FROM ${AddressBookEntryDb.TABLE_NAME} WHERE ${AddressBookEntryDb.COL_ADDRESS} = :address")

@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.addressbook.add
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,14 +10,17 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_address_book.*
 import kotlinx.android.synthetic.main.layout_address_book_add_entry.*
-import kotlinx.android.synthetic.main.layout_tokens.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.common.utils.scanQrCode
+import pm.gnosis.heimdall.common.utils.snackbar
+import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.isValidEthereumAddress
@@ -77,18 +79,15 @@ class AddressBookAddEntryActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == ZxingIntentIntegrator.REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)) {
-                val scanResult = data.getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
-                if (scanResult.isValidEthereumAddress()) {
-                    layout_add_address_book_entry_address.setText(scanResult)
-                } else {
-                    snackbar(layout_address_book_coordinator, R.string.invalid_ethereum_address)
-                }
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                snackbar(layout_address_book_coordinator, R.string.qr_code_scan_cancel)
-            }
-        }
+        handleQrCodeActivityResult(requestCode, resultCode, data,
+                {
+                    if (it.isValidEthereumAddress()) {
+                        layout_add_address_book_entry_address.setText(it)
+                    } else {
+                        snackbar(layout_address_book_coordinator, R.string.invalid_ethereum_address)
+                    }
+
+                }, { snackbar(layout_address_book_coordinator, R.string.qr_code_scan_cancel) })
     }
 
     private fun inject() {

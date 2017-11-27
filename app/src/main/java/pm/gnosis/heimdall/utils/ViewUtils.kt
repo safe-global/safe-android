@@ -11,5 +11,5 @@ fun TextView.filterEditorActions(actionId: Int): Observable<Int> =
 fun String.initials(): String {
     val words = split(" ")
     return ((words.firstOrNull()?.firstOrNull()?.toString() ?: "") +
-            (if (words.size > 1) split(" ").lastOrNull()?.firstOrNull()?.toString() ?: "" else ""))
+            (if (words.size > 1) words.lastOrNull()?.firstOrNull()?.toString() ?: "" else ""))
 }

@@ -46,16 +46,16 @@ class AddressBookViewModelTest {
     fun testObserveAddressBook() {
         val testSubscriber = TestSubscriber<Adapter.Data<AddressBookEntry>>()
         val items = listOf(
-                AddressBookEntry(BigInteger.ZERO, "C", ""),
+                AddressBookEntry(BigInteger.ZERO, "A", ""),
                 AddressBookEntry(BigInteger.ZERO, "B", ""),
-                AddressBookEntry(BigInteger.ZERO, "A", ""))
+                AddressBookEntry(BigInteger.ZERO, "C", ""))
         given(addressBookRepositoryMock.observeAddressBook()).willReturn(Flowable.just(items))
 
         viewModel.observeAddressBook().subscribe(testSubscriber)
 
         testSubscriber
                 .assertValueAt(0, Adapter.Data())
-                .assertValueAt(1, { it.entries == items.sortedBy { it.name } })
+                .assertValueAt(1, { it.entries == items })
                 .assertNoErrors()
         then(addressBookRepositoryMock).should().observeAddressBook()
         then(addressBookRepositoryMock).shouldHaveNoMoreInteractions()

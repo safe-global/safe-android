@@ -10,8 +10,8 @@
 
     <TextView
         android:id="@+id/layout_address_book_entry_initials"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/address_book_circle"
+        android:layout_height="@dimen/address_book_circle"
         android:background="@drawable/address_book_circle"
         android:gravity="center"
         tools:text="DO" />

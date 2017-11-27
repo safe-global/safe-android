@@ -43,7 +43,6 @@
             android:name=".ui.addressbook.add.AddressBookAddEntryActivity"
             android:parentActivityName=".ui.addressbook.list.AddressBookActivity" />
         <activity
-            android:name=".ui.addressbook.detail.AddressBookEntryDetailsActivity"
-            android:parentActivityName=".ui.addressbook.list.AddressBookActivity" />
+            android:name=".ui.addressbook.detail.AddressBookEntryDetailsActivity" />
     </application>
 </manifest>

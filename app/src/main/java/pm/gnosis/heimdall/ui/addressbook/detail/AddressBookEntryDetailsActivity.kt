@@ -1,14 +1,14 @@
 package pm.gnosis.heimdall.ui.addressbook.detail
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
-import android.view.Menu
-import android.view.MenuItem
+import android.support.v7.app.AlertDialog
 import android.view.View
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -18,15 +18,12 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.shareExternalText
-import pm.gnosis.heimdall.common.utils.snackbar
-import pm.gnosis.heimdall.common.utils.subscribeForResult
-import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.utils.asEthereumAddressStringOrNull
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
+import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -44,8 +41,8 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
 
-        intent.extras.getString(EXTRA_ADDRESS_ENTRY).hexAsEthereumAddressOrNull().let {
-            if (it == null) {
+        (intent.extras.getSerializable(EXTRA_ADDRESS_ENTRY) as? BigInteger?).let {
+            if (it == null || !it.isValidEthereumAddress()) {
                 toast(R.string.invalid_ethereum_address)
                 finish()
                 return
@@ -55,23 +52,17 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
         }
 
         setContentView(R.layout.layout_address_book_entry_details)
-        registerToolbar(layout_address_book_entry_details_toolbar)
-        setSupportActionBar(layout_address_book_entry_details_toolbar)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.address_book_entry_details_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.address_book_entry_details_menu_share ->
-                address.asEthereumAddressStringOrNull()?.let { shareExternalText(it, R.string.share_address) }
-            R.id.address_book_entry_details_menu_delete -> showDeleteDialog()
-            else -> return super.onOptionsItemSelected(item)
+        layout_address_book_entry_details_toolbar.inflateMenu(R.menu.address_book_entry_details_menu)
+        layout_address_book_entry_details_toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
+        layout_address_book_entry_details_toolbar.setNavigationOnClickListener { onBackPressed() }
+        layout_address_book_entry_details_toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.address_book_entry_details_menu_share ->
+                    address.asEthereumAddressStringOrNull()?.let { shareExternalText(it, R.string.share_address) }
+                R.id.address_book_entry_details_menu_delete -> showDeleteDialog()
+            }
+            true
         }
-        return true
     }
 
     override fun onStart() {
@@ -91,7 +82,10 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
                 .subscribeForResult(onNext = this::onQrCodeGenerated, onError = this::onQrCodeGenerateError)
 
         disposables += deleteEntryClickSubject
-                .flatMap { viewModel.deleteAddressBookEntry(address) }
+                .flatMap {
+                    Observable.just(ErrorResult<BigInteger>(Exception()))
+                    //   viewModel.deleteAddressBookEntry(address)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = this::onAddressBookEntryDeleted, onError = this::onAddressBookEntryDeleteError)
     }
@@ -119,7 +113,9 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
     private fun onQrCodeGenerateError(throwable: Throwable) {
         Timber.e(throwable)
         layout_address_book_entry_details_qr_code.visibility = View.INVISIBLE
-        snackbar(layout_address_book_entry_details_coordinator, R.string.qr_code_error)
+        snackbar(layout_address_book_entry_details_coordinator, R.string.qr_code_error,
+                duration = Snackbar.LENGTH_INDEFINITE,
+                action = R.string.retry to { _: View -> generateQrCodeSubject.onNext(Unit) })
     }
 
     private fun onAddressBookEntryDeleted(address: BigInteger) {
@@ -129,6 +125,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
 
     private fun onAddressBookEntryDeleteError(throwable: Throwable) {
         Timber.e(throwable)
+        snackbar(layout_address_book_entry_details_coordinator, R.string.address_book_entry_delete_error)
     }
 
     private fun showDeleteDialog() {
@@ -150,7 +147,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
     companion object {
         private const val EXTRA_ADDRESS_ENTRY = "extra.string.address_entry"
 
-        fun createIntent(context: Context, address: String) =
+        fun createIntent(context: Context, address: BigInteger) =
                 Intent(context, AddressBookEntryDetailsActivity::class.java)
                         .apply { putExtra(EXTRA_ADDRESS_ENTRY, address) }
     }

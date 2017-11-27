@@ -149,4 +149,6 @@
     <string name="description_optional">Description (optional)</string>
     <string name="save_address">Save Address</string>
     <string name="description">Description</string>
+    <string name="retry">Retry</string>
+    <string name="address_book_entry_delete_error">Error deleting entry</string>
 </resources>
