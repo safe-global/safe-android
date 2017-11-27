@@ -37,7 +37,7 @@ class SecurityViewModel @Inject constructor(
     override fun setupPin(pin: String, repeat: String): Observable<Result<State>> =
             checkPins(pin, repeat)
                     .flatMap {
-                        encryptionManager.setup(pin.toByteArray()).toObservable()
+                        encryptionManager.setupPassword(pin.toByteArray()).toObservable()
                     }
                     .map {
                         LocalizedException.assert(it, context, R.string.pin_setup_failed)
@@ -53,7 +53,7 @@ class SecurityViewModel @Inject constructor(
             }
 
     override fun unlockPin(pin: String): Observable<Result<State>> =
-            encryptionManager.unlock(pin.toByteArray())
+            encryptionManager.unlockWithPassword(pin.toByteArray())
                     .map {
                         LocalizedException.assert(it, context, R.string.error_wrong_credentials)
                         State.UNLOCKED

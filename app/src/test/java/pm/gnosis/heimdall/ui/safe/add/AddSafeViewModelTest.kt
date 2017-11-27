@@ -17,9 +17,9 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
-import pm.gnosis.heimdall.test.utils.MockUtils.any
-import pm.gnosis.heimdall.test.utils.mockGetString
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils.any
+import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.models.Wei
 import java.math.BigInteger

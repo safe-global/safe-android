@@ -15,10 +15,10 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
-import pm.gnosis.heimdall.test.utils.MockUtils
-import pm.gnosis.heimdall.test.utils.TestListUpdateCallback
-import pm.gnosis.heimdall.test.utils.TestObservableFactory
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.TestListUpdateCallback
+import pm.gnosis.tests.utils.TestObservableFactory
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract.PaginatedTransactions
 import java.math.BigInteger
 

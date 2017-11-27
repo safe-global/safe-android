@@ -1,9 +1,9 @@
 apply plugin: 'com.android.application'
-apply plugin: 'jacoco'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'bivrost'
+apply from: '../buildsystem/coverageReport.gradle'
 
 android {
     defaultConfig {
@@ -40,7 +40,6 @@ android {
 
         debug {
             minifyEnabled false
-            testCoverageEnabled true
         }
 
         release {
@@ -132,52 +131,10 @@ dependencies {
     implementation "com.madgag.spongycastle:prov:$versions.spongycastle"
     implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
+    testImplementation project(':utils-testing')
     testImplementation "org.mockito:mockito-core:$versions.mockito"
     testImplementation "org.mockito:mockito-inline:$versions.mockito"
     androidTestImplementation("com.android.support.test.espresso:espresso-core:$versions.espresso", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-}
-
-android.applicationVariants.all { variant ->
-    def variantName = variant.name.capitalize()
-    task("create${variantName}TestCoverage", type: JacocoReport, dependsOn: "test${variantName}UnitTest") {
-        group = "Reporting"
-        description = "Generate Jacoco coverage reports after running tests."
-        reports {
-            csv.enabled = false
-            xml.enabled = true
-            html.enabled = true
-        }
-        def fileFilter = [
-                '**/*Test*.*',
-                '**/AutoValue_*.*',
-                '**/*JavascriptBridge.class',
-                '**/R.class',
-                '**/R$*.class',
-                '**/Manifest*.*',
-                'android/**/*.*',
-                '**/BuildConfig.*',
-                '**/*$ViewBinder*.*',
-                '**/*$ViewInjector*.*',
-                '**/*$InjectAdapter.class',
-                '**/*$ModuleAdapter.class',
-                '**/*$ViewInjector*.class',
-                '**/*_*MembersInjector*.class',
-                '**/Dagger*Component*.class', // covers component implementations
-                '**/Dagger*Component*$Builder.class', // covers component builders
-                '**/*_*Factory*.class',
-                '**/*_*Impl*.class',
-        ]
-        def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/${variant.name}", excludes: fileFilter)
-        def kotlinTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variant.name}", excludes: fileFilter)
-        def mainSrc = "${project.projectDir}/src/main/java"
-
-        sourceDirectories = files([mainSrc])
-        classDirectories = files([debugTree], [kotlinTree])
-        executionData = fileTree(dir: "$buildDir", includes: [
-                "jacoco/test${variantName}UnitTest.exec",
-                "outputs/code-coverage/connected/*coverage.ec"
-        ])
-    }
 }

@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.test.utils
+package pm.gnosis.tests.utils
 
 import android.support.v7.util.DiffUtil
 import android.support.v7.util.ListUpdateCallback
