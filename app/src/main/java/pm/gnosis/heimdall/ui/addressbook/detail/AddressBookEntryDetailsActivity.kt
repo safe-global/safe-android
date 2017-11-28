@@ -8,7 +8,6 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -18,11 +17,16 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.common.utils.shareExternalText
+import pm.gnosis.heimdall.common.utils.snackbar
+import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
+import pm.gnosis.utils.hexAsEthereumAddress
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import java.math.BigInteger
@@ -41,13 +45,13 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
 
-        (intent.extras.getSerializable(EXTRA_ADDRESS_ENTRY) as? BigInteger?).let {
+        intent.extras.getString(EXTRA_ADDRESS_ENTRY).let {
             if (it == null || !it.isValidEthereumAddress()) {
                 toast(R.string.invalid_ethereum_address)
                 finish()
                 return
             } else {
-                address = it
+                address = it.hexAsEthereumAddress()
             }
         }
 
@@ -82,10 +86,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
                 .subscribeForResult(onNext = this::onQrCodeGenerated, onError = this::onQrCodeGenerateError)
 
         disposables += deleteEntryClickSubject
-                .flatMap {
-                    Observable.just(ErrorResult<BigInteger>(Exception()))
-                    //   viewModel.deleteAddressBookEntry(address)
-                }
+                .flatMap { viewModel.deleteAddressBookEntry(address) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = this::onAddressBookEntryDeleted, onError = this::onAddressBookEntryDeleteError)
     }
@@ -149,6 +150,6 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
 
         fun createIntent(context: Context, address: BigInteger) =
                 Intent(context, AddressBookEntryDetailsActivity::class.java)
-                        .apply { putExtra(EXTRA_ADDRESS_ENTRY, address) }
+                        .apply { putExtra(EXTRA_ADDRESS_ENTRY, address.asEthereumAddressString()) }
     }
 }
