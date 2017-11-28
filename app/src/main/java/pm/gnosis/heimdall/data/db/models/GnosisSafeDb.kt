@@ -37,7 +37,7 @@ data class PendingGnosisSafeDb(
 ) {
     companion object {
         const val TABLE_NAME = "gnosis_pending_safes"
-        const val COL_TX_HASH = "transactionHasjh"
+        const val COL_TX_HASH = "transactionHash"
         const val COL_NAME = "name"
     }
 }

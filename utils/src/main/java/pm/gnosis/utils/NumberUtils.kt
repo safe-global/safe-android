@@ -1,6 +1,7 @@
 package pm.gnosis.utils
 
 import pm.gnosis.utils.exceptions.InvalidAddressException
+import pm.gnosis.utils.exceptions.InvalidTransactionHashException
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -31,7 +32,7 @@ fun BigInteger.asEthereumAddressString(): String {
 fun BigInteger.isValidEthereumAddress() = this <= BigInteger.valueOf(2).pow(160).minus(BigInteger.ONE)
 
 fun BigInteger.asTransactionHash(): String {
-    if (!isValidTransactionHash()) throw InvalidAddressException(this)
+    if (!isValidTransactionHash()) throw InvalidTransactionHashException(this)
     return "0x${this.toString(16).padStart(64, '0')}"
 }
 

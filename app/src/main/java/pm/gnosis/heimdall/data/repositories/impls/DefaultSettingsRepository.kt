@@ -56,8 +56,8 @@ class DefaultSettingsRepository @Inject constructor(
 
     @Throws(InvalidAddressException::class)
     override fun setSafeFactoryAddress(address: String?) {
-        val checkAddress = if (address.isNullOrBlank() ||
-                address?.removePrefix("0x") == BuildConfig.SAFE_FACTORY_ADDRESS.removePrefix("0x")) null else address
+        // Check if input address is null or blank reset to null, so that it will return the default
+        val checkAddress = if (address.isNullOrBlank()) null else address
         if (checkAddress?.isValidEthereumAddress() == false) {
             throw InvalidAddressException()
         }

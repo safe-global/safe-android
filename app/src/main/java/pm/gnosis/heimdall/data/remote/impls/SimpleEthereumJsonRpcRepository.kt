@@ -1,10 +1,12 @@
 package pm.gnosis.heimdall.data.remote.impls
 
-import com.squareup.moshi.Moshi
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.remote.*
 import pm.gnosis.heimdall.data.remote.BulkRequest.SubRequest
-import pm.gnosis.heimdall.data.remote.models.*
+import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
+import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
+import pm.gnosis.heimdall.data.remote.models.TransactionParameters
+import pm.gnosis.heimdall.data.remote.models.TransactionReceipt
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.hexAsBigInteger
 import timber.log.Timber
@@ -15,8 +17,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SimpleEthereumJsonRpcRepository @Inject constructor(
-        private val ethereumJsonRpcApi: EthereumJsonRpcApi,
-        private val moshi: Moshi
+        private val ethereumJsonRpcApi: EthereumJsonRpcApi
 ) : EthereumJsonRpcRepository {
 
     override fun <R : BulkRequest> bulk(request: R): Observable<R> {

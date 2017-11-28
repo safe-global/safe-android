@@ -36,6 +36,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
@@ -90,7 +91,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun estimateDeployCosts(devices: Set<BigInteger>, requiredConfirmations: Int): Single<Wei> {
         return loadSafeDeployParams(devices, requiredConfirmations)
-                .map { Wei(it.transactionParameters.gas.multiply(it.transactionParameters.gasPrice)) }
+                .map { Wei(it.transactionParameters.gas * it.transactionParameters.gasPrice) }
     }
 
     override fun deploy(name: String?, devices: Set<BigInteger>, requiredConfirmations: Int): Completable {
@@ -136,11 +137,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
     }
 
     private fun decodeCreationEventOrNull(event: TransactionReceipt.Event) =
-            try {
-                GnosisSafeWithDescriptionsCreation.decode(event.topics, event.data)
-            } catch (e: Exception) {
-                null
-            }
+            nullOnThrow { GnosisSafeWithDescriptionsCreation.decode(event.topics, event.data) }
 
     override fun remove(address: BigInteger) =
             Completable.fromCallable {

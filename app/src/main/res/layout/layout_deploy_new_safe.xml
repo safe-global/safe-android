@@ -34,6 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/safe_name_hint"
+                android:singleLine="true"
                 tools:text="Gno Sa" />
         </android.support.design.widget.TextInputLayout>
 

@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Consumer
+import io.reactivex.internal.functions.Functions
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_pending_safe_item.view.*
@@ -123,12 +125,10 @@ class SafeAdapter @Inject constructor(
             val pendingSafe = currentEntry ?: return
             disposables += safeRepository.observeDeployStatus(pendingSafe.hash.asTransactionHash())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::safeDeployed, Timber::e)
+                    // Empty function for now, we should adjust the design and
+                    // maybe display a retry button on error
+                    .subscribe(Functions.emptyConsumer(), Consumer { Timber.e(it) })
 
-        }
-
-        private fun safeDeployed(safeAddress: String) {
-            Timber.i("#######", safeAddress)
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

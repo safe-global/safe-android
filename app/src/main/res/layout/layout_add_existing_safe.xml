@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,6 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/safe_name_hint"
+                android:singleLine="true"
                 tools:text="Gno Sa" />
         </android.support.design.widget.TextInputLayout>
 
@@ -52,6 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/safe_address"
+                android:singleLine="true"
                 tools:text="0xAAAAA" />
         </android.support.design.widget.TextInputLayout>
 
