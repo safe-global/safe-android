@@ -9,6 +9,8 @@ import pm.gnosis.heimdall.common.di.ViewModelFactory
 import pm.gnosis.heimdall.common.di.ViewModelKey
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.account.AccountViewModel
+import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
+import pm.gnosis.heimdall.ui.addressbook.AddressBookViewModel
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
@@ -48,6 +50,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AddTokenContract::class)
     abstract fun bindsAddTokenContract(viewModel: AddTokenViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AddressBookContract::class)
+    abstract fun bindsAddressBookContract(viewModel: AddressBookViewModel): ViewModel
 
     @Binds
     @IntoMap

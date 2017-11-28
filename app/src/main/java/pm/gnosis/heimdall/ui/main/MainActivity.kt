@@ -5,9 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.v4.view.ViewPager
+import android.view.Menu
+import android.view.MenuItem
 import kotlinx.android.synthetic.main.layout_main.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.account.AccountFragment
+import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
@@ -28,6 +31,7 @@ class MainActivity : BaseActivity() {
         layout_main_toolbar.setOnMenuItemClickListener {
             when(it.itemId) {
                 R.id.main_menu_settings -> startActivity(SettingsActivity.createIntent(this))
+                R.id.main_menu_address_book -> startActivity(AddressBookActivity.createIntent(this))
             }
             true
         }

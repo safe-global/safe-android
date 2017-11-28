@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.data.db
+package pm.gnosis.heimdall.data.db.daos
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert

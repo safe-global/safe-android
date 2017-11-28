@@ -21,12 +21,16 @@ fun Context.toast(@StringRes text: Int, duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, text, duration).show()
 }
 
-fun snackbar(view: View, text: CharSequence, duration: Int = Snackbar.LENGTH_LONG) {
-    Snackbar.make(view, text, duration).show()
+fun snackbar(view: View, text: CharSequence, duration: Int = Snackbar.LENGTH_LONG, action: Pair<String, (View) -> Unit>? = null) {
+    val snackbar = Snackbar.make(view, text, duration)
+    action?.let { snackbar.setAction(it.first, it.second) }
+    snackbar.show()
 }
 
-fun snackbar(view: View, @StringRes textId: Int, duration: Int = Snackbar.LENGTH_LONG) {
-    Snackbar.make(view, textId, duration).show()
+fun snackbar(view: View, @StringRes textId: Int, duration: Int = Snackbar.LENGTH_LONG, action: Pair<Int, (View) -> Unit>? = null) {
+    val snackbar = Snackbar.make(view, textId, duration)
+    action?.let { snackbar.setAction(it.first, it.second) }
+    snackbar.show()
 }
 
 fun Context.getSimplePlural(@PluralsRes stringId: Int, quantity: Long): String =

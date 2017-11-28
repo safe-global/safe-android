@@ -100,7 +100,7 @@ class SafeDetailsViewModelTest {
         val bitmapMock = mock(Bitmap::class.java)
         val contents = "contents"
         val testObserver = TestObserver.create<Result<Bitmap>>()
-        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt())).willReturn(Single.just(bitmapMock))
+        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.just(bitmapMock))
 
         viewModel.loadQrCode(contents).subscribe(testObserver)
 
@@ -114,7 +114,7 @@ class SafeDetailsViewModelTest {
         val exception = Exception()
         val contents = "contents"
         val testObserver = TestObserver.create<Result<Bitmap>>()
-        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt())).willReturn(Single.error(exception))
+        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.error(exception))
 
         viewModel.loadQrCode(contents).subscribe(testObserver)
 

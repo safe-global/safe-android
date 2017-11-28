@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_address_book_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_address_book_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_shadow_size"
+            android:layout_below="@id/layout_address_book_toolbar"
+            android:background="@drawable/toolbar_dropshadow" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/layout_address_book_toolbar">
+
+            <TextView
+                android:id="@+id/layout_address_book_empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/no_entries"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/layout_address_book_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/layout_address_book_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/fab_add" />
+
+</android.support.design.widget.CoordinatorLayout>

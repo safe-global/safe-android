@@ -49,6 +49,9 @@ abstract class BaseActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
     }
 
     protected fun skipSecurityCheck() {
@@ -65,5 +68,4 @@ abstract class BaseActivity : AppCompatActivity() {
         Timber.d(throwable)
         // Show blocker screen. No auth -> no app usage
     }
-
 }

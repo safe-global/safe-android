@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_address_book_entry_details_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_address_book_entry_details_toolbar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/layout_address_book_entry_details_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:textColor="@color/darker_text"
+                    android:textSize="21sp"
+                    tools:text="Hans Zimmerman" />
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/layout_address_book_entry_details_qr_code"
+                        android:layout_width="180dp"
+                        android:layout_height="180dp" />
+
+                    <ProgressBar
+                        android:id="@+id/layout_address_book_entry_details_qr_code_loading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        tools:visibility="gone" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/layout_address_book_entry_details_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:textColor="#202020"
+                    android:textSize="14sp"
+                    tools:text="0xf1511FAB6b7347899f51f9db027A32b39caE3910" />
+
+                <LinearLayout
+                    android:id="@+id/layout_address_book_entry_details_description_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#d4d4d4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="@string/description"
+                        android:textAllCaps="true"
+                        android:textColor="#8a8a8a"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/layout_address_book_entry_details_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:textColor="#202020"
+                        android:textSize="14sp"
+                        tools:text="Hans who I met at Devcon." />
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_address_book_entry_details_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_shadow_size"
+            android:layout_below="@id/layout_address_book_entry_details_toolbar"
+            android:background="@drawable/toolbar_dropshadow" />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

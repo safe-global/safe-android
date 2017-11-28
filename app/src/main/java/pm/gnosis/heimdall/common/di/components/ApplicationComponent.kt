@@ -8,7 +8,12 @@ import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.accounts.di.AccountsBindingModule
 import pm.gnosis.heimdall.accounts.di.AccountsModule
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.di.modules.*
+import pm.gnosis.heimdall.common.di.modules.ApplicationBindingsModule
+import pm.gnosis.heimdall.common.di.modules.ApplicationModule
+import pm.gnosis.heimdall.common.di.modules.CoreModule
+import pm.gnosis.heimdall.common.di.modules.InterceptorsModule
+import pm.gnosis.heimdall.common.di.modules.ViewModelFactoryModule
+import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
@@ -37,6 +42,7 @@ interface ApplicationComponent {
     fun context(): Context
 
     fun accountsRepository(): AccountsRepository
+    fun addressBookRepository(): AddressBookRepository
     fun safeRepository(): GnosisSafeRepository
     fun tokenRepository(): TokenRepository
     fun transactionDetailRepository(): TransactionDetailsRepository

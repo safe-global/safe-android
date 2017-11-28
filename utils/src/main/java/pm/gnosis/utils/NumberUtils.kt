@@ -4,7 +4,7 @@ import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigDecimal
 import java.math.BigInteger
 
-fun String.hexAsEthereumAddressOrNull() = nullOnThrow { this.hexStringToByteArray() }
+fun String.hexAsEthereumAddressOrNull() = nullOnThrow { this.hexAsEthereumAddress() }
 fun String.hexAsEthereumAddress(): BigInteger {
     try {
         val bigInt = hexAsBigInteger()
