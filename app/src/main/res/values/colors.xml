@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/white</color>
-    <color name="primary_dark">#9e9e9e</color>
+    <color name="primary">@color/gnosis_blue</color>
+    <color name="primary_dark">@color/gnosis_blue_shade</color>
     <color name="accent">@color/gnosis_blue</color>
-    <color name="window_background">#f9f9f9</color>
+    <color name="window_background">@color/white</color>
+    <color name="toolbar_action">@color/gnosis_blue_shade</color>
 
     <color name="white">#ffffff</color>
+    <color name="white_alpha_70">#b3ffffff</color>
     <color name="black">#000000</color>
     <color name="disabled_button">#9b9b9b</color>
     <color name="pressed_shade">#33000000</color>
     <color name="shadow_shade">#11000000</color>
-    <color name="gnosis_blue">#00a6c4</color>
-    <color name="gnosis_blue_dark">#048299</color>
+    <color name="gnosis_blue">#10b3d4</color>
+    <color name="gnosis_blue_shade">#0083a3</color>
+    <color name="gnosis_dark_blue">#21435a</color>
 
     <color name="lighter_text">#c6c6c6</color>
     <color name="light_text">#9b9b9b</color>
     <color name="dark_text">#4a4a4a</color>
     <color name="darker_text">#333333</color>
 
-    <color name="default_text">#21435a</color>
+    <color name="default_text">@color/gnosis_dark_blue</color>
 
     <color name="list_divider">#e4e3e3</color>
 
-    <color name="unselected_tab">#9b9b9b</color>
+    <color name="selected_tab">@color/white</color>
+    <color name="unselected_tab">@color/toolbar_action</color>
     <color name="default_icon">#4a4a4a</color>
 
     <color name="background">#f9f9f9</color>
