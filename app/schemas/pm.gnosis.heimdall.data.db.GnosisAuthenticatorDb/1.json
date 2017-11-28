@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2b1f0b34c11ae49b02194e50892bfa85",
+    "identityHash": "15b5b20578e2447284b9e5dfc46fd7cb",
     "entities": [
       {
         "tableName": "address_book",
@@ -64,11 +64,11 @@
       },
       {
         "tableName": "gnosis_pending_safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionHasjh` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`transactionHasjh`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionHash` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`transactionHash`))",
         "fields": [
           {
             "fieldPath": "transactionHash",
-            "columnName": "transactionHasjh",
+            "columnName": "transactionHash",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -81,7 +81,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "transactionHasjh"
+            "transactionHash"
           ],
           "autoGenerate": false
         },
@@ -209,7 +209,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2b1f0b34c11ae49b02194e50892bfa85\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"15b5b20578e2447284b9e5dfc46fd7cb\")"
     ]
   }
 }
