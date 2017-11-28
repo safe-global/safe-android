@@ -42,7 +42,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:tabIndicatorColor="@color/accent">
+            app:tabIndicatorColor="@color/white"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/unselected_tab">
 
             <android.support.design.widget.TabItem
                 android:layout_width="match_parent"

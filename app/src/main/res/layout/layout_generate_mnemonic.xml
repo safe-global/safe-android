@@ -72,7 +72,7 @@
                 android:gravity="center"
                 android:padding="16dp"
                 android:text="@string/no_account_restore_it_via_mnemonic_phrase"
-                android:textColor="@color/gnosis_blue_dark"
+                android:textColor="@color/gnosis_blue_shade"
                 android:textSize="16sp" />
 
             <TextView

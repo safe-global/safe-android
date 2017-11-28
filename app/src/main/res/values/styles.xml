@@ -1,8 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="OldAppTheme" parent="Theme.AppCompat.Light">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
@@ -10,15 +9,8 @@
         <item name="android:editTextStyle">@style/Input</item>
         <item name="android:textViewStyle">@style/Text</item>
         <item name="editTextStyle">@style/Input</item>
-    </style>
-
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="android:windowBackground">@color/window_background</item>
-        <item name="android:editTextStyle">@style/Input</item>
-        <item name="android:textViewStyle">@style/Text</item>
-        <item name="editTextStyle">@style/Input</item>
+        <item name="actionMenuTextColor">@color/toolbar_action</item>
+        <item name="colorControlNormal">@color/toolbar_action</item>
     </style>
 
     <style name="SplashTheme" parent="AppTheme">
@@ -33,11 +25,17 @@
 
     <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="titleTextAppearance">@style/ToolbarTitle</item>
+        <item name="subtitleTextAppearance">@style/ToolbarSubtitle</item>
         <item name="android:background">@color/primary</item>
     </style>
 
     <style name="ToolbarTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/white</item>
+    </style>
 
+    <style name="ToolbarSubtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textColor">@color/white_alpha_70</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <!-- End: Toolbar styles -->
