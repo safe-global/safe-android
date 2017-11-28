@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.settings
 
 import android.content.Context
+import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.HttpUrl
 import pm.gnosis.heimdall.R
@@ -9,6 +10,7 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
@@ -59,6 +61,21 @@ class SettingsViewModel @Inject constructor(
         }
         val port = if (parsed.port() != HttpUrl.defaultPort(parsed.scheme())) parsed.port() else null
         return SettingsRepository.UrlOverride(parsed.isHttps, parsed.host(), port)
+    }
+
+    override fun loadSafeFactoryAddress(): Single<String> {
+        return Single.fromCallable {
+            settingsRepository.getSafeFactoryAddress().asEthereumAddressString()
+        }
+    }
+
+    override fun updateSafeFactoryAddress(address: String): Single<Result<String>> {
+        return Single.fromCallable {
+            settingsRepository.setSafeFactoryAddress(address)
+            address
+        }
+                .onErrorResumeNext { Single.error(LocalizedException(context.getString(R.string.invalid_ethereum_address))) }
+                .mapToResult()
     }
 
 }

@@ -7,6 +7,7 @@ import pm.gnosis.crypto.utils.Base58Utils
 import pm.gnosis.heimdall.DailyLimitException
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.StandardToken
+import pm.gnosis.heimdall.common.utils.getSharedObservable
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.models.fromDb
 import pm.gnosis.heimdall.data.db.models.toDb
@@ -61,14 +62,11 @@ class IpfsTransactionDetailsRepository @Inject constructor(
     }
 
     private fun loadDescriptionFromIpfs(hash: String, address: BigInteger, transactionHash: String?): Observable<GnosisSafeTransactionDescription> {
-        return detailRequests.getOrPut(hash, {
-            createIpfsIdentifier(hash)
-                    .flatMap { ipfsApi.transactionDescription(it) }
-                    .flatMap { verifyDescription(address, transactionHash, it) }
-                    .doOnTerminate { detailRequests.remove(hash) }
-                    .publish()
-                    .autoConnect()
-        })
+        return detailRequests.getSharedObservable(hash,
+                createIpfsIdentifier(hash)
+                        .flatMap { ipfsApi.transactionDescription(it) }
+                        .flatMap { verifyDescription(address, transactionHash, it) }
+        )
     }
 
     private fun verifyDescription(address: BigInteger, transactionHash: String?, description: GnosisSafeTransactionDescription): Observable<GnosisSafeTransactionDescription> {

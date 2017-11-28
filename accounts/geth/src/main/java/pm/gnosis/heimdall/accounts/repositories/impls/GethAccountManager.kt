@@ -35,18 +35,13 @@ class GethAccountManager @Inject constructor(private val preferencesManager: Pre
     fun getActiveAccount(): Account = getAccounts().first()
 
     fun getAccountPassphrase(): String {
-        @Suppress("ConstantConditionIf")
-        (return if (BuildConfig.PRIVATE_TEST_NET) {
-            TestRPC.accounts[getActiveAccount().address.hex]?.second!!
-        } else {
-            var passphrase = preferencesManager.prefs.getString(PreferencesManager.Companion.PASSPHRASE_KEY, "")
-            if (passphrase.isEmpty()) {
-                preferencesManager.prefs.edit {
-                    passphrase = generateRandomString()
-                    putString(PreferencesManager.Companion.PASSPHRASE_KEY, passphrase)
-                }
+        var passphrase = preferencesManager.prefs.getString(PreferencesManager.Companion.PASSPHRASE_KEY, "")
+        if (passphrase.isEmpty()) {
+            preferencesManager.prefs.edit {
+                passphrase = generateRandomString()
+                putString(PreferencesManager.Companion.PASSPHRASE_KEY, passphrase)
             }
-            passphrase
-        })
+        }
+        return passphrase
     }
 }

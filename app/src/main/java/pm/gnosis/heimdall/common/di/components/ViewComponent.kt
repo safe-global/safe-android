@@ -11,6 +11,8 @@ import pm.gnosis.heimdall.ui.authenticate.AuthenticateFragment
 import pm.gnosis.heimdall.ui.main.MainActivity
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountActivity
+import pm.gnosis.heimdall.ui.safe.add.AddExistingSafeFragment
+import pm.gnosis.heimdall.ui.safe.add.DeployNewSafeFragment
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoFragment
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
@@ -31,7 +33,9 @@ interface ViewComponent {
     // Fragments
 
     fun inject(fragment: AccountFragment)
+    fun inject(fragment: AddExistingSafeFragment)
     fun inject(fragment: AuthenticateFragment)
+    fun inject(fragment: DeployNewSafeFragment)
     fun inject(fragment: SafeInfoFragment)
     fun inject(fragment: SafeOverviewFragment)
     fun inject(fragment: SafeTransactionsFragment)

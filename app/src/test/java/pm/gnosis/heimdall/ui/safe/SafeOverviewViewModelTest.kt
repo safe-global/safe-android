@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.test.utils.MockUtils
@@ -46,7 +47,7 @@ class SafeOverviewViewModelTest {
 
     @Test
     fun observeSafesResults() {
-        val processor = PublishProcessor.create<List<Safe>>()
+        val processor = PublishProcessor.create<List<AbstractSafe>>()
         val subscriber = createSubscriber()
         given(repositoryMock.observeSafes()).willReturn(processor)
 
@@ -113,34 +114,6 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun addSafeSuccess() {
-        val observer = TestObserver.create<Unit>()
-        val completable = TestCompletable()
-        given(repositoryMock.add(MockUtils.any(), anyString())).willReturn(completable)
-
-        viewModel.addSafe(BigInteger.ZERO, "Test").subscribe(observer)
-
-        then(repositoryMock).should().add(BigInteger.ZERO, "Test")
-        then(repositoryMock).shouldHaveNoMoreInteractions()
-        assertEquals(1, completable.callCount)
-        observer.assertTerminated().assertNoErrors().assertNoValues()
-    }
-
-    @Test
-    fun addSafeError() {
-        val observer = TestObserver.create<Unit>()
-        val error = IllegalStateException()
-        given(repositoryMock.add(MockUtils.any(), anyString())).willReturn(Completable.error(error))
-
-        viewModel.addSafe(BigInteger.ZERO, "Test").subscribe(observer)
-
-        then(repositoryMock).should().add(BigInteger.ZERO, "Test")
-        then(repositoryMock).shouldHaveNoMoreInteractions()
-        observer.assertTerminated().assertNoValues()
-                .assertError(error)
-    }
-
-    @Test
     fun removeSafeSuccess() {
         val observer = TestObserver.create<Unit>()
         val completable = TestCompletable()
@@ -168,33 +141,5 @@ class SafeOverviewViewModelTest {
                 .assertError(error)
     }
 
-    @Test
-    fun updateSafeNameSuccess() {
-        val observer = TestObserver.create<Unit>()
-        val completable = TestCompletable()
-        given(repositoryMock.updateName(MockUtils.any(), anyString())).willReturn(completable)
-
-        viewModel.updateSafeName(BigInteger.ZERO, "Foo").subscribe(observer)
-
-        then(repositoryMock).should().updateName(BigInteger.ZERO, "Foo")
-        then(repositoryMock).shouldHaveNoMoreInteractions()
-        assertEquals(1, completable.callCount)
-        observer.assertTerminated().assertNoErrors().assertNoValues()
-    }
-
-    @Test
-    fun updateSafeNameError() {
-        val observer = TestObserver.create<Unit>()
-        val error = IllegalStateException()
-        given(repositoryMock.updateName(MockUtils.any(), anyString())).willReturn(Completable.error(error))
-
-        viewModel.updateSafeName(BigInteger.ZERO, "Foo").subscribe(observer)
-
-        then(repositoryMock).should().updateName(BigInteger.ZERO, "Foo")
-        then(repositoryMock).shouldHaveNoMoreInteractions()
-        observer.assertTerminated().assertNoValues()
-                .assertError(error)
-    }
-
-    private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<Safe>>>()
+    private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<AbstractSafe>>>()
 }

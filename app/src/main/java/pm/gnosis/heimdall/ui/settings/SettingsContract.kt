@@ -11,4 +11,7 @@ abstract class SettingsContract: ViewModel() {
     
     abstract fun loadRpcUrl(): Single<String>
     abstract fun updateRpcUrl(url: String): Single<Result<String>>
+
+    abstract fun loadSafeFactoryAddress(): Single<String>
+    abstract fun updateSafeFactoryAddress(address: String): Single<Result<String>>
 }

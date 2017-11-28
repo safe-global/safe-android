@@ -1,5 +1,7 @@
 package pm.gnosis.heimdall.test.utils
 
+import android.content.Context
+import org.mockito.BDDMockito.*
 import org.mockito.Mockito
 
 
@@ -16,4 +18,8 @@ object MockUtils {
 
     @Suppress("UNCHECKED_CAST")
     private fun <T> uninitialized(): T = null as T
+}
+
+fun Context.mockGetString() {
+    given(getString(anyInt())).will { it.arguments.first().toString() }
 }

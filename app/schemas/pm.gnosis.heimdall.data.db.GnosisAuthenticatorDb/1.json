@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f2405771397d1e4d320d377ad40cca64",
+    "identityHash": "15b5b20578e2447284b9e5dfc46fd7cb",
     "entities": [
       {
         "tableName": "address_book",
@@ -30,6 +30,58 @@
         "primaryKey": {
           "columnNames": [
             "address"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "gnosis_safes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`address`))",
+        "fields": [
+          {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "address"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "gnosis_pending_safes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionHash` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`transactionHash`))",
+        "fields": [
+          {
+            "fieldPath": "transactionHash",
+            "columnName": "transactionHash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "transactionHash"
           ],
           "autoGenerate": false
         },
@@ -69,32 +121,6 @@
             "columnName": "verified",
             "affinity": "INTEGER",
             "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "address"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "gnosis_safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`address`))",
-        "fields": [
-          {
-            "fieldPath": "address",
-            "columnName": "address",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
           }
         ],
         "primaryKey": {
@@ -183,7 +209,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"f2405771397d1e4d320d377ad40cca64\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"15b5b20578e2447284b9e5dfc46fd7cb\")"
     ]
   }
 }

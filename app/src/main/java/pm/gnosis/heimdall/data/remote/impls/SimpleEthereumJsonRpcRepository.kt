@@ -1,16 +1,16 @@
 package pm.gnosis.heimdall.data.remote.impls
 
 import io.reactivex.Observable
-import pm.gnosis.heimdall.data.remote.BulkRequest
+import pm.gnosis.heimdall.data.remote.*
 import pm.gnosis.heimdall.data.remote.BulkRequest.SubRequest
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.remote.models.TransactionParameters
+import pm.gnosis.heimdall.data.remote.models.TransactionReceipt
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.hexAsBigInteger
 import timber.log.Timber
+import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,46 +30,69 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
                     JsonRpcRequest(
                             method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
                             params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)))
-                    .map { Wei(it.result.hexAsBigInteger()) }
+                    .map { Wei(it.checkedResult().hexAsBigInteger()) }
 
     override fun getLatestBlock(): Observable<BigInteger> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_blockNumber"))
-                    .map { it.result.hexAsBigInteger() }
+                    .map { it.checkedResult().hexAsBigInteger() }
 
     override fun call(transactionCallParams: TransactionCallParams): Observable<String> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_call",
                     params = arrayListOf(transactionCallParams, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)))
-                    .map { it.result }
+                    .map { it.checkedResult() }
 
     override fun sendRawTransaction(signedTransactionData: String): Observable<String> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_sendRawTransaction",
                     params = arrayListOf(signedTransactionData)))
-                    .map { it.result }
+                    .map { it.checkedResult() }
 
     override fun getTransactionCount(address: BigInteger): Observable<BigInteger> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
                     params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)))
-                    .map { it.result.hexAsBigInteger() }
+                    .map { it.checkedResult().hexAsBigInteger() }
+
+    override fun getTransactionReceipt(receiptHash: String): Observable<TransactionReceipt> =
+            ethereumJsonRpcApi.receipt(JsonRpcRequest(method = "eth_getTransactionReceipt",
+                    params = arrayListOf(receiptHash)))
+                    .map { it.checkedResult() }
 
     override fun getGasPrice(): Observable<BigInteger> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_gasPrice"))
-                    .map { it.result.hexAsBigInteger() }
+                    .map { it.checkedResult().hexAsBigInteger() }
 
     override fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_estimateGas",
                     params = arrayListOf(transactionCallParams)))
                     .doOnNext { Timber.d(it.toString()) }
-                    .map { it.result.hexAsBigInteger() }
+                    .map { it.checkedResult().hexAsBigInteger() }
 
     class TransactionParametersRequest(val estimatedGas: SubRequest<BigInteger>, val gasPrice: SubRequest<BigInteger>, val transactionCount: SubRequest<BigInteger>) :
             BulkRequest(estimatedGas, gasPrice, transactionCount)
 
     override fun getTransactionParameters(address: BigInteger, transactionCallParams: TransactionCallParams): Observable<TransactionParameters> {
         val request = TransactionParametersRequest(
-                SubRequest(JsonRpcRequest(id = 0, method = "eth_estimateGas", params = arrayListOf(transactionCallParams)), { it.result.hexAsBigInteger() }),
-                SubRequest(JsonRpcRequest(id = 1, method = "eth_gasPrice"), { it.result.hexAsBigInteger() }),
-                SubRequest(JsonRpcRequest(id = 2, method = "eth_getTransactionCount", params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)), { it.result.hexAsBigInteger() })
+                SubRequest(JsonRpcRequest(id = 0, method = "eth_estimateGas", params = arrayListOf(transactionCallParams)), { it.checkedResult().hexAsBigInteger() }),
+                SubRequest(JsonRpcRequest(id = 1, method = "eth_gasPrice"), { it.checkedResult().hexAsBigInteger() }),
+                SubRequest(JsonRpcRequest(id = 2, method = "eth_getTransactionCount", params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)), { it.checkedResult().hexAsBigInteger() })
         )
-        return bulk(request).map { TransactionParameters(it.estimatedGas.value!!, it.gasPrice.value!!, it.transactionCount.value!!) }
+        return bulk(request).map {
+            val adjustedGas = BigDecimal.valueOf(1.1)
+                    .multiply(BigDecimal(it.estimatedGas.value)).setScale(0, BigDecimal.ROUND_UP).unscaledValue()
+            TransactionParameters(adjustedGas, it.gasPrice.value!!, it.transactionCount.value!!)
+        }
+    }
+
+    private fun JsonRpcResult.checkedResult(): String {
+        error?.let {
+            throw EthereumJsonRpcApi.ErrorResultException(it.message)
+        }
+        return result
+    }
+
+    private fun JsonRpcTransactionReceiptResult.checkedResult(): TransactionReceipt {
+        error?.let {
+            throw EthereumJsonRpcApi.ErrorResultException(it.message)
+        }
+        return result
     }
 }

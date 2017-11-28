@@ -37,6 +37,13 @@ fun <D> Flowable<D>.mapToResult(): Flowable<Result<D>> =
 fun <D> Single<D>.mapToResult(): Single<Result<D>> =
         this.map<Result<D>> { DataResult(it) }.onErrorReturn { ErrorResult(it) }
 
+fun <K, D> MutableMap<K, Observable<D>>.getSharedObservable(key: K, source: Observable<D>): Observable<D> =
+        getOrPut(key, {
+            source.doOnTerminate { remove(key) }
+                .publish()
+                .autoConnect()
+        })
+
 sealed class Result<out D> {
     fun handle(dataFun: ((D) -> Unit)?, errorFun: ((Throwable) -> Unit)?) {
         when (this) {

@@ -1,0 +1,45 @@
+{
+  "contract_name": "GnosisSafeWithDescriptionsFactory",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "owners",
+          "type": "address[]"
+        },
+        {
+          "name": "required",
+          "type": "uint8"
+        }
+      ],
+      "name": "create",
+      "outputs": [
+        {
+          "name": "gnosisSafe",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "creator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "gnosisSafe",
+          "type": "address"
+        }
+      ],
+      "name": "GnosisSafeWithDescriptionsCreation",
+      "type": "event"
+    }
+  ]
+}

@@ -7,16 +7,17 @@ import org.kethereum.functions.rlp.toRLP
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.models.Transaction
+import pm.gnosis.utils.hexStringToByteArray
 import java.math.BigInteger
 
 fun Transaction.rlp(signature: ECDSASignature? = null): ByteArray {
     val items = ArrayList<RLPElement>()
     items.add(nonce!!.toRLP())
     items.add(gasPrice!!.toRLP())
-    items.add(adjustedGas.toRLP())
+    items.add(gas!!.toRLP())
     items.add(address.toRLP())
     items.add((value?.value ?: BigInteger.ZERO).toRLP())
-    items.add((data ?: "").toRLP())
+    items.add((data?.hexStringToByteArray() ?: ByteArray(0)).toRLP())
 
     if (signature != null) {
         items.add(adjustV(signature.v).toRLP())

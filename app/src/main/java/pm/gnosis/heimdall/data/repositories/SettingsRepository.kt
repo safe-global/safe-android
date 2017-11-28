@@ -2,6 +2,8 @@ package pm.gnosis.heimdall.data.repositories
 
 import okhttp3.HttpUrl
 import okhttp3.Request
+import pm.gnosis.utils.exceptions.InvalidAddressException
+import java.math.BigInteger
 
 
 interface SettingsRepository {
@@ -10,6 +12,10 @@ interface SettingsRepository {
 
     fun setIpfsUrl(isHttps: Boolean, host: String?, port: Int?)
     fun getIpfsUrl(): UrlOverride?
+
+    fun getSafeFactoryAddress(): BigInteger
+    @Throws(InvalidAddressException::class)
+    fun setSafeFactoryAddress(address: String?)
 
     fun needsAuth(): Boolean
 

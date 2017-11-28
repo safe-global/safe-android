@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="4dp">
+
+            <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                android:id="@+id/layout_deploy_new_safe_progress"
+                style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal.NoPadding"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </FrameLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/layout_deploy_new_safe_name_input"
+                style="@style/Input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/safe_name_hint"
+                android:singleLine="true"
+                tools:text="Gno Sa" />
+        </android.support.design.widget.TextInputLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:background="@color/divider" />
+
+        <TextView
+            style="@style/Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:text="@string/estimated_transaction_fee" />
+
+        <TextView
+            android:id="@+id/layout_deploy_new_safe_transaction_fee"
+            style="@style/BoldContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="@string/loading" />
+
+        <TextView
+            android:id="@+id/layout_deploy_new_safe_deploy_button"
+            style="@style/PrimaryButton.Wide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/deploy_new_safe" />
+    </LinearLayout>
+</ScrollView>
