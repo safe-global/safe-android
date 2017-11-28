@@ -19,8 +19,8 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.test.utils.MockUtils
-import pm.gnosis.heimdall.test.utils.TestCompletable
+import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.TestCompletable
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.utils.asEthereumAddressString

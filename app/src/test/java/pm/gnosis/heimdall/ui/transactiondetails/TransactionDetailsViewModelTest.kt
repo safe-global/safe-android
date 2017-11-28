@@ -29,9 +29,9 @@ import pm.gnosis.heimdall.data.remote.models.TransactionParameters
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
-import pm.gnosis.heimdall.test.utils.MockUtils
-import pm.gnosis.heimdall.test.utils.TestCompletable
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.TestCompletable
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString

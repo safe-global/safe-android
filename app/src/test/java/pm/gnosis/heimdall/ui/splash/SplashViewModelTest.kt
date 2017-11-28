@@ -15,7 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)

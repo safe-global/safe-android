@@ -21,10 +21,10 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.test.utils.ImmediateSchedulersRule
-import pm.gnosis.heimdall.test.utils.MockUtils
-import pm.gnosis.heimdall.test.utils.TestCompletable
-import pm.gnosis.heimdall.test.utils.TestListUpdateCallback
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.TestCompletable
+import pm.gnosis.tests.utils.TestListUpdateCallback
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import java.math.BigInteger

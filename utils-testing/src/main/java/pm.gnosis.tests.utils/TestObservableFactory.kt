@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.accounts.test.utils
+package pm.gnosis.tests.utils
 
 
 import io.reactivex.Observable

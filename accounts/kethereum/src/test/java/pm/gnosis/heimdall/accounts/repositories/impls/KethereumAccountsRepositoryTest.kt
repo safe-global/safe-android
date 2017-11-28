@@ -14,15 +14,15 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.accounts.data.db.AccountDao
 import pm.gnosis.heimdall.accounts.data.db.AccountsDatabase
 import pm.gnosis.heimdall.accounts.repositories.impls.models.db.AccountDb
-import pm.gnosis.heimdall.accounts.test.utils.ImmediateSchedulersRule
 import pm.gnosis.heimdall.accounts.utils.rlp
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.db.EncryptedByteArray
-import pm.gnosis.heimdall.accounts.test.utils.MockUtils
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.hexAsEthereumAddress
 import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.toHexString

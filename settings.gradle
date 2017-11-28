@@ -9,4 +9,5 @@ include ':mnemonic'
 include ':models'
 include ':security'
 include ':utils'
+include ':utils-testing'
 

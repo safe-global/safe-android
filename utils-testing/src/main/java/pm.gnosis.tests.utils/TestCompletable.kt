@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.test.utils
+package pm.gnosis.tests.utils
 
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver

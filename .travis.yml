@@ -34,7 +34,7 @@ script:
   - ./ci/build_debug.sh
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -f app/build/reports/jacoco/*/*.xml
+  - bash <(curl -s https://codecov.io/bash) -f '*TestCoverage.xml'
 
 deploy:
   provider: releases
