@@ -84,12 +84,12 @@ class AesEncryptionManager @Inject constructor(
                     previousKeySpec = oldKey?.let { buildKeySpecChecksum(it, checksum) } ?: return@fromCallable false
                 }
                 val passwordKeySpec = buildKeySpec(newKey)
-                val generatedPassword = previousKeySpec?.let {
+                val encryptionKey = previousKeySpec?.let {
                     decryptKey(it)
-                } ?: generatePassword()
-                keySpec = buildKeySpec(generatedPassword)
+                } ?: generateKey()
+                keySpec = buildKeySpec(encryptionKey)
                 keySpec?.let {
-                    preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTION_KEY, encrypt(passwordKeySpec, generatedPassword).toHexString()) }
+                    preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTION_KEY, encrypt(passwordKeySpec, encryptionKey).toHexString()) }
                     preferencesManager.prefs.edit { putString(PREF_KEY_PASSWORD_CHECKSUM, generateCryptedChecksum(passwordKeySpec, newKey)) }
                 }
 
@@ -98,7 +98,7 @@ class AesEncryptionManager @Inject constructor(
         }.subscribeOn(Schedulers.io())
     }
 
-    private fun generatePassword(): ByteArray {
+    private fun generateKey(): ByteArray {
         val generatedPassword = ByteArray(32)
         secureRandom.nextBytes(generatedPassword)
         return generatedPassword
