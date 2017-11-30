@@ -84,7 +84,7 @@ class TokenBalancesFragment : BaseFragment() {
 
         disposables += viewModel.observeTokens(layout_tokens_swipe_refresh.refreshes())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = this::onTokensList, onError = this::onTokensListError)
+                .subscribeForResult(onNext = ::onTokensList, onError = ::onTokensListError)
     }
 
     private fun onTokensList(tokens: Adapter.Data<TokenBalancesContract.ERC20TokenWithBalance>) {

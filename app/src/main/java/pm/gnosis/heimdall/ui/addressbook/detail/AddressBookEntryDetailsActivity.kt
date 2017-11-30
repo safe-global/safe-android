@@ -73,7 +73,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
         super.onStart()
         disposables += viewModel.observeAddressBookEntry(address)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = this::onAddressBookEntry)
+                .subscribeBy(onNext = ::onAddressBookEntry)
 
         disposables += generateQrCodeSubject
                 .flatMap {
@@ -83,12 +83,12 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
                             .doOnTerminate { layout_address_book_entry_details_qr_code_loading.visibility = View.GONE }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = this::onQrCodeGenerated, onError = this::onQrCodeGenerateError)
+                .subscribeForResult(onNext = ::onQrCodeGenerated, onError = ::onQrCodeGenerateError)
 
         disposables += deleteEntryClickSubject
                 .flatMap { viewModel.deleteAddressBookEntry(address) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = this::onAddressBookEntryDeleted, onError = this::onAddressBookEntryDeleteError)
+                .subscribeForResult(onNext = ::onAddressBookEntryDeleted, onError = ::onAddressBookEntryDeleteError)
     }
 
     private fun onAddressBookEntry(entry: AddressBookEntry) {

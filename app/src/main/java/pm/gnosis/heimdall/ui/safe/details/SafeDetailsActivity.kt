@@ -95,17 +95,17 @@ class SafeDetailsActivity : BaseActivity() {
                             .doAfterTerminate { onQrCodeLoading(false) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = this::onQrCode, onError = this::onQrCodeError)
+                .subscribeForResult(onNext = ::onQrCode, onError = ::onQrCodeError)
 
         disposables += removeSafeClicks
                 .flatMapSingle { viewModel.deleteSafe() }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = { onSafeRemoved() }, onError = this::onSafeRemoveError)
+                .subscribeForResult(onNext = { onSafeRemoved() }, onError = ::onSafeRemoveError)
 
         disposables += editSafeClicks
                 .flatMapSingle { viewModel.changeSafeName(it) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = { onNameChanged() }, onError = this::onNameChangeError)
+                .subscribeForResult(onNext = { onNameChanged() }, onError = ::onNameChangeError)
     }
 
     private fun onSafeRemoved() {

@@ -54,12 +54,12 @@ class TokenInfoActivity : BaseActivity() {
         super.onStart()
         disposables += viewModel.observeToken()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onTokenInfo, this::onTokenInfoError)
+                .subscribe(::onTokenInfo, ::onTokenInfoError)
 
         disposables += removeClicksSubject
                 .flatMap { viewModel.removeToken() }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult({ onTokenDeleted() }, this::onTokenDeleteError)
+                .subscribeForResult({ onTokenDeleted() }, ::onTokenDeleteError)
     }
 
     private fun onTokenInfo(token: ERC20Token) {

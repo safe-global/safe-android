@@ -58,13 +58,13 @@ class AddTokenActivity : BaseActivity() {
                             .doOnTerminate { onTokenInfoLoading(false) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = this::onTokenInfo, onError = this::onTokenInfoError)
+                .subscribeForResult(onNext = ::onTokenInfo, onError = ::onTokenInfoError)
 
 
         disposables += layout_add_token_add_token_button.clicks()
                 .flatMapSingle { viewModel.addToken() }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = { onTokenAdded() }, onError = this::onTokenAddError)
+                .subscribeForResult(onNext = { onTokenAdded() }, onError = ::onTokenAddError)
 
         intent?.getStringExtra(ADDRESS_EXTRA)?.let { address ->
             if (address.isValidEthereumAddress()) {

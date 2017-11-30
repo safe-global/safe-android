@@ -62,7 +62,7 @@ class SafeTransactionsAdapter @Inject constructor(
             val descriptionHash = currentData ?: return
             disposables += transactionDetailRepository.loadTransactionDetails(descriptionHash, safeAddress, null)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::updateDetails, Timber::e)
+                    .subscribe(::updateDetails, Timber::e)
 
         }
 

@@ -59,7 +59,7 @@ class AddressBookAddEntryActivity : BaseActivity() {
                             layout_add_address_book_entry_description.text.toString())
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = this::onAddressBookEntryAdded, onError = this::onAddressBookEntryAddError)
+                .subscribeForResult(onNext = ::onAddressBookEntryAdded, onError = ::onAddressBookEntryAddError)
     }
 
     private fun onAddressBookEntryAdded(entry: AddressBookEntry) {

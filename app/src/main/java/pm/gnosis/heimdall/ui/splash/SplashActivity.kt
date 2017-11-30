@@ -29,7 +29,7 @@ class SplashActivity : BaseActivity() {
         disposables += viewModel.initialSetup()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = this::handleAction, onError = this::onError)
+                .subscribeBy(onSuccess = ::handleAction, onError = ::onError)
     }
 
     private fun handleAction(action: ViewAction) {

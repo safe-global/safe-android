@@ -36,7 +36,7 @@ class AddExistingSafeFragment : BaseFragment() {
                     .doAfterTerminate { toggleAdding(false) }
         }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(this::safeAdded, this::errorDeploying)
+                .subscribeForResult(::safeAdded, ::errorDeploying)
     }
 
     private fun toggleAdding(inProgress: Boolean) {

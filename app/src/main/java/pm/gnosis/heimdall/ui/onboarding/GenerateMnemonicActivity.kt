@@ -56,7 +56,7 @@ class GenerateMnemonicActivity : BaseActivity() {
             layout_generate_mnemonic_regenerate_button.clicks()
                     .flatMapSingle { viewModel.generateMnemonic() }
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeForResult(onNext = this::onMnemonic, onError = this::onMnemonicError)
+                    .subscribeForResult(onNext = ::onMnemonic, onError = ::onMnemonicError)
 
     private fun onMnemonic(mnemonic: String) {
         layout_generate_mnemonic_mnemonic.text = mnemonic
@@ -84,8 +84,8 @@ class GenerateMnemonicActivity : BaseActivity() {
     private fun onMnemonicConfirmedDisposable() =
             viewModel.saveAccountWithMnemonic(layout_generate_mnemonic_mnemonic.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onComplete = this::onSavedAccountWithMnemonic,
-                            onError = this::onSavedAccountWithMnemonicWithError)
+                    .subscribeBy(onComplete = ::onSavedAccountWithMnemonic,
+                            onError = ::onSavedAccountWithMnemonicWithError)
 
 
     private fun onSavedAccountWithMnemonic() {

@@ -85,7 +85,7 @@ class SafeTransactionsFragment : BaseFragment() {
                         .map { Unit }
         )
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(this::displayTransactions, Timber::e)
+                .subscribeForResult(::displayTransactions, Timber::e)
     }
 
     private fun displayTransactions(transactions: SafeTransactionsContract.PaginatedTransactions) {

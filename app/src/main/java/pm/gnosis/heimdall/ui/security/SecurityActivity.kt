@@ -50,7 +50,7 @@ class SecurityActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap { mapButtonClick() }
                 .startWith(checkInitialState())
-                .subscribeForResult(this::setupUi, this::handleError)
+                .subscribeForResult(::setupUi, ::handleError)
     }
 
     private fun listen() =
