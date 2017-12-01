@@ -27,8 +27,8 @@ import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity
 
 @ForView
 @Component(
-        dependencies = arrayOf(ApplicationComponent::class),
-        modules = arrayOf(ViewModule::class)
+        dependencies = [ApplicationComponent::class],
+        modules = [ViewModule::class]
 )
 interface ViewComponent {
     // Fragments

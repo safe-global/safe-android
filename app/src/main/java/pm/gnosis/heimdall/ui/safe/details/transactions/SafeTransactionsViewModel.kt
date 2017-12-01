@@ -37,7 +37,7 @@ class SafeTransactionsViewModel @Inject constructor(
         }
         return (cachedResults?.let { Observable.just(it) } ?:
                 safeRepository.loadDescriptionCount(address!!)
-                        .flatMap(this::loadDescription)
+                        .flatMap(::loadDescription)
                         .doOnNext { cachedResults = it }
                         .onErrorDefaultBeforeThrow(fallbackResult)
                 )

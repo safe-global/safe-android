@@ -36,7 +36,7 @@ abstract class BaseActivity : AppCompatActivity() {
                     // We block the ui thread here to avoid exposing the ui before the app is unlocked
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::checkSecurity, this::handleCheckError)
+                    .subscribe(::checkSecurity, ::handleCheckError)
         }
     }
 

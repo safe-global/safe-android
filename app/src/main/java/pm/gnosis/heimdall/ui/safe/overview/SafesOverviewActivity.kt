@@ -57,10 +57,10 @@ class SafesOverviewActivity : BaseActivity() {
         super.onStart()
         disposables += viewModel.observeSafes()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = this::onSafes, onError = this::onSafesError)
+                .subscribeForResult(onNext = ::onSafes, onError = ::onSafesError)
 
         disposables += adapter.safeSelection
-                .subscribeBy(onNext = this::onSafeSelection, onError = Timber::e)
+                .subscribeBy(onNext = ::onSafeSelection, onError = Timber::e)
     }
 
     private fun onSafes(data: Adapter.Data<AbstractSafe>) {

@@ -46,7 +46,7 @@ class TokenManagementActivity : BaseActivity() {
         super.onStart()
         disposables += viewModel.observeVerifiedTokens()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = this::onTokensList, onError = this::onTokensListError)
+                .subscribeBy(onNext = ::onTokensList, onError = ::onTokensListError)
     }
 
     private fun onTokensList(tokens: Adapter.Data<ERC20Token>) {

@@ -46,7 +46,7 @@ class RestoreAccountActivity : BaseActivity() {
                                 .doAfterTerminate { onSavingAccount(isSaving = false) }
                     }
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeForResult(this::onAccountSaved, this::onAccountSaveError)
+                    .subscribeForResult(::onAccountSaved, ::onAccountSaveError)
 
     private fun mnemonicChangesDisposable() =
             layout_restore_account_mnemonic.textChanges()

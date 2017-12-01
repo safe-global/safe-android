@@ -39,10 +39,10 @@ class DeployNewSafeFragment : BaseFragment() {
                     .doAfterTerminate { toggleDeploying(false) }
         }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(this::safeDeployed, this::errorDeploying)
+                .subscribeForResult(::safeDeployed, ::errorDeploying)
         disposables += viewModel.observeEstimate()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::updateEstimate, Timber::e)
+                .subscribe(::updateEstimate, Timber::e)
     }
 
     private fun toggleDeploying(inProgress: Boolean) {

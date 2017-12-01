@@ -38,7 +38,7 @@ class AuthenticateActivity : BaseActivity() {
         disposables += resultSubject
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(viewModel::checkResult)
-                .subscribeForResult(this::startActivity, this::handleError)
+                .subscribeForResult(::startActivity, ::handleError)
         layout_authenticate_scan.setOnClickListener {
             scanQrCode()
         }

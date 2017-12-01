@@ -53,7 +53,7 @@ class AddressBookActivity : BaseActivity() {
 
         disposables += viewModel.observeAddressBook()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = this::onAddressBook, onError = this::onAddressBookError)
+                .subscribeBy(onNext = ::onAddressBook, onError = ::onAddressBookError)
     }
 
     private fun onAddressBook(adapterData: Adapter.Data<AddressBookEntry>) {

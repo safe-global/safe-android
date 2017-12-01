@@ -63,18 +63,18 @@ class AccountActivity : BaseActivity() {
                 // flap map, else the loading spinner is triggered on the wrong thread
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap { accountBalance() }
-                .subscribeForResult(this::onAccountBalance, this::handleError)
+                .subscribeForResult(::onAccountBalance, ::handleError)
 
         disposables += layout_account_qrcode.clicks()
                 .flatMapSingle { generateQrCode(layout_account_address.text.toString()) }
-                .subscribeForResult(this::onQrCode, this::handleError)
+                .subscribeForResult(::onQrCode, ::handleError)
     }
 
     private fun accountAddress() = viewModel.getAccountAddress()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult({
                 layout_account_address.text = it.address.asEthereumAddressString()
-            }, this::handleError)
+            }, ::handleError)
 
     private fun accountBalance() = viewModel.getAccountBalance()
             .observeOn(AndroidSchedulers.mainThread())

@@ -50,7 +50,7 @@ class SafeInfoFragment : BaseFragment() {
                             .doOnComplete { showLoading(false) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(this::updateInfo, this::handleError)
+                .subscribeForResult(::updateInfo, ::handleError)
     }
 
     override fun inject(component: ApplicationComponent) {

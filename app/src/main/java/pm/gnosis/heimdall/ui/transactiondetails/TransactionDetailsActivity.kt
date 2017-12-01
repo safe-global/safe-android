@@ -73,7 +73,7 @@ class TransactionDetailsActivity : BaseActivity() {
         val descriptionHash = intent.extras?.getString(DESCRIPTION_EXTRA)
         disposables += viewModel.setTransaction(transaction, descriptionHash)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onComplete = this::onValidTransactionDetails, onError = this::onInvalidTransactionDetails)
+                .subscribeBy(onComplete = ::onValidTransactionDetails, onError = ::onInvalidTransactionDetails)
     }
 
     private fun onValidTransactionDetails() {
@@ -105,7 +105,7 @@ class TransactionDetailsActivity : BaseActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { onTransactionDetailsLoading(true) }
                     .doOnTerminate { onTransactionDetailsLoading(false) }
-                    .subscribeBy(onNext = this::onTransactionDetails, onError = this::onTransactionDetailsError)
+                    .subscribeBy(onNext = ::onTransactionDetails, onError = ::onTransactionDetailsError)
 
     private fun onTransactionDetailsLoading(isLoading: Boolean) {
         transactionDetailsInProgress = isLoading
@@ -176,7 +176,7 @@ class TransactionDetailsActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { onTokenInfoLoading(true) }
                 .doOnTerminate { onTokenInfoLoading(false) }
-                .subscribeBy(onNext = { onTokenTransferInfo(transaction, it) }, onError = this::onTokenInfoError)
+                .subscribeBy(onNext = { onTokenTransferInfo(transaction, it) }, onError = ::onTokenInfoError)
     }
 
     private fun onTokenInfoLoading(isLoading: Boolean) {
@@ -229,7 +229,7 @@ class TransactionDetailsActivity : BaseActivity() {
             addSafeClickSubject
                     .flatMapSingle { viewModel.addSafe(it.first.hexAsBigInteger(), it.second) }
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeForResult(onNext = { onSafeAdded() }, onError = this::onSafeAddError)
+                    .subscribeForResult(onNext = { onSafeAdded() }, onError = ::onSafeAddError)
 
     private fun onSafeAdded() {
         snackbar(layout_transaction_details_coordinator, getString(R.string.added_safe))
@@ -244,7 +244,7 @@ class TransactionDetailsActivity : BaseActivity() {
     private fun safeDetailsDisposable() =
             viewModel.observeSafeDetails()
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = this::displaySafeInfo, onError = Timber::e)
+                    .subscribeBy(onNext = ::displaySafeInfo, onError = Timber::e)
 
     private fun displaySafeInfo(safe: Safe) {
         layout_transaction_details_safe_name.text = if (safe.name.isNullOrEmpty()) getString(R.string.safe_address) else safe.name
@@ -261,7 +261,7 @@ class TransactionDetailsActivity : BaseActivity() {
                                 .doOnTerminate { onTransactionSignLoading(false) }
                     }
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeForResult(onNext = this::onTransactionSigned, onError = this::onTransactionSignError)
+                    .subscribeForResult(onNext = ::onTransactionSigned, onError = ::onTransactionSignError)
 
     private fun onTransactionSigned(transactionHash: String) {
         when (viewModel.getTransactionType()) {

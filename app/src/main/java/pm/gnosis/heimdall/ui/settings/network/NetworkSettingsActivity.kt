@@ -34,8 +34,8 @@ class NetworkSettingsActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += viewModel.loadIpfsUrl().subscribe(this::setupIpfsInput, this::handleSetupError)
-        disposables += viewModel.loadRpcUrl().subscribe(this::setupRpcInput, this::handleSetupError)
+        disposables += viewModel.loadIpfsUrl().subscribe(::setupIpfsInput, ::handleSetupError)
+        disposables += viewModel.loadRpcUrl().subscribe(::setupRpcInput, ::handleSetupError)
     }
 
     private fun setupRpcInput(url: String) {
@@ -47,7 +47,7 @@ class NetworkSettingsActivity : BaseActivity() {
                     viewModel.updateRpcUrl(it.toString())
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(this::handleSuccess, this::handleError)
+                .subscribeForResult(::handleSuccess, ::handleError)
     }
 
     private fun setupIpfsInput(url: String) {
@@ -59,7 +59,7 @@ class NetworkSettingsActivity : BaseActivity() {
                     viewModel.updateIpfsUrl(it.toString())
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(this::handleSuccess, this::handleError)
+                .subscribeForResult(::handleSuccess, ::handleError)
     }
 
     private fun handleSetupError(throwable: Throwable) {
