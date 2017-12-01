@@ -9,6 +9,7 @@
     <color name="white">#ffffff</color>
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black">#000000</color>
+    <color name="black_alpha_70">#b3000000</color>
     <color name="disabled_button">#9b9b9b</color>
     <color name="pressed_shade">#33000000</color>
     <color name="shadow_shade">#11000000</color>

@@ -173,4 +173,5 @@
     <string name="token_contract_address">Token Contract Address</string>
     <string name="tokens_list_error">Could not get list of tokens</string>
     <string name="tokens_delete_error">Could not get remove token from verified list</string>
+    <string name="scan_or_tap_to_copy">Scan or tap to copy</string>
 </resources>

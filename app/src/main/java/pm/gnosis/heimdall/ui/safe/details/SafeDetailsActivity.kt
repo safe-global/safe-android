@@ -7,8 +7,6 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -21,10 +19,13 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.common.utils.snackbar
+import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
+import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoFragment
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
@@ -51,15 +52,21 @@ class SafeDetailsActivity : BaseActivity() {
         inject()
         setContentView(R.layout.layout_safe_details)
 
-        registerToolbar(layout_safe_details_toolbar)
-        layout_safe_details_toolbar.setNavigationOnClickListener {
-            onBackPressed()
-        }
-
         safeAddress = intent.getStringExtra(EXTRA_SAFE_ADDRESS)!!
         safeName = intent.getStringExtra(EXTRA_SAFE_NAME)
         updateTitle()
         viewModel.setup(safeAddress.hexAsEthereumAddress(), safeName)
+
+        registerToolbar(layout_safe_details_toolbar)
+        layout_safe_details_toolbar.inflateMenu(R.menu.safe_details_menu)
+        layout_safe_details_toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.safe_details_menu_share -> ShareSafeAddressDialog.create(safeAddress).show(supportFragmentManager, null)
+                R.id.safe_details_menu_change_name -> showEditDialog()
+                R.id.safe_details_menu_delete -> showRemoveDialog()
+            }
+            true
+        }
 
         layout_safe_details_viewpager.adapter = pagerAdapter()
         layout_safe_details_tabbar.setupWithViewPager(layout_safe_details_viewpager)
@@ -82,6 +89,7 @@ class SafeDetailsActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += viewModel.observeSafe()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = {
                     safeName = it.name
                     updateTitle()
@@ -141,43 +149,6 @@ class SafeDetailsActivity : BaseActivity() {
         layout_safe_details_progress_bar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.safe_details_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        item?.itemId ?: return false
-        when {
-            item.itemId == R.id.safe_details_menu_delete -> {
-                showRemoveDialog()
-            }
-            item.itemId == R.id.safe_details_menu_change_name -> {
-                showEditDialog()
-            }
-            item.itemId == R.id.safe_details_menu_qr_code -> {
-                safeAddress.let {
-                    generateQrCodeClicks.onNext(it.asEthereumAddressString())
-                }
-            }
-            item.itemId == R.id.safe_details_menu_clipboard -> {
-                safeAddress.let {
-                    copyToClipboard(CLIPBOARD_ADDRESS_LABEL, it.asEthereumAddressString(), {
-                        snackbar(layout_safe_details_coordinator, R.string.address_clipboard_success)
-                    })
-                }
-            }
-            item.itemId == R.id.safe_details_menu_share -> {
-                safeAddress.let {
-                    shareExternalText(it.asEthereumAddressString(),
-                            getString(R.string.share_safe_address, safeName ?: getString(R.string.safe)))
-                }
-            }
-            else -> return false
-        }
-        return true
-    }
-
     private fun showRemoveDialog() {
         AlertDialog.Builder(this)
                 .setTitle(R.string.remove_safe_dialog_title)
@@ -189,7 +160,10 @@ class SafeDetailsActivity : BaseActivity() {
 
     private fun showEditDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_safe_add_input, null)
-        safeName?.let { dialogView.dialog_add_safe_text_name.setText(it) }
+        safeName?.let {
+            dialogView.dialog_add_safe_text_name.setText(it)
+            dialogView.dialog_add_safe_text_name.setSelection(it.length)
+        }
         dialogView.dialog_add_safe_text_input_layout.visibility = View.GONE
 
         AlertDialog.Builder(this)
@@ -232,7 +206,7 @@ class SafeDetailsActivity : BaseActivity() {
     companion object {
         private const val EXTRA_SAFE_NAME = "extra.string.safe_name"
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
-        private const val CLIPBOARD_ADDRESS_LABEL = "safe.address"
+
         fun createIntent(context: Context, safe: Safe): Intent {
             val intent = Intent(context, SafeDetailsActivity::class.java)
             intent.putExtra(EXTRA_SAFE_NAME, safe.name)

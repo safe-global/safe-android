@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.accounts.di.AccountsBindingModule
 import pm.gnosis.heimdall.accounts.di.AccountsModule
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.di.modules.*
+import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -46,6 +47,7 @@ interface ApplicationComponent {
     fun viewModelFactory(): ViewModelProvider.Factory
 
     fun encryptionManager(): EncryptionManager
+    fun qrCodeGenerator(): QrCodeGenerator
 
     // Base injects
     fun inject(activity: BaseActivity)
