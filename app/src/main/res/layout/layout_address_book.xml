@@ -11,17 +11,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/layout_address_book_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_height" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_shadow_size"
-            android:layout_below="@id/layout_address_book_toolbar"
-            android:background="@drawable/toolbar_dropshadow" />
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,12 +30,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </FrameLayout>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_address_book_toolbar"
+            style="@style/Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_shadow_size"
+            android:layout_below="@id/layout_address_book_toolbar"
+            android:background="@drawable/toolbar_dropshadow" />
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/layout_address_book_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
         android:layout_gravity="end|bottom"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"

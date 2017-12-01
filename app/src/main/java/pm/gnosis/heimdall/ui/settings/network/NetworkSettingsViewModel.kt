@@ -1,7 +1,6 @@
-package pm.gnosis.heimdall.ui.settings
+package pm.gnosis.heimdall.ui.settings.network
 
 import android.content.Context
-import io.reactivex.Observable
 import io.reactivex.Single
 import okhttp3.HttpUrl
 import pm.gnosis.heimdall.R
@@ -13,10 +12,10 @@ import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
-class SettingsViewModel @Inject constructor(
+class NetworkSettingsViewModel @Inject constructor(
         @ApplicationContext private val context: Context,
         private val settingsRepository: SettingsRepository
-) : SettingsContract() {
+) : NetworkSettingsContract() {
     override fun loadIpfsUrl(): Single<String> {
         return Single.fromCallable {
             settingsRepository.getIpfsUrl()?.toString() ?: ""
@@ -77,5 +76,4 @@ class SettingsViewModel @Inject constructor(
                 .onErrorResumeNext { Single.error(LocalizedException(context.getString(R.string.invalid_ethereum_address))) }
                 .mapToResult()
     }
-
 }

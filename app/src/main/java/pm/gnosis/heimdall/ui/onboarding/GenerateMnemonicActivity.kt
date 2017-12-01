@@ -20,7 +20,7 @@ import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.main.MainActivity
+import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -89,7 +89,7 @@ class GenerateMnemonicActivity : BaseActivity() {
 
 
     private fun onSavedAccountWithMnemonic() {
-        startActivity(MainActivity.createIntent(this), noHistory = true)
+        startActivity(SafesOverviewActivity.createIntent(this), noHistory = true)
     }
 
     private fun onSavedAccountWithMnemonicWithError(throwable: Throwable) {

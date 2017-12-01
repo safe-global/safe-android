@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.tokens.addtoken
+package pm.gnosis.heimdall.ui.tokens.add
 
 import android.content.Context
 import io.reactivex.Observable

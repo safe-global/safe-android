@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.settings
+package pm.gnosis.heimdall.ui.settings.network
 
 import android.content.Context
 import io.reactivex.observers.TestObserver
@@ -14,13 +14,14 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
+import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsViewModel
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.mockGetString
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.utils.exceptions.InvalidAddressException
 
 @RunWith(MockitoJUnitRunner::class)
-class SettingsViewModelTest {
+class NetworkSettingsViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -31,12 +32,12 @@ class SettingsViewModelTest {
     @Mock
     lateinit var repository: SettingsRepository
 
-    lateinit var viewModel: SettingsViewModel
+    lateinit var viewModel: NetworkSettingsViewModel
 
     @Before
     fun setUp() {
         context.mockGetString()
-        viewModel = SettingsViewModel(context, repository)
+        viewModel = NetworkSettingsViewModel(context, repository)
     }
 
     @Test
@@ -193,5 +194,4 @@ class SettingsViewModelTest {
         verify(repository).setSafeFactoryAddress(testAddress)
         verifyNoMoreInteractions(repository)
     }
-
 }

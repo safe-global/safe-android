@@ -7,28 +7,28 @@
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:hint="@string/name_descriptive_and_optional">
 
         <EditText
             android:id="@+id/dialog_token_add_name"
             style="@style/Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/name_descriptive_and_optional"
             android:inputType="text"
             android:maxLines="1" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:hint="@string/address">
 
         <EditText
             android:id="@+id/dialog_token_add_address"
             style="@style/Input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/address"
             android:inputType="textNoSuggestions|textVisiblePassword" />
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>

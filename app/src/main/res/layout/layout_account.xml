@@ -6,95 +6,115 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-        android:id="@+id/layout_account_progress_bar"
-        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:indeterminate="true"
-        android:visibility="gone"
-        app:mpb_progressStyle="horizontal"
-        app:mpb_useIntrinsicPadding="false"
-        tools:visibility="visible" />
+        android:layout_height="wrap_content">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/layout_account_refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v4.widget.NestedScrollView
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/layout_account_refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_below="@+id/layout_account_toolbar">
 
-            <LinearLayout
+            <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    style="@style/Label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/your_account_address" />
-
-                <TextView
-                    android:id="@+id/layout_account_address"
-                    style="@style/Title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    tools:text="0x01ca023012ab3123" />
+                android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <ImageView
-                        android:id="@+id/layout_account_clipboard"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="?selectableItemBackgroundBorderless"
-                        app:srcCompat="@drawable/ic_content_copy_24dp" />
+                    <TextView
+                        style="@style/Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/your_account_address" />
 
-                    <ImageView
-                        android:id="@+id/layout_account_share"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginStart="24dp"
-                        android:background="?selectableItemBackgroundBorderless"
-                        app:srcCompat="@drawable/ic_share_24dp" />
+                    <TextView
+                        android:id="@+id/layout_account_address"
+                        style="@style/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        tools:text="0x01ca023012ab3123" />
 
-                    <ImageView
-                        android:id="@+id/layout_account_qrcode"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginStart="24dp"
-                        android:background="?selectableItemBackgroundBorderless"
-                        app:srcCompat="@drawable/ic_qr_24dp" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/layout_account_clipboard"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/selectable_circle_background"
+                            app:srcCompat="@drawable/ic_content_copy_24dp" />
+
+                        <ImageView
+                            android:id="@+id/layout_account_share"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginLeft="24dp"
+                            android:layout_marginStart="24dp"
+                            android:background="@drawable/selectable_circle_background"
+                            app:srcCompat="@drawable/ic_share_24dp" />
+
+                        <ImageView
+                            android:id="@+id/layout_account_qrcode"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginLeft="24dp"
+                            android:layout_marginStart="24dp"
+                            android:background="@drawable/selectable_circle_background"
+                            app:srcCompat="@drawable/ic_qr_24dp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        style="@style/Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="32dp"
+                        android:text="@string/balance" />
+
+                    <TextView
+                        android:id="@+id/layout_account_balance"
+                        style="@style/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="42sp"
+                        tools:text="42 Ξ" />
 
                 </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
-                <TextView
-                    style="@style/Label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:text="@string/balance" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_account_toolbar"
+            style="@style/Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            app:title="@string/my_account" />
 
-                <TextView
-                    style="@style/Title"
-                    android:id="@+id/layout_account_balance"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="42sp"
-                    tools:text="42 Ξ" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_shadow_size"
+            android:layout_below="@+id/layout_account_toolbar"
+            android:background="@drawable/toolbar_dropshadow" />
 
-            </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/layout_account_progress_bar"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_below="@+id/layout_account_toolbar"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_useIntrinsicPadding="false"
+            tools:visibility="visible" />
+    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

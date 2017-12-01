@@ -1,41 +1,31 @@
 package pm.gnosis.heimdall.ui.safe.overview
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
-import android.text.InputType
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.dialog_safe_add_input.view.*
 import kotlinx.android.synthetic.main.layout_safe_overview.*
+import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator.REQUEST_CODE
-import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator.SCAN_RESULT_EXTRA
-import pm.gnosis.heimdall.common.utils.scanQrCode
-import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
-import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
-import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.isValidEthereumAddress
+import pm.gnosis.heimdall.ui.settings.SettingsActivity
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
-class SafeOverviewFragment : BaseFragment() {
+class SafesOverviewActivity : BaseActivity() {
     @Inject
     lateinit var viewModel: SafeOverviewViewModel
     @Inject
@@ -43,18 +33,24 @@ class SafeOverviewFragment : BaseFragment() {
     @Inject
     lateinit var layoutManager: LinearLayoutManager
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.layout_safe_overview, container, false)
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        inject()
+        setContentView(R.layout.layout_safe_overview)
+        layout_safe_overview_toolbar.inflateMenu(R.menu.safes_overview_menu)
+        layout_safe_overview_toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.safes_overview_menu_settings -> startActivity(SettingsActivity.createIntent(this))
+                R.id.safes_overview_menu_add_safe -> startActivity(AddSafeActivity.createIntent(this))
+            }
+            true
+        }
         layout_safe_overview_list.layoutManager = layoutManager
         layout_safe_overview_list.adapter = adapter
-    }
 
-    override fun onDestroyView() {
-        layout_safe_overview_list.layoutManager = null
-        super.onDestroyView()
+        layout_safe_overview_fab.setOnClickListener {
+            startActivity(AuthenticateActivity.createIntent(this))
+        }
     }
 
     override fun onStart() {
@@ -77,13 +73,17 @@ class SafeOverviewFragment : BaseFragment() {
     }
 
     private fun onSafeSelection(safe: Safe) {
-        startActivity(SafeDetailsActivity.createIntent(context!!, safe))
+        startActivity(SafeDetailsActivity.createIntent(this, safe))
     }
 
-    override fun inject(component: ApplicationComponent) {
+    private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(component)
-                .viewModule(ViewModule(context!!))
+                .applicationComponent(HeimdallApplication[this].component)
+                .viewModule(ViewModule(this))
                 .build().inject(this)
+    }
+
+    companion object {
+        fun createIntent(context: Context) = Intent(context, SafesOverviewActivity::class.java)
     }
 }

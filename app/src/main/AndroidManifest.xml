@@ -21,27 +21,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.safe.overview.SafesOverviewActivity" />
         <activity android:name=".ui.onboarding.GenerateMnemonicActivity" />
         <activity android:name=".ui.onboarding.RestoreAccountActivity" />
         <activity
-            android:name=".ui.main.MainActivity"
-            android:launchMode="singleTop" />
-        <activity
             android:name=".ui.transactiondetails.TransactionDetailsActivity"
-            android:parentActivityName=".ui.main.MainActivity" />
+            android:parentActivityName=".ui.safe.overview.SafesOverviewActivity" />
         <activity android:name=".ui.security.SecurityActivity" />
         <activity android:name=".ui.safe.details.SafeDetailsActivity" />
-        <activity
-            android:name=".ui.tokens.addtoken.AddTokenActivity"
-            android:parentActivityName=".ui.main.MainActivity" />
-        <activity android:name=".ui.settings.SettingsActivity" />
-        <activity
-            android:name=".ui.addressbook.list.AddressBookActivity"
-            android:parentActivityName=".ui.main.MainActivity" />
-        <activity
-            android:name=".ui.addressbook.add.AddressBookAddEntryActivity"
-            android:parentActivityName=".ui.addressbook.list.AddressBookActivity" />
+        <activity android:name=".ui.tokens.add.AddTokenActivity" />
+        <activity android:name=".ui.addressbook.list.AddressBookActivity" />
+        <activity android:name=".ui.addressbook.add.AddressBookAddEntryActivity" />
         <activity android:name=".ui.addressbook.detail.AddressBookEntryDetailsActivity" />
+        <activity android:name=".ui.settings.SettingsActivity" />
         <activity android:name=".ui.safe.add.AddSafeActivity" />
+        <activity android:name=".ui.settings.network.NetworkSettingsActivity" />
+        <activity android:name=".ui.account.AccountActivity" />
+        <activity android:name=".ui.settings.tokens.TokenManagementActivity" />
+        <activity android:name=".ui.authenticate.AuthenticateActivity" />
+        <activity android:name=".ui.tokens.info.TokenInfoActivity" />
     </application>
 </manifest>

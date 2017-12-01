@@ -10,8 +10,8 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.main.MainActivity
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
+import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -40,7 +40,7 @@ class SplashActivity : BaseActivity() {
     }
 
     private fun startMain() {
-        startActivity(MainActivity.createIntent(this), noHistory = true)
+        startActivity(SafesOverviewActivity.createIntent(this), noHistory = true)
     }
 
     private fun startSetup() {
