@@ -20,6 +20,8 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -41,11 +43,30 @@ class TokenInfoViewModelTest {
     }
 
     @Test
+    fun testSetupWithValidAddress() {
+        given(tokenRepositoryMock.observeToken(MockUtils.any())).willReturn(Flowable.just(testToken))
+        given(tokenRepositoryMock.removeToken(MockUtils.any())).willReturn(TestCompletable())
+
+        viewModel.setup(BigInteger.ZERO.asEthereumAddressString())
+        viewModel.observeToken().subscribe(TestObserver())
+        viewModel.removeToken().subscribe(TestObserver())
+
+        then(tokenRepositoryMock).should().observeToken(BigInteger.ZERO)
+        then(tokenRepositoryMock).should().removeToken(BigInteger.ZERO)
+    }
+
+    @Test(expected = InvalidAddressException::class)
+    fun testSetupWithInvalidAddress() {
+        viewModel.setup("z")
+    }
+
+    @Test
     fun testObserveToken() {
         val testObserver = TestObserver<ERC20Token>()
         given(tokenRepositoryMock.observeToken(MockUtils.any())).willReturn(Flowable.just(testToken))
 
-        viewModel.observeToken(BigInteger.ZERO).subscribe(testObserver)
+        viewModel.setup(BigInteger.ZERO.asEthereumAddressString())
+        viewModel.observeToken().subscribe(testObserver)
 
         then(tokenRepositoryMock).should().observeToken(BigInteger.ZERO)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
@@ -58,7 +79,8 @@ class TokenInfoViewModelTest {
         val exception = Exception()
         given(tokenRepositoryMock.observeToken(MockUtils.any())).willReturn(Flowable.error(exception))
 
-        viewModel.observeToken(BigInteger.ZERO).subscribe(testObserver)
+        viewModel.setup(BigInteger.ZERO.asEthereumAddressString())
+        viewModel.observeToken().subscribe(testObserver)
 
         then(tokenRepositoryMock).should().observeToken(BigInteger.ZERO)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
@@ -68,33 +90,29 @@ class TokenInfoViewModelTest {
     @Test
     fun testRemoveToken() {
         val testCompletable = TestCompletable()
-        val testObserver = TestObserver<Result<ERC20Token>>()
-        given(tokenRepositoryMock.observeToken(MockUtils.any())).willReturn(Flowable.just(testToken))
+        val testObserver = TestObserver<Result<Unit>>()
         given(tokenRepositoryMock.removeToken(MockUtils.any())).willReturn(testCompletable)
 
-        viewModel.observeToken(BigInteger.ZERO).subscribe(TestObserver())
+        viewModel.setup(BigInteger.ZERO.asEthereumAddressString())
         viewModel.removeToken().subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().observeToken(BigInteger.ZERO)
         then(tokenRepositoryMock).should().removeToken(BigInteger.ZERO)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, testCompletable.callCount)
         testObserver
-                .assertValue(DataResult(testToken))
+                .assertValue(DataResult(Unit))
                 .assertNoErrors()
     }
 
     @Test
     fun testRemoveTokenError() {
-        val testObserver = TestObserver<Result<ERC20Token>>()
+        val testObserver = TestObserver<Result<Unit>>()
         val exception = Exception()
-        given(tokenRepositoryMock.observeToken(MockUtils.any())).willReturn(Flowable.just(testToken))
         given(tokenRepositoryMock.removeToken(MockUtils.any())).willReturn(Completable.error(exception))
 
-        viewModel.observeToken(BigInteger.ZERO).subscribe(TestObserver())
+        viewModel.setup(BigInteger.ZERO.asEthereumAddressString())
         viewModel.removeToken().subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().observeToken(BigInteger.ZERO)
         then(tokenRepositoryMock).should().removeToken(BigInteger.ZERO)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver

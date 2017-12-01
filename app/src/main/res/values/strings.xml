@@ -107,7 +107,7 @@
     <string name="qr_code_scan_cancel">Cancelled by the user</string>
     <string name="token_remove_dialog_description">%1s will no longer be a verified token</string>
     <string name="token_remove_dialog_title">Remove %1s?</string>
-    <string name="token_removed_message">Removed %1s from the verified tokens</string>
+    <string name="token_removed_message">Removed token from the verified tokens</string>
     <string name="token_added_message_name">%1s is now a verified token</string>
     <string name="token_added_message">Added verified token</string>
     <string name="add_token">Add Token</string>
@@ -172,4 +172,5 @@
     <string name="token_decimals">Token Decimals</string>
     <string name="token_contract_address">Token Contract Address</string>
     <string name="tokens_list_error">Could not get list of tokens</string>
+    <string name="tokens_delete_error">Could not get remove token from verified list</string>
 </resources>

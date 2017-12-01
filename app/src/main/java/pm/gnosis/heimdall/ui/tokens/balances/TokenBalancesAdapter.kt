@@ -23,7 +23,7 @@ class TokenBalancesAdapter @Inject constructor(
         @ViewContext private val context: Context
 ) : Adapter<TokenBalancesContract.ERC20TokenWithBalance, TokenBalancesAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.layout_tokens_item_balance, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.layout_tokens_item_balance, parent, false)
         return ViewHolder(view)
     }
 

@@ -44,6 +44,7 @@ class TokenBalancesFragment : BaseFragment() {
             viewModel.setup(addressArgument)
         } else {
             snackbar(layout_tokens_coordinator_layout, R.string.invalid_ethereum_address)
+            activity?.finish()
         }
 
         layout_tokens_list.layoutManager = LinearLayoutManager(context)

@@ -79,6 +79,16 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(NetworkSettingsContract::class)
+    abstract fun bindsNetworkSettingsContract(viewModel: NetworkSettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RestoreAccountContract::class)
+    abstract fun bindsRestoreAccountContract(viewModel: RestoreAccountViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(SafeDetailsContract::class)
     abstract fun bindsSafeDetailsContract(viewModel: SafeDetailsViewModel): ViewModel
 
@@ -99,18 +109,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(RestoreAccountContract::class)
-    abstract fun bindsRestoreAccountContract(viewModel: RestoreAccountViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(SecurityContract::class)
     abstract fun bindsSecurityContract(viewModel: SecurityViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(NetworkSettingsContract::class)
-    abstract fun bindsSettingsContract(viewModel: NetworkSettingsViewModel): ViewModel
 
     @Binds
     @IntoMap

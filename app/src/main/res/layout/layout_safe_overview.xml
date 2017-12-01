@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_safe_overview_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -13,7 +14,8 @@
             style="@style/Toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true"
+            app:title="@string/safes" />
 
         <View
             android:layout_width="match_parent"

@@ -32,7 +32,6 @@ class TokenManagementActivity : BaseActivity() {
         inject()
         setContentView(R.layout.layout_token_management)
         registerToolbar(layout_token_management_toolbar)
-        layout_token_management_toolbar.title = "Manage Verified Tokens"
 
         layout_token_management_fab.setOnClickListener {
             startActivity(AddTokenActivity.createIntent(this))

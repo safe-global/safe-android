@@ -8,8 +8,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/primary">
+        android:layout_height="match_parent">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -26,6 +25,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:hint="@string/mnemonic"
                     app:errorEnabled="true">
 
                     <EditText
@@ -33,7 +33,6 @@
                         style="@style/Input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/mnemonic"
                         android:padding="16dp"
                         android:textColorHint="#c8ffffff" />
                 </android.support.design.widget.TextInputLayout>

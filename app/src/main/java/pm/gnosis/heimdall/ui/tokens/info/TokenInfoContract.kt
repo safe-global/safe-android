@@ -7,6 +7,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import java.math.BigInteger
 
 abstract class TokenInfoContract : ViewModel() {
-    abstract fun observeToken(tokenAddress: BigInteger): Observable<ERC20Token>
-    abstract fun removeToken(): Observable<Result<ERC20Token>>
+    abstract fun observeToken(): Observable<ERC20Token>
+    abstract fun removeToken(): Observable<Result<Unit>>
+    abstract fun setup(tokenAddress: String)
 }

@@ -18,7 +18,6 @@ import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.utils.asEthereumAddressStringOrNull
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -27,17 +26,15 @@ class TokenInfoActivity : BaseActivity() {
     @Inject
     lateinit var viewModel: TokenInfoContract
 
-    private lateinit var tokenAddress: BigInteger
     private val removeClicksSubject = PublishSubject.create<Unit>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
 
-        val addressExtra = intent.extras.getString(ADDRESS_EXTRA, "").hexAsEthereumAddressOrNull()
-        if (addressExtra != null) {
-            tokenAddress = addressExtra
-        } else {
+        try {
+            viewModel.setup(intent.extras.getString(ADDRESS_EXTRA, ""))
+        } catch (e: Exception) {
             toast(R.string.invalid_ethereum_address)
             finish()
         }
@@ -55,14 +52,14 @@ class TokenInfoActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += viewModel.observeToken(tokenAddress)
+        disposables += viewModel.observeToken()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onTokenInfo, this::onTokenInfoError)
 
         disposables += removeClicksSubject
                 .flatMap { viewModel.removeToken() }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(this::onTokenDeleted, this::onTokenDeleteError)
+                .subscribeForResult({ onTokenDeleted() }, this::onTokenDeleteError)
     }
 
     private fun onTokenInfo(token: ERC20Token) {
@@ -82,12 +79,13 @@ class TokenInfoActivity : BaseActivity() {
         snackbar(layout_token_info_coordinator, R.string.token_information_error)
     }
 
-    private fun onTokenDeleted(token: ERC20Token) {
-        toast(getString(R.string.token_removed_message, tokenDescription(token)))
+    private fun onTokenDeleted() {
+        toast(R.string.token_removed_message)
         finish()
     }
 
     private fun onTokenDeleteError(throwable: Throwable) {
+        snackbar(layout_token_info_coordinator, R.string.tokens_delete_error)
         Timber.e(throwable)
     }
 
@@ -106,9 +104,6 @@ class TokenInfoActivity : BaseActivity() {
                 .build()
                 .inject(this)
     }
-
-    private fun tokenDescription(token: ERC20Token) =
-            token.name ?: token.address.asEthereumAddressStringOrNull() ?: getString(R.string.token)
 
     companion object {
         private const val ADDRESS_EXTRA = "extra.string.address"

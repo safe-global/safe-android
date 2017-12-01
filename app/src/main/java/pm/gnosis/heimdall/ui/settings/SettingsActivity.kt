@@ -16,7 +16,6 @@ class SettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_settings)
         registerToolbar(layout_settings_toolbar)
-        layout_settings_toolbar.title = getString(R.string.settings)
 
         layout_settings_address_book.setOnClickListener {
             startActivity(AddressBookActivity.createIntent(this))

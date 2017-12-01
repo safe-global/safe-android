@@ -30,7 +30,6 @@ class NetworkSettingsActivity : BaseActivity() {
         setContentView(R.layout.layout_network_settings)
 
         registerToolbar(layout_network_settings_toolbar)
-        layout_network_settings_toolbar.setTitle(R.string.settings)
     }
 
     override fun onStart() {

@@ -39,7 +39,6 @@ class AccountActivity : BaseActivity() {
         inject()
         setContentView(R.layout.layout_account)
         registerToolbar(layout_account_toolbar)
-        layout_account_toolbar.title = getString(R.string.my_account)
     }
 
     override fun onStart() {

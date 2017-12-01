@@ -92,12 +92,12 @@
             </android.support.v4.widget.NestedScrollView>
         </android.support.v4.widget.SwipeRefreshLayout>
 
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/layout_account_toolbar"
             style="@style/Toolbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_height" />
+            android:layout_height="@dimen/toolbar_height"
+            app:title="@string/my_account" />
 
         <View
             android:layout_width="match_parent"

@@ -37,7 +37,6 @@ class SafesOverviewActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_safe_overview)
-        layout_safe_overview_toolbar.title = getString(R.string.safes)
         layout_safe_overview_toolbar.inflateMenu(R.menu.safes_overview_menu)
         layout_safe_overview_toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
