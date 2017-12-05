@@ -27,20 +27,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
             android:gravity="center"
-            android:textColor="#21435a"
+            android:textColor="@color/gnosis_dark_blue"
             android:textSize="18sp"
             tools:text="Gnosis Team Safe (BER)" />
 
         <TextView
+            style="@style/SpacedCapsText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:letterSpacing="0.25"
-            android:text="@string/scan_or_tap_to_copy"
-            android:textAllCaps="true"
-            android:textColor="#9921435a"
-            android:textSize="12sp" />
+            android:text="@string/scan_or_tap_to_copy" />
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -57,20 +54,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="invisible"
+                android:visibility="gone"
                 tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/dialog_address_share_retry"
+                style="@style/SpacedCapsText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:letterSpacing="0.25"
                 android:padding="8dp"
                 android:text="@string/retry"
-                android:textAllCaps="true"
-                android:textColor="#9921435a"
-                android:visibility="invisible"
+                android:visibility="gone"
                 tools:visibility="visible" />
         </FrameLayout>
 
@@ -79,11 +74,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:background="#f4f4f9"
+            android:background="@color/text_grey_background"
             android:gravity="center"
             android:letterSpacing="0.03"
             android:padding="8dp"
-            android:textColor="#21435a"
+            android:textColor="@color/gnosis_dark_blue"
             android:textSize="12sp"
             tools:text="0xf1511FAB6b7347899f51f9db027A32b39caE3910" />
 

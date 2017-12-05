@@ -37,7 +37,6 @@ abstract class BaseShareAddressDialog : BaseDialog() {
         val address = arguments?.getString(ADDRESS_EXTRA)?.hexAsEthereumAddressOrNull()
         if (address == null) {
             dismiss()
-            return
         } else {
             this.address = address
         }
@@ -59,9 +58,6 @@ abstract class BaseShareAddressDialog : BaseDialog() {
         // Override the root clicks (we don't want to dismiss the dialog)
         disposables += dialog_address_share_background.clicks()
                 .subscribeBy()
-
-        disposables += dialog_address_share_root.clicks()
-                .subscribeBy(onNext = { dismiss() })
 
         disposables += generateQrCodeSubject
                 .flatMapSingle {

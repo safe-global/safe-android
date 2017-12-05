@@ -32,4 +32,6 @@
 
     <color name="background">#f9f9f9</color>
     <color name="divider">#e3e5ec</color>
+    <color name="gnosis_dark_blue_alpha_60">#9921435a</color>
+    <color name="text_grey_background">#f4f4f9</color>
 </resources>

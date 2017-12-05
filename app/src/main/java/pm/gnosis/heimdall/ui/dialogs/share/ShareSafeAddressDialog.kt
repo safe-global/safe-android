@@ -25,27 +25,10 @@ class ShareSafeAddressDialog : BaseShareAddressDialog() {
         inject()
     }
 
-    override fun onStart() {
-        super.onStart()
-        disposables += safeRepository.observeSafe(address)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = ::onSafe, onError = ::onSafeError)
-    }
-
-    private fun onSafe(safe: Safe) {
-        dialog_address_share_name.text = safe.name ?: "-"
-        dialog_address_share_address.text = safe.address.asEthereumAddressStringOrNull() ?: "-"
-    }
-
     override fun addressSourceObservable(): Observable<Pair<String?, BigInteger>> =
             safeRepository.observeSafe(address)
                     .toObservable()
                     .map { it.name to it.address }
-
-    private fun onSafeError(throwable: Throwable) {
-        Timber.e(throwable)
-        dismiss()
-    }
 
     override fun inject() {
         DaggerViewComponent.builder()
