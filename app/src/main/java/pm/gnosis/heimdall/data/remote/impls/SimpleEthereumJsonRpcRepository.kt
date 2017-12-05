@@ -82,16 +82,9 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
         }
     }
 
-    private fun JsonRpcResult.checkedResult(): String {
-        error?.let {
-            throw EthereumJsonRpcApi.ErrorResultException(it.message)
-        }
-        return result
-    }
-
     private fun JsonRpcTransactionReceiptResult.checkedResult(): TransactionReceipt {
         error?.let {
-            throw EthereumJsonRpcApi.ErrorResultException(it.message)
+            throw ErrorResultException(it.message)
         }
         return result
     }

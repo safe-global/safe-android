@@ -7,4 +7,8 @@ data class Wei(val value: BigInteger) {
     fun toEther(): BigDecimal = BigDecimal(value).setScale(3).div(BigDecimal(10).pow(18))
 
     fun toLong() = value.toLong()
+
+    companion object {
+        val ZERO = Wei(BigInteger.ZERO)
+    }
 }

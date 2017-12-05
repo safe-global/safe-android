@@ -27,7 +27,9 @@ import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
-import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsContract
+import pm.gnosis.heimdall.ui.transactions.BaseTransactionContract
+import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
+import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsContract
 
 @Module
 class ViewModule(val context: Context) {
@@ -59,6 +61,14 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesAuthenticateContract(provider: ViewModelProvider) = provider[AuthenticateContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesBaseTransactionContract(provider: ViewModelProvider) = provider[BaseTransactionContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesBaseTransactionDetailsContract(provider: ViewModelProvider) = provider[BaseTransactionDetailsContract::class.java]
 
     @Provides
     @ForView
@@ -110,7 +120,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesTransactionDetailsContract(provider: ViewModelProvider) = provider[TransactionDetailsContract::class.java]
+    fun providesViewTransactionContract(provider: ViewModelProvider) = provider[ViewTransactionContract::class.java]
 
     @Provides
     @ForView

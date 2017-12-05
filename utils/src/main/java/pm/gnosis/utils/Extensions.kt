@@ -3,9 +3,11 @@ package pm.gnosis.utils
 import okio.ByteString
 import java.math.BigInteger
 import java.security.SecureRandom
+import java.util.regex.Pattern
 import kotlin.experimental.and
 
 private val hexArray = "0123456789abcdef".toCharArray()
+private val hexPattern = Pattern.compile("(0[xX])?[0-9a-fA-F]+")
 private const val HEX_PREFIX = "0x"
 
 fun generateRandomString(numBits: Int = 130, radix: Int = 32): String {
@@ -60,8 +62,16 @@ fun BigInteger.toAlfaNumericAscii(): String? {
     return stringBuilder.toString()
 }
 
+fun String.hexStringToByteArrayOrNull(): ByteArray? {
+    return if (this.length % 2 == 0 && hexPattern.matcher(this).matches()) {
+        nullOnThrow { hexStringToByteArray() }
+    } else {
+        null
+    }
+}
+
 fun String.hexStringToByteArray(): ByteArray {
-    val s = this.removePrefix(HEX_PREFIX)
+    val s = this.removeHexPrefix()
     val len = s.length
     val data = ByteArray(len / 2)
     var i = 0
@@ -74,16 +84,18 @@ fun String.hexStringToByteArray(): ByteArray {
 
 fun String.addHexPrefix() = if (!this.startsWith(HEX_PREFIX)) "$HEX_PREFIX$this" else this
 
+fun String.removeHexPrefix() = this.removePrefix(HEX_PREFIX)
+
 fun String.asEthereumAddressString(): String {
-    val string = this.removePrefix(HEX_PREFIX)
+    val string = this.removeHexPrefix()
     val numericValue = BigInteger(string, 16)
     if (!numericValue.isValidEthereumAddress()) throw IllegalArgumentException("Invalid ethereum address")
 
     return numericValue.toString(16).padStart(40, '0').addHexPrefix()
 }
 
-fun String.isSolidityMethod(methodId: String) = this.removePrefix(HEX_PREFIX).startsWith(methodId.removePrefix(HEX_PREFIX))
-fun String.removeSolidityMethodPrefix(methodId: String) = this.removePrefix(HEX_PREFIX).removePrefix(methodId)
+fun String.isSolidityMethod(methodId: String) = this.removeHexPrefix().startsWith(methodId.removeHexPrefix())
+fun String.removeSolidityMethodPrefix(methodId: String) = this.removeHexPrefix().removePrefix(methodId)
 
 fun ByteArray.toBinaryString(): String {
     val sb = StringBuilder(this.size * java.lang.Byte.SIZE)

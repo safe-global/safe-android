@@ -87,6 +87,9 @@ dependencies {
     implementation project(':security')
     implementation project(':utils')
 
+    // Kethereum RLP
+    implementation "com.github.walleth.kethereum:rlp:$versions.kethereum"
+
     //Android
     implementation "com.android.support:appcompat-v7:$versions.android_support"
     implementation "com.android.support:cardview-v7:$versions.android_support"

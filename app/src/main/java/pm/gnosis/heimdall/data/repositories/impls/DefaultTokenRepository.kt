@@ -54,11 +54,11 @@ class DefaultTokenRepository @Inject constructor(
         if (!contractAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(contractAddress))
         val request = TokenInfoRequest(
                 BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.NAME_METHOD_ID}").callRequest(0),
-                        { it.result.hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim() }),
+                        { it.checkedResult().hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim() }),
                 BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.SYMBOL_METHOD_ID}").callRequest(1),
-                        { it.result.hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim() }),
+                        { it.checkedResult().hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim() }),
                 BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.DECIMALS_METHOD_ID}").callRequest(2),
-                        { it.result.hexAsBigIntegerOrNull() }))
+                        { it.checkedResult().hexAsBigIntegerOrNull() }))
         return ethereumJsonRpcRepository.bulk(request).map { ERC20Token(contractAddress, it.name.value, it.symbol.value, it.decimals.value?.toInt() ?: 0) }
     }
 
@@ -69,7 +69,7 @@ class DefaultTokenRepository @Inject constructor(
                     BulkRequest.SubRequest(TransactionCallParams(
                             to = token.address.asEthereumAddressString(),
                             data = StandardToken.BalanceOf.encode(Solidity.Address(ofAddress))).callRequest(index),
-                            { nullOnThrow { StandardToken.BalanceOf.decode(it.result).param0.value } })
+                            { nullOnThrow { StandardToken.BalanceOf.decode(it.checkedResult()).param0.value } })
                 }.toList())
 
 

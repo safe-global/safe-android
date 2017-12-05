@@ -41,8 +41,12 @@ import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenViewModel
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesViewModel
-import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsContract
-import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsViewModel
+import pm.gnosis.heimdall.ui.transactions.BaseTransactionContract
+import pm.gnosis.heimdall.ui.transactions.BaseTransactionViewModel
+import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
+import pm.gnosis.heimdall.ui.transactions.ViewTransactionViewModel
+import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsViewModel
 import javax.inject.Singleton
 
 @Module
@@ -71,6 +75,16 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AuthenticateContract::class)
     abstract fun bindsAuthenticateContract(viewModel: AuthenticateViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BaseTransactionContract::class)
+    abstract fun bindsBaseTransactionContract(viewModel: BaseTransactionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BaseTransactionDetailsContract::class)
+    abstract fun bindsBaseTransactionDetailsContract(viewModel: BaseTransactionDetailsViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -134,8 +148,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(TransactionDetailsContract::class)
-    abstract fun bindsTransactionDetailsContract(viewModel: TransactionDetailsViewModel): ViewModel
+    @ViewModelKey(ViewTransactionContract::class)
+    abstract fun bindsViewTransactionContract(viewModel: ViewTransactionViewModel): ViewModel
 
     @Binds
     @Singleton

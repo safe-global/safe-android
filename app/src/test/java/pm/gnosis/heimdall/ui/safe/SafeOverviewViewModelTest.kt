@@ -13,7 +13,6 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
-import org.mockito.Mockito.anyString
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
@@ -21,12 +20,12 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
 import pm.gnosis.tests.utils.TestListUpdateCallback
-import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)

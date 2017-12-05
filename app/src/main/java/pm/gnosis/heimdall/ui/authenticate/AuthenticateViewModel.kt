@@ -11,7 +11,7 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
-import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity
+import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
 import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.utils.isSolidityMethod
 import javax.inject.Inject
@@ -37,7 +37,7 @@ class AuthenticateViewModel @Inject constructor(
         val data = parsedData.transaction.data
         if (data != null && (data.isSolidityMethod(GnosisSafe.ConfirmTransaction.METHOD_ID) ||
                 data.isSolidityMethod(GnosisSafe.RevokeConfirmation.METHOD_ID))) {
-            return TransactionDetailsActivity.createIntent(context, parsedData.transaction, parsedData.descriptionHash)
+            return ViewTransactionActivity.createIntent(context, null, parsedData.transaction)
         } else {
             throw LocalizedException(context.getString(R.string.unknown_safe_action))
         }

@@ -14,6 +14,7 @@ import java.math.BigInteger
 interface GnosisSafeRepository {
     fun observeSafes(): Flowable<List<AbstractSafe>>
     fun observeSafe(address: BigInteger): Flowable<Safe>
+    fun observeDeployedSafes(): Flowable<List<Safe>>
 
     fun add(address: BigInteger, name: String?): Completable
     fun remove(address: BigInteger): Completable
@@ -24,6 +25,5 @@ interface GnosisSafeRepository {
     fun observeDeployStatus(hash: String): Observable<String>
 
     fun loadInfo(address: BigInteger): Observable<SafeInfo>
-    fun loadDescriptionCount(address: BigInteger): Observable<Int>
-    fun loadDescriptions(address: BigInteger, from: Int, to: Int): Observable<List<String>>
+    fun observeTransactionDescriptions(address: BigInteger): Flowable<List<String>>
 }

@@ -16,6 +16,11 @@
     <color name="gnosis_blue">#10b3d4</color>
     <color name="gnosis_blue_shade">#0083a3</color>
     <color name="gnosis_dark_blue">#21435a</color>
+    <color name="gnosis_dark_blue_alpha_60">#9921435a</color>
+    <color name="gnosis_dark_blue_alpha_70">#b321435a</color>
+
+    <color name="error">#a70000</color>
+    <color name="error_hint">#b3a70000</color>
 
     <color name="lighter_text">#c6c6c6</color>
     <color name="light_text">#9b9b9b</color>
@@ -30,8 +35,9 @@
     <color name="unselected_tab">@color/toolbar_action</color>
     <color name="default_icon">#4a4a4a</color>
 
+    <color name="text_grey_background">#f4f4f9</color>
     <color name="background">#f9f9f9</color>
     <color name="divider">#e3e5ec</color>
-    <color name="gnosis_dark_blue_alpha_60">#9921435a</color>
-    <color name="text_grey_background">#f4f4f9</color>
+
+    <color name="out_transaction">#de2c42</color>
 </resources>

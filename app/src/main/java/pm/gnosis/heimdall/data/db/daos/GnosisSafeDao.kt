@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.data.db.daos
 import android.arch.persistence.room.*
 import io.reactivex.Flowable
 import io.reactivex.Single
+import org.intellij.lang.annotations.Language
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import java.math.BigInteger

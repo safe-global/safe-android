@@ -9,12 +9,28 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.utils.HttpCodes
 import retrofit2.HttpException
 import timber.log.Timber
+import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLHandshakeException
 
 
-data class LocalizedException(override val message: String) : Exception(message) {
+open class LocalizedException(override val message: String) : Exception(message) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as LocalizedException
+
+        if (message != other.message) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return message.hashCode()
+    }
 
     class Handler private constructor(private val context: Context, private val translators: List<Translator>,
                                       private val logException: Boolean = true) {
@@ -86,7 +102,7 @@ data class LocalizedException(override val message: String) : Exception(message)
                     }
                 })
                 .add({ it is SSLHandshakeException || it.cause is SSLHandshakeException }, { c, _ -> c.getString(R.string.error_ssl_handshake) })
-                .add({ it is UnknownHostException || it is SocketTimeoutException }, { c, _ -> c.getString(R.string.error_check_internet_connection) })
+                .add({ it is UnknownHostException || it is SocketTimeoutException || it is ConnectException }, { c, _ -> c.getString(R.string.error_check_internet_connection) })
 
         fun assert(condition: Boolean, context: Context, @StringRes messagedId: Int, vararg params: Any) {
             if (!condition) {

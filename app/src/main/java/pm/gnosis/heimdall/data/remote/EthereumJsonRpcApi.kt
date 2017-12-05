@@ -20,6 +20,4 @@ interface EthereumJsonRpcApi {
 
     @POST("/")
     fun post(@Body jsonRpcRequest: Collection<JsonRpcRequest>): Observable<Collection<JsonRpcResult>>
-
-    class ErrorResultException(msg: String): IllegalStateException(msg)
 }

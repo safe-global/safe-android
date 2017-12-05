@@ -11,8 +11,8 @@ import java.math.BigInteger
 @Entity(tableName = TransactionDescriptionDb.TABLE_NAME)
 data class TransactionDescriptionDb(
         @PrimaryKey
-        @ColumnInfo(name = COL_HASH)
-        var hash: String,
+        @ColumnInfo(name = COL_ID)
+        var id: String,
 
         @ColumnInfo(name = COL_SAFE_ADDRESS)
         var safeAddress: BigInteger,
@@ -43,7 +43,7 @@ data class TransactionDescriptionDb(
 ) {
     companion object {
         const val TABLE_NAME = "transaction_details"
-        const val COL_HASH = "hash"
+        const val COL_ID = "id"
         const val COL_SAFE_ADDRESS = "safeAddress"
         const val COL_TO = "to"
         const val COL_VALUE = "value"

@@ -1,9 +1,8 @@
 package pm.gnosis.heimdall.ui.safe.details.transactions
 
-import io.reactivex.Observable
-import io.reactivex.observers.TestObserver
-import io.reactivex.subjects.PublishSubject
-import org.junit.After
+import io.reactivex.Flowable
+import io.reactivex.processors.PublishProcessor
+import io.reactivex.subscribers.TestSubscriber
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -15,11 +14,8 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.tests.utils.TestListUpdateCallback
-import pm.gnosis.tests.utils.TestObservableFactory
-import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract.PaginatedTransactions
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -35,267 +31,70 @@ class SafeTransactionsViewModelTest {
 
     private var testAddress = BigInteger.ZERO
 
-    private val testObservableFactory = TestObservableFactory<List<String>>()
-
     @Before
     fun setup() {
         viewModel = SafeTransactionsViewModel(safeRepository)
     }
 
-    @After
-    fun tearDown() {
-        testObservableFactory.complete()
-    }
-
     @Test
-    fun testSetupSameAddress() {
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.just(0))
-
-        viewModel.setup(testAddress)
-        viewModel.initTransactions(false).subscribe(TestObserver())
-
-        // Setting the same address should keep the cache
-        viewModel.setup(testAddress)
-        viewModel.initTransactions(false).subscribe(TestObserver())
-
-        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
-        then(safeRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun testSetupDifferentAddress() {
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.just(0))
-
-        viewModel.setup(testAddress)
-        viewModel.initTransactions(false).subscribe(TestObserver())
-
-        // Setting a different address should clear the cache
-        viewModel.setup(BigInteger.TEN)
-        viewModel.initTransactions(false).subscribe(TestObserver())
-
-        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
-        then(safeRepository).should(times(1)).loadDescriptionCount(BigInteger.TEN)
-        then(safeRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun initTransactionsNoDescriptions() {
-        val testObserver = TestObserver<Result<Int>>()
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.just(0))
-
-        viewModel.setup(testAddress)
-        viewModel.initTransactions(false).subscribe(testObserver)
-
-        testObserver.assertValue(DataResult(0)).assertNoErrors()
-
-        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
-        then(safeRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun initTransactionsError() {
-        val error = IllegalStateException()
-        val testObserver = TestObserver<Result<Int>>()
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.error(error))
-
-        viewModel.setup(testAddress)
-        viewModel.initTransactions(false).subscribe(testObserver)
-
-        testObserver.assertValue(ErrorResult(error)).assertNoErrors()
-
-        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
-        then(safeRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun initTransactionsWithDescriptions() {
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.just(4))
-        given(safeRepository.loadDescriptions(testAddress, 0, 4)).willReturn(Observable.just(generateList(to = 3)))
-
-        viewModel.setup(testAddress)
-        val initialObserver = TestObserver<Result<Int>>()
-        viewModel.initTransactions(false).subscribe(initialObserver)
-        initialObserver.assertValues(DataResult(4)).assertNoErrors()
-
-        // Check that cached version is returned
-        val reloadObserver = TestObserver<Result<Int>>()
-        viewModel.initTransactions(false).subscribe(reloadObserver)
-        reloadObserver.assertValues(DataResult(4)).assertNoErrors()
-
-
-        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
-        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 0, 4)
-        then(safeRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun initTransactionsReload() {
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.just(4))
-        given(safeRepository.loadDescriptions(testAddress, 0, 4)).willReturn(Observable.just(generateList(to = 3)))
-
-        viewModel.setup(testAddress)
-        val initialObserver = TestObserver<Result<Int>>()
-        viewModel.initTransactions(false).subscribe(initialObserver)
-        initialObserver.assertValues(DataResult(4)).assertNoErrors()
-
-        // Check that cached version is returned
-        val reloadObserver = TestObserver<Result<Int>>()
-        viewModel.initTransactions(true).subscribe(reloadObserver)
-        reloadObserver.assertValues(DataResult(4)).assertNoErrors()
-
-
-        then(safeRepository).should(times(2)).loadDescriptionCount(testAddress)
-        then(safeRepository).should(times(2)).loadDescriptions(testAddress, 0, 4)
-        then(safeRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun observeTransactionsReloadFallback() {
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.just(8))
-        given(safeRepository.loadDescriptions(testAddress, 0, 8)).willReturn(Observable.just(generateList(from = 0, to = 7)))
+    fun observeTransactions() {
+        val processor = PublishProcessor.create<List<String>>()
+        given(safeRepository.observeTransactionDescriptions(testAddress)).willReturn(processor)
         viewModel.setup(testAddress)
 
-        val initObserver = TestObserver<Result<Int>>()
-        viewModel.initTransactions(false).subscribe(initObserver)
-        initObserver.assertValue(DataResult(8)).assertNoErrors()
+        val subscriber = TestSubscriber<Result<Adapter.Data<String>>>()
+        viewModel.observeTransactions().subscribe(subscriber)
 
-        // We simulate an error
-        val exception = IllegalStateException()
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.error(exception))
+        subscriber.assertValueCount(1).assertValueAt(0, {
+            it is DataResult &&
+                    it.data.diff == null && it.data.entries == emptyList<String>()
+        }).assertNoErrors()
 
-        val reloadObserver = TestObserver<Result<Int>>()
-        viewModel.initTransactions(true).subscribe(reloadObserver)
-        reloadObserver.assertValueCount(2)
-                .assertValueAt(0, DataResult(8))
-                .assertValueAt(1, ErrorResult(exception))
-                .assertNoErrors()
+        val initialDataId = (subscriber.values().first() as DataResult).data.id
 
-        then(safeRepository).should(times(2)).loadDescriptionCount(testAddress)
-        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 0, 8)
-        then(safeRepository).shouldHaveNoMoreInteractions()
-    }
+        processor.onNext(generateList(to = 8))
 
-    @Test
-    fun observeTransactionsMore() {
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.just(28))
-        given(safeRepository.loadDescriptions(testAddress, 8, 28)).willReturn(Observable.just(generateList(from = 8, to = 27)))
-        given(safeRepository.loadDescriptions(testAddress, 0, 8)).willReturn(Observable.just(generateList(to = 7)))
-        viewModel.setup(testAddress)
-        viewModel.initTransactions(false).subscribe(TestObserver())
+        subscriber.assertValueCount(2).assertValueAt(1, {
+            it is DataResult && it.data.parentId == initialDataId &&
+                    it.data.diff != null && it.data.entries == generateList(to = 8)
+        }).assertNoErrors()
 
-        val subject = PublishSubject.create<Unit>()
-        val moreObserver = TestObserver<Result<PaginatedTransactions>>()
-        viewModel.observeTransactions(subject).subscribe(moreObserver)
+        val firstDataId = (subscriber.values()[1] as DataResult).data.id
 
-        moreObserver.assertValueCount(1).assertValueAt(0, {
-            it is DataResult && it.data.hasMore &&
-                    it.data.data.diff == null && it.data.data.entries == generateList(from = 27, to = 8, step = -1)
-        })
+        processor.onNext(generateList(from = 1, to = 9))
 
-        subject.onNext(Unit)
+        subscriber.assertValueCount(3).assertValueAt(2, {
+            it is DataResult && it.data.parentId == firstDataId &&
+                    it.data.diff != null && it.data.entries == generateList(from = 1, to = 9)
+        }).assertNoErrors()
 
-        moreObserver.assertValueCount(2).assertValueAt(1, {
-            it is DataResult && !it.data.hasMore &&
-                    it.data.data.diff != null && it.data.data.entries == generateList(from = 27, step = -1)
-        })
-
-        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
-        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 8, 28)
-        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 0, 8)
-        then(safeRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun observeTransactionsMoreLoading() {
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.just(28))
-        given(safeRepository.loadDescriptions(testAddress, 8, 28)).willReturn(Observable.just(generateList(from = 8, to = 27)))
-        given(safeRepository.loadDescriptions(testAddress, 0, 8)).willReturn(testObservableFactory.get())
-        viewModel.setup(testAddress)
-        viewModel.initTransactions(false).subscribe(TestObserver())
-
-        val subject = PublishSubject.create<Unit>()
-        val moreObserver = TestObserver<Result<PaginatedTransactions>>()
-        viewModel.observeTransactions(subject).subscribe(moreObserver)
-
-        moreObserver.assertValueCount(1).assertValueAt(0, {
-            it is DataResult && it.data.hasMore &&
-                    it.data.data.diff == null && it.data.data.entries == generateList(from = 27, to = 8, step = -1)
-        })
-
-        subject.onNext(Unit)
-
-        moreObserver.assertValueCount(1)
-
-        // Triggering load more again should not do anything while it is loading
-        subject.onNext(Unit)
-
-        testObservableFactory.success(generateList(to = 7))
-
-        moreObserver.assertValueCount(2).assertValueAt(1, {
-            it is DataResult && !it.data.hasMore &&
-                    it.data.data.diff != null && it.data.data.entries == generateList(from = 27, step = -1)
-        })
-
-        TestListUpdateCallback().apply((moreObserver.values()[1] as DataResult).data.data.diff!!)
-                .assertNoMoves()
-                .assertNoRemoves()
-                .assertInsertsCount(8).assertInserts(20, 8)
-
-        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
-        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 8, 28)
-        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 0, 8)
+        then(safeRepository).should(times(1)).observeTransactionDescriptions(testAddress)
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeTransactionsError() {
-        val error = IllegalStateException()
-        given(safeRepository.loadDescriptionCount(MockUtils.any())).willReturn(Observable.just(28))
-        given(safeRepository.loadDescriptions(testAddress, 8, 28)).willReturn(Observable.just(generateList(from = 8, to = 27)))
-        given(safeRepository.loadDescriptions(testAddress, 0, 8)).willReturn(Observable.error(error))
+        val illegalStateException = IllegalStateException()
+        given(safeRepository.observeTransactionDescriptions(testAddress)).willReturn(Flowable.error(illegalStateException))
         viewModel.setup(testAddress)
-        viewModel.initTransactions(false).subscribe(TestObserver())
 
-        val subject = PublishSubject.create<Unit>()
-        val moreObserver = TestObserver<Result<PaginatedTransactions>>()
-        viewModel.observeTransactions(subject).subscribe(moreObserver)
+        val subscriber = TestSubscriber<Result<Adapter.Data<String>>>()
+        viewModel.observeTransactions().subscribe(subscriber)
+        subscriber.assertValueCount(2)
+                .assertValueAt(0, DataResult(Adapter.Data()))
+                .assertValueAt(1, ErrorResult(illegalStateException))
+                .assertNoErrors()
 
-        moreObserver.assertValueCount(1).assertValueAt(0, {
-            it is DataResult && it.data.hasMore &&
-                    it.data.data.diff == null && it.data.data.entries == generateList(from = 27, to = 8, step = -1)
-        })
-
-        subject.onNext(Unit)
-
-        moreObserver.assertValueCount(2).assertValueAt(1, {
-            it is ErrorResult && it.error == error
-        })
-
-        then(safeRepository).should(times(1)).loadDescriptionCount(testAddress)
-        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 8, 28)
-        then(safeRepository).should(times(1)).loadDescriptions(testAddress, 0, 8)
+        then(safeRepository).should(times(1)).observeTransactionDescriptions(testAddress)
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeTransactionsUninitialized() {
-        viewModel.setup(testAddress)
+        val subscriber = TestSubscriber<Result<Adapter.Data<String>>>()
+        viewModel.observeTransactions().subscribe(subscriber)
 
-        val subject = PublishSubject.create<Unit>()
-        val moreObserver = TestObserver<Result<PaginatedTransactions>>()
-        viewModel.observeTransactions(subject).subscribe(moreObserver)
-
-        moreObserver.assertValueCount(1).assertValueAt(0, {
-            it is DataResult && !it.data.hasMore &&
-                    it.data.data.diff == null && it.data.data.entries.isEmpty()
-        })
-
-        subject.onNext(Unit)
-
-        moreObserver.assertValueCount(2).assertValueAt(1, {
-            it is DataResult && !it.data.hasMore &&
-                    it.data.data.diff != null && it.data.data.entries.isEmpty()
-        })
+        subscriber.assertNoErrors().assertNoValues().assertComplete()
 
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
