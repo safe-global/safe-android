@@ -1,7 +1,7 @@
 ext {
     versions = [
             // Plug-Ins
-            android_tools          : '3.1.0-alpha04',
+            android_tools          : '3.1.0-alpha05',
             google_services        : '3.1.0',
             kotlin                 : '1.2.0',
             jacoco                 : '0.7.9',
