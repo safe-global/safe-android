@@ -2,23 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/safe_details_menu_share"
+        android:icon="@drawable/ic_qr_toolbar_24dp"
+        android:title="@string/share_address"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/safe_details_menu_delete"
         android:title="@string/remove_from_device"
         app:showAsAction="never" />
     <item
         android:id="@+id/safe_details_menu_change_name"
         android:title="@string/change_name"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/safe_details_menu_qr_code"
-        android:title="@string/qrcode"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/safe_details_menu_clipboard"
-        android:title="@string/copy_to_clipboard"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/safe_details_menu_share"
-        android:title="@string/share_address"
         app:showAsAction="never" />
 </menu>

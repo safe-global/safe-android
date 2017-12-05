@@ -123,5 +123,13 @@
         <item name="android:textColorHint">@color/lighter_text</item>
     </style>
 
+    <style name="SpacedCapsTextBase">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/gnosis_dark_blue_alpha_60</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="SpacedCapsText" parent="SpacedCapsTextBase" />
+
     <!-- End: Button styles -->
 </resources>

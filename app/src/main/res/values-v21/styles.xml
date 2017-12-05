@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SpacedCapsText" parent="SpacedCapsTextBase">
+        <item name="android:letterSpacing">0.25</item>
+    </style>
+</resources>

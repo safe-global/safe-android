@@ -9,6 +9,7 @@
     <color name="white">#ffffff</color>
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black">#000000</color>
+    <color name="black_alpha_70">#b3000000</color>
     <color name="disabled_button">#9b9b9b</color>
     <color name="pressed_shade">#33000000</color>
     <color name="shadow_shade">#11000000</color>
@@ -31,4 +32,6 @@
 
     <color name="background">#f9f9f9</color>
     <color name="divider">#e3e5ec</color>
+    <color name="gnosis_dark_blue_alpha_60">#9921435a</color>
+    <color name="text_grey_background">#f4f4f9</color>
 </resources>
