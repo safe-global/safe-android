@@ -19,9 +19,6 @@ class AddSafeActivity : BaseActivity() {
         setContentView(R.layout.layout_add_safe)
 
         registerToolbar(layout_add_safe_toolbar)
-        layout_add_safe_toolbar.setNavigationOnClickListener {
-            onBackPressed()
-        }
         layout_add_safe_toolbar.setTitle(R.string.add_safe)
 
         layout_add_safe_viewpager.adapter = pagerAdapter()

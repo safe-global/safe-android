@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.onboarding
+package pm.gnosis.heimdall.ui.onboarding.account.restore
 
 import android.arch.lifecycle.ViewModel
 import android.content.Intent

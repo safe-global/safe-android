@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.onboarding
+package pm.gnosis.heimdall.ui.onboarding.account.create
 
 import io.reactivex.Single
 import io.reactivex.internal.operators.completable.CompletableError
@@ -25,9 +25,9 @@ class GenerateMnemonicViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var accountsRepositoryMock: AccountsRepository
+    private lateinit var accountsRepositoryMock: AccountsRepository
 
-    lateinit var viewModel: GenerateMnemonicViewModel
+    private lateinit var viewModel: GenerateMnemonicViewModel
 
     private val testMnemonic = "abstract inspire axis monster urban order rookie over volume poverty horse rack"
 
@@ -67,7 +67,7 @@ class GenerateMnemonicViewModelTest {
 
     @Test
     fun testSaveAccountWithMnemonic() {
-        val testObserver = TestObserver.create<Result<String>>()
+        val testObserver = TestObserver.create<Result<Unit>>()
         val saveAccountFromMnemonicCompletable = TestCompletable()
         val saveMnemonicCompletable = TestCompletable()
         given(accountsRepositoryMock.saveAccountFromMnemonic(anyString(), anyLong())).willReturn(saveAccountFromMnemonicCompletable)
@@ -80,14 +80,15 @@ class GenerateMnemonicViewModelTest {
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, saveAccountFromMnemonicCompletable.callCount)
         assertEquals(1, saveMnemonicCompletable.callCount)
-        testObserver.assertNoErrors()
+        testObserver
+                .assertValue(DataResult(Unit))
+                .assertNoErrors()
                 .assertTerminated()
-                .assertNoValues()
     }
 
     @Test
     fun testSaveAccountWithMnemonicErrorOnSaveAccount() {
-        val testObserver = TestObserver.create<Result<String>>()
+        val testObserver = TestObserver.create<Result<Unit>>()
         val exception = Exception()
         val saveMnemonicCompletable = TestCompletable()
         given(accountsRepositoryMock.saveAccountFromMnemonic(anyString(), anyLong())).willReturn(CompletableError(exception))
@@ -99,14 +100,14 @@ class GenerateMnemonicViewModelTest {
         then(accountsRepositoryMock).should().saveMnemonic(testMnemonic)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(0, saveMnemonicCompletable.callCount)
-        testObserver.assertError(exception)
+        testObserver.assertValue(ErrorResult(exception))
                 .assertTerminated()
-                .assertNoValues()
+                .assertNoErrors()
     }
 
     @Test
     fun testSaveAccountWithMnemonicErrorOnSaveMnemonic() {
-        val testObserver = TestObserver.create<Result<String>>()
+        val testObserver = TestObserver.create<Result<Unit>>()
         val exception = Exception()
         val saveAccountFromMnemonicCompletable = TestCompletable()
         given(accountsRepositoryMock.saveAccountFromMnemonic(anyString(), anyLong())).willReturn(saveAccountFromMnemonicCompletable)
@@ -118,8 +119,8 @@ class GenerateMnemonicViewModelTest {
         then(accountsRepositoryMock).should().saveMnemonic(testMnemonic)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, saveAccountFromMnemonicCompletable.callCount)
-        testObserver.assertError(exception)
+        testObserver.assertValue(ErrorResult(exception))
                 .assertTerminated()
-                .assertNoValues()
+                .assertNoErrors()
     }
 }

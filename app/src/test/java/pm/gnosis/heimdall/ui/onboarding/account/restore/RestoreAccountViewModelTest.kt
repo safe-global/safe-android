@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.onboarding
+package pm.gnosis.heimdall.ui.onboarding.account.restore
 
 import android.content.Context
 import android.content.Intent
@@ -11,8 +11,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
@@ -29,10 +31,10 @@ class RestoreAccountViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var accountsRepositoryMock: AccountsRepository
+    private lateinit var accountsRepositoryMock: AccountsRepository
 
     @Mock
-    lateinit var contextMock: Context
+    private lateinit var contextMock: Context
 
     private lateinit var viewModel: RestoreAccountViewModel
 

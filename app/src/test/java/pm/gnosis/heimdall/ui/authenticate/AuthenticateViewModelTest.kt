@@ -21,7 +21,6 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
 import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.model.Solidity
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -44,7 +43,7 @@ class AuthenticateViewModelTest {
 
     @Before
     fun setup() {
-        given(contextMock.getString(Mockito.anyInt())).willReturn(SecurityViewModelTest.TEST_STRING)
+        given(contextMock.getString(Mockito.anyInt())).willReturn(TEST_STRING)
         viewModel = AuthenticateViewModel(contextMock)
     }
 

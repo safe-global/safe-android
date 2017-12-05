@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/onboarding_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="42dp"
+            android:src="@drawable/ic_safe_intro" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:gravity="center"
+            android:lineSpacingExtra="4sp"
+            android:text="@string/finish_setup_title"
+            android:textColor="@color/gnosis_dark_blue"
+            android:textSize="24sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:lineSpacingExtra="6sp"
+            android:text="@string/finish_setup_description"
+            android:textColor="@color/onboarding_description"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/layout_finish_setup_safe"
+            style="@style/PrimaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/finish_setup_safe"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/layout_finish_setup_skip"
+            style="@style/TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:gravity="center"
+            android:text="@string/finish_setup_skip"
+            android:textColor="@color/onboarding_description"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+</ScrollView>

@@ -10,7 +10,8 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
+import pm.gnosis.heimdall.ui.onboarding.OnboardingIntro
+import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import timber.log.Timber
 import javax.inject.Inject
@@ -35,7 +36,8 @@ class SplashActivity : BaseActivity() {
     private fun handleAction(action: ViewAction) {
         when (action) {
             is StartMain -> startMain()
-            is StartSetup -> startSetup()
+            is StartAccountSetup -> startAccountSetup()
+            is StartPasswordSetup -> startPasswordSetup()
         }
     }
 
@@ -43,8 +45,12 @@ class SplashActivity : BaseActivity() {
         startActivity(SafesOverviewActivity.createIntent(this), noHistory = true)
     }
 
-    private fun startSetup() {
-        startActivity(GenerateMnemonicActivity.createIntent(this), noHistory = true)
+    private fun startAccountSetup() {
+        startActivity(OnboardingIntro.createIntent(this), noHistory = true)
+    }
+
+    private fun startPasswordSetup() {
+        startActivity(PasswordSetupActivity.createIntent(this), noHistory = true)
     }
 
     private fun onError(throwable: Throwable) {

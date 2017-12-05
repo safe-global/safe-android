@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.security
+package pm.gnosis.heimdall.ui.security.unlock
 
 import android.content.Context
 import io.reactivex.Single
@@ -7,10 +7,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
-import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.DataResult
@@ -22,7 +23,7 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 
 @RunWith(MockitoJUnitRunner::class)
-class SecurityViewModelTest {
+class UnlockViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -33,11 +34,11 @@ class SecurityViewModelTest {
     @Mock
     lateinit var encryptionManagerMock: EncryptionManager
 
-    lateinit var viewModel: SecurityViewModel
+    lateinit var viewModel: UnlockViewModel
 
     @Before
     fun setup() {
-        viewModel = SecurityViewModel(contextMock, encryptionManagerMock)
+        viewModel = UnlockViewModel(contextMock, encryptionManagerMock)
         given(contextMock.getString(anyInt(), any())).willReturn(TEST_STRING)
     }
 
@@ -50,7 +51,7 @@ class SecurityViewModelTest {
 
         then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(DataResult(SecurityContract.State.UNLOCKED))
+        observer.assertNoErrors().assertValue(DataResult(UnlockContract.State.UNLOCKED))
     }
 
     @Test
@@ -64,7 +65,7 @@ class SecurityViewModelTest {
         then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(DataResult(SecurityContract.State.LOCKED))
+        observer.assertNoErrors().assertValue(DataResult(UnlockContract.State.LOCKED))
     }
 
     @Test
@@ -78,7 +79,7 @@ class SecurityViewModelTest {
         then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(DataResult(SecurityContract.State.UNINITIALIZED))
+        observer.assertNoErrors().assertValue(DataResult(UnlockContract.State.UNINITIALIZED))
     }
 
     @Test
@@ -95,72 +96,12 @@ class SecurityViewModelTest {
     }
 
     @Test
-    fun setupPinTooShort() {
-        val observer = createObserver()
-
-        viewModel.setupPin("", "").subscribe(observer)
-
-        then(encryptionManagerMock).shouldHaveZeroInteractions()
-        observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
-        then(contextMock).should().getString(R.string.pin_too_short, emptyArray<Any>())
-    }
-
-    @Test
-    fun setupPinNotSame() {
-        val observer = createObserver()
-
-        viewModel.setupPin("123456", "").subscribe(observer)
-
-        then(encryptionManagerMock).shouldHaveZeroInteractions()
-        observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
-        then(contextMock).should().getString(R.string.pin_repeat_wrong, emptyArray<Any>())
-    }
-
-    @Test
-    fun setupPinException() {
-        val observer = createObserver()
-        val exception = IllegalStateException()
-        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
-
-        viewModel.setupPin("123456", "123456").subscribe(observer)
-
-        then(encryptionManagerMock).should().setupPassword("123456".toByteArray())
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(ErrorResult(exception))
-    }
-
-    @Test
-    fun setupPinNoSuccess() {
-        val observer = createObserver()
-        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(false))
-
-        viewModel.setupPin("123456", "123456").subscribe(observer)
-
-        then(encryptionManagerMock).should().setupPassword("123456".toByteArray())
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
-        then(contextMock).should().getString(R.string.pin_setup_failed, emptyArray<Any>())
-    }
-
-    @Test
-    fun setupPinSuccess() {
-        val observer = createObserver()
-        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
-
-        viewModel.setupPin("123456", "123456").subscribe(observer)
-
-        then(encryptionManagerMock).should().setupPassword("123456".toByteArray())
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(DataResult(SecurityContract.State.UNLOCKED))
-    }
-
-    @Test
     fun unlockPinException() {
         val observer = createObserver()
         val exception = IllegalStateException()
         given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.error(exception))
 
-        viewModel.unlockPin("123456").subscribe(observer)
+        viewModel.unlock("123456").subscribe(observer)
 
         then(encryptionManagerMock).should().unlockWithPassword("123456".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -172,7 +113,7 @@ class SecurityViewModelTest {
         val observer = createObserver()
         given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(false))
 
-        viewModel.unlockPin("123456").subscribe(observer)
+        viewModel.unlock("123456").subscribe(observer)
 
         then(encryptionManagerMock).should().unlockWithPassword("123456".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -185,14 +126,14 @@ class SecurityViewModelTest {
         val observer = createObserver()
         given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
 
-        viewModel.unlockPin("123456").subscribe(observer)
+        viewModel.unlock("123456").subscribe(observer)
 
         then(encryptionManagerMock).should().unlockWithPassword("123456".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(DataResult(SecurityContract.State.UNLOCKED))
+        observer.assertNoErrors().assertValue(DataResult(UnlockContract.State.UNLOCKED))
     }
 
-    private fun createObserver() = TestObserver.create<Result<SecurityContract.State>>()
+    private fun createObserver() = TestObserver.create<Result<UnlockContract.State>>()
 
     companion object {
         const val TEST_STRING = "TEST"

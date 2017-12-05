@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.onboarding
+package pm.gnosis.heimdall.ui.onboarding.account.restore
 
 import android.content.Context
 import android.content.Intent
@@ -12,7 +12,6 @@ import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.mnemonic.*
-import pm.gnosis.mnemonic.wordlists.BIP39_WORDLISTS
 import javax.inject.Inject
 
 class RestoreAccountViewModel @Inject constructor(
@@ -21,12 +20,9 @@ class RestoreAccountViewModel @Inject constructor(
 ) : RestoreAccountContract() {
 
     private val errorHandler = SimpleLocalizedException.Handler.Builder(context)
-            .add({ it is InvalidEntropy || it is InvalidChecksum || it is UnknownMnemonicError }, R.string.invalid_mnemonic)
-            .add({ it is MnemonicNotInWordlist }, { _, _ ->
-                val wordLists = BIP39_WORDLISTS.keys.joinToString()
-                context.getString(R.string.invalid_mnemonic_supported_languages, wordLists)
-            })
             .add({ it is EmptyMnemonic }, R.string.invalid_mnemonic_no_words)
+            .add({ it is InvalidEntropy || it is InvalidChecksum || it is UnknownMnemonicError }, R.string.invalid_mnemonic)
+            .add({ it is MnemonicNotInWordlist }, R.string.invalid_mnemonic_supported_languages)
             .build()
 
     override fun saveAccountWithMnemonic(mnemonic: String): Observable<Result<Intent>> =

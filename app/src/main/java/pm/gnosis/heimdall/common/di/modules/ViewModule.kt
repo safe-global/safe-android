@@ -14,14 +14,15 @@ import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
-import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
-import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
+import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
+import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountContract
+import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
-import pm.gnosis.heimdall.ui.security.SecurityContract
+import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
@@ -95,6 +96,10 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
+    fun providesPasswordSetupContract(provider: ViewModelProvider) = provider[PasswordSetupContract::class.java]
+
+    @Provides
+    @ForView
     fun providesSafeDetailsContract(provider: ViewModelProvider) = provider[SafeDetailsContract::class.java]
 
     @Provides
@@ -115,10 +120,6 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesSecurityContract(provider: ViewModelProvider) = provider[SecurityContract::class.java]
-
-    @Provides
-    @ForView
     fun providesSplashContract(provider: ViewModelProvider) = provider[SplashContract::class.java]
 
     @Provides
@@ -132,6 +133,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesTokenManagementContract(provider: ViewModelProvider) = provider[TokenManagementContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesUnlockContract(provider: ViewModelProvider) = provider[UnlockContract::class.java]
 
     @Provides
     @ForView

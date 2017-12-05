@@ -5,6 +5,7 @@ import org.spongycastle.jcajce.provider.symmetric.PBEPBKDF2
 import pm.gnosis.mnemonic.wordlists.BIP39_WORDLISTS
 import pm.gnosis.mnemonic.wordlists.WordList
 import pm.gnosis.utils.getIndexesAllMatching
+import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toBinaryString
 import pm.gnosis.utils.toHexString
 import java.security.NoSuchAlgorithmException
@@ -87,7 +88,9 @@ class Bip39Generator @Inject constructor() : Bip39 {
         val wordList = BIP39_WORDLISTS.values.firstOrNull { wordList -> wordList.words.contains(words[0]) } ?:
                 throw MnemonicNotInWordlist(mnemonic)
 
-        val binaryIndexes = wordList.words.getIndexesAllMatching(words).joinToString("") { Integer.toBinaryString(it).padStart(11, '0') }
+        val binaryIndexes =
+                nullOnThrow { wordList.words.getIndexesAllMatching(words).joinToString("") { Integer.toBinaryString(it).padStart(11, '0') } }
+                        ?: throw MnemonicNotInWordlist(mnemonic)
 
         val checksum = binaryIndexes.subSequence(entropyNBits, binaryIndexes.length)
         val originalEntropy = binaryIndexes.subSequence(0, binaryIndexes.length - checksumNBits)

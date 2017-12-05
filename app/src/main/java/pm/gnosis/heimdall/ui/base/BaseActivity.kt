@@ -10,7 +10,7 @@ import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.security.EncryptionManager
-import pm.gnosis.heimdall.ui.security.SecurityActivity
+import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -56,7 +56,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun checkSecurity(unlocked: Boolean) {
         if (!unlocked) {
-            startActivity(SecurityActivity.createIntent(this))
+            startActivity(UnlockActivity.createIntent(this))
         }
     }
 

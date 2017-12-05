@@ -10,4 +10,5 @@ abstract class SplashContract : ViewModel() {
 
 sealed class ViewAction
 class StartMain : ViewAction()
-class StartSetup : ViewAction()
+class StartAccountSetup : ViewAction()
+class StartPasswordSetup : ViewAction()
