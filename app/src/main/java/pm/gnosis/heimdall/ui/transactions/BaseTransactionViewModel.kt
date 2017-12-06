@@ -54,8 +54,8 @@ class BaseTransactionViewModel @Inject constructor(
                     confirmations + 1 >= requiredConfirmation && isOwner && !hasConfirmed -> TransactionRepository.SubmitType.CONFIRM_AND_EXECUTE
                     !hasConfirmed && isOwner -> TransactionRepository.SubmitType.CONFIRM
                     !isOwner -> throw LocalizedException(context.getString(R.string.error_confirm_not_owner))
-                    hasConfirmed -> throw LocalizedException(context.getString(R.string.error_transaction_already_confirmed))
-                    else -> throw IllegalStateException()
+                    // hasConfirmed == true
+                    else -> throw LocalizedException(context.getString(R.string.error_transaction_already_confirmed))
                 }
             }
 }

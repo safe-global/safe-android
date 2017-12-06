@@ -6,7 +6,7 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class BaseTransactionDetailsViewModel @Inject constructor(
-        val safeRepository: GnosisSafeRepository
+        private val safeRepository: GnosisSafeRepository
 ) : BaseTransactionDetailsContract() {
     private var currentSelectedSafe: BigInteger? = null
 
