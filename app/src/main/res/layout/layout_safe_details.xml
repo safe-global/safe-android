@@ -62,4 +62,13 @@
                 android:text="@string/tab_title_tokens" />
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/layout_safe_details_fab"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_authenticate_light" />
 </android.support.design.widget.CoordinatorLayout>

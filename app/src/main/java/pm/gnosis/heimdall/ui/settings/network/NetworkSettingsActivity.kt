@@ -36,6 +36,19 @@ class NetworkSettingsActivity : BaseActivity() {
         super.onStart()
         disposables += viewModel.loadIpfsUrl().subscribe(::setupIpfsInput, ::handleSetupError)
         disposables += viewModel.loadRpcUrl().subscribe(::setupRpcInput, ::handleSetupError)
+        disposables += viewModel.loadSafeFactoryAddress().subscribe(::setupSafeFactoryInput, ::handleSetupError)
+    }
+
+    private fun setupSafeFactoryInput(address: String) {
+        layout_settings_safe_factory_input.setText(address)
+        disposables += layout_settings_safe_factory_input.textChanges()
+                .skipInitialValue()
+                .debounce(TIMEOUT, TIMEOUT_UNIT)
+                .flatMapSingle {
+                    viewModel.updateSafeFactoryAddress(it.toString())
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeForResult(this::handleSuccess, this::handleError)
     }
 
     private fun setupRpcInput(url: String) {

@@ -50,8 +50,6 @@
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
         android:layout_gravity="end|bottom"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_margin="16dp" />
 
 </android.support.design.widget.CoordinatorLayout>
