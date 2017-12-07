@@ -62,7 +62,7 @@ class TokenBalancesViewModelTest {
         viewModel.observeTokens(refreshEvents).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().observeTokens()
-        then(tokenRepositoryMock).should().loadTokenBalances(testAddress, items)
+        then(tokenRepositoryMock).should().loadTokenBalances(testAddress, listOf(ERC20Token.ETHER_TOKEN) + items)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValueCount(2)
         val values = testObserver.values()
@@ -97,7 +97,7 @@ class TokenBalancesViewModelTest {
         viewModel.observeTokens(refreshEvents).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().observeTokens()
-        then(tokenRepositoryMock).should().loadTokenBalances(account.address, items)
+        then(tokenRepositoryMock).should().loadTokenBalances(account.address, listOf(ERC20Token.ETHER_TOKEN) + items)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValueCount(2)
         val values = testObserver.values()
@@ -150,7 +150,7 @@ class TokenBalancesViewModelTest {
         viewModel.observeTokens(refreshEvents).subscribe(testObserver)
 
         then(tokenRepositoryMock).should().observeTokens()
-        then(tokenRepositoryMock).should().loadTokenBalances(testAddress, items)
+        then(tokenRepositoryMock).should().loadTokenBalances(testAddress, listOf(ERC20Token.ETHER_TOKEN) + items)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValueCount(2)
         testObserver.assertValueAt(0, {

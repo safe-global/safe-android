@@ -63,6 +63,8 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
         editable = arguments?.getBoolean(ARG_EDITABLE, false) ?: false
         val transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
         originalTransaction = transaction
+        layout_transaction_details_asset_transfer_max_amount_button.visibility = if (editable) View.VISIBLE else View.GONE
+        layout_transaction_details_asset_transfer_divider_qr_code.visibility = if (editable) View.VISIBLE else View.GONE
         toggleTransactionInput(editable)
     }
 
@@ -158,6 +160,7 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
         layout_transaction_details_asset_transfer_to_input.isEnabled = enabled
         layout_transaction_details_asset_transfer_amount_input.isEnabled = enabled
         layout_transaction_details_asset_transfer_token_input.isEnabled = enabled
+        layout_transaction_details_asset_transfer_max_amount_button.isEnabled = enabled
     }
 
     override fun inject(component: ApplicationComponent) {

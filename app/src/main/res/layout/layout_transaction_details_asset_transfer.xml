@@ -77,6 +77,7 @@
             android:id="@+id/layout_transaction_details_asset_transfer_divider_qr_code"
             android:layout_width="@dimen/divider_width"
             android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
             android:layout_toLeftOf="@+id/layout_transaction_details_asset_transfer_scan_to_button"
             android:layout_toStartOf="@+id/layout_transaction_details_asset_transfer_scan_to_button"
             android:background="@color/divider" />
@@ -86,6 +87,7 @@
             style="@style/InlineInput"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
             android:layout_gravity="bottom"
             android:layout_toEndOf="@id/layout_transaction_details_asset_transfer_to_label"
             android:layout_toLeftOf="@id/layout_transaction_details_asset_transfer_divider_qr_code"
