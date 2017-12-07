@@ -5,7 +5,6 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
-import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import java.math.BigInteger

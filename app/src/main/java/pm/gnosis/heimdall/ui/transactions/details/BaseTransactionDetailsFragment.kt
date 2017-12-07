@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.transactions.details
 
 import android.content.Context
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
 import com.gojuno.koptional.Optional
+import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -17,9 +19,11 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.ui.transactions.BaseTransactionActivity
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -38,6 +42,11 @@ abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnIt
     abstract fun observeTransaction(): Observable<Result<Transaction>>
     abstract fun observeSafe(): Observable<Optional<BigInteger>>
     abstract fun inputEnabled(enabled: Boolean)
+
+    override fun onStart() {
+        super.onStart()
+        (activity as? BaseTransactionActivity)?.registerFragmentObservables(this)
+    }
 
     protected fun setupSafeSpinner(spinner: Spinner, defaultSafe: BigInteger?) {
         this.spinner = spinner
@@ -58,7 +67,15 @@ abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnIt
             adapter.addAll(state.safes)
             adapter.notifyDataSetChanged()
             it.onItemSelectedListener = this
+            it.setSelection(getCurrentSelectedSafeIndex(state), false)
         }
+    }
+
+    private fun getCurrentSelectedSafeIndex(state: BaseTransactionDetailsContract.State): Int {
+        state.selectedSafeAddress?.let {
+            state.safes.forEachIndexed { index, safe -> if (safe.address == state.selectedSafeAddress) return index }
+        }
+        return 0
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
@@ -68,6 +85,21 @@ abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnIt
 
     override fun onNothingSelected(parent: AdapterView<*>) {
         selectedSafeChanged(null)
+    }
+
+    protected fun prepareInput(input: TextView): Observable<CharSequence> =
+            input
+                    .textChanges()
+                    .debounce(INPUT_DELAY_MS, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnNext {
+                        input.setTextColor(ContextCompat.getColor(context!!, R.color.gnosis_dark_blue))
+                        input.setHintTextColor(ContextCompat.getColor(context!!, R.color.gnosis_dark_blue_alpha_70))
+                    }
+
+    protected fun setInputError(input: TextView) {
+        input.setTextColor(ContextCompat.getColor(context!!, R.color.error))
+        input.setHintTextColor(ContextCompat.getColor(context!!, R.color.error_hint))
     }
 
     private class SafesSpinnerAdapter(context: Context) : ArrayAdapter<Safe>(context, R.layout.layout_safe_spinner_item, ArrayList()) {
@@ -99,5 +131,7 @@ abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnIt
         data class ViewHolder(val itemView: View, val titleText: TextView, val subtitleText: TextView)
     }
 
-
+    companion object {
+        private const val INPUT_DELAY_MS = 500L
+    }
 }

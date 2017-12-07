@@ -19,7 +19,6 @@ import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.heimdall.utils.formatAsLongDate
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import java.math.BigInteger
@@ -27,8 +26,9 @@ import javax.inject.Inject
 
 @ForView
 class SafeTransactionsAdapter @Inject constructor(
-        @ViewContext context: Context,
-        val transactionDetailRepository: TransactionDetailsRepository
+        @ViewContext private val context: Context,
+        private val tokenRepository: TokenRepository,
+        private val transactionDetailRepository: TransactionDetailsRepository
 ) : LifecycleAdapter<String, SafeTransactionsAdapter.ViewHolder>(context) {
     lateinit var safeAddress: BigInteger
     val tokensSelectionSubject: PublishSubject<Transaction> = PublishSubject.create()
@@ -76,18 +76,29 @@ class SafeTransactionsAdapter @Inject constructor(
                 TransactionType.ETHER_TRANSFER -> {
                     val value = (details.transaction.value ?: Wei.ZERO).toEther().stripTrailingZeros().toPlainString()
                     val symbol = itemView.context.getString(R.string.currency_eth)
-                    itemView.layout_safe_transactions_item_value.text = "$value $symbol"
+
+                    itemView.layout_safe_transactions_item_value.text = context.getString(R.string.outgoing_transaction_value, value, symbol)
                     itemView.layout_safe_transactions_item_value.visibility = View.VISIBLE
                 }
                 TransactionType.TOKEN_TRANSFER -> {
-                    val value = (details.data as? TokenTransferData)?.tokens ?: BigInteger.ZERO
-                    itemView.layout_safe_transactions_item_value.text = value.asDecimalString()
-                    itemView.layout_safe_transactions_item_value.visibility = View.VISIBLE
+                    (details.data as? TokenTransferData)?.let {
+                        loadTokenValue(details.transaction.address, it.tokens)
+                    }
                 }
                 else -> {
                     itemView.layout_safe_transactions_item_value.visibility = View.GONE
                 }
             }
+        }
+
+        private fun loadTokenValue(token: BigInteger, value: BigInteger) {
+            disposables += tokenRepository.observeToken(token)
+                    .map { it.symbol to it.convertAmount(value).setScale(5).stripTrailingZeros().toPlainString() }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ (symbol, amount) ->
+                        itemView.layout_safe_transactions_item_value.text = context.getString(R.string.outgoing_transaction_value, amount, symbol)
+                        itemView.layout_safe_transactions_item_value.visibility = View.VISIBLE
+                    }, Timber::e)
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
@@ -46,13 +47,13 @@ class TokenBalancesViewModelTest {
     @Test
     fun observeTokens() {
         val items = listOf<ERC20Token>()
-        val testObserver = TestObserver<Result<Adapter.Data<TokenBalancesContract.ERC20TokenWithBalance>>>()
+        val testObserver = TestObserver<Result<Adapter.Data<ERC20TokenWithBalance>>>()
         val loadingObserver = TestObserver<Boolean>()
         val refreshEvents = Observable.just(Unit)
         val token = ERC20Token(testAddress, decimals = 18)
         val balance = BigInteger.ZERO
         val tokensWithBalances = arrayListOf(token to balance)
-        val tokensWithBalancesMapped = arrayListOf(TokenBalancesContract.ERC20TokenWithBalance(token, balance))
+        val tokensWithBalancesMapped = arrayListOf(ERC20TokenWithBalance(token, balance))
         given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.just(items))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), anyList())).willReturn(Observable.just(tokensWithBalances))
 
@@ -80,14 +81,14 @@ class TokenBalancesViewModelTest {
     @Test
     fun observeTokensWithAddress() {
         val items = listOf<ERC20Token>()
-        val testObserver = TestObserver<Result<Adapter.Data<TokenBalancesContract.ERC20TokenWithBalance>>>()
+        val testObserver = TestObserver<Result<Adapter.Data<ERC20TokenWithBalance>>>()
         val loadingObserver = TestObserver<Boolean>()
         val refreshEvents = Observable.just(Unit)
         val account = Account(testAddress)
         val token = ERC20Token(testAddress, decimals = 18)
         val balance = BigInteger.ZERO
         val tokensWithBalances = arrayListOf(token to balance)
-        val tokensWithBalancesMapped = arrayListOf(TokenBalancesContract.ERC20TokenWithBalance(token, balance))
+        val tokensWithBalancesMapped = arrayListOf(ERC20TokenWithBalance(token, balance))
         given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.just(items))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), anyList())).willReturn(Observable.just(tokensWithBalances))
 
@@ -114,7 +115,7 @@ class TokenBalancesViewModelTest {
 
     @Test
     fun observeTokensErrorObserveTokens() {
-        val testObserver = TestObserver<Result<Adapter.Data<TokenBalancesContract.ERC20TokenWithBalance>>>()
+        val testObserver = TestObserver<Result<Adapter.Data<ERC20TokenWithBalance>>>()
         val loadingObserver = TestObserver<Boolean>()
         val refreshEvents = Observable.just(Unit)
         val exception = Exception()
@@ -136,11 +137,11 @@ class TokenBalancesViewModelTest {
     @Test
     fun observeTokensLoadTokenBalancesError() {
         val items = listOf<ERC20Token>()
-        val testObserver = TestObserver<Result<Adapter.Data<TokenBalancesContract.ERC20TokenWithBalance>>>()
+        val testObserver = TestObserver<Result<Adapter.Data<ERC20TokenWithBalance>>>()
         val loadingObserver = TestObserver<Boolean>()
         val refreshEvents = Observable.just(Unit)
         val exception = Exception()
-        val errorResult = ErrorResult<List<TokenBalancesContract.ERC20TokenWithBalance>>(exception)
+        val errorResult = ErrorResult<List<ERC20TokenWithBalance>>(exception)
         given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.just(items))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), anyList())).willReturn(Observable.error(exception))
 

@@ -103,6 +103,9 @@
 
     <style name="TextButton" parent="TextAppearance.AppCompat.Button">
         <item name="android:textColor">@color/gnosis_blue</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
         <item name="android:background">@drawable/selectable_background</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>

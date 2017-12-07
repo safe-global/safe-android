@@ -3,22 +3,16 @@ package pm.gnosis.heimdall.ui.transactions
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.Before
-import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
-import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
-import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import java.math.BigInteger

@@ -7,6 +7,7 @@ import com.squareup.moshi.Types
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.StandardToken
@@ -18,11 +19,13 @@ import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import pm.gnosis.heimdall.data.remote.BulkRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.fromDb
 import pm.gnosis.heimdall.data.repositories.models.toDb
+import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsContract.Companion.ETHER_TOKEN
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.*
 import pm.gnosis.utils.exceptions.InvalidAddressException
@@ -50,6 +53,16 @@ class DefaultTokenRepository @Inject constructor(
                     .map { it.fromDb() }
                     .subscribeOn(Schedulers.io())
 
+    override fun loadTokens(): Single<List<ERC20Token>> =
+            erc20TokenDao.loadTokens()
+                    .subscribeOn(Schedulers.io())
+                    .map { it.map { it.fromDb() } }
+
+    override fun loadToken(address: BigInteger): Single<ERC20Token> =
+            erc20TokenDao.loadToken(address)
+                    .map { it.fromDb() }
+                    .subscribeOn(Schedulers.io())
+
     override fun loadTokenInfo(contractAddress: BigInteger): Observable<ERC20Token> {
         if (!contractAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(contractAddress))
         val request = TokenInfoRequest(
@@ -66,10 +79,18 @@ class DefaultTokenRepository @Inject constructor(
         if (!ofAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(ofAddress))
         val requests = TokenBalancesRequest(
                 erC20Tokens.mapIndexed { index, token ->
-                    BulkRequest.SubRequest(TransactionCallParams(
-                            to = token.address.asEthereumAddressString(),
-                            data = StandardToken.BalanceOf.encode(Solidity.Address(ofAddress))).callRequest(index),
-                            { nullOnThrow { StandardToken.BalanceOf.decode(it.checkedResult()).param0.value } })
+                    if (token == ETHER_TOKEN) {
+                        BulkRequest.SubRequest(JsonRpcRequest(
+                                id = index,
+                                method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
+                                params = arrayListOf(ofAddress, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
+                                { nullOnThrow { it.checkedResult().hexAsBigInteger() } })
+                    } else {
+                        BulkRequest.SubRequest(TransactionCallParams(
+                                to = token.address.asEthereumAddressString(),
+                                data = StandardToken.BalanceOf.encode(Solidity.Address(ofAddress))).callRequest(index),
+                                { nullOnThrow { StandardToken.BalanceOf.decode(it.checkedResult()).param0.value } })
+                    }
                 }.toList())
 
 

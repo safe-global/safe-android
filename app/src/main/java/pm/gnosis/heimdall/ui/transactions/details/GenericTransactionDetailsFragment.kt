@@ -2,15 +2,12 @@ package pm.gnosis.heimdall.ui.transactions.details
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.gojuno.koptional.None
 import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
-import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function3
@@ -33,7 +30,6 @@ import pm.gnosis.models.Wei
 import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigInteger
-import java.util.concurrent.TimeUnit
 
 
 class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
@@ -51,13 +47,16 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
         editable = arguments?.getBoolean(ARG_EDITABLE, false) ?: false
         val transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
         originalTransaction = transaction
-        val safe = arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull()
         layout_transaction_details_generic_to_input.setText(transaction?.address?.asEthereumAddressStringOrNull())
         layout_transaction_details_generic_data_input.setText(transaction?.data)
         layout_transaction_details_generic_value_input.setText(transaction?.value?.value?.asDecimalString())
         toggleTransactionInput(editable)
-        setupSafeSpinner(layout_transaction_details_generic_safe_input, safe)
+    }
 
+    override fun onStart() {
+        super.onStart()
+        val safe = arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull()
+        setupSafeSpinner(layout_transaction_details_generic_safe_input, safe)
         disposables += Observable.combineLatest(
                 prepareInput(layout_transaction_details_generic_to_input),
                 prepareInput(layout_transaction_details_generic_value_input),
@@ -131,21 +130,6 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
                 }
     }
 
-    private fun setInputError(input: TextView) {
-        input.setTextColor(ContextCompat.getColor(context!!, R.color.error))
-        input.setHintTextColor(ContextCompat.getColor(context!!, R.color.error_hint))
-    }
-
-    private fun prepareInput(input: TextView): Observable<CharSequence> =
-            input
-                    .textChanges()
-                    .debounce(INPUT_DELAY_MS, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext {
-                        input.setTextColor(ContextCompat.getColor(context!!, R.color.gnosis_dark_blue))
-                        input.setHintTextColor(ContextCompat.getColor(context!!, R.color.gnosis_dark_blue_alpha_70))
-                    }
-
     override fun observeSafe(): Observable<Optional<BigInteger>> {
         return safeSubject
     }
@@ -180,7 +164,6 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
 
     companion object {
 
-        private const val INPUT_DELAY_MS = 500L
         private const val ARG_TRANSACTION = "argument.parcelable.transaction"
         private const val ARG_SAFE = "argument.string.safe"
         private const val ARG_EDITABLE = "argument.boolean.editable"

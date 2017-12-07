@@ -17,9 +17,9 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.security.EncryptionManager
+import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 
 @RunWith(MockitoJUnitRunner::class)
 class SecurityViewModelTest {

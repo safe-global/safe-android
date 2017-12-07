@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
-import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -73,7 +72,7 @@ class SafeDetailsActivity : BaseActivity() {
         }
 
         layout_safe_details_fab.setOnClickListener {
-            startActivity(CreateTransactionActivity.createIntent(this, safeAddress.hexAsBigIntegerOrNull(), TransactionType.GENERIC, null))
+            startActivity(CreateTransactionActivity.createIntent(this, safeAddress.hexAsBigIntegerOrNull(), TransactionType.TOKEN_TRANSFER, null))
         }
         layout_safe_details_viewpager.adapter = pagerAdapter()
         layout_safe_details_tabbar.setupWithViewPager(layout_safe_details_viewpager)

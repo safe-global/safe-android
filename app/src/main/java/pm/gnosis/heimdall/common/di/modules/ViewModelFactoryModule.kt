@@ -35,16 +35,18 @@ import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementViewModel
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.splash.SplashViewModel
-import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
-import pm.gnosis.heimdall.ui.tokens.info.TokenInfoViewModel
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenViewModel
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesViewModel
+import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
+import pm.gnosis.heimdall.ui.tokens.info.TokenInfoViewModel
 import pm.gnosis.heimdall.ui.transactions.BaseTransactionContract
 import pm.gnosis.heimdall.ui.transactions.BaseTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionViewModel
+import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsViewModel
 import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsViewModel
 import javax.inject.Singleton
@@ -70,6 +72,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AddTokenContract::class)
     abstract fun bindsAddTokenContract(viewModel: AddTokenViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AssetTransferTransactionDetailsContract::class)
+    abstract fun bindsAssetTransferTransactionDetailsContract(viewModel: AssetTransferTransactionDetailsViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -5,7 +5,6 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okio.ByteString
 import pm.gnosis.crypto.utils.Base58Utils
-import pm.gnosis.heimdall.DailyLimitException
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.common.utils.getSharedObservable
@@ -16,7 +15,10 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
-import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.TokenTransferData
+import pm.gnosis.heimdall.data.repositories.TransactionDetails
+import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
+import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
@@ -43,9 +45,15 @@ class IpfsTransactionDetailsRepository @Inject constructor(
 
     private val detailRequests = ConcurrentHashMap<String, Observable<GnosisSafeTransactionDescription>>()
 
+    override fun loadTransactionDetails(transaction: Transaction): Single<TransactionDetails> {
+        return Single.fromCallable {
+            decodeTransactionResult(null, transaction)
+        }
+    }
+
     override fun loadTransactionDetails(id: String, address: BigInteger, transactionHash: String?): Single<TransactionDetails> {
         return loadDescription(id, address, transactionHash)
-                .map { decodeTransactionResult(id, it) }
+                .map { decodeDescription(id, it) }
     }
 
     private fun loadDescription(id: String, address: BigInteger, transactionHash: String?): Single<GnosisSafeTransactionDescription> {
@@ -111,9 +119,11 @@ class IpfsTransactionDetailsRepository @Inject constructor(
                 Base58Utils.encode(ByteString.decodeHex(IPFS_HASH_PREFIX + hash))
             }
 
-    private fun decodeTransactionResult(transactionId: String, description: GnosisSafeTransactionDescription): TransactionDetails {
-        val transaction = Transaction(description.to, value = description.value, data = description.data, nonce = description.nonce)
-        val type = parseTransactionType(description.value.value, transaction.data)
+    private fun decodeDescription(transactionId: String, description: GnosisSafeTransactionDescription) =
+            decodeTransactionResult(transactionId, description.toTransaction(), description.subject, description.submittedAt)
+
+    private fun decodeTransactionResult(transactionId: String?, transaction: Transaction, subject: String? = null, submittedAt: Long? = null): TransactionDetails {
+        val type = parseTransactionType(transaction.value?.value ?: BigInteger.ZERO, transaction.data)
         val transactionData = when (type) {
             TransactionType.TOKEN_TRANSFER -> {
                 val arguments = transaction.data!!.removeSolidityMethodPrefix(StandardToken.Transfer.METHOD_ID)
@@ -121,6 +131,9 @@ class IpfsTransactionDetailsRepository @Inject constructor(
             }
             else -> null
         }
-        return TransactionDetails(transactionId, type, transactionData, transaction, description.subject, description.submittedAt)
+        return TransactionDetails(transactionId, type, transactionData, transaction, subject, submittedAt)
     }
+
+    private fun GnosisSafeTransactionDescription.toTransaction(): Transaction =
+            Transaction(to, value = value, data = data, nonce = nonce)
 }

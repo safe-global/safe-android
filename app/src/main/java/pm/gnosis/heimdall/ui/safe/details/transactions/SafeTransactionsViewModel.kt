@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.safe.details.transactions
 
 import io.reactivex.Flowable
-import io.reactivex.Observable
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository

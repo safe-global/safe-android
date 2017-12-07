@@ -7,9 +7,10 @@ import java.math.BigInteger
 interface TransactionDetailsRepository {
     fun loadTransactionDetails(id: String, address: BigInteger, transactionHash: String?): Single<TransactionDetails>
     fun loadTransactionType(transaction: Transaction): Single<TransactionType>
+    fun loadTransactionDetails(transaction: Transaction): Single<TransactionDetails>
 }
 
-data class TransactionDetails(val transactionId: String, val type: TransactionType, val data: TransactionTypeData?,
+data class TransactionDetails(val transactionId: String?, val type: TransactionType, val data: TransactionTypeData?,
                               val transaction: Transaction, val subject: String? = null, val timestamp: Long? = null)
 
 sealed class TransactionTypeData

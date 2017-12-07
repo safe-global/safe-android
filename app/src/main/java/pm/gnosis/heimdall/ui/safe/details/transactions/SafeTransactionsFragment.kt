@@ -5,12 +5,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.jakewharton.rxbinding2.support.v4.widget.refreshes
-import com.jakewharton.rxbinding2.support.v7.widget.scrollEvents
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_safe_transactions.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
@@ -22,7 +18,6 @@ import pm.gnosis.heimdall.common.utils.withArgs
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
-import pm.gnosis.heimdall.utils.isAtEnd
 import pm.gnosis.utils.hexAsBigInteger
 import timber.log.Timber
 import javax.inject.Inject

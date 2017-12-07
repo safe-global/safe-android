@@ -29,6 +29,7 @@ import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
 import pm.gnosis.heimdall.ui.transactions.BaseTransactionContract
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
+import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsContract
 
 @Module
@@ -57,6 +58,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesAddressBookContract(provider: ViewModelProvider) = provider[AddressBookContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesAssetTransferTransactionDetailsContract(provider: ViewModelProvider) = provider[AssetTransferTransactionDetailsContract::class.java]
 
     @Provides
     @ForView

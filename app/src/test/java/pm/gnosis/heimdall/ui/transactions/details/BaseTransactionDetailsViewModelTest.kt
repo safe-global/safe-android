@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions.details
 
 import io.reactivex.processors.BehaviorProcessor
-import io.reactivex.processors.PublishProcessor
 import io.reactivex.subscribers.TestSubscriber
 import org.junit.Before
 import org.junit.Rule

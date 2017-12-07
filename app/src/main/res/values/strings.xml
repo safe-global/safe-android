@@ -190,4 +190,9 @@
     <string name="error_transaction_already_executed">Transaction was already executed!</string>
     <string name="error_confirm_not_owner">You cannot confirm a transaction for this safe!</string>
     <string name="error_transaction_already_confirmed">You already confirmed this transaction!</string>
+    <string name="create_transaction">Create Transaction</string>
+    <string name="select_token">Select token</string>
+    <string name="max_balance">Max. balance</string>
+    <string name="outgoing_transaction_value">-%s %s</string>
+    <string name="unknown_balance">The current balance for the selected asset is unknown.</string>
 </resources>

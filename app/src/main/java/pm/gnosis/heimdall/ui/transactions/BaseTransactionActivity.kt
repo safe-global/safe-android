@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.GenericTransactionDetailsFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
@@ -30,7 +31,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
     @Inject
     lateinit var viewModel: BaseTransactionContract
 
-    private lateinit var currentFragment: BaseTransactionDetailsFragment
+    private var currentFragment: BaseTransactionDetailsFragment? = null
     private var currentInfo: Pair<BigInteger?, Transaction>? = null
 
     private val transactionInfoTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, *> =
@@ -81,7 +82,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
 
         val fragment = supportFragmentManager.findFragmentById(R.id.layout_transaction_details_transaction_container)
         if (fragment is BaseTransactionDetailsFragment) {
-            setupFragment(fragment)
+            setCurrentFragment(fragment)
         } else {
             loadTransactionDetails()
         }
@@ -90,18 +91,24 @@ abstract class BaseTransactionActivity : BaseActivity() {
     private fun submittingTransaction(loading: Boolean) {
         layout_transaction_details_progress_bar.visibility = if (loading) View.VISIBLE else View.GONE
         layout_transaction_details_button.isEnabled = !loading
-        currentFragment.inputEnabled(!loading)
+        currentFragment?.inputEnabled(!loading)
     }
 
     protected fun displayTransactionDetails(fragment: BaseTransactionDetailsFragment) {
         supportFragmentManager.transaction {
             replace(R.id.layout_transaction_details_transaction_container, fragment)
         }
-        setupFragment(fragment)
+        setCurrentFragment(fragment)
     }
 
-    private fun setupFragment(fragment: BaseTransactionDetailsFragment) {
+    private fun setCurrentFragment(fragment: BaseTransactionDetailsFragment) {
         currentFragment = fragment
+    }
+
+    fun registerFragmentObservables(fragment: BaseTransactionDetailsFragment) {
+        if (currentFragment != fragment) {
+            return
+        }
         disposables += Observable.combineLatest(fragment.observeSafe(), fragment.observeTransaction(), BiFunction { safeAddress: Optional<BigInteger>, transaction: Result<Transaction> ->
             safeAddress.toNullable() to transaction
         })
@@ -165,6 +172,8 @@ abstract class BaseTransactionActivity : BaseActivity() {
 
     protected open fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?, editable: Boolean): BaseTransactionDetailsFragment {
         return when (type) {
+            TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
+                AssetTransferTransactionDetailsFragment.createInstance(transaction, safeAddress, editable)
             else -> GenericTransactionDetailsFragment.createInstance(transaction, safeAddress, editable)
         }
     }

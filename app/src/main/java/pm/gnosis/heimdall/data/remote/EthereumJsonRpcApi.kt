@@ -5,7 +5,6 @@ import pm.gnosis.heimdall.app.core.BuildConfig
 import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
 import retrofit2.http.Body
 import retrofit2.http.POST
-import java.lang.IllegalStateException
 
 interface EthereumJsonRpcApi {
     companion object {

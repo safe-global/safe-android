@@ -2,6 +2,8 @@ package pm.gnosis.heimdall.ui.transactions
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import kotlinx.android.synthetic.main.layout_transaction_details.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -15,6 +17,11 @@ import java.math.BigInteger
 
 
 class CreateTransactionActivity : BaseTransactionActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        layout_transaction_details_toolbar.title = getString(R.string.create_transaction)
+    }
 
     override fun loadTransactionDetails() {
         if (!parseAndDisplayExtras(intent)) {

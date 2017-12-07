@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions
 
 import android.content.Context
-import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.Function

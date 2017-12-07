@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.utils.scanToAdapterDataResult
 import pm.gnosis.utils.exceptions.InvalidAddressException

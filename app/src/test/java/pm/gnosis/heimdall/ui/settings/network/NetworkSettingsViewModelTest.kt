@@ -15,7 +15,6 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
-import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsViewModel
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.utils.exceptions.InvalidAddressException

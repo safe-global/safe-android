@@ -8,8 +8,6 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
 import pm.gnosis.heimdall.GnosisSafe.Required
-import pm.gnosis.heimdall.GnosisSafeWithDescriptions.GetDescriptionCount
-import pm.gnosis.heimdall.GnosisSafeWithDescriptions.GetDescriptions
 import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory
 import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory.Events.GnosisSafeWithDescriptionsCreation
 import pm.gnosis.heimdall.accounts.base.models.Account
@@ -37,7 +35,6 @@ import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.nullOnThrow
-import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
