@@ -31,6 +31,7 @@ import pm.gnosis.heimdall.ui.transactions.BaseTransactionContract
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.GenericTransactionDetailsContract
 
 @Module
 class ViewModule(val context: Context) {
@@ -78,6 +79,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesGenerateMnemonicContract(provider: ViewModelProvider) = provider[GenerateMnemonicContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesGenericTransactionDetailsContract(provider: ViewModelProvider) = provider[GenericTransactionDetailsContract::class.java]
 
     @Provides
     @ForView

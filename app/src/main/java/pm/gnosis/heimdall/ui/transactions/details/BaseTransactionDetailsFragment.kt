@@ -55,7 +55,7 @@ abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnIt
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::setSpinnerData, {
                     val safes = defaultSafe?.let { listOf(Safe(it)) } ?: emptyList()
-                    setSpinnerData(BaseTransactionDetailsContract.State(defaultSafe, safes))
+                    setSpinnerData(BaseTransactionDetailsContract.State(0, safes))
                 })
     }
 
@@ -67,15 +67,8 @@ abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnIt
             adapter.addAll(state.safes)
             adapter.notifyDataSetChanged()
             it.onItemSelectedListener = this
-            it.setSelection(getCurrentSelectedSafeIndex(state), false)
+            it.setSelection(state.selectedIndex, false)
         }
-    }
-
-    private fun getCurrentSelectedSafeIndex(state: BaseTransactionDetailsContract.State): Int {
-        state.selectedSafeAddress?.let {
-            state.safes.forEachIndexed { index, safe -> if (safe.address == state.selectedSafeAddress) return index }
-        }
-        return 0
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {

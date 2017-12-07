@@ -19,23 +19,27 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
-import pm.gnosis.models.Wei
-import pm.gnosis.utils.*
+import pm.gnosis.utils.asDecimalString
+import pm.gnosis.utils.asEthereumAddressStringOrNull
+import pm.gnosis.utils.hexAsBigIntegerOrNull
 import timber.log.Timber
 import java.math.BigInteger
+import javax.inject.Inject
 
 
 class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
 
+    @Inject
+    lateinit var subViewModel: GenericTransactionDetailsContract
+
     private val safeSubject = BehaviorSubject.createDefault<Optional<BigInteger>>(None)
-    private val inputSubject = PublishSubject.create<CombinedRawInput>()
+    private val inputSubject = PublishSubject.create<GenericTransactionDetailsContract.CombinedRawInput>()
     private var editable: Boolean = false
     private var originalTransaction: Transaction? = null
 
@@ -62,7 +66,7 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
                 prepareInput(layout_transaction_details_generic_value_input),
                 prepareInput(layout_transaction_details_generic_data_input),
                 Function3 { to: CharSequence, value: CharSequence, data: CharSequence ->
-                    CombinedRawInput(to.toString() to false, value.toString() to false, data.toString() to false)
+                    GenericTransactionDetailsContract.CombinedRawInput(to.toString() to false, value.toString() to false, data.toString() to false)
                 }
         ).subscribe(inputSubject::onNext, Timber::e)
     }
@@ -86,32 +90,7 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
 
     override fun observeTransaction(): Observable<Result<Transaction>> {
         return inputSubject
-                .scan { old, new -> old.diff(new) }
-                .map {
-                    val to = it.to.first.hexAsEthereumAddressOrNull()
-                    val data = it.data.first.hexStringToByteArrayOrNull()
-                    val value = it.value.first.decimalAsBigIntegerOrNull()
-                    var errorFields = 0
-                    var showToast = false
-                    if (to == null) {
-                        errorFields = errorFields or TransactionInputException.TO_FIELD
-                        showToast = showToast or it.to.second
-                    }
-                    if (it.data.first.isNotBlank() && data == null) {
-                        errorFields = errorFields or TransactionInputException.DATA_FIELD
-                        showToast = showToast or it.data.second
-                    }
-                    if (value == null) {
-                        errorFields = errorFields or TransactionInputException.VALUE_FIELD
-                        showToast = showToast or it.value.second
-                    }
-                    if (errorFields > 0) {
-                        ErrorResult<Transaction>(TransactionInputException(context!!, errorFields, showToast))
-                    } else {
-                        val nonce = originalTransaction?.nonce ?: BigInteger.valueOf(System.currentTimeMillis())
-                        DataResult(Transaction(to!!, value = Wei(value!!), data = data?.toHexString(), nonce = nonce))
-                    }
-                }
+                .compose(subViewModel.inputTransformer(context!!, originalTransaction))
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
                     (it as? ErrorResult)?.let {
@@ -130,26 +109,13 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
                 }
     }
 
-    override fun observeSafe(): Observable<Optional<BigInteger>> {
-        return safeSubject
-    }
+    override fun observeSafe(): Observable<Optional<BigInteger>> = safeSubject
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
                 .applicationComponent(component)
                 .viewModule(ViewModule(activity!!))
                 .build().inject(this)
-    }
-
-    // Field and if the field has changed
-    private data class CombinedRawInput(val to: Pair<String, Boolean>, val value: Pair<String, Boolean>, val data: Pair<String, Boolean>) {
-        fun diff(other: CombinedRawInput): CombinedRawInput =
-                CombinedRawInput(check(this.to, other.to), check(this.value, other.value), check(this.data, other.data))
-
-        companion object {
-            private fun check(current: Pair<String, Boolean>, change: Pair<String, Boolean>): Pair<String, Boolean> =
-                    change.first to (current.first != change.first)
-        }
     }
 
     class TransactionInputException(context: Context, val errorFields: Int, val showSnackbar: Boolean) : LocalizedException(
@@ -159,6 +125,26 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
             const val TO_FIELD = 1
             const val VALUE_FIELD = 1 shl 1
             const val DATA_FIELD = 1 shl 2
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+
+            other as TransactionInputException
+
+            if (errorFields != other.errorFields) return false
+            if (showSnackbar != other.showSnackbar) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + errorFields
+            result = 31 * result + showSnackbar.hashCode()
+            return result
         }
     }
 

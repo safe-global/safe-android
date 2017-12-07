@@ -45,10 +45,7 @@ import pm.gnosis.heimdall.ui.transactions.BaseTransactionContract
 import pm.gnosis.heimdall.ui.transactions.BaseTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionViewModel
-import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsViewModel
-import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsViewModel
+import pm.gnosis.heimdall.ui.transactions.details.*
 import javax.inject.Singleton
 
 @Module
@@ -97,6 +94,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(GenerateMnemonicContract::class)
     abstract fun bindsGenerateMnemonicContract(viewModel: GenerateMnemonicViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GenericTransactionDetailsContract::class)
+    abstract fun bindsGenericTransactionDetailsContract(viewModel: GenericTransactionDetailsViewModel): ViewModel
 
     @Binds
     @IntoMap

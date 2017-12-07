@@ -11,6 +11,7 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TokenTransferData
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -45,11 +46,13 @@ class AssetTransferTransactionDetailsViewModel @Inject constructor(
                                     Single.just(FormData(ETHER_TOKEN.address, details.transaction.address, details.transaction.value?.value ?: BigInteger.ZERO, ETHER_TOKEN))
                             }
                         }
+                        .onErrorReturnItem(FormData())
             } ?: Single.just(FormData())
 
 
     override fun observeTokens(defaultToken: BigInteger?, safeAddress: BigInteger?): Observable<State> =
             tokenRepository.loadTokens()
+                    .onErrorReturnItem(emptyList())
                     .map { arrayListOf(ETHER_TOKEN) + it }
                     .flatMapObservable {
                         val tokensNoBalance = it.map { ERC20TokenWithBalance(it, null) }
@@ -65,7 +68,15 @@ class AssetTransferTransactionDetailsViewModel @Inject constructor(
                         else
                             Observable.just(tokensNoBalance)
                     }
-                    .map { State(defaultToken, it) }
+                    .map { State(getCurrentSelectedTokenIndex(defaultToken, it), it) }
+
+
+    private fun getCurrentSelectedTokenIndex(selectedToken: BigInteger?, tokens: List<ERC20TokenWithBalance>): Int {
+        selectedToken?.let {
+            tokens.forEachIndexed { index, token -> if (token.token.address == selectedToken) return index }
+        }
+        return 0
+    }
 
     override fun inputTransformer(context: Context, originalTransaction: Transaction?): ObservableTransformer<CombinedRawInput, Result<Transaction>> =
             ObservableTransformer {

@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.utils.scanToAdapterDataResult
@@ -34,7 +35,10 @@ class TokenBalancesViewModel @Inject constructor(@ApplicationContext private val
             Observable
                     .combineLatest(refreshEvents.startWith(Unit), tokenRepository.observeTokens().toObservable(),
                             BiFunction { _: Unit, tokens: List<ERC20Token> -> tokens })
-                    .flatMap { tokens -> loadTokenBalances(address, tokens).mapToResult() }
+                    .flatMap { tokens ->
+                        val tokensWithEther = listOf(ETHER_TOKEN) + tokens
+                        loadTokenBalances(address, tokensWithEther).mapToResult()
+                    }
                     .scanToAdapterDataResult({ it.token.address })
 
 

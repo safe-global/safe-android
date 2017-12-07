@@ -12,6 +12,10 @@ data class ERC20Token(val address: BigInteger,
     fun convertAmount(unscaledAmount: BigInteger): BigDecimal =
             BigDecimal(unscaledAmount).setScale(decimals).div(BigDecimal.TEN.pow(decimals))
 
+    companion object {
+        val ETHER_TOKEN = ERC20Token(BigInteger.ZERO, decimals = 18, symbol = "ETH", name = "Ether")
+    }
+
 }
 
 data class ERC20TokenWithBalance(val token: ERC20Token, val balance: BigInteger? = null)

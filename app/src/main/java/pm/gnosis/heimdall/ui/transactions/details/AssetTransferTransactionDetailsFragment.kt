@@ -35,6 +35,7 @@ import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import pm.gnosis.utils.nullOnThrow
+import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -86,7 +87,7 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
                 .subscribe({
                     nullOnThrow { adapter.getItem(layout_transaction_details_asset_transfer_token_input.selectedItemPosition) }?.let {
                         if (it.balance != null) {
-                            val amount = it.token.convertAmount(it.balance).stripTrailingZeros()?.toPlainString()
+                            val amount = it.token.convertAmount(it.balance).stringWithNoTrailingZeroes()
                             layout_transaction_details_asset_transfer_amount_input.setText(amount)
                         } else {
                             snackbar(view!!, R.string.unknown_balance)
@@ -97,7 +98,7 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
             subViewModel.observeTokens(info.selectedToken, it.toNullable())
         }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::setSpinnerData, { setSpinnerData(AssetTransferTransactionDetailsContract.State(info.selectedToken, emptyList())) })
+                .subscribe(::setSpinnerData, { setSpinnerData(AssetTransferTransactionDetailsContract.State(0, emptyList())) })
 
         disposables += Observable.combineLatest(
                 prepareInput(layout_transaction_details_asset_transfer_to_input),
@@ -115,15 +116,8 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
             adapter.clear()
             adapter.addAll(state.tokens)
             adapter.notifyDataSetChanged()
-            it.setSelection(getCurrentSelectedTokenIndex(state))
+            it.setSelection(state.selectedIndex)
         }
-    }
-
-    private fun getCurrentSelectedTokenIndex(state: AssetTransferTransactionDetailsContract.State): Int {
-        state.selectedToken?.let {
-            state.tokens.forEachIndexed { index, token -> if (token.token.address == state.selectedToken) return index }
-        }
-        return 0
     }
 
     override fun observeTransaction(): Observable<Result<Transaction>> {
@@ -205,10 +199,31 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
     class TransactionInputException(context: Context, val errorFields: Int, val showSnackbar: Boolean) : LocalizedException(
             context.getString(R.string.error_transaction_params)
     ) {
+
         companion object {
             const val TO_FIELD = 1
             const val TOKEN_FIELD = 1 shl 1
             const val AMOUNT_FIELD = 1 shl 2
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+
+            other as TransactionInputException
+
+            if (errorFields != other.errorFields) return false
+            if (showSnackbar != other.showSnackbar) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + errorFields
+            result = 31 * result + showSnackbar.hashCode()
+            return result
         }
     }
 

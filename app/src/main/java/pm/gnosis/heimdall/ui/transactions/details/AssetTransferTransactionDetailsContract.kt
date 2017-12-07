@@ -19,7 +19,7 @@ abstract class AssetTransferTransactionDetailsContract : ViewModel() {
 
     data class FormData(val selectedToken: BigInteger? = null, val to: BigInteger? = null, val tokenAmount: BigInteger? = null, val token: ERC20Token? = null)
 
-    data class State(val selectedToken: BigInteger?, val tokens: List<ERC20TokenWithBalance>)
+    data class State(val selectedIndex: Int, val tokens: List<ERC20TokenWithBalance>)
 
     data class CombinedRawInput(val to: Pair<String, Boolean>, val amount: Pair<String, Boolean>, val token: Pair<ERC20TokenWithBalance?, Boolean>) {
         fun diff(other: CombinedRawInput): CombinedRawInput =
@@ -29,9 +29,5 @@ abstract class AssetTransferTransactionDetailsContract : ViewModel() {
             private fun <T> check(current: Pair<T, Boolean>, change: Pair<T, Boolean>): Pair<T, Boolean> =
                     change.first to (current.first != change.first)
         }
-    }
-
-    companion object {
-        val ETHER_TOKEN = ERC20Token(BigInteger.ZERO, decimals = 18, symbol = "ETH")
     }
 }

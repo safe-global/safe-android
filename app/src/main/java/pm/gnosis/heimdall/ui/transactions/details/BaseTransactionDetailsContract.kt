@@ -11,5 +11,5 @@ abstract class BaseTransactionDetailsContract : ViewModel() {
 
     abstract fun updateSelectedSafe(selectedSafe: BigInteger?)
 
-    data class State(val selectedSafeAddress: BigInteger?, val safes: List<Safe>)
+    data class State(val selectedIndex: Int, val safes: List<Safe>)
 }

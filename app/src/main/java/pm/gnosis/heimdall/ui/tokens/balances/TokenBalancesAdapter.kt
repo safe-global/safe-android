@@ -8,14 +8,12 @@ import kotlinx.android.synthetic.main.layout_tokens_item_balance.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoActivity
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.stringWithNoTrailingZeroes
-import pm.gnosis.utils.withTokenScaleOrNull
-import java.math.BigDecimal
 import javax.inject.Inject
 
 
@@ -35,12 +33,15 @@ class TokenBalancesAdapter @Inject constructor(
 
         override fun bind(data: ERC20TokenWithBalance, payloads: List<Any>?) {
             itemView.layout_tokens_item_name.text = if (data.token.name.isNullOrEmpty()) data.token.address.asEthereumAddressString() else data.token.name
-            val balance = nullOnThrow { BigDecimal(data.balance).withTokenScaleOrNull(data.token.decimals)?.stringWithNoTrailingZeroes() } ?: "-"
+            val balance = data.balance?.let { data.token.convertAmount(it).stringWithNoTrailingZeroes() } ?: "-"
             itemView.layout_tokens_item_balance.text = balance
         }
 
         override fun onClick(v: View?) {
-            context.startActivity(TokenInfoActivity.createIntent(context, items[adapterPosition].token.address))
+            val token = items[adapterPosition].token
+            if (token != ETHER_TOKEN) {
+                context.startActivity(TokenInfoActivity.createIntent(context, token.address))
+            }
         }
     }
 }

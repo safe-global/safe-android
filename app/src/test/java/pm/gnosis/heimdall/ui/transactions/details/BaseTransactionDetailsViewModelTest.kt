@@ -44,7 +44,7 @@ class BaseTransactionDetailsViewModelTest {
         val firstSafeList = listOf(Safe(BigInteger.ZERO), Safe(BigInteger.ONE))
         testProcessor.onNext(firstSafeList)
         testSubscriber.assertNoErrors()
-                .assertValueCount(1).assertValueAt(0, State(TEST_DEFAULT_SAFE, firstSafeList))
+                .assertValueCount(1).assertValueAt(0, State(0, firstSafeList))
 
         // Update selected safe
         viewModel.updateSelectedSafe(BigInteger.ONE)
@@ -52,26 +52,32 @@ class BaseTransactionDetailsViewModelTest {
         // Return list and newly selected safe (even if not in list)
         testProcessor.onNext(firstSafeList)
         testSubscriber.assertNoErrors()
-                .assertValueCount(2).assertValueAt(1, State(BigInteger.ONE, firstSafeList))
+                .assertValueCount(2).assertValueAt(1, State(1, firstSafeList))
 
-        // Check that a new subscriber get the correct selected safe
+        // Check that a new subscriber gets the correct selected safe
         val testSubscriber2 = TestSubscriber<State>()
         viewModel.observeSafes(TEST_DEFAULT_SAFE).subscribe(testSubscriber2)
         testSubscriber2.assertNoErrors()
-                .assertValueCount(1).assertValueAt(0, State(BigInteger.ONE, firstSafeList))
+                .assertValueCount(1).assertValueAt(0, State(1, firstSafeList))
 
 
         // Reset selected safe
         viewModel.updateSelectedSafe(null)
-        val secondSafeList = listOf(Safe(BigInteger.ZERO), Safe(BigInteger.TEN), Safe(BigInteger.ONE))
+        val secondSafeList = listOf(Safe(BigInteger.ZERO), Safe(BigInteger.ONE), Safe(BigInteger.TEN))
         // Return new list and default safe
         testProcessor.onNext(secondSafeList)
 
         // Assert that both subscribers got the correct data
         testSubscriber.assertNoErrors()
-                .assertValueCount(3).assertValueAt(2, State(TEST_DEFAULT_SAFE, secondSafeList))
+                .assertValueCount(3).assertValueAt(2, State(2, secondSafeList))
         testSubscriber2.assertNoErrors()
-                .assertValueCount(2).assertValueAt(1, State(TEST_DEFAULT_SAFE, secondSafeList))
+                .assertValueCount(2).assertValueAt(1, State(2, secondSafeList))
+
+        // Check that a new subscriber without a default safe gets the correct selected safe
+        val testSubscriber3 = TestSubscriber<State>()
+        viewModel.observeSafes(null).subscribe(testSubscriber3)
+        testSubscriber3.assertNoErrors()
+                .assertValueCount(1).assertValueAt(0, State(0, secondSafeList))
 
     }
 

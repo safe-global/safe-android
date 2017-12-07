@@ -23,9 +23,9 @@ import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.fromDb
 import pm.gnosis.heimdall.data.repositories.models.toDb
-import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsContract.Companion.ETHER_TOKEN
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.*
 import pm.gnosis.utils.exceptions.InvalidAddressException

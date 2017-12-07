@@ -20,6 +20,7 @@ object MockUtils {
     private fun <T> uninitialized(): T = null as T
 }
 
-fun Context.mockGetString() {
+fun Context.mockGetString(): Context {
     given(getString(anyInt())).will { it.arguments.first().toString() }
+    return this
 }
