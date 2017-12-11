@@ -2,11 +2,8 @@ package pm.gnosis.heimdall.ui.transactions.details
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
 import com.gojuno.koptional.Optional
@@ -14,7 +11,6 @@ import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.layout_simple_spinner_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.Safe

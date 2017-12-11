@@ -2,8 +2,6 @@ package pm.gnosis.heimdall
 
 import android.content.Context
 import android.support.multidex.MultiDexApplication
-import com.crashlytics.android.Crashlytics
-import io.fabric.sdk.android.Fabric
 import io.reactivex.plugins.RxJavaPlugins
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
