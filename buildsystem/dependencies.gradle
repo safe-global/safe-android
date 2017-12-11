@@ -2,14 +2,16 @@ ext {
     versions = [
             // Plug-Ins
             android_tools          : '3.1.0-alpha05',
+            fabric                 : '1.+',
             google_services        : '3.1.0',
             kotlin                 : '1.2.0',
             jacoco                 : '0.7.9',
 
             // Runtime dependencies
-            android_support        : '27.0.1',
+            android_support        : '27.0.2',
             architecture_components: '1.0.0',
             bivrost                : 'v0.6.0',
+            crashlytics            : '2.8.0',
             dagger                 : '2.12',
             floating_action_button : '1.6.4',
             geth                   : '1.7.1',

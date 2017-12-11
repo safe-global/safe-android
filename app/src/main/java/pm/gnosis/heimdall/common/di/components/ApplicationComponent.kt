@@ -14,6 +14,8 @@ import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
+import pm.gnosis.heimdall.reporting.CrashTracker
+import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.di.SecurityBindingsModule
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -37,6 +39,9 @@ interface ApplicationComponent {
 
     @ApplicationContext
     fun context(): Context
+
+    fun crashTracker(): CrashTracker
+    fun eventTracker(): EventTracker
 
     fun accountsRepository(): AccountsRepository
     fun addressBookRepository(): AddressBookRepository

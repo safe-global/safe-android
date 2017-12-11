@@ -2,6 +2,8 @@ package pm.gnosis.heimdall
 
 import android.content.Context
 import android.support.multidex.MultiDexApplication
+import com.crashlytics.android.Crashlytics
+import io.fabric.sdk.android.Fabric
 import io.reactivex.plugins.RxJavaPlugins
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
@@ -19,9 +21,10 @@ class HeimdallApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        if (BuildConfig.DEBUG) {
-            Timber.plant(DebugTree())
-        }
+
+        // Init crash tracker to track unhandled exceptions
+        component.crashTracker().init()
+        Fabric.with(this, Crashlytics())
         RxJavaPlugins.setErrorHandler(Timber::e)
 
         try {
