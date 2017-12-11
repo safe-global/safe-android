@@ -16,7 +16,7 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
@@ -70,7 +70,7 @@ class AddTokenViewModelTest {
         viewModel.addToken().subscribe(testObserver)
 
         then(tokenRepositoryMock).shouldHaveZeroInteractions()
-        testObserver.assertValue { it is ErrorResult && it.error is LocalizedException }.assertNoErrors()
+        testObserver.assertValue { it is ErrorResult && it.error is SimpleLocalizedException }.assertNoErrors()
     }
 
     @Test
@@ -93,7 +93,7 @@ class AddTokenViewModelTest {
 
         println(testObserver.values())
         then(tokenRepositoryMock).shouldHaveZeroInteractions()
-        testObserver.assertValue { it is ErrorResult && it.error is LocalizedException }.assertNoErrors()
+        testObserver.assertValue { it is ErrorResult && it.error is SimpleLocalizedException }.assertNoErrors()
     }
 
     @Test

@@ -14,9 +14,6 @@ interface DescriptionsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertDescription(description: TransactionDescriptionDb)
 
-    @Query("DELETE FROM ${TransactionDescriptionDb.TABLE_NAME} WHERE ${TransactionDescriptionDb.COL_ID} = :id")
-    fun removeDescriptions(id: String)
-
     @Query("SELECT * FROM ${TransactionDescriptionDb.TABLE_NAME} WHERE ${TransactionDescriptionDb.COL_ID} = :id")
     fun loadDescription(id: String): Single<TransactionDescriptionDb>
 

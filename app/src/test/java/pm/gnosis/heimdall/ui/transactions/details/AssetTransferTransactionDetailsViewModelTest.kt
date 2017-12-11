@@ -22,10 +22,10 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsContract.*
-import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsFragment.TransactionInputException
-import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsFragment.TransactionInputException.Companion.AMOUNT_FIELD
-import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsFragment.TransactionInputException.Companion.TOKEN_FIELD
-import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsFragment.TransactionInputException.Companion.TO_FIELD
+import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
+import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.AMOUNT_FIELD
+import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.TOKEN_FIELD
+import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.TO_FIELD
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -59,8 +59,8 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.loadFormData(null).subscribe(testObserver)
 
         testObserver.assertResult(FormData())
-        Mockito.verifyNoMoreInteractions(detailsRepository)
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -73,9 +73,9 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.loadFormData(transaction).subscribe(testObserver)
 
         testObserver.assertResult(FormData())
-        Mockito.verify(detailsRepository).loadTransactionDetails(transaction)
-        Mockito.verifyNoMoreInteractions(detailsRepository)
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -88,9 +88,9 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.loadFormData(transaction).subscribe(testObserver)
 
         testObserver.assertResult(FormData(ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.TEN, ETHER_TOKEN))
-        Mockito.verify(detailsRepository).loadTransactionDetails(transaction)
-        Mockito.verifyNoMoreInteractions(detailsRepository)
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -103,9 +103,9 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.loadFormData(transaction).subscribe(testObserver)
 
         testObserver.assertResult(FormData(ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, ETHER_TOKEN))
-        Mockito.verify(detailsRepository).loadTransactionDetails(transaction)
-        Mockito.verifyNoMoreInteractions(detailsRepository)
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -118,9 +118,9 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.loadFormData(transaction).subscribe(testObserver)
 
         testObserver.assertResult(FormData(ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, ETHER_TOKEN))
-        Mockito.verify(detailsRepository).loadTransactionDetails(transaction)
-        Mockito.verifyNoMoreInteractions(detailsRepository)
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -137,10 +137,10 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.loadFormData(transaction).subscribe(testObserver)
 
         testObserver.assertResult(FormData(token.address, BigInteger.ONE, BigInteger.TEN, token))
-        Mockito.verify(detailsRepository).loadTransactionDetails(transaction)
-        Mockito.verify(tokenRepository).loadToken(token.address)
-        Mockito.verifyNoMoreInteractions(detailsRepository)
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(tokenRepository).should().loadToken(token.address)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -157,10 +157,10 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.loadFormData(transaction).subscribe(testObserver)
 
         testObserver.assertResult(FormData(token.address, BigInteger.ONE, BigInteger.TEN, null))
-        Mockito.verify(detailsRepository).loadTransactionDetails(transaction)
-        Mockito.verify(tokenRepository).loadToken(token.address)
-        Mockito.verifyNoMoreInteractions(detailsRepository)
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(tokenRepository).should().loadToken(token.address)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -181,9 +181,10 @@ class AssetTransferTransactionDetailsViewModelTest {
                         ERC20TokenWithBalance(verifiedTokenNoBalance, null),
                         ERC20TokenWithBalance(verifiedTokenBalance, BigInteger.TEN)
                 )))
-        Mockito.verify(tokenRepository).loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN, verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance))
-        Mockito.verify(tokenRepository).loadTokens()
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN, verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance))
+        then(tokenRepository).should().loadTokens()
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -205,9 +206,10 @@ class AssetTransferTransactionDetailsViewModelTest {
                         ERC20TokenWithBalance(verifiedTokenBalance, null),
                         ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
                 )))
-        Mockito.verify(tokenRepository).loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN, verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance))
-        Mockito.verify(tokenRepository).loadTokens()
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+         then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN, verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance))
+         then(tokenRepository).should().loadTokens()
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -227,8 +229,9 @@ class AssetTransferTransactionDetailsViewModelTest {
                         ERC20TokenWithBalance(verifiedTokenBalance, null),
                         ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
                 )))
-        Mockito.verify(tokenRepository).loadTokens()
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(tokenRepository).should().loadTokens()
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -248,8 +251,9 @@ class AssetTransferTransactionDetailsViewModelTest {
                         ERC20TokenWithBalance(verifiedTokenBalance, null),
                         ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
                 )))
-        Mockito.verify(tokenRepository).loadTokens()
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(tokenRepository).should().loadTokens()
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -265,13 +269,14 @@ class AssetTransferTransactionDetailsViewModelTest {
         testObserver.assertResult(State(0, listOf(
                         ERC20TokenWithBalance(ETHER_TOKEN, null)
                 )))
-        Mockito.verify(tokenRepository).loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN))
-        Mockito.verify(tokenRepository).loadTokens()
-        Mockito.verifyNoMoreInteractions(tokenRepository)
+        then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN))
+        then(tokenRepository).should().loadTokens()
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
-    private fun testTransformer(inputStream: PublishSubject<CombinedRawInput>, outputStream: TestObserver<Result<Transaction>>,
-                                input: CombinedRawInput, expectedOutput: Result<Transaction>, testNo: Int) {
+    private fun testTransformer(inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<Transaction>>,
+                                input: InputEvent, expectedOutput: Result<Transaction>, testNo: Int) {
         inputStream.onNext(input)
         outputStream.assertNoErrors().assertValueCount(testNo)
                 .assertValueAt(testNo - 1, expectedOutput)
@@ -280,7 +285,7 @@ class AssetTransferTransactionDetailsViewModelTest {
     @Test
     fun inputTransformerWithOriginalTransaction() {
 
-        val testPublisher = PublishSubject.create<CombinedRawInput>()
+        val testPublisher = PublishSubject.create<InputEvent>()
         val testObserver = TestObserver<Result<Transaction>>()
         val mockContext = Mockito.mock(Context::class.java).mockGetString()
         val originalTransaction = Transaction(BigInteger.TEN, nonce = BigInteger.valueOf(1337))
@@ -296,14 +301,14 @@ class AssetTransferTransactionDetailsViewModelTest {
         val transferAmount = Solidity.UInt256(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(tentenToken.decimals)))
         val expectedData = StandardToken.Transfer.encode(transferTo, transferAmount)
         testTransformer(testPublisher, testObserver,
-                CombinedRawInput("0x0" to true, "123" to false, ERC20TokenWithBalance(tentenToken, null) to false),
+                InputEvent("0x0" to true, "123" to false, ERC20TokenWithBalance(tentenToken, null) to false),
                 DataResult(Transaction(BigInteger.TEN, value = null,
                         data = expectedData, nonce = BigInteger.valueOf(1337))),
                 testNo++
         )
         // Valid input with change (ether)
         testTransformer(testPublisher, testObserver,
-                CombinedRawInput("0x0" to true, "123" to false, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null) to false),
+                InputEvent("0x0" to true, "123" to false, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null) to false),
                 DataResult(Transaction(BigInteger.ZERO, value = Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals))),
                         data = null, nonce = BigInteger.valueOf(1337))),
                 testNo++
@@ -311,7 +316,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         // Invalid input with change
         // Third changed (compared to last value -> valid input)
         testTransformer(testPublisher, testObserver,
-                CombinedRawInput("0x0" to false, "123" to true, null to false),
+                InputEvent("0x0" to false, "123" to true, null to false),
                 ErrorResult(TransactionInputException(
                         mockContext, TOKEN_FIELD, true
                 )),
@@ -319,7 +324,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         )
         // Second changed
         testTransformer(testPublisher, testObserver,
-                CombinedRawInput("0x0" to false, "123y" to false, null to true),
+                InputEvent("0x0" to false, "123y" to false, null to true),
                 ErrorResult(TransactionInputException(
                         mockContext, AMOUNT_FIELD or TOKEN_FIELD, true
                 )),
@@ -327,7 +332,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         )
         // First changed
         testTransformer(testPublisher, testObserver,
-                CombinedRawInput("0x0t" to false, "123y" to false, null to true),
+                InputEvent("0x0t" to false, "123y" to false, null to true),
                 ErrorResult(TransactionInputException(
                         mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, true
                 )),
@@ -335,7 +340,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         )
         // No change
         testTransformer(testPublisher, testObserver,
-                CombinedRawInput("0x0t" to false, "123y" to false, null to false),
+                InputEvent("0x0t" to false, "123y" to false, null to false),
                 ErrorResult(TransactionInputException(
                         mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, false
                 )),
@@ -346,7 +351,7 @@ class AssetTransferTransactionDetailsViewModelTest {
     @Test
     fun inputTransformerNoOriginalTransaction() {
 
-        val testPublisher = PublishSubject.create<CombinedRawInput>()
+        val testPublisher = PublishSubject.create<InputEvent>()
         val testObserver = TestObserver<Result<Transaction>>()
         val mockContext = Mockito.mock(Context::class.java).mockGetString()
 
@@ -360,7 +365,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         val transferTo = Solidity.Address(BigInteger.ZERO)
         val transferAmount = Solidity.UInt256(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(tentenToken.decimals)))
         val expectedData = StandardToken.Transfer.encode(transferTo, transferAmount)
-        testPublisher.onNext(CombinedRawInput("0x0" to true, "123" to false, ERC20TokenWithBalance(tentenToken, null) to false))
+        testPublisher.onNext(InputEvent("0x0" to true, "123" to false, ERC20TokenWithBalance(tentenToken, null) to false))
         testObserver.assertNoErrors().assertValueCount(testNo)
                 .assertValueAt(testNo - 1, {
                     it is DataResult
@@ -373,7 +378,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 })
         testNo++
         // Valid input with change (ether)
-        testPublisher.onNext(CombinedRawInput("0x0" to true, "123" to false, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null) to false))
+        testPublisher.onNext(InputEvent("0x0" to true, "123" to false, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null) to false))
         testObserver.assertNoErrors().assertValueCount(testNo)
                 .assertValueAt(testNo - 1, {
                     it is DataResult
@@ -388,7 +393,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         // Invalid input with change
         // Third changed (compared to last value -> valid input)
         testTransformer(testPublisher, testObserver,
-                CombinedRawInput("0x0" to false, "123" to true, null to false),
+                InputEvent("0x0" to false, "123" to true, null to false),
                 ErrorResult(TransactionInputException(
                         mockContext, TOKEN_FIELD, true
                 )),
@@ -396,7 +401,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         )
         // Second changed
         testTransformer(testPublisher, testObserver,
-                CombinedRawInput("0x0" to false, "123y" to false, null to true),
+                InputEvent("0x0" to false, "123y" to false, null to true),
                 ErrorResult(TransactionInputException(
                         mockContext, AMOUNT_FIELD or TOKEN_FIELD, true
                 )),
@@ -404,7 +409,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         )
         // First changed
         testTransformer(testPublisher, testObserver,
-                CombinedRawInput("0x0t" to false, "123y" to false, null to true),
+                InputEvent("0x0t" to false, "123y" to false, null to true),
                 ErrorResult(TransactionInputException(
                         mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, true
                 )),
@@ -412,7 +417,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         )
         // No change
         testTransformer(testPublisher, testObserver,
-                CombinedRawInput("0x0t" to false, "123y" to false, null to false),
+                InputEvent("0x0t" to false, "123y" to false, null to false),
                 ErrorResult(TransactionInputException(
                         mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, false
                 )),

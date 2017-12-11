@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.utils.formatAsLongDate
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -74,7 +75,7 @@ class SafeTransactionsAdapter @Inject constructor(
             itemView.layout_safe_transactions_item_timestamp.text = details.timestamp?.let { itemView.context.formatAsLongDate(it) }
             when (details.type) {
                 TransactionType.ETHER_TRANSFER -> {
-                    val value = (details.transaction.value ?: Wei.ZERO).toEther().stripTrailingZeros().toPlainString()
+                    val value = (details.transaction.value ?: Wei.ZERO).toEther().stringWithNoTrailingZeroes()
                     val symbol = itemView.context.getString(R.string.currency_eth)
 
                     itemView.layout_safe_transactions_item_value.text = context.getString(R.string.outgoing_transaction_value, value, symbol)
@@ -93,7 +94,7 @@ class SafeTransactionsAdapter @Inject constructor(
 
         private fun loadTokenValue(token: BigInteger, value: BigInteger) {
             disposables += tokenRepository.observeToken(token)
-                    .map { it.symbol to it.convertAmount(value).setScale(5).stripTrailingZeros().toPlainString() }
+                    .map { it.symbol to it.convertAmount(value).setScale(5).stringWithNoTrailingZeroes() }
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ (symbol, amount) ->
                         itemView.layout_safe_transactions_item_value.text = context.getString(R.string.outgoing_transaction_value, amount, symbol)

@@ -17,7 +17,7 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.security.EncryptionManager
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 
@@ -101,7 +101,7 @@ class SecurityViewModelTest {
         viewModel.setupPin("", "").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
-        observer.assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
+        observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
         verify(contextMock).getString(R.string.pin_too_short, emptyArray<Any>())
     }
 
@@ -112,7 +112,7 @@ class SecurityViewModelTest {
         viewModel.setupPin("123456", "").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
-        observer.assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
+        observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
         verify(contextMock).getString(R.string.pin_repeat_wrong, emptyArray<Any>())
     }
 
@@ -138,7 +138,7 @@ class SecurityViewModelTest {
 
         then(encryptionManagerMock).should().setupPassword("123456".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
+        observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
         verify(contextMock).getString(R.string.pin_setup_failed, emptyArray<Any>())
     }
 
@@ -176,7 +176,7 @@ class SecurityViewModelTest {
 
         then(encryptionManagerMock).should().unlockWithPassword("123456".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
+        observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
         verify(contextMock).getString(R.string.error_wrong_credentials, emptyArray<Any>())
     }
 

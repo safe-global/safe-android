@@ -14,11 +14,12 @@ import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.layout_safe_spinner_item.view.*
+import kotlinx.android.synthetic.main.layout_simple_spinner_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.ui.base.SimpleSpinnerAdapter
 import pm.gnosis.heimdall.ui.transactions.BaseTransactionActivity
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
@@ -62,7 +63,7 @@ abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnIt
     open fun selectedSafeChanged(safe: Safe?) {}
 
     private fun setSpinnerData(state: BaseTransactionDetailsContract.State) {
-        this.spinner?.let {
+        spinner?.let {
             adapter.clear()
             adapter.addAll(state.safes)
             adapter.notifyDataSetChanged()
@@ -95,33 +96,12 @@ abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnIt
         input.setHintTextColor(ContextCompat.getColor(context!!, R.color.error_hint))
     }
 
-    private class SafesSpinnerAdapter(context: Context) : ArrayAdapter<Safe>(context, R.layout.layout_safe_spinner_item, ArrayList()) {
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view = getDropDownView(position, convertView, parent)
-            view.setPadding(0, 0, 0, 0)
-            return view
-        }
+    private class SafesSpinnerAdapter(context: Context) : SimpleSpinnerAdapter<Safe>(context) {
+        override fun title(item: Safe) =
+                item.name
 
-        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val viewHolder = getViewHolder(convertView, parent)
-            val item = getItem(position)
-            viewHolder.titleText.text = item.name
-            viewHolder.subtitleText.text = item.address.asEthereumAddressString()
-            return viewHolder.itemView
-        }
-
-        private fun getViewHolder(convertView: View?, parent: ViewGroup?): ViewHolder {
-            val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.layout_safe_spinner_item, parent, false)
-            return (view.tag as? ViewHolder) ?: createAndSetViewHolder(view)
-        }
-
-        private fun createAndSetViewHolder(view: View): ViewHolder {
-            val viewHolder = ViewHolder(view, view.layout_safe_spinner_item_name, view.layout_safe_spinner_item_address)
-            view.tag = viewHolder
-            return viewHolder
-        }
-
-        data class ViewHolder(val itemView: View, val titleText: TextView, val subtitleText: TextView)
+        override fun subTitle(item: Safe) =
+                item.address.asEthereumAddressString()
     }
 
     companion object {

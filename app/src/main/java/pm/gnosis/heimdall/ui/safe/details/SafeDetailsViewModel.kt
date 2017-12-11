@@ -8,7 +8,7 @@ import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.isValidEthereumAddress
 import java.math.BigInteger
@@ -21,7 +21,7 @@ class SafeDetailsViewModel @Inject constructor(
 ) : SafeDetailsContract() {
     private lateinit var address: BigInteger
 
-    private val errorHandler = LocalizedException.networkErrorHandlerBuilder(context)
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
             .build()
 
     override fun setup(address: BigInteger, name: String?) {

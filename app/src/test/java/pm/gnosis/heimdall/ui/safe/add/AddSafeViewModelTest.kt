@@ -17,7 +17,7 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils.any
@@ -63,7 +63,7 @@ class AddSafeViewModelTest {
         viewModel.addExistingSafe("", "0x0").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
-            it is ErrorResult && it.error is LocalizedException && it.error.message == R.string.error_blank_name.toString()
+            it is ErrorResult && it.error is SimpleLocalizedException && it.error.message == R.string.error_blank_name.toString()
         }
         verifyNoMoreInteractions(repository)
     }
@@ -74,7 +74,7 @@ class AddSafeViewModelTest {
         viewModel.addExistingSafe("test", "test").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
-            it is ErrorResult && it.error is LocalizedException && it.error.message == R.string.invalid_ethereum_address.toString()
+            it is ErrorResult && it.error is SimpleLocalizedException && it.error.message == R.string.invalid_ethereum_address.toString()
         }
         verifyNoMoreInteractions(repository)
     }
@@ -112,7 +112,7 @@ class AddSafeViewModelTest {
         viewModel.deployNewSafe("").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
-            it is ErrorResult && it.error is LocalizedException && it.error.message == R.string.error_blank_name.toString()
+            it is ErrorResult && it.error is SimpleLocalizedException && it.error.message == R.string.error_blank_name.toString()
         }
         verifyNoMoreInteractions(repository)
     }

@@ -18,7 +18,7 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.SubmitType.*
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.TransactionInfo
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.BaseTransactionContract.Info
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -93,17 +93,17 @@ class BaseTransactionViewModelTest {
         // Test already executed
         val executed = TransactionInfo(false, 2, 2, true, false)
         testTransactionInfo(executed, DataResult(TEST_TRANSACTION_FEES),
-                null, DataResult(Info(executed)), ErrorResult(LocalizedException(R.string.error_transaction_already_executed.toString())))
+                null, DataResult(Info(executed)), ErrorResult(SimpleLocalizedException(R.string.error_transaction_already_executed.toString())))
 
         // Test not owner
         val notOwner = TransactionInfo(false, 2, 0, false, true)
         testTransactionInfo(notOwner, DataResult(TEST_TRANSACTION_FEES),
-                null, DataResult(Info(notOwner)), ErrorResult(LocalizedException(R.string.error_confirm_not_owner.toString())))
+                null, DataResult(Info(notOwner)), ErrorResult(SimpleLocalizedException(R.string.error_confirm_not_owner.toString())))
 
         // Test already confirmed
         val confirmed = TransactionInfo(true, 2, 0, false, true)
         testTransactionInfo(confirmed, DataResult(TEST_TRANSACTION_FEES),
-                null, DataResult(Info(confirmed)), ErrorResult(LocalizedException(R.string.error_transaction_already_confirmed.toString())))
+                null, DataResult(Info(confirmed)), ErrorResult(SimpleLocalizedException(R.string.error_transaction_already_confirmed.toString())))
 
         // Test error loading estimate
         val estimateError = TransactionInfo(true, 2, 2, false, true)
@@ -169,17 +169,17 @@ class BaseTransactionViewModelTest {
         // Test already executed
         val executed = TransactionInfo(false, 2, 2, true, false)
         testSubmitTransaction(executed, null,
-                null, ErrorResult(LocalizedException(R.string.error_transaction_already_executed.toString())))
+                null, ErrorResult(SimpleLocalizedException(R.string.error_transaction_already_executed.toString())))
 
         // Test not owner
         val notOwner = TransactionInfo(false, 2, 0, false, true)
         testSubmitTransaction(notOwner, null,
-                null, ErrorResult(LocalizedException(R.string.error_confirm_not_owner.toString())))
+                null, ErrorResult(SimpleLocalizedException(R.string.error_confirm_not_owner.toString())))
 
         // Test already confirmed
         val confirmed = TransactionInfo(true, 2, 0, false, true)
         testSubmitTransaction(confirmed, null,
-                null, ErrorResult(LocalizedException(R.string.error_transaction_already_confirmed.toString())))
+                null, ErrorResult(SimpleLocalizedException(R.string.error_transaction_already_confirmed.toString())))
 
         // Test error submitting transaction
         val estimateError = TransactionInfo(true, 2, 2, false, true)

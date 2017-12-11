@@ -142,7 +142,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
                 val nonce = Solidity.UInt256(innerTransaction.nonce ?: DEFAULT_NONCE)
                 val confirmData = GnosisSafe.ExecuteTransaction.encode(to, value, data, operation, nonce)
                 Transaction(safeAddress, data = confirmData)
-            }
+            }.subscribeOn(Schedulers.computation())
 
     private fun buildConfirmAndExecuteTransaction(safeAddress: BigInteger, innerTransaction: Transaction): Single<Transaction> =
             Single.fromCallable {

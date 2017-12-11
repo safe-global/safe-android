@@ -9,7 +9,7 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.hexAsEthereumAddress
 import javax.inject.Inject
@@ -18,7 +18,7 @@ class AddTokenViewModel @Inject constructor(
         @ApplicationContext context: Context,
         private val tokenRepository: TokenRepository
 ) : AddTokenContract() {
-    private val errorHandler = LocalizedException.networkErrorHandlerBuilder(context)
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
             .add({ it is InvalidAddressException }, R.string.invalid_ethereum_address)
             .add({ it is NoTokenSetException }, R.string.no_token_loaded)
             .build()

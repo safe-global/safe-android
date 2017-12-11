@@ -48,7 +48,7 @@ class IpfsTransactionDetailsRepository @Inject constructor(
     override fun loadTransactionDetails(transaction: Transaction): Single<TransactionDetails> {
         return Single.fromCallable {
             decodeTransactionResult(null, transaction)
-        }
+        }.subscribeOn(Schedulers.computation())
     }
 
     override fun loadTransactionDetails(id: String, address: BigInteger, transactionHash: String?): Single<TransactionDetails> {
@@ -90,7 +90,7 @@ class IpfsTransactionDetailsRepository @Inject constructor(
             val operation = Solidity.UInt8(description.operation)
             val nonce = Solidity.UInt256(description.nonce)
             GnosisSafe.GetTransactionHash.encode(to, value, data, operation, nonce)
-        }.flatMap {
+        }.subscribeOn(Schedulers.computation()).flatMap {
             ethereumJsonRpcRepository.call(TransactionCallParams(to = description.safeAddress.asEthereumAddressString(), data = it))
         }.map { remoteTxHash ->
             val cleanHash = remoteTxHash.removePrefix("0x")
@@ -112,12 +112,12 @@ class IpfsTransactionDetailsRepository @Inject constructor(
     override fun loadTransactionType(transaction: Transaction): Single<TransactionType> =
             Single.fromCallable {
                 parseTransactionType(transaction.value?.value, transaction.data)
-            }
+            }.subscribeOn(Schedulers.computation())
 
     private fun createIpfsIdentifier(hash: String) =
             Observable.fromCallable {
                 Base58Utils.encode(ByteString.decodeHex(IPFS_HASH_PREFIX + hash))
-            }
+            }.subscribeOn(Schedulers.computation())
 
     private fun decodeDescription(transactionId: String, description: GnosisSafeTransactionDescription) =
             decodeTransactionResult(transactionId, description.toTransaction(), description.subject, description.submittedAt)

@@ -37,7 +37,7 @@
             android:id="@+id/layout_transaction_details_asset_transfer_safe_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/layout_safe_spinner_item" />
+            tools:listitem="@layout/layout_simple_spinner_item" />
     </LinearLayout>
 
     <View
@@ -121,7 +121,7 @@
             android:id="@+id/layout_transaction_details_asset_transfer_token_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/layout_safe_spinner_item" />
+            tools:listitem="@layout/layout_simple_spinner_item" />
     </LinearLayout>
 
     <View

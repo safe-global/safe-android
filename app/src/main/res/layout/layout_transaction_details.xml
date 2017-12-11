@@ -134,7 +134,7 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/layout_transaction_details_button"
+                android:id="@+id/layout_transaction_details_submit_button"
                 style="@style/PrimaryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.GenericTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asDecimalString
@@ -66,7 +67,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         setUnknownTransactionInfo()
-        disposables += layout_transaction_details_button.clicks()
+        disposables += layout_transaction_details_submit_button.clicks()
                 .flatMap {
                     currentInfo?.let { (safeAddress, transaction) ->
                         safeAddress?.let {
@@ -78,7 +79,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
                                     .toObservable()
                         }
                     } ?: Observable.empty<Result<Unit>>()
-                }.subscribeForResult({ finish() }, { showErrorSnackbar(it) })
+                }.subscribeForResult({ finish() }, ::showErrorSnackbar)
 
         val fragment = supportFragmentManager.findFragmentById(R.id.layout_transaction_details_transaction_container)
         if (fragment is BaseTransactionDetailsFragment) {
@@ -90,15 +91,15 @@ abstract class BaseTransactionActivity : BaseActivity() {
 
     private fun submittingTransaction(loading: Boolean) {
         layout_transaction_details_progress_bar.visibility = if (loading) View.VISIBLE else View.GONE
-        layout_transaction_details_button.isEnabled = !loading
+        layout_transaction_details_submit_button.isEnabled = !loading
         currentFragment?.inputEnabled(!loading)
     }
 
     protected fun displayTransactionDetails(fragment: BaseTransactionDetailsFragment) {
+        setCurrentFragment(fragment)
         supportFragmentManager.transaction {
             replace(R.id.layout_transaction_details_transaction_container, fragment)
         }
-        setCurrentFragment(fragment)
     }
 
     private fun setCurrentFragment(fragment: BaseTransactionDetailsFragment) {
@@ -127,7 +128,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
             val leftConfirmations = Math.max(0, it.requiredConfirmation - it.confirmations - if (it.isOwner) 1 else 0)
             layout_transaction_details_confirmations_hint_text.text = getString(R.string.confirm_transaction_hint, leftConfirmations.toString())
             layout_transaction_details_confirmations.text = getString(R.string.x_of_x_confirmations, it.confirmations.toString(), it.requiredConfirmation.toString())
-            layout_transaction_details_button.isEnabled = it.isOwner && !it.isExecuted
+            layout_transaction_details_submit_button.isEnabled = it.isOwner && !it.isExecuted
         }
         if (info.estimation != null) {
             layout_transaction_details_transaction_fee.text = getString(R.string.x_wei, info.estimation.value.asDecimalString())
@@ -142,7 +143,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
 
     private fun setUnknownTransactionInfo() {
         setUnknownEstimate()
-        layout_transaction_details_button.isEnabled = false
+        layout_transaction_details_submit_button.isEnabled = false
         layout_transaction_details_confirmations_hint_text.text = getString(R.string.confirm_transaction_hint, "-")
         layout_transaction_details_confirmations.text = getString(R.string.x_of_x_confirmations, "-", "-")
     }
@@ -155,7 +156,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
     private fun showErrorSnackbar(throwable: Throwable) {
         // We don't want to show a snackbar if no safe is selected (UI should have been updated accordingly)
         if (throwable is NoSafeSelectedException) return
-        if (throwable !is GenericTransactionDetailsFragment.TransactionInputException || throwable.showSnackbar) {
+        if (throwable !is TransactionInputException || throwable.showSnackbar) {
             errorSnackbar(layout_transaction_details_transaction_container, throwable)
         }
     }

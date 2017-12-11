@@ -10,7 +10,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator
 import pm.gnosis.heimdall.common.utils.mapToResult
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
 import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.utils.isSolidityMethod
@@ -33,13 +33,13 @@ class AuthenticateViewModel @Inject constructor(
 
     private fun validateQrCode(qrCodeData: String): Intent {
         val parsedData = ERC67Parser.parse(qrCodeData) ?:
-                throw LocalizedException(context.getString(R.string.invalid_erc67))
+                throw SimpleLocalizedException(context.getString(R.string.invalid_erc67))
         val data = parsedData.transaction.data
         if (data != null && (data.isSolidityMethod(GnosisSafe.ConfirmTransaction.METHOD_ID) ||
                 data.isSolidityMethod(GnosisSafe.RevokeConfirmation.METHOD_ID))) {
             return ViewTransactionActivity.createIntent(context, null, parsedData.transaction)
         } else {
-            throw LocalizedException(context.getString(R.string.unknown_safe_action))
+            throw SimpleLocalizedException(context.getString(R.string.unknown_safe_action))
         }
     }
 }

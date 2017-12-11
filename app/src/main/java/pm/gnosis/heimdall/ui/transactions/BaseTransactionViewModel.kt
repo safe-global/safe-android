@@ -9,7 +9,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Transaction
 import java.math.BigInteger
 import javax.inject.Inject
@@ -20,16 +20,18 @@ class BaseTransactionViewModel @Inject constructor(
         private val transactionRepository: TransactionRepository
 ) : BaseTransactionContract() {
 
-    private val errorHandler = LocalizedException.networkErrorHandlerBuilder(context)
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
             .build()
 
     override fun loadTransactionInfo(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Info>> {
         return transactionRepository.loadInformation(safeAddress, transaction)
                 .flatMapObservable { info ->
                     info.toSubmitType()
-                            .flatMap { transactionRepository.estimateFees(safeAddress, transaction, it)  }
+                            .flatMap { transactionRepository.estimateFees(safeAddress, transaction, it) }
                             .map { Info(info, it) }
                             .toObservable()
+                            // First we emit the info without estimate, so the user will see
+                            // independently from what happens to the estimation request
                             .startWith(Info(info))
                 }
                 .onErrorResumeNext(Function { errorHandler.observable(it) })
@@ -48,13 +50,12 @@ class BaseTransactionViewModel @Inject constructor(
     private fun TransactionRepository.TransactionInfo.toSubmitType(): Single<TransactionRepository.SubmitType> =
             Single.fromCallable {
                 when {
-                    isExecuted -> throw LocalizedException(context.getString(R.string.error_transaction_already_executed))
+                    isExecuted -> throw SimpleLocalizedException(context.getString(R.string.error_transaction_already_executed))
                     confirmations >= requiredConfirmation -> TransactionRepository.SubmitType.EXECUTE
                     confirmations + 1 >= requiredConfirmation && isOwner && !hasConfirmed -> TransactionRepository.SubmitType.CONFIRM_AND_EXECUTE
                     !hasConfirmed && isOwner -> TransactionRepository.SubmitType.CONFIRM
-                    !isOwner -> throw LocalizedException(context.getString(R.string.error_confirm_not_owner))
-                    // hasConfirmed == true
-                    else -> throw LocalizedException(context.getString(R.string.error_transaction_already_confirmed))
+                    !isOwner -> throw SimpleLocalizedException(context.getString(R.string.error_confirm_not_owner))
+                    else -> throw SimpleLocalizedException(context.getString(R.string.error_transaction_already_confirmed)) // Last branch left is `hasConfirmed == true`
                 }
             }
 }

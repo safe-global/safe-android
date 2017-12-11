@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.transactions.details
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +21,7 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asDecimalString
@@ -39,7 +38,7 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
     lateinit var subViewModel: GenericTransactionDetailsContract
 
     private val safeSubject = BehaviorSubject.createDefault<Optional<BigInteger>>(None)
-    private val inputSubject = PublishSubject.create<GenericTransactionDetailsContract.CombinedRawInput>()
+    private val inputSubject = PublishSubject.create<GenericTransactionDetailsContract.InputEvent>()
     private var editable: Boolean = false
     private var originalTransaction: Transaction? = null
 
@@ -66,7 +65,7 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
                 prepareInput(layout_transaction_details_generic_value_input),
                 prepareInput(layout_transaction_details_generic_data_input),
                 Function3 { to: CharSequence, value: CharSequence, data: CharSequence ->
-                    GenericTransactionDetailsContract.CombinedRawInput(to.toString() to false, value.toString() to false, data.toString() to false)
+                    GenericTransactionDetailsContract.InputEvent(to.toString() to false, value.toString() to false, data.toString() to false)
                 }
         ).subscribe(inputSubject::onNext, Timber::e)
     }
@@ -116,36 +115,6 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
                 .applicationComponent(component)
                 .viewModule(ViewModule(activity!!))
                 .build().inject(this)
-    }
-
-    class TransactionInputException(context: Context, val errorFields: Int, val showSnackbar: Boolean) : LocalizedException(
-            context.getString(R.string.error_transaction_params)
-    ) {
-        companion object {
-            const val TO_FIELD = 1
-            const val VALUE_FIELD = 1 shl 1
-            const val DATA_FIELD = 1 shl 2
-        }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-            if (!super.equals(other)) return false
-
-            other as TransactionInputException
-
-            if (errorFields != other.errorFields) return false
-            if (showSnackbar != other.showSnackbar) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = super.hashCode()
-            result = 31 * result + errorFields
-            result = 31 * result + showSnackbar.hashCode()
-            return result
-        }
     }
 
     companion object {

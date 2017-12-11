@@ -7,7 +7,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -16,7 +16,7 @@ class SafeInfoViewModel @Inject constructor(
         private val safeRepository: GnosisSafeRepository
 ) : SafeInfoContract() {
 
-    private val errorHandler = LocalizedException.networkErrorHandlerBuilder(context)
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
             .build()
 
     private var cachedInfo: SafeInfo? = null

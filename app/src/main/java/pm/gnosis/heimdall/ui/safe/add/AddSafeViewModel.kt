@@ -8,7 +8,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import javax.inject.Inject
@@ -19,12 +19,12 @@ class AddSafeViewModel @Inject constructor(
         private val repository: GnosisSafeRepository
 ) : AddSafeContract() {
 
-    private val errorHandler = LocalizedException.networkErrorHandlerBuilder(context).build()
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
 
     override fun addExistingSafe(name: String, address: String): Observable<Result<Unit>> {
         return Observable.fromCallable {
             checkName(name)
-            val parsedAddress = address.hexAsEthereumAddressOrNull() ?: throw LocalizedException(context.getString(R.string.invalid_ethereum_address))
+            val parsedAddress = address.hexAsEthereumAddressOrNull() ?: throw SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))
             parsedAddress to name
         }.flatMap { (address, name) ->
             repository.add(address, name)
@@ -52,6 +52,6 @@ class AddSafeViewModel @Inject constructor(
     }
 
     private fun checkName(name: String) {
-        if (name.isBlank()) throw LocalizedException(context.getString(R.string.error_blank_name))
+        if (name.isBlank()) throw SimpleLocalizedException(context.getString(R.string.error_blank_name))
     }
 }

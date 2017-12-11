@@ -16,7 +16,7 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -61,7 +61,7 @@ class RestoreAccountActivity : BaseActivity() {
     }
 
     private fun onAccountSaveError(throwable: Throwable) {
-        val message = (throwable as? LocalizedException)?.message ?: getString(R.string.error_try_again)
+        val message = (throwable as? SimpleLocalizedException)?.message ?: getString(R.string.error_try_again)
         layout_restore_account_mnemonic_input_layout.error = message
     }
 

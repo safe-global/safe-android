@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.repositories.TokenTransferData
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
+import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -78,7 +79,7 @@ class AssetTransferTransactionDetailsViewModel @Inject constructor(
         return 0
     }
 
-    override fun inputTransformer(context: Context, originalTransaction: Transaction?): ObservableTransformer<CombinedRawInput, Result<Transaction>> =
+    override fun inputTransformer(context: Context, originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>> =
             ObservableTransformer {
                 it.scan { old, new -> old.diff(new) }
                         .map {
@@ -88,19 +89,19 @@ class AssetTransferTransactionDetailsViewModel @Inject constructor(
                             var errorFields = 0
                             var showToast = false
                             if (to == null) {
-                                errorFields = errorFields or AssetTransferTransactionDetailsFragment.TransactionInputException.TO_FIELD
+                                errorFields = errorFields or TransactionInputException.TO_FIELD
                                 showToast = showToast or it.to.second
                             }
                             if (amount == null) {
-                                errorFields = errorFields or AssetTransferTransactionDetailsFragment.TransactionInputException.AMOUNT_FIELD
+                                errorFields = errorFields or TransactionInputException.AMOUNT_FIELD
                                 showToast = showToast or it.amount.second
                             }
                             if (token == null) {
-                                errorFields = errorFields or AssetTransferTransactionDetailsFragment.TransactionInputException.TOKEN_FIELD
+                                errorFields = errorFields or TransactionInputException.TOKEN_FIELD
                                 showToast = showToast or it.token.second
                             }
                             if (errorFields > 0) {
-                                ErrorResult<Transaction>(AssetTransferTransactionDetailsFragment.TransactionInputException(context, errorFields, showToast))
+                                ErrorResult<Transaction>(TransactionInputException(context, errorFields, showToast))
                             } else {
                                 val nonce = originalTransaction?.nonce ?: BigInteger.valueOf(System.currentTimeMillis())
                                 val tokenAmount = amount!!.multiply(BigDecimal(10).pow(token!!.token.decimals)).toBigInteger()

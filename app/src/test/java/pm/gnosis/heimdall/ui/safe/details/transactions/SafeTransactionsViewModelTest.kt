@@ -68,7 +68,7 @@ class SafeTransactionsViewModelTest {
                     it.data.diff != null && it.data.entries == generateList(from = 1, to = 9)
         }).assertNoErrors()
 
-        then(safeRepository).should(times(1)).observeTransactionDescriptions(testAddress)
+        then(safeRepository).should().observeTransactionDescriptions(testAddress)
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
@@ -85,7 +85,7 @@ class SafeTransactionsViewModelTest {
                 .assertValueAt(1, ErrorResult(illegalStateException))
                 .assertNoErrors()
 
-        then(safeRepository).should(times(1)).observeTransactionDescriptions(testAddress)
+        then(safeRepository).should().observeTransactionDescriptions(testAddress)
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
