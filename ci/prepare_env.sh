@@ -14,7 +14,5 @@ export APP_RELEASE_NOTES=$TRAVIS_COMMIT_MESSAGE
 echo $APP_VERSION_NAME
 echo $APP_RELEASE_NOTES
 
-echo "abiSecret=$FABRIC_API_SECRET" > app/fabric.properties
-echo "abiKey=$FABRIC_API_KEY" >> app/fabric.properties
-
-ls app
+echo "apiSecret=$FABRIC_API_SECRET" > app/fabric.properties
+echo "apiKey=$FABRIC_API_KEY" >> app/fabric.properties
