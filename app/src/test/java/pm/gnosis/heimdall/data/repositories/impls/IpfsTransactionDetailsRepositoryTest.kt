@@ -1,0 +1,73 @@
+package pm.gnosis.heimdall.data.repositories.impls
+
+import io.reactivex.observers.TestObserver
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.verifyNoMoreInteractions
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.StandardToken
+import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
+import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.heimdall.data.remote.IpfsApi
+import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.model.Solidity
+import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import java.math.BigInteger
+
+@RunWith(MockitoJUnitRunner::class)
+class IpfsTransactionDetailsRepositoryTest {
+    @JvmField
+    @Rule
+    val rule = ImmediateSchedulersRule()
+
+    @Mock
+    lateinit var ethereumJsonRpcRepositoryMock: EthereumJsonRpcRepository
+
+    @Mock
+    lateinit var descriptionsDaoMock: DescriptionsDao
+
+    @Mock
+    lateinit var gnosisAuthenticatorDbMock: GnosisAuthenticatorDb
+
+    @Mock
+    lateinit var ipfsApiMock: IpfsApi
+
+    private lateinit var repository: IpfsTransactionDetailsRepository
+
+    @Before
+    fun setUp() {
+        given(gnosisAuthenticatorDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
+        repository = IpfsTransactionDetailsRepository(gnosisAuthenticatorDbMock, ethereumJsonRpcRepositoryMock, ipfsApiMock)
+    }
+
+    private fun testLoadTransactionType(transaction: Transaction, expectedType: TransactionType) {
+        val testObserver = TestObserver<TransactionType>()
+        repository.loadTransactionType(transaction).subscribe(testObserver)
+        testObserver.assertNoErrors().assertValue(expectedType).assertComplete()
+
+        verifyNoMoreInteractions(ethereumJsonRpcRepositoryMock)
+        verifyNoMoreInteractions(descriptionsDaoMock)
+        verifyNoMoreInteractions(ipfsApiMock)
+    }
+
+    @Test
+    fun loadTransactionType() {
+        // Empty transaction = Generic
+        testLoadTransactionType(Transaction(BigInteger.ZERO), TransactionType.GENERIC)
+
+        // Ether transfer
+        testLoadTransactionType(Transaction(BigInteger.ZERO, value = Wei(BigInteger.TEN)), TransactionType.ETHER_TRANSFER)
+
+        // Token transfer
+        val tokenTransferData = StandardToken.Transfer.encode(Solidity.Address(BigInteger.ONE), Solidity.UInt256(BigInteger.TEN))
+        testLoadTransactionType(Transaction(BigInteger.ZERO, data = tokenTransferData), TransactionType.TOKEN_TRANSFER)
+    }
+
+}

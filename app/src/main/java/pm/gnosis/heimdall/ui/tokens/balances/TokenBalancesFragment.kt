@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
@@ -87,7 +88,7 @@ class TokenBalancesFragment : BaseFragment() {
                 .subscribeForResult(onNext = ::onTokensList, onError = ::onTokensListError)
     }
 
-    private fun onTokensList(tokens: Adapter.Data<TokenBalancesContract.ERC20TokenWithBalance>) {
+    private fun onTokensList(tokens: Adapter.Data<ERC20TokenWithBalance>) {
         adapter.updateData(tokens)
         layout_tokens_empty_view.visibility = if (tokens.entries.isEmpty()) View.VISIBLE else View.GONE
     }

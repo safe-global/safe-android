@@ -1,79 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/selectable_background"
     android:padding="16dp">
 
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/layout_safe_transactions_item_value"
+        style="@style/BoldContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/transaction_amount_background"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/out_transaction"
+        tools:text="300 ETH" />
+
+
     <LinearLayout
+        android:id="@+id/layout_safe_transactions_item_info_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/layout_safe_transactions_item_value"
+        android:gravity="center_vertical"
         android:orientation="vertical">
 
-
-        <RelativeLayout
+        <TextView
+            android:id="@+id/layout_safe_transactions_item_to"
+            style="@style/BoldContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:ellipsize="middle"
+            android:singleLine="true"
+            tools:text="0x00000023479345734578623456234523658234583245fafafa123468" />
 
-            <TextView
-                android:id="@+id/layout_safe_transactions_item_value"
-                style="@style/Title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:textColor="@color/gnosis_blue"
-                android:paddingLeft="4dp"
-                android:paddingStart="4dp"
-                tools:text="300" />
-
-            <TextView
-                android:id="@+id/layout_safe_transactions_item_subject"
-                style="@style/Title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/layout_safe_transactions_item_value"
-                android:layout_toStartOf="@id/layout_safe_transactions_item_value"
-                android:ellipsize="end"
-                android:maxLines="2"
-                tools:text="Gnosis" />
-
-        </RelativeLayout>
-
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/layout_safe_transactions_item_timestamp"
+            style="@style/ThinContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:textSize="12sp"
+            tools:text="3 days ago" />
 
-            <TextView
-                android:id="@+id/layout_safe_transactions_item_hash"
-                style="@style/Content"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
-                tools:text="15" />
-
-            <TextView
-                android:id="@+id/layout_safe_transactions_item_timestamp"
-                style="@style/Content"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:gravity="end"
-                tools:text="3 days ago" />
-
-        </LinearLayout>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/layout_safe_transactions_item_subject"
+        style="@style/ThinContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_safe_transactions_item_info_container"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:visibility="visible"
+        tools:text="Buy a nice work laptop ... with this money" />
 </RelativeLayout>

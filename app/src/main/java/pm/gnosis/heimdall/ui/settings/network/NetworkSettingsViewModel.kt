@@ -8,7 +8,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
@@ -52,11 +52,11 @@ class NetworkSettingsViewModel @Inject constructor(
 
     private fun parseUrl(url: String): SettingsRepository.UrlOverride {
         if (!url.startsWith("https:") && !url.startsWith("http:")) {
-            throw LocalizedException(context.getString(R.string.error_invalid_url_scheme))
+            throw SimpleLocalizedException(context.getString(R.string.error_invalid_url_scheme))
         }
-        val parsed = HttpUrl.parse(url) ?: throw LocalizedException(context.getString(R.string.error_invalid_url))
+        val parsed = HttpUrl.parse(url) ?: throw SimpleLocalizedException(context.getString(R.string.error_invalid_url))
         if (parsed.pathSize() > 1 || !parsed.pathSegments().firstOrNull().isNullOrBlank()) {
-            throw LocalizedException(context.getString(R.string.error_invalid_url_path))
+            throw SimpleLocalizedException(context.getString(R.string.error_invalid_url_path))
         }
         val port = if (parsed.port() != HttpUrl.defaultPort(parsed.scheme())) parsed.port() else null
         return SettingsRepository.UrlOverride(parsed.isHttps, parsed.host(), port)
@@ -73,7 +73,7 @@ class NetworkSettingsViewModel @Inject constructor(
             settingsRepository.setSafeFactoryAddress(address)
             address
         }
-                .onErrorResumeNext { Single.error(LocalizedException(context.getString(R.string.invalid_ethereum_address))) }
+                .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))) }
                 .mapToResult()
     }
 }

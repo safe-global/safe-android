@@ -8,8 +8,6 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
 import pm.gnosis.heimdall.GnosisSafe.Required
-import pm.gnosis.heimdall.GnosisSafeWithDescriptions.GetDescriptionCount
-import pm.gnosis.heimdall.GnosisSafeWithDescriptions.GetDescriptions
 import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory
 import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory.Events.GnosisSafeWithDescriptionsCreation
 import pm.gnosis.heimdall.accounts.base.models.Account
@@ -37,7 +35,6 @@ import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.nullOnThrow
-import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
@@ -53,6 +50,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 ) : GnosisSafeRepository {
 
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
+    private val descriptionsDao = gnosisAuthenticatorDb.descriptionsDao()
 
     private val deployStatusRequests = ConcurrentHashMap<String, Observable<String>>()
 
@@ -61,6 +59,11 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     BiFunction { pendingSafes: List<PendingGnosisSafeDb>, safes: List<GnosisSafeDb> ->
                         pendingSafes.map { it.fromDb() } + safes.map { it.fromDb() }
                     })
+                    .subscribeOn(Schedulers.io())!!
+
+    override fun observeDeployedSafes() =
+            safeDao.observeSafes()
+                    .map { it.map { it.fromDb() } }
                     .subscribeOn(Schedulers.io())!!
 
     override fun observeSafe(address: BigInteger): Flowable<Safe> =
@@ -156,11 +159,11 @@ class DefaultGnosisSafeRepository @Inject constructor(
                         id = 0,
                         method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
                         params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
-                        { Wei(it.result.hexAsBigInteger()) }),
+                        { Wei(it.checkedResult().hexAsBigInteger()) }),
                 SubRequest(TransactionCallParams(to = addressString, data = Required.encode()).callRequest(1),
-                        { Required.decode(it.result) }),
+                        { Required.decode(it.checkedResult()) }),
                 SubRequest(TransactionCallParams(to = addressString, data = GetOwners.encode()).callRequest(2),
-                        { GetOwners.decode(it.result) })
+                        { GetOwners.decode(it.checkedResult()) })
         )
         return ethereumJsonRpcRepository.bulk(request)
                 .map {
@@ -171,22 +174,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 }
     }
 
-    override fun loadDescriptionCount(address: BigInteger): Observable<Int> {
-        val addressString = address.asEthereumAddressString()
-        return ethereumJsonRpcRepository.call(TransactionCallParams(to = addressString, data = GetDescriptionCount.encode()))
-                .map { GetDescriptionCount.decode(it).param0.value.toInt() }
-    }
-
-    override fun loadDescriptions(address: BigInteger, from: Int, to: Int): Observable<List<String>> {
-        val addressString = address.asEthereumAddressString()
-        val fromParam = Solidity.UInt256(BigInteger.valueOf(from.toLong()))
-        val toParam = Solidity.UInt256(BigInteger.valueOf(to.toLong()))
-        return ethereumJsonRpcRepository.call(TransactionCallParams(to = addressString, data = GetDescriptions.encode(fromParam, toParam)))
-                .map {
-                    GetDescriptions.decode(it)._descriptionhashes.items.map {
-                        it.bytes.toHexString()
-                    }
-                }
+    override fun observeTransactionDescriptions(address: BigInteger): Flowable<List<String>> {
+        return descriptionsDao.observeDescriptions(address)
     }
 
     private class SafeInfoRequest(

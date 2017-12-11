@@ -14,8 +14,7 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
-import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsViewModel
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.utils.exceptions.InvalidAddressException
@@ -116,7 +115,7 @@ class NetworkSettingsViewModelTest {
         viewModel.updateIpfsUrl(input).subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
-            it is ErrorResult && it.error is LocalizedException && it.error.localizedMessage == msgId.toString()
+            it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == msgId.toString()
         }.assertTerminated()
         verifyNoMoreInteractions(repository)
     }
@@ -156,7 +155,7 @@ class NetworkSettingsViewModelTest {
         viewModel.updateRpcUrl(input).subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
-            it is ErrorResult && it.error is LocalizedException && it.error.localizedMessage == msgId.toString()
+            it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == msgId.toString()
         }.assertTerminated()
         verifyNoMoreInteractions(repository)
     }
@@ -189,7 +188,7 @@ class NetworkSettingsViewModelTest {
         viewModel.updateSafeFactoryAddress(testAddress).subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
-            it is ErrorResult && it.error is LocalizedException && it.error.localizedMessage == R.string.invalid_ethereum_address.toString()
+            it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == R.string.invalid_ethereum_address.toString()
         }.assertTerminated()
         verify(repository).setSafeFactoryAddress(testAddress)
         verifyNoMoreInteractions(repository)

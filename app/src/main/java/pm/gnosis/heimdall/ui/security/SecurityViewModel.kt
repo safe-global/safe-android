@@ -9,7 +9,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.security.EncryptionManager
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import javax.inject.Inject
 
 
@@ -40,22 +40,22 @@ class SecurityViewModel @Inject constructor(
                         encryptionManager.setupPassword(pin.toByteArray()).toObservable()
                     }
                     .map {
-                        LocalizedException.assert(it, context, R.string.pin_setup_failed)
+                        SimpleLocalizedException.assert(it, context, R.string.pin_setup_failed)
                         State.UNLOCKED
                     }
                     .mapToResult()
 
     private fun checkPins(pin: String, repeat: String) =
             Observable.fromCallable {
-                LocalizedException.assert(pin.length >= 5, context, R.string.pin_too_short)
-                LocalizedException.assert(pin == repeat, context, R.string.pin_repeat_wrong)
+                SimpleLocalizedException.assert(pin.length >= 5, context, R.string.pin_too_short)
+                SimpleLocalizedException.assert(pin == repeat, context, R.string.pin_repeat_wrong)
                 pin
             }
 
     override fun unlockPin(pin: String): Observable<Result<State>> =
             encryptionManager.unlockWithPassword(pin.toByteArray())
                     .map {
-                        LocalizedException.assert(it, context, R.string.error_wrong_credentials)
+                        SimpleLocalizedException.assert(it, context, R.string.error_wrong_credentials)
                         State.UNLOCKED
                     }.toObservable().mapToResult()
 }

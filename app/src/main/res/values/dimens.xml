@@ -11,5 +11,8 @@
     <dimen name="address_book_circle">40dp</dimen>
 
     <dimen name="divider_width">1dp</dimen>
+
     <dimen name="fab_size">56dp</dimen>
+
+    <dimen name="transaction_details_cell_height">60dp</dimen>
 </resources>

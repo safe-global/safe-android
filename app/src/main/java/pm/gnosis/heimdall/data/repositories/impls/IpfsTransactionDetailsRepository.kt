@@ -1,10 +1,10 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okio.ByteString
 import pm.gnosis.crypto.utils.Base58Utils
-import pm.gnosis.heimdall.DailyLimitException
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.common.utils.getSharedObservable
@@ -15,8 +15,12 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
-import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.TokenTransferData
+import pm.gnosis.heimdall.data.repositories.TransactionDetails
+import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
+import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.isSolidityMethod
@@ -41,29 +45,35 @@ class IpfsTransactionDetailsRepository @Inject constructor(
 
     private val detailRequests = ConcurrentHashMap<String, Observable<GnosisSafeTransactionDescription>>()
 
-    override fun loadTransactionDetails(descriptionHash: String, address: BigInteger, transactionHash: String?): Observable<TransactionDetails> {
-        return loadDescription(descriptionHash, address, transactionHash)
-                .map { decodeTransactionResult(descriptionHash, it) }
-                .onErrorReturnItem(TransactionDetails.unknown(descriptionHash))
+    override fun loadTransactionDetails(transaction: Transaction): Single<TransactionDetails> {
+        return Single.fromCallable {
+            decodeTransactionResult(null, transaction)
+        }.subscribeOn(Schedulers.computation())
     }
 
-    private fun loadDescription(hash: String, address: BigInteger, transactionHash: String?): Observable<GnosisSafeTransactionDescription> {
-        return descriptionsDao.loadDescription(hash)
+    override fun loadTransactionDetails(id: String, address: BigInteger, transactionHash: String?): Single<TransactionDetails> {
+        return loadDescription(id, address, transactionHash)
+                .map { decodeDescription(id, it) }
+    }
+
+    private fun loadDescription(id: String, address: BigInteger, transactionHash: String?): Single<GnosisSafeTransactionDescription> {
+        return descriptionsDao.loadDescription(id)
                 .subscribeOn(Schedulers.io())
                 .map { it.fromDb() }
                 .toObservable()
                 .onErrorResumeNext { _: Throwable ->
-                    loadDescriptionFromIpfs(hash, address, transactionHash)
+                    loadDescriptionFromIpfs(id, address, transactionHash)
                             .map {
-                                descriptionsDao.insertDescription(it.toDb(hash))
+                                descriptionsDao.insertDescription(it.toDb(id))
                                 it
                             }
                 }
+                .singleOrError()
     }
 
-    private fun loadDescriptionFromIpfs(hash: String, address: BigInteger, transactionHash: String?): Observable<GnosisSafeTransactionDescription> {
-        return detailRequests.getSharedObservable(hash,
-                createIpfsIdentifier(hash)
+    private fun loadDescriptionFromIpfs(id: String, address: BigInteger, transactionHash: String?): Observable<GnosisSafeTransactionDescription> {
+        return detailRequests.getSharedObservable(id,
+                createIpfsIdentifier(id)
                         .flatMap { ipfsApi.transactionDescription(it) }
                         .flatMap { verifyDescription(address, transactionHash, it) }
         )
@@ -80,7 +90,7 @@ class IpfsTransactionDetailsRepository @Inject constructor(
             val operation = Solidity.UInt8(description.operation)
             val nonce = Solidity.UInt256(description.nonce)
             GnosisSafe.GetTransactionHash.encode(to, value, data, operation, nonce)
-        }.flatMap {
+        }.subscribeOn(Schedulers.computation()).flatMap {
             ethereumJsonRpcRepository.call(TransactionCallParams(to = description.safeAddress.asEthereumAddressString(), data = it))
         }.map { remoteTxHash ->
             val cleanHash = remoteTxHash.removePrefix("0x")
@@ -92,43 +102,38 @@ class IpfsTransactionDetailsRepository @Inject constructor(
         }
     }
 
+    private fun parseTransactionType(value: BigInteger?, data: String?): TransactionType =
+            when {
+                data?.isSolidityMethod(StandardToken.Transfer.METHOD_ID) == true -> TransactionType.TOKEN_TRANSFER
+                data.isNullOrBlank() && value != null && value > BigInteger.ZERO -> TransactionType.ETHER_TRANSFER
+                else -> TransactionType.GENERIC
+            }
+
+    override fun loadTransactionType(transaction: Transaction): Single<TransactionType> =
+            Single.fromCallable {
+                parseTransactionType(transaction.value?.value, transaction.data)
+            }.subscribeOn(Schedulers.computation())
+
     private fun createIpfsIdentifier(hash: String) =
             Observable.fromCallable {
                 Base58Utils.encode(ByteString.decodeHex(IPFS_HASH_PREFIX + hash))
-            }
+            }.subscribeOn(Schedulers.computation())
 
-    private fun decodeTransactionResult(descriptionHash: String, description: GnosisSafeTransactionDescription): TransactionDetails {
-        val innerData = description.data
-        val type = when {
-            innerData.isSolidityMethod(GnosisSafe.ReplaceOwner.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(GnosisSafe.ReplaceOwner.METHOD_ID)
-                GnosisSafe.ReplaceOwner.decodeArguments(arguments).let { SafeReplaceOwner(it.oldowner.value, it.newowner.value) }
+    private fun decodeDescription(transactionId: String, description: GnosisSafeTransactionDescription) =
+            decodeTransactionResult(transactionId, description.toTransaction(), description.subject, description.submittedAt)
+
+    private fun decodeTransactionResult(transactionId: String?, transaction: Transaction, subject: String? = null, submittedAt: Long? = null): TransactionDetails {
+        val type = parseTransactionType(transaction.value?.value ?: BigInteger.ZERO, transaction.data)
+        val transactionData = when (type) {
+            TransactionType.TOKEN_TRANSFER -> {
+                val arguments = transaction.data!!.removeSolidityMethodPrefix(StandardToken.Transfer.METHOD_ID)
+                StandardToken.Transfer.decodeArguments(arguments).let { TokenTransferData(it.to.value, it.value.value) }
             }
-            innerData.isSolidityMethod(GnosisSafe.AddOwner.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(GnosisSafe.AddOwner.METHOD_ID)
-                GnosisSafe.AddOwner.decodeArguments(arguments).let { SafeAddOwner(it.owner.value) }
-            }
-            innerData.isSolidityMethod(GnosisSafe.RemoveOwner.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(GnosisSafe.RemoveOwner.METHOD_ID)
-                GnosisSafe.RemoveOwner.decodeArguments(arguments).let { SafeRemoveOwner(it.owner.value) }
-            }
-            innerData.isSolidityMethod(GnosisSafe.ChangeRequired.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(GnosisSafe.ChangeRequired.METHOD_ID)
-                GnosisSafe.ChangeRequired.decodeArguments(arguments).let { SafeChangeConfirmations(it._required.value) }
-            }
-            innerData.isSolidityMethod(DailyLimitException.ChangeDailyLimit.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(DailyLimitException.ChangeDailyLimit.METHOD_ID)
-                DailyLimitException.ChangeDailyLimit.decodeArguments(arguments).let { SafeChangeDailyLimit(it.dailylimit.value) }
-            }
-            innerData.isSolidityMethod(StandardToken.Transfer.METHOD_ID) -> {
-                val arguments = innerData.removeSolidityMethodPrefix(StandardToken.Transfer.METHOD_ID)
-                StandardToken.Transfer.decodeArguments(arguments).let { TokenTransfer(description.to, it.to.value, it.value.value) }
-            }
-            description.value.value != BigInteger.ZERO -> {
-                EtherTransfer(description.to, description.value)
-            }
-            else -> SafeTransaction(description.to, description.value, description.data, description.operation, description.nonce)
+            else -> null
         }
-        return TransactionDetails(type, descriptionHash, description.transactionHash, description.subject, description.submittedAt)
+        return TransactionDetails(transactionId, type, transactionData, transaction, subject, submittedAt)
     }
+
+    private fun GnosisSafeTransactionDescription.toTransaction(): Transaction =
+            Transaction(to, value = value, data = data, nonce = nonce)
 }

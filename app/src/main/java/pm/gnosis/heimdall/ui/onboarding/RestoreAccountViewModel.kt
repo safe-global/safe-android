@@ -9,7 +9,7 @@ import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.mnemonic.*
 import pm.gnosis.mnemonic.wordlists.BIP39_WORDLISTS
@@ -20,7 +20,7 @@ class RestoreAccountViewModel @Inject constructor(
         private val accountsRepository: AccountsRepository
 ) : RestoreAccountContract() {
 
-    private val errorHandler = LocalizedException.Handler.Builder(context)
+    private val errorHandler = SimpleLocalizedException.Handler.Builder(context)
             .add({ it is InvalidEntropy || it is InvalidChecksum || it is UnknownMnemonicError }, R.string.invalid_mnemonic)
             .add({ it is MnemonicNotInWordlist }, { _, _ ->
                 val wordLists = BIP39_WORDLISTS.keys.joinToString()

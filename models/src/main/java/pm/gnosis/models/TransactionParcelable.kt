@@ -8,18 +8,18 @@ data class TransactionParcelable(val transaction: Transaction) : Parcelable {
     constructor(parcel: Parcel) : this(Transaction(
             parcel.readString().hexAsBigInteger(),
             nullOnThrow { Wei(parcel.readString().hexAsBigInteger()) },
-            nullOnThrow { parcel.readString().decimalAsBigInteger() },
-            nullOnThrow { parcel.readString().decimalAsBigInteger() },
+            nullOnThrow { parcel.readString().hexAsBigInteger() },
+            nullOnThrow { parcel.readString().hexAsBigInteger() },
             parcel.readString(),
-            nullOnThrow { parcel.readString().decimalAsBigInteger() }))
+            nullOnThrow { parcel.readString().hexAsBigInteger() }))
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(transaction.address.asEthereumAddressString())
-        parcel.writeString(transaction.value?.value?.asDecimalString())
-        parcel.writeString(transaction.gas?.asDecimalString())
-        parcel.writeString(transaction.gasPrice?.asDecimalString())
+        parcel.writeString(transaction.value?.value?.toString(16))
+        parcel.writeString(transaction.gas?.toString(16))
+        parcel.writeString(transaction.gasPrice?.toString(16))
         parcel.writeString(transaction.data)
-        parcel.writeString(transaction.nonce?.asDecimalString())
+        parcel.writeString(transaction.nonce?.toString(16))
     }
 
     override fun describeContents() = 0

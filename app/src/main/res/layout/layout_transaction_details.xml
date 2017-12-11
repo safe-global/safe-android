@@ -6,128 +6,144 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-        android:id="@+id/layout_transaction_details_progress_bar"
-        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/layout_transaction_details_appbar"
         android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:indeterminate="true"
-        android:visibility="gone"
-        app:mpb_progressStyle="horizontal"
-        app:mpb_useIntrinsicPadding="false"
-        tools:visibility="visible" />
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_transaction_details_toolbar"
+            style="@style/LightToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            app:navigationIcon="@drawable/ic_close_24dp"
+            app:theme="@style/LightToolbarTheme"
+            app:title="@string/confirm_transaction" />
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/layout_transaction_details_progress_bar"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/white"
+            android:indeterminate="true"
+            android:visibility="visible"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_useIntrinsicPadding="false"
+            tools:visibility="gone" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:background="@color/divider" />
+    </android.support.design.widget.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/layout_transaction_details_transaction_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider" />
 
             <TextView
-                style="@style/Label"
+                style="@style/ThinContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="16dp"
+                android:text="@string/estimated_transaction_fee" />
+
+            <TextView
+                android:id="@+id/layout_transaction_details_transaction_fee"
+                style="@style/BoldContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:text="@string/for_text"
-                android:textColor="@color/light_text" />
+                android:paddingBottom="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/loading" />
 
-            <android.support.v7.widget.CardView
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider" />
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp">
+                android:padding="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp">
+                <FrameLayout
+                    android:id="@+id/layout_transaction_details_confirmations_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true">
 
-                    <TextView
-                        android:id="@+id/layout_transaction_details_safe_name"
-                        style="@style/Content"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/safe" />
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/layout_transaction_details_confirmations"
+                        android:layout_width="84dp"
+                        android:layout_height="84dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/address_book_circle"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:paddingBottom="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="8dp"
+                        app:autoSizeTextType="uniform"
+                        tools:text="0/3" />
 
-                    <TextView
-                        android:id="@+id/layout_transaction_details_safe_address"
-                        style="@style/Content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:gravity="start"
-                        android:textColor="@color/dark_text"
-                        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
-
-                    <Button
-                        android:id="@+id/layout_transaction_details_add_safe"
-                        style="@style/TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:text="@string/add_safe" />
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
-
-            <LinearLayout
-                android:id="@+id/layout_transaction_details_data_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="bottom|center"
+                        android:background="@drawable/white_circle"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_authenticate_small_dark" />
+                </FrameLayout>
 
                 <TextView
-                    style="@style/Label"
+                    android:id="@+id/layout_transaction_details_confirmations_hint_text"
+                    style="@style/ThinContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:text="@string/action"
-                    android:textColor="@color/light_text" />
-
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <FrameLayout
-                            android:id="@+id/layout_transaction_details_action_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                        <TextView
-                            android:id="@+id/layout_transaction_details_transaction_id"
-                            style="@style/Label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:gravity="end"
-                            tools:text="Transaction 1" />
-                    </LinearLayout>
-                </android.support.v7.widget.CardView>
-
-            </LinearLayout>
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginEnd="48dp"
+                    android:layout_marginRight="48dp"
+                    android:layout_toLeftOf="@id/layout_transaction_details_confirmations_container"
+                    android:layout_toStartOf="@id/layout_transaction_details_confirmations_container"
+                    tools:text="@string/confirm_transaction_hint" />
+            </RelativeLayout>
 
             <TextView
-                android:id="@+id/layout_transaction_details_button"
+                android:id="@+id/layout_transaction_details_submit_button"
                 style="@style/PrimaryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_margin="16dp"
                 android:layout_marginTop="16dp"
+                android:enabled="false"
                 android:minHeight="48dp"
-                tools:text="Confirm" />
+                android:text="@string/confirm_transaction" />
         </LinearLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

@@ -38,6 +38,30 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="LightToolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextAppearance">@style/LightToolbarTitle</item>
+        <item name="subtitleTextAppearance">@style/LightToolbarSubtitle</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="LightToolbarTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/gnosis_dark_blue</item>
+    </style>
+
+    <style name="LightToolbarSubtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textColor">@color/gnosis_blue_shade</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="LightToolbarTheme" parent="Theme.AppCompat.Light">
+
+        <!-- navigation icon color -->
+        <item name="colorControlNormal">@color/gnosis_dark_blue_alpha_70</item>
+
+        <!-- color of the menu overflow icon -->
+        <item name="android:textColorSecondary">@color/gnosis_dark_blue_alpha_70</item>
+    </style>
+
     <!-- End: Toolbar styles -->
 
 
@@ -79,6 +103,9 @@
 
     <style name="TextButton" parent="TextAppearance.AppCompat.Button">
         <item name="android:textColor">@color/gnosis_blue</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
         <item name="android:background">@drawable/selectable_background</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
@@ -103,7 +130,7 @@
     </style>
 
     <style name="ThinContent" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:textColor">@color/default_text</item>
+        <item name="android:textColor">@color/gnosis_dark_blue_alpha_70</item>
     </style>
 
     <style name="BoldContent" parent="TextAppearance.AppCompat.Body2">
@@ -118,11 +145,6 @@
         <item name="android:textColor">@color/dark_text</item>
     </style>
 
-    <style name="Input" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/darker_text</item>
-        <item name="android:textColorHint">@color/lighter_text</item>
-    </style>
-
     <style name="SpacedCapsTextBase">
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/gnosis_dark_blue_alpha_60</item>
@@ -131,5 +153,22 @@
 
     <style name="SpacedCapsText" parent="SpacedCapsTextBase" />
 
-    <!-- End: Button styles -->
+    <style name="Input" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/darker_text</item>
+        <item name="android:textColorHint">@color/lighter_text</item>
+    </style>
+
+    <style name="InlineInput" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textColorHint">@color/gnosis_dark_blue_alpha_70</item>
+        <item name="android:background">@null</item>
+        <item name="android:inputType">textMultiLine</item>
+        <item name="android:gravity">end|center_vertical</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <!-- End: Text styles -->
 </resources>

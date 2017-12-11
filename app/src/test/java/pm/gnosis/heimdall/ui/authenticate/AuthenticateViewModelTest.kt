@@ -19,10 +19,10 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
 import pm.gnosis.heimdall.utils.ERC67Parser
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.utils.addHexPrefix
 
 @RunWith(MockitoJUnitRunner::class)
@@ -100,7 +100,7 @@ class AuthenticateViewModelTest {
         then(intent).should().hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
         then(intent).should().getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
         then(intent).shouldHaveNoMoreInteractions()
-        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
+        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
         then(contextMock).should().getString(R.string.invalid_erc67)
     }
 
@@ -115,7 +115,7 @@ class AuthenticateViewModelTest {
         then(intent).should().hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
         then(intent).should().getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
         then(intent).shouldHaveNoMoreInteractions()
-        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
+        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
         then(contextMock).should().getString(R.string.unknown_safe_action)
     }
 
@@ -130,7 +130,7 @@ class AuthenticateViewModelTest {
         then(intent).should().hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
         then(intent).should().getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
         then(intent).shouldHaveNoMoreInteractions()
-        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(LocalizedException(TEST_STRING)))
+        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
         then(contextMock).should().getString(R.string.unknown_safe_action)
     }
 

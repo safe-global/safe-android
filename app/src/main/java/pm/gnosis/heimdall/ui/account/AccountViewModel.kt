@@ -10,7 +10,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ class AccountViewModel @Inject constructor(
         private val qrCodeGenerator: QrCodeGenerator
 ) : AccountContract() {
 
-    private val errorHandler = LocalizedException.networkErrorHandlerBuilder(context)
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
             .add({ it is EmptyResultSetException }, R.string.no_account_available)
             .build()
 

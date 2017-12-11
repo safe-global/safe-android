@@ -22,7 +22,6 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asTransactionHash

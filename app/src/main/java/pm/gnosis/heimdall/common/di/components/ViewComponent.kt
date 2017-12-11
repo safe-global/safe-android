@@ -24,7 +24,10 @@ import pm.gnosis.heimdall.ui.splash.SplashActivity
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoActivity
-import pm.gnosis.heimdall.ui.transactiondetails.TransactionDetailsActivity
+import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.GenericTransactionDetailsFragment
 
 @ForView
 @Component(
@@ -35,7 +38,9 @@ interface ViewComponent {
     // Fragments
 
     fun inject(fragment: AddExistingSafeFragment)
+    fun inject(fragment: AssetTransferTransactionDetailsFragment)
     fun inject(fragment: DeployNewSafeFragment)
+    fun inject(fragment: GenericTransactionDetailsFragment)
     fun inject(fragment: SafeInfoFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)
@@ -48,6 +53,7 @@ interface ViewComponent {
     fun inject(activity: AddressBookEntryDetailsActivity)
     fun inject(activity: AddTokenActivity)
     fun inject(activity: AuthenticateActivity)
+    fun inject(activity: CreateTransactionActivity)
     fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: NetworkSettingsActivity)
     fun inject(activity: RestoreAccountActivity)
@@ -57,7 +63,7 @@ interface ViewComponent {
     fun inject(activity: SplashActivity)
     fun inject(activity: TokenManagementActivity)
     fun inject(activity: TokenInfoActivity)
-    fun inject(activity: TransactionDetailsActivity)
+    fun inject(activity: ViewTransactionActivity)
 
     // Dialogs
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "15b5b20578e2447284b9e5dfc46fd7cb",
+    "identityHash": "a51ccf332f87af9d04dc3f0cc3361e12",
     "entities": [
       {
         "tableName": "address_book",
@@ -134,11 +134,11 @@
       },
       {
         "tableName": "transaction_details",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`hash` TEXT NOT NULL, `safeAddress` TEXT NOT NULL, `to` TEXT NOT NULL, `value` TEXT NOT NULL, `data` TEXT NOT NULL, `operation` TEXT NOT NULL, `nonce` TEXT NOT NULL, `submittedAt` INTEGER NOT NULL, `subject` TEXT, `txHash` TEXT NOT NULL, PRIMARY KEY(`hash`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `safeAddress` TEXT NOT NULL, `to` TEXT NOT NULL, `value` TEXT NOT NULL, `data` TEXT NOT NULL, `operation` TEXT NOT NULL, `nonce` TEXT NOT NULL, `submittedAt` INTEGER NOT NULL, `subject` TEXT, `txHash` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
-            "fieldPath": "hash",
-            "columnName": "hash",
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -199,7 +199,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "hash"
+            "id"
           ],
           "autoGenerate": false
         },
@@ -209,7 +209,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"15b5b20578e2447284b9e5dfc46fd7cb\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a51ccf332f87af9d04dc3f0cc3361e12\")"
     ]
   }
 }

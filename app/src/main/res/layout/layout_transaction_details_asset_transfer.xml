@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/ThinContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/generic_transaction_description" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/transaction_details_cell_height"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/layout_transaction_details_asset_transfer_safe_label"
+            style="@style/ThinContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/from_safe" />
+
+        <Spinner
+            android:id="@+id/layout_transaction_details_asset_transfer_safe_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/layout_simple_spinner_item" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/transaction_details_cell_height">
+
+        <TextView
+            android:id="@+id/layout_transaction_details_asset_transfer_to_label"
+            style="@style/ThinContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:padding="16dp"
+            android:text="@string/to" />
+
+        <ImageView
+            android:id="@+id/layout_transaction_details_asset_transfer_scan_to_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="end"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:tint="@color/gnosis_blue"
+            app:srcCompat="@drawable/ic_qrcode_scan_dark" />
+
+        <View
+            android:id="@+id/layout_transaction_details_asset_transfer_divider_qr_code"
+            android:layout_width="@dimen/divider_width"
+            android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_toLeftOf="@+id/layout_transaction_details_asset_transfer_scan_to_button"
+            android:layout_toStartOf="@+id/layout_transaction_details_asset_transfer_scan_to_button"
+            android:background="@color/divider" />
+
+        <EditText
+            android:id="@+id/layout_transaction_details_asset_transfer_to_input"
+            style="@style/InlineInput"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_gravity="bottom"
+            android:layout_toEndOf="@id/layout_transaction_details_asset_transfer_to_label"
+            android:layout_toLeftOf="@id/layout_transaction_details_asset_transfer_divider_qr_code"
+            android:layout_toRightOf="@id/layout_transaction_details_asset_transfer_to_label"
+            android:layout_toStartOf="@id/layout_transaction_details_asset_transfer_divider_qr_code"
+            android:hint="@string/address_hint"
+            tools:text="" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/transaction_details_cell_height"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/layout_transaction_details_asset_transfer_token_label"
+            style="@style/ThinContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/select_token" />
+
+        <Spinner
+            android:id="@+id/layout_transaction_details_asset_transfer_token_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/layout_simple_spinner_item" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/transaction_details_cell_height">
+
+        <TextView
+            android:id="@+id/layout_transaction_details_asset_transfer_amount_label"
+            style="@style/ThinContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:padding="16dp"
+            android:text="@string/value" />
+
+        <TextView
+            android:id="@+id/layout_transaction_details_asset_transfer_max_amount_button"
+            style="@style/TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="@string/max_balance" />
+
+        <View
+            android:id="@+id/layout_transaction_details_asset_transfer_divider_amount"
+            android:layout_width="@dimen/divider_width"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/layout_transaction_details_asset_transfer_max_amount_button"
+            android:layout_toStartOf="@+id/layout_transaction_details_asset_transfer_max_amount_button"
+            android:background="@color/divider" />
+
+        <EditText
+            android:id="@+id/layout_transaction_details_asset_transfer_amount_input"
+            style="@style/InlineInput"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_toEndOf="@id/layout_transaction_details_asset_transfer_amount_label"
+            android:layout_toLeftOf="@id/layout_transaction_details_asset_transfer_divider_amount"
+            android:layout_toRightOf="@id/layout_transaction_details_asset_transfer_amount_label"
+            android:layout_toStartOf="@id/layout_transaction_details_asset_transfer_divider_amount"
+            android:hint="@string/value_hint"
+            android:inputType="numberDecimal"
+            tools:text="" />
+    </RelativeLayout>
+</LinearLayout>

@@ -23,11 +23,11 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
 import pm.gnosis.models.Wei
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
 import retrofit2.HttpException
 import retrofit2.Response
 import java.math.BigInteger
@@ -99,7 +99,7 @@ class AccountViewModelTest {
         then(accountRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
-                .assertValue(ErrorResult(LocalizedException(TEST_STRING)))
+                .assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
         verify(contextMock).getString(R.string.no_account_available)
     }
 
@@ -171,7 +171,7 @@ class AccountViewModelTest {
         then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
-                .assertValue(ErrorResult(LocalizedException(TEST_STRING)))
+                .assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
     }
 
     @Test

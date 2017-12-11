@@ -50,7 +50,7 @@
     <string name="from_the_list_of_owners">from the list of owners</string>
     <string name="replace_owner">Replace owner</string>
     <string name="with">with</string>
-    <string name="to">to</string>
+    <string name="to">To</string>
     <string name="no_account_restore_it_via_mnemonic_phrase"><b>No account?</b><br /> Restore it via mnemonic phrase</string>
     <string name="mnemonic_copied">Mnemonic copied to clipboard</string>
     <string name="pin_setup_failed">Pin setup failed. Please try again!</string>
@@ -156,6 +156,7 @@
     <string name="safe_name_hint">Safe Name</string>
     <string name="deploy_new_safe">Deploy New Safe</string>
     <string name="estimated_transaction_fee">Estimated Transaction Fee</string>
+    <string name="confirm_transaction_hint">This signing device will initiate and confirm this transaction. <u><b>%s other safe owning devices</b></u> then need to confirm after that, before this transaction gets submitted.</string>
     <string name="add_existing_safe">Add existing safe</string>
     <string name="x_wei">%s Wei</string>
     <string name="tab_title_add_existing">add existing</string>
@@ -174,4 +175,24 @@
     <string name="tokens_list_error">Could not get list of tokens</string>
     <string name="tokens_delete_error">Could not get remove token from verified list</string>
     <string name="scan_or_tap_to_copy">Scan or tap to copy</string>
+    <string name="transaction_confirmation_count_hint_tittle">Device Confirmations:</string>
+    <string name="transaction_confirmation_count_hint">In total %d devices need to confirm this transaction before it gets submitted.</string>
+    <string name="address_hint">Enter Address</string>
+    <string name="data_hint">Enter Data</string>
+    <string name="data">Data</string>
+    <string name="value_hint">Enter Value</string>
+    <string name="value">Value</string>
+    <string name="from_safe">From safe</string>
+    <string name="token_transaction_description">Once approved by all required signing devices, this transaction will transfer tokens to the specified recipient address in the <b>To</b> field.</string>
+    <string name="generic_transaction_description">Once approved by all required signing devices, this transaction will be executed by sending the <b>Data</b> and <b>Value</b> to the address in the <b>To</b> field.</string>
+    <string name="error_transaction_params">Please check your transaction parameters and try again!</string>
+    <string name="x_of_x_confirmations">%s/%s</string>
+    <string name="error_transaction_already_executed">Transaction was already executed!</string>
+    <string name="error_confirm_not_owner">You cannot confirm a transaction for this safe!</string>
+    <string name="error_transaction_already_confirmed">You already confirmed this transaction!</string>
+    <string name="create_transaction">Create Transaction</string>
+    <string name="select_token">Select token</string>
+    <string name="max_balance">Max. balance</string>
+    <string name="outgoing_transaction_value">-%s %s</string>
+    <string name="unknown_balance">The current balance for the selected asset is unknown.</string>
 </resources>

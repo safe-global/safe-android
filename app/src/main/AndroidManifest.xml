@@ -24,9 +24,6 @@
         <activity android:name=".ui.safe.overview.SafesOverviewActivity" />
         <activity android:name=".ui.onboarding.GenerateMnemonicActivity" />
         <activity android:name=".ui.onboarding.RestoreAccountActivity" />
-        <activity
-            android:name=".ui.transactiondetails.TransactionDetailsActivity"
-            android:parentActivityName=".ui.safe.overview.SafesOverviewActivity" />
         <activity android:name=".ui.security.SecurityActivity" />
         <activity android:name=".ui.safe.details.SafeDetailsActivity" />
         <activity android:name=".ui.tokens.add.AddTokenActivity" />
@@ -40,5 +37,7 @@
         <activity android:name=".ui.settings.tokens.TokenManagementActivity" />
         <activity android:name=".ui.authenticate.AuthenticateActivity" />
         <activity android:name=".ui.tokens.info.TokenInfoActivity" />
+        <activity android:name=".ui.transactions.CreateTransactionActivity" />
+        <activity android:name=".ui.transactions.ViewTransactionActivity" />
     </application>
 </manifest>

@@ -1,26 +1,23 @@
 package pm.gnosis.heimdall.data.repositories
 
-import io.reactivex.Observable
-import pm.gnosis.models.Wei
+import io.reactivex.Single
+import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
 interface TransactionDetailsRepository {
-    fun loadTransactionDetails(descriptionHash: String, address: BigInteger, transactionHash: String?): Observable<TransactionDetails>
+    fun loadTransactionDetails(id: String, address: BigInteger, transactionHash: String?): Single<TransactionDetails>
+    fun loadTransactionType(transaction: Transaction): Single<TransactionType>
+    fun loadTransactionDetails(transaction: Transaction): Single<TransactionDetails>
 }
 
-data class TransactionDetails(val type: TransactionType, val descriptionHash: String, val transactionHash: String? = null, val subject: String? = null, val timestamp: Long? = null) {
-    companion object {
-        fun unknown(descriptionHash: String) = TransactionDetails(UnknownTransactionType(null), descriptionHash)
-    }
-}
+data class TransactionDetails(val transactionId: String?, val type: TransactionType, val data: TransactionTypeData?,
+                              val transaction: Transaction, val subject: String? = null, val timestamp: Long? = null)
 
-sealed class TransactionType
-data class UnknownTransactionType(val data: String?) : TransactionType()
-data class SafeTransaction(val to: BigInteger, val value: Wei, val data: String, val operation: BigInteger, val nonce: BigInteger) : TransactionType()
-data class EtherTransfer(val address: BigInteger, val value: Wei) : TransactionType()
-data class TokenTransfer(val tokenAddress: BigInteger, val recipient: BigInteger, val tokens: BigInteger) : TransactionType()
-data class SafeChangeDailyLimit(val newDailyLimit: BigInteger) : TransactionType()
-data class SafeReplaceOwner(val owner: BigInteger, val newOwner: BigInteger) : TransactionType()
-data class SafeAddOwner(val owner: BigInteger) : TransactionType()
-data class SafeRemoveOwner(val owner: BigInteger) : TransactionType()
-data class SafeChangeConfirmations(val newConfirmations: BigInteger) : TransactionType()
+sealed class TransactionTypeData
+data class TokenTransferData(val recipient: BigInteger, val tokens: BigInteger) : TransactionTypeData()
+
+enum class TransactionType {
+    GENERIC,
+    ETHER_TRANSFER,
+    TOKEN_TRANSFER
+}

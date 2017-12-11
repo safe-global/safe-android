@@ -26,35 +26,35 @@ class LocalizedExceptionTest {
     @Mock
     lateinit var contextMock: Context
 
-    val handler: LocalizedException.Handler by lazy { LocalizedException.networkErrorHandlerBuilder(contextMock).build(false) }
+    val handler: SimpleLocalizedException.Handler by lazy { SimpleLocalizedException.networkErrorHandlerBuilder(contextMock).build(false) }
 
     @Test
     fun handleSSLError() {
         mockString(R.string.error_ssl_handshake, "error_ssl_handshake")
-        check(LocalizedException("error_ssl_handshake"), SSLHandshakeException(""))
-        check(LocalizedException("error_ssl_handshake"), RuntimeException(SSLHandshakeException("")))
+        check(SimpleLocalizedException("error_ssl_handshake"), SSLHandshakeException(""))
+        check(SimpleLocalizedException("error_ssl_handshake"), RuntimeException(SSLHandshakeException("")))
     }
 
     @Test
     fun handleNoInternetError() {
         mockString(R.string.error_check_internet_connection, "error_check_internet_connection")
-        check(LocalizedException("error_check_internet_connection"), UnknownHostException(""))
-        check(LocalizedException("error_check_internet_connection"), SocketTimeoutException(""))
+        check(SimpleLocalizedException("error_check_internet_connection"), UnknownHostException(""))
+        check(SimpleLocalizedException("error_check_internet_connection"), SocketTimeoutException(""))
     }
 
     @Test
     fun handleUnauthorizedError() {
         mockString(R.string.error_not_authorized_for_action, "error_not_authorized_for_action")
-        check(LocalizedException("error_not_authorized_for_action"), mockHttpException(HttpCodes.UNAUTHORIZED))
-        check(LocalizedException("error_not_authorized_for_action"), mockHttpException(HttpCodes.FORBIDDEN))
+        check(SimpleLocalizedException("error_not_authorized_for_action"), mockHttpException(HttpCodes.UNAUTHORIZED))
+        check(SimpleLocalizedException("error_not_authorized_for_action"), mockHttpException(HttpCodes.FORBIDDEN))
     }
 
     @Test
     fun handleUnexpectedError() {
         mockString(R.string.error_try_again, "error_try_again")
-        check(LocalizedException("error_try_again"), mockHttpException(HttpCodes.SERVER_ERROR))
-        check(LocalizedException("error_try_again"), mockHttpException(HttpCodes.BAD_REQUEST))
-        check(LocalizedException("error_try_again"), mockHttpException(HttpCodes.NOT_FOUND))
+        check(SimpleLocalizedException("error_try_again"), mockHttpException(HttpCodes.SERVER_ERROR))
+        check(SimpleLocalizedException("error_try_again"), mockHttpException(HttpCodes.BAD_REQUEST))
+        check(SimpleLocalizedException("error_try_again"), mockHttpException(HttpCodes.NOT_FOUND))
     }
 
     @Test

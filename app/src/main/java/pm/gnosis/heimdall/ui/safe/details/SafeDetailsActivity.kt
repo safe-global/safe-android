@@ -22,6 +22,7 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
@@ -29,7 +30,9 @@ import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoFragment
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
+import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexAsBigIntegerOrNull
 import pm.gnosis.utils.hexAsEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
@@ -68,6 +71,9 @@ class SafeDetailsActivity : BaseActivity() {
             true
         }
 
+        layout_safe_details_fab.setOnClickListener {
+            startActivity(CreateTransactionActivity.createIntent(this, safeAddress.hexAsBigIntegerOrNull(), TransactionType.TOKEN_TRANSFER, null))
+        }
         layout_safe_details_viewpager.adapter = pagerAdapter()
         layout_safe_details_tabbar.setupWithViewPager(layout_safe_details_viewpager)
         layout_safe_details_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {

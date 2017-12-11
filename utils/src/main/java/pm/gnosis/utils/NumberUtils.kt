@@ -39,8 +39,6 @@ fun BigInteger.asTransactionHash(): String {
 fun BigInteger.isValidTransactionHash() = this <= BigInteger.valueOf(2).pow(256).minus(BigInteger.ONE)
 
 fun BigInteger.asDecimalString(): String = this.toString(10)
-fun BigDecimal.withTokenScaleOrNull(decimals: Int) = nullOnThrow { withTokenScale(decimals) }
-fun BigDecimal.withTokenScale(decimals: Int) = this.setScale(decimals).div(BigDecimal.TEN.pow(decimals))
 fun BigDecimal.stringWithNoTrailingZeroes(): String =
         //Issue: http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6480539
         if (this.unscaledValue() == BigInteger.ZERO) "0"
