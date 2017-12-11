@@ -8,6 +8,7 @@ import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.remote.models.TransactionParameters
 import pm.gnosis.heimdall.data.remote.models.TransactionReceipt
 import pm.gnosis.models.Wei
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import timber.log.Timber
 import java.math.BigDecimal
@@ -29,7 +30,7 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
             ethereumJsonRpcApi.post(
                     JsonRpcRequest(
                             method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
-                            params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)))
+                            params = arrayListOf(address.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)))
                     .map { Wei(it.checkedResult().hexAsBigInteger()) }
 
     override fun getLatestBlock(): Observable<BigInteger> =
@@ -48,7 +49,7 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
 
     override fun getTransactionCount(address: BigInteger): Observable<BigInteger> =
             ethereumJsonRpcApi.post(JsonRpcRequest(method = "eth_getTransactionCount",
-                    params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)))
+                    params = arrayListOf(address.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)))
                     .map { it.checkedResult().hexAsBigInteger() }
 
     override fun getTransactionReceipt(receiptHash: String): Observable<TransactionReceipt> =
@@ -73,7 +74,7 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
         val request = TransactionParametersRequest(
                 SubRequest(JsonRpcRequest(id = 0, method = "eth_estimateGas", params = arrayListOf(transactionCallParams)), { it.checkedResult().hexAsBigInteger() }),
                 SubRequest(JsonRpcRequest(id = 1, method = "eth_gasPrice"), { it.checkedResult().hexAsBigInteger() }),
-                SubRequest(JsonRpcRequest(id = 2, method = "eth_getTransactionCount", params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)), { it.checkedResult().hexAsBigInteger() })
+                SubRequest(JsonRpcRequest(id = 2, method = "eth_getTransactionCount", params = arrayListOf(address.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)), { it.checkedResult().hexAsBigInteger() })
         )
         return bulk(request).map {
             val adjustedGas = BigDecimal.valueOf(1.1)

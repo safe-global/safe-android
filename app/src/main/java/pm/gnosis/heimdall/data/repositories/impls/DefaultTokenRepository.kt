@@ -83,7 +83,7 @@ class DefaultTokenRepository @Inject constructor(
                         BulkRequest.SubRequest(JsonRpcRequest(
                                 id = index,
                                 method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
-                                params = arrayListOf(ofAddress, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
+                                params = arrayListOf(ofAddress.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
                                 { nullOnThrow { it.checkedResult().hexAsBigInteger() } })
                     } else {
                         BulkRequest.SubRequest(TransactionCallParams(

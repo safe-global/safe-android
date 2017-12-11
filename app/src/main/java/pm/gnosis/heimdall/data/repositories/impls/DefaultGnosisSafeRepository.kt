@@ -158,7 +158,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 SubRequest(JsonRpcRequest(
                         id = 0,
                         method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
-                        params = arrayListOf(address, EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
+                        params = arrayListOf(address.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
                         { Wei(it.checkedResult().hexAsBigInteger()) }),
                 SubRequest(TransactionCallParams(to = addressString, data = Required.encode()).callRequest(1),
                         { Required.decode(it.checkedResult()) }),
