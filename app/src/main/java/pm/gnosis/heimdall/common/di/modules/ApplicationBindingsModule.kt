@@ -8,10 +8,27 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.impls.SimpleEthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.*
+import pm.gnosis.heimdall.reporting.CrashTracker
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.impl.FabricCrashTracker
+import pm.gnosis.heimdall.reporting.impl.FabricEventTracker
 import javax.inject.Singleton
 
 @Module
 abstract class ApplicationBindingsModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindsCrashTracker(tracker: FabricCrashTracker): CrashTracker
+
+    @Binds
+    @Singleton
+    abstract fun bindsEventTracker(tracker: FabricEventTracker): EventTracker
+
+    /*
+        Repositories
+     */
+
     @Binds
     @Singleton
     abstract fun bindsAddressBookRepository(repository: DefaultAddressBookRepository): AddressBookRepository

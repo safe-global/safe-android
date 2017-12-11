@@ -59,7 +59,7 @@ class AssetTransferTransactionDetailsViewModel @Inject constructor(
                         val tokensNoBalance = it.map { ERC20TokenWithBalance(it, null) }
                         if (safeAddress != null)
                             tokenRepository.loadTokenBalances(safeAddress, it)
-                                    .map {
+                                        .map {
                                         it.mapNotNull { (token, balance) ->
                                             if (token.verified && (balance == BigInteger.ZERO)) null
                                             else ERC20TokenWithBalance(token, balance)

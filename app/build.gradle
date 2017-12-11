@@ -3,7 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'bivrost'
+apply plugin: 'io.fabric'
 apply from: '../buildsystem/coverageReport.gradle'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
 
 android {
     defaultConfig {
@@ -16,6 +21,9 @@ android {
         multiDexEnabled true
 
         project.ext.set("archivesBaseName", String.format("gnosis-authenticator-%s", defaultConfig.versionCode))
+
+        ext.betaDistributionGroupAliases = System.getenv("FABRIC_GROUP_INTERNAL_BETA")
+        ext.betaDistributionReleaseNotes = System.getenv("APP_RELEASE_NOTES")
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -32,13 +40,9 @@ android {
     }
 
     buildTypes {
-        chainTest {
-            signingConfig signingConfigs.debug
-            minifyEnabled false
-            debuggable true
-        }
-
         debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
             minifyEnabled false
         }
 
@@ -86,6 +90,11 @@ dependencies {
     implementation project(':mnemonic')
     implementation project(':security')
     implementation project(':utils')
+
+    // Fabric
+    implementation("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics@aar") {
+        transitive = true
+    }
 
     // Kethereum RLP
     implementation "com.github.walleth.kethereum:rlp:$versions.kethereum"

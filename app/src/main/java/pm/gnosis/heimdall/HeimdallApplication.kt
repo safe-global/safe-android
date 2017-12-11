@@ -9,7 +9,6 @@ import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerApplicationComponent
 import pm.gnosis.heimdall.common.di.modules.CoreModule
 import timber.log.Timber
-import timber.log.Timber.DebugTree
 import java.security.Security
 
 class HeimdallApplication : MultiDexApplication() {
@@ -19,9 +18,9 @@ class HeimdallApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        if (BuildConfig.DEBUG) {
-            Timber.plant(DebugTree())
-        }
+
+        // Init crash tracker to track unhandled exceptions
+        component.crashTracker().init()
         RxJavaPlugins.setErrorHandler(Timber::e)
 
         try {

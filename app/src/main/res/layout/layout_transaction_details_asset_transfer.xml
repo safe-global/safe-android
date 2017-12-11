@@ -155,21 +155,25 @@
             android:gravity="center"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:text="@string/max_balance" />
+            android:text="@string/max_balance"
+            tools:visibility="gone" />
 
         <View
             android:id="@+id/layout_transaction_details_asset_transfer_divider_amount"
             android:layout_width="@dimen/divider_width"
             android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
             android:layout_toLeftOf="@+id/layout_transaction_details_asset_transfer_max_amount_button"
             android:layout_toStartOf="@+id/layout_transaction_details_asset_transfer_max_amount_button"
-            android:background="@color/divider" />
+            android:background="@color/divider"
+            tools:visibility="gone" />
 
         <EditText
             android:id="@+id/layout_transaction_details_asset_transfer_amount_input"
             style="@style/InlineInput"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
             android:layout_gravity="bottom"
             android:layout_toEndOf="@id/layout_transaction_details_asset_transfer_amount_label"
             android:layout_toLeftOf="@id/layout_transaction_details_asset_transfer_divider_amount"

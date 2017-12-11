@@ -61,7 +61,7 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
         editable = arguments?.getBoolean(ARG_EDITABLE, false) ?: false
         originalTransaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
         layout_transaction_details_asset_transfer_max_amount_button.visibility = if (editable) View.VISIBLE else View.GONE
-        layout_transaction_details_asset_transfer_divider_qr_code.visibility = if (editable) View.VISIBLE else View.GONE
+        layout_transaction_details_asset_transfer_divider_amount.visibility = if (editable) View.VISIBLE else View.GONE
         toggleTransactionInput(editable)
     }
 
@@ -81,18 +81,20 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
         layout_transaction_details_asset_transfer_to_input.setText(info.to?.asEthereumAddressStringOrNull())
         layout_transaction_details_asset_transfer_amount_input.setText(info.tokenAmount?.let { info.token?.convertAmount(it)?.stringWithNoTrailingZeroes() })
         layout_transaction_details_asset_transfer_amount_label.text = info.token?.symbol ?: getString(R.string.value)
-        disposables += layout_transaction_details_asset_transfer_max_amount_button.clicks()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    nullOnThrow { adapter.getItem(layout_transaction_details_asset_transfer_token_input.selectedItemPosition) }?.let {
-                        if (it.balance != null) {
-                            val amount = it.token.convertAmount(it.balance).stringWithNoTrailingZeroes()
-                            layout_transaction_details_asset_transfer_amount_input.setText(amount)
-                        } else {
-                            snackbar(view!!, R.string.unknown_balance)
+        if (editable) {
+            disposables += layout_transaction_details_asset_transfer_max_amount_button.clicks()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        nullOnThrow { adapter.getItem(layout_transaction_details_asset_transfer_token_input.selectedItemPosition) }?.let {
+                            if (it.balance != null) {
+                                val amount = it.token.convertAmount(it.balance).stringWithNoTrailingZeroes()
+                                layout_transaction_details_asset_transfer_amount_input.setText(amount)
+                            } else {
+                                snackbar(view!!, R.string.unknown_balance)
+                            }
                         }
-                    }
-                }, Timber::e)
+                    }, Timber::e)
+        }
         disposables += observeSafe().flatMap {
             subViewModel.observeTokens(info.selectedToken, it.toNullable())
         }

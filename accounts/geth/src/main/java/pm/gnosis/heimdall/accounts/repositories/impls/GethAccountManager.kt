@@ -2,10 +2,8 @@ package pm.gnosis.heimdall.accounts.repositories.impls
 
 import org.ethereum.geth.Account
 import org.ethereum.geth.KeyStore
-import pm.gnosis.heimdall.app.core.BuildConfig
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.utils.edit
-import pm.gnosis.heimdall.common.utils.test.TestRPC
 import pm.gnosis.utils.generateRandomString
 import javax.inject.Inject
 import javax.inject.Singleton
