@@ -5,23 +5,11 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 android {
-
     defaultConfig {
         buildConfigField javaTypes.STRING, "SAFE_FACTORY_ADDRESS", asString(getKey("SAFE_FACTORY_ADDRESS", "0x19fd8863ea1185d8ef7ab3f2a8f4d469dc35dd52"))
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io"))
         buildConfigField javaTypes.STRING, "IPFS_GATEWAY_URL", asString(getKey("IPFS_GATEWAY_URL", "https://ipfs.infura.io"))
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
-        buildConfigField javaTypes.BOOLEAN, "PRIVATE_TEST_NET", javaTypes.FALSE
-    }
-
-    buildTypes {
-        chainTest {
-            buildConfigField javaTypes.BOOLEAN, "PRIVATE_TEST_NET", getKey("PRIVATE_TEST_NET", javaTypes.FALSE)
-        }
-
-        debug {
-            buildConfigField javaTypes.BOOLEAN, "PRIVATE_TEST_NET", javaTypes.TRUE
-        }
     }
 }
 

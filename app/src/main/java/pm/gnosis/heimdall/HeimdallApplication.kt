@@ -11,7 +11,6 @@ import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerApplicationComponent
 import pm.gnosis.heimdall.common.di.modules.CoreModule
 import timber.log.Timber
-import timber.log.Timber.DebugTree
 import java.security.Security
 
 class HeimdallApplication : MultiDexApplication() {
@@ -24,7 +23,6 @@ class HeimdallApplication : MultiDexApplication() {
 
         // Init crash tracker to track unhandled exceptions
         component.crashTracker().init()
-        Fabric.with(this, Crashlytics())
         RxJavaPlugins.setErrorHandler(Timber::e)
 
         try {

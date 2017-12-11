@@ -10,12 +10,12 @@ ext {
             // Runtime dependencies
             android_support        : '27.0.2',
             architecture_components: '1.0.0',
-            bivrost                : 'v0.6.0',
+            bivrost                : 'v0.6.1',
             crashlytics            : '2.8.0',
             dagger                 : '2.12',
             floating_action_button : '1.6.4',
             geth                   : '1.7.1',
-            kethereum              : '0.32',
+            kethereum              : '0.33',
             koptional              : '1.2.0',
             material_progressbar   : '1.4.2',
             moshi                  : '1.4.0', //https://github.com/square/moshi/issues/315

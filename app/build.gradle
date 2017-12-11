@@ -22,6 +22,9 @@ android {
 
         project.ext.set("archivesBaseName", String.format("gnosis-authenticator-%s", defaultConfig.versionCode))
 
+        ext.betaDistributionGroupAliases = System.getenv("FABRIC_GROUP_INTERNAL_BETA")
+        ext.betaDistributionReleaseNotes = System.getenv("APP_RELEASE_NOTES")
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -37,13 +40,9 @@ android {
     }
 
     buildTypes {
-        chainTest {
-            signingConfig signingConfigs.debug
-            minifyEnabled false
-            debuggable true
-        }
-
         debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
             minifyEnabled false
         }
 

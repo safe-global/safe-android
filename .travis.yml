@@ -32,6 +32,7 @@ before_install:
 script:
   - . ./ci/prepare_env.sh
   - ./ci/build_debug.sh
+  - ./ci/release_internal_beta.sh
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -f '*TestCoverage.xml'

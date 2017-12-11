@@ -13,3 +13,6 @@ export APP_RELEASE_NOTES=$TRAVIS_COMMIT_MESSAGE
 
 echo $APP_VERSION_NAME
 echo $APP_RELEASE_NOTES
+
+echo "abiSecret=$FABRIC_ABI_SECRET" > app/fabric.properties
+echo "abiKey=$FABRIC_ABI_KEY" >> app/fabric.properties
