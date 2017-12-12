@@ -21,8 +21,8 @@ import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeViewModel
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsViewModel
-import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
-import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoViewModel
+import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract
+import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsViewModel
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsViewModel
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
@@ -117,8 +117,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SafeInfoContract::class)
-    abstract fun bindsSafeInfoContract(viewModel: SafeInfoViewModel): ViewModel
+    @ViewModelKey(SafeSettingsContract::class)
+    abstract fun bindsSafeInfoContract(viewModel: SafeSettingsViewModel): ViewModel
 
     @Binds
     @IntoMap

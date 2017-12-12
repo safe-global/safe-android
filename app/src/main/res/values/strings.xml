@@ -195,4 +195,9 @@
     <string name="max_balance">Max. balance</string>
     <string name="outgoing_transaction_value">-%s %s</string>
     <string name="unknown_balance">The current balance for the selected asset is unknown.</string>
+    <string name="safe_name_label">Safe name</string>
+    <string name="safe_information_loading">Safe information not yet loaded!</string>
+    <string name="safe_owning_devices">Safe owning devices</string>
+    <string name="safe_confirmations_text"><b>%1$s</b> of <b>%2$s</b> safe owning device/s need to confirm transactions for this safe</string>
+    <string name="delete_this_safe">Delete this safe</string>
 </resources>

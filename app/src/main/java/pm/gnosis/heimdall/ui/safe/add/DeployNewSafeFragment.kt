@@ -29,8 +29,8 @@ class DeployNewSafeFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             inflater.inflate(R.layout.layout_deploy_new_safe, container, false)!!
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onStart() {
+        super.onStart()
         disposables += layout_deploy_new_safe_deploy_button.clicks().flatMap {
             viewModel.deployNewSafe(layout_deploy_new_safe_name_input.text.toString())
                     .subscribeOn(AndroidSchedulers.mainThread())

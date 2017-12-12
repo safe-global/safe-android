@@ -40,6 +40,7 @@ abstract class BaseShareAddressDialog : BaseDialog() {
         } else {
             this.address = address
         }
+        inject()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =

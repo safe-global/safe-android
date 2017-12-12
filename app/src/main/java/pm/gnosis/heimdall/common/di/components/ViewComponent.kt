@@ -9,12 +9,13 @@ import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
+import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountActivity
 import pm.gnosis.heimdall.ui.safe.add.AddExistingSafeFragment
 import pm.gnosis.heimdall.ui.safe.add.DeployNewSafeFragment
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
-import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoFragment
+import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsFragment
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.ui.security.SecurityActivity
@@ -41,7 +42,7 @@ interface ViewComponent {
     fun inject(fragment: AssetTransferTransactionDetailsFragment)
     fun inject(fragment: DeployNewSafeFragment)
     fun inject(fragment: GenericTransactionDetailsFragment)
-    fun inject(fragment: SafeInfoFragment)
+    fun inject(fragment: SafeSettingsFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)
 
@@ -68,4 +69,5 @@ interface ViewComponent {
     // Dialogs
 
     fun inject(dialog: ShareSafeAddressDialog)
+    fun inject(dialog: SimpleAddressShareDialog)
 }

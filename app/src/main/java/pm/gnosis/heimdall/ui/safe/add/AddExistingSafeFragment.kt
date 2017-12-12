@@ -26,8 +26,8 @@ class AddExistingSafeFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             inflater.inflate(R.layout.layout_add_existing_safe, container, false)!!
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onStart() {
+        super.onStart()
         disposables += layout_add_existing_safe_add_button.clicks().flatMap {
             viewModel.addExistingSafe(layout_add_existing_safe_name_input.text.toString(), layout_add_existing_safe_address_input.text.toString())
                     .subscribeOn(AndroidSchedulers.mainThread())

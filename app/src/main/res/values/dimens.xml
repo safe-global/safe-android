@@ -15,4 +15,6 @@
     <dimen name="fab_size">56dp</dimen>
 
     <dimen name="transaction_details_cell_height">60dp</dimen>
+    <dimen name="divider_padding">8dp</dimen>
+    <dimen name="divider_offset">4dp</dimen>
 </resources>

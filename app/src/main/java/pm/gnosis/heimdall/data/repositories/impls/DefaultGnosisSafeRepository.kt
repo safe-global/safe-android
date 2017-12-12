@@ -170,7 +170,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     SafeInfo(addressString,
                             it.balance.value!!,
                             it.requiredConfirmations.value!!.param0.value.toLong(),
-                            it.owners.value!!.param0.items.map { it.value.toString(16) })
+                            it.owners.value!!.param0.items.map { it.value.asEthereumAddressString() })
                 }
     }
 

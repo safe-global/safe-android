@@ -17,7 +17,7 @@ import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
-import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
+import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.security.SecurityContract
@@ -94,7 +94,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesSafeInfoContract(provider: ViewModelProvider) = provider[SafeInfoContract::class.java]
+    fun providesSafeInfoContract(provider: ViewModelProvider) = provider[SafeSettingsContract::class.java]
 
     @Provides
     @ForView

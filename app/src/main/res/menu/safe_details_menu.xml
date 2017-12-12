@@ -6,12 +6,4 @@
         android:icon="@drawable/ic_qr_toolbar_24dp"
         android:title="@string/share_address"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/safe_details_menu_delete"
-        android:title="@string/remove_from_device"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/safe_details_menu_change_name"
-        android:title="@string/change_name"
-        app:showAsAction="never" />
 </menu>

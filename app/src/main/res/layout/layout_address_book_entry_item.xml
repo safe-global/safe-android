@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
-        android:textColor="@color/darker_text"
+        android:textColor="@color/default_text"
         android:textSize="16sp"
         tools:text="devops199" />
 </LinearLayout>
