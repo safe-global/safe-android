@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.safe
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.subscribers.TestSubscriber
@@ -14,12 +15,15 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.accounts.base.models.Account
+import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeWithInfo
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -35,13 +39,16 @@ class SafeOverviewViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var repositoryMock: GnosisSafeRepository
+    private lateinit var accountsRepositoryMock: AccountsRepository
 
-    lateinit var viewModel: SafeOverviewViewModel
+    @Mock
+    private lateinit var repositoryMock: GnosisSafeRepository
+
+    private lateinit var viewModel: SafeOverviewViewModel
 
     @Before
     fun setup() {
-        viewModel = SafeOverviewViewModel(repositoryMock)
+        viewModel = SafeOverviewViewModel(accountsRepositoryMock, repositoryMock)
     }
 
     @Test
@@ -60,7 +67,7 @@ class SafeOverviewViewModelTest {
                 .assertValue { it is DataResult && it.data.parentId == null && it.data.diff == null && it.data.entries.isEmpty() }
         val initialDataId = (subscriber.values().first() as DataResult).data.id
 
-        val results = listOf(Safe(BigInteger.ZERO), Safe(BigInteger.ONE))
+        val results = listOf(SafeWithInfo(Safe(BigInteger.ZERO)), SafeWithInfo(Safe(BigInteger.ONE)))
         processor.offer(results)
         // Check that the results are emitted
         subscriber.assertNoErrors()
@@ -75,7 +82,7 @@ class SafeOverviewViewModelTest {
                 .assertInsertsCount(2).assertInserts(0, 2)
                 .reset()
 
-        val moreResults = listOf(Safe(BigInteger.ONE), Safe(BigInteger.ZERO), Safe(BigInteger.valueOf(3)))
+        val moreResults = listOf(SafeWithInfo(Safe(BigInteger.ONE)), SafeWithInfo(Safe(BigInteger.ZERO)), SafeWithInfo(Safe(BigInteger.valueOf(3))))
         processor.offer(moreResults)
         // Check that the diff are calculated correctly
         subscriber.assertNoErrors()
@@ -138,6 +145,32 @@ class SafeOverviewViewModelTest {
         then(repositoryMock).shouldHaveNoMoreInteractions()
         observer.assertTerminated().assertNoValues()
                 .assertError(error)
+    }
+
+    @Test
+    fun loadAccountAddress() {
+        val observer = TestObserver.create<BigInteger>()
+        val account = Account(BigInteger.ONE)
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+
+        viewModel.loadAccountAddress().subscribe(observer)
+
+        then(accountsRepositoryMock).should().loadActiveAccount()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        observer.assertResult(BigInteger.ONE)
+    }
+
+    @Test
+    fun loadAccountAddressError() {
+        val observer = TestObserver.create<BigInteger>()
+        val exception = Exception()
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error(exception))
+
+        viewModel.loadAccountAddress().subscribe(observer)
+
+        then(accountsRepositoryMock).should().loadActiveAccount()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        observer.assertError(exception)
     }
 
     private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<AbstractSafe>>>()
