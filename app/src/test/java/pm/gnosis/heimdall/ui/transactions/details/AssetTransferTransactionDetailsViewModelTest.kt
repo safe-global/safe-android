@@ -57,7 +57,7 @@ class AssetTransferTransactionDetailsViewModelTest {
     @Test
     fun loadFormDataNoTransaction() {
         val testObserver = TestObserver<FormData>()
-        viewModel.loadFormData(null).subscribe(testObserver)
+        viewModel.loadFormData(null, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData())
         then(detailsRepository).shouldHaveNoMoreInteractions()
@@ -71,7 +71,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 .willReturn(Single.error(IllegalStateException()))
 
         val testObserver = TestObserver<FormData>()
-        viewModel.loadFormData(transaction).subscribe(testObserver)
+        viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData())
         then(detailsRepository).should().loadTransactionDetails(transaction)
@@ -86,7 +86,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 .willReturn(Single.just(TransactionDetails(null, TransactionType.ETHER_TRANSFER, null, transaction)))
 
         val testObserver = TestObserver<FormData>()
-        viewModel.loadFormData(transaction).subscribe(testObserver)
+        viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.TEN, ETHER_TOKEN))
         then(detailsRepository).should().loadTransactionDetails(transaction)
@@ -101,7 +101,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 .willReturn(Single.just(TransactionDetails(null, TransactionType.GENERIC, null, transaction)))
 
         val testObserver = TestObserver<FormData>()
-        viewModel.loadFormData(transaction).subscribe(testObserver)
+        viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, ETHER_TOKEN))
         then(detailsRepository).should().loadTransactionDetails(transaction)
@@ -116,7 +116,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, null, transaction)))
 
         val testObserver = TestObserver<FormData>()
-        viewModel.loadFormData(transaction).subscribe(testObserver)
+        viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, ETHER_TOKEN))
         then(detailsRepository).should().loadTransactionDetails(transaction)
@@ -135,7 +135,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 .willReturn(Single.just(token))
 
         val testObserver = TestObserver<FormData>()
-        viewModel.loadFormData(transaction).subscribe(testObserver)
+        viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(token.address, BigInteger.ONE, BigInteger.TEN, token))
         then(detailsRepository).should().loadTransactionDetails(transaction)
@@ -155,9 +155,49 @@ class AssetTransferTransactionDetailsViewModelTest {
                 .willReturn(Single.error(NoSuchElementException()))
 
         val testObserver = TestObserver<FormData>()
-        viewModel.loadFormData(transaction).subscribe(testObserver)
+        viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(token.address, BigInteger.ONE, BigInteger.TEN, null))
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(tokenRepository).should().loadToken(token.address)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadFormDataLoadingTokenTransferKeepDefaults() {
+        val token = ERC20Token(BigInteger.ZERO, decimals = 42)
+        val transaction = Transaction(token.address)
+        val transferData = TokenTransferData(BigInteger.ZERO, BigInteger.ZERO)
+        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
+                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, transferData, transaction)))
+        given(tokenRepository.loadToken(token.address))
+                .willReturn(Single.error(NoSuchElementException()))
+
+        val testObserver = TestObserver<FormData>()
+        viewModel.loadFormData(transaction, false).subscribe(testObserver)
+
+        testObserver.assertResult(FormData(token.address, BigInteger.ZERO, BigInteger.ZERO, null))
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(tokenRepository).should().loadToken(token.address)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadFormDataLoadingTokenTransferClearDefaults() {
+        val token = ERC20Token(BigInteger.ZERO, decimals = 42)
+        val transaction = Transaction(token.address)
+        val transferData = TokenTransferData(BigInteger.ZERO, BigInteger.ZERO)
+        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
+                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, transferData, transaction)))
+        given(tokenRepository.loadToken(token.address))
+                .willReturn(Single.error(NoSuchElementException()))
+
+        val testObserver = TestObserver<FormData>()
+        viewModel.loadFormData(transaction, true).subscribe(testObserver)
+
+        testObserver.assertResult(FormData(token.address, null, null, null))
         then(detailsRepository).should().loadTransactionDetails(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()

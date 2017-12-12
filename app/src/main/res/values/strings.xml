@@ -200,4 +200,6 @@
     <string name="safe_owning_devices">Safe owning devices</string>
     <string name="safe_confirmations_text"><b>%1$s</b> of <b>%2$s</b> safe owning device/s need to confirm transactions for this safe</string>
     <string name="delete_this_safe">Delete this safe</string>
+    <string name="prepare_transaction">Preparing transaction</string>
+    <string name="error_invalid_token_address">Please provide a valid token address!</string>
 </resources>

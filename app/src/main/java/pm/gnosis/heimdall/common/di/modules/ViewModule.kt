@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
+import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
@@ -75,6 +76,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesBaseTransactionDetailsContract(provider: ViewModelProvider) = provider[BaseTransactionDetailsContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesCreateTokenTransactionProgressContract(provider: ViewModelProvider) = provider[CreateTokenTransactionProgressContract::class.java]
 
     @Provides
     @ForView
