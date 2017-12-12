@@ -68,9 +68,9 @@
     <string name="required_confirmations">Required confirmations</string>
     <string name="deposit">Deposit</string>
     <string name="withdraw">Withdraw</string>
-    <string name="tab_title_info">Info</string>
+    <string name="tab_title_settings">Settings</string>
     <string name="tab_title_transactions">Transactions</string>
-    <string name="tab_title_tokens">Tokens</string>
+    <string name="tab_title_assets">Assets</string>
     <string name="address_clipboard_success">Address copied to clipboard</string>
     <string name="share_your_address">Share your address</string>
     <string name="share_address">Share address</string>

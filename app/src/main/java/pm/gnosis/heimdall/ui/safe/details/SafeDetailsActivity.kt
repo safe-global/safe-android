@@ -42,7 +42,7 @@ class SafeDetailsActivity : BaseActivity() {
     @Inject
     lateinit var viewModel: SafeDetailsContract
 
-    private val items = listOf(R.string.tab_title_info, R.string.tab_title_transactions, R.string.tab_title_tokens)
+    private val items = listOf(R.string.tab_title_assets, R.string.tab_title_transactions, R.string.tab_title_settings)
     private val generateQrCodeClicks = PublishSubject.create<String>()
     private val removeSafeClicks = PublishSubject.create<Unit>()
     private val editSafeClicks = PublishSubject.create<String>()
@@ -186,10 +186,10 @@ class SafeDetailsActivity : BaseActivity() {
 
     private fun pagerAdapter() = FactoryPagerAdapter(supportFragmentManager, FactoryPagerAdapter.Factory(items.size, {
         when (positionToId(it)) {
-            R.string.tab_title_info -> {
+            R.string.tab_title_settings -> {
                 SafeInfoFragment.createInstance(safeAddress.asEthereumAddressString())
             }
-            R.string.tab_title_tokens -> {
+            R.string.tab_title_assets -> {
                 TokenBalancesFragment.createInstance(safeAddress.asEthereumAddressString())
             }
             R.string.tab_title_transactions -> {
