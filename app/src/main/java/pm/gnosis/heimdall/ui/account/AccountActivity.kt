@@ -23,6 +23,7 @@ import pm.gnosis.heimdall.common.utils.shareExternalText
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
@@ -87,8 +88,7 @@ class AccountActivity : BaseActivity() {
             .doAfterTerminate { onQrCodeLoading(false) }
 
     private fun onAccountBalance(wei: Wei) {
-        val etherBalance = wei.toEther()
-        layout_account_balance.text = getString(R.string.x_ether, etherBalance.stringWithNoTrailingZeroes())
+        layout_account_balance.text = wei.displayString(this)
     }
 
     private fun onAccountBalanceLoading(isLoading: Boolean) {

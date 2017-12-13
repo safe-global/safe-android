@@ -10,10 +10,12 @@ import kotlinx.android.synthetic.main.layout_onboarding_intro.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
+import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import timber.log.Timber
 
 class OnboardingIntro : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        skipSecurityCheck()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_onboarding_intro)
     }
@@ -22,7 +24,7 @@ class OnboardingIntro : BaseActivity() {
         super.onStart()
         disposables += layout_onboarding_intro_get_started.clicks()
                 .subscribeBy(
-                        onNext = { startActivity(AccountSetupActivity.createIntent(this)) },
+                        onNext = { startActivity(PasswordSetupActivity.createIntent(this)) },
                         onError = Timber::e)
     }
 
