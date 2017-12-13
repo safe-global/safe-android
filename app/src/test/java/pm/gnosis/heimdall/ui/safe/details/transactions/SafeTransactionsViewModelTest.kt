@@ -1,6 +1,10 @@
 package pm.gnosis.heimdall.ui.safe.details.transactions
 
+import android.content.Context
+import android.content.Intent
 import io.reactivex.Flowable
+import io.reactivex.Single
+import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.subscribers.TestSubscriber
 import org.junit.Before
@@ -11,13 +15,20 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.mockGetString
 import java.math.BigInteger
+import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeTransactionsViewModelTest {
@@ -26,7 +37,16 @@ class SafeTransactionsViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
+    private lateinit var context: Context
+
+    @Mock
     private lateinit var safeRepository: GnosisSafeRepository
+
+    @Mock
+    private lateinit var detailsRepository: TransactionDetailsRepository
+
+    @Mock
+    private lateinit var tokenRepository: TokenRepository
 
     private lateinit var viewModel: SafeTransactionsViewModel
 
@@ -34,7 +54,8 @@ class SafeTransactionsViewModelTest {
 
     @Before
     fun setup() {
-        viewModel = SafeTransactionsViewModel(safeRepository)
+        context.mockGetString()
+        viewModel = SafeTransactionsViewModel(context, safeRepository, tokenRepository, detailsRepository)
     }
 
     @Test
@@ -100,9 +121,166 @@ class SafeTransactionsViewModelTest {
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
+    @Test
+    fun transactionSelected() {
+        val observer = TestObserver<Intent>()
+        // Should never return an error even if transaction is invalid
+        viewModel.transactionSelected(Transaction(BigInteger.valueOf(2).pow(160)))
+                .subscribe(observer)
+
+        observer.assertNoErrors().assertComplete().assertValueCount(1)
+    }
+
+    @Test
+    fun loadTransactionDetailsNoSafe() {
+        val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
+        viewModel.loadTransactionDetails("TEST ID")
+                .subscribe(observer)
+
+        observer.assertFailure(IllegalStateException::class.java)
+
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadTransactionDetailsDetailsRepoError() {
+        val testId = "some_transaction_id"
+
+        val error = IllegalAccessException()
+        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+                .willReturn(Single.error(error))
+
+        val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
+
+        viewModel.setup(testAddress)
+        viewModel.loadTransactionDetails(testId)
+                .subscribe(observer)
+
+        observer.assertFailure(IllegalAccessException::class.java)
+
+        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadTransactionDetailsNoTransfer() {
+        val testId = "some_transaction_id"
+
+        val details = TransactionDetails(testId, TransactionType.GENERIC, null, Transaction(BigInteger.TEN))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+                .willReturn(Single.just(details))
+
+        val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
+
+        viewModel.setup(testAddress)
+        viewModel.loadTransactionDetails(testId)
+                .subscribe(observer)
+
+        observer.assertResult(details to null)
+
+        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadTransactionDetailsNoTokenTransferData() {
+        val testId = "some_transaction_id"
+
+        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, null, Transaction(BigInteger.TEN))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+                .willReturn(Single.just(details))
+
+        val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
+
+        viewModel.setup(testAddress)
+        viewModel.loadTransactionDetails(testId)
+                .subscribe(observer)
+
+        observer.assertResult(details to null)
+
+        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadTransactionDetailsTokenTransferUnknownToken() {
+        val testId = "some_transaction_id"
+        val tokenAddress = BigInteger.TEN
+        val tokenTransferData = TokenTransferData(BigInteger.ONE, BigInteger.valueOf(42))
+
+        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+                .willReturn(Single.just(details))
+        given(tokenRepository.observeToken(MockUtils.any())).willReturn(Flowable.empty())
+
+        val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
+
+        viewModel.setup(testAddress)
+        viewModel.loadTransactionDetails(testId)
+                .subscribe(observer)
+
+        observer.assertResult(details to null)
+
+        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).should().observeToken(tokenAddress)
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadTransactionDetailsTokenTransfer() {
+        val testId = "some_transaction_id"
+        val tokenAddress = BigInteger.TEN
+        val tokenTransferData = TokenTransferData(BigInteger.ONE, BigInteger.valueOf(42))
+
+        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+                .willReturn(Single.just(details))
+        given(tokenRepository.observeToken(MockUtils.any())).willReturn(Flowable.just(ERC20Token(tokenAddress, decimals = 0, symbol = "GNO")))
+
+        val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
+
+        viewModel.setup(testAddress)
+        viewModel.loadTransactionDetails(testId)
+                .subscribe(observer)
+
+        observer.assertResult(details to SafeTransactionsContract.TransferInfo("42", "GNO"))
+
+        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).should().observeToken(tokenAddress)
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadTransactionDetailsEtherTransfer() {
+        val testId = "some_transaction_id"
+
+        val amount = BigInteger.valueOf(42) * BigInteger.TEN.pow(18)
+        val details = TransactionDetails(testId, TransactionType.ETHER_TRANSFER, null, Transaction(BigInteger.ONE, value = Wei(amount)))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+                .willReturn(Single.just(details))
+
+        val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
+
+        viewModel.setup(testAddress)
+        viewModel.loadTransactionDetails(testId)
+                .subscribe(observer)
+
+        observer.assertResult(details to SafeTransactionsContract.TransferInfo("42", R.string.currency_eth.toString()))
+
+        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
     private fun generateList(from: Int = 0, to: Int = 0, step: Int = 1): List<String> {
         val list = ArrayList<String>(Math.abs(to - from))
-        for (i in LongProgression.fromClosedRange(from.toLong(), to.toLong(), step.toLong() )) {
+        for (i in LongProgression.fromClosedRange(from.toLong(), to.toLong(), step.toLong())) {
             list += "$i"
         }
         return list

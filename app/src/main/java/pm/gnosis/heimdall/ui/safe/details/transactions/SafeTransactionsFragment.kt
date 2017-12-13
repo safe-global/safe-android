@@ -17,7 +17,6 @@ import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.withArgs
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
 import pm.gnosis.utils.hexAsBigInteger
 import timber.log.Timber
 import javax.inject.Inject
@@ -33,7 +32,6 @@ class SafeTransactionsFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         val address = arguments!!.getString(ARGUMENT_SAFE_ADDRESS).hexAsBigInteger()
         viewModel.setup(address)
-        adapter.safeAddress = address
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
@@ -48,10 +46,13 @@ class SafeTransactionsFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        disposables += adapter.tokensSelectionSubject
+        disposables += adapter.transactionSelectionSubject
                 .observeOn(AndroidSchedulers.mainThread())
+                .flatMapSingle {
+                    viewModel.transactionSelected(it)
+                }
                 .subscribe({
-                    startActivity(ViewTransactionActivity.createIntent(context!!, adapter.safeAddress, it))
+                    startActivity(it)
                 }, Timber::e)
         disposables += viewModel.observeTransactions()
                 .observeOn(AndroidSchedulers.mainThread())
