@@ -11,6 +11,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
@@ -47,6 +48,7 @@ class PasswordSetupViewModelTest {
         viewModel.setPassword("", "").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
+        then(contextMock).should().getString(R.string.password_too_short)
         observer.assertNoErrors()
                 .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
     }
@@ -58,6 +60,7 @@ class PasswordSetupViewModelTest {
         viewModel.setPassword("123456", "").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
+        then(contextMock).should().getString(R.string.passwords_do_not_match)
         observer.assertNoErrors()
                 .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
     }
@@ -72,7 +75,9 @@ class PasswordSetupViewModelTest {
 
         then(encryptionManagerMock).should().setupPassword("123456".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(ErrorResult(exception))
+        then(contextMock).should().getString(R.string.password_error_saving)
+        observer.assertNoErrors()
+                .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
     }
 
     @Test

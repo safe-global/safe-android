@@ -80,10 +80,7 @@ class GenerateMnemonicViewModelTest {
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, saveAccountFromMnemonicCompletable.callCount)
         assertEquals(1, saveMnemonicCompletable.callCount)
-        testObserver
-                .assertValue(DataResult(Unit))
-                .assertNoErrors()
-                .assertTerminated()
+        testObserver.assertResult(DataResult(Unit))
     }
 
     @Test
@@ -100,9 +97,7 @@ class GenerateMnemonicViewModelTest {
         then(accountsRepositoryMock).should().saveMnemonic(testMnemonic)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(0, saveMnemonicCompletable.callCount)
-        testObserver.assertValue(ErrorResult(exception))
-                .assertTerminated()
-                .assertNoErrors()
+        testObserver.assertResult(ErrorResult(exception))
     }
 
     @Test
@@ -119,8 +114,6 @@ class GenerateMnemonicViewModelTest {
         then(accountsRepositoryMock).should().saveMnemonic(testMnemonic)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, saveAccountFromMnemonicCompletable.callCount)
-        testObserver.assertValue(ErrorResult(exception))
-                .assertTerminated()
-                .assertNoErrors()
+        testObserver.assertResult(ErrorResult(exception))
     }
 }

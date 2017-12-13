@@ -10,7 +10,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
+import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.mnemonic.*
 import javax.inject.Inject
 
@@ -31,7 +31,7 @@ class RestoreAccountViewModel @Inject constructor(
                     .flatMap {
                         accountsRepository.saveAccountFromMnemonic(it)
                                 .andThen(accountsRepository.saveMnemonic(mnemonic))
-                                .toSingle({ SafesOverviewActivity.createIntent(context) })
+                                .toSingle({ SetupSafeIntroActivity.createIntent(context) })
                                 .subscribeOn(Schedulers.io())
                     }
                     .onErrorResumeNext({ errorHandler.single<Intent>(it) })

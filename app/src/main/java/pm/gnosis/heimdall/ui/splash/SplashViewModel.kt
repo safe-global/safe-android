@@ -34,7 +34,7 @@ class SplashViewModel @Inject constructor(
 
     private fun checkAccount(): Single<ViewAction> =
             accountsRepository.loadActiveAccount()
-                    .flatMap { Single.just(StartMain() as ViewAction) }
+                    .map { StartMain() as ViewAction }
                     .onErrorReturn {
                         when (it) {
                             is EmptyResultSetException, is NoSuchElementException ->

@@ -62,8 +62,7 @@ class RestoreAccountActivity : BaseActivity() {
                             onError = Timber::e)
 
     private fun updateWordCounter(mnemonic: String) {
-        val text = "${mnemonic.words().count()}/12 words"
-        layout_restore_account_word_counter.text = text
+        layout_restore_account_word_counter.text = getString(R.string.mnemonic_required_words, mnemonic.words().count(), 12)
     }
 
     private fun onAccountSaved(intent: Intent) {
