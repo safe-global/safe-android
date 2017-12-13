@@ -15,6 +15,7 @@ import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
@@ -22,8 +23,10 @@ import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
 import pm.gnosis.heimdall.utils.ERC67Parser
+import pm.gnosis.model.Solidity
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.utils.addHexPrefix
+import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class AuthenticateViewModelTest {
@@ -105,52 +108,8 @@ class AuthenticateViewModelTest {
     }
 
     @Test
-    fun checkResultNoActionData() {
-        val intent = testIntent(createTransactionString())
-        val observer = createObserver()
-
-        viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
-                .subscribe(observer)
-
-        then(intent).should().hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
-        then(intent).should().getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
-        then(intent).shouldHaveNoMoreInteractions()
-        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
-        then(contextMock).should().getString(R.string.unknown_safe_action)
-    }
-
-    @Test
-    fun checkResultUnknownSafeAction() {
-        val intent = testIntent(createTransactionString(data = "TEST_DATA"))
-        val observer = createObserver()
-
-        viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
-                .subscribe(observer)
-
-        then(intent).should().hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
-        then(intent).should().getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
-        then(intent).shouldHaveNoMoreInteractions()
-        observer.assertComplete().assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
-        then(contextMock).should().getString(R.string.unknown_safe_action)
-    }
-
-    @Test
-    fun checkResultConfirmAction() {
-        val intent = testIntent(createTransactionString(data = GnosisSafe.ConfirmTransaction.METHOD_ID.addHexPrefix()))
-        val observer = createObserver()
-
-        viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
-                .subscribe(observer)
-
-        then(intent).should().hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
-        then(intent).should().getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)
-        then(intent).shouldHaveNoMoreInteractions()
-        observer.assertComplete().assertNoErrors().assertValue { it is DataResult }
-    }
-
-    @Test
-    fun checkResultRevokeAction() {
-        val intent = testIntent(createTransactionString(data = GnosisSafe.RevokeConfirmation.METHOD_ID.addHexPrefix()))
+    fun checkResultTokenTransfer() {
+        val intent = testIntent(createTransactionString(data = StandardToken.Transfer.encode(Solidity.Address(BigInteger.TEN), Solidity.UInt256(BigInteger.ONE))))
         val observer = createObserver()
 
         viewModel.checkResult(AuthenticateContract.ActivityResults(ZxingIntentIntegrator.REQUEST_CODE, Activity.RESULT_OK, intent))
