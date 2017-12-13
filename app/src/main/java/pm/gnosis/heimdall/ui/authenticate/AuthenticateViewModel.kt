@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import io.reactivex.Observable
-import pm.gnosis.heimdall.GnosisSafe
+import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
 import pm.gnosis.heimdall.utils.ERC67Parser
-import pm.gnosis.utils.isSolidityMethod
 import javax.inject.Inject
 
 
@@ -28,18 +27,12 @@ class AuthenticateViewModel @Inject constructor(
         }
         return Observable.fromCallable {
             validateQrCode(result.data.getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA))
-        }.mapToResult()
+        }.subscribeOn(Schedulers.computation()).mapToResult()
     }
 
     private fun validateQrCode(qrCodeData: String): Intent {
         val parsedData = ERC67Parser.parse(qrCodeData) ?:
                 throw SimpleLocalizedException(context.getString(R.string.invalid_erc67))
-        val data = parsedData.transaction.data
-        if (data != null && (data.isSolidityMethod(GnosisSafe.ConfirmTransaction.METHOD_ID) ||
-                data.isSolidityMethod(GnosisSafe.RevokeConfirmation.METHOD_ID))) {
-            return ViewTransactionActivity.createIntent(context, null, parsedData.transaction)
-        } else {
-            throw SimpleLocalizedException(context.getString(R.string.unknown_safe_action))
-        }
+        return ViewTransactionActivity.createIntent(context, null, parsedData.transaction)
     }
 }

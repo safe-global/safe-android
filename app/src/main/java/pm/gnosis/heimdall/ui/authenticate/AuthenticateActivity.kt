@@ -3,11 +3,8 @@ package pm.gnosis.heimdall.ui.authenticate
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_authenticate.*
-import kotlinx.android.synthetic.main.layout_security.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -21,7 +18,7 @@ import javax.inject.Inject
 
 class AuthenticateActivity : BaseActivity() {
 
-    private val resultSubject = PublishSubject.create<AuthenticateContract.ActivityResults>()
+    private var scannedResults: AuthenticateContract.ActivityResults? = null
 
     @Inject
     lateinit var viewModel: AuthenticateContract
@@ -35,23 +32,26 @@ class AuthenticateActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += resultSubject
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(viewModel::checkResult)
-                .subscribeForResult(::startActivity, ::handleError)
+
         layout_authenticate_scan.setOnClickListener {
             scanQrCode()
+        }
+
+        scannedResults?.let {
+            disposables += viewModel.checkResult(it)
+                    .subscribeForResult(::startActivity, ::handleError)
+            scannedResults = null
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        resultSubject.onNext(AuthenticateContract.ActivityResults(requestCode, resultCode, data))
+        scannedResults = AuthenticateContract.ActivityResults(requestCode, resultCode, data)
     }
 
     private fun handleError(throwable: Throwable) {
         Timber.e(throwable)
-        errorSnackbar(layout_security_content_container, throwable)
+        errorSnackbar(layout_scan_coordinator, throwable)
     }
 
     private fun inject() {
