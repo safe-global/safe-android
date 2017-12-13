@@ -13,6 +13,8 @@ import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookViewModel
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
+import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
+import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressViewModel
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicViewModel
 import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
@@ -21,8 +23,8 @@ import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeViewModel
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsViewModel
-import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoContract
-import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoViewModel
+import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract
+import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsViewModel
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsViewModel
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
@@ -92,6 +94,11 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(CreateTokenTransactionProgressContract::class)
+    abstract fun bindsCreateTokenTransactionProgressContract(viewModel: CreateTokenTransactionProgressViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(GenerateMnemonicContract::class)
     abstract fun bindsGenerateMnemonicContract(viewModel: GenerateMnemonicViewModel): ViewModel
 
@@ -117,8 +124,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SafeInfoContract::class)
-    abstract fun bindsSafeInfoContract(viewModel: SafeInfoViewModel): ViewModel
+    @ViewModelKey(SafeSettingsContract::class)
+    abstract fun bindsSafeInfoContract(viewModel: SafeSettingsViewModel): ViewModel
 
     @Binds
     @IntoMap

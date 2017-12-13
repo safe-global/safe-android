@@ -125,12 +125,12 @@
         -->
     </style>
 
-    <style name="Content" parent="TextAppearance.AppCompat.Body2">
+    <style name="Content" parent="TextAppearance.AppCompat.Body1">
         <item name="android:textColor">@color/light_text</item>
     </style>
 
-    <style name="ThinContent" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:textColor">@color/gnosis_dark_blue_alpha_70</item>
+    <style name="DarkContent" parent="Content">
+        <item name="android:textColor">@color/default_text</item>
     </style>
 
     <style name="BoldContent" parent="TextAppearance.AppCompat.Body2">
@@ -138,11 +138,11 @@
     </style>
 
     <style name="Label" parent="TextAppearance.AppCompat.Caption">
-        <item name="android:textColor">@color/dark_text</item>
+        <item name="android:textColor">@color/default_text</item>
     </style>
 
     <style name="Title" parent="TextAppearance.AppCompat.Title">
-        <item name="android:textColor">@color/dark_text</item>
+        <item name="android:textColor">@color/default_text</item>
     </style>
 
     <style name="SpacedCapsTextBase">
@@ -154,12 +154,17 @@
     <style name="SpacedCapsText" parent="SpacedCapsTextBase" />
 
     <style name="Input" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/darker_text</item>
-        <item name="android:textColorHint">@color/lighter_text</item>
+        <item name="android:textColor">@color/default_text</item>
+        <item name="android:textColorHint">@color/gnosis_dark_blue_alpha_70</item>
+        <item name="android:background">@drawable/input_background</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingTop">4dp</item>
     </style>
 
     <style name="InlineInput" parent="Widget.AppCompat.EditText">
-        <item name="android:textColor">@color/gnosis_dark_blue</item>
+        <item name="android:textColor">@color/default_text</item>
         <item name="android:textColorHint">@color/gnosis_dark_blue_alpha_70</item>
         <item name="android:background">@null</item>
         <item name="android:inputType">textMultiLine</item>

@@ -68,9 +68,9 @@
     <string name="required_confirmations">Required confirmations</string>
     <string name="deposit">Deposit</string>
     <string name="withdraw">Withdraw</string>
-    <string name="tab_title_info">Info</string>
+    <string name="tab_title_settings">Settings</string>
     <string name="tab_title_transactions">Transactions</string>
-    <string name="tab_title_tokens">Tokens</string>
+    <string name="tab_title_assets">Assets</string>
     <string name="address_clipboard_success">Address copied to clipboard</string>
     <string name="share_your_address">Share your address</string>
     <string name="share_address">Share address</string>
@@ -195,4 +195,11 @@
     <string name="max_balance">Max. balance</string>
     <string name="outgoing_transaction_value">-%s %s</string>
     <string name="unknown_balance">The current balance for the selected asset is unknown.</string>
+    <string name="safe_name_label">Safe name</string>
+    <string name="safe_information_loading">Safe information not yet loaded!</string>
+    <string name="safe_owning_devices">Safe owning devices</string>
+    <string name="safe_confirmations_text"><b>%1$s</b> of <b>%2$s</b> safe owning device/s need to confirm transactions for this safe</string>
+    <string name="delete_this_safe">Delete this safe</string>
+    <string name="prepare_transaction">Preparing transaction</string>
+    <string name="error_invalid_token_address">Please provide a valid token address!</string>
 </resources>

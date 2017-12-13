@@ -13,11 +13,6 @@ class ShareSafeAddressDialog : BaseShareAddressDialog() {
     @Inject
     lateinit var safeRepository: GnosisSafeRepository
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        inject()
-    }
-
     override fun addressSourceObservable(): Observable<Pair<String?, BigInteger>> =
             safeRepository.observeSafe(address)
                     .toObservable()

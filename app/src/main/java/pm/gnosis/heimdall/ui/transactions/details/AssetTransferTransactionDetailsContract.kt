@@ -13,7 +13,7 @@ import java.math.BigInteger
 
 
 abstract class AssetTransferTransactionDetailsContract : ViewModel() {
-    abstract fun loadFormData(transaction: Transaction?): Single<FormData>
+    abstract fun loadFormData(transaction: Transaction?, clearDefaults: Boolean): Single<FormData>
     abstract fun observeTokens(defaultToken: BigInteger?, safeAddress: BigInteger?): Observable<State>
     abstract fun inputTransformer(context: Context, originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>>
 

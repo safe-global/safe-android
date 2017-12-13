@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selectable_background"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="8dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp">
+
+    <ImageView
+        android:id="@+id/layout_address_item_icon"
+        android:layout_width="@dimen/action_circle"
+        android:layout_height="@dimen/action_circle"
+        android:background="@drawable/action_circle_background"
+        android:gravity="center"
+        android:padding="8dp"
+        android:tint="@color/gnosis_dark_blue"
+        app:srcCompat="@drawable/ic_qr_24dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/layout_address_item_name"
+            style="@style/BoldContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:text="devops199" />
+
+        <TextView
+            android:id="@+id/layout_address_item_value"
+            style="@style/Content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="0x394754f8Ebc5fFba4..." />
+    </LinearLayout>
+</LinearLayout>

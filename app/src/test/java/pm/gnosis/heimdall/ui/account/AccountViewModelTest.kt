@@ -100,7 +100,7 @@ class AccountViewModelTest {
         observer.assertNoErrors().assertComplete()
                 .assertValueCount(1)
                 .assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
-        verify(contextMock).getString(R.string.no_account_available)
+        then(contextMock).should().getString(R.string.no_account_available)
     }
 
     @Test

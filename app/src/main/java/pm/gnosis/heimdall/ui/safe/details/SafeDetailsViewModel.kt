@@ -35,16 +35,4 @@ class SafeDetailsViewModel @Inject constructor(
             qrCodeGenerator.generateQrCode(contents)
                     .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
                     .mapToResult()
-
-    override fun deleteSafe() =
-            safeRepository.remove(address)
-                    .andThen(Single.just(Unit))
-                    .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
-                    .mapToResult()
-
-    override fun changeSafeName(newName: String) =
-            safeRepository.updateName(address, newName)
-                    .andThen(Single.just(Unit))
-                    .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
-                    .mapToResult()
 }

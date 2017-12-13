@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <TextView
-        style="@style/ThinContent"
+        style="@style/Content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
@@ -27,7 +27,7 @@
 
         <TextView
             android:id="@+id/layout_transaction_details_generic_safe_label"
-            style="@style/ThinContent"
+            style="@style/Content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
@@ -51,7 +51,7 @@
 
         <TextView
             android:id="@+id/layout_transaction_details_generic_to_label"
-            style="@style/ThinContent"
+            style="@style/Content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -109,7 +109,7 @@
 
         <TextView
             android:id="@+id/layout_transaction_details_generic_value_label"
-            style="@style/ThinContent"
+            style="@style/Content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
@@ -140,7 +140,7 @@
 
         <TextView
             android:id="@+id/layout_transaction_details_generic_data_label"
-            style="@style/ThinContent"
+            style="@style/Content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"

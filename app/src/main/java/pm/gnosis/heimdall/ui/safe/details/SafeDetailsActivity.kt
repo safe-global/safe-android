@@ -27,7 +27,7 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
-import pm.gnosis.heimdall.ui.safe.details.info.SafeInfoFragment
+import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsFragment
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
@@ -42,10 +42,8 @@ class SafeDetailsActivity : BaseActivity() {
     @Inject
     lateinit var viewModel: SafeDetailsContract
 
-    private val items = listOf(R.string.tab_title_info, R.string.tab_title_transactions, R.string.tab_title_tokens)
+    private val items = listOf(R.string.tab_title_assets, R.string.tab_title_transactions, R.string.tab_title_settings)
     private val generateQrCodeClicks = PublishSubject.create<String>()
-    private val removeSafeClicks = PublishSubject.create<Unit>()
-    private val editSafeClicks = PublishSubject.create<String>()
 
     private lateinit var safeAddress: String
     private var safeName: String? = null
@@ -65,8 +63,6 @@ class SafeDetailsActivity : BaseActivity() {
         layout_safe_details_toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.safe_details_menu_share -> ShareSafeAddressDialog.create(safeAddress).show(supportFragmentManager, null)
-                R.id.safe_details_menu_change_name -> showEditDialog()
-                R.id.safe_details_menu_delete -> showRemoveDialog()
             }
             true
         }
@@ -110,33 +106,6 @@ class SafeDetailsActivity : BaseActivity() {
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = ::onQrCode, onError = ::onQrCodeError)
-
-        disposables += removeSafeClicks
-                .flatMapSingle { viewModel.deleteSafe() }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = { onSafeRemoved() }, onError = ::onSafeRemoveError)
-
-        disposables += editSafeClicks
-                .flatMapSingle { viewModel.changeSafeName(it) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = { onNameChanged() }, onError = ::onNameChangeError)
-    }
-
-    private fun onSafeRemoved() {
-        toast(getString(R.string.safe_remove_success, safeName ?: R.string.safe))
-        finish()
-    }
-
-    private fun onSafeRemoveError(throwable: Throwable) {
-        snackbar(layout_safe_details_coordinator, R.string.safe_remove_error)
-    }
-
-    private fun onNameChanged() {
-        snackbar(layout_safe_details_coordinator, R.string.safe_name_change_success)
-    }
-
-    private fun onNameChangeError(throwable: Throwable) {
-        snackbar(layout_safe_details_coordinator, R.string.safe_name_change_error)
     }
 
     private fun onQrCode(qrCode: Bitmap) {
@@ -155,41 +124,14 @@ class SafeDetailsActivity : BaseActivity() {
         layout_safe_details_progress_bar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
     }
 
-    private fun showRemoveDialog() {
-        AlertDialog.Builder(this)
-                .setTitle(R.string.remove_safe_dialog_title)
-                .setMessage(getString(R.string.remove_safe_dialog_description, safeName ?: getString(R.string.this_safe)))
-                .setPositiveButton(R.string.remove, { _, _ -> removeSafeClicks.onNext(Unit) })
-                .setNegativeButton(R.string.cancel, { _, _ -> })
-                .show()
-    }
-
-    private fun showEditDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_safe_add_input, null)
-        safeName?.let {
-            dialogView.dialog_add_safe_text_name.setText(it)
-            dialogView.dialog_add_safe_text_name.setSelection(it.length)
-        }
-        dialogView.dialog_add_safe_text_input_layout.visibility = View.GONE
-
-        AlertDialog.Builder(this)
-                .setTitle(R.string.change_name)
-                .setView(dialogView)
-                .setPositiveButton(R.string.change_name, { _, _ ->
-                    editSafeClicks.onNext(dialogView.dialog_add_safe_text_name.text.toString())
-                })
-                .setNegativeButton(R.string.cancel, { _, _ -> })
-                .show()
-    }
-
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
 
     private fun pagerAdapter() = FactoryPagerAdapter(supportFragmentManager, FactoryPagerAdapter.Factory(items.size, {
         when (positionToId(it)) {
-            R.string.tab_title_info -> {
-                SafeInfoFragment.createInstance(safeAddress.asEthereumAddressString())
+            R.string.tab_title_settings -> {
+                SafeSettingsFragment.createInstance(safeAddress.asEthereumAddressString())
             }
-            R.string.tab_title_tokens -> {
+            R.string.tab_title_assets -> {
                 TokenBalancesFragment.createInstance(safeAddress.asEthereumAddressString())
             }
             R.string.tab_title_transactions -> {

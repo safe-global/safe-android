@@ -6,7 +6,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.verifyNoMoreInteractions
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.StandardToken
@@ -52,9 +52,9 @@ class IpfsTransactionDetailsRepositoryTest {
         repository.loadTransactionType(transaction).subscribe(testObserver)
         testObserver.assertNoErrors().assertValue(expectedType).assertComplete()
 
-        verifyNoMoreInteractions(ethereumJsonRpcRepositoryMock)
-        verifyNoMoreInteractions(descriptionsDaoMock)
-        verifyNoMoreInteractions(ipfsApiMock)
+        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
+        then(descriptionsDaoMock).shouldHaveNoMoreInteractions()
+        then(ipfsApiMock).shouldHaveNoMoreInteractions()
     }
 
     @Test

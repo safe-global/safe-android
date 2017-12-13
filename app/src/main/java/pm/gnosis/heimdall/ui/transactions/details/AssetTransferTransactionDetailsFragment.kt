@@ -72,7 +72,7 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
         setupSafeSpinner(layout_transaction_details_asset_transfer_safe_input, safe)
         layout_transaction_details_asset_transfer_token_input.adapter = adapter
 
-        disposables += subViewModel.loadFormData(originalTransaction)
+        disposables += subViewModel.loadFormData(originalTransaction, editable)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::setupForm, Timber::e)
     }

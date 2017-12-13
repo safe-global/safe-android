@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.transactions
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.view.View
 import com.gojuno.koptional.Optional
 import com.jakewharton.rxbinding2.view.clicks
@@ -79,7 +80,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
                                     .toObservable()
                         }
                     } ?: Observable.empty<Result<Unit>>()
-                }.subscribeForResult({ finish() }, ::showErrorSnackbar)
+                }.subscribeForResult({ finish() }, { showErrorSnackbar(it) })
 
         val fragment = supportFragmentManager.findFragmentById(R.id.layout_transaction_details_transaction_container)
         if (fragment is BaseTransactionDetailsFragment) {
@@ -150,14 +151,14 @@ abstract class BaseTransactionActivity : BaseActivity() {
 
     private fun handleInfoError(throwable: Throwable) {
         Timber.e(throwable)
-        showErrorSnackbar(throwable)
+        showErrorSnackbar(throwable, Snackbar.LENGTH_INDEFINITE)
     }
 
-    private fun showErrorSnackbar(throwable: Throwable) {
+    private fun showErrorSnackbar(throwable: Throwable, duration: Int = Snackbar.LENGTH_LONG) {
         // We don't want to show a snackbar if no safe is selected (UI should have been updated accordingly)
         if (throwable is NoSafeSelectedException) return
         if (throwable !is TransactionInputException || throwable.showSnackbar) {
-            errorSnackbar(layout_transaction_details_transaction_container, throwable)
+            errorSnackbar(layout_transaction_details_transaction_container, throwable, duration)
         }
     }
 

@@ -59,7 +59,7 @@
                 android:background="@color/divider" />
 
             <TextView
-                style="@style/ThinContent"
+                style="@style/Content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="16dp"
@@ -100,7 +100,7 @@
                         android:layout_width="84dp"
                         android:layout_height="84dp"
                         android:layout_marginBottom="8dp"
-                        android:background="@drawable/address_book_circle"
+                        android:background="@drawable/action_circle_background"
                         android:gravity="center"
                         android:maxLines="1"
                         android:paddingBottom="16dp"
@@ -121,7 +121,7 @@
 
                 <TextView
                     android:id="@+id/layout_transaction_details_confirmations_hint_text"
-                    style="@style/ThinContent"
+                    style="@style/Content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
