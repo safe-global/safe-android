@@ -10,7 +10,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
-import org.mockito.Mockito.verifyNoMoreInteractions
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.DataResult
@@ -53,8 +52,8 @@ class AddSafeViewModelTest {
         viewModel.addExistingSafe("test", "0x0").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue(DataResult(Unit))
-        verify(repository).add(BigInteger.ZERO, "test")
-        verifyNoMoreInteractions(repository)
+        then(repository).should().add(BigInteger.ZERO, "test")
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -65,7 +64,7 @@ class AddSafeViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error is SimpleLocalizedException && it.error.message == R.string.error_blank_name.toString()
         }
-        verifyNoMoreInteractions(repository)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -76,7 +75,7 @@ class AddSafeViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error is SimpleLocalizedException && it.error.message == R.string.invalid_ethereum_address.toString()
         }
-        verifyNoMoreInteractions(repository)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -90,8 +89,8 @@ class AddSafeViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error == error
         }
-        verify(repository).add(BigInteger.ZERO, "test")
-        verifyNoMoreInteractions(repository)
+        then(repository).should().add(BigInteger.ZERO, "test")
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -102,8 +101,8 @@ class AddSafeViewModelTest {
         viewModel.deployNewSafe("test").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue(DataResult(Unit))
-        verify(repository).deploy("test", emptySet(), 1)
-        verifyNoMoreInteractions(repository)
+        then(repository).should().deploy("test", emptySet(), 1)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -114,7 +113,7 @@ class AddSafeViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error is SimpleLocalizedException && it.error.message == R.string.error_blank_name.toString()
         }
-        verifyNoMoreInteractions(repository)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -128,8 +127,8 @@ class AddSafeViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error == error
         }
-        verify(repository).deploy("test", emptySet(), 1)
-        verifyNoMoreInteractions(repository)
+        then(repository).should().deploy("test", emptySet(), 1)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -140,8 +139,8 @@ class AddSafeViewModelTest {
         viewModel.observeEstimate().subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue(costs).assertTerminated()
-        verify(repository).estimateDeployCosts(emptySet(), 1)
-        verifyNoMoreInteractions(repository)
+        then(repository).should().estimateDeployCosts(emptySet(), 1)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -152,8 +151,8 @@ class AddSafeViewModelTest {
         viewModel.observeEstimate().subscribe(testObserver)
 
         testObserver.assertError(error).assertNoValues().assertTerminated()
-        verify(repository).estimateDeployCosts(emptySet(), 1)
-        verifyNoMoreInteractions(repository)
+        then(repository).should().estimateDeployCosts(emptySet(), 1)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
 }

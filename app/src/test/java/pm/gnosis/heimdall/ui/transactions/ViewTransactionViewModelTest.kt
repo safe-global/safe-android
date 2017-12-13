@@ -7,8 +7,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
@@ -49,8 +49,8 @@ class ViewTransactionViewModelTest {
         val transaction = Transaction(BigInteger.ZERO)
         viewModel.checkTransactionType(transaction).subscribe(testObserver)
         testObserver.assertNoErrors().assertValue(TransactionType.GENERIC).assertComplete()
-        Mockito.verify(transactionDetailsRepositoryMock).loadTransactionType(transaction)
-        Mockito.verifyNoMoreInteractions(transactionDetailsRepositoryMock)
+        then(transactionDetailsRepositoryMock).should().loadTransactionType(transaction)
+        then(transactionDetailsRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -63,8 +63,8 @@ class ViewTransactionViewModelTest {
         val transaction = Transaction(BigInteger.ZERO)
         viewModel.checkTransactionType(transaction).subscribe(testObserver)
         testObserver.assertError(error).assertNoValues().assertTerminated()
-        Mockito.verify(transactionDetailsRepositoryMock).loadTransactionType(transaction)
-        Mockito.verifyNoMoreInteractions(transactionDetailsRepositoryMock)
+        then(transactionDetailsRepositoryMock).should().loadTransactionType(transaction)
+        then(transactionDetailsRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
 }

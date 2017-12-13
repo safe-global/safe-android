@@ -65,11 +65,11 @@ class BaseTransactionViewModelTest {
                 .assertValues(*expectedResults)
                 .assertComplete()
 
-        verify(transactionRepositoryMock).loadInformation(TEST_SAFE, TEST_TRANSACTION)
+        then(transactionRepositoryMock).should().loadInformation(TEST_SAFE, TEST_TRANSACTION)
         expectedType?.let {
-            verify(transactionRepositoryMock).estimateFees(TEST_SAFE, TEST_TRANSACTION, it)
+            then(transactionRepositoryMock).should().estimateFees(TEST_SAFE, TEST_TRANSACTION, it)
         }
-        verifyNoMoreInteractions(transactionRepositoryMock)
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         reset(transactionRepositoryMock)
     }
 
@@ -141,11 +141,11 @@ class BaseTransactionViewModelTest {
                 .assertValues(*expectedResults)
                 .assertComplete()
 
-        verify(transactionRepositoryMock).loadInformation(TEST_SAFE, TEST_TRANSACTION)
+        then(transactionRepositoryMock).should().loadInformation(TEST_SAFE, TEST_TRANSACTION)
         expectedType?.let {
-            verify(transactionRepositoryMock).submit(TEST_SAFE, TEST_TRANSACTION, it)
+            then(transactionRepositoryMock).should().submit(TEST_SAFE, TEST_TRANSACTION, it)
         }
-        verifyNoMoreInteractions(transactionRepositoryMock)
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         reset(transactionRepositoryMock)
     }
 

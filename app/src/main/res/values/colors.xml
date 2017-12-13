@@ -19,14 +19,10 @@
     <color name="gnosis_dark_blue_alpha_60">#9921435a</color>
     <color name="gnosis_dark_blue_alpha_70">#b321435a</color>
 
-    <color name="error">#a70000</color>
-    <color name="error_hint">#b3a70000</color>
+    <color name="error">#f64056</color>
+    <color name="error_hint">#b3f64056</color>
 
-    <color name="lighter_text">#c6c6c6</color>
-    <color name="light_text">#9b9b9b</color>
-    <color name="dark_text">#4a4a4a</color>
-    <color name="darker_text">#333333</color>
-
+    <color name="light_text">@color/gnosis_dark_blue_alpha_70</color>
     <color name="default_text">@color/gnosis_dark_blue</color>
 
     <color name="list_divider">#e4e3e3</color>
@@ -34,6 +30,9 @@
     <color name="selected_tab">@color/white</color>
     <color name="unselected_tab">@color/toolbar_action</color>
     <color name="default_icon">#4a4a4a</color>
+
+    <color name="enabled_input">@color/accent</color>
+    <color name="disabled_input">@color/disabled_button</color>
 
     <color name="text_grey_background">#f4f4f9</color>
     <color name="background">#f9f9f9</color>

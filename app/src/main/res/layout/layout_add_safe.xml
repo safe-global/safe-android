@@ -27,7 +27,9 @@
             android:id="@+id/layout_add_safe_tabbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabIndicatorColor="@color/accent">
+            app:tabIndicatorColor="@color/selected_tab"
+            app:tabSelectedTextColor="@color/selected_tab"
+            app:tabTextColor="@color/unselected_tab">
 
             <android.support.design.widget.TabItem
                 android:layout_width="match_parent"

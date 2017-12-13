@@ -29,18 +29,22 @@ class AssetTransferTransactionDetailsViewModel @Inject constructor(
         private var tokenRepository: TokenRepository
 ) : AssetTransferTransactionDetailsContract() {
 
-    override fun loadFormData(transaction: Transaction?): Single<FormData> =
+    override fun loadFormData(transaction: Transaction?, clearDefaults: Boolean): Single<FormData> =
             transaction?.let {
                 detailsRepository.loadTransactionDetails(transaction)
                         .flatMap { details ->
                             when (details.data) {
                                 is TokenTransferData -> {
+                                    // If recipient is 0x0 we set the value to null to force user input
+                                    val recipient = if (clearDefaults && details.data.recipient == BigInteger.ZERO) null else details.data.recipient
+                                    // If the token count is 0x0 we set it to null to force user input
+                                    val tokens = if (clearDefaults && details.data.tokens == BigInteger.ZERO) null else details.data.tokens
                                     tokenRepository.loadToken(details.transaction.address)
                                             .map {
-                                                FormData(it.address, details.data.recipient, details.data.tokens, it)
+                                                FormData(it.address, recipient, tokens, it)
                                             }
                                             .onErrorReturn {
-                                                FormData(details.transaction.address, details.data.recipient, details.data.tokens)
+                                                FormData(details.transaction.address, recipient, tokens)
                                             }
                                 }
                                 else ->
@@ -59,7 +63,7 @@ class AssetTransferTransactionDetailsViewModel @Inject constructor(
                         val tokensNoBalance = it.map { ERC20TokenWithBalance(it, null) }
                         if (safeAddress != null)
                             tokenRepository.loadTokenBalances(safeAddress, it)
-                                        .map {
+                                    .map {
                                         it.mapNotNull { (token, balance) ->
                                             if (token.verified && (balance == BigInteger.ZERO)) null
                                             else ERC20TokenWithBalance(token, balance)
@@ -92,7 +96,7 @@ class AssetTransferTransactionDetailsViewModel @Inject constructor(
                                 errorFields = errorFields or TransactionInputException.TO_FIELD
                                 showToast = showToast or it.to.second
                             }
-                            if (amount == null) {
+                            if (amount == null || amount == BigDecimal.ZERO) {
                                 errorFields = errorFields or TransactionInputException.AMOUNT_FIELD
                                 showToast = showToast or it.amount.second
                             }

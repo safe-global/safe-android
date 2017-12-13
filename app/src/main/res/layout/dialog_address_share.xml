@@ -91,6 +91,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:padding="8dp"
+        android:scaleType="center"
         android:tint="@color/white"
         app:srcCompat="@drawable/ic_share_24dp" />
 </LinearLayout>

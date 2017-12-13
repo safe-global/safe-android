@@ -43,7 +43,7 @@
 
         <TextView
             android:id="@+id/layout_safe_transactions_item_timestamp"
-            style="@style/ThinContent"
+            style="@style/Content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"
@@ -53,7 +53,7 @@
 
     <TextView
         android:id="@+id/layout_safe_transactions_item_subject"
-        style="@style/ThinContent"
+        style="@style/Content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_safe_transactions_item_info_container"

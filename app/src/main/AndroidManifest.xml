@@ -23,6 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.safe.overview.SafesOverviewActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.onboarding.GenerateMnemonicActivity"
             android:screenOrientation="portrait" />
