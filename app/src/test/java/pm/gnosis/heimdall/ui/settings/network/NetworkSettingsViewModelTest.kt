@@ -117,7 +117,7 @@ class NetworkSettingsViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == msgId.toString()
         }.assertTerminated()
-        verifyNoMoreInteractions(repository)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -157,7 +157,7 @@ class NetworkSettingsViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == msgId.toString()
         }.assertTerminated()
-        verifyNoMoreInteractions(repository)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
