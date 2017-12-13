@@ -24,7 +24,6 @@ import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.heimdall.ui.security.SecurityViewModelTest
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
@@ -55,7 +54,7 @@ class AccountViewModelTest {
     @Before
     fun setup() {
         viewModel = AccountViewModel(contextMock, accountRepositoryMock, ethereumJsonRpcRepositoryMock, qrCodeGeneratorMock)
-        given(contextMock.getString(Mockito.anyInt())).willReturn(SecurityViewModelTest.TEST_STRING)
+        given(contextMock.getString(Mockito.anyInt())).willReturn(TEST_STRING)
     }
 
     @Test

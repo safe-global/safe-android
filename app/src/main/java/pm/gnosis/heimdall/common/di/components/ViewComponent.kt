@@ -11,15 +11,17 @@ import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
-import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicActivity
-import pm.gnosis.heimdall.ui.onboarding.RestoreAccountActivity
+import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
+import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicActivity
+import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountActivity
+import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.safe.add.AddExistingSafeFragment
 import pm.gnosis.heimdall.ui.safe.add.DeployNewSafeFragment
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsFragment
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
-import pm.gnosis.heimdall.ui.security.SecurityActivity
+import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
 import pm.gnosis.heimdall.ui.splash.SplashActivity
@@ -58,14 +60,16 @@ interface ViewComponent {
     fun inject(activity: CreateTransactionActivity)
     fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: NetworkSettingsActivity)
+    fun inject(activity: PasswordSetupActivity)
     fun inject(activity: RestoreAccountActivity)
     fun inject(activity: SafeDetailsActivity)
     fun inject(activity: SafesOverviewActivity)
-    fun inject(activity: SecurityActivity)
+    fun inject(activity: SetupSafeIntroActivity)
     fun inject(activity: SplashActivity)
     fun inject(activity: TokenManagementActivity)
     fun inject(activity: TokenInfoActivity)
     fun inject(activity: ViewTransactionActivity)
+    fun inject(activity: UnlockActivity)
 
     // Dialogs
 

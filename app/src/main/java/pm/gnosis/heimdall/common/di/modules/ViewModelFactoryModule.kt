@@ -15,10 +15,12 @@ import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressViewModel
-import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicContract
-import pm.gnosis.heimdall.ui.onboarding.GenerateMnemonicViewModel
-import pm.gnosis.heimdall.ui.onboarding.RestoreAccountContract
-import pm.gnosis.heimdall.ui.onboarding.RestoreAccountViewModel
+import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
+import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicViewModel
+import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountContract
+import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountViewModel
+import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
+import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupViewModel
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeViewModel
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
@@ -29,8 +31,8 @@ import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsViewModel
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
-import pm.gnosis.heimdall.ui.security.SecurityContract
-import pm.gnosis.heimdall.ui.security.SecurityViewModel
+import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
+import pm.gnosis.heimdall.ui.security.unlock.UnlockViewModel
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsViewModel
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
@@ -114,6 +116,11 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(PasswordSetupContract::class)
+    abstract fun bindsPasswordSetupContract(viewModel: PasswordSetupViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(RestoreAccountContract::class)
     abstract fun bindsRestoreAccountContract(viewModel: RestoreAccountViewModel): ViewModel
 
@@ -139,11 +146,6 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SecurityContract::class)
-    abstract fun bindsSecurityContract(viewModel: SecurityViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(SplashContract::class)
     abstract fun bindsSplashContract(viewModel: SplashViewModel): ViewModel
 
@@ -166,6 +168,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ViewTransactionContract::class)
     abstract fun bindsViewTransactionContract(viewModel: ViewTransactionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UnlockContract::class)
+    abstract fun bindsUnlockContract(viewModel: UnlockViewModel): ViewModel
 
     @Binds
     @Singleton

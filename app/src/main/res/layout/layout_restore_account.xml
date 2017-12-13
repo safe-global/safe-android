@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_restore_account_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,40 +14,87 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/layout_restore_account_restore">
+            android:layout_below="@+id/layout_restore_account_toolbar">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/layout_restore_account_mnemonic_input_layout"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:hint="@string/mnemonic"
-                    app:errorEnabled="true">
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="@string/restore_account_title"
+                    android:textColor="@color/gnosis_dark_blue"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:gravity="center"
+                    android:text="@string/restore_account_description"
+                    android:textColor="@color/onboarding_description" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <EditText
                         android:id="@+id/layout_restore_account_mnemonic"
                         style="@style/Input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:textColorHint="#c8ffffff" />
-                </android.support.design.widget.TextInputLayout>
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/border_radius_edit_text"
+                        android:gravity="top"
+                        android:hint="@string/mnemonic"
+                        android:inputType="textMultiLine"
+                        android:minLines="4"
+                        android:paddingBottom="20dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="16dp"
+                        android:textColor="@color/gnosis_blue"
+                        android:textSize="16sp"
+                        tools:text="This is a mnemonic phrase" />
 
+                    <TextView
+                        android:id="@+id/layout_restore_account_word_counter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:padding="4dp"
+                        tools:text="5/12 words" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/layout_restore_account_restore"
+                    style="@style/PrimaryButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/restore_account"
+                    android:textSize="17sp" />
             </LinearLayout>
-
         </ScrollView>
 
-        <TextView
-            android:id="@+id/layout_restore_account_restore"
-            style="@style/PrimaryButton.FullWidth"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_restore_account_toolbar"
+            style="@style/Toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:text="@string/restore_account" />
+            android:layout_height="@dimen/toolbar_height"
+            app:title="Restore Account" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_shadow_size"
+            android:layout_below="@+id/layout_restore_account_toolbar"
+            android:background="@drawable/toolbar_dropshadow" />
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

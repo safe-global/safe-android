@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.onboarding
+package pm.gnosis.heimdall.ui.onboarding.account.create
 
 import android.content.Context
 import android.content.Intent
@@ -10,6 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_generate_mnemonic.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -20,7 +21,7 @@ import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
+import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -29,18 +30,18 @@ class GenerateMnemonicActivity : BaseActivity() {
     lateinit var viewModel: GenerateMnemonicContract
 
     private var mnemonicGeneratorDisposable: Disposable? = null
+    private val confirmDialogClick = PublishSubject.create<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_generate_mnemonic)
+        registerToolbar(layout_generate_mnemonic_toolbar)
 
-        layout_generate_mnemonic_restore.setOnClickListener {
-            startActivity(RestoreAccountActivity.createIntent(this), noHistory = false)
-        }
         layout_generate_mnemonic_mnemonic.setOnLongClickListener {
-            copyToClipboard("mnemonic", layout_generate_mnemonic_mnemonic.text.toString())
-            snackbar(layout_generate_mnemonic_coordinator, getString(R.string.mnemonic_copied))
+            copyToClipboard("mnemonic", layout_generate_mnemonic_mnemonic.text.toString(), {
+                snackbar(layout_generate_mnemonic_coordinator, getString(R.string.mnemonic_copied))
+            })
             true
         }
         mnemonicGeneratorDisposable = generateMnemonicDisposable()
@@ -50,6 +51,17 @@ class GenerateMnemonicActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += saveAccountConfirmationDisposable()
+        disposables += confirmDialogClick
+                .flatMapSingle { viewModel.saveAccountWithMnemonic(it) }
+                .subscribeForResult(onNext = { onAccountSaved() }, onError = ::onAccountSaveError)
+    }
+
+    private fun onAccountSaved() {
+        startActivity(SetupSafeIntroActivity.createIntent(this), noHistory = true)
+    }
+
+    private fun onAccountSaveError(throwable: Throwable) {
+        Timber.e(throwable)
     }
 
     private fun generateMnemonicDisposable() =
@@ -74,27 +86,13 @@ class GenerateMnemonicActivity : BaseActivity() {
 
     private fun showConfirmationDialog(mnemonic: String) {
         AlertDialog.Builder(this)
-                .setPositiveButton(getString(R.string.yes), { _, _ -> disposables += onMnemonicConfirmedDisposable() })
+                .setPositiveButton(getString(R.string.yes), { _, _ ->
+                    confirmDialogClick.onNext(layout_generate_mnemonic_mnemonic.text.toString())
+                })
                 .setNegativeButton(getString(R.string.no), { _, _ -> })
                 .setTitle(getString(R.string.dialog_title_save_mnemonic))
                 .setMessage(Html.fromHtml(resources.getString(R.string.generate_mnemonic_activity_dialog, mnemonic)))
                 .show()
-    }
-
-    private fun onMnemonicConfirmedDisposable() =
-            viewModel.saveAccountWithMnemonic(layout_generate_mnemonic_mnemonic.text.toString())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onComplete = ::onSavedAccountWithMnemonic,
-                            onError = ::onSavedAccountWithMnemonicWithError)
-
-
-    private fun onSavedAccountWithMnemonic() {
-        startActivity(SafesOverviewActivity.createIntent(this), noHistory = true)
-    }
-
-    private fun onSavedAccountWithMnemonicWithError(throwable: Throwable) {
-        Timber.e(throwable)
-        snackbar(layout_generate_mnemonic_coordinator, getString(R.string.error_try_again))
     }
 
     override fun onDestroy() {

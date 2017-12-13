@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.onboarding
+package pm.gnosis.heimdall.ui.onboarding.account.restore
 
 import android.content.Context
 import android.content.Intent
@@ -16,17 +16,21 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.utils.trimWhitespace
+import pm.gnosis.utils.words
 import timber.log.Timber
 import javax.inject.Inject
 
 class RestoreAccountActivity : BaseActivity() {
-    @Inject lateinit var viewModel: RestoreAccountViewModel
+    @Inject
+    lateinit var viewModel: RestoreAccountContract
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_restore_account)
+        registerToolbar(layout_restore_account_toolbar)
     }
 
     override fun onStart() {
@@ -38,7 +42,7 @@ class RestoreAccountActivity : BaseActivity() {
 
     private fun mnemonicValidatorDisposable() =
             layout_restore_account_restore.clicks()
-                    .map { layout_restore_account_mnemonic.text.toString() }
+                    .map { layout_restore_account_mnemonic.text.toString().trimWhitespace() }
                     .flatMap {
                         viewModel.saveAccountWithMnemonic(it)
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -50,19 +54,23 @@ class RestoreAccountActivity : BaseActivity() {
 
     private fun mnemonicChangesDisposable() =
             layout_restore_account_mnemonic.textChanges()
-                    .skipInitialValue()
                     .map { it.toString() }
                     .subscribeBy(
-                            onNext = { layout_restore_account_mnemonic_input_layout.error = null },
+                            onNext = {
+                                updateWordCounter(it)
+                            },
                             onError = Timber::e)
+
+    private fun updateWordCounter(mnemonic: String) {
+        layout_restore_account_word_counter.text = getString(R.string.mnemonic_required_words, mnemonic.words().count(), 12)
+    }
 
     private fun onAccountSaved(intent: Intent) {
         startActivity(intent, noHistory = false)
     }
 
     private fun onAccountSaveError(throwable: Throwable) {
-        val message = (throwable as? SimpleLocalizedException)?.message ?: getString(R.string.error_try_again)
-        layout_restore_account_mnemonic_input_layout.error = message
+        errorSnackbar(layout_restore_account_coordinator, throwable)
     }
 
     private fun onSavingAccount(isSaving: Boolean) {

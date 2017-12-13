@@ -63,5 +63,4 @@ class AddExistingSafeFragment : BaseFragment() {
     companion object {
         fun createInstance() = AddExistingSafeFragment()
     }
-
 }

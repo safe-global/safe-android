@@ -34,7 +34,9 @@
     <color name="enabled_input">@color/accent</color>
     <color name="disabled_input">@color/disabled_button</color>
 
+    <color name="onboarding_description">#b221435a</color>
     <color name="text_grey_background">#f4f4f9</color>
+    <color name="onboarding_background">#f4f4f9</color>
     <color name="background">#f9f9f9</color>
     <color name="divider">#e3e5ec</color>
 
