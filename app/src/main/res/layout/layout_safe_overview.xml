@@ -50,6 +50,8 @@
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
         android:layout_gravity="end|bottom"
-        android:layout_margin="16dp" />
+        android:layout_margin="16dp"
+        android:scaleType="center"
+        app:srcCompat="@drawable/ic_authenticate_light" />
 
 </android.support.design.widget.CoordinatorLayout>

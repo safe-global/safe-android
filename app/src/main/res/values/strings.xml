@@ -76,6 +76,7 @@
     <string name="share_address">Share address</string>
     <string name="share_safe_address">Share %1$s address</string>
     <string name="x_ether">%s Ξ</string>
+    <string name="x_wei">%s Wei</string>
     <plurals name="x_confirmations">
         <item quantity="one">%s Confirmation</item>
         <item quantity="other">%s Confirmations</item>
@@ -158,7 +159,6 @@
     <string name="estimated_transaction_fee">Estimated Transaction Fee</string>
     <string name="confirm_transaction_hint">This signing device will initiate and confirm this transaction. <u><b>%s other safe owning devices</b></u> then need to confirm after that, before this transaction gets submitted.</string>
     <string name="add_existing_safe">Add existing safe</string>
-    <string name="x_wei">%s Wei</string>
     <string name="tab_title_add_existing">add existing</string>
     <string name="tab_title_create_new">create new</string>
     <string name="error_blank_name">Name should not be blank!</string>

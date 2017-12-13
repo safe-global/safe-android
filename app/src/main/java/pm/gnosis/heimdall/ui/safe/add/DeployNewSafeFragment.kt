@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asDecimalString
@@ -60,7 +61,7 @@ class DeployNewSafeFragment : BaseFragment() {
     }
 
     private fun updateEstimate(estimate: Wei) {
-        layout_deploy_new_safe_transaction_fee.text = getString(R.string.x_wei, estimate.value.asDecimalString())
+        layout_deploy_new_safe_transaction_fee.text = estimate.displayString(context!!)
     }
 
     override fun inject(component: ApplicationComponent) {

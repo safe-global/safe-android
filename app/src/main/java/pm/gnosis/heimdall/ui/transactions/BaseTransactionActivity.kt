@@ -20,9 +20,9 @@ import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetail
 import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.GenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
+import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Transaction
-import pm.gnosis.utils.asDecimalString
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -132,7 +132,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
             layout_transaction_details_submit_button.isEnabled = it.isOwner && !it.isExecuted
         }
         if (info.estimation != null) {
-            layout_transaction_details_transaction_fee.text = getString(R.string.x_wei, info.estimation.value.asDecimalString())
+            layout_transaction_details_transaction_fee.text = info.estimation.displayString(this)
         } else {
             setUnknownEstimate()
         }
