@@ -15,29 +15,48 @@
         <activity
             android:name="pm.gnosis.heimdall.ui.splash.SplashActivity"
             android:launchMode="singleTask"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.safe.overview.SafesOverviewActivity" />
-        <activity android:name=".ui.onboarding.GenerateMnemonicActivity" />
-        <activity android:name=".ui.onboarding.RestoreAccountActivity" />
-        <activity android:name=".ui.security.SecurityActivity" />
-        <activity android:name=".ui.safe.details.SafeDetailsActivity" />
-        <activity android:name=".ui.tokens.add.AddTokenActivity" />
-        <activity android:name=".ui.addressbook.list.AddressBookActivity" />
-        <activity android:name=".ui.addressbook.add.AddressBookAddEntryActivity" />
-        <activity android:name=".ui.addressbook.detail.AddressBookEntryDetailsActivity" />
-        <activity android:name=".ui.settings.SettingsActivity" />
-        <activity android:name=".ui.safe.add.AddSafeActivity" />
-        <activity android:name=".ui.settings.network.NetworkSettingsActivity" />
-        <activity android:name=".ui.account.AccountActivity" />
-        <activity android:name=".ui.settings.tokens.TokenManagementActivity" />
-        <activity android:name=".ui.authenticate.AuthenticateActivity" />
-        <activity android:name=".ui.tokens.info.TokenInfoActivity" />
-        <activity android:name=".ui.transactions.CreateTransactionActivity" />
-        <activity android:name=".ui.transactions.ViewTransactionActivity" />
+        <activity android:name=".ui.safe.overview.SafesOverviewActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.onboarding.GenerateMnemonicActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.onboarding.RestoreAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.security.SecurityActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.safe.details.SafeDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.tokens.add.AddTokenActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.addressbook.list.AddressBookActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.addressbook.add.AddressBookAddEntryActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.addressbook.detail.AddressBookEntryDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.settings.SettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.safe.add.AddSafeActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.settings.network.NetworkSettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.account.AccountActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.settings.tokens.TokenManagementActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.authenticate.AuthenticateActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.tokens.info.TokenInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.transactions.CreateTransactionActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.transactions.ViewTransactionActivity"
+            android:screenOrientation="portrait" />
     </application>
 </manifest>
