@@ -14,8 +14,9 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
-import org.mockito.Mockito
+import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.DataResult
@@ -62,8 +63,8 @@ class SafeSettingsViewModelTest {
         val observer = TestObserver.create<Result<SafeInfo>>()
         viewModel.loadSafeInfo(ignoreCached).subscribe(observer)
         observer.assertNoErrors().assertValueCount(1).assertValue(DataResult(info))
-        Mockito.verify(repositoryMock, Mockito.times(repositoryInvocations)).loadInfo(address)
-        Mockito.verify(repositoryMock, Mockito.times(totalInvocations)).loadInfo(MockUtils.any())
+        then(repositoryMock).should(times(repositoryInvocations)).loadInfo(address)
+        then(repositoryMock).should(times(totalInvocations)).loadInfo(MockUtils.any())
     }
 
     @Test

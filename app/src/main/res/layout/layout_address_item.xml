@@ -14,9 +14,9 @@
 
     <ImageView
         android:id="@+id/layout_address_item_icon"
-        android:layout_width="@dimen/address_book_circle"
-        android:layout_height="@dimen/address_book_circle"
-        android:background="@drawable/address_book_circle"
+        android:layout_width="@dimen/action_circle"
+        android:layout_height="@dimen/action_circle"
+        android:background="@drawable/action_circle_background"
         android:gravity="center"
         android:padding="8dp"
         android:tint="@color/gnosis_dark_blue"

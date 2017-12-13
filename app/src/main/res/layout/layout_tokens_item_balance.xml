@@ -14,11 +14,11 @@
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/layout_tokens_item_symbol"
         style="@style/Title"
-        android:layout_width="@dimen/address_book_circle"
-        android:layout_height="@dimen/address_book_circle"
+        android:layout_width="@dimen/action_circle"
+        android:layout_height="@dimen/action_circle"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/address_book_circle"
+        android:background="@drawable/action_circle_background"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
@@ -31,8 +31,8 @@
 
     <ImageView
         android:id="@+id/layout_tokens_item_symbol_image"
-        android:layout_width="@dimen/address_book_circle"
-        android:layout_height="@dimen/address_book_circle"
+        android:layout_width="@dimen/action_circle"
+        android:layout_height="@dimen/action_circle"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:scaleType="center"

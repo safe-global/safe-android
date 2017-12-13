@@ -102,7 +102,7 @@ class SecurityViewModelTest {
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
-        verify(contextMock).getString(R.string.pin_too_short, emptyArray<Any>())
+        then(contextMock).should().getString(R.string.pin_too_short, emptyArray<Any>())
     }
 
     @Test
@@ -113,7 +113,7 @@ class SecurityViewModelTest {
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
-        verify(contextMock).getString(R.string.pin_repeat_wrong, emptyArray<Any>())
+        then(contextMock).should().getString(R.string.pin_repeat_wrong, emptyArray<Any>())
     }
 
     @Test
@@ -139,7 +139,7 @@ class SecurityViewModelTest {
         then(encryptionManagerMock).should().setupPassword("123456".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
-        verify(contextMock).getString(R.string.pin_setup_failed, emptyArray<Any>())
+        then(contextMock).should().getString(R.string.pin_setup_failed, emptyArray<Any>())
     }
 
     @Test
@@ -177,7 +177,7 @@ class SecurityViewModelTest {
         then(encryptionManagerMock).should().unlockWithPassword("123456".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
-        verify(contextMock).getString(R.string.error_wrong_credentials, emptyArray<Any>())
+        then(contextMock).should().getString(R.string.error_wrong_credentials, emptyArray<Any>())
     }
 
     @Test

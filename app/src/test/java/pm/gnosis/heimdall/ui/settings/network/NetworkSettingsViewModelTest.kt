@@ -47,8 +47,8 @@ class NetworkSettingsViewModelTest {
         viewModel.loadIpfsUrl().subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue("").assertComplete()
-        verify(repository).getIpfsUrl()
-        verifyNoMoreInteractions(repository)
+        then(repository).should().getIpfsUrl()
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -59,8 +59,8 @@ class NetworkSettingsViewModelTest {
         viewModel.loadIpfsUrl().subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue("https://test.example:1337").assertComplete()
-        verify(repository).getIpfsUrl()
-        verifyNoMoreInteractions(repository)
+        then(repository).should().getIpfsUrl()
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -71,8 +71,8 @@ class NetworkSettingsViewModelTest {
         viewModel.loadRpcUrl().subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue("").assertComplete()
-        verify(repository).getEthereumRPCUrl()
-        verifyNoMoreInteractions(repository)
+        then(repository).should().getEthereumRPCUrl()
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -83,19 +83,19 @@ class NetworkSettingsViewModelTest {
         viewModel.loadRpcUrl().subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue("https://test.example:1337").assertComplete()
-        verify(repository).getEthereumRPCUrl()
-        verifyNoMoreInteractions(repository)
+        then(repository).should().getEthereumRPCUrl()
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     private fun testUpdateIpfsUrlValid(input: String, isHttps: Boolean, host: String?, port: Int?) {
         val testObserver = TestObserver<Result<String>>()
         viewModel.updateIpfsUrl(input).subscribe(testObserver)
 
-        verify(repository).setIpfsUrl(isHttps, host, port)
+        then(repository).should().setIpfsUrl(isHttps, host, port)
         testObserver.assertNoErrors().assertValue {
             it is DataResult && it.data == input
         }.assertComplete()
-        verifyNoMoreInteractions(repository)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -131,11 +131,11 @@ class NetworkSettingsViewModelTest {
         val testObserver = TestObserver<Result<String>>()
         viewModel.updateRpcUrl(input).subscribe(testObserver)
 
-        verify(repository).setEthereumRPCUrl(isHttps, host, port)
+        then(repository).should().setEthereumRPCUrl(isHttps, host, port)
         testObserver.assertNoErrors().assertValue {
             it is DataResult && it.data == input
         }.assertComplete()
-        verifyNoMoreInteractions(repository)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -173,10 +173,11 @@ class NetworkSettingsViewModelTest {
         val testObserver = TestObserver<Result<String>>()
         viewModel.updateSafeFactoryAddress(testAddress).subscribe(testObserver)
 
-        verify(repository).setSafeFactoryAddress(testAddress)
+        then(repository).should().setSafeFactoryAddress(testAddress)
         testObserver.assertNoErrors().assertValue {
             it is DataResult && it.data == testAddress
         }.assertComplete()
+        then(repository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -190,7 +191,7 @@ class NetworkSettingsViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == R.string.invalid_ethereum_address.toString()
         }.assertTerminated()
-        verify(repository).setSafeFactoryAddress(testAddress)
-        verifyNoMoreInteractions(repository)
+        then(repository).should().setSafeFactoryAddress(testAddress)
+        then(repository).shouldHaveNoMoreInteractions()
     }
 }

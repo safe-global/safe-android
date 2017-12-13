@@ -100,7 +100,7 @@
                         android:layout_width="84dp"
                         android:layout_height="84dp"
                         android:layout_marginBottom="8dp"
-                        android:background="@drawable/address_book_circle"
+                        android:background="@drawable/action_circle_background"
                         android:gravity="center"
                         android:maxLines="1"
                         android:paddingBottom="16dp"
