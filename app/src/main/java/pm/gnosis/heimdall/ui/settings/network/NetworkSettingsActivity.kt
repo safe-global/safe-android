@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import timber.log.Timber
@@ -21,6 +22,9 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class NetworkSettingsActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.NETWORK_SETTINGS
+
     @Inject
     lateinit var viewModel: NetworkSettingsContract
 

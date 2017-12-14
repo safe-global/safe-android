@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.startActivity
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.OnboardingIntro
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
@@ -18,6 +19,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.SPLASH
+
     @Inject lateinit var viewModel: SplashViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {

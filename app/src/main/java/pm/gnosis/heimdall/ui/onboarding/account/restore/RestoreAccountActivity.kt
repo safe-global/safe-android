@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.trimWhitespace
@@ -23,6 +24,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class RestoreAccountActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.RESTORE_ACCOUNT
+
     @Inject
     lateinit var viewModel: RestoreAccountContract
 

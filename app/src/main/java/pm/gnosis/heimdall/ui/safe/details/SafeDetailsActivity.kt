@@ -24,6 +24,10 @@ import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.reporting.ButtonId
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.reporting.TabId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
@@ -39,6 +43,9 @@ import javax.inject.Inject
 
 
 class SafeDetailsActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.SAFE_DETAILS
+
     @Inject
     lateinit var viewModel: SafeDetailsContract
 
@@ -68,6 +75,7 @@ class SafeDetailsActivity : BaseActivity() {
         }
 
         layout_safe_details_fab.setOnClickListener {
+            eventTracker.submit(Event.ButtonClick(ButtonId.SAFE_DETAILS_CREATE_TRANSACTION))
             startActivity(CreateTransactionActivity.createIntent(this, safeAddress.hexAsBigIntegerOrNull(), TransactionType.TOKEN_TRANSFER, null))
         }
         layout_safe_details_viewpager.adapter = pagerAdapter()
@@ -75,6 +83,7 @@ class SafeDetailsActivity : BaseActivity() {
         layout_safe_details_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 layout_safe_details_appbar.setExpanded(true, true)
+                positionToTabID(position)?.let { eventTracker.submit(Event.TabSelect(it)) }
             }
         })
     }
@@ -125,6 +134,20 @@ class SafeDetailsActivity : BaseActivity() {
     }
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
+
+    private fun positionToTabID(position: Int) =
+            when (positionToId(position)) {
+                R.string.tab_title_settings -> {
+                    TabId.SAFE_DETAILS_SETTINGS
+                }
+                R.string.tab_title_assets -> {
+                    TabId.SAFE_DETAILS_ASSETS
+                }
+                R.string.tab_title_transactions -> {
+                    TabId.SAFE_DETAILS_TRANSACTIONS
+                }
+                else -> null
+            }
 
     private fun pagerAdapter() = FactoryPagerAdapter(supportFragmentManager, FactoryPagerAdapter.Factory(items.size, {
         when (positionToId(it)) {

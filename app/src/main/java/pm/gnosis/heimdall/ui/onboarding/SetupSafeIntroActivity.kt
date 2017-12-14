@@ -12,11 +12,15 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.startActivity
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 
 class SetupSafeIntroActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.SETUP_INTRO
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()

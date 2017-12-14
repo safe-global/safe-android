@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
@@ -28,6 +29,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class AddressBookAddEntryActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.ADDRESS_BOOK_ENTRY
+
     @Inject
     lateinit var viewModel: AddressBookContract
 

@@ -6,12 +6,16 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.reporting.ScreenId
 import java.math.BigInteger
 import javax.inject.Inject
 
 class ShareSafeAddressDialog : BaseShareAddressDialog() {
+
     @Inject
     lateinit var safeRepository: GnosisSafeRepository
+
+    override fun screenId() = ScreenId.DIALOG_SHARE_SAFE
 
     override fun addressSourceObservable(): Observable<Pair<String?, BigInteger>> =
             safeRepository.observeSafe(address)

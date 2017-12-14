@@ -15,6 +15,9 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.dialog_address_share.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
@@ -27,9 +30,14 @@ abstract class BaseShareAddressDialog : BaseDialog() {
     @Inject
     lateinit var qrCodeGenerator: QrCodeGenerator
 
+    @Inject
+    lateinit var eventTracker: EventTracker
+
     private val generateQrCodeSubject = PublishSubject.create<Unit>()
 
     protected lateinit var address: BigInteger
+
+    abstract fun screenId(): ScreenId
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(DialogFragment.STYLE_NO_FRAME, 0)
@@ -87,6 +95,7 @@ abstract class BaseShareAddressDialog : BaseDialog() {
                         context?.shareExternalText(it, R.string.address)
                     }
                 })
+        eventTracker.submit(Event.ScreenView(screenId()))
     }
 
     private fun onResult(name: String?, address: BigInteger) {
