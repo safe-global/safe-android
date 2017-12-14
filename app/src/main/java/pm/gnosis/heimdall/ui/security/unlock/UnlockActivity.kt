@@ -3,7 +3,9 @@ package pm.gnosis.heimdall.ui.security.unlock
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.animation.*
 import android.view.inputmethod.EditorInfo
+import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.PublishSubject
@@ -12,11 +14,11 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.utils.errorToast
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class UnlockActivity : BaseActivity() {
@@ -25,13 +27,19 @@ class UnlockActivity : BaseActivity() {
 
     private val nextClickSubject = PublishSubject.create<Unit>()
 
+    private var handleRotation = 0f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_unlock)
 
-        layout_unlock_password.setOnEditorActionListener { _, actionId, _ ->
+        if (intent?.getBooleanExtra(EXTRA_CLOSE_APP, false) == true) {
+            finish()
+        }
+
+        layout_unlock_password_input.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 nextClickSubject.onNext(Unit)
             }
@@ -46,18 +54,41 @@ class UnlockActivity : BaseActivity() {
                 .subscribeForResult(onNext = ::onState, onError = ::onStateCheckError)
 
         disposables += nextClickSubject
-                .flatMap { viewModel.unlock(layout_unlock_password.text.toString()) }
+                .flatMap { viewModel.unlock(layout_unlock_password_input.text.toString()) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = ::onState, onError = ::onUnlockError)
+        disposables += layout_unlock_password_input.textChanges()
+                .window(200, TimeUnit.MILLISECONDS)
+                .flatMapMaybe { it.lastElement() }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    animateHandle(it.length * 15f, interpolator = DecelerateInterpolator())
+                }, Timber::e)
     }
 
     private fun onState(state: UnlockContract.State) {
         when (state) {
-            UnlockContract.State.UNINITIALIZED -> startActivity(PasswordSetupActivity.createIntent(this), noHistory = true)
-            UnlockContract.State.UNLOCKED -> finish()
+            UnlockContract.State.UNINITIALIZED -> startActivity(createIntentToCloseApp(this))
+            UnlockContract.State.UNLOCKED -> animateHandle(handleRotation + 360f, { finish() })
             UnlockContract.State.LOCKED -> {
             }
         }
+    }
+
+    private fun animateHandle(rotation: Float, endAction: () -> Unit = {}, interpolator: Interpolator = LinearInterpolator()) {
+        handleRotation = rotation
+        layout_unlock_handle.clearAnimation()
+        layout_unlock_handle.animate()
+                .rotation(handleRotation)
+                .setDuration(300)
+                .setInterpolator(interpolator)
+                .withEndAction(endAction)
+    }
+
+    override fun onStop() {
+        layout_unlock_handle.clearAnimation()
+        layout_unlock_handle.animate().cancel()
+        super.onStop()
     }
 
     override fun onBackPressed() {
@@ -69,6 +100,15 @@ class UnlockActivity : BaseActivity() {
     }
 
     private fun onUnlockError(throwable: Throwable) {
+        val rotationAnimation = RotateAnimation(0f, 20f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f)
+                .apply {
+                    duration = 50
+                    repeatCount = 3
+                    repeatMode = Animation.REVERSE
+                }
+        layout_unlock_handle.startAnimation(rotationAnimation)
         errorToast(throwable)
     }
 
