@@ -3,12 +3,18 @@ package pm.gnosis.heimdall.ui.transactions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import kotlinx.android.synthetic.main.layout_transaction_details.*
+import android.view.View
+import com.jakewharton.rxbinding2.view.clicks
+import io.reactivex.Observable
+import io.reactivex.ObservableTransformer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
+import kotlinx.android.synthetic.main.layout_create_transaction.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.models.Transaction
@@ -19,11 +25,29 @@ import java.math.BigInteger
 
 class CreateTransactionActivity : BaseTransactionActivity() {
 
+    private val transactionDataTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Result<Pair<BigInteger?, Transaction>>> =
+            ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
+                up
+                        .flatMap {
+                            checkInfoAndPerform<Pair<BigInteger?, Transaction>>(it, { safeAddress, transaction ->
+                                Observable.just(DataResult(safeAddress to transaction))
+                            })
+                        }
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnNext({ it.handle(::handleTransactionDataUpdate, ::handleTransactionDataError) })
+            }
+
     override fun screenId() = ScreenId.CREATE_TRANSACTION
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        layout_transaction_details_toolbar.title = getString(R.string.create_transaction)
+        setContentView(R.layout.layout_create_transaction)
+
+        setupToolbar(layout_create_transaction_toolbar, R.drawable.ic_close_24dp)
+    }
+
+    override fun fragmentRegistered() {
+        layout_create_transaction_progress_bar.visibility = View.GONE
     }
 
     override fun loadTransactionDetails() {
@@ -41,6 +65,28 @@ class CreateTransactionActivity : BaseTransactionActivity() {
         displayTransactionDetails(createDetailsFragment(safe, type, transaction, true))
         return true
     }
+
+    private fun handleTransactionDataUpdate(data: Pair<BigInteger?, Transaction>) {
+        layout_create_transaction_review_button.isEnabled = true
+    }
+
+    private fun handleTransactionDataError(error: Throwable) {
+        layout_create_transaction_review_button.isEnabled = false
+        handleInputError(error)
+    }
+
+    override fun handleTransactionData(observable: Observable<Pair<BigInteger?, Result<Transaction>>>): Observable<Any> =
+            Observable.combineLatest(
+                    observable.compose(transactionDataTransformer),
+                    layout_create_transaction_review_button.clicks(),
+                    BiFunction { data: Result<Pair<BigInteger?, Transaction>>, _: Unit -> data })
+                    .map {
+                        when (it) {
+                            is DataResult -> startActivity(ViewTransactionActivity.createIntent(this, it.data.first, it.data.second))
+                            is ErrorResult -> handleInputError(it.error)
+                        }
+                    }
+
 
     override fun inject() {
         DaggerViewComponent.builder()

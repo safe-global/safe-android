@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.snackbar
@@ -51,15 +52,19 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
     private val safeSubject = BehaviorSubject.createDefault<Optional<BigInteger>>(None)
     private val inputSubject = PublishSubject.create<AssetTransferTransactionDetailsContract.InputEvent>()
     private var editable: Boolean = false
-    private var originalTransaction: Transaction? = null
+    private var cachedTransaction: Transaction? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        editable = arguments?.getBoolean(ARG_EDITABLE, false) ?: false
+        cachedTransaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.layout_transaction_details_asset_transfer, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        editable = arguments?.getBoolean(ARG_EDITABLE, false) ?: false
-        originalTransaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
         layout_transaction_details_asset_transfer_max_amount_button.visibility = if (editable) View.VISIBLE else View.GONE
         layout_transaction_details_asset_transfer_divider_amount.visibility = if (editable) View.VISIBLE else View.GONE
         toggleTransactionInput(editable)
@@ -72,7 +77,7 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
         setupSafeSpinner(layout_transaction_details_asset_transfer_safe_input, safe)
         layout_transaction_details_asset_transfer_token_input.adapter = adapter
 
-        disposables += subViewModel.loadFormData(originalTransaction, editable)
+        disposables += subViewModel.loadFormData(cachedTransaction, editable)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::setupForm, Timber::e)
     }
@@ -123,17 +128,22 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
 
     override fun observeTransaction(): Observable<Result<Transaction>> {
         return inputSubject
-                .compose(subViewModel.inputTransformer(context!!, originalTransaction))
+                .compose(subViewModel.inputTransformer(context!!, cachedTransaction))
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
-                    (it as? ErrorResult)?.let {
-                        (it.error as? TransactionInputException)?.let {
-                            if (it.errorFields and TransactionInputException.TO_FIELD != 0) {
-                                setInputError(layout_transaction_details_asset_transfer_to_input)
+                    when (it) {
+                        is ErrorResult -> {
+                            (it.error as? TransactionInputException)?.let {
+                                if (it.errorFields and TransactionInputException.TO_FIELD != 0) {
+                                    setInputError(layout_transaction_details_asset_transfer_to_input)
+                                }
+                                if (it.errorFields and TransactionInputException.AMOUNT_FIELD != 0) {
+                                    setInputError(layout_transaction_details_asset_transfer_amount_input)
+                                }
                             }
-                            if (it.errorFields and TransactionInputException.AMOUNT_FIELD != 0) {
-                                setInputError(layout_transaction_details_asset_transfer_amount_input)
-                            }
+                        }
+                        is DataResult -> {
+                            cachedTransaction = it.data.copy(nonce = cachedTransaction?.nonce ?: it.data.nonce)
                         }
                     }
                 }

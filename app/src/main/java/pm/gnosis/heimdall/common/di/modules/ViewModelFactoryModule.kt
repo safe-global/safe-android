@@ -45,8 +45,6 @@ import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesViewModel
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoViewModel
-import pm.gnosis.heimdall.ui.transactions.BaseTransactionContract
-import pm.gnosis.heimdall.ui.transactions.BaseTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.details.*
@@ -83,11 +81,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AuthenticateContract::class)
     abstract fun bindsAuthenticateContract(viewModel: AuthenticateViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(BaseTransactionContract::class)
-    abstract fun bindsBaseTransactionContract(viewModel: BaseTransactionViewModel): ViewModel
 
     @Binds
     @IntoMap

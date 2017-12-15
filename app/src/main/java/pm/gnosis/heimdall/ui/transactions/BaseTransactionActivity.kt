@@ -2,92 +2,44 @@ package pm.gnosis.heimdall.ui.transactions
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.view.View
 import com.gojuno.koptional.Optional
-import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
-import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.layout_transaction_details.*
+import kotlinx.android.synthetic.main.merge_transaction_details_container.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.common.utils.DataResult
+import pm.gnosis.heimdall.common.utils.ErrorResult
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.common.utils.transaction
 import pm.gnosis.heimdall.data.repositories.TransactionType
-import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.GenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
-import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Transaction
 import timber.log.Timber
 import java.math.BigInteger
-import javax.inject.Inject
 
 
 abstract class BaseTransactionActivity : BaseActivity() {
 
-    @Inject
-    lateinit var viewModel: BaseTransactionContract
-
     private var currentFragment: BaseTransactionDetailsFragment? = null
-    private var currentInfo: Pair<BigInteger?, Transaction>? = null
-
-    private val transactionInfoTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, *> =
-            ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
-                up.doOnNext { setUnknownTransactionInfo() }
-                        .flatMap {
-                            checkInfoAndPerform(it, { safeAddress, transaction ->
-                                viewModel.loadTransactionInfo(safeAddress, transaction)
-                            })
-                        }
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext({ it.handle(::updateInfo, ::handleInfoError) })
-            }
-
-    private val cacheTransactionInfoTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, *> =
-            ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
-                up.observeOn(AndroidSchedulers.mainThread()).doOnNext({ (safeAddress, transaction) ->
-                    transaction.handle({ currentInfo = safeAddress to it }, { currentInfo = null })
-                })
-            }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
-        setContentView(R.layout.layout_transaction_details)
-
-        setupToolbar(layout_transaction_details_toolbar, R.drawable.ic_close_24dp)
     }
 
     abstract fun loadTransactionDetails()
 
     override fun onStart() {
         super.onStart()
-        setUnknownTransactionInfo()
-        disposables += layout_transaction_details_submit_button.clicks()
-                .flatMap {
-                    currentInfo?.let { (safeAddress, transaction) ->
-                        safeAddress?.let {
-                            viewModel.submitTransaction(safeAddress, transaction)
-                                    .subscribeOn(AndroidSchedulers.mainThread())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .doOnSubscribe { submittingTransaction(true) }
-                                    .doAfterTerminate { submittingTransaction(false) }
-                                    .toObservable()
-                        }
-                    } ?: Observable.empty<Result<Unit>>()
-                }
-                .subscribeForResult({
-                    eventTracker.submit(Event.SubmittedTransaction())
-                    finish()
-                }, { showErrorSnackbar(it) })
-
-        val fragment = supportFragmentManager.findFragmentById(R.id.layout_transaction_details_transaction_container)
+        val fragment = supportFragmentManager.findFragmentById(R.id.merge_transaction_details_container)
         if (fragment is BaseTransactionDetailsFragment) {
             setCurrentFragment(fragment)
         } else {
@@ -95,22 +47,24 @@ abstract class BaseTransactionActivity : BaseActivity() {
         }
     }
 
-    private fun submittingTransaction(loading: Boolean) {
-        layout_transaction_details_progress_bar.visibility = if (loading) View.VISIBLE else View.GONE
-        layout_transaction_details_submit_button.isEnabled = !loading
-        currentFragment?.inputEnabled(!loading)
+    protected fun transactionInputEnabled(enabled: Boolean) {
+        currentFragment?.inputEnabled(enabled)
     }
 
     protected fun displayTransactionDetails(fragment: BaseTransactionDetailsFragment) {
         setCurrentFragment(fragment)
         supportFragmentManager.transaction {
-            replace(R.id.layout_transaction_details_transaction_container, fragment)
+            replace(R.id.merge_transaction_details_container, fragment)
         }
     }
 
     private fun setCurrentFragment(fragment: BaseTransactionDetailsFragment) {
         currentFragment = fragment
     }
+
+    abstract fun handleTransactionData(observable: Observable<Pair<BigInteger?, Result<Transaction>>>): Observable<Any>
+
+    abstract fun fragmentRegistered()
 
     fun registerFragmentObservables(fragment: BaseTransactionDetailsFragment) {
         if (currentFragment != fragment) {
@@ -120,54 +74,25 @@ abstract class BaseTransactionActivity : BaseActivity() {
             safeAddress.toNullable() to transaction
         })
                 .observeOn(AndroidSchedulers.mainThread())
-                .publish { shared ->
-                    Observable.merge(
-                            shared.compose(transactionInfoTransformer),
-                            shared.compose(cacheTransactionInfoTransformer)
-                    )
-                }.subscribeBy(onError = Timber::e)
-        layout_transaction_details_progress_bar.visibility = View.GONE
+                .publish(::handleTransactionData)
+                .subscribeBy(onError = Timber::e)
+        fragmentRegistered()
     }
 
-    private fun updateInfo(info: BaseTransactionContract.Info) {
-        info.transactionInfo.let {
-            val leftConfirmations = Math.max(0, it.requiredConfirmation - it.confirmations - if (it.isOwner) 1 else 0)
-            layout_transaction_details_confirmations_hint_text.text = getString(R.string.confirm_transaction_hint, leftConfirmations.toString())
-            layout_transaction_details_confirmations.text = getString(R.string.x_of_x_confirmations, it.confirmations.toString(), it.requiredConfirmation.toString())
-            layout_transaction_details_submit_button.isEnabled = it.isOwner && !it.isExecuted
-        }
-        if (info.estimation != null) {
-            layout_transaction_details_transaction_fee.text = info.estimation.displayString(this)
-        } else {
-            setUnknownEstimate()
-        }
-    }
-
-    private fun setUnknownEstimate() {
-        layout_transaction_details_transaction_fee.text = "-"
-    }
-
-    private fun setUnknownTransactionInfo() {
-        setUnknownEstimate()
-        layout_transaction_details_submit_button.isEnabled = false
-        layout_transaction_details_confirmations_hint_text.text = getString(R.string.confirm_transaction_hint, "-")
-        layout_transaction_details_confirmations.text = getString(R.string.x_of_x_confirmations, "-", "-")
-    }
-
-    private fun handleInfoError(throwable: Throwable) {
+    protected fun handleInputError(throwable: Throwable) {
         Timber.e(throwable)
         showErrorSnackbar(throwable, Snackbar.LENGTH_INDEFINITE)
     }
 
-    private fun showErrorSnackbar(throwable: Throwable, duration: Int = Snackbar.LENGTH_LONG) {
+    protected fun showErrorSnackbar(throwable: Throwable, duration: Int = Snackbar.LENGTH_LONG) {
         // We don't want to show a snackbar if no safe is selected (UI should have been updated accordingly)
         if (throwable is NoSafeSelectedException) return
         if (throwable !is TransactionInputException || throwable.showSnackbar) {
-            errorSnackbar(layout_transaction_details_transaction_container, throwable, duration)
+            errorSnackbar(merge_transaction_details_container, throwable, duration)
         }
     }
 
-    private fun <T> checkInfoAndPerform(info: Pair<BigInteger?, Result<Transaction>>, action: (BigInteger, Transaction) -> Observable<Result<T>>): Observable<Result<T>> =
+    protected fun <T> checkInfoAndPerform(info: Pair<BigInteger?, Result<Transaction>>, action: (BigInteger, Transaction) -> Observable<Result<T>>): Observable<Result<T>> =
             info.let { (safeAddress, transaction) ->
                 safeAddress?.let {
                     when (transaction) {
