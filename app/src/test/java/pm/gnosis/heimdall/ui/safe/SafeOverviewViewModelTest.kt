@@ -150,13 +150,14 @@ class SafeOverviewViewModelTest {
 
         viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver)
 
+        testObserver.assertResult(safeInfo)
+        val testObserver2 = TestObserver.create<SafeInfo>()
+
+        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver2)
+
+        testObserver2.assertResult(safeInfo)
         then(repositoryMock).should().loadInfo(BigInteger.ZERO)
         then(repositoryMock).shouldHaveNoMoreInteractions()
-        testObserver.assertResult(safeInfo)
-
-        val testObserver2 = TestObserver.create<SafeInfo>()
-        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver2)
-        testObserver2.assertResult(safeInfo)
     }
 
     @Test
