@@ -16,7 +16,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
-import pm.gnosis.heimdall.data.repositories.models.SafeWithInfo
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.reporting.ButtonId
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -68,10 +68,6 @@ class SafesOverviewActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = ::onSafes, onError = ::onSafesError)
 
-        disposables += viewModel.loadAccountAddress()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = { adapter.accountAddress = it }, onError = Timber::e)
-
         disposables += adapter.safeSelection
                 .subscribeBy(onNext = ::onSafeSelection, onError = Timber::e)
 
@@ -94,8 +90,8 @@ class SafesOverviewActivity : BaseActivity() {
         Timber.e(throwable)
     }
 
-    private fun onSafeSelection(safeWithInfo: SafeWithInfo) {
-        startActivity(SafeDetailsActivity.createIntent(this, safeWithInfo.safe))
+    private fun onSafeSelection(safe: Safe) {
+        startActivity(SafeDetailsActivity.createIntent(this, safe))
     }
 
     private fun inject() {

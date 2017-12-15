@@ -2,7 +2,7 @@ package pm.gnosis.heimdall.ui.safe
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Single
+import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.subscribers.TestSubscriber
@@ -11,19 +11,15 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.accounts.base.models.Account
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.data.repositories.models.SafeWithInfo
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -39,16 +35,13 @@ class SafeOverviewViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    private lateinit var accountsRepositoryMock: AccountsRepository
-
-    @Mock
     private lateinit var repositoryMock: GnosisSafeRepository
 
     private lateinit var viewModel: SafeOverviewViewModel
 
     @Before
     fun setup() {
-        viewModel = SafeOverviewViewModel(accountsRepositoryMock, repositoryMock)
+        viewModel = SafeOverviewViewModel(repositoryMock)
     }
 
     @Test
@@ -67,7 +60,7 @@ class SafeOverviewViewModelTest {
                 .assertValue { it is DataResult && it.data.parentId == null && it.data.diff == null && it.data.entries.isEmpty() }
         val initialDataId = (subscriber.values().first() as DataResult).data.id
 
-        val results = listOf(SafeWithInfo(Safe(BigInteger.ZERO)), SafeWithInfo(Safe(BigInteger.ONE)))
+        val results = listOf(Safe(BigInteger.ZERO), Safe(BigInteger.ONE))
         processor.offer(results)
         // Check that the results are emitted
         subscriber.assertNoErrors()
@@ -82,7 +75,7 @@ class SafeOverviewViewModelTest {
                 .assertInsertsCount(2).assertInserts(0, 2)
                 .reset()
 
-        val moreResults = listOf(SafeWithInfo(Safe(BigInteger.ONE)), SafeWithInfo(Safe(BigInteger.ZERO)), SafeWithInfo(Safe(BigInteger.valueOf(3))))
+        val moreResults = listOf(Safe(BigInteger.ONE), Safe(BigInteger.ZERO), Safe(BigInteger.valueOf(3)))
         processor.offer(moreResults)
         // Check that the diff are calculated correctly
         subscriber.assertNoErrors()
@@ -148,29 +141,29 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun loadAccountAddress() {
-        val observer = TestObserver.create<BigInteger>()
-        val account = Account(BigInteger.ONE)
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+    fun observeDeployedStatus() {
+        val result = "result"
+        val testObserver = TestObserver.create<String>()
+        given(repositoryMock.observeDeployStatus(anyString())).willReturn(Observable.just(result))
 
-        viewModel.loadAccountAddress().subscribe(observer)
+        viewModel.observeDeployedStatus("test").subscribe(testObserver)
 
-        then(accountsRepositoryMock).should().loadActiveAccount()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-        observer.assertResult(BigInteger.ONE)
+        then(repositoryMock).should().observeDeployStatus("test")
+        then(repositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(result)
     }
 
     @Test
-    fun loadAccountAddressError() {
-        val observer = TestObserver.create<BigInteger>()
+    fun observeDeployedStatusError() {
         val exception = Exception()
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error(exception))
+        val testObserver = TestObserver.create<String>()
+        given(repositoryMock.observeDeployStatus(anyString())).willReturn(Observable.error(exception))
 
-        viewModel.loadAccountAddress().subscribe(observer)
+        viewModel.observeDeployedStatus("test").subscribe(testObserver)
 
-        then(accountsRepositoryMock).should().loadActiveAccount()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-        observer.assertError(exception)
+        then(repositoryMock).should().observeDeployStatus("test")
+        then(repositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertError(exception)
     }
 
     private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<AbstractSafe>>>()

@@ -6,6 +6,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
 import pm.gnosis.heimdall.GnosisSafe.Required
 import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory
@@ -154,23 +155,28 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun loadInfo(address: BigInteger): Observable<SafeInfo> {
         val addressString = address.asEthereumAddressString()
-        val request = SafeInfoRequest(
-                SubRequest(JsonRpcRequest(
-                        id = 0,
-                        method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
-                        params = arrayListOf(address.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
-                        { Wei(it.checkedResult().hexAsBigInteger()) }),
-                SubRequest(TransactionCallParams(to = addressString, data = Required.encode()).callRequest(1),
-                        { Required.decode(it.checkedResult()) }),
-                SubRequest(TransactionCallParams(to = addressString, data = GetOwners.encode()).callRequest(2),
-                        { GetOwners.decode(it.checkedResult()) })
-        )
-        return ethereumJsonRpcRepository.bulk(request)
+        return accountsRepository.loadActiveAccount()
+                .map {
+                    SafeInfoRequest(
+                            SubRequest(JsonRpcRequest(
+                                    id = 0,
+                                    method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
+                                    params = arrayListOf(address.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
+                                    { Wei(it.checkedResult().hexAsBigInteger()) }),
+                            SubRequest(TransactionCallParams(to = addressString, data = Required.encode()).callRequest(1),
+                                    { Required.decode(it.checkedResult()) }),
+                            SubRequest(TransactionCallParams(to = addressString, data = GetOwners.encode()).callRequest(2),
+                                    { GetOwners.decode(it.checkedResult()) }),
+                            SubRequest(TransactionCallParams(to = addressString, data = GnosisSafe.IsOwner.encode(Solidity.Address(it.address))).callRequest(3),
+                                    { GnosisSafe.IsOwner.decode(it.checkedResult()) }))
+                }
+                .flatMapObservable { ethereumJsonRpcRepository.bulk(it) }
                 .map {
                     SafeInfo(addressString,
                             it.balance.value!!,
                             it.requiredConfirmations.value!!.param0.value.toLong(),
-                            it.owners.value!!.param0.items.map { it.value.asEthereumAddressString() })
+                            it.owners.value!!.param0.items.map { it.value.asEthereumAddressString() },
+                            it.isOwner.value!!.param0.value)
                 }
     }
 
@@ -181,8 +187,9 @@ class DefaultGnosisSafeRepository @Inject constructor(
     private class SafeInfoRequest(
             val balance: SubRequest<Wei>,
             val requiredConfirmations: SubRequest<Required.Return>,
-            val owners: SubRequest<GetOwners.Return>
-    ) : BulkRequest(balance, requiredConfirmations, owners)
+            val owners: SubRequest<GetOwners.Return>,
+            val isOwner: SubRequest<GnosisSafe.IsOwner.Return>
+    ) : BulkRequest(balance, requiredConfirmations, owners, isOwner)
 
     private data class SafeDeployParams(val account: Account, val factoryAddress: BigInteger, val data: String, val transactionParameters: TransactionParameters)
 }

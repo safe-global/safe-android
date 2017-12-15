@@ -70,11 +70,11 @@ class SafeSettingsViewModelTest {
     @Test
     fun setupViewModelClearCache() {
         val address1 = BigInteger.ZERO
-        val info1 = SafeInfo("Test1", Wei(BigInteger.ONE), 0, emptyList())
+        val info1 = SafeInfo("Test1", Wei(BigInteger.ONE), 0, emptyList(), false)
         given(repositoryMock.loadInfo(address1)).willReturn(Observable.just(info1))
 
         val address2 = BigInteger.ONE
-        val info2 = SafeInfo("Test2", Wei(BigInteger.ONE), 0, emptyList())
+        val info2 = SafeInfo("Test2", Wei(BigInteger.ONE), 0, emptyList(), false)
         given(repositoryMock.loadInfo(address2)).willReturn(Observable.just(info2))
 
         callSetupAndCheck(address1, info1)
@@ -85,7 +85,7 @@ class SafeSettingsViewModelTest {
     @Test
     fun setupViewModelKeepCache() {
         val address = BigInteger.ZERO
-        val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList())
+        val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList(), false)
         given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(info))
 
         callSetupAndCheck(address, info)
@@ -96,7 +96,7 @@ class SafeSettingsViewModelTest {
     @Test
     fun loadSafeInfoIgnoreCache() {
         val address = BigInteger.ZERO
-        val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList())
+        val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList(), false)
         given(repositoryMock.loadInfo(address)).willReturn(Observable.just(info))
 
         callSetupAndCheck(address, info)

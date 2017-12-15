@@ -98,12 +98,12 @@
 
         <TextView
             android:id="@+id/layout_safe_item_authorizations"
+            style="@style/SafeSmallInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:text="-"
-            android:textSize="13sp"
             tools:ignore="HardcodedText"
             tools:text="3/5" />
     </LinearLayout>
@@ -126,12 +126,12 @@
 
         <TextView
             android:id="@+id/layout_safe_item_ether"
+            style="@style/SafeSmallInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:text="-"
-            android:textSize="13sp"
             tools:ignore="HardcodedText"
             tools:text="1.519494580 ETH" />
     </LinearLayout>

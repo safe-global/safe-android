@@ -33,21 +33,21 @@
                     android:src="@drawable/ic_no_safes" />
 
                 <TextView
+                    style="@style/Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:gravity="center"
                     android:text="@string/safe_overview_empty_title"
-                    android:textColor="@color/gnosis_dark_blue"
                     android:textSize="16sp" />
 
                 <TextView
+                    style="@style/Content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="@string/safe_overview_emtpy_description"
-                    android:textColor="@color/onboarding_description" />
+                    android:text="@string/safe_overview_emtpy_description" />
 
                 <TextView
                     android:id="@+id/layout_safe_overview_add_safe"
