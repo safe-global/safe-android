@@ -27,12 +27,9 @@ class SafeOverviewViewModel @Inject constructor(
             safeRepository.remove(address)
 
     override fun loadSafeInfo(address: BigInteger): Single<SafeInfo> =
-            if (infoCache.containsKey(address)) {
-                Single.just(infoCache[address])
-            } else {
-                safeRepository.loadInfo(address).firstOrError()
-                        .doOnSuccess { infoCache.put(address, it) }
-            }
+            infoCache[address]?.let { Single.just(it) } ?:
+                    safeRepository.loadInfo(address).firstOrError()
+                            .doOnSuccess { infoCache.put(address, it) }
 
     override fun observeDeployedStatus(hash: String) =
             safeRepository.observeDeployStatus(hash)

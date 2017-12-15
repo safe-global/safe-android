@@ -20,8 +20,10 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
+import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
@@ -138,6 +140,36 @@ class SafeOverviewViewModelTest {
         then(repositoryMock).shouldHaveNoMoreInteractions()
         observer.assertTerminated().assertNoValues()
                 .assertError(error)
+    }
+
+    @Test
+    fun loadSafeInfoLoadsFromCache() {
+        val testObserver = TestObserver.create<SafeInfo>()
+        val safeInfo = SafeInfo("0x0", Wei(BigInteger.ZERO), 0, emptyList(), false)
+        given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(safeInfo))
+
+        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver)
+
+        then(repositoryMock).should().loadInfo(BigInteger.ZERO)
+        then(repositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(safeInfo)
+
+        val testObserver2 = TestObserver.create<SafeInfo>()
+        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver2)
+        testObserver2.assertResult(safeInfo)
+    }
+
+    @Test
+    fun loadSafeInfoError() {
+        val testObserver = TestObserver.create<SafeInfo>()
+        val exception = Exception()
+        given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.error(exception))
+
+        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver)
+
+        then(repositoryMock).should().loadInfo(BigInteger.ZERO)
+        then(repositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertError(exception)
     }
 
     @Test
