@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.generic
 
 import android.content.Context
 import io.reactivex.ObservableTransformer

@@ -19,8 +19,13 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.setupToolbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.assets.ReviewAssetTransferDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
@@ -146,10 +151,17 @@ class ViewTransactionActivity : BaseTransactionActivity() {
         lifetimeDisposables += viewModel.checkTransactionType(transaction)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    displayTransactionDetails(createDetailsFragment(safe, it, transaction, false))
+                    displayTransactionDetails(createDetailsFragment(safe, it, transaction))
                 }, this::handleError)
         return true
     }
+
+    override fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
+            when (type) {
+                TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
+                    ReviewAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
+                else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, false)
+            }
 
     private fun handleError(throwable: Throwable? = null) {
         throwable?.let { Timber.e(throwable) }

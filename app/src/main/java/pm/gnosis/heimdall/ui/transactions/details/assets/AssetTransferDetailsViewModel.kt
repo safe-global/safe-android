@@ -1,16 +1,18 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.assets
 
 import android.content.Context
+import com.gojuno.koptional.Optional
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
+import io.reactivex.SingleTransformer
 import pm.gnosis.heimdall.StandardToken
+import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TokenTransferData
-import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
+import pm.gnosis.heimdall.common.utils.mapToResult
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
@@ -24,10 +26,11 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 
-class AssetTransferTransactionDetailsViewModel @Inject constructor(
+class AssetTransferDetailsViewModel @Inject constructor(
+        @ApplicationContext private val context: Context,
         private var detailsRepository: TransactionDetailsRepository,
         private var tokenRepository: TokenRepository
-) : AssetTransferTransactionDetailsContract() {
+) : AssetTransferDetailsContract() {
 
     override fun loadFormData(transaction: Transaction?, clearDefaults: Boolean): Single<FormData> =
             transaction?.let {
@@ -83,7 +86,7 @@ class AssetTransferTransactionDetailsViewModel @Inject constructor(
         return 0
     }
 
-    override fun inputTransformer(context: Context, originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>> =
+    override fun inputTransformer(originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>> =
             ObservableTransformer {
                 it.scan { old, new -> old.diff(new) }
                         .map {
@@ -125,5 +128,37 @@ class AssetTransferTransactionDetailsViewModel @Inject constructor(
                             }
                         }
             }
+
+    override fun transactionTransformer(): ObservableTransformer<Optional<Transaction>, Result<Transaction>> =
+            ObservableTransformer {
+                it.flatMapSingle {
+                    val transaction = it.toNullable()
+                    transaction?.let {
+                        detailsRepository.loadTransactionDetails(it)
+                                .map(::checkDetails)
+                                .mapToResult()
+                    } ?: Single.just(ErrorResult(IllegalStateException()))
+                }
+            }
+
+    private fun checkDetails(details: TransactionDetails): Transaction {
+        return when (details.type) {
+            TransactionType.TOKEN_TRANSFER -> {
+                val data = details.data as? TokenTransferData
+                if (data == null || data.tokens == BigInteger.ZERO) {
+                    throw TransactionInputException(context, TransactionInputException.AMOUNT_FIELD, true)
+                }
+                details.transaction
+            }
+            TransactionType.ETHER_TRANSFER -> {
+                if (details.transaction.value == null || details.transaction.value?.value == BigInteger.ZERO) {
+                    throw TransactionInputException(context, TransactionInputException.AMOUNT_FIELD, true)
+                }
+                details.transaction
+            }
+            else ->
+                throw IllegalStateException()
+        }
+    }
 
 }

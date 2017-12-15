@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.transactions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Display
 import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
@@ -17,6 +18,9 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -62,9 +66,16 @@ class CreateTransactionActivity : BaseTransactionActivity() {
         val safe = intent.getStringExtra(EXTRA_SAFE)
         val type = TransactionType.values().getOrNull(intent.getIntExtra(EXTRA_TYPE, -1)) ?: return false
         val transaction = intent.getParcelableExtra<TransactionParcelable>(EXTRA_TRANSACTION)?.transaction
-        displayTransactionDetails(createDetailsFragment(safe, type, transaction, true))
+        displayTransactionDetails(createDetailsFragment(safe, type, transaction))
         return true
     }
+
+    override fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
+             when (type) {
+                TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
+                    CreateAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
+                else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, true)
+            }
 
     private fun handleTransactionDataUpdate(data: Pair<BigInteger?, Transaction>) {
         layout_create_transaction_review_button.isEnabled = true

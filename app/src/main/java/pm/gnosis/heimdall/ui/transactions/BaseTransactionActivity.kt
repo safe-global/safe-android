@@ -16,9 +16,9 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.transaction
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.GenericTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Transaction
@@ -102,13 +102,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
                 } ?: Observable.just(ErrorResult(NoSafeSelectedException()))
             }
 
-    protected open fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?, editable: Boolean): BaseTransactionDetailsFragment {
-        return when (type) {
-            TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
-                AssetTransferTransactionDetailsFragment.createInstance(transaction, safeAddress, editable)
-            else -> GenericTransactionDetailsFragment.createInstance(transaction, safeAddress, editable)
-        }
-    }
+    abstract fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment
 
     abstract fun inject()
 

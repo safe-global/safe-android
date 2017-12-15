@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.generic
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
@@ -32,7 +33,7 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 
-class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
+class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFragment() {
 
     @Inject
     lateinit var subViewModel: GenericTransactionDetailsContract
@@ -124,7 +125,7 @@ class GenericTransactionDetailsFragment : BaseTransactionDetailsFragment() {
         private const val ARG_EDITABLE = "argument.boolean.editable"
 
         fun createInstance(transaction: Transaction?, safeAddress: String?, editable: Boolean) =
-                GenericTransactionDetailsFragment().apply {
+                CreateGenericTransactionDetailsFragment().apply {
                     arguments = Bundle().apply {
                         putBoolean(ARG_EDITABLE, editable)
                         putParcelable(ARG_TRANSACTION, transaction?.parcelable())

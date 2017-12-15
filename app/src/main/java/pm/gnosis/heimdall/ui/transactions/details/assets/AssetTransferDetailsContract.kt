@@ -1,10 +1,12 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.assets
 
 import android.arch.lifecycle.ViewModel
 import android.content.Context
+import com.gojuno.koptional.Optional
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
+import io.reactivex.SingleTransformer
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
@@ -12,10 +14,11 @@ import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
 
-abstract class AssetTransferTransactionDetailsContract : ViewModel() {
+abstract class AssetTransferDetailsContract : ViewModel() {
     abstract fun loadFormData(transaction: Transaction?, clearDefaults: Boolean): Single<FormData>
     abstract fun observeTokens(defaultToken: BigInteger?, safeAddress: BigInteger?): Observable<State>
-    abstract fun inputTransformer(context: Context, originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>>
+    abstract fun inputTransformer(originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>>
+    abstract fun transactionTransformer(): ObservableTransformer<Optional<Transaction>, Result<Transaction>>
 
     data class FormData(val selectedToken: BigInteger? = null, val to: BigInteger? = null, val tokenAmount: BigInteger? = null, val token: ERC20Token? = null)
 

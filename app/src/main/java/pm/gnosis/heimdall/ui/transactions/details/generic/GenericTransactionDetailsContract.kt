@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.generic
 
 import android.arch.lifecycle.ViewModel
 import android.content.Context

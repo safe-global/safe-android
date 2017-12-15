@@ -30,9 +30,9 @@ import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
-import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.GenericTransactionDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
 
 @Module
 class ViewModule(val context: Context) {
@@ -63,7 +63,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesAssetTransferTransactionDetailsContract(provider: ViewModelProvider) = provider[AssetTransferTransactionDetailsContract::class.java]
+    fun providesAssetTransferTransactionDetailsContract(provider: ViewModelProvider) = provider[AssetTransferDetailsContract::class.java]
 
     @Provides
     @ForView
@@ -71,7 +71,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesBaseTransactionDetailsContract(provider: ViewModelProvider) = provider[BaseTransactionDetailsContract::class.java]
+    fun providesBaseTransactionDetailsContract(provider: ViewModelProvider) = provider[BaseEditableTransactionDetailsContract::class.java]
 
     @Provides
     @ForView

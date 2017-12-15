@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.base
 
 import io.reactivex.Flowable
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
@@ -6,14 +6,14 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import java.math.BigInteger
 import javax.inject.Inject
 
-class BaseTransactionDetailsViewModel @Inject constructor(
+class BaseEditableTransactionDetailsViewModel @Inject constructor(
         private val safeRepository: GnosisSafeRepository
-) : BaseTransactionDetailsContract() {
+) : BaseEditableTransactionDetailsContract() {
     private var currentSelectedSafe: BigInteger? = null
 
     override fun observeSafes(defaultSafe: BigInteger?): Flowable<State> =
             safeRepository.observeDeployedSafes().map {
-                BaseTransactionDetailsContract.State(getCurrentSelectedSafeIndex(currentSelectedSafe ?: defaultSafe, it), it)
+                State(getCurrentSelectedSafeIndex(currentSelectedSafe ?: defaultSafe, it), it)
             }
 
     private fun getCurrentSelectedSafeIndex(selectedSafeAddress: BigInteger?, safes: List<Safe>): Int {
