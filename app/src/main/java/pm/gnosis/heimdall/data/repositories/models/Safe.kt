@@ -4,6 +4,6 @@ import java.math.BigInteger
 
 sealed class AbstractSafe
 
-data class Safe(val address: BigInteger, val name: String? = null): AbstractSafe()
+data class Safe(val address: BigInteger, val name: String? = null) : AbstractSafe()
 
-data class PendingSafe(val hash: BigInteger, val name: String? = null): AbstractSafe()
+data class PendingSafe(val hash: BigInteger, val name: String? = null) : AbstractSafe()

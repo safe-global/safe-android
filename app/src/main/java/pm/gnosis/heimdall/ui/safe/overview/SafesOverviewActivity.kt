@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -22,6 +23,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.settings.SettingsActivity
@@ -68,6 +70,15 @@ class SafesOverviewActivity : BaseActivity() {
 
         disposables += adapter.safeSelection
                 .subscribeBy(onNext = ::onSafeSelection, onError = Timber::e)
+
+        disposables += adapter.shareSelection
+                .subscribeBy(onNext = {
+                    ShareSafeAddressDialog.create(it).show(supportFragmentManager, null)
+                }, onError = Timber::e)
+
+        disposables += layout_safe_overview_add_safe.clicks()
+                .subscribeBy(onNext = { startActivity(AddSafeActivity.createIntent(this)) },
+                        onError = Timber::e)
     }
 
     private fun onSafes(data: Adapter.Data<AbstractSafe>) {

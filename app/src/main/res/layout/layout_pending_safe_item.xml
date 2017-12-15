@@ -3,21 +3,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/selectable_background"
+    android:background="@color/text_grey_background"
     android:gravity="center_vertical"
     android:padding="16dp">
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:padding="8dp" />
+        android:layout_width="@dimen/action_circle"
+        android:layout_height="@dimen/action_circle"
+        android:background="@drawable/progress_circle_background"
+        android:padding="8dp"
+        android:theme="@style/WhiteCircleProgress" />
 
-    <TextView
-        android:id="@+id/layout_pending_safe_item_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="1"
-        style="@style/Title"
-        tools:text="My Safe" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/BoldContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/deploying_new_safe"
+            android:textColor="@color/gnosis_blue"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/layout_pending_safe_item_name"
+            style="@style/Content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="My Safe" />
+
+        <TextView
+            style="@style/Content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/deploying_safe_warning" />
+    </LinearLayout>
 </LinearLayout>

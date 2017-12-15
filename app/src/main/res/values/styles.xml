@@ -175,5 +175,14 @@
         <item name="android:maxLines">2</item>
     </style>
 
+    <style name="SafeSmallInfo">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/gnosis_dark_blue</item>
+    </style>
+
     <!-- End: Text styles -->
+
+    <style name="WhiteCircleProgress" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/white</item>
+    </style>
 </resources>
