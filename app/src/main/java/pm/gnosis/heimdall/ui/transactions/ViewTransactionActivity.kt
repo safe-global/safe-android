@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -19,6 +20,8 @@ import javax.inject.Inject
 
 
 class ViewTransactionActivity : BaseTransactionActivity() {
+
+    override fun screenId() = ScreenId.VIEW_TRANSACTION
 
     @Inject
     lateinit var subViewModel: ViewTransactionContract

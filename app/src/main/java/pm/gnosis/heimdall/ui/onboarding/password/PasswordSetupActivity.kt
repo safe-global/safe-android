@@ -11,6 +11,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.OnboardingIntro
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
@@ -19,6 +20,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class PasswordSetupActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.PASSWORD_SETUP
+
     @Inject
     lateinit var viewModel: PasswordSetupContract
 

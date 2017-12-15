@@ -8,11 +8,14 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_account_setup.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicActivity
 import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountActivity
 
 class AccountSetupActivity : BaseActivity() {
+    override fun screenId() = ScreenId.ACCOUNT_SETUP
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_account_setup)

@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -17,6 +18,8 @@ import java.math.BigInteger
 
 
 class CreateTransactionActivity : BaseTransactionActivity() {
+
+    override fun screenId() = ScreenId.CREATE_TRANSACTION
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

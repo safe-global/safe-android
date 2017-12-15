@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.layout_transaction_details.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsFragment
@@ -80,7 +81,11 @@ abstract class BaseTransactionActivity : BaseActivity() {
                                     .toObservable()
                         }
                     } ?: Observable.empty<Result<Unit>>()
-                }.subscribeForResult({ finish() }, { showErrorSnackbar(it) })
+                }
+                .subscribeForResult({
+                    eventTracker.submit(Event.SubmittedTransaction())
+                    finish()
+                }, { showErrorSnackbar(it) })
 
         val fragment = supportFragmentManager.findFragmentById(R.id.layout_transaction_details_transaction_container)
         if (fragment is BaseTransactionDetailsFragment) {

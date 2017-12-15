@@ -9,6 +9,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import timber.log.Timber
@@ -19,9 +22,14 @@ abstract class BaseActivity : AppCompatActivity() {
     @Inject
     lateinit var encryptionManager: EncryptionManager
 
+    @Inject
+    lateinit var eventTracker: EventTracker
+
     protected val disposables = CompositeDisposable()
 
     private var performSecurityCheck = true
+
+    abstract fun screenId(): ScreenId
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +46,7 @@ abstract class BaseActivity : AppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(::checkSecurity, ::handleCheckError)
         }
+        eventTracker.submit(Event.ScreenView(screenId()))
     }
 
     override fun onStop() {

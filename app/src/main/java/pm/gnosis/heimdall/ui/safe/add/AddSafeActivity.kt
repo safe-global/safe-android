@@ -6,11 +6,16 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import kotlinx.android.synthetic.main.layout_add_safe.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.reporting.TabId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 
 
 class AddSafeActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.ADD_SAFE
 
     private val items = listOf(R.string.tab_title_create_new, R.string.tab_title_add_existing)
 
@@ -26,9 +31,21 @@ class AddSafeActivity : BaseActivity() {
         layout_add_safe_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 layout_add_safe_appbar.setExpanded(true, true)
+                positionToTabID(position)?.let { eventTracker.submit(Event.TabSelect(it)) }
             }
         })
     }
+
+    private fun positionToTabID(position: Int) =
+            when (positionToId(position)) {
+                R.string.tab_title_add_existing -> {
+                    TabId.ADD_SAFE_EXISTING
+                }
+                R.string.tab_title_create_new -> {
+                    TabId.ADD_NEW_SAFE
+                }
+                else -> null
+            }
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
 

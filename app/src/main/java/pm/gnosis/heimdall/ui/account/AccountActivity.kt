@@ -22,6 +22,7 @@ import pm.gnosis.heimdall.common.utils.copyToClipboard
 import pm.gnosis.heimdall.common.utils.shareExternalText
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
@@ -34,6 +35,8 @@ import javax.inject.Inject
 class AccountActivity : BaseActivity() {
     @Inject
     lateinit var viewModel: AccountContract
+
+    override fun screenId() = ScreenId.ACCOUNT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

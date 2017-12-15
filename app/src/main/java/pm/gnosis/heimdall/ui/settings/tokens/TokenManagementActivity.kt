@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
@@ -21,6 +22,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class TokenManagementActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.TOKEN_MANAGEMENT
+
     @Inject
     lateinit var viewModel: TokenManagementContract
 

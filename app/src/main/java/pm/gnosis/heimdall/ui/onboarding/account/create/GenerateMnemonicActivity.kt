@@ -20,12 +20,16 @@ import pm.gnosis.heimdall.common.utils.copyToClipboard
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import timber.log.Timber
 import javax.inject.Inject
 
 class GenerateMnemonicActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.GENERATE_MNEMONIC
+
     @Inject
     lateinit var viewModel: GenerateMnemonicContract
 

@@ -16,6 +16,9 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.reporting.ButtonId
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -26,6 +29,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class SafesOverviewActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.SAFE_OVERVIEW
+
     @Inject
     lateinit var viewModel: SafeOverviewViewModel
     @Inject
@@ -49,6 +55,7 @@ class SafesOverviewActivity : BaseActivity() {
         layout_safe_overview_list.adapter = adapter
 
         layout_safe_overview_fab.setOnClickListener {
+            eventTracker.submit(Event.ButtonClick(ButtonId.SAFE_OVERVIEW_SCAN_TRANSACTION))
             startActivity(AuthenticateActivity.createIntent(this))
         }
     }

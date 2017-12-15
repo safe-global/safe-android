@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_settings.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -12,6 +13,9 @@ import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
 
 class SettingsActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.SETTINGS
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_settings)

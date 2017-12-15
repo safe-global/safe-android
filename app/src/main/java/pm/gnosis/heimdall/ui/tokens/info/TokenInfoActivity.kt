@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import timber.log.Timber
@@ -23,6 +24,9 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class TokenInfoActivity : BaseActivity() {
+
+    override fun screenId() = ScreenId.TOKEN_INFO
+
     @Inject
     lateinit var viewModel: TokenInfoContract
 

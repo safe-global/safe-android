@@ -6,14 +6,16 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.reporting.ScreenId
 import java.math.BigInteger
 
 
 class SimpleAddressShareDialog: BaseShareAddressDialog() {
 
+    override fun screenId() = ScreenId.DIALOG_SHARE_ADDRESS
+
     override fun addressSourceObservable(): Observable<Pair<String?, BigInteger>> =
         Observable.just(context?.getString(R.string.share_address) to address)
-
 
     override fun inject() {
         DaggerViewComponent.builder()
