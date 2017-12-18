@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
+import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
 
 class SettingsActivity : BaseActivity() {
@@ -35,6 +36,12 @@ class SettingsActivity : BaseActivity() {
 
         layout_settings_tokens.setOnClickListener {
             startActivity(TokenManagementActivity.createIntent(this))
+        }
+
+        if (encryptionManager.canSetupFingerprint()) {
+            layout_settings_security.setOnClickListener {
+                startActivity(SecuritySettingsActivity.createIntent(this))
+            }
         }
     }
 

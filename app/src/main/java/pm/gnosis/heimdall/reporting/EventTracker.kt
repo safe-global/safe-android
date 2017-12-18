@@ -33,6 +33,7 @@ enum class ScreenId {
     RESTORE_ACCOUNT,
     SAFE_DETAILS,
     SAFE_OVERVIEW,
+    SECURITY_SETTINGS,
     SETTINGS,
     SETUP_INTRO,
     SPLASH,

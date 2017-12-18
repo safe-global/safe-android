@@ -35,6 +35,8 @@ import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockViewModel
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsViewModel
+import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsContract
+import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsViewModel
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementViewModel
 import pm.gnosis.heimdall.ui.splash.SplashContract
@@ -141,6 +143,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SafeTransactionsContract::class)
     abstract fun bindsSafeTransactionsContract(viewModel: SafeTransactionsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SecuritySettingsContract::class)
+    abstract fun bindsSecuritySettingsContract(viewModel: SecuritySettingsViewModel): ViewModel
 
     @Binds
     @IntoMap

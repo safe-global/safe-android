@@ -8,6 +8,7 @@ import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
+import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
@@ -23,6 +24,7 @@ import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
+import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
 import pm.gnosis.heimdall.ui.splash.SplashActivity
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
@@ -66,6 +68,7 @@ interface ViewComponent {
     fun inject(activity: RestoreAccountActivity)
     fun inject(activity: SafeDetailsActivity)
     fun inject(activity: SafesOverviewActivity)
+    fun inject(activity: SecuritySettingsActivity)
     fun inject(activity: SetupSafeIntroActivity)
     fun inject(activity: SplashActivity)
     fun inject(activity: TokenManagementActivity)
@@ -76,6 +79,7 @@ interface ViewComponent {
     // Dialogs
 
     fun inject(dialog: CreateTokenTransactionProgressDialog)
+    fun inject(dialog: FingerprintDialog)
     fun inject(dialog: ShareSafeAddressDialog)
     fun inject(dialog: SimpleAddressShareDialog)
 }

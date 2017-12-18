@@ -3,6 +3,8 @@
     package="pm.gnosis.heimdall">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name="pm.gnosis.heimdall.HeimdallApplication"
@@ -89,6 +91,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.onboarding.OnboardingIntro"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.settings.security.SecuritySettingsActivity"
             android:screenOrientation="portrait" />
     </application>
 </manifest>

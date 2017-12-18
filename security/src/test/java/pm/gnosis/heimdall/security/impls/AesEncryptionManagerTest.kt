@@ -23,7 +23,10 @@ class AesEncryptionManagerTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var application: Application
+    private lateinit var application: Application
+
+    @Mock
+    private lateinit var fingerprintManagerMock: CompatSafeFingerprintManager
 
     private val preferences = TestPreferences()
 
@@ -34,17 +37,17 @@ class AesEncryptionManagerTest {
     fun setup() {
         given(application.getSharedPreferences(anyString(), anyInt())).willReturn(preferences)
         preferencesManager = PreferencesManager(application)
-        manager = AesEncryptionManager(application, preferencesManager)
+        manager = AesEncryptionManager(application, preferencesManager, fingerprintManagerMock)
     }
 
     @Test
     fun initialized() {
-        preferences.remove(PREF_KEY_APP_KEY)
+        preferences.remove(PREF_KEY_PASSWORD_ENCRYPTED_APP_KEY)
         val uninitializedObserver = TestObserver<Boolean>()
         manager.initialized().subscribe(uninitializedObserver)
         uninitializedObserver.assertNoErrors().assertValue(false)
 
-        preferences.putString(PREF_KEY_APP_KEY, "TEST")
+        preferences.putString(PREF_KEY_PASSWORD_ENCRYPTED_APP_KEY, "TEST")
         val initializedObserver = TestObserver<Boolean>()
         manager.initialized().subscribe(initializedObserver)
         initializedObserver.assertNoErrors().assertValue(true)
@@ -100,8 +103,7 @@ class AesEncryptionManagerTest {
 
 
     companion object {
-        private const val PREF_KEY_APP_KEY = "encryption_manager.string.app_key"
+        private const val PREF_KEY_PASSWORD_ENCRYPTED_APP_KEY = "encryption_manager.string.password_encrypted_app_key"
         private const val PREF_KEY_PASSWORD_CHECKSUM = "encryption_manager.string.password_checksum"
     }
-
 }

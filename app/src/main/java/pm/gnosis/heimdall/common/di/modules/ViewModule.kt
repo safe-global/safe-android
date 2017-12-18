@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
+import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsContract
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
@@ -108,6 +109,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesSafeTransactionsContract(provider: ViewModelProvider) = provider[SafeTransactionsContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesSecuritySettingsContract(provider: ViewModelProvider) = provider[SecuritySettingsContract::class.java]
 
     @Provides
     @ForView
