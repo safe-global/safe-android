@@ -22,12 +22,12 @@ private interface Encrypted<out T> {
 class EncryptedByteArray private constructor(private val encryptedValue: String) : Encrypted<ByteArray> {
 
     override fun value(encryptionManager: EncryptionManager): ByteArray {
-        return encryptionManager.decrypt(encryptedValue.hexStringToByteArray())
+        return encryptionManager.decrypt(EncryptionManager.CryptoData.fromString(encryptedValue))
     }
 
     companion object : Encrypted.Creator<ByteArray> {
         override fun create(encryptionManager: EncryptionManager, value: ByteArray): EncryptedByteArray {
-            return EncryptedByteArray(encryptionManager.encrypt(value).toHexString())
+            return EncryptedByteArray(encryptionManager.encrypt(value).toString())
         }
     }
 
@@ -47,12 +47,12 @@ class EncryptedByteArray private constructor(private val encryptedValue: String)
 class EncryptedString private constructor(private val encryptedValue: String) : Encrypted<String> {
 
     override fun value(encryptionManager: EncryptionManager): String {
-        return encryptionManager.decrypt(encryptedValue.hexStringToByteArray()).utf8String()
+        return encryptionManager.decrypt(EncryptionManager.CryptoData.fromString(encryptedValue)).utf8String()
     }
 
     companion object : Encrypted.Creator<String> {
         override fun create(encryptionManager: EncryptionManager, value: String): EncryptedString {
-            return EncryptedString(encryptionManager.encrypt(value.toByteArray()).toHexString())
+            return EncryptedString(encryptionManager.encrypt(value.toByteArray()).toString())
         }
     }
 
