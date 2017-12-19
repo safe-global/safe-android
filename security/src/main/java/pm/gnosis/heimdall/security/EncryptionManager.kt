@@ -9,9 +9,9 @@ interface EncryptionManager {
     fun decrypt(data: CryptoData): ByteArray
     fun encrypt(data: ByteArray): CryptoData
     fun unlocked(): Single<Boolean>
-    fun unlockWithPassword(key: ByteArray): Single<Boolean>
+    fun unlockWithPassword(keyBytes: ByteArray): Single<Boolean>
     fun lock()
-    fun setupPassword(newKey: ByteArray, oldKey: ByteArray? = null): Single<Boolean>
+    fun setupPassword(newKeyBytes: ByteArray, oldKeyBytes: ByteArray? = null): Single<Boolean>
     fun initialized(): Single<Boolean>
 
     class CryptoData(val data: ByteArray, val iv: ByteArray) {

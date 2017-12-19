@@ -54,8 +54,8 @@ class KethereumAccountsRepositoryTest {
     fun setup() {
         accountsDao = mock(AccountDao::class.java)
         given(accountsDatabase.accountsDao()).willReturn(accountsDao)
-        given(encryptionManager.encrypt(MockUtils.any())).willAnswer { it.arguments.first() }
-        given(encryptionManager.decrypt(MockUtils.any())).willAnswer { it.arguments.first() }
+        given(encryptionManager.encrypt(MockUtils.any())).willAnswer { EncryptionManager.CryptoData(it.arguments.first() as ByteArray, "iv".toByteArray()) }
+        given(encryptionManager.decrypt(MockUtils.any())).willAnswer { (it.arguments.first() as EncryptionManager.CryptoData).data }
         repository = KethereumAccountsRepository(accountsDatabase, encryptionManager, preferencesManager, bip39)
     }
 

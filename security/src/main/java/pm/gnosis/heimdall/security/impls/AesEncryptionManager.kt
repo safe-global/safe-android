@@ -33,9 +33,9 @@ class AesEncryptionManager @Inject constructor(
 ) : EncryptionManager {
 
     private val secureRandom = SecureRandom()
-    private val keySpecLock = Any()
+    private val keyLock = Any()
     private val handler = Handler(Looper.getMainLooper())
-    private var keySpec: SecretKeySpec? = null
+    private var key: SecretKey? = null
     private var lockRunnable: Runnable? = null
 
     init {
@@ -69,25 +69,25 @@ class AesEncryptionManager @Inject constructor(
         }
     }
 
-    override fun setupPassword(newKey: ByteArray, oldKey: ByteArray?): Single<Boolean> {
+    override fun setupPassword(newKeyBytes: ByteArray, oldKeyBytes: ByteArray?): Single<Boolean> {
         return Single.fromCallable {
-            synchronized(keySpecLock) {
+            synchronized(keyLock) {
                 val checksum = preferencesManager.prefs.getString(PREF_KEY_PASSWORD_CHECKSUM, null)
-                var previousKeySpec: SecretKeySpec? = null
+                var previousKey: SecretKey? = null
                 if (checksum != null) {
-                    previousKeySpec = oldKey?.let { buildKeySpecChecksum(it, checksum) } ?: return@fromCallable false
+                    previousKey = oldKeyBytes?.let { buildSecretKeyIfValid(it, checksum) } ?: return@fromCallable false
                 }
-                val passwordKeySpec = buildKeySpec(newKey)
-                val encryptionKey = previousKeySpec?.let {
+                val passwordKey = buildSecretKey(newKeyBytes)
+                val encryptionKeyBytes = previousKey?.let {
                     decryptKey(it)
                 } ?: generateKey()
-                keySpec = buildKeySpec(encryptionKey)
-                keySpec?.let {
-                    preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTION_KEY, encrypt(passwordKeySpec, encryptionKey).toString()) }
-                    preferencesManager.prefs.edit { putString(PREF_KEY_PASSWORD_CHECKSUM, generateCryptedChecksum(passwordKeySpec, newKey)) }
+                key = buildSecretKey(encryptionKeyBytes)
+                key?.let {
+                    preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTION_KEY, encrypt(passwordKey, encryptionKeyBytes).toString()) }
+                    preferencesManager.prefs.edit { putString(PREF_KEY_PASSWORD_CHECKSUM, generateCryptedChecksum(passwordKey, newKeyBytes)) }
                 }
 
-                keySpec != null
+                key != null
             }
         }.subscribeOn(Schedulers.io())
     }
@@ -100,80 +100,80 @@ class AesEncryptionManager @Inject constructor(
 
     override fun unlocked(): Single<Boolean> {
         return Single.fromCallable {
-            synchronized(keySpecLock) {
-                keySpec != null
+            synchronized(keyLock) {
+                key != null
             }
         }
     }
 
-    override fun unlockWithPassword(key: ByteArray): Single<Boolean> {
+    override fun unlockWithPassword(keyBytes: ByteArray): Single<Boolean> {
         return Single.fromCallable {
-            synchronized(keySpecLock) {
+            synchronized(keyLock) {
                 // If we have no password set (no checksum stored, we cannot unlockWithPassword
                 val checksum = preferencesManager.prefs.getString(PREF_KEY_PASSWORD_CHECKSUM, null) ?: return@fromCallable false
-                val passwordKeySpec = buildKeySpecChecksum(key, checksum) ?: return@fromCallable false
-                keySpec = buildKeySpec(decryptKey(passwordKeySpec) ?: return@fromCallable false)
-                keySpec != null
+                val passwordKey = buildSecretKeyIfValid(keyBytes, checksum) ?: return@fromCallable false
+                key = buildSecretKey(decryptKey(passwordKey) ?: return@fromCallable false)
+                key != null
             }
         }.subscribeOn(Schedulers.io())
     }
 
-    private fun decryptKey(keySpec: SecretKeySpec): ByteArray? {
+    private fun decryptKey(key: SecretKey): ByteArray? {
         val encryptedKey = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTION_KEY, null) ?: return null
-        return decrypt(keySpec, CryptoData.fromString(encryptedKey))
+        return decrypt(key, CryptoData.fromString(encryptedKey))
     }
 
     override fun lock() {
-        synchronized(keySpecLock) {
-            keySpec = null
+        synchronized(keyLock) {
+            key = null
         }
     }
 
     override fun decrypt(data: CryptoData): ByteArray {
-        val keySpec = synchronized(keySpecLock) {
-            this.keySpec ?: throw DeviceIsLockedException()
+        val key = synchronized(keyLock) {
+            this.key ?: throw DeviceIsLockedException()
         }
-        return decrypt(keySpec, data)
+        return decrypt(key, data)
     }
 
     override fun encrypt(data: ByteArray): CryptoData {
-        val keySpec = synchronized(keySpecLock) {
-            this.keySpec ?: throw DeviceIsLockedException()
+        val key = synchronized(keyLock) {
+            this.key ?: throw DeviceIsLockedException()
         }
-        return encrypt(keySpec, data)
+        return encrypt(key, data)
     }
 
-    private fun keyChecksum(key: ByteArray) =
-            Sha3Utils.sha3String(key).substring(0, 6).toByteArray()
+    private fun keyChecksum(keyBytes: ByteArray) =
+            Sha3Utils.sha3String(keyBytes).substring(0, 6).toByteArray()
 
-    private fun buildKeySpecChecksum(key: ByteArray?, checksum: String): SecretKeySpec? {
-        key ?: return null
-        val keySpec = buildKeySpec(key)
-        val decryptedChecksum = nullOnThrow { decrypt(keySpec, CryptoData.fromString(checksum)).toHexString() }
-        if (keyChecksum(key).toHexString() == decryptedChecksum) {
-            return keySpec
+    private fun buildSecretKeyIfValid(keyBytes: ByteArray?, checksum: String): SecretKey? {
+        keyBytes ?: return null
+        val secretKey = buildSecretKey(keyBytes)
+        val decryptedChecksum = nullOnThrow { decrypt(secretKey, CryptoData.fromString(checksum)).toHexString() }
+        if (keyChecksum(keyBytes).toHexString() == decryptedChecksum) {
+            return secretKey
         }
         return null
     }
 
-    private fun generateCryptedChecksum(keySpec: SecretKey, key: ByteArray): String {
-        return encrypt(keySpec, keyChecksum(key)).toString()
+    private fun generateCryptedChecksum(key: SecretKey, keyBytes: ByteArray): String {
+        return encrypt(key, keyChecksum(keyBytes)).toString()
     }
 
-    private fun encrypt(keySpec: SecretKey, data: ByteArray): CryptoData {
-        return useCipher(true, keySpec, CryptoData(data, randomIv()))
+    private fun encrypt(key: SecretKey, data: ByteArray): CryptoData {
+        return useCipher(true, key, CryptoData(data, randomIv()))
     }
 
-    private fun decrypt(keySpec: SecretKey, data: CryptoData): ByteArray {
-        return useCipher(false, keySpec, data).data
+    private fun decrypt(key: SecretKey, data: CryptoData): ByteArray {
+        return useCipher(false, key, data).data
     }
 
-    private fun useCipher(encrypt: Boolean, keySpec: SecretKey, wrapper: CryptoData): CryptoData {
+    private fun useCipher(encrypt: Boolean, key: SecretKey, wrapper: CryptoData): CryptoData {
         val padding = PKCS7Padding()
         val cipher = PaddedBufferedBlockCipher(CBCBlockCipher(AESEngine()), padding)
         cipher.reset()
 
-        val keyParam = KeyParameter(keySpec.encoded)
+        val keyParam = KeyParameter(key.encoded)
         val params = ParametersWithIV(keyParam, wrapper.iv)
         cipher.init(encrypt, params)
 
@@ -195,8 +195,8 @@ class AesEncryptionManager @Inject constructor(
         private const val PREF_KEY_ENCRYPTION_KEY = "encryption_manager.string.encryption_key"
         private const val PREF_KEY_PASSWORD_CHECKSUM = "encryption_manager.string.password_checksum"
 
-        private fun buildKeySpec(key: ByteArray): SecretKeySpec {
-            return SecretKeySpec(Sha3Utils.sha3(key), KEY_SPEC_ALGORITHM)
+        private fun buildSecretKey(keyBytes: ByteArray): SecretKey {
+            return SecretKeySpec(Sha3Utils.sha3(keyBytes), KEY_SPEC_ALGORITHM)
         }
     }
 }
