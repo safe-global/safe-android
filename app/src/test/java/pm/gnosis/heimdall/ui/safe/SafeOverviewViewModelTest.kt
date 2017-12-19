@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.safe
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.subscribers.TestSubscriber
@@ -10,8 +11,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.common.utils.DataResult
@@ -20,8 +20,10 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
+import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
@@ -35,9 +37,9 @@ class SafeOverviewViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var repositoryMock: GnosisSafeRepository
+    private lateinit var repositoryMock: GnosisSafeRepository
 
-    lateinit var viewModel: SafeOverviewViewModel
+    private lateinit var viewModel: SafeOverviewViewModel
 
     @Before
     fun setup() {
@@ -138,6 +140,63 @@ class SafeOverviewViewModelTest {
         then(repositoryMock).shouldHaveNoMoreInteractions()
         observer.assertTerminated().assertNoValues()
                 .assertError(error)
+    }
+
+    @Test
+    fun loadSafeInfoLoadsFromCache() {
+        val testObserver = TestObserver.create<SafeInfo>()
+        val safeInfo = SafeInfo("0x0", Wei(BigInteger.ZERO), 0, emptyList(), false)
+        given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(safeInfo))
+
+        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver)
+
+        testObserver.assertResult(safeInfo)
+        val testObserver2 = TestObserver.create<SafeInfo>()
+
+        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver2)
+
+        testObserver2.assertResult(safeInfo)
+        then(repositoryMock).should().loadInfo(BigInteger.ZERO)
+        then(repositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadSafeInfoError() {
+        val testObserver = TestObserver.create<SafeInfo>()
+        val exception = Exception()
+        given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.error(exception))
+
+        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver)
+
+        then(repositoryMock).should().loadInfo(BigInteger.ZERO)
+        then(repositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertError(exception)
+    }
+
+    @Test
+    fun observeDeployedStatus() {
+        val result = "result"
+        val testObserver = TestObserver.create<String>()
+        given(repositoryMock.observeDeployStatus(anyString())).willReturn(Observable.just(result))
+
+        viewModel.observeDeployedStatus("test").subscribe(testObserver)
+
+        then(repositoryMock).should().observeDeployStatus("test")
+        then(repositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(result)
+    }
+
+    @Test
+    fun observeDeployedStatusError() {
+        val exception = Exception()
+        val testObserver = TestObserver.create<String>()
+        given(repositoryMock.observeDeployStatus(anyString())).willReturn(Observable.error(exception))
+
+        viewModel.observeDeployedStatus("test").subscribe(testObserver)
+
+        then(repositoryMock).should().observeDeployStatus("test")
+        then(repositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertError(exception)
     }
 
     private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<AbstractSafe>>>()

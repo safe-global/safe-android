@@ -11,20 +11,21 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Consumer
 import io.reactivex.internal.functions.Functions
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_pending_safe_item.view.*
 import kotlinx.android.synthetic.main.layout_safe_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
-import pm.gnosis.heimdall.common.utils.shareExternalText
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asTransactionHash
+import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,7 +33,7 @@ import javax.inject.Inject
 @ForView
 class SafeAdapter @Inject constructor(
         @ViewContext private val context: Context,
-        private val safeRepository: GnosisSafeRepository
+        private val viewModel: SafeOverviewContract
 ) : LifecycleAdapter<AbstractSafe, SafeAdapter.CastingViewHolder<out AbstractSafe>>(context) {
 
     companion object {
@@ -41,6 +42,7 @@ class SafeAdapter @Inject constructor(
     }
 
     val safeSelection = PublishSubject.create<Safe>()!!
+    val shareSelection = PublishSubject.create<String>()!!
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): SafeAdapter.CastingViewHolder<out AbstractSafe> {
         return when (viewType) {
@@ -52,7 +54,6 @@ class SafeAdapter @Inject constructor(
             }
             else -> throw IllegalArgumentException()
         }
-
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -73,27 +74,47 @@ class SafeAdapter @Inject constructor(
     }
 
     inner class ViewHolder(itemView: View) : CastingViewHolder<Safe>(Safe::class.java, itemView), View.OnClickListener {
+        private val disposables = CompositeDisposable()
+
+        private var currentEntry: Safe? = null
 
         init {
             itemView.setOnClickListener(this)
             itemView.layout_safe_item_share.setOnClickListener {
                 currentEntry?.let {
-                    it.let {
-                        val addressString = it.address.asEthereumAddressString()
-                        val title = context.getString(R.string.sharing_x, it.name ?: addressString)
-                        context.shareExternalText(addressString, title)
-                    }
+                    val addressString = it.address.asEthereumAddressString()
+                    shareSelection.onNext(addressString)
                 }
             }
         }
-
-        private var currentEntry: Safe? = null
 
         override fun castedBind(data: Safe, payloads: List<Any>?) {
             currentEntry = data
             itemView.layout_safe_item_address.text = data.address.asEthereumAddressString()
             itemView.layout_safe_item_name.text = data.name
             itemView.layout_safe_item_name.visibility = if (data.name.isNullOrEmpty()) View.GONE else View.VISIBLE
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_START)
+        fun start() {
+            // Make sure no disposable are left over
+            disposables.clear()
+            currentEntry?.address?.let { address ->
+                disposables += viewModel.loadSafeInfo(address)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(onSuccess = ::onSafeInfo, onError = Timber::e)
+            }
+        }
+
+        private fun onSafeInfo(safeInfo: SafeInfo) {
+            itemView.layout_safe_item_authorizations.text = "${safeInfo.requiredConfirmations}/${safeInfo.owners.count()}"
+            itemView.layout_safe_item_ether.text = safeInfo.balance.toEther().stringWithNoTrailingZeroes()
+            itemView.layout_safe_item_owner.visibility = if (safeInfo.isOwner) View.VISIBLE else View.GONE
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+        fun stop() {
+            disposables.clear()
         }
 
         override fun unbind() {
@@ -122,12 +143,11 @@ class SafeAdapter @Inject constructor(
             // Make sure no disposable are left over
             disposables.clear()
             val pendingSafe = currentEntry ?: return
-            disposables += safeRepository.observeDeployStatus(pendingSafe.hash.asTransactionHash())
+            disposables += viewModel.observeDeployedStatus(pendingSafe.hash.asTransactionHash())
                     .observeOn(AndroidSchedulers.mainThread())
                     // Empty function for now, we should adjust the design and
                     // maybe display a retry button on error
                     .subscribe(Functions.emptyConsumer(), Consumer { Timber.e(it) })
-
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
