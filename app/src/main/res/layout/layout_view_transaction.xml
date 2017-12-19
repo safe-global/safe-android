@@ -2,17 +2,17 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout_transaction_details_coordinator"
+    android:id="@+id/layout_view_transaction_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/layout_transaction_details_appbar"
+        android:id="@+id/layout_view_transaction_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/layout_transaction_details_toolbar"
+            android:id="@+id/layout_view_transaction_toolbar"
             style="@style/LightToolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
@@ -21,7 +21,7 @@
             app:title="@string/confirm_transaction" />
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-            android:id="@+id/layout_transaction_details_progress_bar"
+            android:id="@+id/layout_view_transaction_progress_bar"
             style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
@@ -48,10 +48,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/layout_transaction_details_transaction_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <include layout="@layout/merge_transaction_details_container" />
 
             <View
                 android:layout_width="match_parent"
@@ -68,7 +65,7 @@
                 android:text="@string/estimated_transaction_fee" />
 
             <TextView
-                android:id="@+id/layout_transaction_details_transaction_fee"
+                android:id="@+id/layout_view_transaction_transaction_fee"
                 style="@style/BoldContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -89,14 +86,14 @@
                 android:padding="16dp">
 
                 <FrameLayout
-                    android:id="@+id/layout_transaction_details_confirmations_container"
+                    android:id="@+id/layout_view_transaction_confirmations_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true">
 
                     <android.support.v7.widget.AppCompatTextView
-                        android:id="@+id/layout_transaction_details_confirmations"
+                        android:id="@+id/layout_view_transaction_confirmations"
                         android:layout_width="84dp"
                         android:layout_height="84dp"
                         android:layout_marginBottom="8dp"
@@ -120,7 +117,7 @@
                 </FrameLayout>
 
                 <TextView
-                    android:id="@+id/layout_transaction_details_confirmations_hint_text"
+                    android:id="@+id/layout_view_transaction_confirmations_hint_text"
                     style="@style/Content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -128,13 +125,13 @@
                     android:layout_alignParentStart="true"
                     android:layout_marginEnd="48dp"
                     android:layout_marginRight="48dp"
-                    android:layout_toLeftOf="@id/layout_transaction_details_confirmations_container"
-                    android:layout_toStartOf="@id/layout_transaction_details_confirmations_container"
+                    android:layout_toLeftOf="@id/layout_view_transaction_confirmations_container"
+                    android:layout_toStartOf="@id/layout_view_transaction_confirmations_container"
                     tools:text="@string/confirm_transaction_hint" />
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/layout_transaction_details_submit_button"
+                android:id="@+id/layout_view_transaction_submit_button"
                 style="@style/PrimaryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.base
 
 import io.reactivex.processors.BehaviorProcessor
 import io.reactivex.subscribers.TestSubscriber
@@ -11,12 +11,12 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.ui.transactions.details.BaseTransactionDetailsContract.State
+import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsContract.State
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
-class BaseTransactionDetailsViewModelTest {
+class BaseEditableTransactionDetailsViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -24,11 +24,11 @@ class BaseTransactionDetailsViewModelTest {
     @Mock
     lateinit var safeRepositoryMock: GnosisSafeRepository
 
-    private lateinit var viewModel: BaseTransactionDetailsViewModel
+    private lateinit var viewModel: BaseEditableTransactionDetailsViewModel
 
     @Before
     fun setUp() {
-        viewModel = BaseTransactionDetailsViewModel(safeRepositoryMock)
+        viewModel = BaseEditableTransactionDetailsViewModel(safeRepositoryMock)
     }
 
     @Test

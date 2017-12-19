@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.generic
 
 import android.content.Context
 import io.reactivex.observers.TestObserver
@@ -12,7 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.ui.transactions.details.GenericTransactionDetailsContract.InputEvent
+import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract.InputEvent
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.DATA_FIELD
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.TO_FIELD

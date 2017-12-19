@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.base
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
@@ -6,28 +6,23 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
 import android.widget.TextView
-import com.gojuno.koptional.Optional
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.base.SimpleSpinnerAdapter
-import pm.gnosis.heimdall.ui.transactions.BaseTransactionActivity
-import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
-abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
+abstract class BaseEditableTransactionDetailsFragment: BaseTransactionDetailsFragment(), AdapterView.OnItemSelectedListener {
 
     @Inject
-    lateinit var baseViewModel: BaseTransactionDetailsContract
+    lateinit var baseViewModel: BaseEditableTransactionDetailsContract
 
     private val adapter by lazy {
         // Adapter should only be created if we need it
@@ -36,15 +31,6 @@ abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnIt
 
     private var spinner: Spinner? = null
 
-    abstract fun observeTransaction(): Observable<Result<Transaction>>
-    abstract fun observeSafe(): Observable<Optional<BigInteger>>
-    abstract fun inputEnabled(enabled: Boolean)
-
-    override fun onStart() {
-        super.onStart()
-        (activity as? BaseTransactionActivity)?.registerFragmentObservables(this)
-    }
-
     protected fun setupSafeSpinner(spinner: Spinner, defaultSafe: BigInteger?) {
         this.spinner = spinner
         spinner.adapter = adapter
@@ -52,13 +38,13 @@ abstract class BaseTransactionDetailsFragment : BaseFragment(), AdapterView.OnIt
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::setSpinnerData, {
                     val safes = defaultSafe?.let { listOf(Safe(it)) } ?: emptyList()
-                    setSpinnerData(BaseTransactionDetailsContract.State(0, safes))
+                    setSpinnerData(BaseEditableTransactionDetailsContract.State(0, safes))
                 })
     }
 
     open fun selectedSafeChanged(safe: Safe?) {}
 
-    private fun setSpinnerData(state: BaseTransactionDetailsContract.State) {
+    private fun setSpinnerData(state: BaseEditableTransactionDetailsContract.State) {
         spinner?.let {
             adapter.clear()
             adapter.addAll(state.safes)

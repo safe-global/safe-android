@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <TextView
+        style="@style/Content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This transaction will transfer" />
+
+    <TextView
+        android:id="@+id/layout_review_asset_transfer_amount"
+        style="@style/BoldContent"
+        android:padding="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="3450 GNO" />
+
+    <TextView
+        style="@style/Content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="from your Safe" />
+
+    <TextView
+        android:id="@+id/layout_review_asset_transfer_from"
+        style="@style/BoldContent"
+        android:padding="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Gnosis Safe (0x001234)"/>
+
+    <TextView
+        style="@style/Content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="to" />
+
+    <TextView
+        android:id="@+id/layout_review_asset_transfer_to"
+        style="@style/BoldContent"
+        android:padding="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Michel (0xa01234)" />
+
+
+</LinearLayout>

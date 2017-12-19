@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.assets
 
 import android.content.Context
 import android.os.Bundle
@@ -21,12 +21,14 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.SimpleSpinnerAdapter
+import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
@@ -39,30 +41,31 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 
-class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment() {
+class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragment() {
 
     @Inject
-    lateinit var subViewModel: AssetTransferTransactionDetailsContract
+    lateinit var subViewModel: AssetTransferDetailsContract
 
     private val adapter by lazy {
         // Adapter should only be created if we need it
         TokensSpinnerAdapter(context!!)
     }
     private val safeSubject = BehaviorSubject.createDefault<Optional<BigInteger>>(None)
-    private val inputSubject = PublishSubject.create<AssetTransferTransactionDetailsContract.InputEvent>()
-    private var editable: Boolean = false
-    private var originalTransaction: Transaction? = null
+    private val inputSubject = PublishSubject.create<AssetTransferDetailsContract.InputEvent>()
+    private var cachedTransaction: Transaction? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        cachedTransaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.layout_transaction_details_asset_transfer, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        editable = arguments?.getBoolean(ARG_EDITABLE, false) ?: false
-        originalTransaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
-        layout_transaction_details_asset_transfer_max_amount_button.visibility = if (editable) View.VISIBLE else View.GONE
-        layout_transaction_details_asset_transfer_divider_amount.visibility = if (editable) View.VISIBLE else View.GONE
-        toggleTransactionInput(editable)
+        layout_transaction_details_asset_transfer_max_amount_button.visibility = View.VISIBLE
+        layout_transaction_details_asset_transfer_divider_amount.visibility = View.VISIBLE
     }
 
     override fun onStart() {
@@ -72,34 +75,32 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
         setupSafeSpinner(layout_transaction_details_asset_transfer_safe_input, safe)
         layout_transaction_details_asset_transfer_token_input.adapter = adapter
 
-        disposables += subViewModel.loadFormData(originalTransaction, editable)
+        disposables += subViewModel.loadFormData(cachedTransaction, true)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::setupForm, Timber::e)
     }
 
-    private fun setupForm(info: AssetTransferTransactionDetailsContract.FormData) {
+    private fun setupForm(info: AssetTransferDetailsContract.FormData) {
         layout_transaction_details_asset_transfer_to_input.setText(info.to?.asEthereumAddressStringOrNull())
         layout_transaction_details_asset_transfer_amount_input.setText(info.tokenAmount?.let { info.token?.convertAmount(it)?.stringWithNoTrailingZeroes() })
         layout_transaction_details_asset_transfer_amount_label.text = info.token?.symbol ?: getString(R.string.value)
-        if (editable) {
-            disposables += layout_transaction_details_asset_transfer_max_amount_button.clicks()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        nullOnThrow { adapter.getItem(layout_transaction_details_asset_transfer_token_input.selectedItemPosition) }?.let {
-                            if (it.balance != null) {
-                                val amount = it.token.convertAmount(it.balance).stringWithNoTrailingZeroes()
-                                layout_transaction_details_asset_transfer_amount_input.setText(amount)
-                            } else {
-                                snackbar(view!!, R.string.unknown_balance)
-                            }
+        disposables += layout_transaction_details_asset_transfer_max_amount_button.clicks()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    nullOnThrow { adapter.getItem(layout_transaction_details_asset_transfer_token_input.selectedItemPosition) }?.let {
+                        if (it.balance != null) {
+                            val amount = it.token.convertAmount(it.balance).stringWithNoTrailingZeroes()
+                            layout_transaction_details_asset_transfer_amount_input.setText(amount)
+                        } else {
+                            snackbar(view!!, R.string.unknown_balance)
                         }
-                    }, Timber::e)
-        }
+                    }
+                }, Timber::e)
         disposables += observeSafe().flatMap {
             subViewModel.observeTokens(info.selectedToken, it.toNullable())
         }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::setSpinnerData, { setSpinnerData(AssetTransferTransactionDetailsContract.State(0, emptyList())) })
+                .subscribe(::setSpinnerData, { setSpinnerData(AssetTransferDetailsContract.State(0, emptyList())) })
 
         disposables += Observable.combineLatest(
                 prepareInput(layout_transaction_details_asset_transfer_to_input),
@@ -107,12 +108,12 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
                 layout_transaction_details_asset_transfer_token_input.itemSelections(),
                 Function3 { to: CharSequence, amount: CharSequence, tokenIndex: Int ->
                     val token = if (tokenIndex < 0) null else adapter.getItem(tokenIndex)
-                    AssetTransferTransactionDetailsContract.InputEvent(to.toString() to false, amount.toString() to false, token to false)
+                    AssetTransferDetailsContract.InputEvent(to.toString() to false, amount.toString() to false, token to false)
                 }
         ).subscribe(inputSubject::onNext, Timber::e)
     }
 
-    private fun setSpinnerData(state: AssetTransferTransactionDetailsContract.State) {
+    private fun setSpinnerData(state: AssetTransferDetailsContract.State) {
         this.layout_transaction_details_asset_transfer_token_input?.let {
             adapter.clear()
             adapter.addAll(state.tokens)
@@ -123,17 +124,22 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
 
     override fun observeTransaction(): Observable<Result<Transaction>> {
         return inputSubject
-                .compose(subViewModel.inputTransformer(context!!, originalTransaction))
+                .compose(subViewModel.inputTransformer(cachedTransaction))
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
-                    (it as? ErrorResult)?.let {
-                        (it.error as? TransactionInputException)?.let {
-                            if (it.errorFields and TransactionInputException.TO_FIELD != 0) {
-                                setInputError(layout_transaction_details_asset_transfer_to_input)
+                    when (it) {
+                        is ErrorResult -> {
+                            (it.error as? TransactionInputException)?.let {
+                                if (it.errorFields and TransactionInputException.TO_FIELD != 0) {
+                                    setInputError(layout_transaction_details_asset_transfer_to_input)
+                                }
+                                if (it.errorFields and TransactionInputException.AMOUNT_FIELD != 0) {
+                                    setInputError(layout_transaction_details_asset_transfer_amount_input)
+                                }
                             }
-                            if (it.errorFields and TransactionInputException.AMOUNT_FIELD != 0) {
-                                setInputError(layout_transaction_details_asset_transfer_amount_input)
-                            }
+                        }
+                        is DataResult -> {
+                            cachedTransaction = it.data.copy(nonce = cachedTransaction?.nonce ?: it.data.nonce)
                         }
                     }
                 }
@@ -146,12 +152,6 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
     override fun observeSafe(): Observable<Optional<BigInteger>> = safeSubject
 
     override fun inputEnabled(enabled: Boolean) {
-        if (editable) {
-            toggleTransactionInput(enabled)
-        }
-    }
-
-    private fun toggleTransactionInput(enabled: Boolean) {
         layout_transaction_details_asset_transfer_safe_input.isEnabled = enabled
         layout_transaction_details_asset_transfer_to_input.isEnabled = enabled
         layout_transaction_details_asset_transfer_amount_input.isEnabled = enabled
@@ -178,12 +178,10 @@ class AssetTransferTransactionDetailsFragment : BaseTransactionDetailsFragment()
 
         private const val ARG_TRANSACTION = "argument.parcelable.transaction"
         private const val ARG_SAFE = "argument.string.safe"
-        private const val ARG_EDITABLE = "argument.boolean.editable"
 
-        fun createInstance(transaction: Transaction?, safeAddress: String?, editable: Boolean) =
-                AssetTransferTransactionDetailsFragment().apply {
+        fun createInstance(transaction: Transaction?, safeAddress: String?) =
+                CreateAssetTransferDetailsFragment().apply {
                     arguments = Bundle().apply {
-                        putBoolean(ARG_EDITABLE, editable)
                         putParcelable(ARG_TRANSACTION, transaction?.parcelable())
                         putString(ARG_SAFE, safeAddress)
                     }

@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.reporting.impl
 
-import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.ContentViewEvent
 import com.crashlytics.android.answers.CustomEvent

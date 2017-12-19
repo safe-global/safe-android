@@ -1,6 +1,9 @@
-package pm.gnosis.heimdall.ui.transactions.details
+package pm.gnosis.heimdall.ui.transactions.details.assets
 
 import android.content.Context
+import com.gojuno.koptional.None
+import com.gojuno.koptional.Optional
+import com.gojuno.koptional.toOptional
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -9,8 +12,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
@@ -22,11 +24,12 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
-import pm.gnosis.heimdall.ui.transactions.details.AssetTransferTransactionDetailsContract.*
+import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract.*
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.AMOUNT_FIELD
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.TOKEN_FIELD
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.TO_FIELD
+import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.VALUE_FIELD
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -36,10 +39,13 @@ import pm.gnosis.tests.utils.mockGetString
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
-class AssetTransferTransactionDetailsViewModelTest {
+class AssetTransferDetailsViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
+
+    @Mock
+    lateinit var mockContext: Context
 
     @Mock
     lateinit var detailsRepository: TransactionDetailsRepository
@@ -47,11 +53,12 @@ class AssetTransferTransactionDetailsViewModelTest {
     @Mock
     lateinit var tokenRepository: TokenRepository
 
-    private lateinit var viewModel: AssetTransferTransactionDetailsViewModel
+    private lateinit var viewModel: AssetTransferDetailsViewModel
 
     @Before
     fun setUp() {
-        viewModel = AssetTransferTransactionDetailsViewModel(detailsRepository, tokenRepository)
+        mockContext.mockGetString()
+        viewModel = AssetTransferDetailsViewModel(mockContext, detailsRepository, tokenRepository)
     }
 
     @Test
@@ -218,10 +225,10 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.observeTokens(BigInteger.ONE, BigInteger.TEN).subscribe(testObserver)
 
         testObserver.assertResult(State(0, listOf(
-                        ERC20TokenWithBalance(ETHER_TOKEN, null),
-                        ERC20TokenWithBalance(verifiedTokenNoBalance, null),
-                        ERC20TokenWithBalance(verifiedTokenBalance, BigInteger.TEN)
-                )))
+                ERC20TokenWithBalance(ETHER_TOKEN, null),
+                ERC20TokenWithBalance(verifiedTokenNoBalance, null),
+                ERC20TokenWithBalance(verifiedTokenBalance, BigInteger.TEN)
+        )))
         then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN, verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance))
         then(tokenRepository).should().loadTokens()
         then(detailsRepository).shouldHaveNoMoreInteractions()
@@ -242,13 +249,13 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.observeTokens(BigInteger.ONE, BigInteger.TEN).subscribe(testObserver)
 
         testObserver.assertResult(State(0, listOf(
-                        ERC20TokenWithBalance(ETHER_TOKEN, null),
-                        ERC20TokenWithBalance(verifiedTokenNoBalance, null),
-                        ERC20TokenWithBalance(verifiedTokenBalance, null),
-                        ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
-                )))
-         then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN, verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance))
-         then(tokenRepository).should().loadTokens()
+                ERC20TokenWithBalance(ETHER_TOKEN, null),
+                ERC20TokenWithBalance(verifiedTokenNoBalance, null),
+                ERC20TokenWithBalance(verifiedTokenBalance, null),
+                ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
+        )))
+        then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN, verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance))
+        then(tokenRepository).should().loadTokens()
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
@@ -265,11 +272,11 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.observeTokens(BigInteger.valueOf(41), null).subscribe(testObserver)
 
         testObserver.assertResult(State(3, listOf(
-                        ERC20TokenWithBalance(ETHER_TOKEN, null),
-                        ERC20TokenWithBalance(verifiedTokenNoBalance, null),
-                        ERC20TokenWithBalance(verifiedTokenBalance, null),
-                        ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
-                )))
+                ERC20TokenWithBalance(ETHER_TOKEN, null),
+                ERC20TokenWithBalance(verifiedTokenNoBalance, null),
+                ERC20TokenWithBalance(verifiedTokenBalance, null),
+                ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
+        )))
         then(tokenRepository).should().loadTokens()
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -287,11 +294,11 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.observeTokens(null, null).subscribe(testObserver)
 
         testObserver.assertResult(State(0, listOf(
-                        ERC20TokenWithBalance(ETHER_TOKEN, null),
-                        ERC20TokenWithBalance(verifiedTokenNoBalance, null),
-                        ERC20TokenWithBalance(verifiedTokenBalance, null),
-                        ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
-                )))
+                ERC20TokenWithBalance(ETHER_TOKEN, null),
+                ERC20TokenWithBalance(verifiedTokenNoBalance, null),
+                ERC20TokenWithBalance(verifiedTokenBalance, null),
+                ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
+        )))
         then(tokenRepository).should().loadTokens()
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -308,16 +315,16 @@ class AssetTransferTransactionDetailsViewModelTest {
         viewModel.observeTokens(null, BigInteger.TEN).subscribe(testObserver)
 
         testObserver.assertResult(State(0, listOf(
-                        ERC20TokenWithBalance(ETHER_TOKEN, null)
-                )))
+                ERC20TokenWithBalance(ETHER_TOKEN, null)
+        )))
         then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN))
         then(tokenRepository).should().loadTokens()
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
-    private fun testTransformer(inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<Transaction>>,
-                                input: InputEvent, expectedOutput: Result<Transaction>, testNo: Int) {
+    private fun testInputTransformer(inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<Transaction>>,
+                                     input: InputEvent, expectedOutput: Result<Transaction>, testNo: Int) {
         inputStream.onNext(input)
         outputStream.assertNoErrors().assertValueCount(testNo)
                 .assertValueAt(testNo - 1, expectedOutput)
@@ -328,10 +335,9 @@ class AssetTransferTransactionDetailsViewModelTest {
 
         val testPublisher = PublishSubject.create<InputEvent>()
         val testObserver = TestObserver<Result<Transaction>>()
-        val mockContext = Mockito.mock(Context::class.java).mockGetString()
         val originalTransaction = Transaction(BigInteger.TEN, nonce = BigInteger.valueOf(1337))
 
-        testPublisher.compose(viewModel.inputTransformer(mockContext, originalTransaction))
+        testPublisher.compose(viewModel.inputTransformer(originalTransaction))
                 .subscribe(testObserver)
         testObserver.assertNoValues()
 
@@ -341,14 +347,14 @@ class AssetTransferTransactionDetailsViewModelTest {
         val transferTo = Solidity.Address(BigInteger.ZERO)
         val transferAmount = Solidity.UInt256(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(tentenToken.decimals)))
         val expectedData = StandardToken.Transfer.encode(transferTo, transferAmount)
-        testTransformer(testPublisher, testObserver,
+        testInputTransformer(testPublisher, testObserver,
                 InputEvent("0x0" to true, "123" to false, ERC20TokenWithBalance(tentenToken, null) to false),
                 DataResult(Transaction(BigInteger.TEN, value = null,
                         data = expectedData, nonce = BigInteger.valueOf(1337))),
                 testNo++
         )
         // Valid input with change (ether)
-        testTransformer(testPublisher, testObserver,
+        testInputTransformer(testPublisher, testObserver,
                 InputEvent("0x0" to true, "123" to false, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null) to false),
                 DataResult(Transaction(BigInteger.ZERO, value = Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals))),
                         data = null, nonce = BigInteger.valueOf(1337))),
@@ -356,7 +362,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         )
         // Invalid input with change
         // Third changed (compared to last value -> valid input)
-        testTransformer(testPublisher, testObserver,
+        testInputTransformer(testPublisher, testObserver,
                 InputEvent("0x0" to false, "123" to true, null to false),
                 ErrorResult(TransactionInputException(
                         mockContext, TOKEN_FIELD, true
@@ -364,7 +370,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 testNo++
         )
         // Second changed
-        testTransformer(testPublisher, testObserver,
+        testInputTransformer(testPublisher, testObserver,
                 InputEvent("0x0" to false, "123y" to false, null to true),
                 ErrorResult(TransactionInputException(
                         mockContext, AMOUNT_FIELD or TOKEN_FIELD, true
@@ -372,7 +378,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 testNo++
         )
         // First changed
-        testTransformer(testPublisher, testObserver,
+        testInputTransformer(testPublisher, testObserver,
                 InputEvent("0x0t" to false, "123y" to false, null to true),
                 ErrorResult(TransactionInputException(
                         mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, true
@@ -380,7 +386,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 testNo++
         )
         // No change
-        testTransformer(testPublisher, testObserver,
+        testInputTransformer(testPublisher, testObserver,
                 InputEvent("0x0t" to false, "123y" to false, null to false),
                 ErrorResult(TransactionInputException(
                         mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, false
@@ -394,9 +400,8 @@ class AssetTransferTransactionDetailsViewModelTest {
 
         val testPublisher = PublishSubject.create<InputEvent>()
         val testObserver = TestObserver<Result<Transaction>>()
-        val mockContext = Mockito.mock(Context::class.java).mockGetString()
 
-        testPublisher.compose(viewModel.inputTransformer(mockContext, null))
+        testPublisher.compose(viewModel.inputTransformer(null))
                 .subscribe(testObserver)
         testObserver.assertNoValues()
 
@@ -433,7 +438,7 @@ class AssetTransferTransactionDetailsViewModelTest {
         testNo++
         // Invalid input with change
         // Third changed (compared to last value -> valid input)
-        testTransformer(testPublisher, testObserver,
+        testInputTransformer(testPublisher, testObserver,
                 InputEvent("0x0" to false, "123" to true, null to false),
                 ErrorResult(TransactionInputException(
                         mockContext, TOKEN_FIELD, true
@@ -441,7 +446,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 testNo++
         )
         // Second changed
-        testTransformer(testPublisher, testObserver,
+        testInputTransformer(testPublisher, testObserver,
                 InputEvent("0x0" to false, "123y" to false, null to true),
                 ErrorResult(TransactionInputException(
                         mockContext, AMOUNT_FIELD or TOKEN_FIELD, true
@@ -449,7 +454,7 @@ class AssetTransferTransactionDetailsViewModelTest {
                 testNo++
         )
         // First changed
-        testTransformer(testPublisher, testObserver,
+        testInputTransformer(testPublisher, testObserver,
                 InputEvent("0x0t" to false, "123y" to false, null to true),
                 ErrorResult(TransactionInputException(
                         mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, true
@@ -457,13 +462,106 @@ class AssetTransferTransactionDetailsViewModelTest {
                 testNo++
         )
         // No change
-        testTransformer(testPublisher, testObserver,
+        testInputTransformer(testPublisher, testObserver,
                 InputEvent("0x0t" to false, "123y" to false, null to false),
                 ErrorResult(TransactionInputException(
                         mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, false
                 )),
                 testNo++
         )
+    }
+
+    private fun testTransactionTransformer(inputStream: PublishSubject<Optional<Transaction>>, outputStream: TestObserver<Result<Transaction>>,
+                                           input: Transaction?, expectedOutput: Result<Transaction>, testNo: Int) {
+        inputStream.onNext(input.toOptional())
+        outputStream.assertNoErrors().assertValueCount(testNo)
+                .assertValueAt(testNo - 1, expectedOutput)
+    }
+
+    @Test
+    fun transactionTransformer() {
+
+        val testPublisher = PublishSubject.create<Optional<Transaction>>()
+        val testObserver = TestObserver<Result<Transaction>>()
+
+        testPublisher.compose(viewModel.transactionTransformer())
+                .subscribe(testObserver)
+        testObserver.assertNoValues()
+
+        var testNo = 1
+
+        // No transaction passed
+        testPublisher.onNext(None)
+        testObserver.assertNoErrors().assertValueCount(testNo)
+                .assertValueAt(testNo - 1, { it is ErrorResult && it.error is IllegalStateException })
+        testNo++
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+        reset(detailsRepository)
+
+        // No asset transaction passed
+        var transaction = Transaction(BigInteger.valueOf(42))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
+                .willReturn(Single.just(TransactionDetails(null, TransactionType.GENERIC, null, transaction)))
+        testPublisher.onNext(transaction.toOptional())
+        testObserver.assertNoErrors().assertValueCount(testNo)
+                .assertValueAt(testNo - 1, { it is ErrorResult && it.error is IllegalStateException })
+        testNo++
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        reset(detailsRepository)
+
+        // Ether transaction action passed with no value
+        transaction = Transaction(BigInteger.valueOf(42))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
+                .willReturn(Single.just(TransactionDetails(null, TransactionType.ETHER_TRANSFER, null, transaction)))
+        testTransactionTransformer(testPublisher, testObserver,
+                transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        reset(detailsRepository)
+
+        // Ether transaction action passed with zero value
+        transaction = Transaction(BigInteger.valueOf(42), value = Wei.ZERO)
+        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
+                .willReturn(Single.just(TransactionDetails(null, TransactionType.ETHER_TRANSFER, null, transaction)))
+        testTransactionTransformer(testPublisher, testObserver,
+                transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        reset(detailsRepository)
+
+        // Ether transaction action passed
+        transaction = Transaction(BigInteger.valueOf(42), value = Wei(BigInteger.TEN))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
+                .willReturn(Single.just(TransactionDetails(null, TransactionType.ETHER_TRANSFER, null, transaction)))
+        testTransactionTransformer(testPublisher, testObserver,
+                transaction, DataResult(transaction), testNo++)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        reset(detailsRepository)
+
+        // Token transaction action passed no data
+        transaction = Transaction(BigInteger.valueOf(23))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
+                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, null, transaction)))
+        testTransactionTransformer(testPublisher, testObserver,
+                transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        reset(detailsRepository)
+
+        // Token transaction action passed zero tokens
+        transaction = Transaction(BigInteger.valueOf(23))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
+                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, TokenTransferData(BigInteger.valueOf(42), BigInteger.ZERO), transaction)))
+        testTransactionTransformer(testPublisher, testObserver,
+                transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        reset(detailsRepository)
+
+        // Ether transaction action passed
+        transaction = Transaction(BigInteger.valueOf(42))
+        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
+                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, TokenTransferData(BigInteger.valueOf(42), BigInteger.TEN), transaction)))
+        testTransactionTransformer(testPublisher, testObserver,
+                transaction, DataResult(transaction), testNo++)
+        then(detailsRepository).should().loadTransactionDetails(transaction)
+        reset(detailsRepository)
     }
 
     companion object {
