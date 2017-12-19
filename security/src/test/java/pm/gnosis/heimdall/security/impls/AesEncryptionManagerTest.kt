@@ -39,12 +39,12 @@ class AesEncryptionManagerTest {
 
     @Test
     fun initialized() {
-        preferences.remove(PREF_KEY_ENCRYPTION_KEY)
+        preferences.remove(PREF_KEY_APP_KEY)
         val uninitializedObserver = TestObserver<Boolean>()
         manager.initialized().subscribe(uninitializedObserver)
         uninitializedObserver.assertNoErrors().assertValue(false)
 
-        preferences.putString(PREF_KEY_ENCRYPTION_KEY, "TEST")
+        preferences.putString(PREF_KEY_APP_KEY, "TEST")
         val initializedObserver = TestObserver<Boolean>()
         manager.initialized().subscribe(initializedObserver)
         initializedObserver.assertNoErrors().assertValue(true)
@@ -100,7 +100,7 @@ class AesEncryptionManagerTest {
 
 
     companion object {
-        private const val PREF_KEY_ENCRYPTION_KEY = "encryption_manager.string.encryption_key"
+        private const val PREF_KEY_APP_KEY = "encryption_manager.string.app_key"
         private const val PREF_KEY_PASSWORD_CHECKSUM = "encryption_manager.string.password_checksum"
     }
 

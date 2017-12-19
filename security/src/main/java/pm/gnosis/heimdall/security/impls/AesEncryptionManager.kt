@@ -21,8 +21,6 @@ import pm.gnosis.heimdall.security.exceptions.DeviceIsLockedException
 import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import java.security.SecureRandom
-import javax.crypto.SecretKey
-import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,7 +33,7 @@ class AesEncryptionManager @Inject constructor(
     private val secureRandom = SecureRandom()
     private val keyLock = Any()
     private val handler = Handler(Looper.getMainLooper())
-    private var key: SecretKey? = null
+    private var key: ByteArray? = null
     private var lockRunnable: Runnable? = null
 
     init {
@@ -65,26 +63,25 @@ class AesEncryptionManager @Inject constructor(
 
     override fun initialized(): Single<Boolean> {
         return Single.fromCallable {
-            preferencesManager.prefs.getString(PREF_KEY_ENCRYPTION_KEY, null) != null
+            preferencesManager.prefs.getString(PREF_KEY_APP_KEY, null) != null
         }
     }
 
-    override fun setupPassword(newKeyBytes: ByteArray, oldKeyBytes: ByteArray?): Single<Boolean> {
+    override fun setupPassword(newPassword: ByteArray, oldPassword: ByteArray?): Single<Boolean> {
         return Single.fromCallable {
             synchronized(keyLock) {
                 val checksum = preferencesManager.prefs.getString(PREF_KEY_PASSWORD_CHECKSUM, null)
-                var previousKey: SecretKey? = null
+                var previousKey: ByteArray? = null
                 if (checksum != null) {
-                    previousKey = oldKeyBytes?.let { buildSecretKeyIfValid(it, checksum) } ?: return@fromCallable false
+                    previousKey = buildPasswordKeyIfValid(oldPassword, checksum) ?: return@fromCallable false
                 }
-                val passwordKey = buildSecretKey(newKeyBytes)
-                val encryptionKeyBytes = previousKey?.let {
-                    decryptKey(it)
+                val passwordKey = Sha3Utils.sha3(newPassword)
+                key = previousKey?.let {
+                    decryptAppKey(it)
                 } ?: generateKey()
-                key = buildSecretKey(encryptionKeyBytes)
                 key?.let {
-                    preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTION_KEY, encrypt(passwordKey, encryptionKeyBytes).toString()) }
-                    preferencesManager.prefs.edit { putString(PREF_KEY_PASSWORD_CHECKSUM, generateCryptedChecksum(passwordKey, newKeyBytes)) }
+                    preferencesManager.prefs.edit { putString(PREF_KEY_APP_KEY, encrypt(passwordKey, it).toString()) }
+                    preferencesManager.prefs.edit { putString(PREF_KEY_PASSWORD_CHECKSUM, generateCryptedChecksum(passwordKey)) }
                 }
 
                 key != null
@@ -106,20 +103,20 @@ class AesEncryptionManager @Inject constructor(
         }
     }
 
-    override fun unlockWithPassword(keyBytes: ByteArray): Single<Boolean> {
+    override fun unlockWithPassword(password: ByteArray): Single<Boolean> {
         return Single.fromCallable {
             synchronized(keyLock) {
                 // If we have no password set (no checksum stored, we cannot unlockWithPassword
                 val checksum = preferencesManager.prefs.getString(PREF_KEY_PASSWORD_CHECKSUM, null) ?: return@fromCallable false
-                val passwordKey = buildSecretKeyIfValid(keyBytes, checksum) ?: return@fromCallable false
-                key = buildSecretKey(decryptKey(passwordKey) ?: return@fromCallable false)
+                val passwordKey = buildPasswordKeyIfValid(password, checksum) ?: return@fromCallable false
+                key = decryptAppKey(passwordKey) ?: return@fromCallable false
                 key != null
             }
         }.subscribeOn(Schedulers.io())
     }
 
-    private fun decryptKey(key: SecretKey): ByteArray? {
-        val encryptedKey = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTION_KEY, null) ?: return null
+    private fun decryptAppKey(key: ByteArray): ByteArray? {
+        val encryptedKey = preferencesManager.prefs.getString(PREF_KEY_APP_KEY, null) ?: return null
         return decrypt(key, CryptoData.fromString(encryptedKey))
     }
 
@@ -143,37 +140,37 @@ class AesEncryptionManager @Inject constructor(
         return encrypt(key, data)
     }
 
-    private fun keyChecksum(keyBytes: ByteArray) =
-            Sha3Utils.sha3String(keyBytes).substring(0, 6).toByteArray()
+    private fun keyChecksum(key: ByteArray) =
+            Sha3Utils.sha3String(key).substring(0, 6).toByteArray()
 
-    private fun buildSecretKeyIfValid(keyBytes: ByteArray?, checksum: String): SecretKey? {
-        keyBytes ?: return null
-        val secretKey = buildSecretKey(keyBytes)
-        val decryptedChecksum = nullOnThrow { decrypt(secretKey, CryptoData.fromString(checksum)).toHexString() }
-        if (keyChecksum(keyBytes).toHexString() == decryptedChecksum) {
-            return secretKey
+    private fun buildPasswordKeyIfValid(key: ByteArray?, checksum: String): ByteArray? {
+        key ?: return null
+        val hashedKey = Sha3Utils.sha3(key)
+        val decryptedChecksum = nullOnThrow { decrypt(hashedKey, CryptoData.fromString(checksum)).toHexString() }
+        if (keyChecksum(hashedKey).toHexString() == decryptedChecksum) {
+            return hashedKey
         }
         return null
     }
 
-    private fun generateCryptedChecksum(key: SecretKey, keyBytes: ByteArray): String {
-        return encrypt(key, keyChecksum(keyBytes)).toString()
+    private fun generateCryptedChecksum(key: ByteArray): String {
+        return encrypt(key, keyChecksum(key)).toString()
     }
 
-    private fun encrypt(key: SecretKey, data: ByteArray): CryptoData {
+    private fun encrypt(key: ByteArray, data: ByteArray): CryptoData {
         return useCipher(true, key, CryptoData(data, randomIv()))
     }
 
-    private fun decrypt(key: SecretKey, data: CryptoData): ByteArray {
+    private fun decrypt(key: ByteArray, data: CryptoData): ByteArray {
         return useCipher(false, key, data).data
     }
 
-    private fun useCipher(encrypt: Boolean, key: SecretKey, wrapper: CryptoData): CryptoData {
+    private fun useCipher(encrypt: Boolean, key: ByteArray, wrapper: CryptoData): CryptoData {
         val padding = PKCS7Padding()
         val cipher = PaddedBufferedBlockCipher(CBCBlockCipher(AESEngine()), padding)
         cipher.reset()
 
-        val keyParam = KeyParameter(key.encoded)
+        val keyParam = KeyParameter(key)
         val params = ParametersWithIV(keyParam, wrapper.iv)
         cipher.init(encrypt, params)
 
@@ -191,12 +188,7 @@ class AesEncryptionManager @Inject constructor(
 
     companion object {
         private const val LOCK_DELAY_MS = 5 * 60 * 1000L
-        private const val KEY_SPEC_ALGORITHM = "AES"
-        private const val PREF_KEY_ENCRYPTION_KEY = "encryption_manager.string.encryption_key"
+        private const val PREF_KEY_APP_KEY = "encryption_manager.string.app_key"
         private const val PREF_KEY_PASSWORD_CHECKSUM = "encryption_manager.string.password_checksum"
-
-        private fun buildSecretKey(keyBytes: ByteArray): SecretKey {
-            return SecretKeySpec(Sha3Utils.sha3(keyBytes), KEY_SPEC_ALGORITHM)
-        }
     }
 }
