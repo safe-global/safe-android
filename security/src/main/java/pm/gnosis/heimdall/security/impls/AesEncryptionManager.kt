@@ -16,10 +16,12 @@ import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.base.TrackingActivityLifecycleCallbacks
 import pm.gnosis.heimdall.common.utils.edit
 import pm.gnosis.heimdall.security.EncryptionManager
+import pm.gnosis.heimdall.security.EncryptionManager.CryptoData
 import pm.gnosis.heimdall.security.exceptions.DeviceIsLockedException
-import pm.gnosis.utils.hexStringToByteArray
+import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import java.security.SecureRandom
+import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,16 +33,12 @@ class AesEncryptionManager @Inject constructor(
 ) : EncryptionManager {
 
     private val secureRandom = SecureRandom()
-    private val ivData: ByteArray
-    private val keySpecLock = Any()
+    private val keyLock = Any()
     private val handler = Handler(Looper.getMainLooper())
-    private var keySpec: SecretKeySpec? = null
+    private var key: SecretKey? = null
     private var lockRunnable: Runnable? = null
 
     init {
-        val iv = preferencesManager.prefs.getString(PREF_KEY_IV, null) ?: setupInstanceId()
-        ivData = iv.hexStringToByteArray()
-
         application.registerActivityLifecycleCallbacks(object : TrackingActivityLifecycleCallbacks() {
 
             override fun active() {
@@ -59,14 +57,10 @@ class AesEncryptionManager @Inject constructor(
         })
     }
 
-    private fun setupInstanceId(): String {
+    private fun randomIv(): ByteArray {
         val randomBytes = ByteArray(16)
         secureRandom.nextBytes(randomBytes)
-        val instanceId = randomBytes.toHexString()
-        preferencesManager.prefs.edit {
-            putString(PREF_KEY_IV, instanceId)
-        }
-        return instanceId
+        return randomBytes
     }
 
     override fun initialized(): Single<Boolean> {
@@ -75,25 +69,25 @@ class AesEncryptionManager @Inject constructor(
         }
     }
 
-    override fun setupPassword(newKey: ByteArray, oldKey: ByteArray?): Single<Boolean> {
+    override fun setupPassword(newKeyBytes: ByteArray, oldKeyBytes: ByteArray?): Single<Boolean> {
         return Single.fromCallable {
-            synchronized(keySpecLock) {
+            synchronized(keyLock) {
                 val checksum = preferencesManager.prefs.getString(PREF_KEY_PASSWORD_CHECKSUM, null)
-                var previousKeySpec: SecretKeySpec? = null
+                var previousKey: SecretKey? = null
                 if (checksum != null) {
-                    previousKeySpec = oldKey?.let { buildKeySpecChecksum(it, checksum) } ?: return@fromCallable false
+                    previousKey = oldKeyBytes?.let { buildSecretKeyIfValid(it, checksum) } ?: return@fromCallable false
                 }
-                val passwordKeySpec = buildKeySpec(newKey)
-                val encryptionKey = previousKeySpec?.let {
+                val passwordKey = buildSecretKey(newKeyBytes)
+                val encryptionKeyBytes = previousKey?.let {
                     decryptKey(it)
                 } ?: generateKey()
-                keySpec = buildKeySpec(encryptionKey)
-                keySpec?.let {
-                    preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTION_KEY, encrypt(passwordKeySpec, encryptionKey).toHexString()) }
-                    preferencesManager.prefs.edit { putString(PREF_KEY_PASSWORD_CHECKSUM, generateCryptedChecksum(passwordKeySpec, newKey)) }
+                key = buildSecretKey(encryptionKeyBytes)
+                key?.let {
+                    preferencesManager.prefs.edit { putString(PREF_KEY_ENCRYPTION_KEY, encrypt(passwordKey, encryptionKeyBytes).toString()) }
+                    preferencesManager.prefs.edit { putString(PREF_KEY_PASSWORD_CHECKSUM, generateCryptedChecksum(passwordKey, newKeyBytes)) }
                 }
 
-                keySpec != null
+                key != null
             }
         }.subscribeOn(Schedulers.io())
     }
@@ -106,100 +100,103 @@ class AesEncryptionManager @Inject constructor(
 
     override fun unlocked(): Single<Boolean> {
         return Single.fromCallable {
-            synchronized(keySpecLock) {
-                keySpec != null
+            synchronized(keyLock) {
+                key != null
             }
         }
     }
 
-    override fun unlockWithPassword(key: ByteArray): Single<Boolean> {
+    override fun unlockWithPassword(keyBytes: ByteArray): Single<Boolean> {
         return Single.fromCallable {
-            synchronized(keySpecLock) {
+            synchronized(keyLock) {
                 // If we have no password set (no checksum stored, we cannot unlockWithPassword
                 val checksum = preferencesManager.prefs.getString(PREF_KEY_PASSWORD_CHECKSUM, null) ?: return@fromCallable false
-                val passwordKeySpec = buildKeySpecChecksum(key, checksum) ?: return@fromCallable false
-                keySpec = buildKeySpec(decryptKey(passwordKeySpec) ?: return@fromCallable false)
-                keySpec != null
+                val passwordKey = buildSecretKeyIfValid(keyBytes, checksum) ?: return@fromCallable false
+                key = buildSecretKey(decryptKey(passwordKey) ?: return@fromCallable false)
+                key != null
             }
         }.subscribeOn(Schedulers.io())
     }
 
-    private fun decryptKey(keySpec: SecretKeySpec): ByteArray? {
+    private fun decryptKey(key: SecretKey): ByteArray? {
         val encryptedKey = preferencesManager.prefs.getString(PREF_KEY_ENCRYPTION_KEY, null) ?: return null
-        return decrypt(keySpec, encryptedKey.hexStringToByteArray())
+        return decrypt(key, CryptoData.fromString(encryptedKey))
     }
 
     override fun lock() {
-        synchronized(keySpecLock) {
-            keySpec = null
+        synchronized(keyLock) {
+            key = null
         }
     }
 
-    override fun decrypt(data: ByteArray): ByteArray {
-        val keySpec = synchronized(keySpecLock) {
-            this.keySpec ?: throw DeviceIsLockedException()
+    override fun decrypt(data: CryptoData): ByteArray {
+        val key = synchronized(keyLock) {
+            this.key ?: throw DeviceIsLockedException()
         }
-        return decrypt(keySpec, data)
+        return decrypt(key, data)
     }
 
-    override fun encrypt(data: ByteArray): ByteArray {
-        val keySpec = synchronized(keySpecLock) {
-            this.keySpec ?: throw DeviceIsLockedException()
+    override fun encrypt(data: ByteArray): CryptoData {
+        val key = synchronized(keyLock) {
+            this.key ?: throw DeviceIsLockedException()
         }
-        return encrypt(keySpec, data)
+        return encrypt(key, data)
     }
 
-    private fun generateCryptedChecksum(keySpec: SecretKeySpec, key: ByteArray): String {
-        return encrypt(keySpec, Sha3Utils.sha3String(key).substring(0, 6).toByteArray()).toHexString()
+    private fun keyChecksum(keyBytes: ByteArray) =
+            Sha3Utils.sha3String(keyBytes).substring(0, 6).toByteArray()
+
+    private fun buildSecretKeyIfValid(keyBytes: ByteArray?, checksum: String): SecretKey? {
+        keyBytes ?: return null
+        val secretKey = buildSecretKey(keyBytes)
+        val decryptedChecksum = nullOnThrow { decrypt(secretKey, CryptoData.fromString(checksum)).toHexString() }
+        if (keyChecksum(keyBytes).toHexString() == decryptedChecksum) {
+            return secretKey
+        }
+        return null
     }
 
-    private fun encrypt(keySpec: SecretKeySpec, data: ByteArray): ByteArray {
-        return useCipher(true, keySpec, data)
+    private fun generateCryptedChecksum(key: SecretKey, keyBytes: ByteArray): String {
+        return encrypt(key, keyChecksum(keyBytes)).toString()
     }
 
-    private fun decrypt(keySpec: SecretKeySpec, data: ByteArray): ByteArray {
-        return useCipher(false, keySpec, data)
+    private fun encrypt(key: SecretKey, data: ByteArray): CryptoData {
+        return useCipher(true, key, CryptoData(data, randomIv()))
     }
 
-    private fun useCipher(encryt: Boolean, keySpec: SecretKeySpec, data: ByteArray): ByteArray {
+    private fun decrypt(key: SecretKey, data: CryptoData): ByteArray {
+        return useCipher(false, key, data).data
+    }
+
+    private fun useCipher(encrypt: Boolean, key: SecretKey, wrapper: CryptoData): CryptoData {
         val padding = PKCS7Padding()
         val cipher = PaddedBufferedBlockCipher(CBCBlockCipher(AESEngine()), padding)
         cipher.reset()
 
-        val keyParam = KeyParameter(keySpec.encoded)
-        val params = ParametersWithIV(keyParam, ivData)
-        cipher.init(encryt, params)
+        val keyParam = KeyParameter(key.encoded)
+        val params = ParametersWithIV(keyParam, wrapper.iv)
+        cipher.init(encrypt, params)
 
         // create a temporary buffer to decode into (it'll include padding)
-        val buf = ByteArray(cipher.getOutputSize(data.size))
-        var len = cipher.processBytes(data, 0, data.size, buf, 0)
+        val buf = ByteArray(cipher.getOutputSize(wrapper.data.size))
+        var len = cipher.processBytes(wrapper.data, 0, wrapper.data.size, buf, 0)
         len += cipher.doFinal(buf, len)
 
         // remove padding
         val out = ByteArray(len)
         System.arraycopy(buf, 0, out, 0, len)
 
-        return out
-    }
-
-    private fun buildKeySpecChecksum(key: ByteArray?, checksum: String): SecretKeySpec? {
-        key ?: return null
-        val keySpec = buildKeySpec(key)
-        if (generateCryptedChecksum(keySpec, key) == checksum) {
-            return keySpec
-        }
-        return null
+        return CryptoData(out, wrapper.iv)
     }
 
     companion object {
         private const val LOCK_DELAY_MS = 5 * 60 * 1000L
         private const val KEY_SPEC_ALGORITHM = "AES"
-        private const val PREF_KEY_IV = "encryption_manager.string.iv"
         private const val PREF_KEY_ENCRYPTION_KEY = "encryption_manager.string.encryption_key"
         private const val PREF_KEY_PASSWORD_CHECKSUM = "encryption_manager.string.password_checksum"
 
-        private fun buildKeySpec(key: ByteArray): SecretKeySpec {
-            return SecretKeySpec(Sha3Utils.sha3(key), KEY_SPEC_ALGORITHM)
+        private fun buildSecretKey(keyBytes: ByteArray): SecretKey {
+            return SecretKeySpec(Sha3Utils.sha3(keyBytes), KEY_SPEC_ALGORITHM)
         }
     }
 }
