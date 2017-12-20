@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
+import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.security.EncryptionManager
@@ -42,6 +43,8 @@ interface ApplicationComponent {
 
     fun crashTracker(): CrashTracker
     fun eventTracker(): EventTracker
+
+    fun gasPriceHelper(): GasPriceHelper
 
     fun accountsRepository(): AccountsRepository
     fun addressBookRepository(): AddressBookRepository

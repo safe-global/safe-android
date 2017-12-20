@@ -71,7 +71,7 @@ class CreateTransactionActivity : BaseTransactionActivity() {
     }
 
     override fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
-             when (type) {
+            when (type) {
                 TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
                     CreateAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
                 else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, true)
@@ -86,17 +86,18 @@ class CreateTransactionActivity : BaseTransactionActivity() {
         handleInputError(error)
     }
 
-    override fun handleTransactionData(observable: Observable<Pair<BigInteger?, Result<Transaction>>>): Observable<Any> =
-            Observable.combineLatest(
-                    observable.compose(transactionDataTransformer),
-                    layout_create_transaction_review_button.clicks(),
-                    BiFunction { data: Result<Pair<BigInteger?, Transaction>>, _: Unit -> data })
-                    .map {
-                        when (it) {
-                            is DataResult -> startActivity(ViewTransactionActivity.createIntent(this, it.data.first, it.data.second))
-                            is ErrorResult -> handleInputError(it.error)
+    override fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any> =
+            ObservableTransformer {
+                it.compose(transactionDataTransformer).switchMap { data ->
+                    layout_create_transaction_review_button.clicks().map { data }
+                }
+                        .map {
+                            when (it) {
+                                is DataResult -> startActivity(ViewTransactionActivity.createIntent(this, it.data.first, it.data.second))
+                                is ErrorResult -> handleInputError(it.error)
+                            }
                         }
-                    }
+            }
 
 
     override fun inject() {

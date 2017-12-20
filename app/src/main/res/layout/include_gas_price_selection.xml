@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/include_gas_price_selection_root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/include_gas_price_selection_slow_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/selectable_background"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/BoldContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Slow" />
+
+        <TextView
+            android:id="@+id/include_gas_price_selection_slow_time"
+            style="@style/SafeSmallInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="~16 min" />
+
+        <TextView
+            android:id="@+id/include_gas_price_selection_slow_costs"
+            style="@style/SafeSmallInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="30 GWei" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/include_gas_price_selection_normal_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/selectable_background"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/BoldContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Normal" />
+
+        <TextView
+            android:id="@+id/include_gas_price_selection_normal_time"
+            style="@style/SafeSmallInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="~0.5 min" />
+
+        <TextView
+            android:id="@+id/include_gas_price_selection_normal_costs"
+            style="@style/SafeSmallInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="37 GWei" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/include_gas_price_selection_fast_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/rounded_border_background"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/BoldContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fast" />
+
+        <TextView
+            android:id="@+id/include_gas_price_selection_fast_time"
+            style="@style/SafeSmallInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="~0.5 min" />
+
+        <TextView
+            android:id="@+id/include_gas_price_selection_fast_costs"
+            style="@style/SafeSmallInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="40 GWei" />
+    </LinearLayout>
+</LinearLayout>

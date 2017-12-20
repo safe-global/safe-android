@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.support.annotation.StringRes
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
@@ -86,6 +87,7 @@ class SafeDetailsActivity : BaseActivity() {
                 positionToTabID(position)?.let { eventTracker.submit(Event.TabSelect(it)) }
             }
         })
+        layout_safe_details_viewpager.currentItem = items.indexOf(intent.getIntExtra(EXTRA_SELECTED_TAB, 0))
     }
 
     private fun updateTitle() {
@@ -177,11 +179,13 @@ class SafeDetailsActivity : BaseActivity() {
     companion object {
         private const val EXTRA_SAFE_NAME = "extra.string.safe_name"
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
+        private const val EXTRA_SELECTED_TAB = "extra.int.selected_tab"
 
-        fun createIntent(context: Context, safe: Safe): Intent {
+        fun createIntent(context: Context, safe: Safe, @StringRes selectedTab: Int = 0): Intent {
             val intent = Intent(context, SafeDetailsActivity::class.java)
             intent.putExtra(EXTRA_SAFE_NAME, safe.name)
             intent.putExtra(EXTRA_SAFE_ADDRESS, safe.address.asEthereumAddressString())
+            intent.putExtra(EXTRA_SELECTED_TAB, selectedTab)
             return intent
         }
     }

@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -31,30 +32,30 @@ class ViewTransactionViewModel @Inject constructor(
     }
 
     override fun loadTransactionInfo(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Info>> {
-        return transactionRepository.loadInformation(safeAddress, transaction)
+        return transactionRepository.loadStatus(safeAddress, transaction)
                 .flatMapObservable { info ->
                     info.toSubmitType()
                             .flatMap { transactionRepository.estimateFees(safeAddress, transaction, it) }
-                            .map { Info(info, it) }
+                            .map { Info(safeAddress, transaction, info, it) }
                             .toObservable()
                             // First we emit the info without estimate, so the user will see
                             // independently from what happens to the estimation request
-                            .startWith(Info(info))
+                            .startWith(Info(safeAddress, transaction, info))
                 }
                 .onErrorResumeNext(Function { errorHandler.observable(it) })
                 .mapToResult()
     }
 
-    override fun submitTransaction(safeAddress: BigInteger, transaction: Transaction): Single<Result<Unit>> {
-        return transactionRepository.loadInformation(safeAddress, transaction)
+    override fun submitTransaction(safeAddress: BigInteger, transaction: Transaction, overrideGasPrice: Wei?): Single<Result<BigInteger>> {
+        return transactionRepository.loadStatus(safeAddress, transaction)
                 .flatMap { it.toSubmitType() }
-                .flatMapCompletable { transactionRepository.submit(safeAddress, transaction, it) }
-                .andThen(Single.just(Unit))
+                .flatMapCompletable { transactionRepository.submit(safeAddress, transaction, it, overrideGasPrice) }
+                .andThen(Single.just(safeAddress))
                 .onErrorResumeNext({ errorHandler.single(it) })
                 .mapToResult()
     }
 
-    private fun TransactionRepository.TransactionInfo.toSubmitType(): Single<TransactionRepository.SubmitType> =
+    private fun TransactionRepository.TransactionStatus.toSubmitType(): Single<TransactionRepository.SubmitType> =
             Single.fromCallable {
                 when {
                     isExecuted -> throw SimpleLocalizedException(context.getString(R.string.error_transaction_already_executed))
