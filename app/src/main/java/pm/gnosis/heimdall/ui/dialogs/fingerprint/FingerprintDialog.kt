@@ -34,7 +34,7 @@ class FingerprintDialog : BaseDialog() {
 
     override fun onStart() {
         super.onStart()
-        disposables += encryptionManager.watchFingerprintForSetup()
+        disposables += encryptionManager.observeFingerprintForSetup()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = ::onFingerprintResult, onError = ::onFingerprintUnrecoverableError)
     }

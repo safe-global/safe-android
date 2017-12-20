@@ -53,7 +53,7 @@ class SecuritySettingsActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = {
                     layout_security_settings_switch.isChecked = false
-                    toast("Fingerprint unlock disabled")
+                    toast(R.string.fingerprint_unlock_disabled)
                 }, onError = Timber::e)
 
 

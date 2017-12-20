@@ -18,8 +18,8 @@ class UnlockViewModel @Inject constructor(
         private val encryptionManager: EncryptionManager
 ) : UnlockContract() {
 
-    override fun watchFingerprint(): Observable<Result<FingerprintUnlockResult>> =
-            encryptionManager.watchFingerprintForUnlock()
+    override fun observeFingerprint(): Observable<Result<FingerprintUnlockResult>> =
+            encryptionManager.observeFingerprintForUnlock()
                     .mapToResult()
 
     override fun checkState() =

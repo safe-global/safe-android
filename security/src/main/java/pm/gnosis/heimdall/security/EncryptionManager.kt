@@ -14,8 +14,8 @@ interface EncryptionManager {
     fun lock()
     fun setupPassword(newPassword: ByteArray, oldPassword: ByteArray? = null): Single<Boolean>
     fun initialized(): Single<Boolean>
-    fun watchFingerprintForSetup(): Observable<Boolean>
-    fun watchFingerprintForUnlock(): Observable<FingerprintUnlockResult>
+    fun observeFingerprintForSetup(): Observable<Boolean>
+    fun observeFingerprintForUnlock(): Observable<FingerprintUnlockResult>
     fun clearFingerprintData(): Completable
     fun isFingerPrintSet(): Single<Boolean>
     fun canSetupFingerprint(): Boolean
@@ -42,4 +42,4 @@ sealed class FingerprintUnlockResult
 class FingerprintUnlockSuccessful : FingerprintUnlockResult()
 class FingerprintUnlockFailed : FingerprintUnlockResult()
 class FingerprintUnlockError : IllegalArgumentException()
-class FingerprintUnlockHelp : FingerprintUnlockResult()
+class FingerprintUnlockHelp(val message: CharSequence?) : FingerprintUnlockResult()

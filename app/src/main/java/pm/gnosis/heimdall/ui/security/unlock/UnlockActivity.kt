@@ -10,6 +10,7 @@ import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
@@ -41,6 +42,8 @@ class UnlockActivity : BaseActivity() {
 
     private var handleRotation = 0f
 
+    private var fingerPrintDisposable: Disposable? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
         super.onCreate(savedInstanceState)
@@ -61,14 +64,14 @@ class UnlockActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += encryptionManager.isFingerPrintSet()
+        fingerPrintDisposable = encryptionManager.isFingerPrintSet()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
                     layout_unlock_fingerprint.visibility = if (it) View.VISIBLE else View.GONE
                     layout_unlock_password_input.visibility = if (it) View.GONE else View.VISIBLE
                 }
                 .flatMapObservable {
-                    if (it) viewModel.watchFingerprint() else Observable.empty()
+                    if (it) viewModel.observeFingerprint() else Observable.empty()
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = ::onFingerprintResult, onError = ::onFingerprintError)
@@ -92,6 +95,7 @@ class UnlockActivity : BaseActivity() {
 
         disposables += layout_unlock_switch_to_password.clicks()
                 .subscribeBy(onNext = {
+                    fingerPrintDisposable?.dispose()
                     layout_unlock_fingerprint.visibility = View.GONE
                     layout_unlock_password_input.visibility = View.VISIBLE
                 }, onError = Timber::e)
@@ -108,6 +112,10 @@ class UnlockActivity : BaseActivity() {
                 layout_unlock_error.text = getString(R.string.fingerprint_not_recognized)
             }
             is FingerprintUnlockHelp -> {
+                result.message?.let {
+                    layout_unlock_error.visibility = View.VISIBLE
+                    layout_unlock_error.text = it
+                }
             }
         }
     }
@@ -142,6 +150,7 @@ class UnlockActivity : BaseActivity() {
     override fun onStop() {
         layout_unlock_handle.clearAnimation()
         layout_unlock_handle.animate().cancel()
+        fingerPrintDisposable?.dispose()
         super.onStop()
     }
 

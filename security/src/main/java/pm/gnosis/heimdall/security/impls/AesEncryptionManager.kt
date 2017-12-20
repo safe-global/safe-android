@@ -172,11 +172,11 @@ class AesEncryptionManager @Inject constructor(
     }
 
     override fun canSetupFingerprint() =
-            Build.VERSION.SDK_INT > Build.VERSION_CODES.M &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                     nullOnThrow { application.getSystemService(KeyguardManager::class.java).isKeyguardSecure == true } ?: false &&
                     fingerprintManager.systemHasFingerprintsEnrolled()
 
-    override fun watchFingerprintForSetup(): Observable<Boolean> =
+    override fun observeFingerprintForSetup(): Observable<Boolean> =
             fingerprintManager.authenticate()
                     .subscribeOn(Schedulers.io())
                     .map { result ->
@@ -195,7 +195,7 @@ class AesEncryptionManager @Inject constructor(
                         }
                     }
 
-    override fun watchFingerprintForUnlock(): Observable<FingerprintUnlockResult> =
+    override fun observeFingerprintForUnlock(): Observable<FingerprintUnlockResult> =
             Observable
                     .fromCallable {
                         val cryptedData = preferencesManager.prefs.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null) ?: throw FingerprintUnlockError()
@@ -212,7 +212,7 @@ class AesEncryptionManager @Inject constructor(
                                 if (key != null) FingerprintUnlockSuccessful() else throw FingerprintUnlockError()
                             }
                             is AuthenticationFailed -> FingerprintUnlockFailed()
-                            is AuthenticationHelp -> FingerprintUnlockHelp()
+                            is AuthenticationHelp -> FingerprintUnlockHelp(authResult.helpString)
                         }
                     }
 

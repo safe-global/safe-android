@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import kotlinx.android.synthetic.main.layout_settings.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -42,6 +43,8 @@ class SettingsActivity : BaseActivity() {
             layout_settings_security.setOnClickListener {
                 startActivity(SecuritySettingsActivity.createIntent(this))
             }
+        } else {
+            layout_settings_security.visibility = View.GONE
         }
     }
 

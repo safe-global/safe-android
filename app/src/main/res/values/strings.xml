@@ -237,7 +237,8 @@
     <string name="deploying_new_safe">Deploying New Safe:</string>
     <string name="deploying_safe_warning">This process can take up to several minutes</string>
     <string name="fingerprint_not_recognized">Fingerprint not recognized. Please try again</string>
-    <string name="touch_fingerprint">Touch the fingerpirint sensor</string>
+    <string name="touch_fingerprint">Touch the fingerprint sensor</string>
     <string name="fingerprint_registered">Fingerprint registered</string>
     <string name="switch_to_password">Switch to Password</string>
+    <string name="fingerprint_unlock_disabled">Fingerprint unlock disabled</string>
 </resources>

@@ -67,7 +67,7 @@ class CompatSafeFingerprintManager @Inject constructor(
                     }
 
     fun authenticate(iv: ByteArray? = null): Observable<AuthenticationResult> =
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) Observable.empty()
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) Observable.error(FingerprintNotAvailable("Android version not supported (${Build.VERSION.SDK_INT})"))
             else Observable.create(AuthenticateObservable(context, iv, ::createCipher))
 
     private class AuthenticateObservable(context: Context, private val iv: ByteArray? = null,
@@ -128,3 +128,4 @@ sealed class AuthenticationResult
 class AuthenticationFailed : AuthenticationResult()
 data class AuthenticationHelp(val helpMsgId: Int, val helpString: CharSequence?) : AuthenticationResult()
 data class AuthenticationResultSuccess(val cipher: Cipher) : AuthenticationResult()
+class FingerprintNotAvailable(message: String? = null) : Exception(message)

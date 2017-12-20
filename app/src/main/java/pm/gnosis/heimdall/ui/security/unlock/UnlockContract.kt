@@ -9,7 +9,7 @@ import pm.gnosis.heimdall.security.FingerprintUnlockResult
 abstract class UnlockContract : ViewModel() {
     abstract fun checkState(): Observable<Result<State>>
     abstract fun unlock(password: String): Observable<Result<State>>
-    abstract fun watchFingerprint(): Observable<Result<FingerprintUnlockResult>>
+    abstract fun observeFingerprint(): Observable<Result<FingerprintUnlockResult>>
 
     enum class State {
         UNINITIALIZED,
