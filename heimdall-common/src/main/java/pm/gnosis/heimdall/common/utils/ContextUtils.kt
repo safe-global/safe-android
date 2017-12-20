@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.common.utils
 
-import android.annotation.SuppressLint
+import android.Manifest
 import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -9,6 +9,7 @@ import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.os.Vibrator
 import android.support.annotation.PluralsRes
+import android.support.annotation.RequiresPermission
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
 import android.view.View
@@ -73,6 +74,6 @@ fun Activity.hideSoftKeyboard() {
     }
 }
 
-@SuppressLint("MissingPermission")
+@RequiresPermission(Manifest.permission.VIBRATE)
 fun Context.vibrate(milliseconds: Long) =
         (getSystemService(VIBRATOR_SERVICE) as? Vibrator)?.vibrate(milliseconds)
