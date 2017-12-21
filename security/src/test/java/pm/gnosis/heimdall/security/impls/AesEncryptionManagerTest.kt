@@ -1,10 +1,10 @@
 package pm.gnosis.heimdall.security.impls
 
 import android.app.Application
-import android.security.keystore.KeyProperties
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -13,16 +13,17 @@ import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
+import org.mockito.invocation.InvocationOnMock
 import org.mockito.junit.MockitoJUnitRunner
-import org.spongycastle.jce.provider.BouncyCastleProvider
+import org.mockito.stubbing.Answer
 import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.heimdall.security.AuthenticationResultSuccess
-import pm.gnosis.heimdall.security.EncryptionManager
+import pm.gnosis.heimdall.security.*
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
+import pm.gnosis.utils.toHexString
+import pm.gnosis.utils.utf8String
 import java.security.AlgorithmParameters
-import java.security.Security
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 
@@ -36,7 +37,7 @@ class AesEncryptionManagerTest {
     private lateinit var application: Application
 
     @Mock
-    private lateinit var fingerprintHelperMock: DefaultFingerprintHelper
+    private lateinit var fingerprintHelperMock: FingerprintHelper
 
     private val preferences = TestPreferences()
 
@@ -112,37 +113,74 @@ class AesEncryptionManagerTest {
     }
 
     @Test
-    fun testObserveFingerprintForSetupPasswordSet() {
+    fun fingerprintFlow() {
         val cipherMock = mock(Cipher::class.java)
         val algorithmParametersMock = mock(AlgorithmParameters::class.java)
         val ivParameterSpecMock = mock(IvParameterSpec::class.java)
         val authenticationResult = AuthenticationResultSuccess(cipherMock)
-        val testObserver = TestObserver.create<Boolean>()
 
-        //TODO get valid cipher else encryption will fail
+        given(fingerprintHelperMock.removeKey()).willReturn(Completable.complete())
         given(fingerprintHelperMock.authenticate()).willReturn(Observable.just(authenticationResult))
-        given(cipherMock.doFinal(MockUtils.any())).willReturn(byteArrayOf(0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf))
         given(cipherMock.parameters).willReturn(algorithmParametersMock)
         given(algorithmParametersMock.getParameterSpec(IvParameterSpec::class.java)).willReturn(ivParameterSpecMock)
         given(ivParameterSpecMock.iv).willReturn(byteArrayOf(0x0))
         given(fingerprintHelperMock.authenticate(MockUtils.any())).willReturn(Observable.just(authenticationResult))
 
+        // Setup password to generate app key
         val passwordInput = byteArrayOf(0x0)
-        val data = byteArrayOf(0x2)
         manager.setupPassword(passwordInput).subscribe(TestObserver())
-        val encryptedData = manager.encrypt(data)
-        manager.observeFingerprintForSetup().subscribe(testObserver)
-        manager.lock()
-        manager.observeFingerprintForUnlock().subscribe(TestObserver())
-        val decryptedData = manager.decrypt(encryptedData)
-        assertEquals(data, decryptedData)
 
-        then(fingerprintHelperMock).should(times(2)).authenticate()
-        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        // Encrypt data
+        val data = "Merry Christmas".toByteArray()
+        val encryptedData = manager.encrypt(data)
+
+        // Setup encryption mock for fingerprint setup
+        val encryptDoFinalAnswer = CachedAnswer<ByteArray, ByteArray>("ENCRYPTED_KEY".toByteArray())
+        given(cipherMock.doFinal(MockUtils.any())).will(encryptDoFinalAnswer)
+
+        // Setup fingerprint
+        val setupObserver = TestObserver.create<Boolean>()
+        manager.observeFingerprintForSetup().subscribe(setupObserver)
+        setupObserver.assertResult(true)
+        assertNotNull("App key should not be null", encryptDoFinalAnswer.input)
+        then(fingerprintHelperMock).should().authenticate()
+
+        // Check that correct data is stored
         val cryptoDataString = preferences.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null)
-        val cryptoDataExpected = EncryptionManager.CryptoData(byteArrayOf(0x1), byteArrayOf(0x0))
+        val cryptoDataExpected = EncryptionManager.CryptoData(encryptDoFinalAnswer.output, ivParameterSpecMock.iv)
         assertEquals(cryptoDataExpected.toString(), cryptoDataString)
-        testObserver.assertResult(true)
+
+        // Lock device
+        manager.lock()
+
+        // Setup encryption mock for fingerprint unlock
+        val decryptDoFinalAnswer = CachedAnswer<ByteArray, ByteArray>(encryptDoFinalAnswer.input!!)
+        given(cipherMock.doFinal(MockUtils.any())).will(decryptDoFinalAnswer)
+
+        // Unlock with fingerprint
+        val unlockObserver = TestObserver.create<FingerprintUnlockResult>()
+        manager.observeFingerprintForUnlock().subscribe(unlockObserver)
+        unlockObserver.assertSubscribed()
+                .assertValue { it is FingerprintUnlockSuccessful }
+                .assertNoErrors()
+                .assertComplete()
+        assertEquals("Encrypted app key should the same that has be returned on setup", encryptDoFinalAnswer.output.toHexString(), decryptDoFinalAnswer.input?.toHexString())
+        then(fingerprintHelperMock).should().authenticate(ivParameterSpecMock.iv)
+
+        // Check that decrypted data is correct
+        val decryptedData = manager.decrypt(encryptedData)
+        assertEquals("Data was not correctly decryted", data.utf8String(), decryptedData.utf8String())
+
+        // Check that the fingerprint can be removed
+        val clearObserver = TestObserver<Any>()
+        manager.clearFingerprintData().subscribe(clearObserver)
+        clearObserver.assertResult()
+        then(fingerprintHelperMock).should().removeKey()
+        assertNull("Fingerprint encrypted app key should have been removed.", preferences.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null))
+
+
+        // Check that we don't make unnecessary call to the fingerprint manager
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -170,6 +208,16 @@ class AesEncryptionManagerTest {
         then(fingerprintHelperMock).should().authenticate()
         then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception)
+    }
+
+    private class CachedAnswer<I, O>(val output: O) : Answer<O> {
+        var input: I? = null
+
+        override fun answer(invocation: InvocationOnMock): O {
+            // It should only be set once (the mock call will invoke it too .... )
+            input = input ?: invocation.getArgument<I>(0)
+            return output
+        }
     }
 
     companion object {
