@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.showKeyboardForView
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.vibrate
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -98,6 +99,7 @@ class UnlockActivity : BaseActivity() {
                     fingerPrintDisposable?.dispose()
                     layout_unlock_fingerprint.visibility = View.GONE
                     layout_unlock_password_input.visibility = View.VISIBLE
+                    showKeyboardForView(layout_unlock_password_input)
                 }, onError = Timber::e)
     }
 

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.os.Vibrator
@@ -66,11 +67,16 @@ fun Activity.startActivity(i: Intent, noHistory: Boolean = false) {
     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
 }
 
+fun Context.showKeyboardForView(view: View) {
+    (getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager)?.
+            showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+}
+
 fun Activity.hideSoftKeyboard() {
     val view = this.currentFocus
     if (view != null) {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        (getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager)?.
+                hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
 
