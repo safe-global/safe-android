@@ -23,6 +23,10 @@ object MockUtils {
 
 fun Context.mockGetString(): Context {
     given(getString(anyInt())).will { it.arguments.first().toString() }
+    return this
+}
+
+fun Context.mockGetStringWithArgs(): Context {
     given(getString(anyInt(), MockUtils.any())).will { it.arguments.joinToString() }
     return this
 }

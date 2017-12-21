@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.tests.utils.mockGetStringWithArgs
 import java.math.BigDecimal
 import java.net.UnknownHostException
 
@@ -76,6 +77,7 @@ class EtherGasStationGasPriceHelperTest {
     @Before
     fun setup() {
         contextMock.mockGetString()
+        contextMock.mockGetStringWithArgs()
         slowContainerMock = spy(TestLinearLayout(contextMock))
         normalContainerMock = spy(TestLinearLayout(contextMock))
         fastContainerMock = spy(TestLinearLayout(contextMock))

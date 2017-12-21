@@ -28,6 +28,7 @@ import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.tests.utils.mockGetStringWithArgs
 import java.math.BigInteger
 
 
