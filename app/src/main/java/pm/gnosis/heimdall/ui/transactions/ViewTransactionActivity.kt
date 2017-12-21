@@ -210,9 +210,6 @@ class ViewTransactionActivity : BaseTransactionActivity() {
                 .inject(this)
     }
 
-    private data class TransactionDataWithPrice(val txData: Pair<BigInteger?, Result<Transaction>>, val price: Result<Pair<Wei, Long>>)
-
-
     companion object {
 
         private const val EXTRA_SAFE = "extra.string.safe"

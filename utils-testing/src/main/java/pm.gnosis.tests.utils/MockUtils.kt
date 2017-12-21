@@ -1,7 +1,8 @@
 package pm.gnosis.tests.utils
 
 import android.content.Context
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.anyInt
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito
 
 
@@ -22,5 +23,6 @@ object MockUtils {
 
 fun Context.mockGetString(): Context {
     given(getString(anyInt())).will { it.arguments.first().toString() }
+    given(getString(anyInt(), MockUtils.any())).will { it.arguments.joinToString() }
     return this
 }

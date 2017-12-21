@@ -20,7 +20,7 @@
             style="@style/BoldContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Slow" />
+            android:text="@string/slow" />
 
         <TextView
             android:id="@+id/include_gas_price_selection_slow_time"
@@ -52,7 +52,7 @@
             style="@style/BoldContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Normal" />
+            android:text="@string/normal" />
 
         <TextView
             android:id="@+id/include_gas_price_selection_normal_time"
@@ -84,7 +84,7 @@
             style="@style/BoldContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fast" />
+            android:text="@string/fast" />
 
         <TextView
             android:id="@+id/include_gas_price_selection_fast_time"

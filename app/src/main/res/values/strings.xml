@@ -244,4 +244,7 @@
     <string name="fingerprint_unlock_disabled">Fingerprint unlock disabled</string>
     <string name="transaction_execution_time_estimate_sec">~%s sec</string>
     <string name="transaction_execution_time_estimate_min">~%s min</string>
+    <string name="slow">Slow</string>
+    <string name="normal">Normal</string>
+    <string name="fast">Fast</string>
 </resources>
