@@ -26,7 +26,7 @@ class AesEncryptionManagerTest {
     private lateinit var application: Application
 
     @Mock
-    private lateinit var fingerprintManagerMock: CompatSafeFingerprintManager
+    private lateinit var fingerprintHelperMock: DefaultFingerprintHelper
 
     private val preferences = TestPreferences()
 
@@ -37,7 +37,7 @@ class AesEncryptionManagerTest {
     fun setup() {
         given(application.getSharedPreferences(anyString(), anyInt())).willReturn(preferences)
         preferencesManager = PreferencesManager(application)
-        manager = AesEncryptionManager(application, preferencesManager, fingerprintManagerMock)
+        manager = AesEncryptionManager(application, preferencesManager, fingerprintHelperMock)
     }
 
     @Test

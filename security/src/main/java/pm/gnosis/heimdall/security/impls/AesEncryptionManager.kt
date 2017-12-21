@@ -33,7 +33,7 @@ import javax.inject.Singleton
 class AesEncryptionManager @Inject constructor(
         private val application: Application,
         private val preferencesManager: PreferencesManager,
-        private val fingerprintManager: CompatSafeFingerprintManager
+        private val fingerprintHelper: FingerprintHelper
 ) : EncryptionManager {
 
     private val secureRandom = SecureRandom()
@@ -174,10 +174,10 @@ class AesEncryptionManager @Inject constructor(
     override fun canSetupFingerprint() =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                     nullOnThrow { application.getSystemService(KeyguardManager::class.java).isKeyguardSecure == true } ?: false &&
-                    fingerprintManager.systemHasFingerprintsEnrolled()
+                    fingerprintHelper.systemHasFingerprintsEnrolled()
 
     override fun observeFingerprintForSetup(): Observable<Boolean> =
-            fingerprintManager.authenticate()
+            fingerprintHelper.authenticate()
                     .subscribeOn(Schedulers.io())
                     .map { result ->
                         when (result) {
@@ -201,7 +201,7 @@ class AesEncryptionManager @Inject constructor(
                         val cryptedData = preferencesManager.prefs.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null) ?: throw FingerprintUnlockError()
                         CryptoData.fromString(cryptedData)
                     }
-                    .flatMap { cryptedData -> fingerprintManager.authenticate(cryptedData.iv).map { cryptedData to it } }
+                    .flatMap { cryptedData -> fingerprintHelper.authenticate(cryptedData.iv).map { cryptedData to it } }
                     .subscribeOn(Schedulers.io())
                     .map { (cryptedData, authResult) ->
                         when (authResult) {
@@ -217,7 +217,7 @@ class AesEncryptionManager @Inject constructor(
                     }
 
     override fun isFingerPrintSet(): Single<Boolean> =
-            fingerprintManager.isKeySet()
+            fingerprintHelper.isKeySet()
                     .map { it && preferencesManager.prefs.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null) != null }
 
     override fun clearFingerprintData(): Completable =
@@ -225,7 +225,7 @@ class AesEncryptionManager @Inject constructor(
                 preferencesManager.prefs.edit {
                     remove(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY)
                 }
-            }.andThen(fingerprintManager.removeKey())
+            }.andThen(fingerprintHelper.removeKey())
 
     private fun useCipher(encrypt: Boolean, key: ByteArray, wrapper: CryptoData): CryptoData {
         val padding = PKCS7Padding()

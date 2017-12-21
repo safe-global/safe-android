@@ -10,6 +10,7 @@ import android.support.v4.os.CancellationSignal
 import io.reactivex.*
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.common.di.ApplicationContext
+import pm.gnosis.heimdall.security.*
 import pm.gnosis.utils.nullOnThrow
 import java.security.KeyStore
 import javax.crypto.Cipher
@@ -20,9 +21,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CompatSafeFingerprintManager @Inject constructor(
+class DefaultFingerprintHelper @Inject constructor(
         @ApplicationContext private val context: Context
-) {
+) : FingerprintHelper {
     private val keyStore by lazy { KeyStore.getInstance(ANDROID_KEY_STORE) }
     private val keyGenerator by lazy { KeyGenerator.getInstance(AES, ANDROID_KEY_STORE) }
 
@@ -37,12 +38,12 @@ class CompatSafeFingerprintManager @Inject constructor(
         return keyGenerator.generateKey()
     }
 
-    fun removeKey(): Completable = Completable.fromCallable {
+    override fun removeKey(): Completable = Completable.fromCallable {
         keyStore.load(null)
         keyStore.deleteEntry(FINGERPRINT_KEY)
     }.subscribeOn(Schedulers.io())
 
-    fun systemHasFingerprintsEnrolled() =
+    override fun systemHasFingerprintsEnrolled() =
             nullOnThrow { FingerprintManagerCompat.from(context).hasEnrolledFingerprints() } ?: false
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -51,7 +52,7 @@ class CompatSafeFingerprintManager @Inject constructor(
         return keyStore.getKey(FINGERPRINT_KEY, null) as? SecretKey ?: createKey()
     }
 
-    fun isKeySet(): Single<Boolean> = Single.fromCallable {
+    override fun isKeySet(): Single<Boolean> = Single.fromCallable {
         keyStore.load(null)
         keyStore.getKey(FINGERPRINT_KEY, null) != null
     }.subscribeOn(Schedulers.io())
@@ -66,7 +67,7 @@ class CompatSafeFingerprintManager @Inject constructor(
                         else init(Cipher.DECRYPT_MODE, getOrCreateKey(), IvParameterSpec(iv))
                     }
 
-    fun authenticate(iv: ByteArray? = null): Observable<AuthenticationResult> =
+    override fun authenticate(iv: ByteArray?): Observable<AuthenticationResult> =
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) Observable.error(FingerprintNotAvailable("Android version not supported (${Build.VERSION.SDK_INT})"))
             else Observable.create(AuthenticateObservable(context, iv, ::createCipher))
 
@@ -121,11 +122,3 @@ class CompatSafeFingerprintManager @Inject constructor(
         private const val FINGERPRINT_KEY = "GnosisFingerprintKey"
     }
 }
-
-data class AuthenticationError(val errMsgId: Int, val errString: CharSequence?) : IllegalArgumentException()
-
-sealed class AuthenticationResult
-class AuthenticationFailed : AuthenticationResult()
-data class AuthenticationHelp(val helpMsgId: Int, val helpString: CharSequence?) : AuthenticationResult()
-data class AuthenticationResultSuccess(val cipher: Cipher) : AuthenticationResult()
-class FingerprintNotAvailable(message: String? = null) : Exception(message)

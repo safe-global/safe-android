@@ -14,8 +14,8 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.common.utils.vibrate
+import pm.gnosis.heimdall.security.AuthenticationError
 import pm.gnosis.heimdall.security.EncryptionManager
-import pm.gnosis.heimdall.security.impls.AuthenticationError
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import timber.log.Timber
 import javax.inject.Inject
@@ -52,7 +52,7 @@ class FingerprintDialog : BaseDialog() {
 
     private fun onFingerprintUnrecoverableError(throwable: Throwable) {
         Timber.e(throwable)
-        val message = (throwable as? AuthenticationError).let { it?.errString } ?: getString(R.string.unknown_error)
+        val message = (throwable as? AuthenticationError)?.errString ?: getString(R.string.unknown_error)
         context!!.toast(message)
         dismiss()
     }
