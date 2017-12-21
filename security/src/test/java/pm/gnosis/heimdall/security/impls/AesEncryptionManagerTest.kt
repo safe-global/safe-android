@@ -1,6 +1,8 @@
 package pm.gnosis.heimdall.security.impls
 
 import android.app.Application
+import android.security.keystore.KeyProperties
+import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -9,12 +11,20 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import org.spongycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.heimdall.common.PreferencesManager
+import pm.gnosis.heimdall.security.AuthenticationResultSuccess
+import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
+import java.security.AlgorithmParameters
+import java.security.Security
+import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
 
 @RunWith(MockitoJUnitRunner::class)
 class AesEncryptionManagerTest {
@@ -101,9 +111,70 @@ class AesEncryptionManagerTest {
         assertEquals("Hello World", String(manager.decrypt(encryptedData)))
     }
 
+    @Test
+    fun testObserveFingerprintForSetupPasswordSet() {
+        val cipherMock = mock(Cipher::class.java)
+        val algorithmParametersMock = mock(AlgorithmParameters::class.java)
+        val ivParameterSpecMock = mock(IvParameterSpec::class.java)
+        val authenticationResult = AuthenticationResultSuccess(cipherMock)
+        val testObserver = TestObserver.create<Boolean>()
+
+        //TODO get valid cipher else encryption will fail
+        given(fingerprintHelperMock.authenticate()).willReturn(Observable.just(authenticationResult))
+        given(cipherMock.doFinal(MockUtils.any())).willReturn(byteArrayOf(0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf))
+        given(cipherMock.parameters).willReturn(algorithmParametersMock)
+        given(algorithmParametersMock.getParameterSpec(IvParameterSpec::class.java)).willReturn(ivParameterSpecMock)
+        given(ivParameterSpecMock.iv).willReturn(byteArrayOf(0x0))
+        given(fingerprintHelperMock.authenticate(MockUtils.any())).willReturn(Observable.just(authenticationResult))
+
+        val passwordInput = byteArrayOf(0x0)
+        val data = byteArrayOf(0x2)
+        manager.setupPassword(passwordInput).subscribe(TestObserver())
+        val encryptedData = manager.encrypt(data)
+        manager.observeFingerprintForSetup().subscribe(testObserver)
+        manager.lock()
+        manager.observeFingerprintForUnlock().subscribe(TestObserver())
+        val decryptedData = manager.decrypt(encryptedData)
+        assertEquals(data, decryptedData)
+
+        then(fingerprintHelperMock).should(times(2)).authenticate()
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        val cryptoDataString = preferences.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null)
+        val cryptoDataExpected = EncryptionManager.CryptoData(byteArrayOf(0x1), byteArrayOf(0x0))
+        assertEquals(cryptoDataExpected.toString(), cryptoDataString)
+        testObserver.assertResult(true)
+    }
+
+    @Test
+    fun testObserveFingerprintForSetupPasswordNotSet() {
+        val cipherMock = mock(Cipher::class.java)
+        val authenticationResult = AuthenticationResultSuccess(cipherMock)
+        val testObserver = TestObserver.create<Boolean>()
+        given(fingerprintHelperMock.authenticate()).willReturn(Observable.just(authenticationResult))
+
+        manager.observeFingerprintForSetup().subscribe(testObserver)
+
+        then(fingerprintHelperMock).should().authenticate()
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(false)
+    }
+
+    @Test
+    fun testObserveFingerprintForSetupFingerprintError() {
+        val testObserver = TestObserver<Boolean>()
+        val exception = Exception()
+        given(fingerprintHelperMock.authenticate()).willReturn(Observable.error(exception))
+
+        manager.observeFingerprintForSetup().subscribe(testObserver)
+
+        then(fingerprintHelperMock).should().authenticate()
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        testObserver.assertError(exception)
+    }
 
     companion object {
         private const val PREF_KEY_PASSWORD_ENCRYPTED_APP_KEY = "encryption_manager.string.password_encrypted_app_key"
         private const val PREF_KEY_PASSWORD_CHECKSUM = "encryption_manager.string.password_checksum"
+        private const val PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY = "encryption_manager.string.fingerprint_encrypted_app_key"
     }
 }

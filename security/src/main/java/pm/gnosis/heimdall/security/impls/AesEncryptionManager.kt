@@ -182,7 +182,7 @@ class AesEncryptionManager @Inject constructor(
                     .map { result ->
                         when (result) {
                             is AuthenticationResultSuccess -> {
-                                key?.let {
+                                key?.let { key ->
                                     preferencesManager.prefs.edit {
                                         val cryptoData = CryptoData(result.cipher.doFinal(key),
                                                 result.cipher.parameters.getParameterSpec(IvParameterSpec::class.java).iv)
