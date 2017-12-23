@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.security.impls
 
+import android.app.KeyguardManager
 import android.content.Context
 import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
@@ -44,7 +45,9 @@ class DefaultFingerprintHelper @Inject constructor(
     }.subscribeOn(Schedulers.io())
 
     override fun systemHasFingerprintsEnrolled() =
-            nullOnThrow { FingerprintManagerCompat.from(context).hasEnrolledFingerprints() } ?: false
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    nullOnThrow { context.getSystemService(KeyguardManager::class.java).isKeyguardSecure == true } ?: false &&
+                    nullOnThrow { FingerprintManagerCompat.from(context).hasEnrolledFingerprints() } ?: false
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun getOrCreateKey(): SecretKey {

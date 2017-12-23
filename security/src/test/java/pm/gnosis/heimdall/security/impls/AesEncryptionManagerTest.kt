@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.security.impls
 import android.app.Application
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.*
 import org.junit.Before
@@ -20,6 +21,7 @@ import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.security.*
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.TestCompletable
 import pm.gnosis.tests.utils.TestPreferences
 import pm.gnosis.utils.toHexString
 import pm.gnosis.utils.utf8String
@@ -181,6 +183,97 @@ class AesEncryptionManagerTest {
 
         // Check that we don't make unnecessary call to the fingerprint manager
         then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun clearFingerprintData() {
+        val testCompletable = TestCompletable()
+        given(fingerprintHelperMock.removeKey()).willReturn(testCompletable)
+        preferences.putString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, "testKey")
+
+        manager.clearFingerprintData().subscribe(TestObserver<Any>())
+
+        then(fingerprintHelperMock).should().removeKey()
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        assertEquals(1, testCompletable.callCount)
+        assertNull(preferences.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null))
+    }
+
+    @Test
+    fun clearFingerprintDataError() {
+        val exception = Exception()
+        val testObservable = TestObserver<Any>()
+        given(fingerprintHelperMock.removeKey()).willReturn(Completable.error(exception))
+        preferences.putString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, "testKey")
+
+        manager.clearFingerprintData().subscribe(testObservable)
+
+        then(fingerprintHelperMock).should().removeKey()
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        testObservable.assertError(exception)
+        assertNull(preferences.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null))
+    }
+
+    @Test
+    fun isFingerprintSet() {
+        val testObserver = TestObserver<Boolean>()
+        preferences.putString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, "testKey")
+        given(fingerprintHelperMock.isKeySet()).willReturn(Single.just(true))
+
+        manager.isFingerPrintSet().subscribe(testObserver)
+
+        then(fingerprintHelperMock).should().isKeySet()
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(true)
+    }
+
+    @Test
+    fun isFingerprintNotSet() {
+        val testObserver = TestObserver<Boolean>()
+        preferences.putString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, "testKey")
+        given(fingerprintHelperMock.isKeySet()).willReturn(Single.just(false))
+
+        manager.isFingerPrintSet().subscribe(testObserver)
+
+        then(fingerprintHelperMock).should().isKeySet()
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(false)
+    }
+
+    @Test
+    fun isFingerprintSetError() {
+        val testObserver = TestObserver<Boolean>()
+        val exception = Exception()
+        preferences.putString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, "testKey")
+        given(fingerprintHelperMock.isKeySet()).willReturn(Single.error(exception))
+
+        manager.isFingerPrintSet().subscribe(testObserver)
+
+        then(fingerprintHelperMock).should().isKeySet()
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(false)
+    }
+
+    @Test
+    fun canSetupFingerprint() {
+        given(fingerprintHelperMock.systemHasFingerprintsEnrolled()).willReturn(true)
+
+        val result = manager.canSetupFingerprint()
+
+        then(fingerprintHelperMock).should().systemHasFingerprintsEnrolled()
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        assertTrue(result)
+    }
+
+    @Test
+    fun cannotSetupFingerprint() {
+        given(fingerprintHelperMock.systemHasFingerprintsEnrolled()).willReturn(false)
+
+        val result = manager.canSetupFingerprint()
+
+        then(fingerprintHelperMock).should().systemHasFingerprintsEnrolled()
+        then(fingerprintHelperMock).shouldHaveNoMoreInteractions()
+        assertFalse(result)
     }
 
     @Test

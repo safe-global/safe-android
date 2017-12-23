@@ -1,8 +1,6 @@
 package pm.gnosis.heimdall.security.impls
 
 import android.app.Application
-import android.app.KeyguardManager
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import io.reactivex.Completable
@@ -31,7 +29,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AesEncryptionManager @Inject constructor(
-        private val application: Application,
+        application: Application,
         private val preferencesManager: PreferencesManager,
         private val fingerprintHelper: FingerprintHelper
 ) : EncryptionManager {
@@ -172,9 +170,7 @@ class AesEncryptionManager @Inject constructor(
     }
 
     override fun canSetupFingerprint() =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    nullOnThrow { application.getSystemService(KeyguardManager::class.java).isKeyguardSecure == true } ?: false &&
-                    fingerprintHelper.systemHasFingerprintsEnrolled()
+            nullOnThrow { fingerprintHelper.systemHasFingerprintsEnrolled() } ?: false
 
     override fun observeFingerprintForSetup(): Observable<Boolean> =
             fingerprintHelper.authenticate()
@@ -219,6 +215,7 @@ class AesEncryptionManager @Inject constructor(
     override fun isFingerPrintSet(): Single<Boolean> =
             fingerprintHelper.isKeySet()
                     .map { it && preferencesManager.prefs.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null) != null }
+                    .onErrorReturn { false }
 
     override fun clearFingerprintData(): Completable =
             Completable.fromCallable {
