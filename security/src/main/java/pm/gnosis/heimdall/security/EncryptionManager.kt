@@ -1,9 +1,10 @@
 package pm.gnosis.heimdall.security
 
+import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.utils.hexStringToByteArrayOrNull
 import pm.gnosis.utils.toHexString
-
 
 interface EncryptionManager {
     fun decrypt(data: CryptoData): ByteArray
@@ -13,6 +14,11 @@ interface EncryptionManager {
     fun lock()
     fun setupPassword(newPassword: ByteArray, oldPassword: ByteArray? = null): Single<Boolean>
     fun initialized(): Single<Boolean>
+    fun observeFingerprintForSetup(): Observable<Boolean>
+    fun observeFingerprintForUnlock(): Observable<FingerprintUnlockResult>
+    fun clearFingerprintData(): Completable
+    fun isFingerPrintSet(): Single<Boolean>
+    fun canSetupFingerprint(): Boolean
 
     class CryptoData(val data: ByteArray, val iv: ByteArray) {
         override fun toString(): String {
@@ -20,7 +26,6 @@ interface EncryptionManager {
         }
 
         companion object {
-
             const val SEPARATOR = "####"
             fun fromString(encoded: String) =
                     encoded.split(SEPARATOR).let {
@@ -32,3 +37,9 @@ interface EncryptionManager {
         }
     }
 }
+
+sealed class FingerprintUnlockResult
+class FingerprintUnlockSuccessful : FingerprintUnlockResult()
+class FingerprintUnlockFailed : FingerprintUnlockResult()
+class FingerprintUnlockError : IllegalArgumentException()
+class FingerprintUnlockHelp(val message: CharSequence?) : FingerprintUnlockResult()

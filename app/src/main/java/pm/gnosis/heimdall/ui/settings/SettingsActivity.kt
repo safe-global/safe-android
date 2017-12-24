@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import kotlinx.android.synthetic.main.layout_settings.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -10,6 +11,7 @@ import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
+import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
 
 class SettingsActivity : BaseActivity() {
@@ -35,6 +37,14 @@ class SettingsActivity : BaseActivity() {
 
         layout_settings_tokens.setOnClickListener {
             startActivity(TokenManagementActivity.createIntent(this))
+        }
+
+        if (encryptionManager.canSetupFingerprint()) {
+            layout_settings_security.setOnClickListener {
+                startActivity(SecuritySettingsActivity.createIntent(this))
+            }
+        } else {
+            layout_settings_security.visibility = View.GONE
         }
     }
 

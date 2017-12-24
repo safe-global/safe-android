@@ -3,6 +3,8 @@ package pm.gnosis.heimdall.security.impls
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
+import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.spongycastle.crypto.engines.AESEngine
@@ -15,19 +17,21 @@ import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.base.TrackingActivityLifecycleCallbacks
 import pm.gnosis.heimdall.common.utils.edit
-import pm.gnosis.heimdall.security.EncryptionManager
+import pm.gnosis.heimdall.security.*
 import pm.gnosis.heimdall.security.EncryptionManager.CryptoData
 import pm.gnosis.heimdall.security.exceptions.DeviceIsLockedException
 import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import java.security.SecureRandom
+import javax.crypto.spec.IvParameterSpec
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AesEncryptionManager @Inject constructor(
         application: Application,
-        private val preferencesManager: PreferencesManager
+        private val preferencesManager: PreferencesManager,
+        private val fingerprintHelper: FingerprintHelper
 ) : EncryptionManager {
 
     private val secureRandom = SecureRandom()
@@ -63,7 +67,7 @@ class AesEncryptionManager @Inject constructor(
 
     override fun initialized(): Single<Boolean> {
         return Single.fromCallable {
-            preferencesManager.prefs.getString(PREF_KEY_APP_KEY, null) != null
+            preferencesManager.prefs.getString(PREF_KEY_PASSWORD_ENCRYPTED_APP_KEY, null) != null
         }
     }
 
@@ -80,7 +84,7 @@ class AesEncryptionManager @Inject constructor(
                     decryptAppKey(it)
                 } ?: generateKey()
                 key?.let {
-                    preferencesManager.prefs.edit { putString(PREF_KEY_APP_KEY, encrypt(passwordKey, it).toString()) }
+                    preferencesManager.prefs.edit { putString(PREF_KEY_PASSWORD_ENCRYPTED_APP_KEY, encrypt(passwordKey, it).toString()) }
                     preferencesManager.prefs.edit { putString(PREF_KEY_PASSWORD_CHECKSUM, generateCryptedChecksum(passwordKey)) }
                 }
 
@@ -116,7 +120,7 @@ class AesEncryptionManager @Inject constructor(
     }
 
     private fun decryptAppKey(key: ByteArray): ByteArray? {
-        val encryptedKey = preferencesManager.prefs.getString(PREF_KEY_APP_KEY, null) ?: return null
+        val encryptedKey = preferencesManager.prefs.getString(PREF_KEY_PASSWORD_ENCRYPTED_APP_KEY, null) ?: return null
         return decrypt(key, CryptoData.fromString(encryptedKey))
     }
 
@@ -165,6 +169,61 @@ class AesEncryptionManager @Inject constructor(
         return useCipher(false, key, data).data
     }
 
+    override fun canSetupFingerprint() =
+            nullOnThrow { fingerprintHelper.systemHasFingerprintsEnrolled() } ?: false
+
+    override fun observeFingerprintForSetup(): Observable<Boolean> =
+            fingerprintHelper.authenticate()
+                    .subscribeOn(Schedulers.io())
+                    .map { result ->
+                        when (result) {
+                            is AuthenticationResultSuccess -> {
+                                key?.let { key ->
+                                    preferencesManager.prefs.edit {
+                                        val cryptoData = CryptoData(result.cipher.doFinal(key),
+                                                result.cipher.parameters.getParameterSpec(IvParameterSpec::class.java).iv)
+                                        putString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, cryptoData.toString())
+                                    }
+                                    true
+                                } ?: false
+                            }
+                            else -> false
+                        }
+                    }
+
+    override fun observeFingerprintForUnlock(): Observable<FingerprintUnlockResult> =
+            Observable
+                    .fromCallable {
+                        val cryptedData = preferencesManager.prefs.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null) ?: throw FingerprintUnlockError()
+                        CryptoData.fromString(cryptedData)
+                    }
+                    .flatMap { cryptedData -> fingerprintHelper.authenticate(cryptedData.iv).map { cryptedData to it } }
+                    .subscribeOn(Schedulers.io())
+                    .map { (cryptedData, authResult) ->
+                        when (authResult) {
+                            is AuthenticationResultSuccess -> {
+                                synchronized(keyLock) {
+                                    key = authResult.cipher.doFinal(cryptedData.data)
+                                }
+                                if (key != null) FingerprintUnlockSuccessful() else throw FingerprintUnlockError()
+                            }
+                            is AuthenticationFailed -> FingerprintUnlockFailed()
+                            is AuthenticationHelp -> FingerprintUnlockHelp(authResult.helpString)
+                        }
+                    }
+
+    override fun isFingerPrintSet(): Single<Boolean> =
+            fingerprintHelper.isKeySet()
+                    .map { it && preferencesManager.prefs.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null) != null }
+                    .onErrorReturn { false }
+
+    override fun clearFingerprintData(): Completable =
+            Completable.fromCallable {
+                preferencesManager.prefs.edit {
+                    remove(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY)
+                }
+            }.andThen(fingerprintHelper.removeKey())
+
     private fun useCipher(encrypt: Boolean, key: ByteArray, wrapper: CryptoData): CryptoData {
         val padding = PKCS7Padding()
         val cipher = PaddedBufferedBlockCipher(CBCBlockCipher(AESEngine()), padding)
@@ -188,7 +247,8 @@ class AesEncryptionManager @Inject constructor(
 
     companion object {
         private const val LOCK_DELAY_MS = 5 * 60 * 1000L
-        private const val PREF_KEY_APP_KEY = "encryption_manager.string.app_key"
+        private const val PREF_KEY_PASSWORD_ENCRYPTED_APP_KEY = "encryption_manager.string.password_encrypted_app_key"
         private const val PREF_KEY_PASSWORD_CHECKSUM = "encryption_manager.string.password_checksum"
+        private const val PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY = "encryption_manager.string.fingerprint_encrypted_app_key"
     }
 }
