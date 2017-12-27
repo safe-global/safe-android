@@ -55,6 +55,13 @@
                 android:layout_height="@dimen/divider_width"
                 android:background="@color/divider" />
 
+            <include layout="@layout/include_gas_price_selection" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider" />
+
             <TextView
                 style="@style/Content"
                 android:layout_width="wrap_content"
@@ -73,7 +80,6 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="@string/loading" />
-
 
             <View
                 android:layout_width="match_parent"

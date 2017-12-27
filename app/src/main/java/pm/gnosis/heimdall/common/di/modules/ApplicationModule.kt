@@ -12,11 +12,13 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.remote.EthGasStationApi
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -62,9 +64,24 @@ class ApplicationModule {
 
     @Provides
     @Singleton
+    fun providesEthGasStationApi(moshi: Moshi, @Named(REST_CLIENT) client: OkHttpClient): EthGasStationApi {
+        val retrofit = Retrofit.Builder()
+                .client(client)
+                .baseUrl(EthGasStationApi.BASE_URL)
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+                .build()
+        return retrofit.create(EthGasStationApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     @Named(REST_CLIENT)
     fun providesOkHttpClient(@Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>): OkHttpClient {
         return OkHttpClient.Builder().apply {
+            connectTimeout(10, TimeUnit.SECONDS)
+            readTimeout(10, TimeUnit.SECONDS)
+            writeTimeout(10, TimeUnit.SECONDS)
             interceptors.forEach {
                 addInterceptor(it)
             }

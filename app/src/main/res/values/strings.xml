@@ -77,6 +77,7 @@
     <string name="share_safe_address">Share %1$s address</string>
     <string name="x_ether">%s Ξ</string>
     <string name="x_wei">%s Wei</string>
+    <string name="x_gwei">%s GWei</string>
     <plurals name="x_confirmations">
         <item quantity="one">%s Confirmation</item>
         <item quantity="other">%s Confirmations</item>
@@ -241,4 +242,9 @@
     <string name="fingerprint_registered">Fingerprint registered</string>
     <string name="switch_to_password">Switch to Password</string>
     <string name="fingerprint_unlock_disabled">Fingerprint unlock disabled</string>
+    <string name="transaction_execution_time_estimate_sec">~%s sec</string>
+    <string name="transaction_execution_time_estimate_min">~%s min</string>
+    <string name="slow">Slow</string>
+    <string name="normal">Normal</string>
+    <string name="fast">Fast</string>
 </resources>

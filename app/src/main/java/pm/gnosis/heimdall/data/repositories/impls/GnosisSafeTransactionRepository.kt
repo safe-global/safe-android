@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.remote.BulkRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -50,7 +51,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
         return Sha3Utils.keccak(parts.fold(initial, { acc, part -> acc.append(part) }).toString().hexToByteArray())
     }
 
-    override fun loadInformation(safeAddress: BigInteger, transaction: Transaction): Single<TransactionRepository.TransactionInfo> =
+    override fun loadStatus(safeAddress: BigInteger, transaction: Transaction): Single<TransactionRepository.TransactionStatus> =
             accountsRepository.loadActiveAccount()
                     .flatMap { account ->
                         calculateHash(safeAddress, transaction).map { account to it }
@@ -85,7 +86,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
                         )
                         ethereumJsonRpcRepository.bulk(request)
                                 .map {
-                                    TransactionRepository.TransactionInfo(
+                                    TransactionRepository.TransactionStatus(
                                             it.isOwner.value!!,
                                             it.requiredConfirmation.value!!,
                                             it.confirmation.value!!,
@@ -96,7 +97,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
                                 .singleOrError()
                     }
 
-    override fun estimateFees(safeAddress: BigInteger, transaction: Transaction, type: TransactionRepository.SubmitType): Single<Wei> =
+    override fun estimateFees(safeAddress: BigInteger, transaction: Transaction, type: TransactionRepository.SubmitType): Single<GasEstimate> =
             when (type) {
                 TransactionRepository.SubmitType.CONFIRM -> buildConfirmTransaction(safeAddress, transaction)
                 TransactionRepository.SubmitType.CONFIRM_AND_EXECUTE -> buildConfirmAndExecuteTransaction(safeAddress, transaction)
@@ -110,17 +111,17 @@ class GnosisSafeTransactionRepository @Inject constructor(
                                 TransactionCallParams(
                                         to = confirmAndExecuteTransaction.address.asEthereumAddressString(),
                                         data = confirmAndExecuteTransaction.data))
-                                .map { Wei(it.gas * it.gasPrice) }
+                                .map { GasEstimate(it.gas, Wei(it.gasPrice)) }
                                 .singleOrError()
                     }
 
-    override fun submit(safeAddress: BigInteger, transaction: Transaction, type: TransactionRepository.SubmitType): Completable =
+    override fun submit(safeAddress: BigInteger, transaction: Transaction, type: TransactionRepository.SubmitType, overrideGasPrice: Wei?): Completable =
             when (type) {
                 TransactionRepository.SubmitType.CONFIRM -> buildConfirmTransaction(safeAddress, transaction)
                 TransactionRepository.SubmitType.CONFIRM_AND_EXECUTE -> buildConfirmAndExecuteTransaction(safeAddress, transaction)
                 TransactionRepository.SubmitType.EXECUTE -> buildExecuteTransaction(safeAddress, transaction)
             }
-                    .flatMapObservable { submitSignedTransaction(it) }
+                    .flatMapObservable { submitSignedTransaction(it, overrideGasPrice) }
                     .flatMapSingle { addLocalTransaction(safeAddress, transaction, it) }
                     .ignoreElements()
 
@@ -155,7 +156,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
                 Transaction(safeAddress, data = confirmData)
             }.subscribeOn(Schedulers.computation())
 
-    private fun submitSignedTransaction(transaction: Transaction): Observable<String> =
+    private fun submitSignedTransaction(transaction: Transaction, overrideGasPrice: Wei? = null): Observable<String> =
             accountsRepository.loadActiveAccount()
                     .flatMapObservable {
                         ethereumJsonRpcRepository.getTransactionParameters(it.address,
@@ -164,7 +165,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
                                         data = transaction.data))
                     }
                     .flatMapSingle {
-                        accountsRepository.signTransaction(transaction.copy(nonce = it.nonce, gas = it.gas, gasPrice = it.gasPrice))
+                        accountsRepository.signTransaction(transaction.copy(nonce = it.nonce, gas = it.gas, gasPrice = overrideGasPrice?.value ?: it.gasPrice))
                     }
                     .flatMap { ethereumJsonRpcRepository.sendRawTransaction(it) }
 

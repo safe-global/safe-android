@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import com.gojuno.koptional.Optional
 import io.reactivex.Observable
+import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
@@ -16,9 +17,7 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.transaction
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Transaction
@@ -62,7 +61,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
         currentFragment = fragment
     }
 
-    abstract fun handleTransactionData(observable: Observable<Pair<BigInteger?, Result<Transaction>>>): Observable<Any>
+    abstract fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any>
 
     abstract fun fragmentRegistered()
 
@@ -74,7 +73,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
             safeAddress.toNullable() to transaction
         })
                 .observeOn(AndroidSchedulers.mainThread())
-                .publish(::handleTransactionData)
+                .compose(transactionDataTransformer())
                 .subscribeBy(onError = Timber::e)
         fragmentRegistered()
     }
