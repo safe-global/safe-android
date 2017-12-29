@@ -11,10 +11,11 @@ import pm.gnosis.heimdall.data.db.models.*
 
 @Database(entities = [
     AddressBookEntryDb::class,
+    ERC20TokenDb::class,
     GnosisSafeDb::class,
     PendingGnosisSafeDb::class,
-    ERC20TokenDb::class,
-    TransactionDescriptionDb::class
+    TransactionDescriptionDb::class,
+    TransactionPublishStatusDb::class
 ], version = 1)
 @TypeConverters(BigIntegerConverter::class)
 abstract class GnosisAuthenticatorDb : RoomDatabase() {

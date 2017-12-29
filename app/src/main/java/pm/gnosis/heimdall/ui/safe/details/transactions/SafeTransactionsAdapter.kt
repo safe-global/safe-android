@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.safe.details.transactions
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,11 +55,33 @@ class SafeTransactionsAdapter @Inject constructor(
             val transactionId = currentData ?: return
             disposables += viewModel.loadTransactionDetails(transactionId)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ (details, transferInfo) -> updateDetails(details, transferInfo)}, {
+                    .subscribe({ (details, transferInfo) -> updateDetails(details, transferInfo) }, {
                         Timber.e(it)
                         itemView.layout_safe_transactions_item_timestamp.text = itemView.context.getString(R.string.transaction_details_error)
                     })
+            disposables += viewModel.observeTransactionStatus(transactionId)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(::updateStatus, Timber::e)
+        }
 
+        private fun updateStatus(status: TransactionRepository.PublishStatus) {
+            itemView.layout_safe_transactions_item_status.apply {
+                when (status) {
+                    TransactionRepository.PublishStatus.UNKNOWN, TransactionRepository.PublishStatus.SUCCESS -> {
+                        visibility = View.GONE
+                    }
+                    TransactionRepository.PublishStatus.PENDING -> {
+                        setTextColor(ContextCompat.getColor(context, R.color.light_text))
+                        text = context.getString(R.string.status_pending)
+                        visibility = View.VISIBLE
+                    }
+                    TransactionRepository.PublishStatus.FAILED -> {
+                        setTextColor(ContextCompat.getColor(context, R.color.error))
+                        text = context.getString(R.string.status_failed)
+                        visibility = View.VISIBLE
+                    }
+                }
+            }
         }
 
         private fun updateDetails(details: TransactionDetails, transferInfo: SafeTransactionsContract.TransferInfo?) {

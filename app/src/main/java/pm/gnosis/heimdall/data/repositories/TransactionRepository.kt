@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.data.repositories
 
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.models.Transaction
@@ -21,4 +22,13 @@ interface TransactionRepository {
         CONFIRM_AND_EXECUTE,
         EXECUTE
     }
+
+    enum class PublishStatus {
+        UNKNOWN,
+        PENDING,
+        FAILED,
+        SUCCESS
+    }
+
+    fun observePublishStatus(id: String): Observable<PublishStatus>
 }

@@ -9,10 +9,12 @@ import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
+import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
 import pm.gnosis.heimdall.data.remote.BulkRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -20,6 +22,7 @@ import pm.gnosis.models.Wei
 import pm.gnosis.utils.*
 import java.math.BigInteger
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -173,16 +176,42 @@ class GnosisSafeTransactionRepository @Inject constructor(
             calculateHash(safeAddress, transaction).flatMap {
                 Single.fromCallable {
                     val transactionUuid = UUID.randomUUID().toString()
-                    descriptionsDao.insertDescription(
+                    descriptionsDao.insert(
                             TransactionDescriptionDb(transactionUuid, safeAddress, transaction.address,
                                     transaction.value?.value ?: BigInteger.ZERO,
                                     transaction.data ?: "", DEFAULT_OPERATION,
                                     transaction.nonce ?: DEFAULT_NONCE, System.currentTimeMillis(), null, it.toHexString())
-
+                    )
+                    descriptionsDao.insert(
+                            TransactionPublishStatusDb(transactionUuid, txChainHash, null)
                     )
                     transactionUuid
                 }
             }
+
+    override fun observePublishStatus(id: String): Observable<PublishStatus> =
+            descriptionsDao.observeStatus(id)
+                    .toObservable()
+                    .switchMap { status ->
+                        status.success?.let {
+                            Observable.just(it)
+                        } ?: ethereumJsonRpcRepository.getTransactionReceipt(status.transactionId)
+                                .flatMap {
+                                    it.status?.let {
+                                        Observable.just(it == BigInteger.ONE)
+                                    } ?: Observable.error<Boolean>(IllegalStateException())
+                                }
+                                .retryWhen {
+                                    it.delay(20, TimeUnit.SECONDS)
+                                }
+                                .map {
+                                    descriptionsDao.update(status.apply { success = it })
+                                    it
+                                }
+                    }
+                    .map { if (it) PublishStatus.SUCCESS else PublishStatus.FAILED }
+                    .startWith(PublishStatus.PENDING)
+                    .onErrorReturnItem(PublishStatus.UNKNOWN)
 
     private class TransactionInfoRequest(
             val isOwner: SubRequest<Boolean>,
