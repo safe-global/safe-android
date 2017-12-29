@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -17,16 +18,14 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.setupToolbar
-import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
+import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.transactions.details.assets.ReviewAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
@@ -53,6 +52,9 @@ class ViewTransactionActivity : BaseTransactionActivity() {
     // Used for disposables that exists from onCreate to onDestroy
     private val lifetimeDisposables = CompositeDisposable()
 
+    private var cachedTransactionData: CachedTransactionData? = null
+    private var credentialsConfirmed: Boolean = false
+
     private val transactionInfoTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Result<ViewTransactionContract.Info>> =
             ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
                 up
@@ -71,20 +73,20 @@ class ViewTransactionActivity : BaseTransactionActivity() {
                 up.switchMap { infoWithGasPrice ->
                     layout_view_transaction_submit_button.clicks().map { infoWithGasPrice }
                 }
-                        .flatMap { (info, gasPrice) ->
-                            // We only want to submit the action if we got valid input, no need for
-                            // handling the ErrorResult, as this is done before
+                        .doOnNext { (info, gasPrice) ->
                             (info as? DataResult)?.let {
-                                submitTransaction(it.data.selectedSafe, it.data.transaction, (gasPrice as? DataResult)?.data)
-                            } ?: Observable.empty()
-                        }
-                        .doOnNext {
-                            it.handle({
-                                eventTracker.submit(Event.SubmittedTransaction())
-                                startActivity(SafeDetailsActivity.createIntent(this, Safe(it), R.string.tab_title_transactions).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                            }, { showErrorSnackbar(it) })
+                                cachedTransactionData = CachedTransactionData(it.data.selectedSafe, it.data.transaction, (gasPrice as? DataResult)?.data)
+                                startActivityForResult(UnlockActivity.createConformIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
+                            } ?: run {
+                                cachedTransactionData = null
+                            }
                         }
             }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        credentialsConfirmed = requestCode == REQUEST_CODE_CONFIRM_CREDENTIALS && resultCode == Activity.RESULT_OK
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +98,21 @@ class ViewTransactionActivity : BaseTransactionActivity() {
     override fun onStart() {
         super.onStart()
         setUnknownTransactionInfo()
+        cachedTransactionData?.let {
+            if (credentialsConfirmed) {
+                disposables += submitTransaction(it.safeAddress, it.transaction, it.overrideGasPrice)
+                        .subscribe({
+                            it.handle({
+                                eventTracker.submit(Event.SubmittedTransaction())
+                                startActivity(SafeDetailsActivity.createIntent(this, Safe(it), R.string.tab_title_transactions).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                            }, { showErrorSnackbar(it) })
+                        }, Timber::e)
+            } else {
+                snackbar(layout_view_transaction_submit_button, R.string.please_confirm_credentials)
+            }
+        }
+        cachedTransactionData = null
+        credentialsConfirmed = false
     }
 
     override fun fragmentRegistered() {
@@ -210,7 +227,10 @@ class ViewTransactionActivity : BaseTransactionActivity() {
                 .inject(this)
     }
 
+    private data class CachedTransactionData(val safeAddress: BigInteger, val transaction: Transaction, val overrideGasPrice: Wei?)
+
     companion object {
+        private const val REQUEST_CODE_CONFIRM_CREDENTIALS = 2342
 
         private const val EXTRA_SAFE = "extra.string.safe"
         private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"

@@ -31,14 +31,14 @@ class SetupSafeIntroActivity : BaseActivity() {
         super.onStart()
         disposables += layout_finish_setup_safe.clicks()
                 .subscribeBy(onNext = {
-                    startActivity(SafesOverviewActivity.createIntent(this), noHistory = true)
+                    startActivity(SafesOverviewActivity.createIntent(this), clearStack = true)
                     startActivity(AddSafeActivity.createIntent(this))
                     finish()
                 })
 
         disposables += layout_finish_setup_skip.clicks()
                 .subscribeBy(onNext = {
-                    startActivity(SafesOverviewActivity.createIntent(this), noHistory = true)
+                    startActivity(SafesOverviewActivity.createIntent(this), clearStack = true)
                     finish()
                 })
     }

@@ -249,4 +249,6 @@
     <string name="fast">Fast</string>
     <string name="status_pending">Pending</string>
     <string name="status_failed">Failed</string>
+    <string name="please_confirm_credentials">Please confirm your credentials to submit the transaction.</string>
+    <string name="just_a_moment_ago">Just a moment ago</string>
 </resources>

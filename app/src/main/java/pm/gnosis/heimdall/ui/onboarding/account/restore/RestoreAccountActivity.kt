@@ -70,7 +70,7 @@ class RestoreAccountActivity : BaseActivity() {
     }
 
     private fun onAccountSaved(intent: Intent) {
-        startActivity(intent, noHistory = false)
+        startActivity(intent, clearStack = false)
     }
 
     private fun onAccountSaveError(throwable: Throwable) {

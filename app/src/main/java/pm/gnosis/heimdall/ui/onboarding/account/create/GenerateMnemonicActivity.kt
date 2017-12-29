@@ -61,7 +61,7 @@ class GenerateMnemonicActivity : BaseActivity() {
     }
 
     private fun onAccountSaved() {
-        startActivity(SetupSafeIntroActivity.createIntent(this), noHistory = true)
+        startActivity(SetupSafeIntroActivity.createIntent(this), clearStack = true)
     }
 
     private fun onAccountSaveError(throwable: Throwable) {

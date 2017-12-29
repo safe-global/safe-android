@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.OnboardingIntro
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
-import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import timber.log.Timber
 import javax.inject.Inject
@@ -47,15 +46,15 @@ class SplashActivity : BaseActivity() {
     }
 
     private fun startMain() {
-        startActivity(SafesOverviewActivity.createIntent(this), noHistory = true)
+        startActivity(SafesOverviewActivity.createIntent(this), clearStack = true)
     }
 
     private fun startAccountSetup() {
-        startActivity(AccountSetupActivity.createIntent(this), noHistory = true)
+        startActivity(AccountSetupActivity.createIntent(this), clearStack = true)
     }
 
     private fun startPasswordSetup() {
-        startActivity(OnboardingIntro.createIntent(this), noHistory = true)
+        startActivity(OnboardingIntro.createIntent(this), clearStack = true)
     }
 
     private fun onError(throwable: Throwable) {

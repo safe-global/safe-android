@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.onboarding.OnboardingIntro
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import timber.log.Timber
@@ -45,7 +44,7 @@ class PasswordSetupActivity : BaseActivity() {
     }
 
     private fun onPasswordSet() {
-        startActivity(AccountSetupActivity.createIntent(this), noHistory = true)
+        startActivity(AccountSetupActivity.createIntent(this), clearStack = true)
     }
 
     private fun onPasswordSetError(throwable: Throwable) {

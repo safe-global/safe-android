@@ -47,7 +47,7 @@ class UnlockViewModelTest {
         val observer = createObserver()
         given(encryptionManagerMock.unlocked()).willReturn(Single.just(true))
 
-        viewModel.checkState().subscribe(observer)
+        viewModel.checkState(false).subscribe(observer)
 
         then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -60,7 +60,7 @@ class UnlockViewModelTest {
         given(encryptionManagerMock.unlocked()).willReturn(Single.just(false))
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
 
-        viewModel.checkState().subscribe(observer)
+        viewModel.checkState(false).subscribe(observer)
 
         then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).should().initialized()
@@ -74,7 +74,7 @@ class UnlockViewModelTest {
         given(encryptionManagerMock.unlocked()).willReturn(Single.just(false))
         given(encryptionManagerMock.initialized()).willReturn(Single.just(false))
 
-        viewModel.checkState().subscribe(observer)
+        viewModel.checkState(false).subscribe(observer)
 
         then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).should().initialized()
@@ -88,9 +88,46 @@ class UnlockViewModelTest {
         val exception = IllegalStateException()
         given(encryptionManagerMock.unlocked()).willReturn(Single.error(exception))
 
-        viewModel.checkState().subscribe(observer)
+        viewModel.checkState(false).subscribe(observer)
 
         then(encryptionManagerMock).should().unlocked()
+        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
+        observer.assertNoErrors().assertValue(ErrorResult(exception))
+    }
+
+    @Test
+    fun checkStateWithCheckCredentials() {
+        val observer = createObserver()
+        given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
+
+        viewModel.checkState(true).subscribe(observer)
+
+        then(encryptionManagerMock).should().initialized()
+        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
+        observer.assertNoErrors().assertValue(DataResult(UnlockContract.State.LOCKED))
+    }
+
+    @Test
+    fun checkStateWithCheckCredentialsUninitialized() {
+        val observer = createObserver()
+        given(encryptionManagerMock.initialized()).willReturn(Single.just(false))
+
+        viewModel.checkState(true).subscribe(observer)
+
+        then(encryptionManagerMock).should().initialized()
+        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
+        observer.assertNoErrors().assertValue(DataResult(UnlockContract.State.UNINITIALIZED))
+    }
+
+    @Test
+    fun checkStateWithCheckCredentialsError() {
+        val observer = createObserver()
+        val exception = IllegalStateException()
+        given(encryptionManagerMock.initialized()).willReturn(Single.error(exception))
+
+        viewModel.checkState(true).subscribe(observer)
+
+        then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertValue(ErrorResult(exception))
     }

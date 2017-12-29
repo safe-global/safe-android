@@ -57,8 +57,12 @@ object DateTimeUtils {
      */
     fun getLongTimeString(context: Context, referenceTime: Long): String {
         val now = System.currentTimeMillis()
+        val diff = now - referenceTime
+        if (diff < DateUtils.MINUTE_IN_MILLIS) {
+            return context.getString(R.string.just_a_moment_ago)
+        }
         var relativeTimeSpanString = DateUtils.getRelativeTimeSpanString(referenceTime, now, DateUtils.SECOND_IN_MILLIS).toString()
-        if (now - referenceTime > DateUtils.DAY_IN_MILLIS) {
+        if (diff > DateUtils.DAY_IN_MILLIS) {
             relativeTimeSpanString += ", " + DateUtils.formatDateTime(context, referenceTime, DateUtils.FORMAT_SHOW_TIME)
         }
         return relativeTimeSpanString
