@@ -41,7 +41,7 @@ class GenericTransactionDetailsViewModel @Inject constructor(): GenericTransacti
                         if (errorFields > 0) {
                             ErrorResult<Transaction>(TransactionInputException(context, errorFields, showToast))
                         } else {
-                            val nonce = originalTransaction?.nonce ?: BigInteger.valueOf(System.currentTimeMillis())
+                            val nonce = originalTransaction?.nonce
                             DataResult(Transaction(to!!, value = Wei(value!!), data = data?.toHexString(), nonce = nonce))
                         }
                     }

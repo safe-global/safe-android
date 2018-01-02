@@ -110,7 +110,7 @@ class AssetTransferDetailsViewModel @Inject constructor(
                             if (errorFields > 0) {
                                 ErrorResult<Transaction>(TransactionInputException(context, errorFields, showToast))
                             } else {
-                                val nonce = originalTransaction?.nonce ?: BigInteger.valueOf(System.currentTimeMillis())
+                                val nonce = originalTransaction?.nonce
                                 val tokenAmount = amount!!.multiply(BigDecimal(10).pow(token!!.token.decimals)).toBigInteger()
                                 val transaction = when (token.token) {
                                     ETHER_TOKEN -> {

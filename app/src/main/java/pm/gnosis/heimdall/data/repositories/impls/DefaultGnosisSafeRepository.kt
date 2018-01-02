@@ -33,6 +33,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.nullOnThrow
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
@@ -84,7 +85,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                             owners, Solidity.UInt8(BigInteger.valueOf(confirmations.toLong())),
                             // Extension info -> not set for now
                             Solidity.Address(BigInteger.ZERO), Solidity.Bytes(ByteArray(0)))
-                    val data = ProxyFactory.CreateProxy.encode(Solidity.Address(masterCopyAddress), Solidity.Bytes(setupData.toByteArray()))
+                    val data = ProxyFactory.CreateProxy.encode(Solidity.Address(masterCopyAddress), Solidity.Bytes(setupData.hexStringToByteArray()))
                     ethereumJsonRpcRepository.getTransactionParameters(account.address, TransactionCallParams(to = factoryAddress.asEthereumAddressString(), data = data)).map {
                         SafeDeployParams(account, factoryAddress, data, it)
                     }
@@ -115,15 +116,25 @@ class DefaultGnosisSafeRepository @Inject constructor(
     override fun observeDeployStatus(hash: String): Observable<String> {
         return ethereumJsonRpcRepository.getTransactionReceipt(hash)
                 .flatMap {
-                    it.logs.forEach {
-                        decodeCreationEventOrNull(it)?.let {
-                            return@flatMap Observable.just(it.proxy.value)
+                    if (it.status != null) {
+                        it.logs.forEach {
+                            decodeCreationEventOrNull(it)?.let {
+                                return@flatMap Observable.just(it.proxy.value)
+                            }
                         }
+                        Observable.error<BigInteger>(SafeDeploymentFailedException())
+                    } else {
+                        Observable.error<BigInteger>(IllegalStateException())
                     }
-                    Observable.error<BigInteger>(IllegalStateException())
                 }
                 .retryWhen {
-                    it.delay(20, TimeUnit.SECONDS)
+                    it.flatMap {
+                        if (it is SafeDeploymentFailedException) {
+                            Observable.error(it)
+                        } else {
+                            Observable.just(it).delay(20, TimeUnit.SECONDS)
+                        }
+                    }
                 }
                 .flatMapSingle { safeAddress ->
                     safeDao.loadPendingSafe(hash.hexAsBigInteger()).map { pendingSafe ->
@@ -134,6 +145,9 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     safeDao.removePendingSafe(hash.hexAsBigInteger())
                     safeDao.insertSafe(GnosisSafeDb(it.first, it.second.name))
                     it.first.asEthereumAddressString()
+                }
+                .doOnError {
+                    safeDao.removePendingSafe(hash.hexAsBigInteger())
                 }
     }
 
@@ -189,4 +203,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
     ) : BulkRequest(balance, requiredConfirmations, owners, isOwner)
 
     private data class SafeDeployParams(val account: Account, val factoryAddress: BigInteger, val data: String, val transactionParameters: TransactionParameters)
+
+    private class SafeDeploymentFailedException() : IllegalArgumentException()
 }

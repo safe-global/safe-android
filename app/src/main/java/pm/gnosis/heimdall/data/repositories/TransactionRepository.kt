@@ -15,7 +15,7 @@ interface TransactionRepository {
     fun estimateFees(safeAddress: BigInteger, transaction: Transaction): Single<GasEstimate>
     fun submit(safeAddress: BigInteger, transaction: Transaction, overrideGasPrice: Wei? = null): Completable
 
-    data class TransactionStatus(val isOwner: Boolean, val requiredConfirmation: Int)
+    data class TransactionStatus(val isOwner: Boolean, val requiredConfirmation: Int, val safeNonce: BigInteger)
 
     enum class PublishStatus {
         UNKNOWN,

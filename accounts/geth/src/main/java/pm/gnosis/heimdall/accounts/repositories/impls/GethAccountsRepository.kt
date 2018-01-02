@@ -10,15 +10,13 @@ import org.ethereum.geth.KeyStore
 import pm.gnosis.crypto.KeyGenerator
 import pm.gnosis.heimdall.accounts.base.exceptions.InvalidTransactionParams
 import pm.gnosis.heimdall.accounts.base.models.Account
+import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.utils.edit
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
-import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.generateRandomString
-import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.toHexString
+import pm.gnosis.utils.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,6 +27,7 @@ class GethAccountsRepository @Inject constructor(
         private val preferencesManager: PreferencesManager,
         private val bip39: Bip39
 ) : AccountsRepository {
+
     override fun loadActiveAccount(): Single<Account> {
         return Single.fromCallable {
             gethAccountManager.getActiveAccount()
@@ -51,12 +50,25 @@ class GethAccountsRepository @Inject constructor(
                     BigInt(transaction.value?.toLong() ?: 0),
                     BigInt(transaction.gas!!.toLong()),
                     BigInt(transaction.gasPrice!!.toLong()),
-                    transaction.data?.toByteArray() ?: ByteArray(0))
+                    transaction.data?.hexStringToByteArray() ?: ByteArray(0))
 
             val signed = gethKeyStore.signTxPassphrase(
                     account, gethAccountManager.getAccountPassphrase(), tx, BigInt(transaction.chainId.toLong()))
 
             signed.encodeRLP().toHexString()
+        }
+    }
+
+    override fun sign(data: ByteArray): Single<Signature> {
+        return Single.fromCallable {
+            val account = gethAccountManager.getActiveAccount()
+
+            val signature = gethKeyStore.signHashPassphrase(account, gethAccountManager.getAccountPassphrase(), data).toHexString()
+
+            val r = signature.substring(0, 64).hexAsBigInteger()
+            val s = signature.substring(64, 128).hexAsBigInteger()
+            val v = signature.substring(128, 130).hexAsBigInteger().toByte()
+            Signature(r, s, v)
         }
     }
 

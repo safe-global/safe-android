@@ -35,7 +35,7 @@ class ViewTransactionViewModel @Inject constructor(
         return transactionRepository.loadStatus(safeAddress)
                 .flatMapObservable { info ->
                     Single.fromCallable { info.check() }
-                            .flatMap { transactionRepository.estimateFees(safeAddress, transaction) }
+                            .flatMap { transactionRepository.estimateFees(safeAddress, transaction.updateTransactionWithstatus(it)) }
                             .map { Info(safeAddress, transaction, info, it) }
                             .toObservable()
                             // First we emit the info without estimate, so the user will see
@@ -50,17 +50,20 @@ class ViewTransactionViewModel @Inject constructor(
         return transactionRepository.loadStatus(safeAddress)
                 .flatMapCompletable {
                     it.check()
-                    transactionRepository.submit(safeAddress, transaction, overrideGasPrice)
+                    transactionRepository.submit(safeAddress, transaction.updateTransactionWithstatus(it), overrideGasPrice)
                 }
                 .andThen(Single.just(safeAddress))
                 .onErrorResumeNext({ errorHandler.single(it) })
                 .mapToResult()
     }
 
-    private fun TransactionRepository.TransactionStatus.check() {
+    private fun Transaction.updateTransactionWithstatus(status: TransactionRepository.TransactionStatus) =
+            nonce?.let { this } ?: copy(nonce = status.safeNonce)
+
+    private fun TransactionRepository.TransactionStatus.check(): TransactionRepository.TransactionStatus =
         when {
             requiredConfirmation - (if (isOwner) 1 else 0) > 0 ->
                 throw SimpleLocalizedException(context.getString(R.string.error_not_enough_confirmations))
+            else -> this
         }
-    }
 }

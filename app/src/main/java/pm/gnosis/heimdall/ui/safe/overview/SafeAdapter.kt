@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.layout_safe_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
+import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
@@ -147,7 +148,10 @@ class SafeAdapter @Inject constructor(
                     .observeOn(AndroidSchedulers.mainThread())
                     // Empty function for now, we should adjust the design and
                     // maybe display a retry button on error
-                    .subscribe(Functions.emptyConsumer(), Consumer { Timber.e(it) })
+                    .subscribe(Functions.emptyConsumer(), Consumer {
+                        context.toast(R.string.error_deploying_safe)
+                        Timber.e(it)
+                    })
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
