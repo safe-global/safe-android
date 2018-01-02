@@ -418,9 +418,7 @@ class AssetTransferDetailsViewModelTest {
                             && it.data.address == BigInteger.TEN
                             && it.data.value == null
                             && it.data.data == expectedData
-                            && it.data.nonce != null
-                            && it.data.nonce!! <= BigInteger.valueOf(System.currentTimeMillis())
-                            && it.data.nonce!! >= BigInteger.valueOf(System.currentTimeMillis() - NONCE_WINDOW)
+                            && it.data.nonce == null
                 })
         testNo++
         // Valid input with change (ether)
@@ -431,9 +429,7 @@ class AssetTransferDetailsViewModelTest {
                             && it.data.address == BigInteger.ZERO
                             && it.data.value == Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals)))
                             && it.data.data == null
-                            && it.data.nonce != null
-                            && it.data.nonce!! <= BigInteger.valueOf(System.currentTimeMillis())
-                            && it.data.nonce!! >= BigInteger.valueOf(System.currentTimeMillis() - NONCE_WINDOW)
+                            && it.data.nonce == null
                 })
         testNo++
         // Invalid input with change
@@ -562,10 +558,6 @@ class AssetTransferDetailsViewModelTest {
                 transaction, DataResult(transaction), testNo++)
         then(detailsRepository).should().loadTransactionDetails(transaction)
         reset(detailsRepository)
-    }
-
-    companion object {
-        private const val NONCE_WINDOW = 10000L
     }
 
 }

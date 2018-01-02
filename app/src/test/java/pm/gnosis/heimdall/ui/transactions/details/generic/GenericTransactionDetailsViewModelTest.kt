@@ -125,9 +125,7 @@ class GenericTransactionDetailsViewModelTest {
                             && it.data.address == BigInteger.ZERO
                             && it.data.value == Wei(BigInteger.valueOf(123))
                             && it.data.data == null
-                            && it.data.nonce != null
-                            && it.data.nonce!! <= BigInteger.valueOf(System.currentTimeMillis())
-                            && it.data.nonce!! >= BigInteger.valueOf(System.currentTimeMillis() - NONCE_WINDOW)
+                            && it.data.nonce == null
                 })
         testNo++
         // Invalid input with change
@@ -171,9 +169,5 @@ class GenericTransactionDetailsViewModelTest {
                 )),
                 testNo++
         )
-    }
-
-    companion object {
-        private const val NONCE_WINDOW = 10000L
     }
 }
