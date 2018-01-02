@@ -21,20 +21,6 @@
       "type": "function"
     },
     {
-      "constant": true,
-      "inputs": [],
-      "name": "MAX_OWNERS",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint8"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "constant": false,
       "inputs": [
         {
@@ -42,7 +28,7 @@
           "type": "address"
         },
         {
-          "name": "_required",
+          "name": "_threshold",
           "type": "uint8"
         }
       ],
@@ -53,37 +39,52 @@
       "type": "function"
     },
     {
-      "constant": true,
+      "constant": false,
       "inputs": [
         {
-          "name": "transactionHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "getConfirmationCount",
-      "outputs": [
+          "name": "to",
+          "type": "address"
+        },
         {
-          "name": "confirmationCount",
+          "name": "value",
           "type": "uint256"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        },
+        {
+          "name": "operation",
+          "type": "uint8"
+        },
+        {
+          "name": "v",
+          "type": "uint8[]"
+        },
+        {
+          "name": "r",
+          "type": "bytes32[]"
+        },
+        {
+          "name": "s",
+          "type": "bytes32[]"
         }
       ],
+      "name": "executeTransaction",
+      "outputs": [],
       "payable": false,
-      "stateMutability": "view",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "constant": false,
       "inputs": [
         {
-          "name": "owner",
+          "name": "extension",
           "type": "address"
-        },
-        {
-          "name": "_required",
-          "type": "uint8"
         }
       ],
-      "name": "removeOwner",
+      "name": "addExtension",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -109,7 +110,7 @@
           "type": "uint8"
         },
         {
-          "name": "nonce",
+          "name": "_nonce",
           "type": "uint256"
         }
       ],
@@ -144,48 +145,13 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "name": "data",
-          "type": "bytes"
-        },
-        {
-          "name": "operation",
-          "type": "uint8"
-        },
-        {
-          "name": "exception",
-          "type": "address"
-        }
-      ],
-      "name": "executeException",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
-      "inputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "exceptions",
+      "inputs": [],
+      "name": "threshold",
       "outputs": [
         {
           "name": "",
-          "type": "address"
+          "type": "uint8"
         }
       ],
       "payable": false,
@@ -193,9 +159,41 @@
       "type": "function"
     },
     {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "oldOwnerIndex",
+          "type": "uint256"
+        },
+        {
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "replaceOwner",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_masterCopy",
+          "type": "address"
+        }
+      ],
+      "name": "changeMasterCopy",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "constant": true,
       "inputs": [],
-      "name": "getExceptions",
+      "name": "getExtensions",
       "outputs": [
         {
           "name": "",
@@ -210,196 +208,26 @@
       "constant": false,
       "inputs": [
         {
-          "name": "to",
-          "type": "address"
+          "name": "_owners",
+          "type": "address[]"
         },
         {
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "name": "data",
-          "type": "bytes"
-        },
-        {
-          "name": "operation",
+          "name": "_threshold",
           "type": "uint8"
         },
-        {
-          "name": "nonce",
-          "type": "uint256"
-        },
-        {
-          "name": "v",
-          "type": "uint8[]"
-        },
-        {
-          "name": "r",
-          "type": "bytes32[]"
-        },
-        {
-          "name": "s",
-          "type": "bytes32[]"
-        }
-      ],
-      "name": "confirmAndExecuteTransactionWithSignatures",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "transactionHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "isConfirmedByRequiredOwners",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "transactionHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "confirmTransaction",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "exception",
-          "type": "address"
-        }
-      ],
-      "name": "removeException",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_required",
-          "type": "uint8"
-        }
-      ],
-      "name": "changeRequired",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_condition",
-          "type": "address"
-        }
-      ],
-      "name": "changeCondition",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
         {
           "name": "to",
           "type": "address"
         },
         {
-          "name": "value",
-          "type": "uint256"
-        },
-        {
           "name": "data",
           "type": "bytes"
-        },
-        {
-          "name": "operation",
-          "type": "uint8"
-        },
-        {
-          "name": "nonce",
-          "type": "uint256"
         }
       ],
-      "name": "confirmAndExecuteTransaction",
+      "name": "setup",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "name": "data",
-          "type": "bytes"
-        },
-        {
-          "name": "operation",
-          "type": "uint8"
-        },
-        {
-          "name": "nonce",
-          "type": "uint256"
-        }
-      ],
-      "name": "executeTransaction",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "isException",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -417,48 +245,13 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "transactionHash",
-          "type": "bytes32"
-        },
-        {
-          "name": "v",
-          "type": "uint8[]"
-        },
-        {
-          "name": "r",
-          "type": "bytes32[]"
-        },
-        {
-          "name": "s",
-          "type": "bytes32[]"
-        }
-      ],
-      "name": "confirmTransactionWithSignatures",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
-      "inputs": [
-        {
-          "name": "",
-          "type": "bytes32"
-        },
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "isConfirmed",
+      "inputs": [],
+      "name": "NAME",
       "outputs": [
         {
           "name": "",
-          "type": "bool"
+          "type": "string"
         }
       ],
       "payable": false,
@@ -468,11 +261,11 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "condition",
+      "name": "nonce",
       "outputs": [
         {
           "name": "",
-          "type": "address"
+          "type": "uint256"
         }
       ],
       "payable": false,
@@ -483,62 +276,55 @@
       "constant": false,
       "inputs": [
         {
-          "name": "exception",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        },
+        {
+          "name": "operation",
+          "type": "uint8"
+        },
+        {
+          "name": "extension",
           "type": "address"
         }
       ],
-      "name": "addException",
+      "name": "executeExtension",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "constant": true,
+      "constant": false,
       "inputs": [
         {
-          "name": "transactionHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "getConfirmingOwners",
-      "outputs": [
-        {
-          "name": "confirmingOwners",
-          "type": "address[]"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "required",
-      "outputs": [
-        {
-          "name": "",
+          "name": "_threshold",
           "type": "uint8"
         }
       ],
+      "name": "changeThreshold",
+      "outputs": [],
       "payable": false,
-      "stateMutability": "view",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "constant": false,
       "inputs": [
         {
-          "name": "oldOwner",
-          "type": "address"
-        },
-        {
-          "name": "newOwner",
-          "type": "address"
+          "name": "extensionIndex",
+          "type": "uint256"
         }
       ],
-      "name": "replaceOwner",
+      "name": "removeExtension",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -549,10 +335,47 @@
       "inputs": [
         {
           "name": "",
-          "type": "bytes32"
+          "type": "uint256"
         }
       ],
-      "name": "isExecuted",
+      "name": "extensions",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "ownerIndex",
+          "type": "uint256"
+        },
+        {
+          "name": "_threshold",
+          "type": "uint8"
+        }
+      ],
+      "name": "removeOwner",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "isExtension",
       "outputs": [
         {
           "name": "",
@@ -564,17 +387,17 @@
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
+      "constant": true,
+      "inputs": [],
+      "name": "VERSION",
+      "outputs": [
         {
-          "name": "transactionHash",
-          "type": "bytes32"
+          "name": "",
+          "type": "string"
         }
       ],
-      "name": "revokeConfirmation",
-      "outputs": [],
       "payable": false,
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -584,8 +407,16 @@
           "type": "address[]"
         },
         {
-          "name": "_required",
+          "name": "_threshold",
           "type": "uint8"
+        },
+        {
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
         }
       ],
       "payable": false,
@@ -601,181 +432,12 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": true,
-          "name": "owner",
-          "type": "address"
-        },
-        {
           "indexed": false,
-          "name": "transactionHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "Confirmation",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "transactionHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "Revocation",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "name": "owner",
+          "name": "newContract",
           "type": "address"
         }
       ],
-      "name": "CallExecution",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "name": "owner",
-          "type": "address"
-        }
-      ],
-      "name": "DelegateCallExecution",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "createdContract",
-          "type": "address"
-        }
-      ],
-      "name": "CreateExecution",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "name": "sender",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "name": "Deposit",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "owner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnerAddition",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "owner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnerRemoval",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "oldOwner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnerReplacement",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "required",
-          "type": "uint256"
-        }
-      ],
-      "name": "RequirementChange",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "condition",
-          "type": "address"
-        }
-      ],
-      "name": "ConditionChange",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "exception",
-          "type": "address"
-        }
-      ],
-      "name": "ExceptionAddition",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "name": "exception",
-          "type": "address"
-        }
-      ],
-      "name": "ExceptionRemoval",
+      "name": "ContractCreation",
       "type": "event"
     }
   ]

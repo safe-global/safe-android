@@ -28,7 +28,6 @@ import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockGetString
-import pm.gnosis.tests.utils.mockGetStringWithArgs
 import java.math.BigInteger
 
 
@@ -56,15 +55,15 @@ class ViewTransactionViewModelTest {
     }
 
     private fun testTransactionInfo(info: TransactionRepository.TransactionStatus, estimateResult: Result<GasEstimate>,
-                                    expectedType: TransactionRepository.SubmitType?, vararg expectedResults: Result<Info>) {
-        given(transactionRepositoryMock.loadStatus(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(info))
+                                    expectingEstimate: Boolean, vararg expectedResults: Result<Info>) {
+        given(transactionRepositoryMock.loadStatus(TEST_SAFE)).willReturn(Single.just(info))
 
         val estimateReturn = when (estimateResult) {
             is DataResult -> Single.just(estimateResult.data)
             is ErrorResult -> Single.error(estimateResult.error)
         }
-        expectedType?.let {
-            given(transactionRepositoryMock.estimateFees(TEST_SAFE, TEST_TRANSACTION, it)).willReturn(estimateReturn)
+        if (expectingEstimate) {
+            given(transactionRepositoryMock.estimateFees(TEST_SAFE, TEST_TRANSACTION)).willReturn(estimateReturn)
         }
 
         val testObserver = TestObserver<Result<Info>>()
@@ -74,9 +73,9 @@ class ViewTransactionViewModelTest {
                 .assertValues(*expectedResults)
                 .assertComplete()
 
-        then(transactionRepositoryMock).should().loadStatus(TEST_SAFE, TEST_TRANSACTION)
-        expectedType?.let {
-            then(transactionRepositoryMock).should().estimateFees(TEST_SAFE, TEST_TRANSACTION, it)
+        then(transactionRepositoryMock).should().loadStatus(TEST_SAFE)
+        if (expectingEstimate) {
+            then(transactionRepositoryMock).should().estimateFees(TEST_SAFE, TEST_TRANSACTION)
         }
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         BDDMockito.reset(transactionRepositoryMock)
@@ -87,47 +86,33 @@ class ViewTransactionViewModelTest {
 
     @Test
     fun loadTransactionInfo() {
-        // Test confirm and execute
-        val confirmAndExecute = TransactionRepository.TransactionStatus(true, 1, 0, false, false)
-        testTransactionInfo(confirmAndExecute, DataResult(TEST_TRANSACTION_FEES),
-                TransactionRepository.SubmitType.CONFIRM_AND_EXECUTE, DataResult(buildInfo(confirmAndExecute)), DataResult(buildInfo(confirmAndExecute, TEST_TRANSACTION_FEES)))
-
-        // Test confirm
-        val confirm = TransactionRepository.TransactionStatus(true, 2, 0, false, false)
-        testTransactionInfo(confirm, DataResult(TEST_TRANSACTION_FEES),
-                TransactionRepository.SubmitType.CONFIRM, DataResult(buildInfo(confirm)), DataResult(buildInfo(confirm, TEST_TRANSACTION_FEES)))
 
         // Test execute
-        val execute = TransactionRepository.TransactionStatus(false, 2, 2, false, false)
-        testTransactionInfo(execute, DataResult(TEST_TRANSACTION_FEES),
-                TransactionRepository.SubmitType.EXECUTE, DataResult(buildInfo(execute)), DataResult(buildInfo(execute, TEST_TRANSACTION_FEES)))
-
-        // Test already executed
-        val executed = TransactionRepository.TransactionStatus(false, 2, 2, true, false)
-        testTransactionInfo(executed, DataResult(TEST_TRANSACTION_FEES),
-                null, DataResult(buildInfo(executed)), ErrorResult(SimpleLocalizedException(R.string.error_transaction_already_executed.toString())))
+        val execute = TransactionRepository.TransactionStatus(true, 1)
+        testTransactionInfo(execute, DataResult(TEST_TRANSACTION_FEES), true,
+                DataResult(buildInfo(execute)), DataResult(buildInfo(execute, TEST_TRANSACTION_FEES)))
 
         // Test not owner
-        val notOwner = TransactionRepository.TransactionStatus(false, 2, 0, false, true)
+        val notOwner = TransactionRepository.TransactionStatus(false, 1)
         testTransactionInfo(notOwner, DataResult(TEST_TRANSACTION_FEES),
-                null, DataResult(buildInfo(notOwner)), ErrorResult(SimpleLocalizedException(R.string.error_confirm_not_owner.toString())))
+                false, DataResult(buildInfo(notOwner)), ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
-        // Test already confirmed
-        val confirmed = TransactionRepository.TransactionStatus(true, 2, 0, false, true)
-        testTransactionInfo(confirmed, DataResult(TEST_TRANSACTION_FEES),
-                null, DataResult(buildInfo(confirmed)), ErrorResult(SimpleLocalizedException(R.string.error_transaction_already_confirmed.toString())))
+        // Test not owner with multiple confirms
+        val notOwnerMultipleConfirms = TransactionRepository.TransactionStatus(false, 2)
+        testTransactionInfo(notOwnerMultipleConfirms, DataResult(TEST_TRANSACTION_FEES),
+                false, DataResult(buildInfo(notOwnerMultipleConfirms)), ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
         // Test error loading estimate
-        val estimateError = TransactionRepository.TransactionStatus(true, 2, 2, false, true)
+        val estimateError = TransactionRepository.TransactionStatus(true, 1)
         val error = IllegalStateException()
         testTransactionInfo(estimateError, ErrorResult(error),
-                TransactionRepository.SubmitType.EXECUTE, DataResult(buildInfo(estimateError)), ErrorResult(error))
+                true, DataResult(buildInfo(estimateError)), ErrorResult(error))
     }
 
     @Test
     fun loadTransactionInfoError() {
         val error = IllegalStateException()
-        given(transactionRepositoryMock.loadStatus(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.error(error))
+        given(transactionRepositoryMock.loadStatus(TEST_SAFE)).willReturn(Single.error(error))
 
         val testObserver = TestObserver<Result<Info>>()
         viewModel.loadTransactionInfo(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
@@ -138,80 +123,64 @@ class ViewTransactionViewModelTest {
     }
 
     private fun testSubmitTransactionWithGas(info: TransactionRepository.TransactionStatus, submitError: Throwable?,
-                                             expectedType: TransactionRepository.SubmitType?, gasOverride: Wei?,
+                                             expectingSubmit: Boolean, gasOverride: Wei?,
                                              vararg expectedResults: Result<BigInteger>) {
 
-        given(transactionRepositoryMock.loadStatus(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(info))
+        given(transactionRepositoryMock.loadStatus(TEST_SAFE)).willReturn(Single.just(info))
 
-        val submitReturn = submitError?.let { Completable.error(it) } ?: Completable.complete()
-        expectedType?.let {
-            given(transactionRepositoryMock.submit(TEST_SAFE, TEST_TRANSACTION, it)).willReturn(submitReturn)
+        if (expectingSubmit) {
+            val submitReturn = submitError?.let { Completable.error(it) } ?: Completable.complete()
+            given(transactionRepositoryMock.submit(TEST_SAFE, TEST_TRANSACTION, gasOverride)).willReturn(submitReturn)
         }
 
         val testObserverDefaultGas = TestObserver<Result<BigInteger>>()
-        viewModel.submitTransaction(TEST_SAFE, TEST_TRANSACTION, null).subscribe(testObserverDefaultGas)
+        viewModel.submitTransaction(TEST_SAFE, TEST_TRANSACTION, gasOverride).subscribe(testObserverDefaultGas)
 
         testObserverDefaultGas.assertNoErrors()
                 .assertValues(*expectedResults)
                 .assertComplete()
 
-        then(transactionRepositoryMock).should().loadStatus(TEST_SAFE, TEST_TRANSACTION)
-        expectedType?.let {
-            then(transactionRepositoryMock).should().submit(TEST_SAFE, TEST_TRANSACTION, it, null)
+        then(transactionRepositoryMock).should().loadStatus(TEST_SAFE)
+        if (expectingSubmit) {
+            then(transactionRepositoryMock).should().submit(TEST_SAFE, TEST_TRANSACTION, gasOverride)
         }
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         BDDMockito.reset(transactionRepositoryMock)
     }
 
     private fun testSubmitTransaction(info: TransactionRepository.TransactionStatus, submitError: Throwable?,
-                                      expectedType: TransactionRepository.SubmitType?, vararg expectedResults: Result<BigInteger>) {
-        testSubmitTransactionWithGas(info, submitError, expectedType, null, *expectedResults)
-        testSubmitTransactionWithGas(info, submitError, expectedType, TEST_GAS_OVERRIDE, *expectedResults)
+                                      expectingSubmit: Boolean, vararg expectedResults: Result<BigInteger>) {
+        testSubmitTransactionWithGas(info, submitError, expectingSubmit, null, *expectedResults)
+        testSubmitTransactionWithGas(info, submitError, expectingSubmit, TEST_GAS_OVERRIDE, *expectedResults)
     }
 
     @Test
     fun submitTransaction() {
-        // Test confirm and execute
-        val confirmAndExecute = TransactionRepository.TransactionStatus(true, 1, 0, false, false)
-        testSubmitTransaction(confirmAndExecute, null,
-                TransactionRepository.SubmitType.CONFIRM_AND_EXECUTE, DataResult(TEST_SAFE))
-
-        // Test confirm
-        val confirm = TransactionRepository.TransactionStatus(true, 2, 0, false, false)
-        testSubmitTransaction(confirm, null,
-                TransactionRepository.SubmitType.CONFIRM, DataResult(TEST_SAFE))
 
         // Test execute
-        val execute = TransactionRepository.TransactionStatus(false, 2, 2, false, false)
-        testSubmitTransaction(execute, null,
-                TransactionRepository.SubmitType.EXECUTE, DataResult(TEST_SAFE))
-
-        // Test already executed
-        val executed = TransactionRepository.TransactionStatus(false, 2, 2, true, false)
-        testSubmitTransaction(executed, null,
-                null, ErrorResult(SimpleLocalizedException(R.string.error_transaction_already_executed.toString())))
+        val execute = TransactionRepository.TransactionStatus(true, 1)
+        testSubmitTransaction(execute, null, true, DataResult(TEST_SAFE))
 
         // Test not owner
-        val notOwner = TransactionRepository.TransactionStatus(false, 2, 0, false, true)
+        val notOwner = TransactionRepository.TransactionStatus(false, 1)
         testSubmitTransaction(notOwner, null,
-                null, ErrorResult(SimpleLocalizedException(R.string.error_confirm_not_owner.toString())))
+                false, ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
-        // Test already confirmed
-        val confirmed = TransactionRepository.TransactionStatus(true, 2, 0, false, true)
-        testSubmitTransaction(confirmed, null,
-                null, ErrorResult(SimpleLocalizedException(R.string.error_transaction_already_confirmed.toString())))
+        // Test not owner with multiple confirms
+        val notOwnerMultipleConfirms = TransactionRepository.TransactionStatus(false, 2)
+        testSubmitTransaction(notOwnerMultipleConfirms, null,
+                false, ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
         // Test error submitting transaction
-        val estimateError = TransactionRepository.TransactionStatus(true, 2, 2, false, true)
+        val estimateError = TransactionRepository.TransactionStatus(true, 1)
         val error = IllegalStateException()
-        testSubmitTransaction(estimateError, error,
-                TransactionRepository.SubmitType.EXECUTE, ErrorResult(error))
+        testSubmitTransaction(estimateError, error, true, ErrorResult(error))
     }
 
     @Test
     fun submitTransactionLoadInfoError() {
         val error = IllegalStateException()
-        given(transactionRepositoryMock.loadStatus(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.error(error))
+        given(transactionRepositoryMock.loadStatus(TEST_SAFE)).willReturn(Single.error(error))
 
         val testObserver = TestObserver<Result<BigInteger>>()
         viewModel.submitTransaction(TEST_SAFE, TEST_TRANSACTION, null).subscribe(testObserver)

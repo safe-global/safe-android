@@ -1,22 +1,22 @@
 {
-  "contract_name": "GnosisSafeWithDescriptionsFactory",
+  "contract_name": "ProxyFactory",
   "abi": [
     {
       "constant": false,
       "inputs": [
         {
-          "name": "owners",
-          "type": "address[]"
+          "name": "masterCopy",
+          "type": "address"
         },
         {
-          "name": "required",
-          "type": "uint8"
+          "name": "data",
+          "type": "bytes"
         }
       ],
-      "name": "create",
+      "name": "createProxy",
       "outputs": [
         {
-          "name": "gnosisSafe",
+          "name": "proxy",
           "type": "address"
         }
       ],
@@ -29,16 +29,11 @@
       "inputs": [
         {
           "indexed": false,
-          "name": "creator",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "gnosisSafe",
+          "name": "proxy",
           "type": "address"
         }
       ],
-      "name": "GnosisSafeWithDescriptionsCreation",
+      "name": "ProxyCreation",
       "type": "event"
     }
   ]

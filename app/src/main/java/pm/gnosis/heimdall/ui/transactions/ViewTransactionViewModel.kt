@@ -32,10 +32,10 @@ class ViewTransactionViewModel @Inject constructor(
     }
 
     override fun loadTransactionInfo(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Info>> {
-        return transactionRepository.loadStatus(safeAddress, transaction)
+        return transactionRepository.loadStatus(safeAddress)
                 .flatMapObservable { info ->
-                    info.toSubmitType()
-                            .flatMap { transactionRepository.estimateFees(safeAddress, transaction, it) }
+                    Single.fromCallable { info.check() }
+                            .flatMap { transactionRepository.estimateFees(safeAddress, transaction) }
                             .map { Info(safeAddress, transaction, info, it) }
                             .toObservable()
                             // First we emit the info without estimate, so the user will see
@@ -47,23 +47,20 @@ class ViewTransactionViewModel @Inject constructor(
     }
 
     override fun submitTransaction(safeAddress: BigInteger, transaction: Transaction, overrideGasPrice: Wei?): Single<Result<BigInteger>> {
-        return transactionRepository.loadStatus(safeAddress, transaction)
-                .flatMap { it.toSubmitType() }
-                .flatMapCompletable { transactionRepository.submit(safeAddress, transaction, it, overrideGasPrice) }
+        return transactionRepository.loadStatus(safeAddress)
+                .flatMapCompletable {
+                    it.check()
+                    transactionRepository.submit(safeAddress, transaction, overrideGasPrice)
+                }
                 .andThen(Single.just(safeAddress))
                 .onErrorResumeNext({ errorHandler.single(it) })
                 .mapToResult()
     }
 
-    private fun TransactionRepository.TransactionStatus.toSubmitType(): Single<TransactionRepository.SubmitType> =
-            Single.fromCallable {
-                when {
-                    isExecuted -> throw SimpleLocalizedException(context.getString(R.string.error_transaction_already_executed))
-                    confirmations >= requiredConfirmation -> TransactionRepository.SubmitType.EXECUTE
-                    confirmations + 1 >= requiredConfirmation && isOwner && !hasConfirmed -> TransactionRepository.SubmitType.CONFIRM_AND_EXECUTE
-                    !hasConfirmed && isOwner -> TransactionRepository.SubmitType.CONFIRM
-                    !isOwner -> throw SimpleLocalizedException(context.getString(R.string.error_confirm_not_owner))
-                    else -> throw SimpleLocalizedException(context.getString(R.string.error_transaction_already_confirmed)) // Last branch left is `hasConfirmed == true`
-                }
-            }
+    private fun TransactionRepository.TransactionStatus.check() {
+        when {
+            requiredConfirmation - (if (isOwner) 1 else 0) > 0 ->
+                throw SimpleLocalizedException(context.getString(R.string.error_not_enough_confirmations))
+        }
+    }
 }

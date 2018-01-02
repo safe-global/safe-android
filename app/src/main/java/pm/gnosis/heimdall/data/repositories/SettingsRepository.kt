@@ -13,9 +13,13 @@ interface SettingsRepository {
     fun setIpfsUrl(isHttps: Boolean, host: String?, port: Int?)
     fun getIpfsUrl(): UrlOverride?
 
-    fun getSafeFactoryAddress(): BigInteger
+    fun getProxyFactoryAddress(): BigInteger
     @Throws(InvalidAddressException::class)
-    fun setSafeFactoryAddress(address: String?)
+    fun setProxyFactoryAddress(address: String?)
+
+    fun getSafeMasterCopyAddress(): BigInteger
+    @Throws(InvalidAddressException::class)
+    fun setSafeMasterCopyAddress(address: String?)
 
     fun needsAuth(): Boolean
 

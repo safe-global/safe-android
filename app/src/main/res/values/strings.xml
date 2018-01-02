@@ -188,9 +188,7 @@
     <string name="generic_transaction_description">Once approved by all required signing devices, this transaction will be executed by sending the <b>Data</b> and <b>Value</b> to the address in the <b>To</b> field.</string>
     <string name="error_transaction_params">Please check your transaction parameters and try again!</string>
     <string name="x_of_x_confirmations">%s/%s</string>
-    <string name="error_transaction_already_executed">Transaction was already executed!</string>
-    <string name="error_confirm_not_owner">You cannot confirm a transaction for this safe!</string>
-    <string name="error_transaction_already_confirmed">You already confirmed this transaction!</string>
+    <string name="error_not_enough_confirmations">More confirmations are required</string>
     <string name="create_transaction">Create Transaction</string>
     <string name="select_token">Select token</string>
     <string name="max_balance">Max. balance</string>
