@@ -88,22 +88,22 @@ class ViewTransactionViewModelTest {
     fun loadTransactionInfo() {
 
         // Test execute
-        val execute = TransactionRepository.TransactionStatus(true, 1)
+        val execute = TransactionRepository.TransactionStatus(true, 1, BigInteger.ZERO)
         testTransactionInfo(execute, DataResult(TEST_TRANSACTION_FEES), true,
                 DataResult(buildInfo(execute)), DataResult(buildInfo(execute, TEST_TRANSACTION_FEES)))
 
         // Test not owner
-        val notOwner = TransactionRepository.TransactionStatus(false, 1)
+        val notOwner = TransactionRepository.TransactionStatus(false, 1, BigInteger.ZERO)
         testTransactionInfo(notOwner, DataResult(TEST_TRANSACTION_FEES),
                 false, DataResult(buildInfo(notOwner)), ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
         // Test not owner with multiple confirms
-        val notOwnerMultipleConfirms = TransactionRepository.TransactionStatus(false, 2)
+        val notOwnerMultipleConfirms = TransactionRepository.TransactionStatus(false, 2, BigInteger.ZERO)
         testTransactionInfo(notOwnerMultipleConfirms, DataResult(TEST_TRANSACTION_FEES),
                 false, DataResult(buildInfo(notOwnerMultipleConfirms)), ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
         // Test error loading estimate
-        val estimateError = TransactionRepository.TransactionStatus(true, 1)
+        val estimateError = TransactionRepository.TransactionStatus(true, 1, BigInteger.ZERO)
         val error = IllegalStateException()
         testTransactionInfo(estimateError, ErrorResult(error),
                 true, DataResult(buildInfo(estimateError)), ErrorResult(error))
@@ -158,21 +158,21 @@ class ViewTransactionViewModelTest {
     fun submitTransaction() {
 
         // Test execute
-        val execute = TransactionRepository.TransactionStatus(true, 1)
+        val execute = TransactionRepository.TransactionStatus(true, 1, BigInteger.ZERO)
         testSubmitTransaction(execute, null, true, DataResult(TEST_SAFE))
 
         // Test not owner
-        val notOwner = TransactionRepository.TransactionStatus(false, 1)
+        val notOwner = TransactionRepository.TransactionStatus(false, 1, BigInteger.ZERO)
         testSubmitTransaction(notOwner, null,
                 false, ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
         // Test not owner with multiple confirms
-        val notOwnerMultipleConfirms = TransactionRepository.TransactionStatus(false, 2)
+        val notOwnerMultipleConfirms = TransactionRepository.TransactionStatus(false, 2, BigInteger.ZERO)
         testSubmitTransaction(notOwnerMultipleConfirms, null,
                 false, ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
         // Test error submitting transaction
-        val estimateError = TransactionRepository.TransactionStatus(true, 1)
+        val estimateError = TransactionRepository.TransactionStatus(true, 1, BigInteger.ZERO)
         val error = IllegalStateException()
         testSubmitTransaction(estimateError, error, true, ErrorResult(error))
     }
@@ -219,7 +219,7 @@ class ViewTransactionViewModelTest {
 
     companion object {
         private val TEST_SAFE = BigInteger.ZERO
-        private val TEST_TRANSACTION = Transaction(BigInteger.ZERO)
+        private val TEST_TRANSACTION = Transaction(BigInteger.ZERO, nonce = BigInteger.TEN)
         private val TEST_TRANSACTION_FEES = GasEstimate(BigInteger.valueOf(1337), Wei(BigInteger.valueOf(23)))
         private val TEST_GAS_OVERRIDE = Wei(BigInteger.valueOf(7331))
     }
