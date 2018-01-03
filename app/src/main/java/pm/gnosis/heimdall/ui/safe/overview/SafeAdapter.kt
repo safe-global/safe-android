@@ -146,9 +146,7 @@ class SafeAdapter @Inject constructor(
             val pendingSafe = currentEntry ?: return
             disposables += viewModel.observeDeployedStatus(pendingSafe.hash.asTransactionHash())
                     .observeOn(AndroidSchedulers.mainThread())
-                    // Empty function for now, we should adjust the design and
-                    // maybe display a retry button on error
-                    .subscribe(Functions.emptyConsumer(), Consumer {
+                    .subscribeBy(onError = {
                         context.toast(R.string.error_deploying_safe)
                         Timber.e(it)
                     })

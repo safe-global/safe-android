@@ -66,12 +66,12 @@ class GnosisSafeTransactionRepository @Inject constructor(
                                 ),
                                 BulkRequest.SubRequest(TransactionCallParams(
                                         to = safeAddress.asEthereumAddressString(),
-                                        data = GnosisSafe.Threshold.encode()).callRequest(2),
+                                        data = GnosisSafe.Threshold.encode()).callRequest(1),
                                         { GnosisSafe.Threshold.decode(it.checkedResult()).param0.value.toInt() }
                                 ),
                                 BulkRequest.SubRequest(TransactionCallParams(
                                         to = safeAddress.asEthereumAddressString(),
-                                        data = GnosisSafe.Nonce.encode()).callRequest(3),
+                                        data = GnosisSafe.Nonce.encode()).callRequest(2),
                                         { GnosisSafe.Nonce.decode(it.checkedResult()).param0.value }
                                 )
                         )
