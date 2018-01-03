@@ -7,10 +7,9 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe
+import pm.gnosis.heimdall.GnosisSafe.Threshold
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
-import pm.gnosis.heimdall.GnosisSafe.Required
-import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory
-import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory.Events.GnosisSafeWithDescriptionsCreation
+import pm.gnosis.heimdall.ProxyFactory
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
@@ -34,6 +33,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.nullOnThrow
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
@@ -75,13 +75,17 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     private fun loadSafeDeployParams(devices: Set<BigInteger>, requiredConfirmations: Int): Single<SafeDeployParams> {
         return accountsRepository.loadActiveAccount()
-                .map {
-                    it to settingsRepository.getSafeFactoryAddress()
-                }
-                .flatMapObservable { (account, factoryAddress) ->
+                .flatMapObservable { account ->
+                    val factoryAddress = settingsRepository.getProxyFactoryAddress()
+                    val masterCopyAddress = settingsRepository.getSafeMasterCopyAddress()
                     val owners = SolidityBase.Vector((devices + account.address).map { Solidity.Address(it) })
                     val confirmations = Math.max(1, Math.min(requiredConfirmations, devices.size))
-                    val data = GnosisSafeWithDescriptionsFactory.Create.encode(owners, Solidity.UInt8(BigInteger.valueOf(confirmations.toLong())))
+                    val setupData = GnosisSafe.Setup.encode(
+                            // Safe owner info
+                            owners, Solidity.UInt8(BigInteger.valueOf(confirmations.toLong())),
+                            // Extension info -> not set for now
+                            Solidity.Address(BigInteger.ZERO), Solidity.Bytes(ByteArray(0)))
+                    val data = ProxyFactory.CreateProxy.encode(Solidity.Address(masterCopyAddress), Solidity.Bytes(setupData.hexStringToByteArray()))
                     ethereumJsonRpcRepository.getTransactionParameters(account.address, TransactionCallParams(to = factoryAddress.asEthereumAddressString(), data = data)).map {
                         SafeDeployParams(account, factoryAddress, data, it)
                     }
@@ -112,15 +116,25 @@ class DefaultGnosisSafeRepository @Inject constructor(
     override fun observeDeployStatus(hash: String): Observable<String> {
         return ethereumJsonRpcRepository.getTransactionReceipt(hash)
                 .flatMap {
-                    it.logs.forEach {
-                        decodeCreationEventOrNull(it)?.let {
-                            return@flatMap Observable.just(it.gnosissafe.value)
+                    if (it.status != null) {
+                        it.logs.forEach {
+                            decodeCreationEventOrNull(it)?.let {
+                                return@flatMap Observable.just(it.proxy.value)
+                            }
                         }
+                        Observable.error<BigInteger>(SafeDeploymentFailedException())
+                    } else {
+                        Observable.error<BigInteger>(IllegalStateException())
                     }
-                    Observable.error<BigInteger>(IllegalStateException())
                 }
                 .retryWhen {
-                    it.delay(20, TimeUnit.SECONDS)
+                    it.flatMap {
+                        if (it is SafeDeploymentFailedException) {
+                            Observable.error(it)
+                        } else {
+                            Observable.just(it).delay(20, TimeUnit.SECONDS)
+                        }
+                    }
                 }
                 .flatMapSingle { safeAddress ->
                     safeDao.loadPendingSafe(hash.hexAsBigInteger()).map { pendingSafe ->
@@ -132,10 +146,13 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     safeDao.insertSafe(GnosisSafeDb(it.first, it.second.name))
                     it.first.asEthereumAddressString()
                 }
+                .doOnError {
+                    safeDao.removePendingSafe(hash.hexAsBigInteger())
+                }
     }
 
     private fun decodeCreationEventOrNull(event: TransactionReceipt.Event) =
-            nullOnThrow { GnosisSafeWithDescriptionsCreation.decode(event.topics, event.data) }
+            nullOnThrow { ProxyFactory.Events.ProxyCreation.decode(event.topics, event.data) }
 
     override fun remove(address: BigInteger) =
             Completable.fromCallable {
@@ -157,8 +174,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
                                     method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
                                     params = arrayListOf(address.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
                                     { Wei(it.checkedResult().hexAsBigInteger()) }),
-                            SubRequest(TransactionCallParams(to = addressString, data = Required.encode()).callRequest(1),
-                                    { Required.decode(it.checkedResult()) }),
+                            SubRequest(TransactionCallParams(to = addressString, data = Threshold.encode()).callRequest(1),
+                                    { Threshold.decode(it.checkedResult()) }),
                             SubRequest(TransactionCallParams(to = addressString, data = GetOwners.encode()).callRequest(2),
                                     { GetOwners.decode(it.checkedResult()) }),
                             SubRequest(TransactionCallParams(to = addressString, data = GnosisSafe.IsOwner.encode(Solidity.Address(it.address))).callRequest(3),
@@ -180,10 +197,12 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     private class SafeInfoRequest(
             val balance: SubRequest<Wei>,
-            val requiredConfirmations: SubRequest<Required.Return>,
+            val requiredConfirmations: SubRequest<Threshold.Return>,
             val owners: SubRequest<GetOwners.Return>,
             val isOwner: SubRequest<GnosisSafe.IsOwner.Return>
     ) : BulkRequest(balance, requiredConfirmations, owners, isOwner)
 
     private data class SafeDeployParams(val account: Account, val factoryAddress: BigInteger, val data: String, val transactionParameters: TransactionParameters)
+
+    private class SafeDeploymentFailedException() : IllegalArgumentException()
 }

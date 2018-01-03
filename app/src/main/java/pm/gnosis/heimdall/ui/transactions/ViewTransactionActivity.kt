@@ -76,7 +76,7 @@ class ViewTransactionActivity : BaseTransactionActivity() {
                         .doOnNext { (info, gasPrice) ->
                             (info as? DataResult)?.let {
                                 cachedTransactionData = CachedTransactionData(it.data.selectedSafe, it.data.transaction, (gasPrice as? DataResult)?.data)
-                                startActivityForResult(UnlockActivity.createConformIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
+                                startActivityForResult(UnlockActivity.createConfirmIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
                             } ?: run {
                                 cachedTransactionData = null
                             }
@@ -160,10 +160,11 @@ class ViewTransactionActivity : BaseTransactionActivity() {
 
     private fun updateInfo(info: ViewTransactionContract.Info, estimatedFees: Wei?) {
         info.status.let {
-            val leftConfirmations = Math.max(0, it.requiredConfirmation - it.confirmations - if (it.isOwner) 1 else 0)
+            val availableConfirmations = if (it.isOwner) 1 else 0
+            val leftConfirmations = Math.max(0, it.requiredConfirmation - availableConfirmations)
             layout_view_transaction_confirmations_hint_text.text = getString(R.string.confirm_transaction_hint, leftConfirmations.toString())
-            layout_view_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, it.confirmations.toString(), it.requiredConfirmation.toString())
-            layout_view_transaction_submit_button.isEnabled = it.isOwner && !it.isExecuted
+            layout_view_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, availableConfirmations.toString(), it.requiredConfirmation.toString())
+            layout_view_transaction_submit_button.isEnabled = availableConfirmations >= it.requiredConfirmation
         }
         if (estimatedFees != null) {
             layout_view_transaction_transaction_fee.text = estimatedFees.displayString(this)

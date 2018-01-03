@@ -3,12 +3,15 @@ package pm.gnosis.heimdall.accounts.base.repositories
 import io.reactivex.Completable
 import io.reactivex.Single
 import pm.gnosis.heimdall.accounts.base.models.Account
+import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.models.Transaction
 
 interface AccountsRepository {
     fun loadActiveAccount(): Single<Account>
 
     fun signTransaction(transaction: Transaction): Single<String>
+
+    fun sign(data: ByteArray): Single<Signature>
 
     fun saveAccount(privateKey: ByteArray): Completable
 

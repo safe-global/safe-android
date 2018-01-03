@@ -8,6 +8,7 @@ import pm.gnosis.crypto.KeyGenerator
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.heimdall.accounts.base.exceptions.InvalidTransactionParams
 import pm.gnosis.heimdall.accounts.base.models.Account
+import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.accounts.data.db.AccountsDatabase
 import pm.gnosis.heimdall.accounts.repositories.impls.models.db.AccountDb
@@ -45,6 +46,11 @@ class KethereumAccountsRepository @Inject internal constructor(
         if (!transaction.signable()) return Single.error(InvalidTransactionParams())
         return keyPairFromActiveAccount()
                 .map { transaction.rlp(it.sign(transaction.hash())).toHexString().addHexPrefix() }
+    }
+
+    override fun sign(data: ByteArray): Single<Signature> {
+        return keyPairFromActiveAccount()
+                .map { it.sign(data).let { Signature(it.r, it.s, it.v) } }
     }
 
     private fun keyPairFromActiveAccount(): Single<KeyPair> {

@@ -17,7 +17,9 @@ import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.exceptions.InvalidAddressException
+import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class NetworkSettingsViewModelTest {
@@ -168,12 +170,24 @@ class NetworkSettingsViewModelTest {
     }
 
     @Test
-    fun updateSafeAddress() {
+    fun loadProxyFactoryAddress() {
+        given(repository.getProxyFactoryAddress()).willReturn(BigInteger.TEN)
+
+        val testObserver = TestObserver<String>()
+        viewModel.loadProxyFactoryAddress().subscribe(testObserver)
+
+        testObserver.assertNoErrors().assertValue(BigInteger.TEN.asEthereumAddressString()).assertComplete()
+        then(repository).should().getProxyFactoryAddress()
+        then(repository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun updateProxyFactoryAddress() {
         val testAddress = "0x0000000000000000000000000000000000000000"
         val testObserver = TestObserver<Result<String>>()
-        viewModel.updateSafeFactoryAddress(testAddress).subscribe(testObserver)
+        viewModel.updateProxyFactoryAddress(testAddress).subscribe(testObserver)
 
-        then(repository).should().setSafeFactoryAddress(testAddress)
+        then(repository).should().setProxyFactoryAddress(testAddress)
         testObserver.assertNoErrors().assertValue {
             it is DataResult && it.data == testAddress
         }.assertComplete()
@@ -181,17 +195,57 @@ class NetworkSettingsViewModelTest {
     }
 
     @Test
-    fun updateSafeAddressFails() {
-        given(repository.setSafeFactoryAddress(anyString())).willThrow(InvalidAddressException())
+    fun updatProxyFactoryAddressFails() {
+        given(repository.setProxyFactoryAddress(anyString())).willThrow(InvalidAddressException())
 
         val testAddress = "0x0000000000000000000000000000000000000000"
         val testObserver = TestObserver<Result<String>>()
-        viewModel.updateSafeFactoryAddress(testAddress).subscribe(testObserver)
+        viewModel.updateProxyFactoryAddress(testAddress).subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == R.string.invalid_ethereum_address.toString()
         }.assertTerminated()
-        then(repository).should().setSafeFactoryAddress(testAddress)
+        then(repository).should().setProxyFactoryAddress(testAddress)
+        then(repository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadSafeMasterCopyAddress() {
+        given(repository.getSafeMasterCopyAddress()).willReturn(BigInteger.ONE)
+
+        val testObserver = TestObserver<String>()
+        viewModel.loadSafeMasterCopyAddress().subscribe(testObserver)
+
+        testObserver.assertNoErrors().assertValue(BigInteger.ONE.asEthereumAddressString()).assertComplete()
+        then(repository).should().getSafeMasterCopyAddress()
+        then(repository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun updateSafeMasterCopyAddress() {
+        val testAddress = "0x0000000000000000000000000000000000000000"
+        val testObserver = TestObserver<Result<String>>()
+        viewModel.updateSafeMasterCopyAddress(testAddress).subscribe(testObserver)
+
+        then(repository).should().setSafeMasterCopyAddress(testAddress)
+        testObserver.assertNoErrors().assertValue {
+            it is DataResult && it.data == testAddress
+        }.assertComplete()
+        then(repository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun updateMasterCopyAddressFails() {
+        given(repository.setSafeMasterCopyAddress(anyString())).willThrow(InvalidAddressException())
+
+        val testAddress = "0x0000000000000000000000000000000000000000"
+        val testObserver = TestObserver<Result<String>>()
+        viewModel.updateSafeMasterCopyAddress(testAddress).subscribe(testObserver)
+
+        testObserver.assertNoErrors().assertValue {
+            it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == R.string.invalid_ethereum_address.toString()
+        }.assertTerminated()
+        then(repository).should().setSafeMasterCopyAddress(testAddress)
         then(repository).shouldHaveNoMoreInteractions()
     }
 }

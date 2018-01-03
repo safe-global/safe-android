@@ -62,15 +62,30 @@ class NetworkSettingsViewModel @Inject constructor(
         return SettingsRepository.UrlOverride(parsed.isHttps, parsed.host(), port)
     }
 
-    override fun loadSafeFactoryAddress(): Single<String> {
+    override fun loadProxyFactoryAddress(): Single<String> {
         return Single.fromCallable {
-            settingsRepository.getSafeFactoryAddress().asEthereumAddressString()
+            settingsRepository.getProxyFactoryAddress().asEthereumAddressString()
         }
     }
 
-    override fun updateSafeFactoryAddress(address: String): Single<Result<String>> {
+    override fun updateProxyFactoryAddress(address: String): Single<Result<String>> {
         return Single.fromCallable {
-            settingsRepository.setSafeFactoryAddress(address)
+            settingsRepository.setProxyFactoryAddress(address)
+            address
+        }
+                .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))) }
+                .mapToResult()
+    }
+
+    override fun loadSafeMasterCopyAddress(): Single<String> {
+        return Single.fromCallable {
+            settingsRepository.getSafeMasterCopyAddress().asEthereumAddressString()
+        }
+    }
+
+    override fun updateSafeMasterCopyAddress(address: String): Single<Result<String>> {
+        return Single.fromCallable {
+            settingsRepository.setSafeMasterCopyAddress(address)
             address
         }
                 .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))) }

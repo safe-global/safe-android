@@ -206,7 +206,7 @@ class UnlockActivity : BaseActivity() {
 
         fun createIntent(context: Context) = Intent(context, UnlockActivity::class.java).noHistory()
 
-        fun createConformIntent(context: Context) = createIntent(context).apply {
+        fun createConfirmIntent(context: Context) = createIntent(context).apply {
             putExtra(EXTRA_CONFIRM_CREDENTIALS, true)
         }
 

@@ -12,6 +12,8 @@ abstract class NetworkSettingsContract : ViewModel() {
     abstract fun loadRpcUrl(): Single<String>
     abstract fun updateRpcUrl(url: String): Single<Result<String>>
 
-    abstract fun loadSafeFactoryAddress(): Single<String>
-    abstract fun updateSafeFactoryAddress(address: String): Single<Result<String>>
+    abstract fun loadProxyFactoryAddress(): Single<String>
+    abstract fun updateProxyFactoryAddress(address: String): Single<Result<String>>
+    abstract fun loadSafeMasterCopyAddress(): Single<String>
+    abstract fun updateSafeMasterCopyAddress(address: String): Single<Result<String>>
 }
