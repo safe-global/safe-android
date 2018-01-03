@@ -76,7 +76,7 @@ class ViewTransactionActivity : BaseTransactionActivity() {
                         .doOnNext { (info, gasPrice) ->
                             (info as? DataResult)?.let {
                                 cachedTransactionData = CachedTransactionData(it.data.selectedSafe, it.data.transaction, (gasPrice as? DataResult)?.data)
-                                startActivityForResult(UnlockActivity.createConformIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
+                                startActivityForResult(UnlockActivity.createConfirmIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
                             } ?: run {
                                 cachedTransactionData = null
                             }
