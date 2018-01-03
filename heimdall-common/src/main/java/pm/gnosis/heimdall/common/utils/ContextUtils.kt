@@ -58,13 +58,24 @@ fun Context.shareExternalText(text: String, dialogTitle: String = "") {
 fun Context.shareExternalText(text: String, @StringRes stringId: Int) =
         shareExternalText(text, getString(stringId))
 
-fun Activity.startActivity(i: Intent, noHistory: Boolean = false) {
-    if (noHistory) {
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+fun Activity.startActivity(i: Intent, clearStack: Boolean = false) {
+    if (clearStack) {
+        i.clearStack()
     }
     startActivity(i)
     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+}
+
+fun Intent.clearStack(): Intent {
+    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+    return this
+}
+
+fun Intent.noHistory(): Intent {
+    addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+    addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+    return this
 }
 
 fun Context.showKeyboardForView(view: View) {

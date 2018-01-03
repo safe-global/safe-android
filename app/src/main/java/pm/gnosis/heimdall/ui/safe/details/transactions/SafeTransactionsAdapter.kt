@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -21,6 +22,7 @@ import pm.gnosis.heimdall.utils.formatAsLongDate
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @ForView
@@ -40,6 +42,7 @@ class SafeTransactionsAdapter @Inject constructor(
         private val disposables = CompositeDisposable()
 
         private var currentData: String? = null
+        private var cachedDetails: TransactionDetails? = null
 
         override fun bind(data: String, payloads: List<Any>?) {
             currentData = data
@@ -85,6 +88,7 @@ class SafeTransactionsAdapter @Inject constructor(
         }
 
         private fun updateDetails(details: TransactionDetails, transferInfo: SafeTransactionsContract.TransferInfo?) {
+            cachedDetails = details
             itemView.setOnClickListener {
                 transactionSelectionSubject.onNext(details.transaction)
             }
@@ -93,18 +97,28 @@ class SafeTransactionsAdapter @Inject constructor(
                 visibility = if (details.subject != null) View.VISIBLE else View.GONE
             }
             itemView.layout_safe_transactions_item_to.text = details.transaction.address.asEthereumAddressString()
-            itemView.layout_safe_transactions_item_timestamp.text = details.timestamp?.let { itemView.context.formatAsLongDate(it) }
             if (transferInfo != null) {
                 itemView.layout_safe_transactions_item_value.text = context.getString(R.string.outgoing_transaction_value, transferInfo.amount, transferInfo.symbol)
                 itemView.layout_safe_transactions_item_value.visibility = View.VISIBLE
             } else {
                 itemView.layout_safe_transactions_item_value.visibility = View.GONE
             }
+            updateTimestamp()
+            disposables += Observable.interval(60, TimeUnit.SECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ updateTimestamp() }, Timber::e)
+        }
+
+        private fun updateTimestamp() {
+            cachedDetails?.timestamp?.let {
+                itemView.layout_safe_transactions_item_timestamp.text = itemView.context.formatAsLongDate(it)
+            }
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
         fun stop() {
             disposables.clear()
+            cachedDetails = null
             itemView.setOnClickListener(null)
         }
 

@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.security.unlock
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -19,9 +20,7 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.showKeyboardForView
-import pm.gnosis.heimdall.common.utils.subscribeForResult
-import pm.gnosis.heimdall.common.utils.vibrate
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.security.FingerprintUnlockFailed
 import pm.gnosis.heimdall.security.FingerprintUnlockHelp
@@ -45,12 +44,15 @@ class UnlockActivity : BaseActivity() {
 
     private var fingerPrintDisposable: Disposable? = null
 
+    private var forceConfirmCredentials: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_unlock)
 
+        forceConfirmCredentials = intent?.getBooleanExtra(EXTRA_CONFIRM_CREDENTIALS, false) ?: false
         if (intent?.getBooleanExtra(EXTRA_CLOSE_APP, false) == true) {
             finish()
         }
@@ -77,7 +79,7 @@ class UnlockActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = ::onFingerprintResult, onError = ::onFingerprintError)
 
-        disposables += viewModel.checkState()
+        disposables += viewModel.checkState(forceConfirmCredentials)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = ::onState, onError = ::onStateCheckError)
 
@@ -133,7 +135,10 @@ class UnlockActivity : BaseActivity() {
     private fun onState(state: UnlockContract.State) {
         when (state) {
             UnlockContract.State.UNINITIALIZED -> startActivity(createIntentToCloseApp(this))
-            UnlockContract.State.UNLOCKED -> animateHandle(handleRotation + 360f, { finish() })
+            UnlockContract.State.UNLOCKED -> animateHandle(handleRotation + 360f, {
+                setResult(Activity.RESULT_OK)
+                finish()
+            })
             UnlockContract.State.LOCKED -> {
             }
         }
@@ -157,7 +162,12 @@ class UnlockActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        startActivity(UnlockActivity.createIntentToCloseApp(this))
+        if (forceConfirmCredentials) {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        } else {
+            startActivity(UnlockActivity.createIntentToCloseApp(this))
+        }
     }
 
     private fun onStateCheckError(throwable: Throwable) {
@@ -192,8 +202,13 @@ class UnlockActivity : BaseActivity() {
 
     companion object {
         private const val EXTRA_CLOSE_APP = "extra.boolean.close_app"
+        private const val EXTRA_CONFIRM_CREDENTIALS = "extra.boolean.confirm_credentials"
 
-        fun createIntent(context: Context) = Intent(context, UnlockActivity::class.java)
+        fun createIntent(context: Context) = Intent(context, UnlockActivity::class.java).noHistory()
+
+        fun createConformIntent(context: Context) = createIntent(context).apply {
+            putExtra(EXTRA_CONFIRM_CREDENTIALS, true)
+        }
 
         private fun createIntentToCloseApp(context: Context): Intent {
             val intent = Intent(context, UnlockActivity::class.java)

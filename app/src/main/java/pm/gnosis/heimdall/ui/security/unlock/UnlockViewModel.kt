@@ -22,8 +22,8 @@ class UnlockViewModel @Inject constructor(
             encryptionManager.observeFingerprintForUnlock()
                     .mapToResult()
 
-    override fun checkState() =
-            encryptionManager.unlocked()
+    override fun checkState(forceConfirmCredentials: Boolean) =
+            (if (forceConfirmCredentials) Single.just(false) else encryptionManager.unlocked())
                     .flatMap({
                         if (it) Single.just(State.UNLOCKED)
                         else
