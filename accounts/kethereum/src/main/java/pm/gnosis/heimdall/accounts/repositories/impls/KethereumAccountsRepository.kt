@@ -23,7 +23,9 @@ import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asBigInteger
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.toHexString
+import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -52,6 +54,11 @@ class KethereumAccountsRepository @Inject internal constructor(
         return keyPairFromActiveAccount()
                 .map { it.sign(data).let { Signature(it.r, it.s, it.v) } }
     }
+
+    override fun recover(data: ByteArray, signature: Signature): Single<BigInteger> =
+            Single.fromCallable {
+                KeyPair.signatureToKey(data, signature.v, signature.r, signature.s).address.asBigInteger()
+            }
 
     private fun keyPairFromActiveAccount(): Single<KeyPair> {
         return accountsDatabase.accountsDao().observeAccounts()

@@ -128,19 +128,24 @@ class KethereumAccountsRepositoryTest {
     }
 
     @Test
-    fun signMessage() {
+    fun signAndRecover() {
         val privateKey = "0x8678adf78db8d1c8a40028795077b3463ca06a743ca37dfd28a5b4442c27b457"
         val encryptedKey = EncryptedByteArray.create(encryptionManager, privateKey.hexStringToByteArray())
         val account = AccountDb(encryptedKey)
         given(accountsDao.observeAccounts()).willReturn(Single.just(account))
         val testObserver = TestObserver<Signature>()
 
-        repository.sign("9b8bc77908c0b0ebe93e897e43f594b811f5d7130d86a5708403ddb417dc111b".hexStringToByteArray()).subscribe(testObserver)
+        val data = "9b8bc77908c0b0ebe93e897e43f594b811f5d7130d86a5708403ddb417dc111b".hexStringToByteArray()
+        repository.sign(data).subscribe(testObserver)
 
         val expectedSignature = Signature(
                 "6c65af8fabdf55b026300ccb4cf1c19f27592a81c78aba86abe83409563d9c13".hexAsBigInteger(),
                 "256a9a9e87604e89f083983f7449f58a456ac7929265f7114d585538fe226e1f".hexAsBigInteger(), 27)
         testObserver.assertResult(expectedSignature)
+
+        val recoverObserver = TestObserver<BigInteger>()
+        repository.recover(data, expectedSignature).subscribe(recoverObserver)
+        recoverObserver.assertResult("a5056c8efadb5d6a1a6eb0176615692b6e648313".hexAsBigInteger())
     }
 
     companion object {
