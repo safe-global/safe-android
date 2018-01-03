@@ -247,4 +247,6 @@
     <string name="slow">Slow</string>
     <string name="normal">Normal</string>
     <string name="fast">Fast</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_failed">Failed</string>
 </resources>

@@ -4,6 +4,7 @@ import java.math.BigInteger
 
 
 data class TransactionReceipt(
+        val status: BigInteger?,
         val transactionHash: String,
         val contractAddress: String?,
         val logs: List<Event>

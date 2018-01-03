@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
 import pm.gnosis.heimdall.utils.scanToAdapterData
@@ -27,6 +28,7 @@ import javax.inject.Inject
 class SafeTransactionsViewModel @Inject constructor(
         @ApplicationContext private val context: Context,
         private val safeRepository: GnosisSafeRepository,
+        private val safeTransactionsRepository: GnosisSafeTransactionRepository,
         private val tokenRepository: TokenRepository,
         private val transactionDetailsRepository: TransactionDetailsRepository
 ) : SafeTransactionsContract() {
@@ -66,8 +68,11 @@ class SafeTransactionsViewModel @Inject constructor(
                         }
             } ?: Single.error(IllegalStateException())
 
+    override fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus> =
+            safeTransactionsRepository.observePublishStatus(id)
+
     override fun transactionSelected(it: Transaction): Single<Intent> =
-        Single.just(ViewTransactionActivity.createIntent(context, address, it))
+            Single.just(ViewTransactionActivity.createIntent(context, address, it))
 
     private fun loadTokenValue(token: BigInteger, value: BigInteger) =
             tokenRepository.observeToken(token)

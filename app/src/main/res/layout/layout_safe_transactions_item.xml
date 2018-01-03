@@ -7,28 +7,45 @@
     android:background="@drawable/selectable_background"
     android:padding="16dp">
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/layout_safe_transactions_item_value"
-        style="@style/BoldContent"
+
+    <LinearLayout
+        android:id="@+id/layout_safe_transactions_item_status_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:background="@drawable/transaction_amount_background"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:textColor="@color/white"
-        app:backgroundTint="@color/out_transaction"
-        tools:text="300 ETH" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/layout_safe_transactions_item_status"
+            style="@style/SpacedCapsTextSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            tools:text="pending" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/layout_safe_transactions_item_value"
+            style="@style/BoldContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/transaction_amount_background"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/out_transaction"
+            tools:text="300 ETH" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_safe_transactions_item_info_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/layout_safe_transactions_item_value"
+        android:layout_toLeftOf="@id/layout_safe_transactions_item_status_container"
         android:gravity="center_vertical"
         android:orientation="vertical">
 

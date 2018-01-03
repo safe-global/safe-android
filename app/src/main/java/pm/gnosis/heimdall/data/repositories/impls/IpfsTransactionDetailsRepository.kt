@@ -64,7 +64,7 @@ class IpfsTransactionDetailsRepository @Inject constructor(
                 .onErrorResumeNext { _: Throwable ->
                     loadDescriptionFromIpfs(id, address, transactionHash)
                             .map {
-                                descriptionsDao.insertDescription(it.toDb(id))
+                                descriptionsDao.insert(it.toDb(id))
                                 it
                             }
                 }

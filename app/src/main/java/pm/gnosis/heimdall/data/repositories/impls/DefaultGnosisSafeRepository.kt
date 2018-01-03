@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory
 import pm.gnosis.heimdall.GnosisSafeWithDescriptionsFactory.Events.GnosisSafeWithDescriptionsCreation
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.common.utils.getSharedObservable
 import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
@@ -37,7 +36,6 @@ import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.nullOnThrow
 import java.math.BigInteger
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -52,8 +50,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
     private val descriptionsDao = gnosisAuthenticatorDb.descriptionsDao()
-
-    private val deployStatusRequests = ConcurrentHashMap<String, Observable<String>>()
 
     override fun observeSafes() =
             Flowable.combineLatest(safeDao.observePendingSafes(), safeDao.observeSafes(),
@@ -114,7 +110,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
     }
 
     override fun observeDeployStatus(hash: String): Observable<String> {
-        return deployStatusRequests.getSharedObservable(hash, ethereumJsonRpcRepository.getTransactionReceipt(hash)
+        return ethereumJsonRpcRepository.getTransactionReceipt(hash)
                 .flatMap {
                     it.logs.forEach {
                         decodeCreationEventOrNull(it)?.let {
@@ -124,8 +120,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     Observable.error<BigInteger>(IllegalStateException())
                 }
                 .retryWhen {
-                    it.zipWith(Observable.range(1, 3), BiFunction { _: Throwable, i: Int -> i })
-                            .flatMap { Observable.timer(5, TimeUnit.SECONDS) }
+                    it.delay(20, TimeUnit.SECONDS)
                 }
                 .flatMapSingle { safeAddress ->
                     safeDao.loadPendingSafe(hash.hexAsBigInteger()).map { pendingSafe ->
@@ -137,7 +132,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     safeDao.insertSafe(GnosisSafeDb(it.first, it.second.name))
                     it.first.asEthereumAddressString()
                 }
-        )
     }
 
     private fun decodeCreationEventOrNull(event: TransactionReceipt.Event) =

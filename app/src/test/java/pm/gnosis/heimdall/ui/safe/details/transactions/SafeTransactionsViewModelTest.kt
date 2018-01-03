@@ -3,7 +3,9 @@ package pm.gnosis.heimdall.ui.safe.details.transactions
 import android.content.Context
 import android.content.Intent
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.subscribers.TestSubscriber
@@ -20,6 +22,8 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
+import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.models.Transaction
@@ -43,6 +47,9 @@ class SafeTransactionsViewModelTest {
     private lateinit var safeRepository: GnosisSafeRepository
 
     @Mock
+    private lateinit var safeTransactionRepository: GnosisSafeTransactionRepository
+
+    @Mock
     private lateinit var detailsRepository: TransactionDetailsRepository
 
     @Mock
@@ -55,7 +62,7 @@ class SafeTransactionsViewModelTest {
     @Before
     fun setup() {
         context.mockGetString()
-        viewModel = SafeTransactionsViewModel(context, safeRepository, tokenRepository, detailsRepository)
+        viewModel = SafeTransactionsViewModel(context, safeRepository, safeTransactionRepository, tokenRepository, detailsRepository)
     }
 
     @Test
@@ -276,6 +283,36 @@ class SafeTransactionsViewModelTest {
         then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeTransactionStatus() {
+        val testId = "some_transaction_id"
+        given(safeTransactionRepository.observePublishStatus(MockUtils.any())).willReturn(Observable.just(PublishStatus.SUCCESS))
+
+        val observer = TestObserver<PublishStatus>()
+        viewModel.observeTransactionStatus(testId)
+                .subscribe(observer)
+
+        observer.assertResult(PublishStatus.SUCCESS)
+        then(safeTransactionRepository).should().observePublishStatus(testId)
+        then(safeTransactionRepository).shouldHaveNoMoreInteractions()
+        then(detailsRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeTransactionStatusError() {
+        val testId = "some_transaction_id"
+        given(safeTransactionRepository.observePublishStatus(MockUtils.any())).willReturn(Observable.error(IllegalStateException()))
+
+        val observer = TestObserver<PublishStatus>()
+        viewModel.observeTransactionStatus(testId)
+                .subscribe(observer)
+
+        observer.assertFailure(Predicate{ it is IllegalStateException })
+        then(safeTransactionRepository).should().observePublishStatus(testId)
+        then(safeTransactionRepository).shouldHaveNoMoreInteractions()
+        then(detailsRepository).shouldHaveNoMoreInteractions()
     }
 
     private fun generateList(from: Int = 0, to: Int = 0, step: Int = 1): List<String> {
