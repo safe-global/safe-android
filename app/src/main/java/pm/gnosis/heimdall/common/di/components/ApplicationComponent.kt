@@ -21,6 +21,9 @@ import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.di.SecurityBindingsModule
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.mnemonic.di.Bip39BindingModule
+import pm.gnosis.ticker.data.repositories.TickerRepository
+import pm.gnosis.ticker.di.TickerBindingModule
+import pm.gnosis.ticker.di.TickerModule
 import javax.inject.Singleton
 
 @Singleton
@@ -32,6 +35,8 @@ import javax.inject.Singleton
     Bip39BindingModule::class,
     CoreModule::class,
     InterceptorsModule::class,
+    TickerBindingModule::class,
+    TickerModule::class,
     SecurityBindingsModule::class,
     ViewModelFactoryModule::class
 ])
@@ -49,6 +54,7 @@ interface ApplicationComponent {
     fun accountsRepository(): AccountsRepository
     fun addressBookRepository(): AddressBookRepository
     fun safeRepository(): GnosisSafeRepository
+    fun tickerRepository(): TickerRepository
     fun tokenRepository(): TokenRepository
     fun transactionDetailRepository(): TransactionDetailsRepository
 

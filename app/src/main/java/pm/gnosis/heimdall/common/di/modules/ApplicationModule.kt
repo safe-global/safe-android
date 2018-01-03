@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.remote.EthGasStationApi
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.IpfsApi
+import pm.gnosis.ticker.data.remote.TickerAdapter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -25,7 +26,7 @@ import javax.inject.Singleton
 @Module
 class ApplicationModule {
     companion object {
-        const val REST_CLIENT = "restClient"
+        const val INFURA_REST_CLIENT = "infuraRestClient"
     }
 
     @Provides
@@ -34,12 +35,13 @@ class ApplicationModule {
         return Moshi.Builder()
                 .add(WeiAdapter())
                 .add(HexNumberAdapter())
+                .add(TickerAdapter())
                 .build()
     }
 
     @Provides
     @Singleton
-    fun providesIpfsApi(moshi: Moshi, @Named(REST_CLIENT) client: OkHttpClient): IpfsApi {
+    fun providesIpfsApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): IpfsApi {
         val retrofit = Retrofit.Builder()
                 .client(client)
                 .baseUrl(IpfsApi.BASE_URL)
@@ -51,7 +53,7 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(REST_CLIENT) client: OkHttpClient)
+    fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient)
             : EthereumJsonRpcApi {
         val retrofit = Retrofit.Builder()
                 .client(client)
@@ -64,7 +66,7 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun providesEthGasStationApi(moshi: Moshi, @Named(REST_CLIENT) client: OkHttpClient): EthGasStationApi {
+    fun providesEthGasStationApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): EthGasStationApi {
         val retrofit = Retrofit.Builder()
                 .client(client)
                 .baseUrl(EthGasStationApi.BASE_URL)
@@ -76,17 +78,22 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    @Named(REST_CLIENT)
-    fun providesOkHttpClient(@Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>): OkHttpClient {
-        return OkHttpClient.Builder().apply {
-            connectTimeout(10, TimeUnit.SECONDS)
-            readTimeout(10, TimeUnit.SECONDS)
-            writeTimeout(10, TimeUnit.SECONDS)
+    @Named(INFURA_REST_CLIENT)
+    fun providesInfuraOkHttpClient(okHttpClient: OkHttpClient, @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>): OkHttpClient {
+        return okHttpClient.newBuilder().apply {
             interceptors.forEach {
                 addInterceptor(it)
             }
         }.build()
     }
+
+    @Provides
+    @Singleton
+    fun providesOkHttpClient(): OkHttpClient = OkHttpClient.Builder().apply {
+        connectTimeout(10, TimeUnit.SECONDS)
+        readTimeout(10, TimeUnit.SECONDS)
+        writeTimeout(10, TimeUnit.SECONDS)
+    }.build()
 
     @Provides
     @Singleton

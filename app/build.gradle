@@ -88,6 +88,7 @@ dependencies {
     implementation project(':heimdall-common')
     implementation project(':crypto')
     implementation project(':mnemonic')
+    implementation project(':ticker')
     implementation project(':security')
     implementation project(':utils')
 

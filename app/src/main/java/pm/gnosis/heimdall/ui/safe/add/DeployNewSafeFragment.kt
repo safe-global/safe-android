@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_deploy_new_safe.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
@@ -17,8 +18,10 @@ import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Wei
-import pm.gnosis.utils.asDecimalString
+import pm.gnosis.ticker.data.repositories.models.Currency
+import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
+import java.math.BigDecimal
 import javax.inject.Inject
 
 
@@ -26,6 +29,8 @@ class DeployNewSafeFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModel: AddSafeContract
+
+    private val onEstimateSubject = PublishSubject.create<Wei>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             inflater.inflate(R.layout.layout_deploy_new_safe, container, false)!!
@@ -44,6 +49,11 @@ class DeployNewSafeFragment : BaseFragment() {
         disposables += viewModel.observeEstimate()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::updateEstimate, Timber::e)
+
+        disposables += onEstimateSubject
+                .flatMapSingle { viewModel.loadFiatConversion(it) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeForResult(onNext = ::onFiat, onError = ::onFiatError)
     }
 
     private fun toggleDeploying(inProgress: Boolean) {
@@ -62,6 +72,20 @@ class DeployNewSafeFragment : BaseFragment() {
 
     private fun updateEstimate(estimate: Wei) {
         layout_deploy_new_safe_transaction_fee.text = estimate.displayString(context!!)
+        onEstimateSubject.onNext(estimate)
+    }
+
+    private fun onFiat(fiat: Pair<BigDecimal, Currency>) {
+        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.VISIBLE
+        layout_deploy_new_safe_transaction_fee_fiat.text =
+                getString(R.string.fiat_approximation,
+                        fiat.first.stringWithNoTrailingZeroes(),
+                        fiat.second.getFiatSymbol())
+    }
+
+    private fun onFiatError(throwable: Throwable) {
+        Timber.e(throwable)
+        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.GONE
     }
 
     override fun inject(component: ApplicationComponent) {

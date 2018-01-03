@@ -10,13 +10,15 @@ import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
+import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import javax.inject.Inject
 
 
 class AddSafeViewModel @Inject constructor(
         @ApplicationContext private val context: Context,
-        private val repository: GnosisSafeRepository
+        private val repository: GnosisSafeRepository,
+        private val tickerRepository: TickerRepository
 ) : AddSafeContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
@@ -50,6 +52,8 @@ class AddSafeViewModel @Inject constructor(
     override fun observeEstimate(): Observable<Wei> {
         return repository.estimateDeployCosts(emptySet(), 1).toObservable()
     }
+
+    override fun loadFiatConversion(wei: Wei) = tickerRepository.convertToFiat(wei).mapToResult()
 
     private fun checkName(name: String) {
         if (name.isBlank()) throw SimpleLocalizedException(context.getString(R.string.error_blank_name))

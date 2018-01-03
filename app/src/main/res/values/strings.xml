@@ -250,4 +250,5 @@
     <string name="please_confirm_credentials">Please confirm your credentials to submit the transaction.</string>
     <string name="just_a_moment_ago">Just a moment ago</string>
     <string name="error_deploying_safe">There was an error deploying the safe. Therefore it was removed!</string>
+    <string name="fiat_approximation">≈ %1s%2s</string>
 </resources>

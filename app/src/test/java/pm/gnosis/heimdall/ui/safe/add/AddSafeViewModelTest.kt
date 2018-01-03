@@ -19,41 +19,47 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.MockUtils.any
 import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.ticker.data.repositories.TickerRepository
+import pm.gnosis.ticker.data.repositories.models.Currency
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class AddSafeViewModelTest {
-
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var context: Context
+    private lateinit var context: Context
 
     @Mock
-    lateinit var repository: GnosisSafeRepository
+    private lateinit var safeRepositoryMock: GnosisSafeRepository
+
+    @Mock
+    private lateinit var tickerRepositoryMock: TickerRepository
 
     private lateinit var viewModel: AddSafeViewModel
 
     @Before
     fun setUp() {
         context.mockGetString()
-        viewModel = AddSafeViewModel(context, repository)
+        viewModel = AddSafeViewModel(context, safeRepositoryMock, tickerRepositoryMock)
     }
 
     @Test
     fun addExistingSafe() {
         val testObserver = TestObserver.create<Result<Unit>>()
-        given(repository.add(any(), anyString())).willReturn(Completable.complete())
+        given(safeRepositoryMock.add(any(), anyString())).willReturn(Completable.complete())
 
         viewModel.addExistingSafe("test", "0x0").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue(DataResult(Unit))
-        then(repository).should().add(BigInteger.ZERO, "test")
-        then(repository).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).should().add(BigInteger.ZERO, "test")
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -64,7 +70,7 @@ class AddSafeViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error is SimpleLocalizedException && it.error.message == R.string.error_blank_name.toString()
         }
-        then(repository).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -75,34 +81,34 @@ class AddSafeViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error is SimpleLocalizedException && it.error.message == R.string.invalid_ethereum_address.toString()
         }
-        then(repository).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun addExistingRepoError() {
         val testObserver = TestObserver.create<Result<Unit>>()
         val error = IllegalStateException()
-        given(repository.add(any(), anyString())).willReturn(Completable.error(error))
+        given(safeRepositoryMock.add(any(), anyString())).willReturn(Completable.error(error))
 
         viewModel.addExistingSafe("test", "0x0").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error == error
         }
-        then(repository).should().add(BigInteger.ZERO, "test")
-        then(repository).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).should().add(BigInteger.ZERO, "test")
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun deployNewSafe() {
         val testObserver = TestObserver.create<Result<Unit>>()
-        given(repository.deploy(any(), any(), anyInt())).willReturn(Completable.complete())
+        given(safeRepositoryMock.deploy(any(), any(), anyInt())).willReturn(Completable.complete())
 
         viewModel.deployNewSafe("test").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue(DataResult(Unit))
-        then(repository).should().deploy("test", emptySet(), 1)
-        then(repository).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).should().deploy("test", emptySet(), 1)
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -113,46 +119,73 @@ class AddSafeViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error is SimpleLocalizedException && it.error.message == R.string.error_blank_name.toString()
         }
-        then(repository).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun deployNewSafeRepoError() {
         val testObserver = TestObserver.create<Result<Unit>>()
         val error = IllegalStateException()
-        given(repository.deploy(any(), any(), anyInt())).willReturn(Completable.error(error))
+        given(safeRepositoryMock.deploy(any(), any(), anyInt())).willReturn(Completable.error(error))
 
         viewModel.deployNewSafe("test").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error == error
         }
-        then(repository).should().deploy("test", emptySet(), 1)
-        then(repository).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).should().deploy("test", emptySet(), 1)
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeEstimate() {
         val testObserver = TestObserver.create<Wei>()
         val costs = Wei(BigInteger.TEN)
-        given(repository.estimateDeployCosts(any(), anyInt())).willReturn(Single.just(costs))
+        given(safeRepositoryMock.estimateDeployCosts(any(), anyInt())).willReturn(Single.just(costs))
         viewModel.observeEstimate().subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue(costs).assertTerminated()
-        then(repository).should().estimateDeployCosts(emptySet(), 1)
-        then(repository).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).should().estimateDeployCosts(emptySet(), 1)
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeEstimateError() {
         val testObserver = TestObserver.create<Wei>()
         val error = IllegalStateException()
-        given(repository.estimateDeployCosts(any(), anyInt())).willReturn(Single.error(error))
+        given(safeRepositoryMock.estimateDeployCosts(any(), anyInt())).willReturn(Single.error(error))
         viewModel.observeEstimate().subscribe(testObserver)
 
         testObserver.assertError(error).assertNoValues().assertTerminated()
-        then(repository).should().estimateDeployCosts(emptySet(), 1)
-        then(repository).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).should().estimateDeployCosts(emptySet(), 1)
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
+    @Test
+    fun loadFiatConversion() {
+        val wei = Wei(BigInteger.ONE)
+        val testObserver = TestObserver.create<Result<Pair<BigDecimal, Currency>>>()
+        val result = BigDecimal.ONE to Currency("testId", "testName", "testSymbol", 0, 0, BigDecimal.ZERO, Currency.FiatTicker.USD)
+        given(tickerRepositoryMock.convertToFiat(MockUtils.any<Wei>(), MockUtils.any())).willReturn(Single.just(result))
+
+        viewModel.loadFiatConversion(wei).subscribe(testObserver)
+
+        then(tickerRepositoryMock).should().convertToFiat(wei)
+        then(tickerRepositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(DataResult(result))
+    }
+
+    @Test
+    fun loadFiatConversionError() {
+        val wei = Wei(BigInteger.ONE)
+        val exception = Exception()
+        val testObserver = TestObserver.create<Result<Pair<BigDecimal, Currency>>>()
+        given(tickerRepositoryMock.convertToFiat(MockUtils.any<Wei>(), MockUtils.any())).willReturn(Single.error(exception))
+
+        viewModel.loadFiatConversion(wei).subscribe(testObserver)
+
+        then(tickerRepositoryMock).should().convertToFiat(wei)
+        then(tickerRepositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(ErrorResult(exception))
+    }
 }

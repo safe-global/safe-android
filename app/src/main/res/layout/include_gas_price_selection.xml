@@ -37,6 +37,16 @@
             android:layout_height="wrap_content"
             android:textSize="12sp"
             tools:text="30 GWei" />
+
+        <TextView
+            android:id="@+id/include_gas_price_selection_slow_costs_fiat"
+            style="@style/SafeSmallInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:text="≈ 42$"
+            tools:visibility="visible" />
     </LinearLayout>
 
     <LinearLayout
@@ -69,6 +79,16 @@
             android:layout_height="wrap_content"
             android:textSize="12sp"
             tools:text="37 GWei" />
+
+        <TextView
+            android:id="@+id/include_gas_price_selection_normal_costs_fiat"
+            style="@style/SafeSmallInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:text="≈ 42$"
+            tools:visibility="visible" />
     </LinearLayout>
 
     <LinearLayout
@@ -101,5 +121,15 @@
             android:layout_height="wrap_content"
             android:textSize="12sp"
             tools:text="40 GWei" />
+
+        <TextView
+            android:id="@+id/include_gas_price_selection_fast_costs_fiat"
+            style="@style/SafeSmallInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:text="≈ 42$"
+            tools:visibility="visible" />
     </LinearLayout>
 </LinearLayout>

@@ -25,6 +25,7 @@ import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.tests.utils.mockGetStringWithArgs
+import pm.gnosis.ticker.data.repositories.TickerRepository
 import java.math.BigDecimal
 import java.net.UnknownHostException
 
@@ -39,6 +40,10 @@ class EtherGasStationGasPriceHelperTest {
 
     @Mock
     lateinit var ethGasStationApi: EthGasStationApi
+
+    @Mock
+    lateinit var tickerRepositoryMock: TickerRepository
+
     @Mock
     lateinit var slowCostsMock: TextView
 
@@ -95,7 +100,7 @@ class EtherGasStationGasPriceHelperTest {
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_container, fastContainerMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_costs, fastCostsMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_time, fastTimeMock.setupMock())
-        helper = EtherGasStationGasPriceHelper(contextMock, ethGasStationApi)
+        helper = EtherGasStationGasPriceHelper(contextMock, ethGasStationApi, tickerRepositoryMock)
     }
 
     private fun validateTextUpdate(costsView: TextView, waitTimeView: TextView, costs: Float, waitTime: Float) {
@@ -108,7 +113,8 @@ class EtherGasStationGasPriceHelperTest {
         val gasPriceSubject = PublishSubject.create<EthGasStationPrices>()
         given(ethGasStationApi.loadGasPrices()).willReturn(gasPriceSubject)
         val testObserver = TestObserver<Result<Wei>>()
-        helper.observe(rootViewMock).subscribe(testObserver)
+        helper.setup(rootViewMock)
+        helper.observe().subscribe(testObserver)
 
         // When subscribing we should setup the click listeners
         slowContainerMock.assertClickListenerNotNull()
