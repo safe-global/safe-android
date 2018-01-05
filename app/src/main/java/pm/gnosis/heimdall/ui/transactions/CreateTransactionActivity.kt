@@ -90,7 +90,7 @@ class CreateTransactionActivity : BaseTransactionActivity() {
                 }
                         .map {
                             when (it) {
-                                is DataResult -> startActivity(ViewTransactionActivity.createIntent(this, it.data.first, it.data.second))
+                                is DataResult -> startActivity(ExecuteTransactionActivity.createIntent(this, it.data.first, it.data.second))
                                 is ErrorResult -> handleInputError(it.error)
                             }
                         }

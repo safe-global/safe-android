@@ -21,7 +21,6 @@ import pm.gnosis.heimdall.data.remote.models.EthGasStationPrices
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.DateTimeUtils
 import pm.gnosis.heimdall.utils.displayString
-import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
@@ -76,7 +75,7 @@ class EtherGasStationGasPriceHelper @Inject constructor(
             .onErrorResumeNext(Function { errorHandler.observable(it) })
             .mapToResult()
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { it.handle({ updateInfo(it) }, { errorSnackbar(view, it) }) }
+            .doOnNext { it.handle({ updateInfo(it) }, { Timber.e(it) }) }
             .flatMapSingle { ethGasStationPrices ->
                 when (ethGasStationPrices) {
                     is DataResult -> loadFiatPrices(ethGasStationPrices.data)

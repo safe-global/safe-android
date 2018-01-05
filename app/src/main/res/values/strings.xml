@@ -82,8 +82,8 @@
         <item quantity="one">%s Confirmation</item>
         <item quantity="other">%s Confirmations</item>
     </plurals>
-    <string name="confirm_transaction">Confirm Transaction</string>
-    <string name="revoke_transaction">Revoke Transaction</string>
+    <string name="submit_transaction">Submit Transaction</string>
+    <string name="add_signature">Add signature</string>
     <string name="cancel">Cancel</string>
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
     <string name="added_safe">Safe Added</string>
@@ -251,4 +251,6 @@
     <string name="just_a_moment_ago">Just a moment ago</string>
     <string name="error_deploying_safe">There was an error deploying the safe. Therefore it was removed!</string>
     <string name="fiat_approximation">≈ %1s%2s</string>
+    <string name="sign_transaction">Sign Transaction</string>
+    <string name="this_device">This device</string>
 </resources>

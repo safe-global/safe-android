@@ -69,9 +69,6 @@
             android:name=".ui.transactions.CreateTransactionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.transactions.ViewTransactionActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.security.unlock.UnlockActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -95,5 +92,7 @@
         <activity
             android:name=".ui.settings.security.SecuritySettingsActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.transactions.SignTransactionActivity" />
+        <activity android:name=".ui.transactions.ExecuteTransactionActivity" />
     </application>
 </manifest>

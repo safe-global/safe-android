@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.ui.transactions.ExecuteTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.models.Transaction
@@ -72,7 +73,7 @@ class SafeTransactionsViewModel @Inject constructor(
             safeTransactionsRepository.observePublishStatus(id)
 
     override fun transactionSelected(it: Transaction): Single<Intent> =
-            Single.just(ViewTransactionActivity.createIntent(context, address, it))
+            Single.just(ExecuteTransactionActivity.createIntent(context, address, it))
 
     private fun loadTokenValue(token: BigInteger, value: BigInteger) =
             tokenRepository.observeToken(token)

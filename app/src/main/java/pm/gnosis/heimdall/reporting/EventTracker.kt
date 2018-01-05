@@ -11,6 +11,7 @@ interface EventTracker {
 
 sealed class Event {
     class SubmittedTransaction : Event()
+    class SignedTransaction : Event()
     data class ScreenView(val id: ScreenId) : Event()
     data class ButtonClick(val id: ButtonId) : Event()
     data class TabSelect(val id: TabId) : Event()
