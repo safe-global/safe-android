@@ -13,18 +13,18 @@ class BigDecimalConverter {
     fun toString(value: BigDecimal?) = nullOnThrow { value.toString() }
 }
 
-class CurrencyFiatTickerConverter {
+class FiatSymbolConverter {
     @TypeConverter
     fun fromString(string: String) = when (string) {
-        "AUD" -> Currency.FiatTicker.AUD
-        "CAD" -> Currency.FiatTicker.CAD
-        "EUR" -> Currency.FiatTicker.EUR
-        "JPY" -> Currency.FiatTicker.JPY
-        "USD" -> Currency.FiatTicker.USD
-        "GBP" -> Currency.FiatTicker.GBP
+        "AUD" -> Currency.FiatSymbol.AUD
+        "CAD" -> Currency.FiatSymbol.CAD
+        "EUR" -> Currency.FiatSymbol.EUR
+        "JPY" -> Currency.FiatSymbol.JPY
+        "USD" -> Currency.FiatSymbol.USD
+        "GBP" -> Currency.FiatSymbol.GBP
         else -> null
     }
 
     @TypeConverter
-    fun toString(fiatTicker: Currency.FiatTicker) = fiatTicker.ticker
+    fun toString(fiatSymbol: Currency.FiatSymbol) = fiatSymbol.symbol
 }

@@ -27,8 +27,8 @@ data class CurrencyDb(
         @ColumnInfo(name = PRICE_COL)
         val price: BigDecimal,
 
-        @ColumnInfo(name = CURRENCY_COL)
-        val currency: Currency.FiatTicker
+        @ColumnInfo(name = FIAT_SYMBOL_COL)
+        val fiatSymbol: Currency.FiatSymbol
 ) {
     companion object {
         const val TABLE_NAME = "ticker_currency"
@@ -38,6 +38,6 @@ data class CurrencyDb(
         const val RANK_COL = "rank"
         const val LAST_UPDATED_COL = "last_updated"
         const val PRICE_COL = "price"
-        const val CURRENCY_COL = "currency"
+        const val FIAT_SYMBOL_COL = "fiat_symbol"
     }
 }

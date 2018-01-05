@@ -6,7 +6,7 @@ import pm.gnosis.ticker.data.repositories.models.Currency
 import java.math.BigDecimal
 
 interface TickerRepository {
-    fun convertToFiat(amount: Wei, currency: Currency.FiatTicker = Currency.FiatTicker.USD): Single<Pair<BigDecimal, Currency>>
-    fun convertToFiat(amounts: List<Wei>, currency: Currency.FiatTicker = Currency.FiatTicker.USD): Single<Pair<List<BigDecimal>, Currency>>
-    fun loadCurrency(currency: Currency.FiatTicker = Currency.FiatTicker.USD): Single<Currency>
+    fun convertToFiat(amount: Wei, currency: Currency.FiatSymbol = Currency.FiatSymbol.USD): Single<Pair<BigDecimal, Currency>>
+    fun convertToFiat(amounts: List<Wei>, currency: Currency.FiatSymbol = Currency.FiatSymbol.USD): Single<Pair<List<BigDecimal>, Currency>>
+    fun loadCurrency(currency: Currency.FiatSymbol = Currency.FiatSymbol.USD): Single<Currency>
 }

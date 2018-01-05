@@ -12,5 +12,5 @@ interface TickerApi {
     }
 
     @GET("ethereum")
-    fun currency(@Query(value = "convert") ticker: String = Currency.FiatTicker.USD.ticker): Single<List<CurrencyNetwork>>
+    fun currency(@Query(value = "convert") ticker: String = Currency.FiatSymbol.USD.symbol): Single<List<CurrencyNetwork>>
 }

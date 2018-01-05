@@ -165,7 +165,7 @@ class AddSafeViewModelTest {
     fun loadFiatConversion() {
         val wei = Wei(BigInteger.ONE)
         val testObserver = TestObserver.create<Result<Pair<BigDecimal, Currency>>>()
-        val result = BigDecimal.ONE to Currency("testId", "testName", "testSymbol", 0, 0, BigDecimal.ZERO, Currency.FiatTicker.USD)
+        val result = BigDecimal.ONE to Currency("testId", "testName", "testSymbol", 0, 0, BigDecimal.ZERO, Currency.FiatSymbol.USD)
         given(tickerRepositoryMock.convertToFiat(MockUtils.any<Wei>(), MockUtils.any())).willReturn(Single.just(result))
 
         viewModel.loadFiatConversion(wei).subscribe(testObserver)
