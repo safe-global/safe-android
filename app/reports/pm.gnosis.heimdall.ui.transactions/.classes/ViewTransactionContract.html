@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ViewTransactionContract</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">pm.gnosis.heimdall.ui.transactions</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ViewTransactionContract (pm.gnosis.heimdall.ui.transactions)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ViewTransactionContract</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ViewTransactionContract$Info</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package pm.gnosis.heimdall.ui.transactions
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import android.arch.lifecycle.ViewModel
+<i>4</i>&nbsp;import android.graphics.Bitmap
+<i>5</i>&nbsp;import io.reactivex.Completable
+<i>6</i>&nbsp;import io.reactivex.Observable
+<i>7</i>&nbsp;import io.reactivex.Single
+<i>8</i>&nbsp;import pm.gnosis.heimdall.accounts.base.models.Signature
+<i>9</i>&nbsp;import pm.gnosis.heimdall.common.utils.Result
+<i>10</i>&nbsp;import pm.gnosis.heimdall.data.repositories.TransactionRepository
+<i>11</i>&nbsp;import pm.gnosis.heimdall.data.repositories.TransactionType
+<i>12</i>&nbsp;import pm.gnosis.heimdall.data.repositories.models.GasEstimate
+<i>13</i>&nbsp;import pm.gnosis.models.Transaction
+<i>14</i>&nbsp;import pm.gnosis.models.Wei
+<i>15</i>&nbsp;import java.math.BigInteger
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;
+<b class="fc"><i>18</i>&nbsp;abstract class ViewTransactionContract : ViewModel() {</b>
+<i>19</i>&nbsp;    abstract fun checkTransactionType(transaction: Transaction): Single&lt;TransactionType&gt;
+<i>20</i>&nbsp;    abstract fun loadExecuteInfo(safeAddress: BigInteger, transaction: Transaction): Observable&lt;Result&lt;Info&gt;&gt;
+<i>21</i>&nbsp;    abstract fun submitTransaction(safeAddress: BigInteger, transaction: Transaction, overrideGasPrice: Wei?): Single&lt;Result&lt;BigInteger&gt;&gt;
+<i>22</i>&nbsp;    abstract fun signTransaction(safeAddress: BigInteger, transaction: Transaction): Single&lt;Result&lt;Pair&lt;String, Bitmap&gt;&gt;&gt;
+<i>23</i>&nbsp;    abstract fun addSignature(encodedSignatureUrl: String): Completable
+<i>24</i>&nbsp;
+<b class="fc"><i>25</i>&nbsp;    data class Info(val selectedSafe: BigInteger, val status: TransactionRepository.ExecuteInformation, val signatures: Map&lt;BigInteger, Signature&gt;, val estimate: GasEstimate? = null)</b>
+<i>26</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2018-01-08 23:27</div>
+</div>
+</body>
+</html>

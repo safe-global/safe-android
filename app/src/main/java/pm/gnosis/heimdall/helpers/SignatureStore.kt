@@ -11,9 +11,9 @@ import pm.gnosis.models.Transaction
 import java.math.BigInteger
 import javax.inject.Inject
 
-class SignatureStore @Inject constructor(
+class SimpleSignatureStore @Inject constructor(
         @ApplicationContext val context: Context
-) : ObservableOnSubscribe<Map<BigInteger, Signature>>, SingleOnSubscribe<Map<BigInteger, Signature>> {
+) : SignatureStore {
 
     private val signatureLock = Any()
     private val signatures = HashMap<BigInteger, Signature>()
@@ -40,7 +40,7 @@ class SignatureStore @Inject constructor(
         e.onSuccess(HashMap(signatures))
     }
 
-    fun flatMapInfo(safeAddress: BigInteger, info: TransactionRepository.ExecuteInformation): Observable<Map<BigInteger, Signature>> {
+    override fun flatMapInfo(safeAddress: BigInteger, info: TransactionRepository.ExecuteInformation): Observable<Map<BigInteger, Signature>> {
         synchronized(signatureLock) {
             this.safeAddress = safeAddress
             this.info = info
@@ -54,10 +54,10 @@ class SignatureStore @Inject constructor(
         return Observable.create(this)
     }
 
-    fun loadSingingInfo(): Single<Pair<BigInteger, Transaction>> =
+    override fun loadSingingInfo(): Single<Pair<BigInteger, Transaction>> =
             info?.let { Single.just(safeAddress!! to info!!.transaction) } ?: Single.error(IllegalStateException())
 
-    fun addSignature(signature: Pair<BigInteger, Signature>) {
+    override fun addSignature(signature: Pair<BigInteger, Signature>) {
         synchronized(signatureLock) {
             SimpleLocalizedException.assert(info?.owners?.contains(signature.first) == true, context, R.string.error_signature_not_owner)
             SimpleLocalizedException.assert(!signatures.containsKey(signature.first), context, R.string.error_signature_already_exists)
@@ -66,4 +66,10 @@ class SignatureStore @Inject constructor(
         // We only emit a copy of the signatures
         emitter?.onNext(HashMap(signatures))
     }
+}
+
+interface SignatureStore : ObservableOnSubscribe<Map<BigInteger, Signature>>, SingleOnSubscribe<Map<BigInteger, Signature>> {
+    fun flatMapInfo(safeAddress: BigInteger, info: TransactionRepository.ExecuteInformation): Observable<Map<BigInteger, Signature>>
+    fun loadSingingInfo(): Single<Pair<BigInteger, Transaction>>
+    fun addSignature(signature: Pair<BigInteger, Signature>)
 }

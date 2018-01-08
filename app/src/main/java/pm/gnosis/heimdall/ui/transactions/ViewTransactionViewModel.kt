@@ -7,10 +7,7 @@ import io.reactivex.functions.Function
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.QrCodeGenerator
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
@@ -53,7 +50,9 @@ class ViewTransactionViewModel @Inject constructor(
         return transactionRepository.loadExecuteInformation(safeAddress, transaction)
                 .flatMapObservable { info ->
                     // Observe local signature store
-                    signatureStore.flatMapInfo(safeAddress, info).map { info to it }
+                    signatureStore.flatMapInfo(safeAddress, info)
+                            .onErrorReturnItem(emptyMap())
+                            .map { info to it }
                 }
                 .flatMap { (info, signatures) ->
                     Observable.concatDelayError(listOf(
@@ -65,6 +64,7 @@ class ViewTransactionViewModel @Inject constructor(
                                     .mapToResult()
                     ))
                 }
+                .onErrorReturn { ErrorResult(it) }
     }
 
     override fun submitTransaction(safeAddress: BigInteger, transaction: Transaction, overrideGasPrice: Wei?): Single<Result<BigInteger>> {
