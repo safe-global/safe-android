@@ -77,7 +77,7 @@ class SimpleEthereumJsonRpcRepository @Inject constructor(
                 SubRequest(JsonRpcRequest(id = 2, method = "eth_getTransactionCount", params = arrayListOf(address.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)), { it.checkedResult().hexAsBigInteger() })
         )
         return bulk(request).map {
-            val adjustedGas = BigDecimal.valueOf(1.1)
+            val adjustedGas = BigDecimal.valueOf(1.4)
                     .multiply(BigDecimal(it.estimatedGas.value)).setScale(0, BigDecimal.ROUND_UP).unscaledValue()
             TransactionParameters(adjustedGas, it.gasPrice.value!!, it.transactionCount.value!!)
         }
