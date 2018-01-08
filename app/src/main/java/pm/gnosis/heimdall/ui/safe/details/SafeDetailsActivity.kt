@@ -2,27 +2,17 @@ package pm.gnosis.heimdall.ui.safe.details
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AlertDialog
-import android.view.LayoutInflater
-import android.view.View
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.dialog_safe_add_input.view.*
-import kotlinx.android.synthetic.main.dialog_show_qr_code.view.*
 import kotlinx.android.synthetic.main.layout_safe_details.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.snackbar
-import pm.gnosis.heimdall.common.utils.subscribeForResult
-import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.reporting.ButtonId
@@ -51,7 +41,6 @@ class SafeDetailsActivity : BaseActivity() {
     lateinit var viewModel: SafeDetailsContract
 
     private val items = listOf(R.string.tab_title_assets, R.string.tab_title_transactions, R.string.tab_title_settings)
-    private val generateQrCodeClicks = PublishSubject.create<String>()
 
     private lateinit var safeAddress: String
     private var safeName: String? = null
@@ -107,32 +96,6 @@ class SafeDetailsActivity : BaseActivity() {
                     safeName = it.name
                     updateTitle()
                 }, onError = Timber::e)
-
-        disposables += generateQrCodeClicks
-                .flatMapSingle {
-                    viewModel.loadQrCode(it)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnSuccess { onQrCodeLoading(true) }
-                            .doAfterTerminate { onQrCodeLoading(false) }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onQrCode, onError = ::onQrCodeError)
-    }
-
-    private fun onQrCode(qrCode: Bitmap) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_show_qr_code, null)
-        dialogView.dialog_qr_code_image.setImageBitmap(qrCode)
-        AlertDialog.Builder(this)
-                .setView(dialogView)
-                .show()
-    }
-
-    private fun onQrCodeError(throwable: Throwable) {
-        Timber.e(throwable)
-    }
-
-    private fun onQrCodeLoading(isLoading: Boolean) {
-        layout_safe_details_progress_bar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
     }
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })

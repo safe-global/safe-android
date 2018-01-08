@@ -39,7 +39,7 @@
     <string name="mnemonic">Mnemonic</string>
     <string name="empty_verified_tokens">No balance in any of the verified tokens</string>
     <string name="empty_safe_transactions">No transactions in safe history</string>
-    <string name="transaction_id">Transaction ID</string>
+    <string name="transaction_hash">Transaction Hash</string>
     <string name="safe_address">Safe Address</string>
     <string name="add_safe">Add safe</string>
     <string name="add">Add</string>
@@ -56,6 +56,7 @@
     <string name="pin_setup_failed">Pin setup failed. Please try again!</string>
     <string name="pin_too_short">The pin is too short. It should have at least 6 digits!</string>
     <string name="invalid_erc67">Not a valid ERC67 transaction</string>
+    <string name="invalid_signature_uri">Not a valid encoded signature</string>
     <string name="unknown_safe_action">Not Confirm or Revoke</string>
     <string name="no_account_available">No account available. Please restart the app!</string>
     <string name="error_not_authorized_for_action">You are not authorized to perform this action.</string>
@@ -72,6 +73,7 @@
     <string name="tab_title_transactions">Transactions</string>
     <string name="tab_title_assets">Assets</string>
     <string name="address_clipboard_success">Address copied to clipboard</string>
+    <string name="data_clipboard_success">Data copied to clipboard</string>
     <string name="share_your_address">Share your address</string>
     <string name="share_address">Share address</string>
     <string name="share_safe_address">Share %1$s address</string>
@@ -253,4 +255,8 @@
     <string name="fiat_approximation">≈ %1s%2s</string>
     <string name="sign_transaction">Sign Transaction</string>
     <string name="this_device">This device</string>
+    <string name="scan_signature">Scan Signature</string>
+    <string name="request_signature">Request Signature</string>
+    <string name="error_signature_not_owner">The signature was not create by a safe owning device!</string>
+    <string name="error_signature_already_exists">This signature has already been added!</string>
 </resources>

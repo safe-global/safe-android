@@ -14,12 +14,11 @@ interface TransactionRepository {
     fun calculateHash(safeAddress: BigInteger, transaction: Transaction): Single<ByteArray>
     fun loadExecuteInformation(safeAddress: BigInteger, transaction: Transaction): Single<ExecuteInformation>
     fun sign(safeAddress: BigInteger, transaction: Transaction): Single<Signature>
-    fun parseSignature(safeAddress: BigInteger, transaction: Transaction, encodedSignature: String): Single<Pair<BigInteger, Signature>>
+    fun checkSignature(safeAddress: BigInteger, transaction: Transaction, signature: Signature): Single<Pair<BigInteger, Signature>>
     fun estimateFees(safeAddress: BigInteger, transaction: Transaction, signatures: Map<BigInteger, Signature>): Single<GasEstimate>
     fun submit(safeAddress: BigInteger, transaction: Transaction, signatures: Map<BigInteger, Signature>, overrideGasPrice: Wei? = null): Completable
 
-    data class ExecuteInformation(val transactionHash: String, val isOwner: Boolean, val requiredConfirmation: Int,
-                                  val safeNonce: BigInteger, val owners: List<BigInteger>)
+    data class ExecuteInformation(val transactionHash: String, val transaction: Transaction, val isOwner: Boolean, val requiredConfirmation: Int, val owners: List<BigInteger>)
 
     enum class PublishStatus {
         UNKNOWN,

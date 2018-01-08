@@ -16,11 +16,13 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
+import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
+import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract.Info
 import pm.gnosis.models.Transaction
@@ -41,6 +43,9 @@ class ViewTransactionViewModelTest {
     lateinit var contextMock: Context
 
     @Mock
+    lateinit var qrCodeGenerator: QrCodeGenerator
+
+    @Mock
     lateinit var transactionRepositoryMock: TransactionRepository
 
     @Mock
@@ -51,7 +56,7 @@ class ViewTransactionViewModelTest {
     @Before
     fun setUp() {
         contextMock.mockGetString()
-        viewModel = ViewTransactionViewModel(contextMock, ViewTransactionViewModel.SignatureStore(), transactionRepositoryMock, transactionDetailsRepositoryMock)
+        viewModel = ViewTransactionViewModel(contextMock, qrCodeGenerator, SignatureStore(contextMock), transactionRepositoryMock, transactionDetailsRepositoryMock)
     }
 
     private fun testExecuteInfo(info: TransactionRepository.ExecuteInformation, estimateResult: Result<GasEstimate>,
@@ -63,7 +68,7 @@ class ViewTransactionViewModelTest {
             is ErrorResult -> Single.error(estimateResult.error)
         }
         if (expectingEstimate) {
-            given(transactionRepositoryMock.estimateFees(TEST_SAFE, TEST_TRANSACTION)).willReturn(estimateReturn)
+            given(transactionRepositoryMock.estimateFees(TEST_SAFE, TEST_TRANSACTION, emptyMap())).willReturn(estimateReturn)
         }
 
         val testObserver = TestObserver<Result<Info>>()
@@ -75,35 +80,35 @@ class ViewTransactionViewModelTest {
 
         then(transactionRepositoryMock).should().loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)
         if (expectingEstimate) {
-            then(transactionRepositoryMock).should().estimateFees(TEST_SAFE, TEST_TRANSACTION)
+            then(transactionRepositoryMock).should().estimateFees(TEST_SAFE, TEST_TRANSACTION, emptyMap())
         }
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         BDDMockito.reset(transactionRepositoryMock)
     }
 
     private fun buildInfo(transactionStatus: TransactionRepository.ExecuteInformation, estimate: GasEstimate? = null) =
-            Info(TEST_SAFE, TEST_TRANSACTION, transactionStatus, emptyMap(), estimate)
+            Info(TEST_SAFE, transactionStatus, emptyMap(), estimate)
 
     @Test
     fun loadExecuteInfo() {
 
         // Test execute
-        val execute = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, true, 1, BigInteger.ZERO, TEST_OWNERS)
+        val execute = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION, true, 1, TEST_OWNERS)
         testExecuteInfo(execute, DataResult(TEST_TRANSACTION_FEES), true,
                 DataResult(buildInfo(execute)), DataResult(buildInfo(execute, TEST_TRANSACTION_FEES)))
 
         // Test not owner
-        val notOwner = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, false, 1, BigInteger.ZERO, TEST_OWNERS)
+        val notOwner = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION, false, 1, TEST_OWNERS)
         testExecuteInfo(notOwner, DataResult(TEST_TRANSACTION_FEES),
                 false, DataResult(buildInfo(notOwner)), ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
         // Test not owner with multiple confirms
-        val notOwnerMultipleConfirms = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, false, 2, BigInteger.ZERO, TEST_OWNERS)
+        val notOwnerMultipleConfirms = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION, false, 2, TEST_OWNERS)
         testExecuteInfo(notOwnerMultipleConfirms, DataResult(TEST_TRANSACTION_FEES),
                 false, DataResult(buildInfo(notOwnerMultipleConfirms)), ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
         // Test error loading estimate
-        val estimateError = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, true, 1, BigInteger.ZERO, TEST_OWNERS)
+        val estimateError = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION, true, 1, TEST_OWNERS)
         val error = IllegalStateException()
         testExecuteInfo(estimateError, ErrorResult(error),
                 true, DataResult(buildInfo(estimateError)), ErrorResult(error))
@@ -130,7 +135,7 @@ class ViewTransactionViewModelTest {
 
         if (expectingSubmit) {
             val submitReturn = submitError?.let { Completable.error(it) } ?: Completable.complete()
-            given(transactionRepositoryMock.submit(TEST_SAFE, TEST_TRANSACTION, gasOverride)).willReturn(submitReturn)
+            given(transactionRepositoryMock.submit(TEST_SAFE, TEST_TRANSACTION, emptyMap(), gasOverride)).willReturn(submitReturn)
         }
 
         val testObserverDefaultGas = TestObserver<Result<BigInteger>>()
@@ -142,7 +147,7 @@ class ViewTransactionViewModelTest {
 
         then(transactionRepositoryMock).should().loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)
         if (expectingSubmit) {
-            then(transactionRepositoryMock).should().submit(TEST_SAFE, TEST_TRANSACTION, gasOverride)
+            then(transactionRepositoryMock).should().submit(TEST_SAFE, TEST_TRANSACTION, emptyMap(), gasOverride)
         }
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         BDDMockito.reset(transactionRepositoryMock)
@@ -158,21 +163,21 @@ class ViewTransactionViewModelTest {
     fun submitTransaction() {
 
         // Test execute
-        val execute = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, true, 1, BigInteger.ZERO, TEST_OWNERS)
+        val execute = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION, true, 1, TEST_OWNERS)
         testSubmitTransaction(execute, null, true, DataResult(TEST_SAFE))
 
         // Test not owner
-        val notOwner = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, false, 1, BigInteger.ZERO, TEST_OWNERS)
+        val notOwner = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION, false, 1, TEST_OWNERS)
         testSubmitTransaction(notOwner, null,
                 false, ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
         // Test not owner with multiple confirms
-        val notOwnerMultipleConfirms = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, false, 2, BigInteger.ZERO, TEST_OWNERS)
+        val notOwnerMultipleConfirms = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION, false, 2, TEST_OWNERS)
         testSubmitTransaction(notOwnerMultipleConfirms, null,
                 false, ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
 
         // Test error submitting transaction
-        val estimateError = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, true, 1, BigInteger.ZERO, TEST_OWNERS)
+        val estimateError = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION, true, 1, TEST_OWNERS)
         val error = IllegalStateException()
         testSubmitTransaction(estimateError, error, true, ErrorResult(error))
     }

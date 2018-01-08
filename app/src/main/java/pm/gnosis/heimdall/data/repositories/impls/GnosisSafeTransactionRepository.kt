@@ -58,8 +58,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
 
     override fun loadExecuteInformation(safeAddress: BigInteger, transaction: Transaction): Single<TransactionRepository.ExecuteInformation> =
             accountsRepository.loadActiveAccount()
-                    .flatMap { account -> calculateHash(safeAddress, transaction).map { account to it } }
-                    .flatMap { (account, txHash) ->
+                    .flatMap { account ->
                         val request = TransactionInfoRequest(
                                 BulkRequest.SubRequest(TransactionCallParams(
                                         to = safeAddress.asEthereumAddressString(),
@@ -82,27 +81,31 @@ class GnosisSafeTransactionRepository @Inject constructor(
                                         { GnosisSafe.GetOwners.decode(it.checkedResult()).param0.items.map { it.value } }
                                 )
                         )
-                        ethereumJsonRpcRepository.bulk(request)
-                                .map {
-                                    TransactionRepository.ExecuteInformation(
-                                            txHash.toHexString(),
-                                            it.isOwner.value!!,
-                                            it.requiredConfirmation.value!!,
-                                            it.nonce.value!!,
-                                            it.owners.value!!
-                                    )
-                                }
-                                .singleOrError()
+                        ethereumJsonRpcRepository.bulk(request).singleOrError()
                     }
+                    .flatMap { info ->
+                        val updatedTransaction = transaction.updateTransactionWithStatus(info.nonce.value!!)
+                        calculateHash(safeAddress, updatedTransaction).map {
+                            TransactionRepository.ExecuteInformation(
+                                    it.toHexString(),
+                                    updatedTransaction,
+                                    info.isOwner.value!!,
+                                    info.requiredConfirmation.value!!,
+                                    info.owners.value!!
+                            )
+                        }
+                    }
+
+    private fun Transaction.updateTransactionWithStatus(safeNonce: BigInteger) =
+            nonce?.let { this } ?: copy(nonce = safeNonce)
 
     override fun sign(safeAddress: BigInteger, transaction: Transaction): Single<Signature> =
             calculateHash(safeAddress, transaction).flatMap {
                 accountsRepository.sign(it)
             }
 
-    override fun parseSignature(safeAddress: BigInteger, transaction: Transaction, encodedSignature: String): Single<Pair<BigInteger, Signature>> =
+    override fun checkSignature(safeAddress: BigInteger, transaction: Transaction, signature: Signature): Single<Pair<BigInteger, Signature>> =
             calculateHash(safeAddress, transaction).flatMap {
-                val signature = Signature.from(encodedSignature)
                 accountsRepository.recover(it, signature).map { it to signature }
             }
 

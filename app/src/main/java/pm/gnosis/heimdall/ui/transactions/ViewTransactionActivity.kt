@@ -3,14 +3,11 @@ package pm.gnosis.heimdall.ui.transactions
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.LayoutRes
+import android.support.v7.widget.Toolbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.layout_view_transaction.*
-import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.setupToolbar
 import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.TransactionType
@@ -36,11 +33,13 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
     @LayoutRes
     abstract fun layout(): Int
 
+    abstract fun toolbar(): Toolbar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout())
 
-        setupToolbar(layout_view_transaction_toolbar, R.drawable.ic_close_24dp)
+        setupToolbar(toolbar(), R.drawable.ic_close_24dp)
     }
 
     override fun loadTransactionDetails() {

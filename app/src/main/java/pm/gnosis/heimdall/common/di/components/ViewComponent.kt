@@ -11,6 +11,7 @@ import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
+import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
@@ -87,6 +88,7 @@ interface ViewComponent {
 
     fun inject(dialog: CreateTokenTransactionProgressDialog)
     fun inject(dialog: FingerprintDialog)
+    fun inject(dialog: RequestSignatureDialog)
     fun inject(dialog: ShareSafeAddressDialog)
     fun inject(dialog: SimpleAddressShareDialog)
 }

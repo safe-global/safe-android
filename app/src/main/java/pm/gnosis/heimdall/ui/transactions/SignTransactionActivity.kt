@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.transactions
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.support.v7.widget.Toolbar
 import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
@@ -14,10 +15,7 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.snackbar
-import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
@@ -49,6 +47,8 @@ class SignTransactionActivity : ViewTransactionActivity() {
 
     override fun layout() = R.layout.layout_sign_transaction
 
+    override fun toolbar(): Toolbar = layout_sign_transaction_toolbar
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         credentialsConfirmed = requestCode == REQUEST_CODE_CONFIRM_CREDENTIALS && resultCode == Activity.RESULT_OK
@@ -59,9 +59,11 @@ class SignTransactionActivity : ViewTransactionActivity() {
         cachedTransactionData?.let {
             if (credentialsConfirmed) {
                 disposables += signTransaction(it.safeAddress, it.transaction)
-                        .subscribeForResult({
+                        .subscribeForResult({ (signature, qrCode) ->
                             eventTracker.submit(Event.SignedTransaction())
-                            layout_sign_transaction_signature.text = it
+                            layout_sign_transaction_qr_code.setImageBitmap(qrCode)
+                            layout_sign_transaction_qr_code.visibility = View.VISIBLE
+                            layout_sign_transaction_signature.text = signature
                             layout_sign_transaction_signature.visibility = View.VISIBLE
                             layout_sign_transaction_sign_button.visibility = View.GONE
                         }, { showErrorSnackbar(it) })
@@ -79,7 +81,9 @@ class SignTransactionActivity : ViewTransactionActivity() {
 
     override fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any> =
             ObservableTransformer {
-                it.compose(signTransformer)
+                it
+                        .doOnNext { layout_sign_transaction_sign_button.isEnabled = it.first != null && it.second is DataResult }
+                        .compose(signTransformer)
             }
 
     private fun signTransaction(safe: BigInteger, transaction: Transaction) =

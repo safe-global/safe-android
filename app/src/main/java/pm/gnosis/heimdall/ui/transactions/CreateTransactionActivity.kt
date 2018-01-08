@@ -26,13 +26,11 @@ import java.math.BigInteger
 
 class CreateTransactionActivity : BaseTransactionActivity() {
 
-    private val transactionDataTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Result<Pair<BigInteger?, Transaction>>> =
+    private val transactionDataTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Result<Pair<BigInteger, Transaction>>> =
             ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
                 up
-                        .flatMap {
-                            checkInfoAndPerform<Pair<BigInteger?, Transaction>>(it, { safeAddress, transaction ->
-                                Observable.just(DataResult(safeAddress to transaction))
-                            })
+                        .checkedFlatMap { safeAddress, transaction ->
+                            Observable.just<Result<Pair<BigInteger, Transaction>>>(DataResult(safeAddress to transaction))
                         }
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext({ it.handle(::handleTransactionDataUpdate, ::handleTransactionDataError) })
