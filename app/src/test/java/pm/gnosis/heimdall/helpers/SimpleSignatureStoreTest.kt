@@ -51,7 +51,7 @@ class SimpleSignatureStoreTest {
 
         val mappedObserver = TestObserver<Map<BigInteger, Signature>>()
         val info = TransactionRepository.ExecuteInformation(
-                TEST_TRANSACTION_HASH, TEST_TRANSACTION, false, 2, TEST_OWNERS
+                TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, info).subscribe(mappedObserver)
@@ -65,6 +65,11 @@ class SimpleSignatureStoreTest {
         // It should not be possible to add a signature if he is not an owner
         assertError(SimpleLocalizedException(R.string.error_signature_not_owner.asString()), {
             store.addSignature(BigInteger.valueOf(8754) to TEST_SIGNATURE)
+        })
+
+        // It should not be possible to add the signature of the sender
+        assertError(SimpleLocalizedException(R.string.error_signature_already_exists.asString()), {
+            store.addSignature(TEST_OWNERS[2] to TEST_SIGNATURE)
         })
 
         store.addSignature(TEST_OWNERS[0] to TEST_SIGNATURE)
@@ -88,20 +93,20 @@ class SimpleSignatureStoreTest {
                 emptyMap(),
                 mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
                 // New value
-                TEST_OWNERS.associate { it to TEST_SIGNATURE })
+                TEST_SIGNERS.associate { it to TEST_SIGNATURE })
         signaturesObserver.assertValuesOnly(
                 // Previous value
                 emptyMap(), emptyMap(),
                 mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
                 // New value
-                TEST_OWNERS.associate { it to TEST_SIGNATURE })
+                TEST_SIGNERS.associate { it to TEST_SIGNATURE })
 
         /*
          * Checks for load methods
          */
         val loadSignaturesObserver = TestObserver<Map<BigInteger, Signature>>()
         store.loadSignatures().subscribe(loadSignaturesObserver)
-        loadSignaturesObserver.assertResult(TEST_OWNERS.associate { it to TEST_SIGNATURE })
+        loadSignaturesObserver.assertResult(TEST_SIGNERS.associate { it to TEST_SIGNATURE })
 
         val loadSigningInfoObserver = TestObserver<Pair<BigInteger, Transaction>>()
         store.loadSingingInfo().subscribe(loadSigningInfoObserver)
@@ -112,7 +117,7 @@ class SimpleSignatureStoreTest {
          */
         val updateOwnersObserver = TestObserver<Map<BigInteger, Signature>>()
         val updateOwnersInfo = TransactionRepository.ExecuteInformation(
-                TEST_TRANSACTION_HASH, TEST_TRANSACTION, false, 2,
+                TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
                 TEST_OWNERS_2
         )
         // Set store info an observe it
@@ -123,21 +128,21 @@ class SimpleSignatureStoreTest {
                 // Previous value
                 emptyMap(),
                 mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
-                TEST_OWNERS.associate { it to TEST_SIGNATURE },
+                TEST_SIGNERS.associate { it to TEST_SIGNATURE },
                 // New value
                 mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE))
         signaturesObserver.assertValuesOnly(
                 // Previous value
                 emptyMap(), emptyMap(),
                 mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
-                TEST_OWNERS.associate { it to TEST_SIGNATURE },
+                TEST_SIGNERS.associate { it to TEST_SIGNATURE },
                 // New value
                 mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE))
         updateOwnersObserver.assertValuesOnly(mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE))
 
         val updateHashObserver = TestObserver<Map<BigInteger, Signature>>()
         val updateHashInfo = TransactionRepository.ExecuteInformation(
-                "some_new_hash", TEST_TRANSACTION, false, 2,
+                "some_new_hash", TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
                 TEST_OWNERS_2
         )
         // Set store info an observe it
@@ -148,7 +153,7 @@ class SimpleSignatureStoreTest {
                 // Previous value
                 emptyMap(),
                 mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
-                TEST_OWNERS.associate { it to TEST_SIGNATURE },
+                TEST_SIGNERS.associate { it to TEST_SIGNATURE },
                 mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE),
                 // New value
                 emptyMap())
@@ -156,7 +161,7 @@ class SimpleSignatureStoreTest {
                 // Previous value
                 emptyMap(), emptyMap(),
                 mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
-                TEST_OWNERS.associate { it to TEST_SIGNATURE },
+                TEST_SIGNERS.associate { it to TEST_SIGNATURE },
                 mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE),
                 // New value
                 emptyMap())
@@ -185,7 +190,8 @@ class SimpleSignatureStoreTest {
         private val TEST_SAFE = BigInteger.ZERO
         private val TEST_TRANSACTION_HASH = "SomeHash"
         private val TEST_TRANSACTION = Transaction(BigInteger.ZERO, nonce = BigInteger.TEN)
-        private val TEST_OWNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13))
+        private val TEST_SIGNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13))
+        private val TEST_OWNERS = TEST_SIGNERS + BigInteger.valueOf(5)
         private val TEST_OWNERS_2 = listOf(BigInteger.valueOf(13), BigInteger.valueOf(23))
     }
 }

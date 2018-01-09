@@ -62,34 +62,29 @@ class GnosisSafeTransactionRepository @Inject constructor(
                         val request = TransactionInfoRequest(
                                 BulkRequest.SubRequest(TransactionCallParams(
                                         to = safeAddress.asEthereumAddressString(),
-                                        data = GnosisSafe.IsOwner.encode(Solidity.Address(account.address))).callRequest(0),
-                                        { GnosisSafe.IsOwner.decode(it.checkedResult()).param0.value }
-                                ),
-                                BulkRequest.SubRequest(TransactionCallParams(
-                                        to = safeAddress.asEthereumAddressString(),
-                                        data = GnosisSafe.Threshold.encode()).callRequest(1),
+                                        data = GnosisSafe.Threshold.encode()).callRequest(0),
                                         { GnosisSafe.Threshold.decode(it.checkedResult()).param0.value.toInt() }
                                 ),
                                 BulkRequest.SubRequest(TransactionCallParams(
                                         to = safeAddress.asEthereumAddressString(),
-                                        data = GnosisSafe.Nonce.encode()).callRequest(2),
+                                        data = GnosisSafe.Nonce.encode()).callRequest(1),
                                         { GnosisSafe.Nonce.decode(it.checkedResult()).param0.value }
                                 ),
                                 BulkRequest.SubRequest(TransactionCallParams(
                                         to = safeAddress.asEthereumAddressString(),
-                                        data = GnosisSafe.GetOwners.encode()).callRequest(3),
+                                        data = GnosisSafe.GetOwners.encode()).callRequest(2),
                                         { GnosisSafe.GetOwners.decode(it.checkedResult()).param0.items.map { it.value } }
                                 )
                         )
-                        ethereumJsonRpcRepository.bulk(request).singleOrError()
+                        ethereumJsonRpcRepository.bulk(request).singleOrError().map { account to it }
                     }
-                    .flatMap { info ->
+                    .flatMap { (account, info) ->
                         val updatedTransaction = transaction.updateTransactionWithStatus(info.nonce.value!!)
                         calculateHash(safeAddress, updatedTransaction).map {
                             TransactionRepository.ExecuteInformation(
                                     it.toHexString(),
                                     updatedTransaction,
-                                    info.isOwner.value!!,
+                                    account.address,
                                     info.requiredConfirmation.value!!,
                                     info.owners.value!!
                             )
@@ -109,8 +104,8 @@ class GnosisSafeTransactionRepository @Inject constructor(
                 accountsRepository.recover(it, signature).map { it to signature }
             }
 
-    override fun estimateFees(safeAddress: BigInteger, transaction: Transaction, signatures: Map<BigInteger, Signature>): Single<GasEstimate> =
-            buildExecuteTransaction(safeAddress, transaction, signatures)
+    override fun estimateFees(safeAddress: BigInteger, transaction: Transaction, signatures: Map<BigInteger, Signature>, senderIsOwner: Boolean): Single<GasEstimate> =
+            buildExecuteTransaction(safeAddress, transaction, signatures, senderIsOwner)
                     .flatMap { confirmAndExecuteTransaction ->
                         accountsRepository.loadActiveAccount().map { it to confirmAndExecuteTransaction }
                     }
@@ -123,16 +118,15 @@ class GnosisSafeTransactionRepository @Inject constructor(
                                 .singleOrError()
                     }
 
-    override fun submit(safeAddress: BigInteger, transaction: Transaction, signatures: Map<BigInteger, Signature>, overrideGasPrice: Wei?): Completable =
-            buildExecuteTransaction(safeAddress, transaction, signatures)
+    override fun submit(safeAddress: BigInteger, transaction: Transaction, signatures: Map<BigInteger, Signature>, senderIsOwner: Boolean, overrideGasPrice: Wei?): Completable =
+            buildExecuteTransaction(safeAddress, transaction, signatures, senderIsOwner)
                     .flatMapObservable { submitSignedTransaction(it, overrideGasPrice) }
                     .flatMapSingle { addLocalTransaction(safeAddress, transaction, it) }
                     .ignoreElements()
 
-    private fun buildExecuteTransaction(safeAddress: BigInteger, innerTransaction: Transaction, signatures: Map<BigInteger, Signature>): Single<Transaction> =
+    private fun buildExecuteTransaction(safeAddress: BigInteger, innerTransaction: Transaction, signatures: Map<BigInteger, Signature>, senderIsOwner: Boolean): Single<Transaction> =
             accountsRepository.loadActiveAccount().flatMap { account ->
-                val sortedAddresses = setOf(account.address).plus(signatures.keys).sorted()
-                val senderIndex = sortedAddresses.indexOf(account.address)
+                val sortedAddresses = signatures.keys.run { if (senderIsOwner) plus(account.address) else this }.sorted()
                 val vList = mutableListOf<Solidity.UInt8>()
                 val rList = mutableListOf<Solidity.Bytes32>()
                 val sList = mutableListOf<Solidity.Bytes32>()
@@ -143,6 +137,15 @@ class GnosisSafeTransactionRepository @Inject constructor(
                         sList.add(Solidity.Bytes32(it.s.toBytes(32)))
                     }
                 }
+
+                val confirmations = mutableListOf<Solidity.Address>()
+                val confirmationsIndexes = mutableListOf<Solidity.UInt256>()
+                if (senderIsOwner) {
+                    val senderIndex = sortedAddresses.indexOf(account.address)
+                    confirmations.add(Solidity.Address(account.address))
+                    confirmationsIndexes.add(Solidity.UInt256(BigInteger.valueOf(senderIndex.toLong())))
+                }
+
                 Single.fromCallable {
                     val to = Solidity.Address(innerTransaction.address)
                     val value = Solidity.UInt256(innerTransaction.value?.value ?: BigInteger.ZERO)
@@ -150,7 +153,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
                     val operation = Solidity.UInt8(DEFAULT_OPERATION)
                     val confirmData = GnosisSafe.ExecuteTransaction.encode(to, value, data, operation,
                             SolidityBase.Vector(vList), SolidityBase.Vector(rList), SolidityBase.Vector(sList),
-                            SolidityBase.Vector(listOf(Solidity.Address(account.address))), SolidityBase.Vector(listOf(Solidity.UInt256(BigInteger.valueOf(senderIndex.toLong())))))
+                            SolidityBase.Vector(confirmations), SolidityBase.Vector(confirmationsIndexes))
                     Transaction(safeAddress, data = confirmData)
                 }
             }
@@ -210,11 +213,10 @@ class GnosisSafeTransactionRepository @Inject constructor(
                     .onErrorReturnItem(PublishStatus.UNKNOWN)
 
     private class TransactionInfoRequest(
-            val isOwner: SubRequest<Boolean>,
             val requiredConfirmation: SubRequest<Int>,
             val nonce: SubRequest<BigInteger>,
             val owners: SubRequest<List<BigInteger>>
-    ) : BulkRequest(isOwner, requiredConfirmation, nonce, owners)
+    ) : BulkRequest(requiredConfirmation, nonce, owners)
 
     companion object {
         private const val ERC191_BYTE = "19"

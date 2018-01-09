@@ -66,6 +66,7 @@ class SimpleSignatureStore @Inject constructor(
     override fun addSignature(signature: Pair<BigInteger, Signature>) {
         synchronized(signatureLock) {
             SimpleLocalizedException.assert(info?.owners?.contains(signature.first) == true, context, R.string.error_signature_not_owner)
+            SimpleLocalizedException.assert(info?.sender != signature.first, context, R.string.error_signature_already_exists)
             SimpleLocalizedException.assert(!signatures.containsKey(signature.first), context, R.string.error_signature_already_exists)
             signatures.put(signature.first, signature.second)
         }

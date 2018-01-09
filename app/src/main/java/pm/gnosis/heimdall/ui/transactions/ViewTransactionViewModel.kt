@@ -58,7 +58,7 @@ class ViewTransactionViewModel @Inject constructor(
                     Observable.concatDelayError(listOf(
                             Observable.just(DataResult(Info(safeAddress, info, signatures))),
                             info.checkMap(signatures)
-                                    .flatMapSingle { transactionRepository.estimateFees(safeAddress, info.transaction, signatures) }
+                                    .flatMapSingle { transactionRepository.estimateFees(safeAddress, info.transaction, signatures, info.isOwner) }
                                     .map { Info(safeAddress, info, signatures, it) }
                                     .onErrorResumeNext(Function { errorHandler.observable(it) })
                                     .mapToResult()
@@ -73,7 +73,7 @@ class ViewTransactionViewModel @Inject constructor(
                     // Observe local signature store
                     signatureStore.loadSignatures()
                             .map { info.check(it); it }
-                            .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, overrideGasPrice) }
+                            .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, info.isOwner, overrideGasPrice) }
                 }
                 .andThen(Single.just(safeAddress))
                 .onErrorResumeNext({ errorHandler.single(it) })
