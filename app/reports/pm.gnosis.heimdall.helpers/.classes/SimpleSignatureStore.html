@@ -1,0 +1,191 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SimpleSignatureStore</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">pm.gnosis.heimdall.helpers</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SimpleSignatureStore (pm.gnosis.heimdall.helpers)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SimpleSignatureStore</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (31/ 31)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SimpleSignatureStore$subscribe$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (33/ 33)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package pm.gnosis.heimdall.helpers
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import android.content.Context
+<i>4</i>&nbsp;import io.reactivex.*
+<i>5</i>&nbsp;import pm.gnosis.heimdall.R
+<i>6</i>&nbsp;import pm.gnosis.heimdall.accounts.base.models.Signature
+<i>7</i>&nbsp;import pm.gnosis.heimdall.common.di.ApplicationContext
+<i>8</i>&nbsp;import pm.gnosis.heimdall.data.repositories.TransactionRepository
+<i>9</i>&nbsp;import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+<i>10</i>&nbsp;import pm.gnosis.models.Transaction
+<i>11</i>&nbsp;import java.math.BigInteger
+<i>12</i>&nbsp;import java.util.concurrent.CopyOnWriteArraySet
+<i>13</i>&nbsp;import javax.inject.Inject
+<i>14</i>&nbsp;
+<b class="fc"><i>15</i>&nbsp;class SimpleSignatureStore @Inject constructor(</b>
+<i>16</i>&nbsp;        @ApplicationContext private val context: Context
+<i>17</i>&nbsp;) : SignatureStore, ObservableOnSubscribe&lt;Map&lt;BigInteger, Signature&gt;&gt;, SingleOnSubscribe&lt;Map&lt;BigInteger, Signature&gt;&gt; {
+<i>18</i>&nbsp;
+<b class="fc"><i>19</i>&nbsp;    private val signatureLock = Any()</b>
+<b class="fc"><i>20</i>&nbsp;    private val signatures = HashMap&lt;BigInteger, Signature&gt;()</b>
+<i>21</i>&nbsp;
+<b class="fc"><i>22</i>&nbsp;    private var emitters = CopyOnWriteArraySet&lt;ObservableEmitter&lt;Map&lt;BigInteger, Signature&gt;&gt;&gt;()</b>
+<i>23</i>&nbsp;    private var safeAddress: BigInteger? = null
+<i>24</i>&nbsp;    private var info: TransactionRepository.ExecuteInformation? = null
+<i>25</i>&nbsp;        private set(value) {
+<i>26</i>&nbsp;            // Transaction changed, clear signatures
+<b class="fc"><i>27</i>&nbsp;            if (field?.transactionHash != value?.transactionHash) {</b>
+<b class="fc"><i>28</i>&nbsp;                signatures.clear()</b>
+<i>29</i>&nbsp;            }
+<b class="fc"><i>30</i>&nbsp;            field = value</b>
+<b class="fc"><i>31</i>&nbsp;        }</b>
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    override fun subscribe(e: ObservableEmitter&lt;Map&lt;BigInteger, Signature&gt;&gt;) {
+<b class="fc"><i>34</i>&nbsp;        emitters.add(e)</b>
+<b class="fc"><i>35</i>&nbsp;        e.setCancellable {</b>
+<b class="fc"><i>36</i>&nbsp;            emitters.remove(e)</b>
+<b class="fc"><i>37</i>&nbsp;        }</b>
+<i>38</i>&nbsp;        // We only emit a copy of the signatures
+<b class="fc"><i>39</i>&nbsp;        e.onNext(HashMap(signatures))</b>
+<b class="fc"><i>40</i>&nbsp;    }</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    override fun subscribe(e: SingleEmitter&lt;Map&lt;BigInteger, Signature&gt;&gt;) {
+<i>43</i>&nbsp;        // We only emit a copy of the signatures
+<b class="fc"><i>44</i>&nbsp;        e.onSuccess(HashMap(signatures))</b>
+<b class="fc"><i>45</i>&nbsp;    }</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    override fun flatMapInfo(safeAddress: BigInteger, info: TransactionRepository.ExecuteInformation): Observable&lt;Map&lt;BigInteger, Signature&gt;&gt; {
+<b class="fc"><i>48</i>&nbsp;        synchronized(signatureLock) {</b>
+<b class="fc"><i>49</i>&nbsp;            this.safeAddress = safeAddress</b>
+<b class="fc"><i>50</i>&nbsp;            this.info = info</b>
+<i>51</i>&nbsp;            // Check if any signatures are from owners that are not present anymore
+<b class="fc"><i>52</i>&nbsp;            val validSignatures = signatures.filter { info.owners.contains(it.key) }</b>
+<b class="fc"><i>53</i>&nbsp;            signatures.clear()</b>
+<b class="fc"><i>54</i>&nbsp;            signatures.putAll(validSignatures)</b>
+<b class="fc"><i>55</i>&nbsp;        }</b>
+<i>56</i>&nbsp;        // We only emit a copy of the signatures
+<b class="fc"><i>57</i>&nbsp;        emitters.forEach { it.onNext(HashMap(signatures)) }</b>
+<b class="fc"><i>58</i>&nbsp;        return Observable.create(this)</b>
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<b class="fc"><i>61</i>&nbsp;    override fun loadSignatures(): Single&lt;Map&lt;BigInteger, Signature&gt;&gt; = Single.create(this)</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    override fun loadSingingInfo(): Single&lt;Pair&lt;BigInteger, Transaction&gt;&gt; =
+<b class="fc"><i>64</i>&nbsp;            info?.let { Single.just(safeAddress!! to info!!.transaction) } ?: Single.error(IllegalStateException())</b>
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    override fun addSignature(signature: Pair&lt;BigInteger, Signature&gt;) {
+<b class="fc"><i>67</i>&nbsp;        synchronized(signatureLock) {</b>
+<b class="fc"><i>68</i>&nbsp;            SimpleLocalizedException.assert(info?.owners?.contains(signature.first) == true, context, R.string.error_signature_not_owner)</b>
+<b class="fc"><i>69</i>&nbsp;            SimpleLocalizedException.assert(!signatures.containsKey(signature.first), context, R.string.error_signature_already_exists)</b>
+<b class="fc"><i>70</i>&nbsp;            signatures.put(signature.first, signature.second)</b>
+<i>71</i>&nbsp;        }
+<i>72</i>&nbsp;        // We only emit a copy of the signatures
+<b class="fc"><i>73</i>&nbsp;        emitters.forEach { it.onNext(HashMap(signatures)) }</b>
+<b class="fc"><i>74</i>&nbsp;    }</b>
+<i>75</i>&nbsp;}
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;interface SignatureStore {
+<i>78</i>&nbsp;    fun flatMapInfo(safeAddress: BigInteger, info: TransactionRepository.ExecuteInformation): Observable&lt;Map&lt;BigInteger, Signature&gt;&gt;
+<i>79</i>&nbsp;    fun loadSingingInfo(): Single&lt;Pair&lt;BigInteger, Transaction&gt;&gt;
+<i>80</i>&nbsp;    fun loadSignatures(): Single&lt;Map&lt;BigInteger, Signature&gt;&gt;
+<i>81</i>&nbsp;    fun addSignature(signature: Pair&lt;BigInteger, Signature&gt;)
+<i>82</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2018-01-09 13:35</div>
+</div>
+</body>
+</html>

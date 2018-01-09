@@ -9,16 +9,17 @@ import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Transaction
 import java.math.BigInteger
+import java.util.concurrent.CopyOnWriteArraySet
 import javax.inject.Inject
 
 class SimpleSignatureStore @Inject constructor(
-        @ApplicationContext val context: Context
+        @ApplicationContext private val context: Context
 ) : SignatureStore, ObservableOnSubscribe<Map<BigInteger, Signature>>, SingleOnSubscribe<Map<BigInteger, Signature>> {
 
     private val signatureLock = Any()
     private val signatures = HashMap<BigInteger, Signature>()
 
-    private var emitter: ObservableEmitter<Map<BigInteger, Signature>>? = null
+    private var emitters = CopyOnWriteArraySet<ObservableEmitter<Map<BigInteger, Signature>>>()
     private var safeAddress: BigInteger? = null
     private var info: TransactionRepository.ExecuteInformation? = null
         private set(value) {
@@ -30,7 +31,10 @@ class SimpleSignatureStore @Inject constructor(
         }
 
     override fun subscribe(e: ObservableEmitter<Map<BigInteger, Signature>>) {
-        emitter = e
+        emitters.add(e)
+        e.setCancellable {
+            emitters.remove(e)
+        }
         // We only emit a copy of the signatures
         e.onNext(HashMap(signatures))
     }
@@ -50,7 +54,7 @@ class SimpleSignatureStore @Inject constructor(
             signatures.putAll(validSignatures)
         }
         // We only emit a copy of the signatures
-        emitter?.onNext(HashMap(signatures))
+        emitters.forEach { it.onNext(HashMap(signatures)) }
         return Observable.create(this)
     }
 
@@ -66,7 +70,7 @@ class SimpleSignatureStore @Inject constructor(
             signatures.put(signature.first, signature.second)
         }
         // We only emit a copy of the signatures
-        emitter?.onNext(HashMap(signatures))
+        emitters.forEach { it.onNext(HashMap(signatures)) }
     }
 }
 

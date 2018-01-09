@@ -27,6 +27,11 @@ fun Context.mockGetString(): Context {
 }
 
 fun Context.mockGetStringWithArgs(): Context {
-    given(getString(anyInt(), MockUtils.any())).will { it.arguments.joinToString() }
+    given(getString(anyInt(), MockUtils.any())).will { it.arguments.joinToString(transform = {
+        (it as? Array<*>)?.let{
+            if (it.isEmpty()) "<no_args>"
+            else null
+        } ?: it.toString()
+    }) }
     return this
 }
