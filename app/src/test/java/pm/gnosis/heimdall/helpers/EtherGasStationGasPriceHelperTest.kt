@@ -17,9 +17,11 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.DataResult
+import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.remote.EthGasStationApi
 import pm.gnosis.heimdall.data.remote.models.EthGasStationPrices
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.DateTimeUtils
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.models.Wei
@@ -190,15 +192,15 @@ class EtherGasStationGasPriceHelperTest {
         fastContainerMock.assertBackgroundRes(R.drawable.selectable_background)
 
         gasPriceSubject.onError(UnknownHostException())
-        // We will get an exception when displaying the snackbar, as we don't mock static methods
-        testObserver.assertFailureAndMessage(
-                IllegalArgumentException::class.java,
-                "No suitable parent found from the given view. Please provide a valid view.",
+        // Propagate error
+        testObserver.assertValuesOnly(
                 DataResult(convertToWei(200f)),
                 DataResult(convertToWei(200f)),
                 DataResult(convertToWei(300f)),
-                DataResult(convertToWei(100f))
+                DataResult(convertToWei(100f)),
+                ErrorResult(SimpleLocalizedException(R.string.error_check_internet_connection.toString())) // New value
         )
+        testObserver.dispose()
 
         // After the error the click listeners should be nulled
         slowContainerMock.assertClickListenerNull()
