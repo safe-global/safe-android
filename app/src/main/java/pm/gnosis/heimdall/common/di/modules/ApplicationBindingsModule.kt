@@ -28,14 +28,6 @@ abstract class ApplicationBindingsModule {
     abstract fun bindsEventTracker(tracker: FabricEventTracker): EventTracker
 
     /*
-        Helpers
-     */
-
-    @Binds
-    @Singleton
-    abstract fun bindsGasPriceHelper(helper: EtherGasStationGasPriceHelper): GasPriceHelper
-
-    /*
         Repositories
      */
 

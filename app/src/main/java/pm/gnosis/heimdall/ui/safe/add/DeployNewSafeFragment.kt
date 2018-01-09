@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_deploy_new_safe.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
@@ -26,11 +25,8 @@ import javax.inject.Inject
 
 
 class DeployNewSafeFragment : BaseFragment() {
-
     @Inject
     lateinit var viewModel: AddSafeContract
-
-    private val onEstimateSubject = PublishSubject.create<Wei>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             inflater.inflate(R.layout.layout_deploy_new_safe, container, false)!!
@@ -46,11 +42,11 @@ class DeployNewSafeFragment : BaseFragment() {
         }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(::safeDeployed, ::errorDeploying)
+
         disposables += viewModel.observeEstimate()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::updateEstimate, Timber::e)
-
-        disposables += onEstimateSubject
+                .doOnNext { updateEstimate(it) }
+                .doOnError { Timber.e(it) }
                 .flatMapSingle { viewModel.loadFiatConversion(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = ::onFiat, onError = ::onFiatError)
@@ -72,7 +68,6 @@ class DeployNewSafeFragment : BaseFragment() {
 
     private fun updateEstimate(estimate: Wei) {
         layout_deploy_new_safe_transaction_fee.text = estimate.displayString(context!!)
-        onEstimateSubject.onNext(estimate)
     }
 
     private fun onFiat(fiat: Pair<BigDecimal, Currency>) {

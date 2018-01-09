@@ -4,13 +4,14 @@ import android.content.Context
 import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.include_gas_price_selection.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
+import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
@@ -28,9 +29,8 @@ import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ForView
 class EtherGasStationGasPriceHelper @Inject constructor(
         @ApplicationContext private val context: Context,
         private val gasStationApi: EthGasStationApi,
@@ -40,30 +40,14 @@ class EtherGasStationGasPriceHelper @Inject constructor(
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
 
-    private val gasPricesSubject = PublishSubject.create<EthGasStationPrices>()
-
     override fun setup(view: View) {
         this.view = view
     }
 
     override fun observe(): Observable<Result<Wei>> {
         return Observable.combineLatest(
-                Observable.merge(
-                        view.include_gas_price_selection_slow_container.clicks().map { TransactionSpeed.SLOW },
-                        view.include_gas_price_selection_normal_container.clicks().map { TransactionSpeed.NORMAL },
-                        view.include_gas_price_selection_fast_container.clicks().map { TransactionSpeed.FAST }
-                ).startWith(TransactionSpeed.NORMAL)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext { updateSelected(view, it) },
-
-                gasStationApi.loadGasPrices()
-                        .onErrorResumeNext(Function { errorHandler.observable(it) })
-                        .mapToResult()
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext {
-                            it.handle({ updateInfo(it) }, { errorSnackbar(view, it) })
-                        },
-
+                viewSpeedClicksObservable(),
+                loadGasPrices(),
                 BiFunction { speed: TransactionSpeed, prices: Result<EthGasStationPrices> ->
                     when (prices) {
                         is ErrorResult -> ErrorResult<Wei>(prices.error)
@@ -80,23 +64,38 @@ class EtherGasStationGasPriceHelper @Inject constructor(
         )
     }
 
-    override fun observeFiatPrices(): Observable<Result<Pair<List<BigDecimal>, Currency>>> =
-            gasPricesSubject
-                    .map {
-                        listOf(
-                                convertToWei(it.slowPrice),
-                                convertToWei(it.standardPrice),
-                                convertToWei(it.fastPrice)
-                        )
-                    }
-                    .flatMapSingle {
-                        tickerRepository.convertToFiat(it).mapToResult()
-                    }
+    private fun viewSpeedClicksObservable() = Observable
+            .merge(view.include_gas_price_selection_slow_container.clicks().map { TransactionSpeed.SLOW },
+                    view.include_gas_price_selection_normal_container.clicks().map { TransactionSpeed.NORMAL },
+                    view.include_gas_price_selection_fast_container.clicks().map { TransactionSpeed.FAST })
+            .startWith(TransactionSpeed.NORMAL)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext { updateSelected(view, it) }
 
-    override fun onFiatValues(slow: BigDecimal,
-                              normal: BigDecimal,
-                              fast: BigDecimal,
-                              currency: Currency) {
+    private fun loadGasPrices() = gasStationApi.loadGasPrices()
+            .onErrorResumeNext(Function { errorHandler.observable(it) })
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext { updateInfo(it) }
+            .doOnError { errorSnackbar(view, it) }
+            .flatMapSingle { ethGasStationPrices ->
+                loadFiatPrices(ethGasStationPrices)
+                        .doOnSuccess { onFiatValues(it.first[0], it.first[1], it.first[2], it.second) }
+                        .doOnError { onFiatValuesError(it) }
+                        .map { ethGasStationPrices }
+            }
+            .mapToResult()
+
+    private fun loadFiatPrices(ethGasStationPrices: EthGasStationPrices): Single<Pair<List<BigDecimal>, Currency>> =
+            Single.just(listOf(
+                    convertToWei(ethGasStationPrices.slowPrice),
+                    convertToWei(ethGasStationPrices.standardPrice),
+                    convertToWei(ethGasStationPrices.fastPrice)))
+                    .flatMap { tickerRepository.convertToFiat(it) }
+
+    private fun onFiatValues(slow: BigDecimal,
+                             normal: BigDecimal,
+                             fast: BigDecimal,
+                             currency: Currency) {
         val symbol = currency.symbol
         view.include_gas_price_selection_slow_costs_fiat.visibility = View.VISIBLE
         view.include_gas_price_selection_normal_costs_fiat.visibility = View.VISIBLE
@@ -106,7 +105,7 @@ class EtherGasStationGasPriceHelper @Inject constructor(
         view.include_gas_price_selection_fast_costs_fiat.text = context.getString(R.string.fiat_approximation, fast.stringWithNoTrailingZeroes(), symbol)
     }
 
-    override fun onFiatValuesError(throwable: Throwable) {
+    private fun onFiatValuesError(throwable: Throwable) {
         Timber.e(throwable)
         view.include_gas_price_selection_slow_costs_fiat.visibility = View.GONE
         view.include_gas_price_selection_normal_costs_fiat.visibility = View.GONE
@@ -114,7 +113,6 @@ class EtherGasStationGasPriceHelper @Inject constructor(
     }
 
     private fun updateInfo(prices: EthGasStationPrices) {
-        gasPricesSubject.onNext(prices)
         view.include_gas_price_selection_slow_costs.text = convertToWei(prices.slowPrice).displayString(view.context)
         view.include_gas_price_selection_slow_time.text = setExecutionTimeEstimate(view.context, prices.slowWaitTime)
 
@@ -178,8 +176,4 @@ interface GasPriceHelper {
      * Emits a DataResult with the selected price or an ErrorResult if no price could be loaded
      */
     fun observe(): Observable<Result<Wei>>
-
-    fun observeFiatPrices(): Observable<Result<Pair<List<BigDecimal>, Currency>>>
-    fun onFiatValues(slow: BigDecimal, normal: BigDecimal, fast: BigDecimal, currency: Currency)
-    fun onFiatValuesError(throwable: Throwable)
 }

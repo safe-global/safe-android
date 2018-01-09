@@ -2,7 +2,9 @@ package pm.gnosis.heimdall.common.di.components
 
 import dagger.Component
 import pm.gnosis.heimdall.common.di.ForView
+import pm.gnosis.heimdall.common.di.modules.ViewBindingsModule
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
@@ -39,9 +41,11 @@ import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransacti
 @ForView
 @Component(
         dependencies = [ApplicationComponent::class],
-        modules = [ViewModule::class]
+        modules = [ViewModule::class, ViewBindingsModule::class]
 )
 interface ViewComponent {
+    fun gasPriceHelper(): GasPriceHelper
+
     // Fragments
 
     fun inject(fragment: AddExistingSafeFragment)

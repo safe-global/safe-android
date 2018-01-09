@@ -113,12 +113,6 @@ class ViewTransactionActivity : BaseTransactionActivity() {
         }
         cachedTransactionData = null
         credentialsConfirmed = false
-
-        disposables += gasPriceHelper.observeFiatPrices()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = {
-                    gasPriceHelper.onFiatValues(it.first[0], it.first[1], it.first[2], it.second)
-                }, onError = gasPriceHelper::onFiatValuesError)
     }
 
     override fun fragmentRegistered() {
