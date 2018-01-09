@@ -71,7 +71,7 @@ class ViewTransactionViewModel @Inject constructor(
         return transactionRepository.loadExecuteInformation(safeAddress, transaction)
                 .flatMapCompletable { info ->
                     // Observe local signature store
-                    Single.create(signatureStore)
+                    signatureStore.loadSignatures()
                             .map { info.check(it); it }
                             .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, overrideGasPrice) }
                 }

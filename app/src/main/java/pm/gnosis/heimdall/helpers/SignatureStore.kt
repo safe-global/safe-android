@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class SimpleSignatureStore @Inject constructor(
         @ApplicationContext val context: Context
-) : SignatureStore {
+) : SignatureStore, ObservableOnSubscribe<Map<BigInteger, Signature>>, SingleOnSubscribe<Map<BigInteger, Signature>> {
 
     private val signatureLock = Any()
     private val signatures = HashMap<BigInteger, Signature>()
@@ -54,6 +54,8 @@ class SimpleSignatureStore @Inject constructor(
         return Observable.create(this)
     }
 
+    override fun loadSignatures(): Single<Map<BigInteger, Signature>> = Single.create(this)
+
     override fun loadSingingInfo(): Single<Pair<BigInteger, Transaction>> =
             info?.let { Single.just(safeAddress!! to info!!.transaction) } ?: Single.error(IllegalStateException())
 
@@ -68,8 +70,9 @@ class SimpleSignatureStore @Inject constructor(
     }
 }
 
-interface SignatureStore : ObservableOnSubscribe<Map<BigInteger, Signature>>, SingleOnSubscribe<Map<BigInteger, Signature>> {
+interface SignatureStore {
     fun flatMapInfo(safeAddress: BigInteger, info: TransactionRepository.ExecuteInformation): Observable<Map<BigInteger, Signature>>
     fun loadSingingInfo(): Single<Pair<BigInteger, Transaction>>
+    fun loadSignatures(): Single<Map<BigInteger, Signature>>
     fun addSignature(signature: Pair<BigInteger, Signature>)
 }

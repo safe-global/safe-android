@@ -39,18 +39,18 @@
   <td class="name">ViewTransactionViewModel</td>
 <td class="coverageStat">
   <span class="percent">
-    87.5%
+    100%
   </span>
   <span class="absValue">
-    (7/ 8)
+    (8/ 8)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    85.7%
+    100%
   </span>
   <span class="absValue">
-    (24/ 28)
+    (28/ 28)
   </span>
 </td>
 </tr>
@@ -264,6 +264,63 @@
 </td>
   </tr>
   <tr>
+    <td class="name">ViewTransactionViewModel$signTransaction$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">ViewTransactionViewModel$signTransaction$1$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">ViewTransactionViewModel$signTransaction$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+  </tr>
+  <tr>
     <td class="name">ViewTransactionViewModel$submitTransaction$1</td>
 <td class="coverageStat">
   <span class="percent">
@@ -286,18 +343,18 @@
     <td class="name">ViewTransactionViewModel$submitTransaction$1$1</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/ 1)
+    (1/ 1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/ 1)
+    (1/ 1)
   </span>
 </td>
   </tr>
@@ -305,18 +362,18 @@
     <td class="name">ViewTransactionViewModel$submitTransaction$1$2</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/ 1)
+    (1/ 1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/ 1)
+    (1/ 1)
   </span>
 </td>
   </tr>
@@ -343,18 +400,18 @@
   <td class="name"><strong>total</strong></td>
 <td class="coverageStat">
   <span class="percent">
-    87%
+    100%
   </span>
   <span class="absValue">
-    (20/ 23)
+    (26/ 26)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    89.3%
+    100%
   </span>
   <span class="absValue">
-    (50/ 56)
+    (61/ 61)
   </span>
 </td>
 </tr>
@@ -437,9 +494,9 @@
 <b class="fc"><i>71</i>&nbsp;        return transactionRepository.loadExecuteInformation(safeAddress, transaction)</b>
 <b class="fc"><i>72</i>&nbsp;                .flatMapCompletable { info -&gt;</b>
 <i>73</i>&nbsp;                    // Observe local signature store
-<b class="fc"><i>74</i>&nbsp;                    Single.create(signatureStore)</b>
-<b class="pc"><i>75</i>&nbsp;                            .map { info.check(it); it }</b>
-<b class="pc"><i>76</i>&nbsp;                            .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, overrideGasPrice) }</b>
+<b class="fc"><i>74</i>&nbsp;                    signatureStore.loadSignatures()</b>
+<b class="fc"><i>75</i>&nbsp;                            .map { info.check(it); it }</b>
+<b class="fc"><i>76</i>&nbsp;                            .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, overrideGasPrice) }</b>
 <i>77</i>&nbsp;                }
 <b class="fc"><i>78</i>&nbsp;                .andThen(Single.just(safeAddress))</b>
 <b class="fc"><i>79</i>&nbsp;                .onErrorResumeNext({ errorHandler.single(it) })</b>
@@ -447,14 +504,14 @@
 <i>81</i>&nbsp;    }
 <i>82</i>&nbsp;
 <i>83</i>&nbsp;    override fun signTransaction(safeAddress: BigInteger, transaction: Transaction): Single&lt;Result&lt;Pair&lt;String, Bitmap&gt;&gt;&gt; {
-<b class="nc"><i>84</i>&nbsp;        return transactionRepository.sign(safeAddress, transaction)</b>
-<b class="nc"><i>85</i>&nbsp;                .flatMap { signature -&gt;</b>
-<i>86</i>&nbsp;                    qrCodeGenerator
-<i>87</i>&nbsp;                            .generateQrCode(GnoSafeUrlParser.signResponse(signature))
-<i>88</i>&nbsp;                            .map { signature.toString() to it }
+<b class="fc"><i>84</i>&nbsp;        return transactionRepository.sign(safeAddress, transaction)</b>
+<b class="fc"><i>85</i>&nbsp;                .flatMap { signature -&gt;</b>
+<b class="fc"><i>86</i>&nbsp;                    qrCodeGenerator</b>
+<b class="fc"><i>87</i>&nbsp;                            .generateQrCode(GnoSafeUrlParser.signResponse(signature))</b>
+<b class="fc"><i>88</i>&nbsp;                            .map { signature.toString() to it }</b>
 <i>89</i>&nbsp;                }
-<b class="nc"><i>90</i>&nbsp;                .onErrorResumeNext({ errorHandler.single(it) })</b>
-<b class="nc"><i>91</i>&nbsp;                .mapToResult()</b>
+<b class="fc"><i>90</i>&nbsp;                .onErrorResumeNext({ errorHandler.single(it) })</b>
+<b class="fc"><i>91</i>&nbsp;                .mapToResult()</b>
 <i>92</i>&nbsp;    }
 <i>93</i>&nbsp;
 <i>94</i>&nbsp;    private fun TransactionRepository.ExecuteInformation.check(signatures: Map&lt;BigInteger, Signature&gt;): TransactionRepository.ExecuteInformation =
@@ -473,7 +530,7 @@
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2018-01-08 23:27</div>
+    <div style="float:right;">generated on 2018-01-09 11:58</div>
 </div>
 </body>
 </html>
