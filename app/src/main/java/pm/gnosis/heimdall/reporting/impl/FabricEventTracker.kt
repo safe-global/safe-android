@@ -31,6 +31,8 @@ class FabricEventTracker @Inject constructor(
                 trackCustomEvent(EVENT_NAME_TAB_SELECT, PARAM_NAME_ID to event.id.name.toLowerCase())
             is Event.SubmittedTransaction ->
                 trackCustomEvent(EVENT_NAME_SUBMITTED_TRANSACTION)
+            is Event.SignedTransaction ->
+                trackCustomEvent(EVENT_NAME_SIGNED_TRANSACTION)
         }
     }
 
@@ -48,6 +50,7 @@ class FabricEventTracker @Inject constructor(
         private const val EVENT_NAME_BUTTON_CLICK = "button_click"
         private const val EVENT_NAME_TAB_SELECT = "tab_select"
         private const val EVENT_NAME_SUBMITTED_TRANSACTION = "submitted_transaction"
+        private const val EVENT_NAME_SIGNED_TRANSACTION = "signed_transaction"
 
         private const val PARAM_NAME_ID = "id"
     }

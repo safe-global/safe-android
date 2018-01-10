@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.widget.Toolbar
+import android.view.View
 
 inline fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
     val editor = edit()
@@ -19,7 +20,7 @@ inline fun FragmentManager.transaction(func: FragmentTransaction.() -> FragmentT
     beginTransaction().func().commit()
 }
 
-inline fun Activity.setupToolbar(toolbar: Toolbar, @DrawableRes icon: Int) {
+fun Activity.setupToolbar(toolbar: Toolbar, @DrawableRes icon: Int) {
     toolbar.setup({ finish() }, icon)
 }
 
@@ -28,6 +29,8 @@ inline fun Toolbar.setup(crossinline func: (Toolbar) -> Unit, @DrawableRes icon:
     setNavigationOnClickListener { func(this) }
 }
 
+fun Boolean.toVisibility(hiddenVisibility: Int = View.GONE) =
+        if (this) View.VISIBLE else hiddenVisibility
 
 inline fun Bundle.build(func: Bundle.() -> Unit): Bundle {
     this.func()

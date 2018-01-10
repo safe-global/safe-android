@@ -22,6 +22,9 @@ fun <D> Observable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onE
             onError?.invoke(it)
         })
 
+fun <D> Observable<out Result<D>>.doOnNextForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)? = null): Observable<out Result<D>> =
+        doOnNext { it.handle(onNext, onError) }
+
 fun <D> Flowable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)?): Disposable =
         subscribe({ it.handle(onNext, onError) }, {
             Timber.e(WhatTheFuck(it))

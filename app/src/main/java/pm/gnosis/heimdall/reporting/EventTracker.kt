@@ -11,6 +11,7 @@ interface EventTracker {
 
 sealed class Event {
     class SubmittedTransaction : Event()
+    class SignedTransaction : Event()
     data class ScreenView(val id: ScreenId) : Event()
     data class ButtonClick(val id: ButtonId) : Event()
     data class TabSelect(val id: TabId) : Event()
@@ -42,6 +43,7 @@ enum class ScreenId {
     UNLOCK,
     VIEW_TRANSACTION,
 
+    DIALOG_REQUEST_SIGNATURE,
     DIALOG_SHARE_SAFE,
     DIALOG_SHARE_ADDRESS
 }

@@ -42,44 +42,6 @@
       "constant": false,
       "inputs": [
         {
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "name": "data",
-          "type": "bytes"
-        },
-        {
-          "name": "operation",
-          "type": "uint8"
-        },
-        {
-          "name": "v",
-          "type": "uint8[]"
-        },
-        {
-          "name": "r",
-          "type": "bytes32[]"
-        },
-        {
-          "name": "s",
-          "type": "bytes32[]"
-        }
-      ],
-      "name": "executeTransaction",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
           "name": "extension",
           "type": "address"
         }
@@ -174,6 +136,43 @@
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "transactionHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "confirmTransaction",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "address"
+        },
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "isConfirmed",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -362,6 +361,52 @@
         }
       ],
       "name": "removeOwner",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        },
+        {
+          "name": "operation",
+          "type": "uint8"
+        },
+        {
+          "name": "v",
+          "type": "uint8[]"
+        },
+        {
+          "name": "r",
+          "type": "bytes32[]"
+        },
+        {
+          "name": "s",
+          "type": "bytes32[]"
+        },
+        {
+          "name": "_owners",
+          "type": "address[]"
+        },
+        {
+          "name": "indices",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "executeTransaction",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",

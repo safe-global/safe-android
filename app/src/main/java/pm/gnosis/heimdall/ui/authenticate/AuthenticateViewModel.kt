@@ -11,8 +11,11 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.ZxingIntentIntegrator
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.ui.transactions.ExecuteTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
 import pm.gnosis.heimdall.utils.ERC67Parser
+import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import javax.inject.Inject
 
 
@@ -31,8 +34,15 @@ class AuthenticateViewModel @Inject constructor(
     }
 
     private fun validateQrCode(qrCodeData: String): Intent {
+        GnoSafeUrlParser.parse(qrCodeData)?.let {
+            when (it) {
+                is GnoSafeUrlParser.Parsed.SignRequest ->
+                    return SignTransactionActivity.createIntent(context, it.safe, it.transaction)
+                else -> null
+            }
+        }
         val parsedData = ERC67Parser.parse(qrCodeData) ?:
                 throw SimpleLocalizedException(context.getString(R.string.invalid_erc67))
-        return ViewTransactionActivity.createIntent(context, null, parsedData.transaction)
+        return ExecuteTransactionActivity.createIntent(context, null, parsedData.transaction)
     }
 }

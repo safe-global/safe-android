@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/dialog_address_share_root"
+    android:id="@+id/dialog_request_signature_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_alpha_70"
@@ -11,14 +10,12 @@
 
     <include layout="@layout/include_base_share_qr_code" />
 
-    <ImageView
-        android:id="@+id/dialog_address_share_share"
+    <TextView
+        android:id="@+id/dialog_request_signature_scan"
         style="@style/PrimaryButton.FullWidth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:padding="8dp"
-        android:scaleType="center"
-        android:tint="@color/white"
-        app:srcCompat="@drawable/ic_share_24dp" />
+        android:text="@string/scan_signature"/>
 </LinearLayout>

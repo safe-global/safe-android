@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.common.utils.edit
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.*
+import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -70,6 +71,10 @@ class GethAccountsRepository @Inject constructor(
             val v = signature.substring(128, 130).hexAsBigInteger().toByte()
             Signature(r, s, v)
         }
+    }
+
+    override fun recover(data: ByteArray, signature: Signature): Single<BigInteger> {
+        return Single.error(UnsupportedOperationException())
     }
 
     override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable =

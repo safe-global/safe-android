@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
+import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asTransactionHash
 import pm.gnosis.utils.stringWithNoTrailingZeroes
@@ -109,7 +110,7 @@ class SafeAdapter @Inject constructor(
 
         private fun onSafeInfo(safeInfo: SafeInfo) {
             itemView.layout_safe_item_authorizations.text = "${safeInfo.requiredConfirmations}/${safeInfo.owners.count()}"
-            itemView.layout_safe_item_ether.text = safeInfo.balance.toEther().stringWithNoTrailingZeroes()
+            itemView.layout_safe_item_ether.text = safeInfo.balance.displayString(context)
             itemView.layout_safe_item_owner.visibility = if (safeInfo.isOwner) View.VISIBLE else View.GONE
         }
 
@@ -146,9 +147,7 @@ class SafeAdapter @Inject constructor(
             val pendingSafe = currentEntry ?: return
             disposables += viewModel.observeDeployedStatus(pendingSafe.hash.asTransactionHash())
                     .observeOn(AndroidSchedulers.mainThread())
-                    // Empty function for now, we should adjust the design and
-                    // maybe display a retry button on error
-                    .subscribe(Functions.emptyConsumer(), Consumer {
+                    .subscribeBy(onError = {
                         context.toast(R.string.error_deploying_safe)
                         Timber.e(it)
                     })

@@ -91,14 +91,16 @@ abstract class BaseTransactionActivity : BaseActivity() {
         }
     }
 
-    protected fun <T> checkInfoAndPerform(info: Pair<BigInteger?, Result<Transaction>>, action: (BigInteger, Transaction) -> Observable<Result<T>>): Observable<Result<T>> =
-            info.let { (safeAddress, transaction) ->
-                safeAddress?.let {
-                    when (transaction) {
-                        is DataResult -> action(safeAddress, transaction.data)
-                        is ErrorResult -> Observable.just(ErrorResult(transaction.error))
-                    }
-                } ?: Observable.just(ErrorResult(NoSafeSelectedException()))
+    protected fun <T> Observable<Pair<BigInteger?, Result<Transaction>>>.checkedFlatMap(action: (BigInteger, Transaction) -> Observable<Result<T>>): Observable<Result<T>> =
+            flatMap {
+                it.let { (safeAddress, transaction) ->
+                    safeAddress?.let {
+                        when (transaction) {
+                            is DataResult -> action(safeAddress, transaction.data)
+                            is ErrorResult -> Observable.just(ErrorResult(transaction.error))
+                        }
+                    } ?: Observable.just(ErrorResult(NoSafeSelectedException()))
+                }
             }
 
     abstract fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment

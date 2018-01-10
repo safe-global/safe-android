@@ -18,7 +18,7 @@
             android:layout_height="@dimen/toolbar_height"
             app:navigationIcon="@drawable/ic_close_24dp"
             app:theme="@style/LightToolbarTheme"
-            app:title="@string/confirm_transaction" />
+            app:title="@string/submit_transaction" />
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             android:id="@+id/layout_view_transaction_progress_bar"
@@ -55,14 +55,70 @@
                 android:layout_height="@dimen/divider_width"
                 android:background="@color/divider" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Content"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/confirmations" />
+
+                <TextView
+                    android:id="@+id/layout_view_transaction_confirmations"
+                    style="@style/Content"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableEnd="@drawable/ic_authenticate_small_dark"
+                    android:drawablePadding="8dp"
+                    android:drawableRight="@drawable/ic_authenticate_small_dark"
+                    android:gravity="end"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="16dp"
+                    android:text="-/-"
+                    tools:text="1/3" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/layout_view_transaction_confirmations_hint_text"
+                style="@style/Content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/confirm_transaction_hint" />
+
+            <LinearLayout
+                android:id="@+id/layout_view_transaction_confirmations_addresses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <View
+                android:id="@+id/layout_view_transaction_confirmations_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:layout_marginTop="16dp"
+                android:background="@color/divider" />
+
             <include layout="@layout/include_gas_price_selection" />
 
             <View
+                android:id="@+id/layout_view_transaction_transaction_fee_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/divider_width"
                 android:background="@color/divider" />
 
             <TextView
+                android:id="@+id/layout_view_transaction_transaction_fee_label"
                 style="@style/Content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,61 +137,6 @@
                 android:paddingRight="16dp"
                 android:text="@string/loading" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_width"
-                android:background="@color/divider" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp">
-
-                <FrameLayout
-                    android:id="@+id/layout_view_transaction_confirmations_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true">
-
-                    <android.support.v7.widget.AppCompatTextView
-                        android:id="@+id/layout_view_transaction_confirmations"
-                        android:layout_width="84dp"
-                        android:layout_height="84dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="@drawable/action_circle_background"
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:paddingBottom="16dp"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingTop="8dp"
-                        app:autoSizeTextType="uniform"
-                        tools:text="0/3" />
-
-                    <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="bottom|center"
-                        android:background="@drawable/white_circle"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_authenticate_small_dark" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/layout_view_transaction_confirmations_hint_text"
-                    style="@style/Content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginEnd="48dp"
-                    android:layout_marginRight="48dp"
-                    android:layout_toLeftOf="@id/layout_view_transaction_confirmations_container"
-                    android:layout_toStartOf="@id/layout_view_transaction_confirmations_container"
-                    tools:text="@string/confirm_transaction_hint" />
-            </RelativeLayout>
-
             <TextView
                 android:id="@+id/layout_view_transaction_submit_button"
                 style="@style/PrimaryButton"
@@ -144,9 +145,20 @@
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
                 android:layout_marginTop="16dp"
-                android:enabled="false"
                 android:minHeight="48dp"
-                android:text="@string/confirm_transaction" />
+                android:text="@string/submit_transaction"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/layout_view_transaction_add_signature_button"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:layout_marginTop="16dp"
+                android:minHeight="48dp"
+                android:text="@string/add_signature" />
         </LinearLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

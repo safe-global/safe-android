@@ -12,16 +12,12 @@ import kotlinx.android.synthetic.main.include_gas_price_selection.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.remote.EthGasStationApi
 import pm.gnosis.heimdall.data.remote.models.EthGasStationPrices
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.DateTimeUtils
 import pm.gnosis.heimdall.utils.displayString
-import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
@@ -76,10 +72,11 @@ class EtherGasStationGasPriceHelper @Inject constructor(
             .onErrorResumeNext(Function { errorHandler.observable(it) })
             .mapToResult()
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { it.handle({ updateInfo(it) }, { errorSnackbar(view, it) }) }
+            .doOnNextForResult({ updateInfo(it) }, { Timber.e(it) })
             .flatMapSingle { ethGasStationPrices ->
                 when (ethGasStationPrices) {
                     is DataResult -> loadFiatPrices(ethGasStationPrices.data)
+                            .observeOn(AndroidSchedulers.mainThread())
                             .doOnSuccess { onFiatValues(it.first[0], it.first[1], it.first[2], it.second) }
                             .doOnError { onFiatValuesError(it) }
                             .map { ethGasStationPrices }
@@ -99,7 +96,7 @@ class EtherGasStationGasPriceHelper @Inject constructor(
                              normal: BigDecimal,
                              fast: BigDecimal,
                              currency: Currency) {
-        val symbol = currency.symbol
+        val symbol = currency.getFiatSymbol()
         view.include_gas_price_selection_slow_costs_fiat.visibility = View.VISIBLE
         view.include_gas_price_selection_normal_costs_fiat.visibility = View.VISIBLE
         view.include_gas_price_selection_fast_costs_fiat.visibility = View.VISIBLE

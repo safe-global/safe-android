@@ -351,13 +351,30 @@ class KeyPair(
             if (signatureEncoded.size < 65) {
                 throw SignatureException("Signature truncated, expected 65 bytes and got " + signatureEncoded.size)
             }
-            var header = signatureEncoded[0].toInt() and 0xFF
+            val v = signatureEncoded[0]
+            val r = BigInteger(1, Arrays.copyOfRange(signatureEncoded, 1, 33))
+            val s = BigInteger(1, Arrays.copyOfRange(signatureEncoded, 33, 65))
+            return signatureToKey(messageHash, v, r, s)
+        }
+
+        /**
+         * Given a piece of text and a message signature parts (v, r, s), returns an ECKey
+         * containing the public key that was used to sign it. This can then be compared to the expected public key to
+         * determine if the signature was correct.
+         *
+         * @param messageHash a piece of human readable text that was signed
+         * @param v Which possible key to recover.
+         * @param r Component of the signature.
+         * @param s Component of the signature.
+         * @throws SignatureException If the public key could not be recovered or if there was a signature format error.
+         */
+        @Throws(SignatureException::class)
+        fun signatureToKey(messageHash: ByteArray, v: Byte, r: BigInteger, s: BigInteger): KeyPair {
+            var header = v.toInt() and 0xFF
             // The header byte: 0x1B = first key with even y, 0x1C = first key with odd y,
             //                  0x1D = second key with even y, 0x1E = second key with odd y
             if (header < 27 || header > 34)
                 throw SignatureException("Header byte out of range: " + header)
-            val r = BigInteger(1, Arrays.copyOfRange(signatureEncoded, 1, 33))
-            val s = BigInteger(1, Arrays.copyOfRange(signatureEncoded, 33, 65))
             val sig = ECDSASignature(r, s)
             var compressed = false
             if (header >= 31) {
