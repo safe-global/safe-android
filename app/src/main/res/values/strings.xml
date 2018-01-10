@@ -257,6 +257,6 @@
     <string name="this_device">This device</string>
     <string name="scan_signature">Scan Signature</string>
     <string name="request_signature">Request Signature</string>
-    <string name="error_signature_not_owner">The signature was not create by a safe owning device!</string>
+    <string name="error_signature_not_owner">The signature was not created by a safe owning device!</string>
     <string name="error_signature_already_exists">This signature has already been added!</string>
 </resources>

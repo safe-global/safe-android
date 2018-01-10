@@ -55,7 +55,8 @@ class SafeTransactionsViewModel @Inject constructor(
                         .flatMap { details ->
                             when (details.type) {
                                 TransactionType.ETHER_TRANSFER -> {
-                                    val value = (details.transaction.value ?: Wei.ZERO).displayString(context)
+                                    // We always want to display the complete amount (all 18 decimals)
+                                    val value = (details.transaction.value ?: Wei.ZERO).toEther().stringWithNoTrailingZeroes()
                                     val symbol = context.getString(R.string.currency_eth)
                                     Single.just(details to TransferInfo(value, symbol))
                                 }

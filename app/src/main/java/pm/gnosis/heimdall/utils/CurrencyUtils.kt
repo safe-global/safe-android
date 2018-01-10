@@ -10,9 +10,9 @@ import java.math.BigInteger
 
 fun Wei.displayString(context: Context) =
         when {
-            value < WEI_LIMIT ->
+            value <= WEI_LIMIT ->
                 context.getString(R.string.x_wei, value.asDecimalString())!!
-            value < GWEI_LIMIT ->
+            value <= GWEI_LIMIT ->
                 context.getString(R.string.x_gwei, value.divide(GWEI_FACTOR).asDecimalString())!!
             else ->
                 context.getString(R.string.x_ether, toEther().stringWithNoTrailingZeroes())!!
