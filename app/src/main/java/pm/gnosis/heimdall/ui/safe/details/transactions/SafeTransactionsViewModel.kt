@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepositor
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.transactions.ExecuteTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
+import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -54,7 +55,7 @@ class SafeTransactionsViewModel @Inject constructor(
                         .flatMap { details ->
                             when (details.type) {
                                 TransactionType.ETHER_TRANSFER -> {
-                                    val value = (details.transaction.value ?: Wei.ZERO).toEther().stringWithNoTrailingZeroes()
+                                    val value = (details.transaction.value ?: Wei.ZERO).displayString(context)
                                     val symbol = context.getString(R.string.currency_eth)
                                     Single.just(details to TransferInfo(value, symbol))
                                 }
