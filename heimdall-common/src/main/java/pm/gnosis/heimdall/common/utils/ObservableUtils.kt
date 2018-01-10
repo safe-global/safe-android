@@ -22,7 +22,7 @@ fun <D> Observable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onE
             onError?.invoke(it)
         })
 
-fun <D> Observable<out Result<D>>.doOnNextForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)? = null): Observable<out Result<D>> =
+fun <D> Observable<Result<D>>.doOnNextForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)? = null): Observable<Result<D>> =
         doOnNext { it.handle(onNext, onError) }
 
 fun <D> Flowable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)?): Disposable =
@@ -43,8 +43,8 @@ fun <D> Single<D>.mapToResult(): Single<Result<D>> =
 fun <K, D> MutableMap<K, Observable<D>>.getSharedObservable(key: K, source: Observable<D>): Observable<D> =
         getOrPut(key, {
             source.doOnTerminate { remove(key) }
-                .publish()
-                .autoConnect()
+                    .publish()
+                    .autoConnect()
         })
 
 sealed class Result<out D> {
@@ -53,6 +53,21 @@ sealed class Result<out D> {
             is DataResult -> dataFun?.invoke(data)
             is ErrorResult -> errorFun?.invoke(error)
         }
+    }
+
+    fun <O> map(mapper: (D) -> O): Result<O> = when (this) {
+        is DataResult -> try {
+            DataResult(mapper(data))
+        } catch (throwable: Throwable) {
+            ErrorResult<O>(throwable)
+        }
+        is ErrorResult -> ErrorResult(error)
+    }
+
+    fun <O> mapSingle(mapper: (D) -> Single<Result<O>>, errorMapper: ((Throwable) -> Single<Result<O>>)? = null):
+            Single<Result<O>> = when (this) {
+        is DataResult -> mapper(data)
+        is ErrorResult -> errorMapper?.invoke(error) ?: Single.just(ErrorResult(error))
     }
 }
 

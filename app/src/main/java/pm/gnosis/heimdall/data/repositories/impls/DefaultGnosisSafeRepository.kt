@@ -25,6 +25,7 @@ import pm.gnosis.heimdall.data.remote.models.TransactionParameters
 import pm.gnosis.heimdall.data.remote.models.TransactionReceipt
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
+import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.model.Solidity
@@ -93,16 +94,17 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 .singleOrError()
     }
 
-    override fun estimateDeployCosts(devices: Set<BigInteger>, requiredConfirmations: Int): Single<Wei> {
+    override fun estimateDeployCosts(devices: Set<BigInteger>, requiredConfirmations: Int): Single<GasEstimate> {
         return loadSafeDeployParams(devices, requiredConfirmations)
-                .map { Wei(it.transactionParameters.gas * it.transactionParameters.gasPrice) }
+                .map { GasEstimate(it.transactionParameters.gas, Wei(it.transactionParameters.gasPrice)) }
     }
 
-    override fun deploy(name: String?, devices: Set<BigInteger>, requiredConfirmations: Int): Completable {
+    override fun deploy(name: String?, devices: Set<BigInteger>, requiredConfirmations: Int, overrideGasPrice: Wei?): Completable {
         return loadSafeDeployParams(devices, requiredConfirmations)
                 .flatMap {
                     val params = it.transactionParameters
-                    val transaction = Transaction(address = it.factoryAddress, data = it.data, nonce = params.nonce, gas = params.gas, gasPrice = params.gasPrice)
+                    val gasPrice = overrideGasPrice?.value ?: params.gasPrice
+                    val transaction = Transaction(address = it.factoryAddress, data = it.data, nonce = params.nonce, gas = params.gas, gasPrice = gasPrice)
                     accountsRepository.signTransaction(transaction)
                 }
                 .flatMapObservable { ethereumJsonRpcRepository.sendRawTransaction(it) }

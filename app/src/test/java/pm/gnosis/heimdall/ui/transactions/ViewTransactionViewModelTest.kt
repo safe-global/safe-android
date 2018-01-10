@@ -10,7 +10,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
@@ -346,7 +345,7 @@ class ViewTransactionViewModelTest {
         given(transactionRepositoryMock.loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(info))
 
         val signatureSingle = signatures?.let { Single.just(it) } ?: Single.error(TestException())
-        given(signatureStoreMock.loadSignatures()).willReturn(signatureSingle)
+        given(signatureStoreMock.load()).willReturn(signatureSingle)
 
         if (expectingSubmit) {
             val submitReturn = submitError?.let { Completable.error(it) } ?: Completable.complete()
@@ -463,7 +462,7 @@ class ViewTransactionViewModelTest {
         val testObserver = TestObserver<Unit>()
         viewModel.addSignature(GnoSafeUrlParser.signResponse(TEST_SIGNATURE)).subscribe(testObserver)
 
-        then(signatureStoreMock).should().addSignature(sigInfo)
+        then(signatureStoreMock).should().add(sigInfo)
         then(signatureStoreMock).should().loadSingingInfo()
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
 
