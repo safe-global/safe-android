@@ -57,10 +57,22 @@
             style="@style/BoldContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
+            android:paddingBottom="8dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:text="@string/loading" />
+
+        <TextView
+            android:id="@+id/layout_deploy_new_safe_transaction_fee_fiat"
+            style="@style/BoldContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:visibility="gone"
+            tools:text="42$"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/layout_deploy_new_safe_deploy_button"

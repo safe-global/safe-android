@@ -3,13 +3,11 @@ package pm.gnosis.heimdall.ui.transactions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Display
 import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
 import kotlinx.android.synthetic.main.layout_create_transaction.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -25,7 +23,6 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
-
 
 class CreateTransactionActivity : BaseTransactionActivity() {
 
@@ -110,7 +107,6 @@ class CreateTransactionActivity : BaseTransactionActivity() {
 
 
     companion object {
-
         private const val EXTRA_SAFE = "extra.string.safe"
         private const val EXTRA_TYPE = "extra.int.type"
         private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"

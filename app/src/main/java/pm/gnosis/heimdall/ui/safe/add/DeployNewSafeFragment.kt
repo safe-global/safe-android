@@ -17,13 +17,14 @@ import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Wei
-import pm.gnosis.utils.asDecimalString
+import pm.gnosis.ticker.data.repositories.models.Currency
+import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
+import java.math.BigDecimal
 import javax.inject.Inject
 
 
 class DeployNewSafeFragment : BaseFragment() {
-
     @Inject
     lateinit var viewModel: AddSafeContract
 
@@ -41,9 +42,14 @@ class DeployNewSafeFragment : BaseFragment() {
         }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(::safeDeployed, ::errorDeploying)
+
         disposables += viewModel.observeEstimate()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::updateEstimate, Timber::e)
+                .doOnNext { updateEstimate(it) }
+                .doOnError { Timber.e(it) }
+                .flatMapSingle { viewModel.loadFiatConversion(it) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeForResult(onNext = ::onFiat, onError = ::onFiatError)
     }
 
     private fun toggleDeploying(inProgress: Boolean) {
@@ -62,6 +68,19 @@ class DeployNewSafeFragment : BaseFragment() {
 
     private fun updateEstimate(estimate: Wei) {
         layout_deploy_new_safe_transaction_fee.text = estimate.displayString(context!!)
+    }
+
+    private fun onFiat(fiat: Pair<BigDecimal, Currency>) {
+        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.VISIBLE
+        layout_deploy_new_safe_transaction_fee_fiat.text =
+                getString(R.string.fiat_approximation,
+                        fiat.first.stringWithNoTrailingZeroes(),
+                        fiat.second.getFiatSymbol())
+    }
+
+    private fun onFiatError(throwable: Throwable) {
+        Timber.e(throwable)
+        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.GONE
     }
 
     override fun inject(component: ApplicationComponent) {

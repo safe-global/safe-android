@@ -126,7 +126,10 @@ class ViewTransactionActivity : BaseTransactionActivity() {
                         // Transaction Data
                         it.compose(transactionInfoTransformer),
                         // Price data
-                        gasPriceHelper.observe(include_gas_price_selection_root_container),
+                        gasPriceHelper.let {
+                            it.setup(include_gas_price_selection_root_container)
+                            it.observe()
+                        },
                         BiFunction { info: Result<ViewTransactionContract.Info>, prices: Result<Wei> -> info to prices }
                 )
                         // Update displayed information
