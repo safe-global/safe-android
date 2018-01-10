@@ -74,16 +74,19 @@ class EtherGasStationGasPriceHelper @Inject constructor(
 
     private fun loadGasPrices() = gasStationApi.loadGasPrices()
             .onErrorResumeNext(Function { errorHandler.observable(it) })
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { updateInfo(it) }
-            .doOnError { errorSnackbar(view, it) }
-            .flatMapSingle { ethGasStationPrices ->
-                loadFiatPrices(ethGasStationPrices)
-                        .doOnSuccess { onFiatValues(it.first[0], it.first[1], it.first[2], it.second) }
-                        .doOnError { onFiatValuesError(it) }
-                        .map { ethGasStationPrices }
-            }
             .mapToResult()
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext { it.handle({ updateInfo(it) }, { errorSnackbar(view, it) }) }
+            .flatMapSingle { ethGasStationPrices ->
+                when (ethGasStationPrices) {
+                    is DataResult -> loadFiatPrices(ethGasStationPrices.data)
+                            .doOnSuccess { onFiatValues(it.first[0], it.first[1], it.first[2], it.second) }
+                            .doOnError { onFiatValuesError(it) }
+                            .map { ethGasStationPrices }
+                            .onErrorReturn { ErrorResult(it) }
+                    is ErrorResult -> Single.just(ethGasStationPrices)
+                }
+            }
 
     private fun loadFiatPrices(ethGasStationPrices: EthGasStationPrices): Single<Pair<List<BigDecimal>, Currency>> =
             Single.just(listOf(

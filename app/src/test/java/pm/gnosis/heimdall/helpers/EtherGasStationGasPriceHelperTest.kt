@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import org.junit.Assert.*
@@ -23,9 +24,11 @@ import pm.gnosis.heimdall.utils.DateTimeUtils
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.tests.utils.mockGetStringWithArgs
 import pm.gnosis.ticker.data.repositories.TickerRepository
+import pm.gnosis.ticker.data.repositories.models.Currency
 import java.math.BigDecimal
 import java.net.UnknownHostException
 
@@ -63,6 +66,15 @@ class EtherGasStationGasPriceHelperTest {
     lateinit var fastTimeMock: TextView
 
     @Mock
+    lateinit var slowFiatMock: TextView
+
+    @Mock
+    lateinit var normalFiatMock: TextView
+
+    @Mock
+    lateinit var fastFiatMock: TextView
+
+    @Mock
     lateinit var rootViewMock: View
 
     private lateinit var slowContainerMock: TestLinearLayout
@@ -92,14 +104,17 @@ class EtherGasStationGasPriceHelperTest {
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_slow_container, slowContainerMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_slow_costs, slowCostsMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_slow_time, slowTimeMock.setupMock())
+        rootViewMock.mockFindViewById(R.id.include_gas_price_selection_slow_costs_fiat, slowFiatMock.setupMock())
 
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_normal_container, normalContainerMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_normal_costs, normalCostsMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_normal_time, normalTimeMock.setupMock())
+        rootViewMock.mockFindViewById(R.id.include_gas_price_selection_normal_costs_fiat, normalFiatMock.setupMock())
 
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_container, fastContainerMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_costs, fastCostsMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_time, fastTimeMock.setupMock())
+        rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_costs_fiat, fastFiatMock.setupMock())
         helper = EtherGasStationGasPriceHelper(contextMock, ethGasStationApi, tickerRepositoryMock)
     }
 
@@ -112,6 +127,8 @@ class EtherGasStationGasPriceHelperTest {
     fun observe() {
         val gasPriceSubject = PublishSubject.create<EthGasStationPrices>()
         given(ethGasStationApi.loadGasPrices()).willReturn(gasPriceSubject)
+        val currencyResult = listOf(BigDecimal(1), BigDecimal(2), BigDecimal(3)) to Currency("id", "name", "CUR", 0, 0, BigDecimal.ONE, Currency.FiatSymbol.USD)
+        given(tickerRepositoryMock.convertToFiat(MockUtils.any<List<Wei>>(), MockUtils.any())).willReturn(Single.just(currencyResult))
         val testObserver = TestObserver<Result<Wei>>()
         helper.setup(rootViewMock)
         helper.observe().subscribe(testObserver)
@@ -199,6 +216,8 @@ class EtherGasStationGasPriceHelperTest {
 
         then(ethGasStationApi).should().loadGasPrices()
         then(ethGasStationApi).shouldHaveNoMoreInteractions()
+        then(tickerRepositoryMock).should().convertToFiat(listOf(BigDecimal(100), BigDecimal(200), BigDecimal(300)).map { convertToWei(it.toFloat()) },
+                Currency.FiatSymbol.USD)
     }
 
     private fun convertToWei(price: Float) =
