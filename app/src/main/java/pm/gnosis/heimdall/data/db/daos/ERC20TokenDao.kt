@@ -18,10 +18,10 @@ interface ERC20TokenDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertERC20Tokens(erC20Tokens: List<ERC20TokenDb>)
 
-    @Query("SELECT * FROM ${ERC20TokenDb.TABLE_NAME} ORDER BY ${ERC20TokenDb.COL_NAME} ASC")
+    @Query("SELECT * FROM ${ERC20TokenDb.TABLE_NAME}")
     fun observeTokens(): Flowable<List<ERC20TokenDb>>
 
-    @Query("SELECT * FROM ${ERC20TokenDb.TABLE_NAME} ORDER BY ${ERC20TokenDb.COL_NAME} ASC")
+    @Query("SELECT * FROM ${ERC20TokenDb.TABLE_NAME}")
     fun loadTokens(): Single<List<ERC20TokenDb>>
 
     @Query("SELECT * FROM ${ERC20TokenDb.TABLE_NAME} WHERE ${ERC20TokenDb.COL_ADDRESS} = :address")

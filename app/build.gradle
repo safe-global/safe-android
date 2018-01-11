@@ -46,6 +46,10 @@ android {
             minifyEnabled false
         }
 
+        mainnet {
+            minifyEnabled true
+        }
+
         release {
             minifyEnabled true
         }
