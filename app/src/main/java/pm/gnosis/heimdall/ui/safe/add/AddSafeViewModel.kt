@@ -73,6 +73,7 @@ class AddSafeViewModel @Inject constructor(
     override fun observeEstimate(): Observable<Result<GasEstimate>> {
         return addressStore.observe().flatMapSingle {
             repository.estimateDeployCosts(it, calculateRequiredConfirmations(it))
+                    .onErrorResumeNext({ errorHandler.single(it) })
         }.mapToResult()
     }
 
