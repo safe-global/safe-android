@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.observers.TestObserver
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

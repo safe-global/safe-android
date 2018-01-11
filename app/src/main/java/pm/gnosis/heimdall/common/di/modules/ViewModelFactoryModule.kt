@@ -37,6 +37,10 @@ import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsViewModel
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsContract
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsViewModel
+import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordContract
+import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordViewModel
+import pm.gnosis.heimdall.ui.settings.security.revealmnemonic.RevealMnemonicContract
+import pm.gnosis.heimdall.ui.settings.security.revealmnemonic.RevealMnemonicViewModel
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementViewModel
 import pm.gnosis.heimdall.ui.splash.SplashContract
@@ -96,6 +100,11 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(ChangePasswordContract::class)
+    abstract fun bindsChangePasswordContract(viewModel: ChangePasswordViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(CreateTokenTransactionProgressContract::class)
     abstract fun bindsCreateTokenTransactionProgressContract(viewModel: CreateTokenTransactionProgressViewModel): ViewModel
 
@@ -123,6 +132,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(RestoreAccountContract::class)
     abstract fun bindsRestoreAccountContract(viewModel: RestoreAccountViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RevealMnemonicContract::class)
+    abstract fun bindsRevealMnemonicContract(viewModel: RevealMnemonicViewModel): ViewModel
 
     @Binds
     @IntoMap

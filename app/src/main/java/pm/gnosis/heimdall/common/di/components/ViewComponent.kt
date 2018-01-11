@@ -28,6 +28,8 @@ import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
+import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordActivity
+import pm.gnosis.heimdall.ui.settings.security.revealmnemonic.RevealMnemonicActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
 import pm.gnosis.heimdall.ui.splash.SplashActivity
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
@@ -67,12 +69,14 @@ interface ViewComponent {
     fun inject(activity: AddressBookEntryDetailsActivity)
     fun inject(activity: AddTokenActivity)
     fun inject(activity: AuthenticateActivity)
+    fun inject(activity: ChangePasswordActivity)
     fun inject(activity: CreateTransactionActivity)
     fun inject(activity: ExecuteTransactionActivity)
     fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: NetworkSettingsActivity)
     fun inject(activity: PasswordSetupActivity)
     fun inject(activity: RestoreAccountActivity)
+    fun inject(activity: RevealMnemonicActivity)
     fun inject(activity: SafeDetailsActivity)
     fun inject(activity: SafesOverviewActivity)
     fun inject(activity: SecuritySettingsActivity)

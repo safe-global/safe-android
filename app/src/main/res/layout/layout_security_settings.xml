@@ -25,6 +25,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/selectable_background"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="16dp">
 
@@ -47,6 +48,25 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/layout_security_settings_show_mnemonic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selectable_background"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:text="Security phrase" />
+
+                <TextView
+                    android:id="@+id/layout_security_settings_change_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selectable_background"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:text="Change password" />
             </LinearLayout>
 
         </ScrollView>
