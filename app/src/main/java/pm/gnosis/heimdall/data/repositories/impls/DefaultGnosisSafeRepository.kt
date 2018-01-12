@@ -28,6 +28,7 @@ import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.heimdall.utils.GnosisSafeUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
@@ -188,7 +189,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     SafeInfo(addressString,
                             it.balance.value!!,
                             it.requiredConfirmations.value!!.param0.value.toLong(),
-                            it.owners.value!!.param0.items.map { it.value.asEthereumAddressString() },
+                            it.owners.value!!.param0.items.map { it.value },
                             it.isOwner.value!!.param0.value)
                 }
     }

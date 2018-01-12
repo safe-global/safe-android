@@ -1,5 +1,7 @@
 package pm.gnosis.heimdall.helpers
 
+import com.gojuno.koptional.Optional
+import com.gojuno.koptional.toOptional
 import io.reactivex.*
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -43,7 +45,21 @@ abstract class ValueStore<T> : ObservableStore<T>, ObservableOnSubscribe<T>, Sin
     }
 }
 
-abstract class SetStore<T>(private val set: MutableSet<T> = HashSet()) : ValueStore<Set<T>>() {
+open class SingleValueStore<T : Any> : ValueStore<Optional<T>>() {
+
+    private var value: T? = null
+
+    override fun dataSet(): Optional<T> = value.toOptional()
+
+    fun store(value: T?) {
+        transaction {
+            this.value = value
+        }
+        publish()
+    }
+}
+
+open class SetStore<T>(private val set: MutableSet<T> = HashSet()) : ValueStore<Set<T>>() {
 
     override fun dataSet() = HashSet(set)
 

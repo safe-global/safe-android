@@ -72,5 +72,5 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsTransactionDetailRepository(repository: IpfsTransactionDetailsRepository): TransactionDetailsRepository
+    abstract fun bindsTransactionDetailRepository(repository: SimpleTransactionDetailsRepository): TransactionDetailsRepository
 }

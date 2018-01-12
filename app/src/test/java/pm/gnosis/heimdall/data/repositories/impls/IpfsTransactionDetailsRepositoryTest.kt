@@ -39,12 +39,12 @@ class IpfsTransactionDetailsRepositoryTest {
     @Mock
     lateinit var ipfsApiMock: IpfsApi
 
-    private lateinit var repository: IpfsTransactionDetailsRepository
+    private lateinit var repository: SimpleTransactionDetailsRepository
 
     @Before
     fun setUp() {
         given(gnosisAuthenticatorDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
-        repository = IpfsTransactionDetailsRepository(gnosisAuthenticatorDbMock, ethereumJsonRpcRepositoryMock, ipfsApiMock)
+        repository = SimpleTransactionDetailsRepository(gnosisAuthenticatorDbMock, ethereumJsonRpcRepositoryMock, ipfsApiMock)
     }
 
     private fun testLoadTransactionType(transaction: Transaction, expectedType: TransactionType) {

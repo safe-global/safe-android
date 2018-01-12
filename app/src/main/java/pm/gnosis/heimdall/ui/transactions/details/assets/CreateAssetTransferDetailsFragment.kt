@@ -21,10 +21,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.snackbar
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.SimpleSpinnerAdapter
@@ -126,23 +123,18 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
         return inputSubject
                 .compose(subViewModel.inputTransformer(cachedTransaction))
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext {
-                    when (it) {
-                        is ErrorResult -> {
-                            (it.error as? TransactionInputException)?.let {
-                                if (it.errorFields and TransactionInputException.TO_FIELD != 0) {
-                                    setInputError(layout_transaction_details_asset_transfer_to_input)
-                                }
-                                if (it.errorFields and TransactionInputException.AMOUNT_FIELD != 0) {
-                                    setInputError(layout_transaction_details_asset_transfer_amount_input)
-                                }
-                            }
+                .doOnNextForResult({
+                    cachedTransaction = it.copy(nonce = cachedTransaction?.nonce ?: it.nonce)
+                }, {
+                    (it as? TransactionInputException)?.let {
+                        if (it.errorFields and TransactionInputException.TO_FIELD != 0) {
+                            setInputError(layout_transaction_details_asset_transfer_to_input)
                         }
-                        is DataResult -> {
-                            cachedTransaction = it.data.copy(nonce = cachedTransaction?.nonce ?: it.data.nonce)
+                        if (it.errorFields and TransactionInputException.AMOUNT_FIELD != 0) {
+                            setInputError(layout_transaction_details_asset_transfer_amount_input)
                         }
                     }
-                }
+                })
     }
 
     override fun selectedSafeChanged(safe: Safe?) {

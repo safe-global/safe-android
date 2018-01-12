@@ -22,7 +22,7 @@ fun <D> Observable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onE
             onError?.invoke(it)
         })
 
-fun <D> Observable<Result<D>>.doOnNextForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)? = null): Observable<Result<D>> =
+fun <D> Observable<Result<D>>.doOnNextForResult(onNext: ((D) -> Unit)? = null, onError: ((Throwable) -> Unit)? = null): Observable<Result<D>> =
         doOnNext { it.handle(onNext, onError) }
 
 fun <D> Flowable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)?): Disposable =

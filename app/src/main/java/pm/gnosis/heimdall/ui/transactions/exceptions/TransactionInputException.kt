@@ -20,5 +20,8 @@ data class TransactionInputException(private val internalMessage: String, val er
         const val TOKEN_FIELD = 1 shl 3
         const val AMOUNT_FIELD = 1 shl 4
 
+        // Safe settings specific fields
+        const val TARGET_FIELD = 1 shl 5
+
     }
 }

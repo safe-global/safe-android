@@ -36,6 +36,8 @@ import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsViewModel
 
 @Module
 class ViewModule(val context: Context) {
@@ -79,6 +81,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesChangePasswordContract(provider: ViewModelProvider) = provider[ChangePasswordContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesChangeSafeSettingsDetailsContract(provider: ViewModelProvider) = provider[ChangeSafeSettingsDetailsContract::class.java]
 
     @Provides
     @ForView
