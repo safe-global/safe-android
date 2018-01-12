@@ -40,13 +40,13 @@ class SimpleSignatureStoreTest {
     @Test
     fun completeFlow() {
         val signaturesObserver = TestObserver<Map<BigInteger, Signature>>()
-        Observable.create(store).subscribe(signaturesObserver)
+        store.observe().subscribe(signaturesObserver)
         // No signatures exist we should get an empty map
         signaturesObserver.assertValuesOnly(emptyMap())
 
         // It should not be possible to add a signature if we have no information about the safe
         assertError(SimpleLocalizedException(R.string.error_signature_not_owner.asString()), {
-            store.addSignature(TEST_OWNERS[0] to TEST_SIGNATURE)
+            store.add(TEST_OWNERS[0] to TEST_SIGNATURE)
         })
 
         val mappedObserver = TestObserver<Map<BigInteger, Signature>>()
@@ -64,15 +64,15 @@ class SimpleSignatureStoreTest {
 
         // It should not be possible to add a signature if he is not an owner
         assertError(SimpleLocalizedException(R.string.error_signature_not_owner.asString()), {
-            store.addSignature(BigInteger.valueOf(8754) to TEST_SIGNATURE)
+            store.add(BigInteger.valueOf(8754) to TEST_SIGNATURE)
         })
 
         // It should not be possible to add the signature of the sender
         assertError(SimpleLocalizedException(R.string.error_signature_already_exists.asString()), {
-            store.addSignature(TEST_OWNERS[2] to TEST_SIGNATURE)
+            store.add(TEST_OWNERS[2] to TEST_SIGNATURE)
         })
 
-        store.addSignature(TEST_OWNERS[0] to TEST_SIGNATURE)
+        store.add(TEST_OWNERS[0] to TEST_SIGNATURE)
         // Signature added, changes should be propagated
         mappedObserver.assertValuesOnly(
                 emptyMap(), // Previous value
@@ -83,10 +83,10 @@ class SimpleSignatureStoreTest {
 
         // It should not be possible to add the same signature again
         assertError(SimpleLocalizedException(R.string.error_signature_already_exists.asString()), {
-            store.addSignature(TEST_OWNERS[0] to TEST_SIGNATURE)
+            store.add(TEST_OWNERS[0] to TEST_SIGNATURE)
         })
 
-        store.addSignature(TEST_OWNERS[1] to TEST_SIGNATURE)
+        store.add(TEST_OWNERS[1] to TEST_SIGNATURE)
         // Signature added, changes should be propagated
         mappedObserver.assertValuesOnly(
                 // Previous value
@@ -105,7 +105,7 @@ class SimpleSignatureStoreTest {
          * Checks for load methods
          */
         val loadSignaturesObserver = TestObserver<Map<BigInteger, Signature>>()
-        store.loadSignatures().subscribe(loadSignaturesObserver)
+        store.load().subscribe(loadSignaturesObserver)
         loadSignaturesObserver.assertResult(TEST_SIGNERS.associate { it to TEST_SIGNATURE })
 
         val loadSigningInfoObserver = TestObserver<Pair<BigInteger, Transaction>>()

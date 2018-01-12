@@ -21,13 +21,10 @@ class DefaultTickerRepository @Inject constructor(
 ) : TickerRepository {
     override fun convertToFiat(amount: Wei, currency: Currency.FiatSymbol): Single<Pair<BigDecimal, Currency>> =
             loadCurrency(currency)
-                    .map { convert(amount, it) to it }
+                    .map { it.convert(amount) to it }
 
     override fun convertToFiat(amounts: List<Wei>, currency: Currency.FiatSymbol): Single<Pair<List<BigDecimal>, Currency>> =
-            loadCurrency(currency).map { amounts.map { wei -> convert(wei, it) } to it }
-
-    private fun convert(amount: Wei, currency: Currency) =
-            (amount.toEther() * currency.price).setScale(3, RoundingMode.HALF_UP)
+            loadCurrency(currency).map { amounts.map { wei -> it.convert(wei) } to it }
 
     override fun loadCurrency(currency: Currency.FiatSymbol): Single<Currency> =
             tickerApi.currency(currency.symbol)

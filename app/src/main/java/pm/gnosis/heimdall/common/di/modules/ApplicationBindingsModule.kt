@@ -8,8 +8,7 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.impls.SimpleEthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.*
-import pm.gnosis.heimdall.helpers.SignatureStore
-import pm.gnosis.heimdall.helpers.SimpleSignatureStore
+import pm.gnosis.heimdall.helpers.*
 import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.impl.FabricCrashTracker
@@ -31,6 +30,11 @@ abstract class ApplicationBindingsModule {
         Helpers
      */
 
+    // This is unscoped so it will get recreated each time it is injected
+    @Binds
+    abstract fun bindsAddressStore(helper: SimpleAddressStore): AddressStore
+
+    // This is unscoped so it will get recreated each time it is injected
     @Binds
     abstract fun bindsSignatureStore(helper: SimpleSignatureStore): SignatureStore
 
