@@ -106,14 +106,11 @@ class GnosisSafeTransactionRepository @Inject constructor(
 
     override fun estimateFees(safeAddress: BigInteger, transaction: Transaction, signatures: Map<BigInteger, Signature>, senderIsOwner: Boolean): Single<GasEstimate> =
             buildExecuteTransaction(safeAddress, transaction, signatures, senderIsOwner)
-                    .flatMap { confirmAndExecuteTransaction ->
-                        accountsRepository.loadActiveAccount().map { it to confirmAndExecuteTransaction }
+                    .flatMap { executeTransaction ->
+                        accountsRepository.loadActiveAccount().map { it to executeTransaction }
                     }
-                    .flatMap { (account, confirmAndExecuteTransaction) ->
-                        ethereumJsonRpcRepository.getTransactionParameters(account.address,
-                                TransactionCallParams(
-                                        to = confirmAndExecuteTransaction.address.asEthereumAddressString(),
-                                        data = confirmAndExecuteTransaction.data))
+                    .flatMap { (account, executeTransaction) ->
+                        ethereumJsonRpcRepository.getTransactionParameters(account.address, executeTransaction.address,  data = executeTransaction.data)
                                 .map { GasEstimate(it.gas, Wei(it.gasPrice)) }
                                 .singleOrError()
                     }
@@ -161,10 +158,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
     private fun submitSignedTransaction(transaction: Transaction, overrideGasPrice: Wei? = null): Observable<String> =
             accountsRepository.loadActiveAccount()
                     .flatMapObservable {
-                        ethereumJsonRpcRepository.getTransactionParameters(it.address,
-                                TransactionCallParams(
-                                        to = transaction.address.asEthereumAddressString(),
-                                        data = transaction.data))
+                        ethereumJsonRpcRepository.getTransactionParameters(it.address, transaction.address, data = transaction.data)
                     }
                     .flatMapSingle {
                         accountsRepository.signTransaction(transaction.copy(nonce = it.nonce, gas = it.gas, gasPrice = overrideGasPrice?.value ?: it.gasPrice))

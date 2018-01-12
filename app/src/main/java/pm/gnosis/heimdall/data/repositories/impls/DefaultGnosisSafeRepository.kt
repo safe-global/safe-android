@@ -86,7 +86,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                             // Extension info -> not set for now
                             Solidity.Address(BigInteger.ZERO), Solidity.Bytes(ByteArray(0)))
                     val data = ProxyFactory.CreateProxy.encode(Solidity.Address(masterCopyAddress), Solidity.Bytes(setupData.hexStringToByteArray()))
-                    ethereumJsonRpcRepository.getTransactionParameters(account.address, TransactionCallParams(to = factoryAddress.asEthereumAddressString(), data = data)).map {
+                    ethereumJsonRpcRepository.getTransactionParameters(account.address, factoryAddress, data = data).map {
                         SafeDeployParams(account, factoryAddress, data, it)
                     }
                 }
