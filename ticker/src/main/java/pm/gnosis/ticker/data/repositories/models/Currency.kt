@@ -1,9 +1,11 @@
 package pm.gnosis.ticker.data.repositories.models
 
+import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.db.models.CurrencyDb
 import pm.gnosis.ticker.data.remote.models.CurrencyNetwork
 import pm.gnosis.utils.nullOnThrow
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 data class Currency(val id: String,
                     val name: String,
@@ -13,6 +15,9 @@ data class Currency(val id: String,
                     val price: BigDecimal,
                     val fiatSymbol: FiatSymbol) {
     fun getFiatSymbol(): String = nullOnThrow { java.util.Currency.getInstance(fiatSymbol.symbol).symbol } ?: fiatSymbol.symbol
+
+    fun convert(crypto: Wei): BigDecimal =
+            (crypto.toEther() * price).setScale(3, RoundingMode.HALF_UP)
 
     enum class FiatSymbol(val symbol: String) {
         AUD("AUD"),

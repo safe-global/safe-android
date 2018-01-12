@@ -180,7 +180,7 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
     }
 
     private fun submittingTransaction(loading: Boolean) {
-        layout_view_transaction_progress_bar.visibility = loading.toVisibility()
+        layout_view_transaction_progress_bar.visible(loading)
         layout_view_transaction_submit_button.isEnabled = !loading
         transactionInputEnabled(!loading)
     }
@@ -209,24 +209,23 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
 
     private fun setViewVisibilities(canSubmit: Boolean, canSign: Boolean = !canSubmit) {
         // If we can submit show information for submitting
-        layout_view_transaction_submit_button.visibility = (canSubmit).toVisibility()
-        layout_view_transaction_confirmations_divider.visibility = (canSubmit).toVisibility()
-        layout_view_transaction_transaction_fee_divider.visibility = (canSubmit).toVisibility()
-        layout_view_transaction_transaction_fee_label.visibility = (canSubmit).toVisibility()
-        layout_view_transaction_transaction_fee.visibility = (canSubmit).toVisibility()
-        include_gas_price_selection_root_container.visibility = (canSubmit).toVisibility()
+        layout_view_transaction_submit_button.visible(canSubmit)
+        layout_view_transaction_confirmations_divider.visible(canSubmit)
+        layout_view_transaction_transaction_fee_divider.visible(canSubmit)
+        layout_view_transaction_transaction_fee_label.visible(canSubmit)
+        layout_view_transaction_transaction_fee.visible(canSubmit)
+        include_gas_price_selection_root_container.visible(canSubmit)
         // If we can sign show information for signing
-        //layout_view_transaction_confirmations_hint_text.visibility = (canSign).toVisibility()
-        layout_view_transaction_add_signature_button.visibility = (canSign).toVisibility()
+        layout_view_transaction_add_signature_button.visible(canSign)
     }
 
     private fun buildSignerView(name: String?, address: BigInteger?) =
             layoutInflater.inflate(R.layout.layout_address_item, layout_view_transaction_confirmations_addresses, false)
                     .apply {
                         layout_address_item_value.text = address?.asEthereumAddressStringOrNull()
-                        layout_address_item_value.visibility = (address != null).toVisibility()
+                        layout_address_item_value.visible(address != null)
                         layout_address_item_name.text = name
-                        layout_address_item_name.visibility = (name != null).toVisibility()
+                        layout_address_item_name.visible(name != null)
                     }
 
     private fun setUnknownEstimate() {

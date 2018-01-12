@@ -42,7 +42,7 @@ class ViewTransactionViewModel @Inject constructor(
                         transactionRepository.checkSignature(safe, transaction, it.signature)
                     } ?: throw SimpleLocalizedException(context.getString(R.string.invalid_signature_uri))
                 }
-                .map(signatureStore::addSignature)
+                .map(signatureStore::add)
                 .toCompletable()
     }
 
@@ -71,7 +71,7 @@ class ViewTransactionViewModel @Inject constructor(
         return transactionRepository.loadExecuteInformation(safeAddress, transaction)
                 .flatMapCompletable { info ->
                     // Observe local signature store
-                    signatureStore.loadSignatures()
+                    signatureStore.load()
                             .map { info.check(it); it }
                             .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, info.isOwner, overrideGasPrice) }
                 }
