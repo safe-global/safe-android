@@ -23,6 +23,7 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
+import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
@@ -30,6 +31,8 @@ import pm.gnosis.tests.utils.*
 import pm.gnosis.tests.utils.MockUtils.any
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
+import pm.gnosis.utils.exceptions.InvalidAddressException
+import pm.gnosis.utils.hexAsEthereumAddress
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -370,6 +373,68 @@ class AddSafeViewModelTest {
         clearObserver.assertResult(BigInteger.TEN)
         then(addressStore).should(times(2)).clear()
         then(addressStore).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadSafeInfo() {
+        val testObserver = TestObserver<Result<SafeInfo>>()
+        val safeInfo = SafeInfo("0x0", Wei(BigInteger.ONE), 1, emptyList(), false)
+        given(safeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(safeInfo))
+
+        viewModel.loadSafeInfo("0x0").subscribe(testObserver)
+
+        then(safeRepositoryMock).should().loadInfo("0x0".hexAsEthereumAddress())
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(DataResult(safeInfo))
+    }
+
+    @Test
+    fun loadSafeInfoWithInvalidAddress() {
+        val testObserver = TestObserver<Result<SafeInfo>>()
+
+        viewModel.loadSafeInfo("0xz").subscribe(testObserver)
+
+        then(safeRepositoryMock).shouldHaveZeroInteractions()
+        testObserver.assertValue { it is ErrorResult && it.error is InvalidAddressException }
+                .assertNoErrors()
+    }
+
+    @Test
+    fun loadSafeInfoError() {
+        val testObserver = TestObserver<Result<SafeInfo>>()
+        val exception = Exception()
+        given(safeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.error(exception))
+
+        viewModel.loadSafeInfo("0x0").subscribe(testObserver)
+
+        then(safeRepositoryMock).should().loadInfo("0x0".hexAsEthereumAddress())
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(ErrorResult(exception))
+    }
+
+    @Test
+    fun loadActiveAccount() {
+        val testObserver = TestObserver<Account>()
+        val account = Account(BigInteger.TEN)
+        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(account))
+
+        viewModel.loadActiveAccount().subscribe(testObserver)
+
+        then(accountsRepository).should().loadActiveAccount()
+        then(accountsRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(account)
+    }
+
+    @Test
+    fun loadActiveAccountError() {
+        val testObserver = TestObserver<Account>()
+        given(accountsRepository.loadActiveAccount()).willReturn(Single.error(Exception()))
+
+        viewModel.loadActiveAccount().subscribe(testObserver)
+
+        then(accountsRepository).should().loadActiveAccount()
+        then(accountsRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertNoErrors().assertNoValues().assertComplete()
     }
 
     private fun localizedExceptionResult(res: Int) =

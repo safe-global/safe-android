@@ -6,22 +6,25 @@ import io.reactivex.Single
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
+import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.GnosisSafeUtils
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
+import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
+import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 class AddSafeViewModel @Inject constructor(
         @ApplicationContext private val context: Context,
@@ -113,6 +116,17 @@ class AddSafeViewModel @Inject constructor(
             }
                     .subscribeOn(Schedulers.io())
                     .mapToResult()
+
+
+    override fun loadSafeInfo(address: String): Observable<Result<SafeInfo>> =
+            Single.fromCallable {
+                address.hexAsEthereumAddressOrNull() ?: throw InvalidAddressException()
+            }.flatMapObservable {
+                repository.loadInfo(it)
+            }.mapToResult()
+
+    override fun loadActiveAccount(): Observable<Account> = accountsRepository.loadActiveAccount().toObservable()
+            .onErrorResumeNext { t: Throwable -> Timber.d(t); Observable.empty<Account>() }
 
     private fun checkName(name: String) {
         if (name.isBlank()) throw SimpleLocalizedException(context.getString(R.string.error_blank_name))
