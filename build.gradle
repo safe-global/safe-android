@@ -40,7 +40,7 @@ subprojects {
                 }
 
                 buildTypes {
-                    chainTest {
+                    mainnet {
                     }
                 }
                 lintOptions {

@@ -1,56 +1,26 @@
 [
   {
-    "address" : "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07",
-    "name" : "OMGToken",
-    "symbol" : "OMG",
-    "decimals" : 18
+    "address" : "0x826921230178969e9142acdfb9bd2f57330ede18",
+    "name" : "World Energy",
+    "symbol" : "WE",
+    "decimals" : 4
   },
   {
-    "address" : "0x9a642d6b3368ddc662CA244bAdf32cDA716005BC",
-    "name" : "Qtum",
-    "symbol" : "QTUM",
-    "decimals" : 18
+    "address" : "0x9d3de1be7309764824211f9e4219e01a5f223d99",
+    "name" : "Love",
+    "symbol" : "<3",
+    "decimals" : 6
   },
   {
-    "address" : "0x888666CA69E0f178DED6D75b5726Cee99A87D698",
-    "name" : "ICONOMI",
-    "symbol" : "ICN",
-    "decimals" : 18
-  },
-  {
-    "address" : "0x41e5560054824ea6b0732e656e3ad64e20e94e45",
-    "name" : "Civic",
-    "symbol" : "CVC",
-    "decimals" : 8
-  },
-  {
-    "address" : "0xe41d2489571d322189246dafa5ebde1f4699f498",
-    "name" : "0x Protocol Token",
-    "symbol" : "ZRX",
-    "decimals" : 18
-  },
-  {
-    "address" : "0x744d70fdbe2ba4cf95131626614a1763df805b9e",
-    "name" : "Status Network Token",
-    "symbol" : "SNT",
-    "decimals" : 18
-  },
-  {
-    "address" : "0x6810e776880c02933d47db1b9fc05908e5386b96",
+    "address" : "0x4A01f5a50C5140cA021e0B52135B2154f652A497",
     "name" : "Gnosis Token",
     "symbol" : "GNO",
     "decimals" : 18
   },
   {
-    "address" : "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c",
-    "name" : "Bancor Network Token",
-    "symbol" : "BNT",
-    "decimals" : 18
-  },
-  {
-    "address" : "0x960b236A07cf122663c4303350609A66A7B288C0",
-    "name" : "Aragon Network Token",
-    "symbol" : "ANT",
+    "address" : "0x746c32e1a3a46fd87468323c897b3ad216cb374e",
+    "name" : "Universe Answer Token",
+    "symbol" : "UAT",
     "decimals" : 18
   }
 ]

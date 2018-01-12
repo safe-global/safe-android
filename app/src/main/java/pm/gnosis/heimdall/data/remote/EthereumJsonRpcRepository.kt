@@ -21,20 +21,12 @@ interface EthereumJsonRpcRepository {
 
     fun getBalance(address: BigInteger): Observable<Wei>
 
-    fun getLatestBlock(): Observable<BigInteger>
-
     fun call(transactionCallParams: TransactionCallParams): Observable<String>
 
     fun sendRawTransaction(signedTransactionData: String): Observable<String>
 
-    fun getTransactionCount(address: BigInteger): Observable<BigInteger>
-
     fun getTransactionReceipt(receiptHash: String): Observable<TransactionReceipt>
 
-    fun getGasPrice(): Observable<BigInteger>
-
-    fun estimateGas(transactionCallParams: TransactionCallParams): Observable<BigInteger>
-
-    fun getTransactionParameters(address: BigInteger, transactionCallParams: TransactionCallParams): Observable<TransactionParameters>
+    fun getTransactionParameters(from: BigInteger, to: BigInteger, value: Wei? = null, data: String? = null): Observable<TransactionParameters>
 
 }
