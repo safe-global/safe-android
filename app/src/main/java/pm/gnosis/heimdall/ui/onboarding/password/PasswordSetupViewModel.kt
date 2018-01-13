@@ -17,8 +17,8 @@ class PasswordSetupViewModel @Inject constructor(
     override fun setPassword(password: String, repeat: String) =
             Observable
                     .fromCallable {
-                        if (password.length < 6) throw SimpleLocalizedException(context.getString(R.string.password_too_short))
-                        if (password != repeat) throw SimpleLocalizedException(context.getString(R.string.passwords_do_not_match))
+                        SimpleLocalizedException.assert(password.length > 5, context, R.string.password_too_short)
+                        SimpleLocalizedException.assert(password == repeat, context, R.string.passwords_do_not_match)
                         password
                     }
                     .flatMapSingle {

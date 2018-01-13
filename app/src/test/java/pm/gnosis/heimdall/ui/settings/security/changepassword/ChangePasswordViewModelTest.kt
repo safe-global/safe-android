@@ -49,8 +49,7 @@ class ChangePasswordViewModelTest {
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         then(contextMock).should().getString(R.string.password_too_short)
-        observer.assertNoErrors()
-                .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
+        observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_too_short.toString())))
     }
 
     @Test
@@ -61,8 +60,7 @@ class ChangePasswordViewModelTest {
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         then(contextMock).should().getString(R.string.passwords_do_not_match)
-        observer.assertNoErrors()
-                .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
+        observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.passwords_do_not_match.toString())))
     }
 
     @Test
@@ -76,8 +74,7 @@ class ChangePasswordViewModelTest {
         then(encryptionManagerMock).should().setupPassword("123456".toByteArray(), "111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.password_error_saving)
-        observer.assertNoErrors()
-                .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
+        observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
     }
 
     @Test
@@ -89,8 +86,8 @@ class ChangePasswordViewModelTest {
 
         then(encryptionManagerMock).should().setupPassword("123456".toByteArray(), "111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors()
-                .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
+        then(contextMock).should().getString(R.string.password_error_saving)
+        observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
     }
 
     @Test
@@ -102,7 +99,7 @@ class ChangePasswordViewModelTest {
 
         then(encryptionManagerMock).should().setupPassword("123456".toByteArray(), "111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(DataResult(Unit))
+        observer.assertResult(DataResult(Unit))
     }
 
     private fun createObserver() = TestObserver.create<Result<Unit>>()
