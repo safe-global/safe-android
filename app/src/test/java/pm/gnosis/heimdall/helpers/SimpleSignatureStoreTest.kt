@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.helpers
 
 import android.content.Context
-import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -17,6 +16,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Transaction
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.getTestString
 import pm.gnosis.tests.utils.mockGetStringWithArgs
 import java.math.BigInteger
 
@@ -45,7 +45,7 @@ class SimpleSignatureStoreTest {
         signaturesObserver.assertValuesOnly(emptyMap())
 
         // It should not be possible to add a signature if we have no information about the safe
-        assertError(SimpleLocalizedException(R.string.error_signature_not_owner.asString()), {
+        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_not_owner)), {
             store.add(TEST_OWNERS[0] to TEST_SIGNATURE)
         })
 
@@ -63,12 +63,12 @@ class SimpleSignatureStoreTest {
                 emptyMap())
 
         // It should not be possible to add a signature if he is not an owner
-        assertError(SimpleLocalizedException(R.string.error_signature_not_owner.asString()), {
+        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_not_owner)), {
             store.add(BigInteger.valueOf(8754) to TEST_SIGNATURE)
         })
 
         // It should not be possible to add the signature of the sender
-        assertError(SimpleLocalizedException(R.string.error_signature_already_exists.asString()), {
+        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_already_exists)), {
             store.add(TEST_OWNERS[2] to TEST_SIGNATURE)
         })
 
@@ -82,7 +82,7 @@ class SimpleSignatureStoreTest {
                 mapOf(TEST_OWNERS[0] to TEST_SIGNATURE))
 
         // It should not be possible to add the same signature again
-        assertError(SimpleLocalizedException(R.string.error_signature_already_exists.asString()), {
+        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_already_exists)), {
             store.add(TEST_OWNERS[0] to TEST_SIGNATURE)
         })
 
@@ -172,9 +172,6 @@ class SimpleSignatureStoreTest {
         mappedObserver.dispose()
         signaturesObserver.dispose()
     }
-
-    private fun Int.asString(vararg params: Any) =
-            contextMock.getString(this, params)
 
     private fun assertError(expected: Throwable, action: (() -> Unit)) {
         try {

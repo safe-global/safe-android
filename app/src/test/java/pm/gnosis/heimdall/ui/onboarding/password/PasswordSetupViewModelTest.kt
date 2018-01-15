@@ -17,9 +17,7 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.tests.utils.*
 
 @RunWith(MockitoJUnitRunner::class)
 class PasswordSetupViewModelTest {
@@ -36,8 +34,9 @@ class PasswordSetupViewModelTest {
     private lateinit var viewModel: PasswordSetupViewModel
 
     @Before
-    fun setup() {
+    fun setUp() {
         contextMock.mockGetString()
+        contextMock.mockGetStringWithArgs()
         viewModel = PasswordSetupViewModel(contextMock, encryptionManagerMock)
     }
 
@@ -45,39 +44,36 @@ class PasswordSetupViewModelTest {
     fun setupPasswordTooShort() {
         val observer = createObserver()
 
-        viewModel.setPassword("", "").subscribe(observer)
+        viewModel.setPassword("11111", "11111").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
-        then(contextMock).should().getString(R.string.password_too_short)
-        observer.assertNoErrors()
-                .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
+        then(contextMock).should().getString(R.string.password_too_short, emptyArray<Any>())
+        observer.assertResult(ErrorResult(SimpleLocalizedException(contextMock.getTestString(R.string.password_too_short))))
     }
 
     @Test
     fun setupPasswordNotSame() {
         val observer = createObserver()
 
-        viewModel.setPassword("123456", "").subscribe(observer)
+        viewModel.setPassword("111111", "123456").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
-        then(contextMock).should().getString(R.string.passwords_do_not_match)
-        observer.assertNoErrors()
-                .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
+        then(contextMock).should().getString(R.string.passwords_do_not_match, emptyArray<Any>())
+        observer.assertResult(ErrorResult(SimpleLocalizedException(contextMock.getTestString(R.string.passwords_do_not_match))))
     }
 
     @Test
     fun setupPasswordException() {
         val observer = createObserver()
-        val exception = IllegalStateException()
+        val exception = Exception()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
 
-        viewModel.setPassword("123456", "123456").subscribe(observer)
+        viewModel.setPassword("111111", "111111").subscribe(observer)
 
-        then(encryptionManagerMock).should().setupPassword("123456".toByteArray())
+        then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.password_error_saving)
-        observer.assertNoErrors()
-                .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
+        observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
     }
 
     @Test
@@ -85,12 +81,12 @@ class PasswordSetupViewModelTest {
         val observer = createObserver()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(false))
 
-        viewModel.setPassword("123456", "123456").subscribe(observer)
+        viewModel.setPassword("111111", "111111").subscribe(observer)
 
-        then(encryptionManagerMock).should().setupPassword("123456".toByteArray())
+        then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors()
-                .assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
+        then(contextMock).should().getString(R.string.password_error_saving)
+        observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
     }
 
     @Test
@@ -98,11 +94,11 @@ class PasswordSetupViewModelTest {
         val observer = createObserver()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
 
-        viewModel.setPassword("123456", "123456").subscribe(observer)
+        viewModel.setPassword("111111", "111111").subscribe(observer)
 
-        then(encryptionManagerMock).should().setupPassword("123456".toByteArray())
+        then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertNoErrors().assertValue(DataResult(Unit))
+        observer.assertResult(DataResult(Unit))
     }
 
     private fun createObserver() = TestObserver.create<Result<Unit>>()

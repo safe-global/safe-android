@@ -17,9 +17,7 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.tests.utils.*
 
 @RunWith(MockitoJUnitRunner::class)
 class ChangePasswordViewModelTest {
@@ -38,6 +36,7 @@ class ChangePasswordViewModelTest {
     @Before
     fun setUp() {
         contextMock.mockGetString()
+        contextMock.mockGetStringWithArgs()
         viewModel = ChangePasswordViewModel(contextMock, encryptionManagerMock)
     }
 
@@ -48,8 +47,8 @@ class ChangePasswordViewModelTest {
         viewModel.setPassword("111111", "", "").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
-        then(contextMock).should().getString(R.string.password_too_short)
-        observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_too_short.toString())))
+        then(contextMock).should().getString(R.string.password_too_short, emptyArray<Any>())
+        observer.assertResult(ErrorResult(SimpleLocalizedException(contextMock.getTestString(R.string.password_too_short))))
     }
 
     @Test
@@ -59,14 +58,14 @@ class ChangePasswordViewModelTest {
         viewModel.setPassword("111111", "123456", "").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
-        then(contextMock).should().getString(R.string.passwords_do_not_match)
-        observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.passwords_do_not_match.toString())))
+        then(contextMock).should().getString(R.string.passwords_do_not_match, emptyArray<Any>())
+        observer.assertResult(ErrorResult(SimpleLocalizedException(contextMock.getTestString(R.string.passwords_do_not_match))))
     }
 
     @Test
     fun setupPasswordException() {
         val observer = createObserver()
-        val exception = IllegalStateException()
+        val exception = Exception()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
 
         viewModel.setPassword("111111", "123456", "123456").subscribe(observer)

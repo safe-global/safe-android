@@ -27,11 +27,15 @@ fun Context.mockGetString(): Context {
 }
 
 fun Context.mockGetStringWithArgs(): Context {
-    given(getString(anyInt(), MockUtils.any())).will { it.arguments.joinToString(transform = {
-        (it as? Array<*>)?.let{
-            if (it.isEmpty()) "<no_args>"
-            else null
-        } ?: it.toString()
-    }) }
+    given(getString(anyInt(), MockUtils.any())).will {
+        it.arguments.joinToString(transform = {
+            (it as? Array<*>)?.let {
+                if (it.isEmpty()) "<no_args>"
+                else null
+            } ?: it.toString()
+        })
+    }
     return this
 }
+
+fun Context.getTestString(id: Int, vararg params: Any): String = getString(id, params)

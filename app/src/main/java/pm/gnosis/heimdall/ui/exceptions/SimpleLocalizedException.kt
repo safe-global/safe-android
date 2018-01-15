@@ -93,7 +93,7 @@ data class SimpleLocalizedException(override val message: String) : Exception(me
 
         fun assert(condition: Boolean, context: Context, @StringRes messagedId: Int, vararg params: Any) {
             if (!condition) {
-                throw SimpleLocalizedException(if (params.isNotEmpty()) context.getString(messagedId, params) else context.getString(messagedId))
+                throw SimpleLocalizedException(context.getString(messagedId, params))
             }
         }
 
