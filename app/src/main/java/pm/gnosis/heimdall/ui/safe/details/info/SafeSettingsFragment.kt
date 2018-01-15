@@ -52,7 +52,6 @@ class SafeSettingsFragment : BaseFragment() {
                 .startWith(false)
                 .flatMap {
                     viewModel.loadSafeInfo(it)
-                            .subscribeOn(AndroidSchedulers.mainThread())
                             .observeOn(AndroidSchedulers.mainThread())
                             .doOnSubscribe { showLoading(true) }
                             .doOnComplete { showLoading(false) }
