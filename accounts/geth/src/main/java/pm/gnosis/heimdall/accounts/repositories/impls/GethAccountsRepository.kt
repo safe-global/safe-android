@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.accounts.repositories.impls
 
 import io.reactivex.Completable
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import okio.ByteString
 import org.ethereum.geth.Address
 import org.ethereum.geth.BigInt
@@ -14,20 +15,27 @@ import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.utils.edit
+import pm.gnosis.heimdall.security.EncryptionManager
+import pm.gnosis.heimdall.security.db.EncryptedString
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
-import pm.gnosis.utils.*
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.hexStringToByteArray
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GethAccountsRepository @Inject constructor(
+        private val encryptionManager: EncryptionManager,
         private val gethAccountManager: GethAccountManager,
         private val gethKeyStore: KeyStore,
         private val preferencesManager: PreferencesManager,
         private val bip39: Bip39
 ) : AccountsRepository {
+    private val encryptedStringConverter = EncryptedString.Converter()
 
     override fun loadActiveAccount(): Single<Account> {
         return Single.fromCallable {
@@ -88,10 +96,15 @@ class GethAccountsRepository @Inject constructor(
 
     override fun saveMnemonic(mnemonic: String): Completable = Completable.fromCallable {
         preferencesManager.prefs.edit {
-            //TODO: in the future this needs to be encrypted
-            putString(PreferencesManager.MNEMONIC_KEY, mnemonic)
+            val encryptedString = EncryptedString.create(encryptionManager, mnemonic)
+            putString(PreferencesManager.MNEMONIC_KEY, encryptedStringConverter.toStorage(encryptedString))
         }
-    }
+    }.subscribeOn(Schedulers.computation())
+
+    override fun loadMnemonic(): Single<String> = Single.fromCallable {
+        val encryptedMnemonic = preferencesManager.prefs.getString(PreferencesManager.MNEMONIC_KEY, "")
+        encryptedStringConverter.fromStorage(encryptedMnemonic).value(encryptionManager)
+    }.subscribeOn(Schedulers.computation())
 
     override fun saveAccount(privateKey: ByteArray): Completable =
             Completable.fromCallable {

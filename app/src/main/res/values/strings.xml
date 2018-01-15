@@ -261,4 +261,11 @@
     <string name="error_signature_already_exists">This signature has already been added!</string>
     <string name="error_owner_already_added">This device has already been added as an owner!</string>
     <string name="removed_x">Removed %s</string>
+    <string name="current_password">Current password</string>
+    <string name="new_password">New password</string>
+    <string name="repeat_new_password">Repeat new password</string>
+    <string name="change_password">Change Password</string>
+    <string name="password_change_success">Password successfully changed</string>
+    <string name="reveal_security_phrase_warning">This is the security phrase used to get access to your account!  Revealing the security phrase might get your account stolen if you have onlookers (people, recording devices). Please do so in a private environment.</string>
+    <string name="show_security_phrase">Show Security Phrase</string>
 </resources>

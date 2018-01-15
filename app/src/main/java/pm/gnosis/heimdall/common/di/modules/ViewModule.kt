@@ -25,6 +25,8 @@ import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsContract
+import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordContract
+import pm.gnosis.heimdall.ui.settings.security.revealmnemonic.RevealMnemonicContract
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
@@ -76,6 +78,10 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
+    fun providesChangePasswordContract(provider: ViewModelProvider) = provider[ChangePasswordContract::class.java]
+
+    @Provides
+    @ForView
     fun providesCreateTokenTransactionProgressContract(provider: ViewModelProvider) = provider[CreateTokenTransactionProgressContract::class.java]
 
     @Provides
@@ -117,6 +123,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesRestoreAccountContract(provider: ViewModelProvider) = provider[RestoreAccountContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesRevealMnemonicContract(provider: ViewModelProvider) = provider[RevealMnemonicContract::class.java]
 
     @Provides
     @ForView

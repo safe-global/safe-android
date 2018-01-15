@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.onboarding.password
+package pm.gnosis.heimdall.ui.settings.security.changepassword
 
 import android.content.Context
 import io.reactivex.Observable
@@ -10,19 +10,19 @@ import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import javax.inject.Inject
 
-class PasswordSetupViewModel @Inject constructor(
+class ChangePasswordViewModel @Inject constructor(
         @ApplicationContext private val context: Context,
         private val encryptionManager: EncryptionManager
-) : PasswordSetupContract() {
-    override fun setPassword(password: String, repeat: String) =
+) : ChangePasswordContract() {
+    override fun setPassword(currentPassword: String, newPassword: String, newPasswordRepeat: String) =
             Observable
                     .fromCallable {
-                        SimpleLocalizedException.assert(password.length > 5, context, R.string.password_too_short)
-                        SimpleLocalizedException.assert(password == repeat, context, R.string.passwords_do_not_match)
-                        password
+                        SimpleLocalizedException.assert(newPassword.length > 5, context, R.string.password_too_short)
+                        SimpleLocalizedException.assert(newPassword == newPasswordRepeat, context, R.string.passwords_do_not_match)
+                        newPassword
                     }
                     .flatMapSingle {
-                        encryptionManager.setupPassword(it.toByteArray())
+                        encryptionManager.setupPassword(it.toByteArray(), currentPassword.toByteArray())
                                 .map { if (it) Unit else throw Exception() }
                                 .onErrorResumeNext { _: Throwable -> Single.error(SimpleLocalizedException(context.getString(R.string.password_error_saving))) }
                     }

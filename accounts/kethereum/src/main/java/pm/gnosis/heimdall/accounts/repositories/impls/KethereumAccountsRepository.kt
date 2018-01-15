@@ -23,7 +23,6 @@ import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asBigInteger
-import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import javax.inject.Inject
@@ -85,7 +84,12 @@ class KethereumAccountsRepository @Inject internal constructor(
             val encryptedString = EncryptedString.create(encryptionManager, mnemonic)
             putString(PreferencesManager.MNEMONIC_KEY, encryptedStringConverter.toStorage(encryptedString))
         }
-    }
+    }.subscribeOn(Schedulers.computation())
+
+    override fun loadMnemonic(): Single<String> = Single.fromCallable {
+        val encryptedMnemonic = preferencesManager.prefs.getString(PreferencesManager.MNEMONIC_KEY, "")
+        encryptedStringConverter.fromStorage(encryptedMnemonic).value(encryptionManager)
+    }.subscribeOn(Schedulers.computation())
 
     override fun generateMnemonic(): Single<String> = Single.fromCallable { bip39.generateMnemonic() }
 

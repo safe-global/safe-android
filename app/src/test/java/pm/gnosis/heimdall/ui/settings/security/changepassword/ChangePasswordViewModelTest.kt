@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.onboarding.password
+package pm.gnosis.heimdall.ui.settings.security.changepassword
 
 import android.content.Context
 import io.reactivex.Single
@@ -20,7 +20,7 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.tests.utils.*
 
 @RunWith(MockitoJUnitRunner::class)
-class PasswordSetupViewModelTest {
+class ChangePasswordViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -31,20 +31,20 @@ class PasswordSetupViewModelTest {
     @Mock
     private lateinit var encryptionManagerMock: EncryptionManager
 
-    private lateinit var viewModel: PasswordSetupViewModel
+    private lateinit var viewModel: ChangePasswordViewModel
 
     @Before
     fun setUp() {
         contextMock.mockGetString()
         contextMock.mockGetStringWithArgs()
-        viewModel = PasswordSetupViewModel(contextMock, encryptionManagerMock)
+        viewModel = ChangePasswordViewModel(contextMock, encryptionManagerMock)
     }
 
     @Test
     fun setupPasswordTooShort() {
         val observer = createObserver()
 
-        viewModel.setPassword("11111", "11111").subscribe(observer)
+        viewModel.setPassword("111111", "", "").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         then(contextMock).should().getString(R.string.password_too_short, emptyArray<Any>())
@@ -55,7 +55,7 @@ class PasswordSetupViewModelTest {
     fun setupPasswordNotSame() {
         val observer = createObserver()
 
-        viewModel.setPassword("111111", "123456").subscribe(observer)
+        viewModel.setPassword("111111", "123456", "").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         then(contextMock).should().getString(R.string.passwords_do_not_match, emptyArray<Any>())
@@ -68,9 +68,9 @@ class PasswordSetupViewModelTest {
         val exception = Exception()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
 
-        viewModel.setPassword("111111", "111111").subscribe(observer)
+        viewModel.setPassword("111111", "123456", "123456").subscribe(observer)
 
-        then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
+        then(encryptionManagerMock).should().setupPassword("123456".toByteArray(), "111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.password_error_saving)
         observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
@@ -81,9 +81,9 @@ class PasswordSetupViewModelTest {
         val observer = createObserver()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(false))
 
-        viewModel.setPassword("111111", "111111").subscribe(observer)
+        viewModel.setPassword("111111", "123456", "123456").subscribe(observer)
 
-        then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
+        then(encryptionManagerMock).should().setupPassword("123456".toByteArray(), "111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.password_error_saving)
         observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
@@ -94,9 +94,9 @@ class PasswordSetupViewModelTest {
         val observer = createObserver()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
 
-        viewModel.setPassword("111111", "111111").subscribe(observer)
+        viewModel.setPassword("111111", "123456", "123456").subscribe(observer)
 
-        then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
+        then(encryptionManagerMock).should().setupPassword("123456".toByteArray(), "111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         observer.assertResult(DataResult(Unit))
     }

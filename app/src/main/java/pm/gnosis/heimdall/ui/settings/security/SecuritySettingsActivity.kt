@@ -18,6 +18,8 @@ import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
+import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordActivity
+import pm.gnosis.heimdall.ui.settings.security.revealmnemonic.RevealMnemonicActivity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -56,13 +58,22 @@ class SecuritySettingsActivity : BaseActivity() {
                     toast(R.string.fingerprint_unlock_disabled)
                 }, onError = Timber::e)
 
-
         disposables += getFingerprintStateSubject.flatMapSingle { encryptionManager.isFingerPrintSet() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = {
                     layout_security_settings_switch.isChecked = it
                 }, onError = Timber::e)
         getFingerprintStateSubject.onNext(Unit)
+
+        disposables += layout_security_settings_show_mnemonic.clicks()
+                .subscribeBy(onNext = {
+                    startActivity(RevealMnemonicActivity.createIntent(this))
+                }, onError = Timber::e)
+
+        disposables += layout_security_settings_change_password.clicks()
+                .subscribeBy(onNext = {
+                    startActivity(ChangePasswordActivity.createIntent(this))
+                }, onError = Timber::e)
     }
 
     private fun showDialog() {

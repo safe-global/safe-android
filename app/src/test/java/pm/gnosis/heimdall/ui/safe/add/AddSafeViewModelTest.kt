@@ -26,11 +26,8 @@ import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.*
 import pm.gnosis.tests.utils.MockUtils.any
-import pm.gnosis.tests.utils.mockGetString
-import pm.gnosis.tests.utils.mockGetStringWithArgs
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
@@ -376,8 +373,5 @@ class AddSafeViewModelTest {
     }
 
     private fun localizedExceptionResult(res: Int) =
-            ErrorResult<Unit>(SimpleLocalizedException(res.asString()))
-
-    private fun Int.asString(vararg params: Any) =
-            context.getString(this, params)
+            ErrorResult<Unit>(SimpleLocalizedException(context.getTestString(res)))
 }

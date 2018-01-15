@@ -92,7 +92,17 @@
         <activity
             android:name=".ui.settings.security.SecuritySettingsActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.transactions.SignTransactionActivity" />
-        <activity android:name=".ui.transactions.ExecuteTransactionActivity" />
+        <activity
+            android:name=".ui.transactions.SignTransactionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.transactions.ExecuteTransactionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.settings.security.revealmnemonic.RevealMnemonicActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.settings.security.changepassword.ChangePasswordActivity"
+            android:screenOrientation="portrait" />
     </application>
 </manifest>

@@ -25,4 +25,6 @@ interface AccountsRepository {
     fun generateMnemonic(): Single<String>
 
     fun validateMnemonic(mnemonic: String): Single<String>
+
+    fun loadMnemonic(): Single<String>
 }
