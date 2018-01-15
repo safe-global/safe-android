@@ -45,7 +45,7 @@ class ReviewChangeDeviceSettingsDetailsFragment : BaseReviewTransactionDetailsFr
     override fun onStart() {
         super.onStart()
 
-        disposables += subViewModel.loadAction(transaction)
+        disposables += subViewModel.loadAction(safe, transaction)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::setupForm, Timber::e)
     }

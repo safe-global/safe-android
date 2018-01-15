@@ -8,16 +8,15 @@ import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
 
-abstract class ChangeSafeSettingsDetailsContract: ViewModel() {
+abstract class ChangeSafeSettingsDetailsContract : ViewModel() {
 
-    abstract fun loadAction(transaction: Transaction?): Single<Action>
-
-    sealed class Action {
-        data class RemoveOwner(val owner: String): Action()
-        data class AddOwner(val owner: String): Action()
-        data class ReplaceOwner(val newOwner: String, val previousOwner: String): Action()
-    }
-
+    abstract fun loadAction(safeAddress: BigInteger?, transaction: Transaction?): Single<Action>
     abstract fun loadFormData(preset: Transaction?): Single<Pair<String, Int>>
     abstract fun inputTransformer(safeAddress: BigInteger?): ObservableTransformer<CharSequence, Result<Transaction>>
+
+    sealed class Action {
+        data class RemoveOwner(val owner: String) : Action()
+        data class AddOwner(val owner: String) : Action()
+        data class ReplaceOwner(val newOwner: String, val previousOwner: String) : Action()
+    }
 }

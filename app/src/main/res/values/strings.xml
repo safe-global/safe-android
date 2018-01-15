@@ -235,6 +235,7 @@
     <string name="safe_overview_emtpy_description">Add a new or existing safe and it will show up right here.</string>
     <string name="safe_overview_empty_action">Add a Safe</string>
     <string name="owner">owner</string>
+    <string name="owner_x">owner number %s</string>
     <string name="deploying_new_safe">Deploying New Safe:</string>
     <string name="deploying_safe_warning">This process can take up to several minutes</string>
     <string name="fingerprint_not_recognized">Fingerprint not recognized. Please try again</string>
