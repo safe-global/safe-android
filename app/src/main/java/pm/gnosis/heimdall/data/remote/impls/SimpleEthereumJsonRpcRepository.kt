@@ -11,7 +11,6 @@ import pm.gnosis.models.Wei
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
-import timber.log.Timber
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject

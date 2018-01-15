@@ -20,7 +20,10 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.common.utils.noHistory
+import pm.gnosis.heimdall.common.utils.showKeyboardForView
+import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.common.utils.vibrate
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.security.FingerprintUnlockFailed
 import pm.gnosis.heimdall.security.FingerprintUnlockHelp

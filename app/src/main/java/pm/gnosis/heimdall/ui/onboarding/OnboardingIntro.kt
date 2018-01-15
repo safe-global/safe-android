@@ -10,7 +10,6 @@ import kotlinx.android.synthetic.main.layout_onboarding_intro.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import timber.log.Timber
 

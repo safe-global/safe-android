@@ -9,9 +9,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
-import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
 import pm.gnosis.heimdall.utils.errorToast
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString

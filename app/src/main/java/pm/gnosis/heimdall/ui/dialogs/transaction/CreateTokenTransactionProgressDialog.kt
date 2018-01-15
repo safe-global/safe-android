@@ -1,19 +1,11 @@
 package pm.gnosis.heimdall.ui.dialogs.transaction
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.HeimdallApplication
-import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
-import pm.gnosis.heimdall.utils.errorToast
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsEthereumAddressOrNull

@@ -37,7 +37,6 @@ import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsCon
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsViewModel
 
 @Module
 class ViewModule(val context: Context) {

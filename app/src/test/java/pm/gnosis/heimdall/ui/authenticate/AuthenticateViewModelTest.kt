@@ -13,7 +13,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.common.utils.DataResult
@@ -24,7 +23,6 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.model.Solidity
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.utils.addHexPrefix
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)

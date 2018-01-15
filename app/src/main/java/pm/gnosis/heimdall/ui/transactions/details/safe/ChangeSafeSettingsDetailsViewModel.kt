@@ -49,13 +49,14 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
                                                     else it.newOwner.asEthereumAddressString()
                                             address to it.newThreshold
                                         }
-                                        else -> "" to -1
+                                        else -> throw IllegalArgumentException()
                                     }
                                 }
                                 .doOnSuccess {
                                     cachedAddOwnerInfo = it
                                 }
-                    } ?: Single.just("" to -1)
+                                .onErrorReturnItem(EMPTY_FORM_DATA)
+                    } ?: Single.just(EMPTY_FORM_DATA)
 
     override fun inputTransformer(safeAddress: BigInteger?) = ObservableTransformer<CharSequence, Result<Transaction>> {
         Observable.combineLatest(
@@ -128,5 +129,9 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
     private fun getOwnerOrIndex(owners: List<BigInteger>?, index: BigInteger): String {
         val oldOwnerIndex = index.toInt()
         return owners?.getOrNull(oldOwnerIndex)?.asEthereumAddressString() ?: context.getString(R.string.owner_x, (oldOwnerIndex + 1).toString())
+    }
+
+    companion object {
+        val EMPTY_FORM_DATA = "" to -1
     }
 }

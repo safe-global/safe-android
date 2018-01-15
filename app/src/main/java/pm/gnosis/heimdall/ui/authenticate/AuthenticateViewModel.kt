@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.ExecuteTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
-import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
 import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import javax.inject.Inject
