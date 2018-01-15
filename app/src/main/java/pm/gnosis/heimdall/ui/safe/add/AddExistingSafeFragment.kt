@@ -30,7 +30,6 @@ class AddExistingSafeFragment : BaseFragment() {
         super.onStart()
         disposables += layout_add_existing_safe_add_button.clicks().flatMap {
             viewModel.addExistingSafe(layout_add_existing_safe_name_input.text.toString(), layout_add_existing_safe_address_input.text.toString())
-                    .subscribeOn(AndroidSchedulers.mainThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { toggleAdding(true) }
                     .doAfterTerminate { toggleAdding(false) }

@@ -164,7 +164,6 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
 
     private fun submitTransaction(safe: BigInteger, transaction: Transaction, gasOverride: Wei?) =
             viewModel.submitTransaction(safe, transaction, gasOverride)
-                    .subscribeOn(AndroidSchedulers.mainThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { submittingTransaction(true) }
                     .doAfterTerminate { submittingTransaction(false) }
