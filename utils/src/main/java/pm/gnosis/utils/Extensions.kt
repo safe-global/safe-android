@@ -36,7 +36,6 @@ fun ByteArray.utf8String(): String {
  * The regular {@link java.math.BigInteger#toByteArray()} method isn't quite what we often need:
  * it appends a leading zero to indicate that the number is positive and may need padding.
  *
- * @param b the integer to format into a byte array
  * @param numBytes the desired size of the resulting byte array
  * @return numBytes byte long array.
  */
@@ -45,33 +44,18 @@ fun BigInteger.toBytes(numBytes: Int): ByteArray {
     val biBytes = toByteArray()
     val start = if (biBytes.size == numBytes + 1) 1 else 0
     val length = Math.min(biBytes.size, numBytes)
-    System.arraycopy(biBytes, start, bytes, numBytes - length, length);
+    System.arraycopy(biBytes, start, bytes, numBytes - length, length)
     return bytes
 }
 
-
-fun BigInteger.toAlfaNumericAscii(): String? {
-    val hexString = this.toString(16)
-    if (hexString.length.rem(2) != 0) return null
-    val stringBuilder = StringBuilder()
-    (0 until hexString.length step 2)
-            .map { hexString.substring(it, it + 2) }
-            .filter { it.toInt(16) in 32..126 } //alfanumeric
-            .forEach { stringBuilder.append(it.toInt(16).toChar()) }
-
-    return stringBuilder.toString()
-}
-
-fun String.hexStringToByteArrayOrNull(): ByteArray? {
-    return if (this.length % 2 == 0 && hexPattern.matcher(this).matches()) {
+fun String.hexStringToByteArrayOrNull() =
         nullOnThrow { hexStringToByteArray() }
-    } else {
-        null
-    }
-}
 
 fun String.hexStringToByteArray(): ByteArray {
     val s = this.removeHexPrefix()
+    if (this.length % 2 != 0 || !hexPattern.matcher(this).matches()) {
+        throw IllegalArgumentException("Invalid hex string")
+    }
     val len = s.length
     val data = ByteArray(len / 2)
     var i = 0
@@ -95,7 +79,7 @@ fun String.asEthereumAddressString(): String {
 }
 
 fun String.isSolidityMethod(methodId: String) = this.removeHexPrefix().startsWith(methodId.removeHexPrefix())
-fun String.removeSolidityMethodPrefix(methodId: String) = this.removeHexPrefix().removePrefix(methodId)
+fun String.removeSolidityMethodPrefix(methodId: String) = this.removeHexPrefix().removePrefix(methodId.removeHexPrefix())
 
 fun ByteArray.toBinaryString(): String {
     val sb = StringBuilder(this.size * java.lang.Byte.SIZE)
@@ -105,14 +89,12 @@ fun ByteArray.toBinaryString(): String {
     return sb.toString()
 }
 
-//Returns an array of indexes for the specified collection. If an item is not present its index is -1
+/**
+ * @return array of indexes for the specified collection.
+ * @throws IllegalArgumentException if an item is not present
+ */
+@Throws(IllegalArgumentException::class)
 fun <T> Collection<T>.getIndexes(items: List<T>): Array<Int> {
-    if (items.isEmpty()) return emptyArray()
-    return items.map { indexOf(it) }.toTypedArray()
-}
-
-//Returns an array of indexes for the specified collection. If an item is not present an exception is thrown
-fun <T> Collection<T>.getIndexesAllMatching(items: List<T>): Array<Int> {
     if (items.isEmpty()) return emptyArray()
 
     return items.map {
