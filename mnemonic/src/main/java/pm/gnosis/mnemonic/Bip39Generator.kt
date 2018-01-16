@@ -5,9 +5,8 @@ import org.spongycastle.jcajce.provider.symmetric.PBEPBKDF2
 import pm.gnosis.mnemonic.wordlists.BIP39_WORDLISTS
 import pm.gnosis.mnemonic.wordlists.WordList
 import pm.gnosis.utils.getIndexes
-import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toBinaryString
-import pm.gnosis.utils.toHexString
+import pm.gnosis.utils.words
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.security.spec.InvalidKeySpecException
@@ -33,24 +32,15 @@ class Bip39Generator @Inject constructor() : Bip39 {
         return skf.generateSecret(spec).encoded
     }
 
-    override fun normalize(phrase: String): String {
-        return Normalizer.normalize(phrase, Normalizer.Form.NFKD)
-    }
-
-    override fun salt(password: String?): String {
-        return "mnemonic" + (password ?: "")
-    }
-
     override fun mnemonicToSeed(mnemonic: String, password: String?): ByteArray {
         val mnemonicBuffer = normalize(mnemonic).toCharArray()
         val saltBuffer = salt(normalize(password ?: "")).toByteArray()
-
         return pbkdf2(mnemonicBuffer, saltBuffer, 2048, 64)
     }
 
-    override fun mnemonicToSeedHex(mnemonic: String, password: String?): String {
-        return mnemonicToSeed(mnemonic, password).toHexString()
-    }
+    private fun normalize(phrase: String) = Normalizer.normalize(phrase, Normalizer.Form.NFKD)
+
+    private fun salt(password: String?) = "mnemonic" + (password ?: "")
 
     override fun generateMnemonic(strength: Int, wordList: WordList): String {
         if (strength < Bip39.MIN_ENTROPY_BITS || strength > Bip39.MAX_ENTROPY_BITS || strength % Bip39.ENTROPY_MULTIPLE != 0) {
@@ -61,8 +51,7 @@ class Bip39Generator @Inject constructor() : Bip39 {
         val bytes = ByteArray(strength / 8)
         SecureRandom().nextBytes(bytes)
 
-        val digest = SHA256.Digest()
-        val sha256 = digest.digest(bytes)
+        val sha256 = SHA256.Digest().digest(bytes)
         val checksumLength = strength / 32
 
         val checksum = sha256.toBinaryString().subSequence(0, checksumLength)
@@ -75,34 +64,28 @@ class Bip39Generator @Inject constructor() : Bip39 {
     }
 
     override fun validateMnemonic(mnemonic: String): String {
-        val words = mnemonic.split(Regex("\\s+"))
-        if (words.isEmpty() || words[0].isEmpty()) {
-            throw EmptyMnemonic(mnemonic)
-        }
+        val words = mnemonic.words()
+        if (words.isEmpty() || words[0].isEmpty()) throw EmptyMnemonic(mnemonic)
+
         val checksumNBits = (words.size * 11) / (Bip39.ENTROPY_MULTIPLE + 1)
         val entropyNBits = checksumNBits * 32
         if (entropyNBits % Bip39.ENTROPY_MULTIPLE != 0 || entropyNBits < Bip39.MIN_ENTROPY_BITS || entropyNBits > Bip39.MAX_ENTROPY_BITS) {
             throw InvalidEntropy(mnemonic, entropyNBits)
         }
 
-        val wordList = BIP39_WORDLISTS.values.firstOrNull { wordList -> wordList.words.contains(words[0]) } ?:
-                throw MnemonicNotInWordlist(mnemonic)
+        val wordList = BIP39_WORDLISTS.values.firstOrNull { wordList -> wordList.words.containsAll(words) }
+                ?: throw MnemonicNotInWordlist(mnemonic)
 
-        val binaryIndexes =
-                nullOnThrow { wordList.words.getIndexes(words).joinToString("") { Integer.toBinaryString(it).padStart(11, '0') } }
-                        ?: throw MnemonicNotInWordlist(mnemonic)
+        val binaryIndexes = wordList.words.getIndexes(words).joinToString("") { Integer.toBinaryString(it).padStart(11, '0') }
 
         val checksum = binaryIndexes.subSequence(entropyNBits, binaryIndexes.length)
         val originalEntropy = binaryIndexes.subSequence(0, binaryIndexes.length - checksumNBits)
         val originalBytes = (0 until originalEntropy.length step 8).map { (Integer.valueOf((originalEntropy.subSequence(it, it + 8).toString()), 2) and 0xFF).toByte() }.toByteArray()
 
-
-        val digest = SHA256.Digest()
-        val sha256 = digest.digest(originalBytes)
+        val sha256 = SHA256.Digest().digest(originalBytes)
         val generatedChecksum = sha256.toBinaryString().subSequence(0, checksumNBits)
-        if (checksum != generatedChecksum) {
-            throw InvalidChecksum(mnemonic, checksum, generatedChecksum)
-        }
+        if (checksum != generatedChecksum) throw InvalidChecksum(mnemonic, checksum, generatedChecksum)
+
         return mnemonic
     }
 }

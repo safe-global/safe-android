@@ -8,6 +8,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
     implementation project(":crypto")
+    implementation project(":utils-testing")
     implementation project(":utils")
 
     //Kotlin
