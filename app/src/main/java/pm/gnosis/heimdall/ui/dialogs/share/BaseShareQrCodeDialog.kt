@@ -12,14 +12,16 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.include_base_share_qr_code.*
-import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.common.utils.QrCodeGenerator
+import pm.gnosis.heimdall.common.utils.copyToClipboard
+import pm.gnosis.heimdall.common.utils.mapToResult
+import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import pm.gnosis.utils.nullOnThrow
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 abstract class BaseShareQrCodeDialog : BaseDialog() {

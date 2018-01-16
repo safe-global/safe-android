@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Consumer
-import io.reactivex.internal.functions.Functions
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
@@ -27,7 +25,6 @@ import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asTransactionHash
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import javax.inject.Inject
 

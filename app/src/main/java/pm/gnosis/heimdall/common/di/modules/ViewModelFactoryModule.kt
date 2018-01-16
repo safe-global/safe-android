@@ -59,6 +59,8 @@ import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDe
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsViewModel
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsViewModel
+import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsViewModel
 import javax.inject.Singleton
 
 @Module
@@ -102,6 +104,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ChangePasswordContract::class)
     abstract fun bindsChangePasswordContract(viewModel: ChangePasswordViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ChangeSafeSettingsDetailsContract::class)
+    abstract fun bindsChangeSafeSettingsDetailsContract(viewModel: ChangeSafeSettingsDetailsViewModel): ViewModel
 
     @Binds
     @IntoMap

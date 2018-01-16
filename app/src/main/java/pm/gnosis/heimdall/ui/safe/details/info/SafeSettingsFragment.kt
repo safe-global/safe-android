@@ -13,6 +13,7 @@ import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.layout_additional_owner_item.view.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_safe_settings.*
 import pm.gnosis.heimdall.R
@@ -23,10 +24,13 @@ import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
+import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.hexAsBigInteger
 import timber.log.Timber
+import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -37,9 +41,12 @@ class SafeSettingsFragment : BaseFragment() {
 
     private val removeSafeClicks = PublishSubject.create<Unit>()
 
+    private val safeAddress: BigInteger
+        get() = arguments!!.getString(ARGUMENT_SAFE_ADDRESS).hexAsBigInteger()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.setup(arguments!!.getString(ARGUMENT_SAFE_ADDRESS).hexAsBigInteger())
+        viewModel.setup(safeAddress)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
@@ -137,19 +144,31 @@ class SafeSettingsFragment : BaseFragment() {
     private fun updateInfo(info: SafeInfo) {
         layout_safe_settings_confirmations.text = context!!.getString(R.string.safe_confirmations_text, info.requiredConfirmations.toString(), info.owners.size.toString())
 
-        setupOwners(info.owners)
-    }
-
-    private fun setupOwners(owners: List<String>) {
         layout_safe_settings_owners_container.removeAllViews()
-        owners.forEach { addOwner(it) }
+        val ownerCount = info.owners.size
+        val showDelete = ownerCount > 1
+        info.owners.forEachIndexed { index, address -> addOwner(address, index, ownerCount, showDelete) }
+
+        layout_safe_settings_add_owner_button.visible(ownerCount < 3)
+        layout_safe_settings_add_owner_button.setOnClickListener {
+            CreateChangeSafeSettingsTransactionProgressDialog
+                    .addOwner(safeAddress, info.owners.size)
+                    .show(fragmentManager, null)
+        }
     }
 
-    private fun addOwner(address: String) {
-        val ownerLayout = layoutInflater.inflate(R.layout.layout_address_item, layout_safe_settings_owners_container, false)
-        ownerLayout.layout_address_item_value.text = address
-        ownerLayout.layout_address_item_icon.setOnClickListener {
-            SimpleAddressShareDialog.create(address).show(fragmentManager, null)
+    private fun addOwner(address: BigInteger, index: Int, count: Int, showDelete: Boolean) {
+        val ownerLayout = layoutInflater.inflate(R.layout.layout_additional_owner_item, layout_safe_settings_owners_container, false)
+        val addressString = address.asEthereumAddressStringOrNull()
+        ownerLayout.layout_address_item_value.text = addressString
+        addressString?.let {
+            ownerLayout.layout_address_item_icon.setOnClickListener {
+                SimpleAddressShareDialog.create(addressString).show(fragmentManager, null)
+            }
+        }
+        ownerLayout.layout_additional_owner_delete_button.visible(showDelete)
+        ownerLayout.layout_additional_owner_delete_button.setOnClickListener {
+            CreateChangeSafeSettingsTransactionProgressDialog.removeOwner(safeAddress, index.toLong(), count).show(fragmentManager, null)
         }
         layout_safe_settings_owners_container.addView(ownerLayout)
     }

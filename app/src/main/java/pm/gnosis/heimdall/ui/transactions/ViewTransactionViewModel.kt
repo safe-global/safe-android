@@ -2,7 +2,9 @@ package pm.gnosis.heimdall.ui.transactions
 
 import android.content.Context
 import android.graphics.Bitmap
-import io.reactivex.*
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.functions.Function
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.models.Signature

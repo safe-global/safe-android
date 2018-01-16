@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        style="@style/Content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="With this transaction" />
+
+    <TextView
+        android:id="@+id/layout_review_change_safe_owner_target"
+        style="@style/BoldContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        tools:text="0xaf42af42af42af42af42af42" />
+
+    <TextView
+        style="@style/Content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="will be" />
+
+    <TextView
+        android:id="@+id/layout_review_change_safe_owner_action"
+        style="@style/BoldContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp"
+        tools:text="replacing 0x2564646468asd4fdsf as a safe owning device" />
+
+
+</LinearLayout>

@@ -5,7 +5,6 @@ import com.gojuno.koptional.Optional
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
-import io.reactivex.SingleTransformer
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.DataResult

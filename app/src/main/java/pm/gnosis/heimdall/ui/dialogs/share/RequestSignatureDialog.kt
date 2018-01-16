@@ -20,7 +20,6 @@ import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigIntegerOrNull
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import java.math.BigInteger
 

@@ -41,6 +41,8 @@ import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.assets.ReviewAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.safe.CreateAddOwnerDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeDeviceSettingsDetailsFragment
 
 @ForView
 @Component(
@@ -54,9 +56,11 @@ interface ViewComponent {
 
     fun inject(fragment: AddExistingSafeFragment)
     fun inject(fragment: CreateAssetTransferDetailsFragment)
+    fun inject(fragment: CreateAddOwnerDetailsFragment)
     fun inject(fragment: CreateGenericTransactionDetailsFragment)
     fun inject(fragment: DeployNewSafeFragment)
     fun inject(fragment: ReviewAssetTransferDetailsFragment)
+    fun inject(fragment: ReviewChangeDeviceSettingsDetailsFragment)
     fun inject(fragment: SafeSettingsFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)

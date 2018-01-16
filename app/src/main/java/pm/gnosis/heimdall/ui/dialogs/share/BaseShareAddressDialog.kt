@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.dialogs.share
 
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import kotlinx.android.synthetic.main.dialog_address_share.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.shareExternalText
 import pm.gnosis.heimdall.common.utils.toast
-import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.hexAsEthereumAddressOrNull

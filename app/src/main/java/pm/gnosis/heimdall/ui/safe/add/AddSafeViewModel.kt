@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.utils.GnosisSafeUtils
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
@@ -60,9 +61,9 @@ class AddSafeViewModel @Inject constructor(
             checkName(name)
             name
         }.flatMap {
-            // Current device will be added by default for now
             addressStore.load().flatMapCompletable {
-                repository.deploy(name, it, calculateRequiredConfirmations(it), overrideGasPrice)
+                // We add 1 owner because the current device will automatically be added as an owner
+                repository.deploy(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1), overrideGasPrice)
             }
                     .andThen(Observable.just(Unit))
                     .onErrorResumeNext(Function { errorHandler.observable(it) })
@@ -72,7 +73,8 @@ class AddSafeViewModel @Inject constructor(
 
     override fun observeEstimate(): Observable<Result<GasEstimate>> {
         return addressStore.observe().flatMapSingle {
-            repository.estimateDeployCosts(it, calculateRequiredConfirmations(it))
+            // We add 1 owner because the current device will automatically be added as an owner
+            repository.estimateDeployCosts(it, GnosisSafeUtils.calculateThreshold(it.size + 1))
                     .onErrorResumeNext({ errorHandler.single(it) })
         }.mapToResult()
     }
@@ -111,12 +113,6 @@ class AddSafeViewModel @Inject constructor(
             }
                     .subscribeOn(Schedulers.io())
                     .mapToResult()
-
-    private fun calculateRequiredConfirmations(additionalOwners: Set<BigInteger>): Int =
-            // We will always have the current device as a owner. If we have one additional owner,
-            // we will allow recovery. If we have more additional owners we enable 2fa
-            // (additional owners = total owners - 1)
-            Math.max(1, additionalOwners.size)
 
     private fun checkName(name: String) {
         if (name.isBlank()) throw SimpleLocalizedException(context.getString(R.string.error_blank_name))

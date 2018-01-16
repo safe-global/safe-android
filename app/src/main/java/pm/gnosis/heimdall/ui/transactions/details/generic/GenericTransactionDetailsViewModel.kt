@@ -12,7 +12,6 @@ import pm.gnosis.utils.decimalAsBigIntegerOrNull
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import pm.gnosis.utils.hexStringToByteArrayOrNull
 import pm.gnosis.utils.toHexString
-import java.math.BigInteger
 import javax.inject.Inject
 
 

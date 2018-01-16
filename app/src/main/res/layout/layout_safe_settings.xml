@@ -8,6 +8,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,6 +66,17 @@
                     android:paddingTop="16dp"
                     android:text="@string/safe_information_loading" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/layout_safe_settings_add_owner_button"
+                style="@style/TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                android:text="@string/add_safe_owner"
+                android:visibility="gone" />
 
             <View
                 android:layout_width="match_parent"

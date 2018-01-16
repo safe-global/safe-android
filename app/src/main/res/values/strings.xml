@@ -235,6 +235,7 @@
     <string name="safe_overview_emtpy_description">Add a new or existing safe and it will show up right here.</string>
     <string name="safe_overview_empty_action">Add a Safe</string>
     <string name="owner">owner</string>
+    <string name="owner_x">owner number %s</string>
     <string name="deploying_new_safe">Deploying New Safe:</string>
     <string name="deploying_safe_warning">This process can take up to several minutes</string>
     <string name="fingerprint_not_recognized">Fingerprint not recognized. Please try again</string>
@@ -268,4 +269,7 @@
     <string name="password_change_success">Password successfully changed</string>
     <string name="reveal_security_phrase_warning">This is the security phrase used to get access to your account!  Revealing the security phrase might get your account stolen if you have onlookers (people, recording devices). Please do so in a private environment.</string>
     <string name="show_security_phrase">Show Security Phrase</string>
+    <string name="transaction_description_add_safe_owner">added as an safe owning device</string>
+    <string name="transaction_description_remove_safe_owner">removed as an safe owning device</string>
+    <string name="transaction_description_replace_safe_owner">replacing %s as a safe owning device</string>
 </resources>

@@ -15,10 +15,7 @@ import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
 import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
-import pm.gnosis.heimdall.data.repositories.TokenTransferData
-import pm.gnosis.heimdall.data.repositories.TransactionDetails
-import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
-import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
@@ -31,7 +28,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class IpfsTransactionDetailsRepository @Inject constructor(
+class SimpleTransactionDetailsRepository @Inject constructor(
         authenticatorDb: GnosisAuthenticatorDb,
         private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
         private val ipfsApi: IpfsApi
@@ -105,6 +102,9 @@ class IpfsTransactionDetailsRepository @Inject constructor(
     private fun parseTransactionType(value: BigInteger?, data: String?): TransactionType =
             when {
                 data?.isSolidityMethod(StandardToken.Transfer.METHOD_ID) == true -> TransactionType.TOKEN_TRANSFER
+                data?.isSolidityMethod(GnosisSafe.AddOwner.METHOD_ID) == true -> TransactionType.ADD_SAFE_OWNER
+                data?.isSolidityMethod(GnosisSafe.RemoveOwner.METHOD_ID) == true -> TransactionType.REMOVE_SAFE_OWNER
+                data?.isSolidityMethod(GnosisSafe.ReplaceOwner.METHOD_ID) == true -> TransactionType.REPLACE_SAFE_OWNER
                 data.isNullOrBlank() && value != null && value > BigInteger.ZERO -> TransactionType.ETHER_TRANSFER
                 else -> TransactionType.GENERIC
             }
@@ -128,6 +128,18 @@ class IpfsTransactionDetailsRepository @Inject constructor(
             TransactionType.TOKEN_TRANSFER -> {
                 val arguments = transaction.data!!.removeSolidityMethodPrefix(StandardToken.Transfer.METHOD_ID)
                 StandardToken.Transfer.decodeArguments(arguments).let { TokenTransferData(it.to.value, it.value.value) }
+            }
+            TransactionType.ADD_SAFE_OWNER -> {
+                val arguments = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.AddOwner.METHOD_ID)
+                GnosisSafe.AddOwner.decodeArguments(arguments).let { AddSafeOwnerData(it.owner.value, it._threshold.value.toInt()) }
+            }
+            TransactionType.REMOVE_SAFE_OWNER -> {
+                val arguments = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.RemoveOwner.METHOD_ID)
+                GnosisSafe.RemoveOwner.decodeArguments(arguments).let { RemoveSafeOwnerData(it.ownerindex.value, it._threshold.value.toInt()) }
+            }
+            TransactionType.REPLACE_SAFE_OWNER -> {
+                val arguments = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.ReplaceOwner.METHOD_ID)
+                GnosisSafe.ReplaceOwner.decodeArguments(arguments).let { ReplaceSafeOwnerData(it.oldownerindex.value, it.newowner.value) }
             }
             else -> null
         }

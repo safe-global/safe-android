@@ -7,7 +7,6 @@ import com.gojuno.koptional.toOptional
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
@@ -16,13 +15,10 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.transactions.ExecuteTransactionActivity
-import pm.gnosis.heimdall.ui.transactions.ViewTransactionActivity
-import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.stringWithNoTrailingZeroes
-import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 

@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.safe.CreateAddOwnerDetailsFragment
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -69,6 +70,8 @@ class CreateTransactionActivity : BaseTransactionActivity() {
             when (type) {
                 TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
                     CreateAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
+                TransactionType.ADD_SAFE_OWNER ->
+                    CreateAddOwnerDetailsFragment.createInstance(transaction, safeAddress)
                 else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, true)
             }
 

@@ -12,11 +12,8 @@ import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
-import pm.gnosis.heimdall.ui.tokens.info.TokenInfoActivity
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.stringWithNoTrailingZeroes
-import java.math.BigInteger
 import java.math.RoundingMode
 import javax.inject.Inject
 

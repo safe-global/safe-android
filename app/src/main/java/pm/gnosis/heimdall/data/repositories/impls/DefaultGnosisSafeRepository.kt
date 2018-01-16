@@ -7,8 +7,8 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe
-import pm.gnosis.heimdall.GnosisSafe.Threshold
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
+import pm.gnosis.heimdall.GnosisSafe.Threshold
 import pm.gnosis.heimdall.ProxyFactory
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
@@ -188,7 +188,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     SafeInfo(addressString,
                             it.balance.value!!,
                             it.requiredConfirmations.value!!.param0.value.toLong(),
-                            it.owners.value!!.param0.items.map { it.value.asEthereumAddressString() },
+                            it.owners.value!!.param0.items.map { it.value },
                             it.isOwner.value!!.param0.value)
                 }
     }
