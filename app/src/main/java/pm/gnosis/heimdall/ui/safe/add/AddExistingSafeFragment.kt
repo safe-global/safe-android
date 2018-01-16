@@ -25,6 +25,7 @@ import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class AddExistingSafeFragment : BaseFragment() {
@@ -64,13 +65,15 @@ class AddExistingSafeFragment : BaseFragment() {
     }
 
     private fun observeSafeAddressTextChanges() = layout_add_existing_safe_address_input.textChanges()
+            .debounce(500, TimeUnit.MILLISECONDS)
             .map { it.toString() }
+            .observeOn(AndroidSchedulers.mainThread())
             .doOnNext { layout_add_existing_safe_owners_container.visibility = View.GONE }
             .filter { it.isValidEthereumAddress() }
 
     private fun onSafeInfo(account: Account, safeInfo: SafeInfo) {
         layout_add_existing_safe_owners.removeAllViews()
-        safeInfo.owners.filter { it.isValidEthereumAddress() }.forEach { address ->
+        safeInfo.owners.forEach { address ->
             val view = layoutInflater.inflate(R.layout.layout_address_item, layout_add_existing_safe_owners, false)
             view.layout_address_item_value.text = address.asEthereumAddressString()
             if (account.address == address) {
