@@ -5,6 +5,7 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
+import io.reactivex.subjects.PublishSubject
 import io.reactivex.subscribers.TestSubscriber
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -143,20 +144,24 @@ class SafeOverviewViewModelTest {
     }
 
     @Test
-    fun loadSafeInfoLoadsFromCache() {
+    fun loadSafeInfoOnErrorLoadsFromCache() {
         val testObserver = TestObserver.create<SafeInfo>()
+        val subject = PublishSubject.create<SafeInfo>()
         val safeInfo = SafeInfo("0x0", Wei(BigInteger.ZERO), 0, emptyList(), false)
-        given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(safeInfo))
+        given(repositoryMock.loadInfo(MockUtils.any())).willReturn(subject)
 
         viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver)
+        subject.onNext(safeInfo)
 
-        testObserver.assertResult(safeInfo)
+        testObserver.assertValue(safeInfo)
+
+        // Error loading the same safe (eg.: no internet) -> should load from cache
         val testObserver2 = TestObserver.create<SafeInfo>()
-
         viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver2)
+        subject.onError(Exception())
 
         testObserver2.assertResult(safeInfo)
-        then(repositoryMock).should().loadInfo(BigInteger.ZERO)
+        then(repositoryMock).should(times(2)).loadInfo(BigInteger.ZERO)
         then(repositoryMock).shouldHaveNoMoreInteractions()
     }
 
