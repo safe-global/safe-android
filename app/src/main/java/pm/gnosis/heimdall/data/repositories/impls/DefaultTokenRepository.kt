@@ -67,9 +67,9 @@ class DefaultTokenRepository @Inject constructor(
         if (!contractAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(contractAddress))
         val request = TokenInfoRequest(
                 BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.NAME_METHOD_ID}").callRequest(0),
-                        { it.checkedResult().hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim() }),
+                        { it.checkedResult().hexStringToByteArrayOrNull()?.utf8String()?.trim() }),
                 BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.SYMBOL_METHOD_ID}").callRequest(1),
-                        { it.checkedResult().hexAsBigIntegerOrNull()?.toAlfaNumericAscii()?.trim() }),
+                        { it.checkedResult().hexStringToByteArrayOrNull()?.utf8String()?.trim() }),
                 BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.DECIMALS_METHOD_ID}").callRequest(2),
                         { it.checkedResult().hexAsBigIntegerOrNull() }))
         return ethereumJsonRpcRepository.bulk(request).map { ERC20Token(contractAddress, it.name.value, it.symbol.value, it.decimals.value?.toInt() ?: 0) }

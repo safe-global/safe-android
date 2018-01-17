@@ -30,6 +30,3 @@ class ImmediateSchedulersRule : TestRule {
         }
     }
 }
-
-
-
