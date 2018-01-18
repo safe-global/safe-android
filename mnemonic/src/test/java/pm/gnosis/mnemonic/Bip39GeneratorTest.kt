@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
-import pm.gnosis.mnemonic.wordlists.BIP39_WORDLISTS
 import pm.gnosis.tests.utils.Asserts.assertThrow
 import pm.gnosis.utils.toHexString
 import pm.gnosis.utils.words
@@ -12,9 +11,11 @@ import pm.gnosis.utils.words
 class Bip39GeneratorTest {
     private lateinit var bip39: Bip39Generator
 
+    private val testWorldListProvider = TestWorldListProvider()
+
     @Before
     fun setup() {
-        bip39 = Bip39Generator()
+        bip39 = Bip39Generator(testWorldListProvider)
     }
 
     @Test
@@ -26,24 +27,24 @@ class Bip39GeneratorTest {
 
     @Test
     fun testGenerateMnemonic() {
-        BIP39_WORDLISTS.values.forEach {
-            val mnemonic12 = bip39.generateMnemonic(wordList = it)
+        TestWorldListProvider.Companion.MAP.forEach { (key, _) ->
+            val mnemonic12 = bip39.generateMnemonic(languageId = key)
             assertEquals(12, mnemonic12.words().size)
             assertEquals(mnemonic12, bip39.validateMnemonic(mnemonic12))
 
-            val mnemonic15 = bip39.generateMnemonic(Bip39.MIN_ENTROPY_BITS + 1 * Bip39.ENTROPY_MULTIPLE, it)
+            val mnemonic15 = bip39.generateMnemonic(Bip39.MIN_ENTROPY_BITS + 1 * Bip39.ENTROPY_MULTIPLE, key)
             assertEquals(15, mnemonic15.words().size)
             assertEquals(mnemonic15, bip39.validateMnemonic(mnemonic15))
 
-            val mnemonic18 = bip39.generateMnemonic(Bip39.MIN_ENTROPY_BITS + 2 * Bip39.ENTROPY_MULTIPLE, it)
+            val mnemonic18 = bip39.generateMnemonic(Bip39.MIN_ENTROPY_BITS + 2 * Bip39.ENTROPY_MULTIPLE, key)
             assertEquals(18, mnemonic18.words().size)
             assertEquals(mnemonic18, bip39.validateMnemonic(mnemonic18))
 
-            val mnemonic21 = bip39.generateMnemonic(Bip39.MIN_ENTROPY_BITS + 3 * Bip39.ENTROPY_MULTIPLE, it)
+            val mnemonic21 = bip39.generateMnemonic(Bip39.MIN_ENTROPY_BITS + 3 * Bip39.ENTROPY_MULTIPLE, key)
             assertEquals(21, mnemonic21.words().size)
             assertEquals(mnemonic21, bip39.validateMnemonic(mnemonic21))
 
-            val mnemonic24 = bip39.generateMnemonic(Bip39.MAX_ENTROPY_BITS, it)
+            val mnemonic24 = bip39.generateMnemonic(Bip39.MAX_ENTROPY_BITS, key)
             assertEquals(24, mnemonic24.words().size)
             assertEquals(mnemonic24, bip39.validateMnemonic(mnemonic24))
         }
@@ -51,10 +52,10 @@ class Bip39GeneratorTest {
 
     @Test
     fun generateMnemonicInvalidEntropy() {
-        assertThrow({ bip39.generateMnemonic(0) }, throwablePredicate = { it is IllegalArgumentException })
-        assertThrow({ bip39.generateMnemonic(127) }, throwablePredicate = { it is IllegalArgumentException })
-        assertThrow({ bip39.generateMnemonic(129) }, throwablePredicate = { it is IllegalArgumentException })
-        assertThrow({ bip39.generateMnemonic(257) }, throwablePredicate = { it is IllegalArgumentException })
+        assertThrow({ bip39.generateMnemonic(0, TestWorldListProvider.ENGLISH) }, throwablePredicate = { it is IllegalArgumentException })
+        assertThrow({ bip39.generateMnemonic(127, TestWorldListProvider.ENGLISH) }, throwablePredicate = { it is IllegalArgumentException })
+        assertThrow({ bip39.generateMnemonic(129, TestWorldListProvider.ENGLISH) }, throwablePredicate = { it is IllegalArgumentException })
+        assertThrow({ bip39.generateMnemonic(257, TestWorldListProvider.ENGLISH) }, throwablePredicate = { it is IllegalArgumentException })
     }
 
     @Test

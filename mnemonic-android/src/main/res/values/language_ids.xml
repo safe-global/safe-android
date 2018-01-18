@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="english" type="id" />
+    <item name="chinese_simplified" type="id" />
+    <item name="chinese_traditional" type="id" />
+</resources>

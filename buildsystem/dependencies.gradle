@@ -4,7 +4,7 @@ ext {
             android_tools          : '3.1.0-alpha07',
             fabric                 : '1.+',
             google_services        : '3.1.0',
-            kotlin                 : '1.2.10',
+            kotlin                 : '1.2.20',
             jacoco                 : '0.7.9',
 
             // Runtime dependencies

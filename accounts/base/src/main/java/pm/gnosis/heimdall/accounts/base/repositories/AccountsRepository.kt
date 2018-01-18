@@ -16,13 +16,9 @@ interface AccountsRepository {
 
     fun recover(data: ByteArray, signature: Signature): Single<BigInteger>
 
-    fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long = 0): Completable
+    fun saveAccountFromMnemonicSeed(mnemonicSeed: ByteArray, accountIndex: Long = 0): Completable
 
     fun saveMnemonic(mnemonic: String): Completable
-
-    fun generateMnemonic(): Single<String>
-
-    fun validateMnemonic(mnemonic: String): Single<String>
 
     fun loadMnemonic(): Single<String>
 }

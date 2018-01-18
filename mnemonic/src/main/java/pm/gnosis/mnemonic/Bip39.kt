@@ -1,8 +1,5 @@
 package pm.gnosis.mnemonic
 
-import pm.gnosis.mnemonic.wordlists.ENGLISH_WORD_LIST
-import pm.gnosis.mnemonic.wordlists.WordList
-
 interface Bip39 {
     companion object {
         const val MIN_ENTROPY_BITS = 128
@@ -12,7 +9,7 @@ interface Bip39 {
     }
 
     fun mnemonicToSeed(mnemonic: String, password: String? = null): ByteArray
-    fun generateMnemonic(strength: Int = MIN_ENTROPY_BITS, wordList: WordList = ENGLISH_WORD_LIST): String
+    fun generateMnemonic(strength: Int = MIN_ENTROPY_BITS, languageId: Int): String
     fun validateMnemonic(mnemonic: String): String
 }
 

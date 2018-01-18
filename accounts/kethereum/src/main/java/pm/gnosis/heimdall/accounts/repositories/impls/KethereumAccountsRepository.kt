@@ -19,7 +19,6 @@ import pm.gnosis.heimdall.common.utils.edit
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.db.EncryptedByteArray
 import pm.gnosis.heimdall.security.db.EncryptedString
-import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asBigInteger
@@ -33,8 +32,7 @@ import javax.inject.Singleton
 class KethereumAccountsRepository @Inject internal constructor(
         private val accountsDatabase: AccountsDatabase,
         private val encryptionManager: EncryptionManager,
-        private val preferencesManager: PreferencesManager,
-        private val bip39: Bip39
+        private val preferencesManager: PreferencesManager
 ) : AccountsRepository {
 
     private val encryptedStringConverter = EncryptedString.Converter()
@@ -68,10 +66,11 @@ class KethereumAccountsRepository @Inject internal constructor(
                 .map { KeyPair.fromPrivate(it) }
     }
 
-    override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable = Completable.fromAction {
-        val hdNode = KeyGenerator.masterNode(ByteString.of(*bip39.mnemonicToSeed(mnemonic)))
+    override fun saveAccountFromMnemonicSeed(mnemonicSeed: ByteArray, accountIndex: Long): Completable = Completable.fromAction {
+        val hdNode = KeyGenerator.masterNode(ByteString.of(*mnemonicSeed))
         val key = hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
-        val privateKey = key.privKeyBytes ?: throw IllegalStateException("Private key must not be null")
+        val privateKey = key.privKeyBytes
+                ?: throw IllegalStateException("Private key must not be null")
         val address = key.address.asBigInteger().apply {
             isValidEthereumAddress()
         }
@@ -90,8 +89,4 @@ class KethereumAccountsRepository @Inject internal constructor(
         val encryptedMnemonic = preferencesManager.prefs.getString(PreferencesManager.MNEMONIC_KEY, "")
         encryptedStringConverter.fromStorage(encryptedMnemonic).value(encryptionManager)
     }.subscribeOn(Schedulers.computation())
-
-    override fun generateMnemonic(): Single<String> = Single.fromCallable { bip39.generateMnemonic() }
-
-    override fun validateMnemonic(mnemonic: String): Single<String> = Single.fromCallable { bip39.validateMnemonic(mnemonic) }
 }

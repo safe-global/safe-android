@@ -1,4 +1,6 @@
-package pm.gnosis.mnemonic.wordlists
+package pm.gnosis.mnemonic
+
+import pm.gnosis.mnemonic.wordlists.WordList
 
 val ENGLISH_WORD_LIST = WordList(" ", listOf(
         "abandon",

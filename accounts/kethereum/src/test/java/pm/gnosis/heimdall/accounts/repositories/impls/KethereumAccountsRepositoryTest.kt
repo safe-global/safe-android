@@ -19,7 +19,6 @@ import pm.gnosis.heimdall.accounts.utils.rlp
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.db.EncryptedByteArray
-import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -45,9 +44,6 @@ class KethereumAccountsRepositoryTest {
     @Mock
     lateinit var preferencesManager: PreferencesManager
 
-    @Mock
-    lateinit var bip39: Bip39
-
     lateinit var accountsDao: AccountDao
 
     lateinit var repository: KethereumAccountsRepository
@@ -58,7 +54,7 @@ class KethereumAccountsRepositoryTest {
         given(accountsDatabase.accountsDao()).willReturn(accountsDao)
         given(encryptionManager.encrypt(MockUtils.any())).willAnswer { EncryptionManager.CryptoData(it.arguments.first() as ByteArray, "iv".toByteArray()) }
         given(encryptionManager.decrypt(MockUtils.any())).willAnswer { (it.arguments.first() as EncryptionManager.CryptoData).data }
-        repository = KethereumAccountsRepository(accountsDatabase, encryptionManager, preferencesManager, bip39)
+        repository = KethereumAccountsRepository(accountsDatabase, encryptionManager, preferencesManager)
     }
 
     @Test

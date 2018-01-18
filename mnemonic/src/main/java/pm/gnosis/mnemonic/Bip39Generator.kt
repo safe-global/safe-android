@@ -2,8 +2,7 @@ package pm.gnosis.mnemonic
 
 import org.spongycastle.jcajce.provider.digest.SHA256
 import org.spongycastle.jcajce.provider.symmetric.PBEPBKDF2
-import pm.gnosis.mnemonic.wordlists.BIP39_WORDLISTS
-import pm.gnosis.mnemonic.wordlists.WordList
+import pm.gnosis.mnemonic.wordlists.WordListProvider
 import pm.gnosis.utils.getIndexes
 import pm.gnosis.utils.toBinaryString
 import pm.gnosis.utils.words
@@ -15,10 +14,8 @@ import java.text.Normalizer
 import javax.crypto.SecretKey
 import javax.crypto.spec.PBEKeySpec
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class Bip39Generator @Inject constructor() : Bip39 {
+class Bip39Generator @Inject constructor(private val wordListProvider: WordListProvider) : Bip39 {
     private class Hasher : PBEPBKDF2.PBKDF2withSHA512() {
         fun generateSecret(keySpec: KeySpec): SecretKey {
             return engineGenerateSecret(keySpec)
@@ -42,10 +39,13 @@ class Bip39Generator @Inject constructor() : Bip39 {
 
     private fun salt(password: String?) = "mnemonic" + (password ?: "")
 
-    override fun generateMnemonic(strength: Int, wordList: WordList): String {
+    override fun generateMnemonic(strength: Int, languageId: Int): String {
         if (strength < Bip39.MIN_ENTROPY_BITS || strength > Bip39.MAX_ENTROPY_BITS || strength % Bip39.ENTROPY_MULTIPLE != 0) {
             throw IllegalArgumentException("Entropy length should be between ${Bip39.MIN_ENTROPY_BITS} and ${Bip39.MAX_ENTROPY_BITS} and be a multiple of ${Bip39.ENTROPY_MULTIPLE}")
         }
+
+        val wordList = wordListProvider.get(languageId)
+                ?: throw IllegalArgumentException("Id not valid")
         if (wordList.words.size != Bip39.WORD_LIST_SIZE) throw IllegalArgumentException("Wordlist needs to have ${Bip39.WORD_LIST_SIZE} (it has ${wordList.words.size})")
 
         val bytes = ByteArray(strength / 8)
@@ -73,7 +73,8 @@ class Bip39Generator @Inject constructor() : Bip39 {
             throw InvalidEntropy(mnemonic, entropyNBits)
         }
 
-        val wordList = BIP39_WORDLISTS.values.firstOrNull { wordList -> wordList.words.containsAll(words) }
+        val wordList = wordListProvider.all()
+                .firstOrNull { it.words.containsAll(words) }
                 ?: throw MnemonicNotInWordlist(mnemonic)
 
         val binaryIndexes = wordList.words.getIndexes(words).joinToString("") { Integer.toBinaryString(it).padStart(11, '0') }
