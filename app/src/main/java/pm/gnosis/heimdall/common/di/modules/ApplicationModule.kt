@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
 import pm.gnosis.heimdall.data.remote.EthGasStationApi
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.IpfsApi
+import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.ticker.data.remote.TickerAdapter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -74,6 +75,18 @@ class ApplicationModule {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build()
         return retrofit.create(EthGasStationApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesPushServiceApi(moshi: Moshi, client: OkHttpClient): PushServiceApi {
+        val retrofit = Retrofit.Builder()
+                .client(client)
+                .baseUrl(PushServiceApi.BASE_URL)
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+                .build()
+        return retrofit.create(PushServiceApi::class.java)
     }
 
     @Provides

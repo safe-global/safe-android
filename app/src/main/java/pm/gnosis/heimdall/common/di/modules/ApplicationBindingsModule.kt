@@ -67,6 +67,10 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindsSignaturePushRepository(repository: DefaultSignaturePushRepository): SignaturePushRepository
+
+    @Binds
+    @Singleton
     abstract fun bindsTokenRepository(repository: DefaultTokenRepository): TokenRepository
 
     @Binds
