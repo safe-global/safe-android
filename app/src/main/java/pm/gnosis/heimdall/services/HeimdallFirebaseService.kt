@@ -17,6 +17,7 @@ import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.utils.asEthereumAddressString
@@ -30,6 +31,9 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
 
     @Inject
     lateinit var accountsRepo: AccountsRepository
+
+    @Inject
+    lateinit var signaturePushRepository: SignaturePushRepository
 
     private val disposables = CompositeDisposable()
 
@@ -48,9 +52,18 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
         if (message.data.isEmpty()) return
 
         val uri = message.data["uri"] ?: return
-        val parsed = (GnoSafeUrlParser.parse(uri) ?: return) as? GnoSafeUrlParser.Parsed.SignRequest
-                ?: return
+        val parsed = GnoSafeUrlParser.parse(uri)
+        when (parsed) {
+            is GnoSafeUrlParser.Parsed.SignRequest -> handleSignRequest(message, parsed)
+            is GnoSafeUrlParser.Parsed.SignResponse -> handleSignResponse(message, parsed)
+        }
+    }
 
+    private fun handleSignResponse(message: RemoteMessage, parsed: GnoSafeUrlParser.Parsed.SignResponse) {
+        signaturePushRepository.receivedSignature(message.from, parsed.signature)
+    }
+
+    private fun handleSignRequest(message: RemoteMessage, parsed: GnoSafeUrlParser.Parsed.SignRequest) {
         val targets = message.data["targets"]?.split(",") ?: return
         if (targets.isEmpty()) return
 
@@ -63,7 +76,7 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
     }
 
     private fun showNotification(signRequest: GnoSafeUrlParser.Parsed.SignRequest) {
-        val intent = SignTransactionActivity.createIntent(this, signRequest.safe, signRequest.transaction)
+        val intent = SignTransactionActivity.createIntent(this, signRequest.safe, signRequest.transaction, false)
         val builder = NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_stat_gno)
                 .setContentTitle("Sign request")

@@ -39,6 +39,7 @@ class SettingsActivity : BaseActivity() {
             startActivity(TokenManagementActivity.createIntent(this))
         }
 
+        // TODO: this check should be done in the SecuritySettingsActivity
         if (encryptionManager.canSetupFingerprint()) {
             layout_settings_security.setOnClickListener {
                 startActivity(SecuritySettingsActivity.createIntent(this))

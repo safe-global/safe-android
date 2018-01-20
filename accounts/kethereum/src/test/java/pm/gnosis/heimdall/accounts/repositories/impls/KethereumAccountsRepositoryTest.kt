@@ -73,7 +73,8 @@ class KethereumAccountsRepositoryTest {
          */
         val privateKey = "0x4646464646464646464646464646464646464646464646464646464646464646"
         val encryptedKey = EncryptedByteArray.create(encryptionManager, privateKey.hexStringToByteArray())
-        val account = AccountDb(encryptedKey)
+        // TODO: maybe replace with the real address
+        val account = AccountDb(encryptedKey, BigInteger.TEN)
         given(accountsDao.observeAccounts()).willReturn(Single.just(account))
         val testObserver = TestObserver<String>()
         val address = "0x3535353535353535353535353535353535353535".hexAsEthereumAddress()
@@ -112,7 +113,7 @@ class KethereumAccountsRepositoryTest {
          */
         val privateKey = "0x8678adf78db8d1c8a40028795077b3463ca06a743ca37dfd28a5b4442c27b457"
         val encryptedKey = EncryptedByteArray.create(encryptionManager, privateKey.hexStringToByteArray())
-        val account = AccountDb(encryptedKey)
+        val account = AccountDb(encryptedKey, BigInteger.TEN)
         given(accountsDao.observeAccounts()).willReturn(Single.just(account))
         val testObserver = TestObserver<String>()
         val address = "0x19fd8863ea1185d8ef7ab3f2a8f4d469dc35dd52".hexAsEthereumAddress()
@@ -131,7 +132,7 @@ class KethereumAccountsRepositoryTest {
     fun signAndRecover() {
         val privateKey = "0x8678adf78db8d1c8a40028795077b3463ca06a743ca37dfd28a5b4442c27b457"
         val encryptedKey = EncryptedByteArray.create(encryptionManager, privateKey.hexStringToByteArray())
-        val account = AccountDb(encryptedKey)
+        val account = AccountDb(encryptedKey, BigInteger.TEN)
         given(accountsDao.observeAccounts()).willReturn(Single.just(account))
         val testObserver = TestObserver<Signature>()
 

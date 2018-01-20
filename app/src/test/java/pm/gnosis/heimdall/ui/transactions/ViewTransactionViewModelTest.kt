@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
@@ -50,6 +51,9 @@ class ViewTransactionViewModelTest {
     lateinit var qrCodeGeneratorMock: QrCodeGenerator
 
     @Mock
+    lateinit var signaturePushRepositoryMock: SignaturePushRepository
+
+    @Mock
     lateinit var signatureStoreMock: SignatureStore
 
     @Mock
@@ -63,7 +67,7 @@ class ViewTransactionViewModelTest {
     @Before
     fun setUp() {
         contextMock.mockGetString()
-        viewModel = ViewTransactionViewModel(contextMock, qrCodeGeneratorMock, signatureStoreMock, transactionRepositoryMock, transactionDetailsRepositoryMock)
+        viewModel = ViewTransactionViewModel(contextMock, qrCodeGeneratorMock, signaturePushRepositoryMock, signatureStoreMock, transactionRepositoryMock, transactionDetailsRepositoryMock)
     }
 
     @Test
@@ -490,7 +494,7 @@ class ViewTransactionViewModelTest {
         given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
         given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.just(TEST_BITMAP))
 
-        val testObserver = TestObserver<Result<Pair<String, Bitmap>>>()
+        val testObserver = TestObserver<Result<Pair<String, Bitmap?>>>()
         viewModel.signTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
 
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
@@ -509,7 +513,7 @@ class ViewTransactionViewModelTest {
         val error = IllegalStateException()
         given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.error(error))
 
-        val testObserver = TestObserver<Result<Pair<String, Bitmap>>>()
+        val testObserver = TestObserver<Result<Pair<String, Bitmap?>>>()
         viewModel.signTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
 
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
@@ -528,7 +532,7 @@ class ViewTransactionViewModelTest {
         given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
         given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.error(error))
 
-        val testObserver = TestObserver<Result<Pair<String, Bitmap>>>()
+        val testObserver = TestObserver<Result<Pair<String, Bitmap?>>>()
         viewModel.signTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
 
         then(signatureStoreMock).shouldHaveNoMoreInteractions()

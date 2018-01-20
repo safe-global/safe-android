@@ -260,6 +260,7 @@
     <string name="request_signature">Request Signature</string>
     <string name="error_signature_not_owner">The signature was not created by a safe owning device!</string>
     <string name="error_signature_already_exists">This signature has already been added!</string>
+    <string name="error_signature_already_enough">No more signatures are required!</string>
     <string name="error_owner_already_added">This device has already been added as an owner!</string>
     <string name="removed_x">Removed %s</string>
     <string name="current_password">Current password</string>

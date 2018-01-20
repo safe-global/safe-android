@@ -86,13 +86,12 @@ class GethAccountsRepository @Inject constructor(
     }
 
     override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable =
-            Single.fromCallable {
+            Completable.fromAction {
                 val hdNode = KeyGenerator().masterNode(ByteString.of(*bip39.mnemonicToSeed(mnemonic)))
-                hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
-            }.flatMapCompletable {
-                saveAccount(it.privKeyBytes ?: throw IllegalStateException("Private key must not be null"))
+                val key = hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
+                gethKeyStore.importECDSAKey(key.privKeyBytes ?: throw IllegalStateException("Private key must not be null"),
+                        gethAccountManager.getAccountPassphrase())
             }
-
 
     override fun saveMnemonic(mnemonic: String): Completable = Completable.fromCallable {
         preferencesManager.prefs.edit {
@@ -105,11 +104,6 @@ class GethAccountsRepository @Inject constructor(
         val encryptedMnemonic = preferencesManager.prefs.getString(PreferencesManager.MNEMONIC_KEY, "")
         encryptedStringConverter.fromStorage(encryptedMnemonic).value(encryptionManager)
     }.subscribeOn(Schedulers.computation())
-
-    override fun saveAccount(privateKey: ByteArray): Completable =
-            Completable.fromCallable {
-                gethKeyStore.importECDSAKey(privateKey, gethAccountManager.getAccountPassphrase())
-            }
 
     override fun generateMnemonic(): Single<String> = Single.fromCallable { bip39.generateMnemonic() }
 

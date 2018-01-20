@@ -52,10 +52,11 @@ class SimpleSignatureStore @Inject constructor(
             SimpleLocalizedException.assert(info?.owners?.contains(signature.first) == true, context, R.string.error_signature_not_owner)
             SimpleLocalizedException.assert(info?.sender != signature.first, context, R.string.error_signature_already_exists)
             SimpleLocalizedException.assert(!signatures.containsKey(signature.first), context, R.string.error_signature_already_exists)
+            SimpleLocalizedException.assert(info?.requiredConfirmation?.let { signatures.size < it } == true, context, R.string.error_signature_already_exists)
             signatures.put(signature.first, signature.second)
         }
         // We only emit a copy of the signatures
-       publish()
+        publish()
     }
 }
 

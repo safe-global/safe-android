@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
@@ -24,7 +25,8 @@ import javax.inject.Inject
 
 class ViewTransactionViewModel @Inject constructor(
         @ApplicationContext private val context: Context,
-        private var qrCodeGenerator: QrCodeGenerator,
+        private val qrCodeGenerator: QrCodeGenerator,
+        private val signaturePushRepository: SignaturePushRepository,
         private val signatureStore: SignatureStore,
         private val transactionRepository: TransactionRepository,
         private val transactionDetailsRepository: TransactionDetailsRepository
@@ -36,6 +38,14 @@ class ViewTransactionViewModel @Inject constructor(
     override fun checkTransactionType(transaction: Transaction): Single<TransactionType> {
         return transactionDetailsRepository.loadTransactionType(transaction)
     }
+
+    override fun observePushSignature(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Unit>> =
+            signaturePushRepository.observe(safeAddress)
+                    .flatMapSingle {
+                        transactionRepository.checkSignature(safeAddress, transaction, it)
+                    }
+                    .map(signatureStore::add)
+                    .mapToResult()
 
     override fun addSignature(encodedSignatureUrl: String): Completable {
         return signatureStore.loadSingingInfo()
@@ -82,12 +92,16 @@ class ViewTransactionViewModel @Inject constructor(
                 .mapToResult()
     }
 
-    override fun signTransaction(safeAddress: BigInteger, transaction: Transaction): Single<Result<Pair<String, Bitmap>>> {
+    override fun signTransaction(safeAddress: BigInteger, transaction: Transaction, sendViaPush: Boolean): Single<Result<Pair<String, Bitmap?>>> {
         return transactionRepository.sign(safeAddress, transaction)
                 .flatMap { signature ->
-                    qrCodeGenerator
-                            .generateQrCode(GnoSafeUrlParser.signResponse(signature))
-                            .map { signature.toString() to it }
+                    if (sendViaPush)
+                        qrCodeGenerator
+                                .generateQrCode(GnoSafeUrlParser.signResponse(signature))
+                                .map { signature.toString() to it }
+                    else
+                        signaturePushRepository.send(safeAddress, transaction, signature)
+                                .andThen(Single.just(signature.toString() to null))
                 }
                 .onErrorResumeNext({ errorHandler.single(it) })
                 .mapToResult()
