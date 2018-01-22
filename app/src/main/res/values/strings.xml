@@ -274,4 +274,5 @@
     <string name="transaction_description_add_safe_owner">added as an safe owning device</string>
     <string name="transaction_description_remove_safe_owner">removed as an safe owning device</string>
     <string name="transaction_description_replace_safe_owner">replacing %s as a safe owning device</string>
+    <string name="signature_request_sent">Request for signatures has been sent!</string>
 </resources>

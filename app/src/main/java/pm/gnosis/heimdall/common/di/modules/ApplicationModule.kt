@@ -81,7 +81,8 @@ class ApplicationModule {
     @Singleton
     fun providesPushServiceApi(moshi: Moshi, client: OkHttpClient): PushServiceApi {
         val retrofit = Retrofit.Builder()
-                .client(client)
+                // Increase timeout since our server goes to sleeps
+                .client(client.newBuilder().connectTimeout(30, TimeUnit.SECONDS).build())
                 .baseUrl(PushServiceApi.BASE_URL)
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))

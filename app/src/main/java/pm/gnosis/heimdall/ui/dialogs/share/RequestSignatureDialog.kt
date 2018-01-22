@@ -14,7 +14,9 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.common.utils.scanQrCode
+import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -85,17 +87,17 @@ class RequestSignatureDialog : BaseShareQrCodeDialog() {
                     dismiss()
                 }
         disposables += dialog_request_signature_push.clicks()
-                .flatMapCompletable {
+                .flatMapSingle {
                     signaturePushRepository.request(safe, data())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnError {
-                                Timber.e(it)
-                                errorSnackbar(dialog_request_signature_push, it)
-                            }
-                            .onErrorComplete()
+                            .mapToResult()
                 }
-                .subscribe({
-                    context!!.toast("Request send!")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeForResult({
+                    context!!.toast(R.string.signature_request_sent)
+                    dismiss()
+                }, {
+                    Timber.e(it)
+                    errorSnackbar(dialog_request_signature_push, it)
                 })
     }
 

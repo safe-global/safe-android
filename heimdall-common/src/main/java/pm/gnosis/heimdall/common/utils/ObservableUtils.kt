@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.common.utils
 
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -39,6 +40,9 @@ fun <D> Flowable<D>.mapToResult(): Flowable<Result<D>> =
 
 fun <D> Single<D>.mapToResult(): Single<Result<D>> =
         this.map<Result<D>> { DataResult(it) }.onErrorReturn { ErrorResult(it) }
+
+fun Completable.mapToResult(): Single<Result<Unit>> =
+        this.andThen(Single.just<Result<Unit>>(DataResult(Unit))).onErrorReturn { ErrorResult(it) }
 
 fun <K, D> MutableMap<K, Observable<D>>.getSharedObservable(key: K, source: Observable<D>): Observable<D> =
         getOrPut(key, {
