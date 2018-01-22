@@ -457,6 +457,75 @@ class ViewTransactionViewModelTest {
     }
 
     @Test
+    fun observeSignature() {
+        val signatureSubject = PublishSubject.create<Signature>()
+        given(signaturePushRepositoryMock.observe(TEST_SAFE)).willReturn(signatureSubject)
+        val sigInfo = TEST_OWNER to TEST_SIGNATURE
+        given(transactionRepositoryMock.checkSignature(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+                .willReturn(Single.just(sigInfo))
+
+        val testObserver = TestObserver<Result<Unit>>()
+        viewModel.observePushSignature(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
+
+        then(signaturePushRepositoryMock).should().observe(TEST_SAFE)
+        then(signaturePushRepositoryMock).shouldHaveNoMoreInteractions()
+
+        testObserver.assertEmpty()
+
+        // Added new signature successfully
+        signatureSubject.onNext(TEST_SIGNATURE)
+
+        testObserver.assertValuesOnly(DataResult(Unit))
+
+        then(signatureStoreMock).should().add(sigInfo)
+        then(signatureStoreMock).shouldHaveNoMoreInteractions()
+
+        then(transactionRepositoryMock).should().checkSignature(TEST_SAFE, TEST_TRANSACTION, TEST_SIGNATURE)
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
+
+        // Failure adding to storage
+        given(signatureStoreMock.add(MockUtils.any()))
+                .will { throw SimpleLocalizedException(R.string.error_owner_already_added.toString()) }
+        signatureSubject.onNext(TEST_SIGNATURE)
+
+        testObserver.assertValuesOnly(DataResult(Unit),
+                ErrorResult(SimpleLocalizedException(R.string.error_owner_already_added.toString()))) // New value
+
+        then(signatureStoreMock).should(times(2)).add(sigInfo)
+        then(signatureStoreMock).shouldHaveNoMoreInteractions()
+
+        then(transactionRepositoryMock).should(times(2)).checkSignature(TEST_SAFE, TEST_TRANSACTION, TEST_SIGNATURE)
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
+
+        // Failure verifying signature
+        given(transactionRepositoryMock.checkSignature(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+                .willReturn(Single.error(IllegalArgumentException()))
+        signatureSubject.onNext(TEST_SIGNATURE)
+
+        testObserver.assertValuesOnly(
+                DataResult(Unit),
+                ErrorResult(SimpleLocalizedException(R.string.error_owner_already_added.toString())),
+                ErrorResult(SimpleLocalizedException(R.string.invalid_signature.toString()))) // New value
+
+        then(signatureStoreMock).shouldHaveNoMoreInteractions()
+
+        then(transactionRepositoryMock).should(times(3)).checkSignature(TEST_SAFE, TEST_TRANSACTION, TEST_SIGNATURE)
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
+
+        // Failure from upstream
+        signatureSubject.onError(IllegalStateException())
+
+        testObserver.assertFailure(IllegalStateException::class.java,
+                DataResult(Unit),
+                ErrorResult(SimpleLocalizedException(R.string.error_owner_already_added.toString())),
+                ErrorResult(SimpleLocalizedException(R.string.invalid_signature.toString())))
+
+        then(signatureStoreMock).shouldHaveNoMoreInteractions()
+        then(signaturePushRepositoryMock).shouldHaveNoMoreInteractions()
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
     fun addSignature() {
         val sigInfo = TEST_OWNER to TEST_SIGNATURE
         given(signatureStoreMock.loadSingingInfo()).willReturn(Single.just(TEST_SAFE to TEST_TRANSACTION))
@@ -476,7 +545,7 @@ class ViewTransactionViewModelTest {
     }
 
     @Test
-    fun addSignatureInvalid() {
+    fun addSignatureInvalidUrl() {
         given(signatureStoreMock.loadSingingInfo()).willReturn(Single.just(TEST_SAFE to TEST_TRANSACTION))
 
         val testObserver = TestObserver<Unit>()
@@ -490,22 +559,56 @@ class ViewTransactionViewModelTest {
     }
 
     @Test
-    fun singTransaction() {
-        given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
-        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.just(TEST_BITMAP))
+    fun addSignatureInvalidSignature() {
+        given(signatureStoreMock.loadSingingInfo()).willReturn(Single.just(TEST_SAFE to TEST_TRANSACTION))
+        given(transactionRepositoryMock.checkSignature(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+                .willReturn(Single.error(Exception()))
 
-        val testObserver = TestObserver<Result<Pair<String, Bitmap?>>>()
-        viewModel.signTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
+        val testObserver = TestObserver<Unit>()
+        viewModel.addSignature(GnoSafeUrlParser.signResponse(TEST_SIGNATURE)).subscribe(testObserver)
 
+        then(signatureStoreMock).should().loadSingingInfo()
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
 
-        then(transactionRepositoryMock).should().sign(TEST_SAFE, TEST_TRANSACTION)
+        then(transactionRepositoryMock).should().checkSignature(TEST_SAFE, TEST_TRANSACTION, TEST_SIGNATURE)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertError(SimpleLocalizedException(R.string.invalid_signature.toString()))
+    }
 
-        then(qrCodeGeneratorMock).should().generateQrCode(GnoSafeUrlParser.signResponse(TEST_SIGNATURE))
-        then(qrCodeGeneratorMock).shouldHaveNoMoreInteractions()
+    @Test
+    fun addSignatureNoSigningInfo() {
+        val error = IllegalStateException()
+        given(signatureStoreMock.loadSingingInfo()).willReturn(Single.error(error))
 
-        testObserver.assertResult(DataResult(TEST_SIGNATURE.toString() to TEST_BITMAP))
+        val testObserver = TestObserver<Unit>()
+        viewModel.addSignature(GnoSafeUrlParser.signResponse(TEST_SIGNATURE)).subscribe(testObserver)
+
+        then(signatureStoreMock).should().loadSingingInfo()
+        then(signatureStoreMock).shouldHaveNoMoreInteractions()
+
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertError(error)
+    }
+
+    @Test
+    fun addSignatureStoreFailure() {
+        given(signatureStoreMock.add(MockUtils.any()))
+                .will { throw SimpleLocalizedException(R.string.error_owner_already_added.toString()) }
+        val sigInfo = TEST_OWNER to TEST_SIGNATURE
+        given(signatureStoreMock.loadSingingInfo()).willReturn(Single.just(TEST_SAFE to TEST_TRANSACTION))
+        given(transactionRepositoryMock.checkSignature(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+                .willReturn(Single.just(sigInfo))
+
+        val testObserver = TestObserver<Unit>()
+        viewModel.addSignature(GnoSafeUrlParser.signResponse(TEST_SIGNATURE)).subscribe(testObserver)
+
+        then(signatureStoreMock).should().add(sigInfo)
+        then(signatureStoreMock).should().loadSingingInfo()
+        then(signatureStoreMock).shouldHaveNoMoreInteractions()
+
+        then(transactionRepositoryMock).should().checkSignature(TEST_SAFE, TEST_TRANSACTION, TEST_SIGNATURE)
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertError(SimpleLocalizedException(R.string.error_owner_already_added.toString()))
     }
 
     @Test
@@ -523,11 +626,34 @@ class ViewTransactionViewModelTest {
 
         then(qrCodeGeneratorMock).shouldHaveNoMoreInteractions()
 
+        then(signaturePushRepositoryMock).shouldHaveNoMoreInteractions()
+
         testObserver.assertResult(ErrorResult(error))
     }
 
     @Test
-    fun singTransactionFailQRCodeGeneration() {
+    fun singTransactionBitmap() {
+        given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
+        given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.just(TEST_BITMAP))
+
+        val testObserver = TestObserver<Result<Pair<String, Bitmap?>>>()
+        viewModel.signTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
+
+        then(signatureStoreMock).shouldHaveNoMoreInteractions()
+
+        then(transactionRepositoryMock).should().sign(TEST_SAFE, TEST_TRANSACTION)
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
+
+        then(qrCodeGeneratorMock).should().generateQrCode(GnoSafeUrlParser.signResponse(TEST_SIGNATURE))
+        then(qrCodeGeneratorMock).shouldHaveNoMoreInteractions()
+
+        then(signaturePushRepositoryMock).shouldHaveNoMoreInteractions()
+
+        testObserver.assertResult(DataResult(TEST_SIGNATURE.toString() to TEST_BITMAP))
+    }
+
+    @Test
+    fun singTransactionBitmapFailQRCodeGeneration() {
         val error = IllegalStateException()
         given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
         given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.error(error))
@@ -543,10 +669,55 @@ class ViewTransactionViewModelTest {
         then(qrCodeGeneratorMock).should().generateQrCode(GnoSafeUrlParser.signResponse(TEST_SIGNATURE))
         then(qrCodeGeneratorMock).shouldHaveNoMoreInteractions()
 
+        then(signaturePushRepositoryMock).shouldHaveNoMoreInteractions()
+
         testObserver.assertResult(ErrorResult(error))
     }
 
-    private data class TestException(val name: String = "test_exception"): Exception()
+    @Test
+    fun singTransactionPush() {
+        given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
+        given(signaturePushRepositoryMock.send(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
+
+        val testObserver = TestObserver<Result<Pair<String, Bitmap?>>>()
+        viewModel.signTransaction(TEST_SAFE, TEST_TRANSACTION, true).subscribe(testObserver)
+
+        then(signatureStoreMock).shouldHaveNoMoreInteractions()
+
+        then(transactionRepositoryMock).should().sign(TEST_SAFE, TEST_TRANSACTION)
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
+
+        then(qrCodeGeneratorMock).shouldHaveNoMoreInteractions()
+
+        then(signaturePushRepositoryMock).should().send(TEST_SAFE, TEST_TRANSACTION, TEST_SIGNATURE)
+        then(signaturePushRepositoryMock).shouldHaveNoMoreInteractions()
+
+        testObserver.assertResult(DataResult(TEST_SIGNATURE.toString() to null))
+    }
+
+    @Test
+    fun singTransactionPushFailQRCodeGeneration() {
+        val error = IllegalStateException()
+        given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
+        given(signaturePushRepositoryMock.send(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Completable.error(error))
+
+        val testObserver = TestObserver<Result<Pair<String, Bitmap?>>>()
+        viewModel.signTransaction(TEST_SAFE, TEST_TRANSACTION, true).subscribe(testObserver)
+
+        then(signatureStoreMock).shouldHaveNoMoreInteractions()
+
+        then(transactionRepositoryMock).should().sign(TEST_SAFE, TEST_TRANSACTION)
+        then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
+
+        then(qrCodeGeneratorMock).shouldHaveNoMoreInteractions()
+
+        then(signaturePushRepositoryMock).should().send(TEST_SAFE, TEST_TRANSACTION, TEST_SIGNATURE)
+        then(signaturePushRepositoryMock).shouldHaveNoMoreInteractions()
+
+        testObserver.assertResult(ErrorResult(error))
+    }
+
+    private data class TestException(val name: String = "test_exception") : Exception()
 
     companion object {
         private val TEST_BITMAP = mock(Bitmap::class.java)

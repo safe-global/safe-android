@@ -39,19 +39,23 @@ class ViewTransactionViewModel @Inject constructor(
         return transactionDetailsRepository.loadTransactionType(transaction)
     }
 
+    private fun checkSignature(safe: BigInteger, transaction: Transaction, signature: Signature) =
+            transactionRepository.checkSignature(safe, transaction, signature)
+                    .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_signature))) }
+
     override fun observePushSignature(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Unit>> =
             signaturePushRepository.observe(safeAddress)
                     .flatMapSingle {
-                        transactionRepository.checkSignature(safeAddress, transaction, it)
+                        checkSignature(safeAddress, transaction, it)
+                                .map(signatureStore::add)
+                                .mapToResult()
                     }
-                    .map(signatureStore::add)
-                    .mapToResult()
 
     override fun addSignature(encodedSignatureUrl: String): Completable {
         return signatureStore.loadSingingInfo()
                 .flatMap { (safe, transaction) ->
                     (GnoSafeUrlParser.parse(encodedSignatureUrl) as? GnoSafeUrlParser.Parsed.SignResponse)?.let {
-                        transactionRepository.checkSignature(safe, transaction, it.signature)
+                        checkSignature(safe, transaction, it.signature)
                     } ?: throw SimpleLocalizedException(context.getString(R.string.invalid_signature_uri))
                 }
                 .map(signatureStore::add)
@@ -96,12 +100,12 @@ class ViewTransactionViewModel @Inject constructor(
         return transactionRepository.sign(safeAddress, transaction)
                 .flatMap { signature ->
                     if (sendViaPush)
+                        signaturePushRepository.send(safeAddress, transaction, signature)
+                                .andThen(Single.just(signature.toString() to null))
+                    else
                         qrCodeGenerator
                                 .generateQrCode(GnoSafeUrlParser.signResponse(signature))
                                 .map { signature.toString() to it }
-                    else
-                        signaturePushRepository.send(safeAddress, transaction, signature)
-                                .andThen(Single.just(signature.toString() to null))
                 }
                 .onErrorResumeNext({ errorHandler.single(it) })
                 .mapToResult()

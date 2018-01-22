@@ -57,6 +57,7 @@
     <string name="pin_too_short">The pin is too short. It should have at least 6 digits!</string>
     <string name="invalid_erc67">Not a valid ERC67 transaction</string>
     <string name="invalid_signature_uri">Not a valid encoded signature</string>
+    <string name="invalid_signature">Could not verify signature</string>
     <string name="unknown_safe_action">Not Confirm or Revoke</string>
     <string name="no_account_available">No account available. Please restart the app!</string>
     <string name="error_not_authorized_for_action">You are not authorized to perform this action.</string>

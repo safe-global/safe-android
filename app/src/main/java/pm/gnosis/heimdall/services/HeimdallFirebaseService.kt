@@ -76,7 +76,7 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
     }
 
     private fun showNotification(signRequest: GnoSafeUrlParser.Parsed.SignRequest) {
-        val intent = SignTransactionActivity.createIntent(this, signRequest.safe, signRequest.transaction, false)
+        val intent = SignTransactionActivity.createIntent(this, signRequest.safe, signRequest.transaction, true)
         val builder = NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_stat_gno)
                 .setContentTitle("Sign request")
