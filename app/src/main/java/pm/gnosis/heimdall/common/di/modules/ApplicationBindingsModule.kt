@@ -5,6 +5,8 @@ import dagger.Module
 import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.common.utils.ZxingQrCodeGenerator
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.heimdall.data.remote.MessageQueueRepository
+import pm.gnosis.heimdall.data.remote.impls.FirebaseMessageQueueRepository
 import pm.gnosis.heimdall.data.remote.impls.SimpleEthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.*
@@ -52,6 +54,10 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsEthereumJsonRepository(repository: SimpleEthereumJsonRpcRepository): EthereumJsonRpcRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsMessageQueueRepository(repository: FirebaseMessageQueueRepository): MessageQueueRepository
 
     @Binds
     @Singleton

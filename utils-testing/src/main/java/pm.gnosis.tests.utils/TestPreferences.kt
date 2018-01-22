@@ -46,7 +46,12 @@ class TestPreferences : SharedPreferences, SharedPreferences.Editor {
     }
 
     override fun putStringSet(key: String, value: MutableSet<String>?): SharedPreferences.Editor {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        value?.apply {
+            map.put(key, this)
+        } ?: run {
+            map.remove(key)
+        }
+        return this
     }
 
     private val map = HashMap<String, Any>()
@@ -55,7 +60,7 @@ class TestPreferences : SharedPreferences, SharedPreferences.Editor {
 
     override fun getBoolean(key: String?, value: Boolean): Boolean = (map[key] as? Boolean) ?: value
 
-    override fun getInt(key: String?, value: Int) =(map[key] as? Int) ?: value
+    override fun getInt(key: String?, value: Int) = (map[key] as? Int) ?: value
 
     override fun getAll(): MutableMap<String, *> = map
 
@@ -67,9 +72,8 @@ class TestPreferences : SharedPreferences, SharedPreferences.Editor {
 
     override fun getString(key: String?, value: String?) = (map[key] as? String) ?: value
 
-    override fun getStringSet(key: String?, value: MutableSet<String>?): MutableSet<String> {
-        TODO("not implemented")
-    }
+    @Suppress("UNCHECKED_CAST")
+    override fun getStringSet(key: String?, value: MutableSet<String>?) = (map[key] as? MutableSet<String>) ?: value
 
     override fun unregisterOnSharedPreferenceChangeListener(key: SharedPreferences.OnSharedPreferenceChangeListener?) {
         TODO("not implemented")

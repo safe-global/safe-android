@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
-import com.google.firebase.messaging.FirebaseMessaging
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
@@ -10,6 +9,7 @@ import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.utils.edit
+import pm.gnosis.heimdall.data.remote.MessageQueueRepository
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.RequestSignatureData
 import pm.gnosis.heimdall.data.remote.models.SendSignatureData
@@ -27,37 +27,36 @@ import javax.inject.Singleton
 @Singleton
 class DefaultSignaturePushRepository @Inject constructor(
         private val accountsRepository: AccountsRepository,
+        private val messageQueueRepository: MessageQueueRepository,
         private val preferencesManager: PreferencesManager,
         private val pushServiceApi: PushServiceApi,
         private val safeRepository: GnosisSafeRepository,
         private val transactionRepository: GnosisSafeTransactionRepository
 ) : SignaturePushRepository {
 
-    // TODO inject
-    private val firebase = FirebaseMessaging.getInstance()
-
     private var cachedSafes: List<Safe>? = null
 
     override fun init() {
         preferencesManager.prefs.getStringSet(PREFS_OBSERVED_SAFES, emptySet()).forEach {
-            firebase.subscribeToTopic(RESPOND_SIGNATURE_TOPIC_PREFIX + it)
+            messageQueueRepository.unsubscribe(RESPOND_SIGNATURE_TOPIC_PREFIX + it)
         }
+        preferencesManager.prefs.edit { putStringSet(PREFS_OBSERVED_SAFES, emptySet()) }
         safeRepository.observeDeployedSafes()
                 .subscribe(::handleSafes)
     }
 
     private fun handleSafes(safes: List<Safe>) {
         cachedSafes?.forEach {
-            firebase.unsubscribeFromTopic(REQUEST_SIGNATURE_TOPIC_PREFIX + it.address.asEthereumAddressString().toLowerCase().removeHexPrefix())
+            messageQueueRepository.unsubscribe(REQUEST_SIGNATURE_TOPIC_PREFIX + cleanAddress(it.address))
         }
         cachedSafes = safes
         safes.forEach {
-            firebase.subscribeToTopic(REQUEST_SIGNATURE_TOPIC_PREFIX + it.address.asEthereumAddressString().toLowerCase().removeHexPrefix())
+            messageQueueRepository.subscribe(REQUEST_SIGNATURE_TOPIC_PREFIX + cleanAddress(it.address))
         }
     }
 
     override fun request(safe: BigInteger, data: String): Completable {
-        val safeAddress = safe.asEthereumAddressString().removeHexPrefix()
+        val safeAddress = cleanAddress(safe)
         return accountsRepository.sign(Sha3Utils.keccak(safeAddress.hexStringToByteArray()))
                 .flatMapCompletable {
                     pushServiceApi.requestSignatures(it.toString(), safeAddress, RequestSignatureData(data))
@@ -65,9 +64,8 @@ class DefaultSignaturePushRepository @Inject constructor(
     }
 
     override fun send(safe: BigInteger, transaction: Transaction, signature: Signature): Completable {
-        val safeAddress = safe.asEthereumAddressString().removeHexPrefix()
         return transactionRepository.calculateHash(safe, transaction).flatMapCompletable {
-            pushServiceApi.sendSignature(safeAddress, SendSignatureData(GnoSafeUrlParser.signResponse(signature), it.toHexString()))
+            pushServiceApi.sendSignature(cleanAddress(safe), SendSignatureData(GnoSafeUrlParser.signResponse(signature), it.toHexString()))
         }
     }
 
@@ -84,31 +82,36 @@ class DefaultSignaturePushRepository @Inject constructor(
 
     override fun observe(safe: BigInteger): Observable<Signature> =
             observedSafes.getOrPut(safe, {
-                ReceiveSignatureObservable(firebase, preferencesManager, {
+                ReceiveSignatureObservable(messageQueueRepository, preferencesManager, {
                     observedSafes.remove(safe)
-                }, safe)
+                }, cleanAddress(safe))
             }).observe()
 
+    private fun cleanAddress(address: BigInteger) =
+            address.asEthereumAddressString().toLowerCase().removeHexPrefix()
+
     private class ReceiveSignatureObservable(
-            private val firebase: FirebaseMessaging,
+            private val messageQueueRepository: MessageQueueRepository,
             private val preferencesManager: PreferencesManager,
             private val releaseCallback: (ReceiveSignatureObservable) -> Unit,
-            safe: BigInteger
+            private val safeAddress: String
     ) : ObservableOnSubscribe<Signature> {
-        private val safeAddress = safe.asEthereumAddressString().toLowerCase().removeHexPrefix()
         private val emitters = CopyOnWriteArraySet<ObservableEmitter<Signature>>()
 
-        init {
+        private fun attach() {
             updateObservedSafes({ it.add(safeAddress) })
-            firebase.subscribeToTopic(RESPOND_SIGNATURE_TOPIC_PREFIX + safeAddress)
+            messageQueueRepository.subscribe(RESPOND_SIGNATURE_TOPIC_PREFIX + safeAddress)
         }
 
         private fun release() {
-            firebase.unsubscribeFromTopic(RESPOND_SIGNATURE_TOPIC_PREFIX + safeAddress)
+            messageQueueRepository.unsubscribe(RESPOND_SIGNATURE_TOPIC_PREFIX + safeAddress)
             updateObservedSafes({ it.remove(safeAddress) })
         }
 
         override fun subscribe(e: ObservableEmitter<Signature>) {
+            if (emitters.isEmpty()) {
+                attach()
+            }
             emitters.add(e)
             e.setCancellable {
                 emitters.remove(e)
