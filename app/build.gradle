@@ -124,8 +124,8 @@ dependencies {
     implementation "com.android.support:multidex:$versions.multidex"
 
     // Firebase
-    implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.google.firebase:firebase-messaging:11.8.0'
+    implementation "com.google.firebase:firebase-core:$versions.firebase"
+    implementation "com.google.firebase:firebase-messaging:$versions.firebase"
 
     //Dagger
     implementation "com.google.dagger:dagger:$versions.dagger"
