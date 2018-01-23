@@ -8,7 +8,7 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 
-fun ByteString.rmd160(): ByteString {
+fun ByteString.hash160(): ByteString {
     try {
         val digest = RIPEMD160.Digest().digest(sha256().toByteArray())
         return ByteString.of(digest, 0, digest.size)

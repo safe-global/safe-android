@@ -4,7 +4,7 @@ import okio.Buffer
 import okio.ByteString
 import pm.gnosis.crypto.utils.Base58Utils
 import pm.gnosis.crypto.utils.Curves
-import pm.gnosis.crypto.utils.rmd160
+import pm.gnosis.crypto.utils.hash160
 import pm.gnosis.utils.bigInt
 import pm.gnosis.utils.toBytes
 import java.math.BigInteger
@@ -106,7 +106,7 @@ class HDNode(val keyPair: KeyPair, val chainCode: ByteString, val depth: Int, va
     }
 
     fun identifier(): ByteString {
-        return publicKey().rmd160()
+        return publicKey().hash160()
     }
 
     fun fingerprint(): ByteString {

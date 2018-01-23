@@ -80,17 +80,6 @@ class KeyPair(
     }
 
     /**
-     * Returns a copy of this key, but with the public point represented in uncompressed form. Normally you would
-     * never need this: it's for specialised scenarios or when backwards compatibility in encoded form is necessary.
-     */
-    fun decompress(): KeyPair {
-        return if (!pubKeyPoint.isCompressed)
-            this
-        else
-            KeyPair(priv, decompressPoint(pubKeyPoint))
-    }
-
-    /**
      * Returns true if this key doesn't have access to private key bytes. This may be because it was never
      * given any private key bytes to begin with (a watching key).
      */
@@ -116,7 +105,7 @@ class KeyPair(
      * as the pubKeyHash/address.
      */
     val pubKey: ByteArray
-        get() = pubKeyPoint.encoded
+        get() = pubKeyPoint.getEncoded(true)
 
     /**
      * Gets the private key in the form of an integer field element. The public key is derived by performing EC
@@ -131,15 +120,9 @@ class KeyPair(
             return priv
         }
 
-    /**
-     * Returns whether this key is using the compressed form or not. Compressed pubkeys are only 33 bytes, not 64.
-     */
-    val isCompressed: Boolean
-        get() = pubKeyPoint.isCompressed
-
     override fun toString(): String {
         val b = StringBuilder()
-        b.append("pub:").append(Hex.toHexString(pubKeyPoint.getEncoded(false)))
+        b.append("pub:").append(Hex.toHexString(pubKeyPoint.getEncoded(true)))
         return b.toString()
     }
 
@@ -163,7 +146,7 @@ class KeyPair(
      * @param input to sign
      * @return ECDSASignature signature that contains the R and S components
      */
-    fun doSign(input: ByteArray): ECDSASignature {
+    private fun doSign(input: ByteArray): ECDSASignature {
         // No decryption of private key required.
         if (priv == null)
             throw MissingPrivateKeyException()
@@ -180,13 +163,11 @@ class KeyPair(
      * @throws IllegalStateException if this ECKey does not have the private part.
      */
     fun sign(messageHash: ByteArray): ECDSASignature {
-        if (priv == null)
-            throw MissingPrivateKeyException()
         val sig = doSign(messageHash)
         // Now we have to work backwards to figure out the recId needed to recover the signature.
         var recId = -1
         for (i in 0..3) {
-            val k = recoverFromSignature(i, sig, messageHash, isCompressed)
+            val k = recoverFromSignature(i, sig, messageHash)
             if (k != null && k.pubKeyPoint.equals(pubKeyPoint)) {
                 recId = i
                 break
@@ -196,16 +177,6 @@ class KeyPair(
             throw RuntimeException("Could not construct a recoverable key. This should never happen.")
         sig.v = (recId + 27).toByte()
         return sig
-    }
-
-    /**
-     * Verifies the given ASN.1 encoded ECDSA signature against a hash using the public key.
-     *
-     * @param data      Hash of the data to verify.
-     * @param signature signature.
-     */
-    fun verify(data: ByteArray, signature: ByteArray): Boolean {
-        return verify(data, signature, pubKey)
     }
 
     /**
@@ -255,16 +226,8 @@ class KeyPair(
          * Utility for compressing an elliptic curve point. Returns the same point if it's already compressed.
          * See the ECKey class docs for a discussion of point compression.
          */
-        fun compressPoint(uncompressed: ECPoint): ECPoint {
+        private fun compressPoint(uncompressed: ECPoint): ECPoint {
             return SECP256K1.curve.decodePoint(uncompressed.getEncoded(true))
-        }
-
-        /**
-         * Utility for decompressing an elliptic curve point. Returns the same point if it's already compressed.
-         * See the ECKey class docs for a discussion of point compression.
-         */
-        fun decompressPoint(compressed: ECPoint): ECPoint {
-            return SECP256K1.curve.decodePoint(compressed.getEncoded(false))
         }
 
         /**
@@ -376,13 +339,11 @@ class KeyPair(
             if (header < 27 || header > 34)
                 throw SignatureException("Header byte out of range: " + header)
             val sig = ECDSASignature(r, s)
-            var compressed = false
             if (header >= 31) {
-                compressed = true
                 header -= 4
             }
             val recId = header - 27
-            return recoverFromSignature(recId, sig, messageHash, compressed) ?: throw SignatureException("Could not recover public key from signature")
+            return recoverFromSignature(recId, sig, messageHash) ?: throw SignatureException("Could not recover public key from signature")
         }
 
         /**
@@ -408,24 +369,12 @@ class KeyPair(
                 // Those signatures are inherently invalid/attack sigs so we just fail them here rather than crash the thread.
                 return false
             }
-
-        }
-
-        /**
-         * Verifies the given ASN.1 encoded ECDSA signature against a hash using the public key.
-         *
-         * @param data      Hash of the data to verify.
-         * @param signature signature.
-         * @param pub       The public key bytes to use.
-         */
-        fun verify(data: ByteArray, signature: ByteArray, pub: ByteArray): Boolean {
-            return verify(data, signature, pub)
         }
 
         /**
          * Returns true if the given pubkey is canonical, i.e. the correct length taking into account compression.
          */
-        fun isPubKeyCanonical(pubkey: ByteArray): Boolean {
+        private fun isPubKeyCanonical(pubkey: ByteArray): Boolean {
             if (pubkey[0].toInt() == 0x04) {
                 // Uncompressed pubkey
                 if (pubkey.size != 65)
@@ -460,10 +409,9 @@ class KeyPair(
          * @param recId Which possible key to recover.
          * @param sig the R and S components of the signature, wrapped.
          * @param messageHash Hash of the data that was signed.
-         * @param compressed Whether or not the original pubkey was compressed.
          * @return An ECKey containing only the public part, or null if recovery wasn't possible.
          */
-        fun recoverFromSignature(recId: Int, sig: ECDSASignature, messageHash: ByteArray?, compressed: Boolean): KeyPair? {
+        fun recoverFromSignature(recId: Int, sig: ECDSASignature, messageHash: ByteArray?): KeyPair? {
             check(recId >= 0, "recId must be positive")
             check(sig.r.signum() >= 0, "r must be positive")
             check(sig.s.signum() >= 0, "s must be positive")
@@ -510,7 +458,7 @@ class KeyPair(
             val srInv = rInv.multiply(sig.s).mod(n)
             val eInvrInv = rInv.multiply(eInv).mod(n)
             val q = ECAlgorithms.sumOfTwoMultiplies(SECP256K1.g, eInvrInv, R, srInv) as ECPoint.Fp
-            return fromPublicOnly(q.getEncoded(compressed))
+            return fromPublicOnly(q.getEncoded(true))
         }
 
         /** Decompress a compressed public key (x co-ord and low-bit of y-coord).  */
