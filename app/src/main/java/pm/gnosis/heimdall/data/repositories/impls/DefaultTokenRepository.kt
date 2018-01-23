@@ -131,8 +131,8 @@ class DefaultTokenRepository @Inject constructor(
                                          @Json(name = "symbol") val symbol: String,
                                          @Json(name = "decimals") val decimals: Int)
 
-    class TokenInfoRequest(val name: SubRequest<String?>, val symbol: SubRequest<String?>, val decimals: SubRequest<BigInteger?>) :
+    private class TokenInfoRequest(val name: SubRequest<String?>, val symbol: SubRequest<String?>, val decimals: SubRequest<BigInteger?>) :
             BulkRequest(name, symbol, decimals)
 
-    class TokenBalancesRequest(val balancesRequest: List<BulkRequest.SubRequest<BigInteger?>>) : BulkRequest(balancesRequest)
+    private class TokenBalancesRequest(val balancesRequest: List<BulkRequest.SubRequest<BigInteger?>>) : BulkRequest(balancesRequest)
 }
