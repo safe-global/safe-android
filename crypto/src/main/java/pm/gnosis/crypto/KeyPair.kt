@@ -526,7 +526,3 @@ class KeyPair(
         }
     }
 }
-/**
- * Generates an entirely new keypair. Point compression is used so the resulting public key will be 33 bytes
- * (32 for the co-ordinate and 1 byte to represent the y bit).
- */

@@ -68,8 +68,8 @@ class KethereumAccountsRepository @Inject internal constructor(
                 .map { KeyPair.fromPrivate(it) }
     }
 
-    override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable = Completable.fromAction {
-        val hdNode = KeyGenerator().masterNode(ByteString.of(*bip39.mnemonicToSeed(mnemonic)))
+     override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable = Completable.fromAction {
+        val hdNode = KeyGenerator.masterNode(ByteString.of(*bip39.mnemonicToSeed(mnemonic)))
         val key = hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
         val privateKey = key.privKeyBytes ?: throw IllegalStateException("Private key must not be null")
         val address = key.address.asBigInteger().apply {

@@ -87,7 +87,7 @@ class GethAccountsRepository @Inject constructor(
 
     override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable =
             Completable.fromAction {
-                val hdNode = KeyGenerator().masterNode(ByteString.of(*bip39.mnemonicToSeed(mnemonic)))
+                val hdNode = KeyGenerator.masterNode(ByteString.of(*bip39.mnemonicToSeed(mnemonic)))
                 val key = hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
                 gethKeyStore.importECDSAKey(key.privKeyBytes ?: throw IllegalStateException("Private key must not be null"),
                         gethAccountManager.getAccountPassphrase())
