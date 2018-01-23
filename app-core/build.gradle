@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply from: '../buildsystem/coverageReport.gradle'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -15,6 +16,10 @@ android {
 }
 
 dependencies {
+    // We specify junit before anything else to make sure that this version is prioritized over the
+    // one bundled in the android.jar
+    testImplementation "junit:junit:$versions.junit"
+
     implementation project(":accounts:base")
     implementation project(":heimdall-common")
     api project(":models")
@@ -24,4 +29,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 
     implementation "com.squareup.moshi:moshi:$versions.moshi"
+
+    testImplementation project(':utils-testing')
 }
