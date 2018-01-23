@@ -24,7 +24,7 @@ object GnoSafeUrlParser {
             "$GNOSIS_SAFE_SCHEMA$SIGN_REQUEST/$hash?" +
                     "$KEY_SAFE=${safe.asEthereumAddressString()}&" +
                     "$KEY_TO=${to.asEthereumAddressString()}&" +
-                    "${(value?.value?.let { "$KEY_VALUE=${it.toString(16)}&" })}" +
+                    (value?.value?.let { "$KEY_VALUE=${it.toString(16)}&" } ?: "") +
                     (data?.let { "$KEY_DATA=$it&" } ?: "") +
                     "$KEY_NONCE=${nonce.toString(16)}"
 
