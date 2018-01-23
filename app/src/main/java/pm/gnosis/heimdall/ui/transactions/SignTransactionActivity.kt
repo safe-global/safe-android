@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.transactions
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
@@ -31,6 +32,7 @@ class SignTransactionActivity : ViewTransactionActivity() {
 
     private var cachedTransactionData: CachedTransactionData? = null
     private var credentialsConfirmed: Boolean = false
+    private var sendViaPush: Boolean = false
 
     private val signTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, *> =
             ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
@@ -48,6 +50,11 @@ class SignTransactionActivity : ViewTransactionActivity() {
                         }
             }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sendViaPush = intent?.getBooleanExtra(EXTRA_SEND_VIA_PUSH, false) ?: false
+    }
+
     override fun layout() = R.layout.layout_sign_transaction
 
     override fun toolbar(): Toolbar = layout_sign_transaction_toolbar
@@ -63,6 +70,7 @@ class SignTransactionActivity : ViewTransactionActivity() {
             if (credentialsConfirmed) {
                 disposables += signTransaction(it.safeAddress, it.transaction)
                         .subscribeForResult({ (signature, qrCode) ->
+                            if (qrCode == null) finish()
                             eventTracker.submit(Event.SignedTransaction())
                             layout_sign_transaction_qr_code.setImageBitmap(qrCode)
                             layout_sign_transaction_qr_code.visibility = View.VISIBLE
@@ -90,7 +98,7 @@ class SignTransactionActivity : ViewTransactionActivity() {
             }
 
     private fun signTransaction(safe: BigInteger, transaction: Transaction) =
-            viewModel.signTransaction(safe, transaction)
+            viewModel.signTransaction(safe, transaction, sendViaPush)
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { signingTransaction(true) }
@@ -115,10 +123,12 @@ class SignTransactionActivity : ViewTransactionActivity() {
 
     companion object {
         private const val REQUEST_CODE_CONFIRM_CREDENTIALS = 2342
+        private const val EXTRA_SEND_VIA_PUSH = "extra.boolean.send_via_push"
 
-        fun createIntent(context: Context, safeAddress: BigInteger?, transaction: Transaction) =
+        fun createIntent(context: Context, safeAddress: BigInteger?, transaction: Transaction, sendViaPush: Boolean = false) =
                 Intent(context, SignTransactionActivity::class.java).apply {
                     putExtras(createBundle(safeAddress, transaction))
+                    putExtra(EXTRA_SEND_VIA_PUSH, sendViaPush)
                 }
     }
 }

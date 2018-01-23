@@ -104,6 +104,17 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
                 }
             }
 
+    private val signaturePushes: ObservableTransformer<Result<ViewTransactionContract.Info>, Any> =
+            ObservableTransformer {
+                it.switchMap { info ->
+                    (info as? DataResult)?.let {
+                        viewModel.observePushSignature(it.data.selectedSafe, it.data.status.transaction)
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnNextForResult(onError = { errorSnackbar(layout_view_transaction_add_signature_button, it) })
+                    } ?: Observable.empty()
+                }
+            }
+
     override fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any> =
             ObservableTransformer {
                 // Load execution information (hash, transaction with correct nonce, owner info)
@@ -113,7 +124,9 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
                             // Combine execution information and price data to update the displayed information
                             it.compose(displayTransactionInformation),
                             // Use execution information to allow adding signatures
-                            it.compose(requestSignatures)
+                            it.compose(requestSignatures),
+                            // Use execution information and observe signatures
+                            it.compose(signaturePushes)
                     )
                 }
             }

@@ -23,6 +23,7 @@ import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asBigInteger
+import pm.gnosis.utils.isValidEthereumAddress
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import javax.inject.Inject
@@ -39,8 +40,9 @@ class KethereumAccountsRepository @Inject internal constructor(
     private val encryptedStringConverter = EncryptedString.Converter()
 
     override fun loadActiveAccount(): Single<Account> {
-        return keyPairFromActiveAccount()
-                .map { Account(it.address.asBigInteger()) }
+        return accountsDatabase.accountsDao().observeAccounts()
+                .subscribeOn(Schedulers.io())
+                .map { Account(it.address) }
     }
 
     override fun signTransaction(transaction: Transaction): Single<String> {
@@ -66,18 +68,16 @@ class KethereumAccountsRepository @Inject internal constructor(
                 .map { KeyPair.fromPrivate(it) }
     }
 
-    override fun saveAccount(privateKey: ByteArray): Completable =
-            Completable.fromCallable {
-                val account = AccountDb(EncryptedByteArray.create(encryptionManager, privateKey))
-                accountsDatabase.accountsDao().insertAccount(account)
-            }.subscribeOn(Schedulers.io())
-
-    override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable = Single.fromCallable {
+    override fun saveAccountFromMnemonic(mnemonic: String, accountIndex: Long): Completable = Completable.fromAction {
         val hdNode = KeyGenerator().masterNode(ByteString.of(*bip39.mnemonicToSeed(mnemonic)))
-        hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
-    }.flatMapCompletable {
-        saveAccount(it.privKeyBytes ?: throw IllegalStateException("Private key must not be null"))
-    }
+        val key = hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
+        val privateKey = key.privKeyBytes ?: throw IllegalStateException("Private key must not be null")
+        val address = key.address.asBigInteger().apply {
+            isValidEthereumAddress()
+        }
+        val account = AccountDb(EncryptedByteArray.create(encryptionManager, privateKey), address)
+        accountsDatabase.accountsDao().insertAccount(account)
+    }.subscribeOn(Schedulers.io())
 
     override fun saveMnemonic(mnemonic: String): Completable = Completable.fromCallable {
         preferencesManager.prefs.edit {

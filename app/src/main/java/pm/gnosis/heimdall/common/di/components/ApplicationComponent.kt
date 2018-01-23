@@ -11,14 +11,12 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.di.modules.*
 import pm.gnosis.heimdall.common.utils.QrCodeGenerator
 import pm.gnosis.heimdall.data.remote.EthGasStationApi
-import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.security.di.SecurityBindingsModule
+import pm.gnosis.heimdall.services.HeimdallFirebaseService
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.mnemonic.di.Bip39BindingModule
 import pm.gnosis.ticker.data.repositories.TickerRepository
@@ -52,6 +50,7 @@ interface ApplicationComponent {
     fun accountsRepository(): AccountsRepository
     fun addressBookRepository(): AddressBookRepository
     fun safeRepository(): GnosisSafeRepository
+    fun signaturePushRepositoryRepository(): SignaturePushRepository
     fun tickerRepository(): TickerRepository
     fun tokenRepository(): TokenRepository
     fun transactionDetailRepository(): TransactionDetailsRepository
@@ -64,4 +63,5 @@ interface ApplicationComponent {
 
     // Base injects
     fun inject(activity: BaseActivity)
+    fun inject(service: HeimdallFirebaseService)
 }

@@ -57,6 +57,7 @@
     <string name="pin_too_short">The pin is too short. It should have at least 6 digits!</string>
     <string name="invalid_erc67">Not a valid ERC67 transaction</string>
     <string name="invalid_signature_uri">Not a valid encoded signature</string>
+    <string name="invalid_signature">Could not verify signature</string>
     <string name="unknown_safe_action">Not Confirm or Revoke</string>
     <string name="no_account_available">No account available. Please restart the app!</string>
     <string name="error_not_authorized_for_action">You are not authorized to perform this action.</string>
@@ -260,6 +261,7 @@
     <string name="request_signature">Request Signature</string>
     <string name="error_signature_not_owner">The signature was not created by a safe owning device!</string>
     <string name="error_signature_already_exists">This signature has already been added!</string>
+    <string name="error_signature_already_enough">No more signatures are required!</string>
     <string name="error_owner_already_added">This device has already been added as an owner!</string>
     <string name="removed_x">Removed %s</string>
     <string name="current_password">Current password</string>
@@ -272,4 +274,7 @@
     <string name="transaction_description_add_safe_owner">added as an safe owning device</string>
     <string name="transaction_description_remove_safe_owner">removed as an safe owning device</string>
     <string name="transaction_description_replace_safe_owner">replacing %s as a safe owning device</string>
+    <string name="signature_request_sent">Request for signatures has been sent!</string>
+    <string name="sign_transaction_request_message">You have been requested to sign a transaction</string>
+    <string name="sign_transaction_request_title">Sign request</string>
 </resources>

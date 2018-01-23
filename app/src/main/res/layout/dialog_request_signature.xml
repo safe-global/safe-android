@@ -10,6 +10,24 @@
 
     <include layout="@layout/include_base_share_qr_code" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/dialog_request_signature_push"
+            style="@style/TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Request via push" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/dialog_request_signature_scan"
         style="@style/PrimaryButton.FullWidth"
@@ -17,5 +35,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:padding="8dp"
-        android:text="@string/scan_signature"/>
+        android:text="@string/scan_signature" />
 </LinearLayout>

@@ -13,6 +13,7 @@ ext {
             bivrost                : 'v0.6.1',
             crashlytics            : '2.8.0',
             dagger                 : '2.12',
+            firebase               : '11.8.0',
             floating_action_button : '1.6.4',
             geth                   : '1.7.1',
             kethereum              : '0.33',

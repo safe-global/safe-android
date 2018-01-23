@@ -14,7 +14,7 @@ abstract class ValueStore<T> : ObservableStore<T>, ObservableOnSubscribe<T>, Sin
 
     private val dataLock = Any()
 
-    private var emitters = CopyOnWriteArraySet<ObservableEmitter<T>>()
+    private val emitters = CopyOnWriteArraySet<ObservableEmitter<T>>()
 
     override fun subscribe(e: ObservableEmitter<T>) {
         emitters.add(e)

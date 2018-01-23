@@ -7,23 +7,33 @@ import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.dialog_request_signature.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.common.utils.scanQrCode
+import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
+import timber.log.Timber
 import java.math.BigInteger
+import javax.inject.Inject
 
 class RequestSignatureDialog : BaseShareQrCodeDialog() {
+
+    @Inject
+    lateinit var signaturePushRepository: SignaturePushRepository
 
     private lateinit var transactionHash: String
     private lateinit var transaction: Transaction
@@ -76,6 +86,19 @@ class RequestSignatureDialog : BaseShareQrCodeDialog() {
                     activity?.scanQrCode()
                     dismiss()
                 }
+        disposables += dialog_request_signature_push.clicks()
+                .flatMapSingle {
+                    signaturePushRepository.request(safe, data())
+                            .mapToResult()
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeForResult({
+                    context!!.toast(R.string.signature_request_sent)
+                    dismiss()
+                }, {
+                    Timber.e(it)
+                    errorSnackbar(dialog_request_signature_push, it)
+                })
     }
 
     override fun onCopiedToClipboard() {
