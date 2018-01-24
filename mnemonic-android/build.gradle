@@ -7,9 +7,8 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    implementation project(":crypto")
-    implementation project(":utils-testing")
-    implementation project(":utils")
+    implementation project(':heimdall-common')
+    implementation project(':mnemonic')
 
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
@@ -17,6 +16,4 @@ dependencies {
     //Dagger
     implementation "com.google.dagger:dagger:$versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
-
-    implementation "com.madgag.spongycastle:prov:$versions.spongycastle"
 }

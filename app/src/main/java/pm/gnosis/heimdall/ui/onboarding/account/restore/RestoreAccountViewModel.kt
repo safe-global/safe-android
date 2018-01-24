@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.onboarding.account.restore
 import android.content.Context
 import android.content.Intent
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 class RestoreAccountViewModel @Inject constructor(
         @ApplicationContext private val context: Context,
-        private val accountsRepository: AccountsRepository
+        private val accountsRepository: AccountsRepository,
+        private val bip39: Bip39
 ) : RestoreAccountContract() {
 
     private val errorHandler = SimpleLocalizedException.Handler.Builder(context)
@@ -26,10 +28,10 @@ class RestoreAccountViewModel @Inject constructor(
             .build()
 
     override fun saveAccountWithMnemonic(mnemonic: String): Observable<Result<Intent>> =
-            accountsRepository.validateMnemonic(mnemonic)
+            Single.fromCallable { bip39.validateMnemonic(mnemonic) }
                     .subscribeOn(Schedulers.computation())
                     .flatMap {
-                        accountsRepository.saveAccountFromMnemonic(it)
+                        accountsRepository.saveAccountFromMnemonicSeed(bip39.mnemonicToSeed(mnemonic))
                                 .andThen(accountsRepository.saveMnemonic(mnemonic))
                                 .toSingle({ SetupSafeIntroActivity.createIntent(context) })
                                 .subscribeOn(Schedulers.io())

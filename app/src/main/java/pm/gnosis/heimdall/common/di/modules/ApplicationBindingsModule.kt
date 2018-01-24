@@ -18,6 +18,8 @@ import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.impl.FabricCrashTracker
 import pm.gnosis.heimdall.reporting.impl.FabricEventTracker
+import pm.gnosis.mnemonic.android.DefaultWordListProvider
+import pm.gnosis.mnemonic.wordlists.WordListProvider
 import javax.inject.Singleton
 
 @Module
@@ -54,6 +56,9 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsEthereumJsonRepository(repository: SimpleEthereumJsonRpcRepository): EthereumJsonRpcRepository
+
+    @Binds
+    abstract fun bindsWordlistProvider(wordListProvider: DefaultWordListProvider): WordListProvider
 
     @Binds
     @Singleton
