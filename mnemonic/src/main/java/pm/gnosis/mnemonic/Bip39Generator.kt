@@ -44,8 +44,7 @@ class Bip39Generator @Inject constructor(private val wordListProvider: WordListP
             throw IllegalArgumentException("Entropy length should be between ${Bip39.MIN_ENTROPY_BITS} and ${Bip39.MAX_ENTROPY_BITS} and be a multiple of ${Bip39.ENTROPY_MULTIPLE}")
         }
 
-        val wordList = wordListProvider.get(languageId)
-                ?: throw IllegalArgumentException("Id not valid")
+        val wordList = wordListProvider.get(languageId) ?: throw IllegalArgumentException("Id not valid")
         if (wordList.words.size != Bip39.WORD_LIST_SIZE) throw IllegalArgumentException("Wordlist needs to have ${Bip39.WORD_LIST_SIZE} (it has ${wordList.words.size})")
 
         val bytes = ByteArray(strength / 8)

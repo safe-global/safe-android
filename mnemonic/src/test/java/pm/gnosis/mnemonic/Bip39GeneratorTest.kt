@@ -102,6 +102,11 @@ class Bip39GeneratorTest {
                 throwablePredicate = { it is MnemonicNotInWordlist })
     }
 
+    @Test
+    fun generateMnemonicWithInvalidLanguageId() {
+        assertThrow({ bip39.generateMnemonic(languageId = -1) }, throwablePredicate = { it is IllegalArgumentException })
+    }
+
     companion object {
         private val MNEMONICS_ENGLISH_12 = listOf(
                 "page tuition excess kidney forward collect fashion finger raven honey tiny wall",
