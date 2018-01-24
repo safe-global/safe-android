@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.settings.security
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -41,7 +42,22 @@ class SecuritySettingsActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += layout_security_settings_switch_container.clicks()
+        if (viewModel.isFingerprintAvailable()) setupFingerprintAction()
+
+        disposables += layout_security_settings_show_mnemonic.clicks()
+                .subscribeBy(onNext = {
+                    startActivity(RevealMnemonicActivity.createIntent(this))
+                }, onError = Timber::e)
+
+        disposables += layout_security_settings_change_password.clicks()
+                .subscribeBy(onNext = {
+                    startActivity(ChangePasswordActivity.createIntent(this))
+                }, onError = Timber::e)
+    }
+
+    private fun setupFingerprintAction() {
+        layout_security_settings_fingerprint_switch_container.visibility = View.VISIBLE
+        disposables += layout_security_settings_fingerprint_switch_container.clicks()
                 .subscribeBy(onNext = {
                     if (layout_security_settings_switch.isChecked) {
                         removeFingerprintClick.onNext(Unit)
@@ -64,16 +80,6 @@ class SecuritySettingsActivity : BaseActivity() {
                     layout_security_settings_switch.isChecked = it
                 }, onError = Timber::e)
         getFingerprintStateSubject.onNext(Unit)
-
-        disposables += layout_security_settings_show_mnemonic.clicks()
-                .subscribeBy(onNext = {
-                    startActivity(RevealMnemonicActivity.createIntent(this))
-                }, onError = Timber::e)
-
-        disposables += layout_security_settings_change_password.clicks()
-                .subscribeBy(onNext = {
-                    startActivity(ChangePasswordActivity.createIntent(this))
-                }, onError = Timber::e)
     }
 
     private fun showDialog() {
