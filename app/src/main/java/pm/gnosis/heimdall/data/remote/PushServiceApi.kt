@@ -15,11 +15,9 @@ interface PushServiceApi {
         const val HTTP_SENDER_SIGNATURE = "Sender-Signature"
     }
 
-    // TODO Completable doesn't work
     @POST("api/1/request_signatures/{safe_address}")
     fun requestSignatures(@Header(HTTP_SENDER_SIGNATURE) signature: String, @Path("safe_address") safeAddress: String, @Body data: RequestSignatureData): Completable
 
-    // TODO Completable doesn't work
     @POST("api/1/send_signature/{safe_address}")
     fun sendSignature(@Path("safe_address") safeAddress: String, @Body data: SendSignatureData): Completable
 }

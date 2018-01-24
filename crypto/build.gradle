@@ -6,6 +6,10 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
+    // We specify junit before anything else to make sure that this version is prioritized over the
+    // one bundled in the android.jar
+    testImplementation "junit:junit:$versions.junit"
+
     implementation project(":utils")
 
     //Kotlin
@@ -13,4 +17,6 @@ dependencies {
 
     implementation "com.madgag.spongycastle:prov:$versions.spongycastle"
     implementation "com.squareup.okio:okio:$versions.okio"
+
+    testImplementation project(":utils-testing")
 }

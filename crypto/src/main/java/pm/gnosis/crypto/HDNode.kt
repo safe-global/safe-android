@@ -4,7 +4,7 @@ import okio.Buffer
 import okio.ByteString
 import pm.gnosis.crypto.utils.Base58Utils
 import pm.gnosis.crypto.utils.Curves
-import pm.gnosis.crypto.utils.rmd160
+import pm.gnosis.crypto.utils.hash160
 import pm.gnosis.utils.bigInt
 import pm.gnosis.utils.toBytes
 import java.math.BigInteger
@@ -12,7 +12,7 @@ import java.math.BigInteger
 
 class HDNode(val keyPair: KeyPair, val chainCode: ByteString, val depth: Int, val index: Long, val parentFingerprint: ByteString) {
     fun derive(path: String): HDNode {
-        if (path == "m" || path == "M" || path === "m'" || path === "M'") {
+        if (path == "m" || path == "M" || path == "m'" || path == "M'") {
             return this
         }
 
@@ -106,22 +106,15 @@ class HDNode(val keyPair: KeyPair, val chainCode: ByteString, val depth: Int, va
     }
 
     fun identifier(): ByteString {
-        return publicKey().rmd160()
+        return publicKey().hash160()
     }
 
     fun fingerprint(): ByteString {
         return identifier().substring(0, 4)
     }
 
-    fun address(): String {
-        val data = Buffer()
-        data.writeInt(0)
-        data.write(publicKey().rmd160())
-        return Base58Utils.encodeChecked(data.readByteString())
-    }
-
     companion object {
-        const val VERSION = 0x0488ade4
-        const val HARDENED_OFFSET = 0x80000000
+        private const val VERSION = 0x0488ade4
+        private const val HARDENED_OFFSET = 0x80000000
     }
 }
