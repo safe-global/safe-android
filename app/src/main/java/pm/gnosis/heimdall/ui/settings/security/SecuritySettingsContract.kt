@@ -5,5 +5,6 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.common.utils.Result
 
 abstract class SecuritySettingsContract : ViewModel() {
+    abstract fun isFingerprintAvailable(): Boolean
     abstract fun clearFingerprintData(): Single<Result<Unit>>
 }

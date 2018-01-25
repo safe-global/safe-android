@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_security_settings_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,13 +22,15 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/layout_security_settings_switch_container"
+                    android:id="@+id/layout_security_settings_fingerprint_switch_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/selectable_background"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
                     <TextView
                         android:layout_width="0dp"
