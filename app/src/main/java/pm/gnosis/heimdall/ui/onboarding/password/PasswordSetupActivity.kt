@@ -12,13 +12,14 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
+import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.errorSnackbar
 import timber.log.Timber
 import javax.inject.Inject
 
-class PasswordSetupActivity : BaseActivity() {
+class PasswordSetupActivity : SecuredBaseActivity() {
 
     override fun screenId() = ScreenId.PASSWORD_SETUP
 
@@ -30,6 +31,18 @@ class PasswordSetupActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_password_setup)
+
+        layout_password_setup_password.disableAccessibility()
+        layout_password_setup_confirmation.disableAccessibility()
+    }
+
+    override fun onWindowObscured() {
+        super.onWindowObscured()
+        // Window is obscured, clear input and disable to prevent potential leak
+        layout_password_setup_password.text = null
+        layout_password_setup_password.isEnabled = false
+        layout_password_setup_confirmation.text = null
+        layout_password_setup_confirmation.isEnabled = false
     }
 
     override fun onStart() {

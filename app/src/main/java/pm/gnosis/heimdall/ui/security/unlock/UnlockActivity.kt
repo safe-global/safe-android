@@ -20,22 +20,20 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.noHistory
-import pm.gnosis.heimdall.common.utils.showKeyboardForView
-import pm.gnosis.heimdall.common.utils.subscribeForResult
-import pm.gnosis.heimdall.common.utils.vibrate
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.security.FingerprintUnlockFailed
 import pm.gnosis.heimdall.security.FingerprintUnlockHelp
 import pm.gnosis.heimdall.security.FingerprintUnlockResult
 import pm.gnosis.heimdall.security.FingerprintUnlockSuccessful
-import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
+import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.errorToast
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class UnlockActivity : BaseActivity() {
+class UnlockActivity : SecuredBaseActivity() {
     override fun screenId() = ScreenId.UNLOCK
 
     @Inject
@@ -60,6 +58,7 @@ class UnlockActivity : BaseActivity() {
             finish()
         }
 
+        layout_unlock_password_input.disableAccessibility()
         layout_unlock_password_input.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE, EditorInfo.IME_NULL ->
@@ -69,13 +68,20 @@ class UnlockActivity : BaseActivity() {
         }
     }
 
+    override fun onWindowObscured() {
+        super.onWindowObscured()
+        // Window is obscured, clear input and disable to prevent potential leak
+        layout_unlock_password_input.text = null
+        layout_unlock_password_input.isEnabled = false
+    }
+
     override fun onStart() {
         super.onStart()
         fingerPrintDisposable = encryptionManager.isFingerPrintSet()
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
-                    layout_unlock_fingerprint.visibility = if (it) View.VISIBLE else View.GONE
-                    layout_unlock_password_input.visibility = if (it) View.GONE else View.VISIBLE
+                    layout_unlock_fingerprint.visible(it)
+                    layout_unlock_password_input.visible(!it)
                 }
                 .flatMapObservable {
                     if (it) viewModel.observeFingerprint() else Observable.empty()
