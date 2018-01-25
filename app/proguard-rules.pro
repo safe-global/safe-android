@@ -23,3 +23,49 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keepattributes *Annotation*
+
+####################################################################################################
+# Crash Reporting
+####################################################################################################
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
+
+####################################################################################################
+# Spongycastle
+####################################################################################################
+-dontwarn javax.naming.**
+
+####################################################################################################
+# Okio
+####################################################################################################
+-dontwarn okio.**
+
+####################################################################################################
+# Okhttp
+####################################################################################################
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+####################################################################################################
+# Moshi
+####################################################################################################
+-keepclasseswithmembers class * {
+    @com.squareup.moshi.* <methods>;
+}
+-keep @com.squareup.moshi.JsonQualifier interface *
+
+####################################################################################################
+# Retrofit
+####################################################################################################
+# Retain generic type information for use by reflection by converters and adapters.
+-keepattributes Signature
+# Retain service method parameters.
+-keepclassmembernames,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+# Ignore annotation used for build tooling.
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement

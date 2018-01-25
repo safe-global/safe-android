@@ -30,6 +30,8 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+
+        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
     signingConfigs {
@@ -52,6 +54,7 @@ android {
 
         release {
             minifyEnabled true
+            multiDexEnabled false
         }
     }
 
@@ -150,7 +153,10 @@ dependencies {
     implementation("me.zhanghai.android.materialprogressbar:library:$versions.material_progressbar") {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
-    implementation "com.madgag.spongycastle:prov:$versions.spongycastle"
+    implementation("com.madgag.spongycastle:prov:$versions.spongycastle", {
+        exclude group: 'junit', module: 'junit'
+    })
+
     implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
     testImplementation project(':utils-testing')

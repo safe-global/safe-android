@@ -61,8 +61,9 @@ class UnlockActivity : BaseActivity() {
         }
 
         layout_unlock_password_input.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                nextClickSubject.onNext(Unit)
+            when (actionId) {
+                EditorInfo.IME_ACTION_DONE, EditorInfo.IME_NULL ->
+                    nextClickSubject.onNext(Unit)
             }
             true
         }
