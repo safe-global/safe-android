@@ -7,8 +7,11 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
+    // We specify junit before anything else to make sure that this version is prioritized over the
+    // one bundled in the android.jar
+    testImplementation "junit:junit:$versions.junit"
+
     implementation project(":crypto")
-    implementation project(":utils-testing")
     implementation project(":utils")
 
     //Kotlin
@@ -18,5 +21,9 @@ dependencies {
     implementation "com.google.dagger:dagger:$versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
 
-    implementation "com.madgag.spongycastle:prov:$versions.spongycastle"
+    implementation("com.madgag.spongycastle:prov:$versions.spongycastle", {
+        exclude group: 'junit', module: 'junit'
+    })
+
+    testImplementation project(":utils-testing")
 }

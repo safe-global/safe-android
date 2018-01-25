@@ -15,7 +15,9 @@ dependencies {
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 
-    implementation "com.madgag.spongycastle:prov:$versions.spongycastle"
+    implementation("com.madgag.spongycastle:prov:$versions.spongycastle", {
+        exclude group: 'junit', module: 'junit'
+    })
     implementation "com.squareup.okio:okio:$versions.okio"
 
     testImplementation project(":utils-testing")
