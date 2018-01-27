@@ -16,14 +16,15 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.startActivity
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
+import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.utils.trimWhitespace
 import pm.gnosis.utils.words
 import timber.log.Timber
 import javax.inject.Inject
 
-class RestoreAccountActivity : BaseActivity() {
+class RestoreAccountActivity : SecuredBaseActivity() {
 
     override fun screenId() = ScreenId.RESTORE_ACCOUNT
 
@@ -35,6 +36,15 @@ class RestoreAccountActivity : BaseActivity() {
         inject()
         setContentView(R.layout.layout_restore_account)
         registerToolbar(layout_restore_account_toolbar)
+
+        layout_restore_account_mnemonic.disableAccessibility()
+    }
+
+    override fun onWindowObscured() {
+        super.onWindowObscured()
+        // Window is obscured, clear input and disable to prevent potential leak
+        layout_restore_account_mnemonic.text = null
+        layout_restore_account_mnemonic.isEnabled = false
     }
 
     override fun onStart() {

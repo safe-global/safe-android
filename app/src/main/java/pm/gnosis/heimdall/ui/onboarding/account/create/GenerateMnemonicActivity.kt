@@ -16,17 +16,16 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.copyToClipboard
-import pm.gnosis.heimdall.common.utils.snackbar
-import pm.gnosis.heimdall.common.utils.startActivity
-import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
+import pm.gnosis.heimdall.utils.disableAccessibility
 import timber.log.Timber
 import javax.inject.Inject
 
-class GenerateMnemonicActivity : BaseActivity() {
+class GenerateMnemonicActivity : SecuredBaseActivity() {
 
     override fun screenId() = ScreenId.GENERATE_MNEMONIC
 
@@ -41,6 +40,8 @@ class GenerateMnemonicActivity : BaseActivity() {
         inject()
         setContentView(R.layout.layout_generate_mnemonic)
         registerToolbar(layout_generate_mnemonic_toolbar)
+
+        layout_generate_mnemonic_mnemonic.disableAccessibility()
 
         layout_generate_mnemonic_mnemonic.setOnLongClickListener {
             copyToClipboard("mnemonic", layout_generate_mnemonic_mnemonic.text.toString(), {

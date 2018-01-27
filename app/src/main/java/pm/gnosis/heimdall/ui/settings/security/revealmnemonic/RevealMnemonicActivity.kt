@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
+import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.errorToast
 import timber.log.Timber
 import javax.inject.Inject
@@ -37,6 +38,7 @@ class RevealMnemonicActivity : BaseActivity() {
         setContentView(R.layout.layout_reveal_mnemonic)
         registerToolbar(layout_reveal_mnemonic_toolbar)
 
+        layout_reveal_mnemonic_mnemonic.disableAccessibility()
         layout_reveal_mnemonic_mnemonic.setOnLongClickListener {
             copyToClipboard("mnemonic", layout_reveal_mnemonic_mnemonic.text.toString(), {
                 snackbar(layout_reveal_mnemonic_coordinator, getString(R.string.mnemonic_copied))
