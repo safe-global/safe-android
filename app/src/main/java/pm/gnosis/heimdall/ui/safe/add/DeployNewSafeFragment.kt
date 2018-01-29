@@ -92,11 +92,10 @@ class DeployNewSafeFragment : BaseFragment() {
                         val address = it.asEthereumAddressStringOrNull()
                         layout_address_item_name.visible(true)
                         layout_address_item_name.text = getString(R.string.this_device)
-                        layout_address_item_value.text = address
+
                         address?.let {
-                            layout_address_item_icon.setOnClickListener {
-                                SimpleAddressShareDialog.create(address).show(fragmentManager, null)
-                            }
+                            layout_address_item_icon.setAddress(it)
+                            layout_address_item_value.text = address
                         }
                     }
                 }
@@ -213,8 +212,8 @@ class DeployNewSafeFragment : BaseFragment() {
                 disposables += view.layout_additional_owner_delete_button.clicks()
                         .flatMap { viewModel.removeAdditionalOwner(rawAddress) }
                         .subscribeForResult(
-                                { snackbar(layout_deploy_new_safe_additional_owners_container, getString(R.string.removed_x, address))},
-                                { errorSnackbar(layout_deploy_new_safe_additional_owners_container, it)}
+                                { snackbar(layout_deploy_new_safe_additional_owners_container, getString(R.string.removed_x, address)) },
+                                { errorSnackbar(layout_deploy_new_safe_additional_owners_container, it) }
                         )
                 layout_deploy_new_safe_additional_owners_container.addView(view)
             }
