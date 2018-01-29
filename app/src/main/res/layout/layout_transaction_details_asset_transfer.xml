@@ -30,16 +30,13 @@
         <TextView
             android:id="@+id/layout_transaction_details_asset_transfer_safe_label"
             style="@style/Content"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/create_tx_label_width"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/from_safe" />
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:text="@string/from" />
 
-        <Spinner
-            android:id="@+id/layout_transaction_details_asset_transfer_safe_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/layout_simple_spinner_item" />
+        <include layout="@layout/layout_create_transaction_safe_info" />
     </LinearLayout>
 
     <View
@@ -54,12 +51,13 @@
         <TextView
             android:id="@+id/layout_transaction_details_asset_transfer_to_label"
             style="@style/Content"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/create_tx_label_width"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:padding="16dp"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
             android:text="@string/to" />
 
         <ImageView
@@ -105,84 +103,51 @@
         android:background="@color/divider" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:minHeight="@dimen/transaction_details_cell_height"
-        android:orientation="horizontal">
+        android:layout_marginLeft="@dimen/create_tx_label_width"
+        android:layout_marginStart="@dimen/create_tx_label_width"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <TextView
-            android:id="@+id/layout_transaction_details_asset_transfer_token_label"
-            style="@style/Content"
+        <pm.gnosis.heimdall.views.CurrencyEditText
+            android:id="@+id/layout_transaction_details_asset_transfer_amount_input"
+            style="@style/InlineInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/select_token" />
-
-        <Spinner
-            android:id="@+id/layout_transaction_details_asset_transfer_token_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/layout_simple_spinner_item" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_width"
-        android:background="@color/divider" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/transaction_details_cell_height">
+            android:drawablePadding="8dp"
+            android:hint="0"
+            android:inputType="numberDecimal"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:textColor="@color/light_text"
+            android:textSize="24sp"
+            tools:text="1294dfhdg83" />
 
         <TextView
-            android:id="@+id/layout_transaction_details_asset_transfer_amount_label"
-            style="@style/Content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:padding="16dp"
-            android:text="@string/value" />
-
-        <TextView
-            android:id="@+id/layout_transaction_details_asset_transfer_max_amount_button"
-            style="@style/TextButton"
+            android:id="@+id/layout_transaction_details_asset_transfer_amount_fiat"
+            style="@style/DarkContent"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:gravity="center"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
+            android:visibility="gone"
+            tools:text="≈ $12.349,34" />
+
+        <TextView
+            android:id="@+id/layout_transaction_details_asset_transfer_max_amount_button"
+            style="@style/PrimaryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:paddingBottom="4dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="4dp"
             android:text="@string/max_balance"
-            tools:visibility="gone" />
-
-        <View
-            android:id="@+id/layout_transaction_details_asset_transfer_divider_amount"
-            android:layout_width="@dimen/divider_width"
-            android:layout_height="match_parent"
-            android:layout_alignWithParentIfMissing="true"
-            android:layout_toLeftOf="@+id/layout_transaction_details_asset_transfer_max_amount_button"
-            android:layout_toStartOf="@+id/layout_transaction_details_asset_transfer_max_amount_button"
-            android:background="@color/divider"
-            tools:visibility="gone" />
-
-        <EditText
-            android:id="@+id/layout_transaction_details_asset_transfer_amount_input"
-            style="@style/InlineInput"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignWithParentIfMissing="true"
-            android:layout_gravity="bottom"
-            android:layout_toEndOf="@id/layout_transaction_details_asset_transfer_amount_label"
-            android:layout_toLeftOf="@id/layout_transaction_details_asset_transfer_divider_amount"
-            android:layout_toRightOf="@id/layout_transaction_details_asset_transfer_amount_label"
-            android:layout_toStartOf="@id/layout_transaction_details_asset_transfer_divider_amount"
-            android:hint="@string/value_hint"
-            android:inputType="numberDecimal"
-            tools:text="" />
-    </RelativeLayout>
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </LinearLayout>
 </LinearLayout>

@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
@@ -43,47 +44,29 @@ class AssetTransferDetailsViewModel @Inject constructor(
                                     val tokens = if (clearDefaults && details.data.tokens == BigInteger.ZERO) null else details.data.tokens
                                     tokenRepository.loadToken(details.transaction.address)
                                             .map {
-                                                FormData(it.address, recipient, tokens, it)
+                                                FormData(recipient, tokens, it)
                                             }
                                             .onErrorReturn {
-                                                FormData(details.transaction.address, recipient, tokens)
+                                                FormData(recipient, tokens)
                                             }
                                 }
-                                else ->
-                                    Single.just(FormData(ETHER_TOKEN.address, details.transaction.address, details.transaction.value?.value ?: BigInteger.ZERO, ETHER_TOKEN))
+                                else -> {
+                                    // If recipient is 0x0 we set the value to null to force user input
+                                    val recipient = if (clearDefaults && details.transaction.address == BigInteger.ZERO) null else details.transaction.address
+                                    Single.just(FormData(recipient, details.transaction.value?.value, ETHER_TOKEN))
+                                }
                             }
                         }
                         .onErrorReturnItem(FormData())
             } ?: Single.just(FormData())
 
-
-    override fun observeTokens(defaultToken: BigInteger?, safeAddress: BigInteger?): Observable<State> =
-            tokenRepository.loadTokens()
-                    .onErrorReturnItem(emptyList())
-                    .map { arrayListOf(ETHER_TOKEN) + it }
-                    .flatMapObservable {
-                        val tokensNoBalance = it.map { ERC20TokenWithBalance(it, null) }
-                        if (safeAddress != null)
-                            tokenRepository.loadTokenBalances(safeAddress, it)
-                                    .map {
-                                        it.mapNotNull { (token, balance) ->
-                                            if (token.verified && (balance == BigInteger.ZERO)) null
-                                            else ERC20TokenWithBalance(token, balance)
-                                        }
-                                    }
-                                    .onErrorReturnItem(tokensNoBalance)
-                        else
-                            Observable.just(tokensNoBalance)
+    override fun loadTokenInfo(safeAddress: BigInteger, token: ERC20Token): Observable<Result<ERC20TokenWithBalance>> =
+            tokenRepository.loadTokenBalances(safeAddress, listOf(token))
+                    .map {
+                        val info = it.first()
+                        ERC20TokenWithBalance(info.first, info.second)
                     }
-                    .map { State(getCurrentSelectedTokenIndex(defaultToken, it), it) }
-
-
-    private fun getCurrentSelectedTokenIndex(selectedToken: BigInteger?, tokens: List<ERC20TokenWithBalance>): Int {
-        selectedToken?.let {
-            tokens.forEachIndexed { index, token -> if (token.token.address == selectedToken) return index }
-        }
-        return 0
-    }
+                    .mapToResult()
 
     override fun inputTransformer(originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>> =
             ObservableTransformer {
@@ -110,8 +93,8 @@ class AssetTransferDetailsViewModel @Inject constructor(
                                 ErrorResult<Transaction>(TransactionInputException(context, errorFields, showToast))
                             } else {
                                 val nonce = originalTransaction?.nonce
-                                val tokenAmount = amount!!.multiply(BigDecimal(10).pow(token!!.token.decimals)).toBigInteger()
-                                val transaction = when (token.token) {
+                                val tokenAmount = amount!!.multiply(BigDecimal(10).pow(token!!.decimals)).toBigInteger()
+                                val transaction = when (token) {
                                     ETHER_TOKEN -> {
                                         val value = Wei(tokenAmount)
                                         Transaction(to!!, value = value, nonce = nonce)
@@ -120,7 +103,7 @@ class AssetTransferDetailsViewModel @Inject constructor(
                                         val transferTo = Solidity.Address(to!!)
                                         val transferAmount = Solidity.UInt256(tokenAmount)
                                         val data = StandardToken.Transfer.encode(transferTo, transferAmount)
-                                        Transaction(token.token.address, data = data, nonce = nonce)
+                                        Transaction(token.address, data = data, nonce = nonce)
                                     }
                                 }
                                 DataResult(transaction)

@@ -105,7 +105,7 @@ class SimpleTransactionDetailsRepository @Inject constructor(
                 data?.isSolidityMethod(GnosisSafe.AddOwner.METHOD_ID) == true -> TransactionType.ADD_SAFE_OWNER
                 data?.isSolidityMethod(GnosisSafe.RemoveOwner.METHOD_ID) == true -> TransactionType.REMOVE_SAFE_OWNER
                 data?.isSolidityMethod(GnosisSafe.ReplaceOwner.METHOD_ID) == true -> TransactionType.REPLACE_SAFE_OWNER
-                data.isNullOrBlank() && value != null && value > BigInteger.ZERO -> TransactionType.ETHER_TRANSFER
+                data.isNullOrBlank() && value != null -> TransactionType.ETHER_TRANSFER
                 else -> TransactionType.GENERIC
             }
 
@@ -123,7 +123,7 @@ class SimpleTransactionDetailsRepository @Inject constructor(
             decodeTransactionResult(transactionId, description.toTransaction(), description.subject, description.submittedAt)
 
     private fun decodeTransactionResult(transactionId: String?, transaction: Transaction, subject: String? = null, submittedAt: Long? = null): TransactionDetails {
-        val type = parseTransactionType(transaction.value?.value ?: BigInteger.ZERO, transaction.data)
+        val type = parseTransactionType(transaction.value?.value, transaction.data)
         val transactionData = when (type) {
             TransactionType.TOKEN_TRANSFER -> {
                 val arguments = transaction.data!!.removeSolidityMethodPrefix(StandardToken.Transfer.METHOD_ID)

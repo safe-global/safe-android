@@ -14,15 +14,13 @@ import java.math.BigInteger
 
 abstract class AssetTransferDetailsContract : ViewModel() {
     abstract fun loadFormData(transaction: Transaction?, clearDefaults: Boolean): Single<FormData>
-    abstract fun observeTokens(defaultToken: BigInteger?, safeAddress: BigInteger?): Observable<State>
+    abstract fun loadTokenInfo(safeAddress: BigInteger, token: ERC20Token): Observable<Result<ERC20TokenWithBalance>>
     abstract fun inputTransformer(originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>>
     abstract fun transactionTransformer(): ObservableTransformer<Optional<Transaction>, Result<Transaction>>
 
-    data class FormData(val selectedToken: BigInteger? = null, val to: BigInteger? = null, val tokenAmount: BigInteger? = null, val token: ERC20Token? = null)
+    data class FormData(val to: BigInteger? = null, val tokenAmount: BigInteger? = null, val token: ERC20Token? = null)
 
-    data class State(val selectedIndex: Int, val tokens: List<ERC20TokenWithBalance>)
-
-    data class InputEvent(val to: Pair<String, Boolean>, val amount: Pair<String, Boolean>, val token: Pair<ERC20TokenWithBalance?, Boolean>) {
+    data class InputEvent(val to: Pair<String, Boolean>, val amount: Pair<String, Boolean>, val token: Pair<ERC20Token?, Boolean>) {
         fun diff(other: InputEvent): InputEvent =
                 InputEvent(check(this.to, other.to), check(this.amount, other.amount), check(this.token, other.token))
 

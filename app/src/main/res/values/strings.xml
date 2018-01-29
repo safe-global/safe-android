@@ -188,6 +188,7 @@
     <string name="value">Value</string>
     <string name="from_safe">From safe</string>
     <string name="token_transaction_description">Once approved by all required signing devices, this transaction will transfer tokens to the specified recipient address in the <b>To</b> field.</string>
+    <string name="add_owner_transaction_description">Once approved by all required signing devices, this transaction will add the address specified in the <b>Add</b> field as an owner to the safe.</string>
     <string name="generic_transaction_description">Once approved by all required signing devices, this transaction will be executed by sending the <b>Data</b> and <b>Value</b> to the address in the <b>To</b> field.</string>
     <string name="error_transaction_params">Please check your transaction parameters and try again!</string>
     <string name="x_of_x_confirmations">%s/%s</string>
@@ -278,4 +279,8 @@
     <string name="sign_transaction_request_message">You have been requested to sign a transaction</string>
     <string name="sign_transaction_request_title">Sign request</string>
     <string name="obscured_window_warning">Windows is obscured. Please close all apps with overlays and reopen this screen!</string>
+    <string name="from">From</string>
+    <string name="approximately_x">≈ %s</string>
+    <string name="error_no_token_info">Could not retrieve balance!</string>
+    <string name="new_owner">New Owner</string>
 </resources>

@@ -11,8 +11,10 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function3
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.layout_create_transaction_safe_info.*
 import kotlinx.android.synthetic.main.layout_transaction_details_generic.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
@@ -20,7 +22,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.models.Transaction
@@ -43,6 +45,11 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
     private var editable: Boolean = false
     private var originalTransaction: Transaction? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        safeSubject.onNext(arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull().toOptional())
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.layout_transaction_details_generic, container, false)
 
@@ -59,8 +66,12 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
 
     override fun onStart() {
         super.onStart()
-        val safe = arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull()
-        setupSafeSpinner(layout_transaction_details_generic_safe_input, safe)
+        disposables += observeSafe()
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap { it.toNullable()?.let { Observable.just(it) } ?: Observable.empty() }
+                .compose(updateSafeInfoTransformer(layout_create_transaction_safe_info_address))
+                .subscribeBy(onError = Timber::e)
+
         disposables += Observable.combineLatest(
                 prepareInput(layout_transaction_details_generic_to_input),
                 prepareInput(layout_transaction_details_generic_value_input),
@@ -78,14 +89,9 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
     }
 
     private fun toggleTransactionInput(enabled: Boolean) {
-        layout_transaction_details_generic_safe_input.isEnabled = enabled
         layout_transaction_details_generic_to_input.isEnabled = enabled
         layout_transaction_details_generic_data_input.isEnabled = enabled
         layout_transaction_details_generic_value_input.isEnabled = enabled
-    }
-
-    override fun selectedSafeChanged(safe: Safe?) {
-        safeSubject.onNext(safe?.address?.toOptional() ?: None)
     }
 
     override fun observeTransaction(): Observable<Result<Transaction>> {
