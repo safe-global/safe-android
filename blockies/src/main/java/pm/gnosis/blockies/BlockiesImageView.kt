@@ -1,10 +1,12 @@
 package pm.gnosis.blockies
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
 import android.util.AttributeSet
 import android.widget.ImageView
-import java.util.*
 
 class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageView(context, attributeSet) {
     private val canvasPaint = Paint().apply { style = Paint.Style.FILL }
@@ -65,24 +67,6 @@ class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageVie
         canvas.restore()
     }
 
-    fun getCroppedBitmap(bitmap: Bitmap): Bitmap {
-        val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(output)
-
-        val color = -0xbdbdbe
-        val paint = Paint()
-        val rect = Rect(0, 0, bitmap.width, bitmap.height)
-
-        paint.isAntiAlias = true
-        canvas.drawARGB(0, 0, 0, 0)
-        paint.color = color
-        canvas.drawCircle((bitmap.width / 2).toFloat(), (bitmap.height / 2).toFloat(),
-                (bitmap.width / 2).toFloat(), paint)
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-        canvas.drawBitmap(bitmap, rect, rect, paint)
-        return output
-    }
-
     fun setAddress(address: String) {
         seedFromAddress(address)
         color = createColor()
@@ -92,53 +76,12 @@ class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageVie
         invalidate()
     }
 
-    private fun createImageData(): DoubleArray {
-        val width = SIZE
-        val height = SIZE
 
-        val dataWidth = Math.ceil((width / 2).toDouble())
-        val mirrorWidth = width - dataWidth
+    private fun createImageData() = (0 until SIZE).map {
+        val leftHalf = DoubleArray(SIZE / 2) { Math.floor(rand() * 2.3) }
+        leftHalf + leftHalf.reversedArray()
+    }.reduce { row1, row2 -> row1 + row2 }
 
-        val data = DoubleArray(SIZE * SIZE)
-        var dataCount = 0
-        for (y in 0 until height) {
-            var row = DoubleArray(dataWidth.toInt())
-            var x = 0
-            while (x < dataWidth) {
-                row[x] = Math.floor(rand() * 2.3)
-                x++
-            }
-
-            var r = Arrays.copyOfRange(row, 0, mirrorWidth.toInt())
-            r = reverse(r)
-            row = concat(row, r)
-
-            for (i in row.indices) {
-                data[dataCount] = row[i]
-                dataCount++
-            }
-        }
-
-        return data
-    }
-
-    private fun reverse(data: DoubleArray): DoubleArray {
-        for (i in 0 until data.size / 2) {
-            val temp = data[i]
-            data[i] = data[data.size - i - 1]
-            data[data.size - i - 1] = temp
-        }
-        return data
-    }
-
-    private fun concat(a: DoubleArray, b: DoubleArray): DoubleArray {
-        val aLen = a.size
-        val bLen = b.size
-        val c = DoubleArray(aLen + bLen)
-        System.arraycopy(a, 0, c, 0, aLen)
-        System.arraycopy(b, 0, c, aLen, bLen)
-        return c
-    }
 
     private fun createColor(): HSL {
         val h = Math.floor(rand() * 360.0)
