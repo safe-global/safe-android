@@ -20,9 +20,8 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -75,13 +74,13 @@ class AddExistingSafeFragment : BaseFragment() {
         layout_add_existing_safe_owners.removeAllViews()
         safeInfo.owners.forEach { address ->
             val view = layoutInflater.inflate(R.layout.layout_address_item, layout_add_existing_safe_owners, false)
-            view.layout_address_item_value.text = address.asEthereumAddressString()
             if (account.address == address) {
                 view.layout_address_item_name.visibility = View.VISIBLE
                 view.layout_address_item_name.text = getString(R.string.this_device)
             }
-            view.layout_address_item_icon.setOnClickListener {
-                SimpleAddressShareDialog.create(address.asEthereumAddressString()).show(fragmentManager, null)
+            address.asEthereumAddressStringOrNull()?.let {
+                view.layout_address_item_icon.setAddress(it)
+                view.layout_address_item_value.text = it
             }
             layout_add_existing_safe_owners.addView(view)
         }
