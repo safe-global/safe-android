@@ -93,7 +93,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.TEN, ETHER_TOKEN))
+        testObserver.assertResult(FormData(BigInteger.ZERO, BigInteger.TEN, ETHER_TOKEN))
         then(detailsRepository).should().loadTransactionDetails(transaction)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -108,7 +108,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, ETHER_TOKEN))
+        testObserver.assertResult(FormData(BigInteger.ZERO, null, ETHER_TOKEN))
         then(detailsRepository).should().loadTransactionDetails(transaction)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -123,7 +123,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, ETHER_TOKEN))
+        testObserver.assertResult(FormData(BigInteger.ZERO, null, ETHER_TOKEN))
         then(detailsRepository).should().loadTransactionDetails(transaction)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -142,7 +142,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(token.address, BigInteger.ONE, BigInteger.TEN, token))
+        testObserver.assertResult(FormData(BigInteger.ONE, BigInteger.TEN, token))
         then(detailsRepository).should().loadTransactionDetails(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()
@@ -162,7 +162,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(token.address, BigInteger.ONE, BigInteger.TEN, null))
+        testObserver.assertResult(FormData(BigInteger.ONE, BigInteger.TEN, null))
         then(detailsRepository).should().loadTransactionDetails(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()
@@ -182,7 +182,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(token.address, BigInteger.ZERO, BigInteger.ZERO, null))
+        testObserver.assertResult(FormData(BigInteger.ZERO, BigInteger.ZERO, null))
         then(detailsRepository).should().loadTransactionDetails(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()
@@ -202,121 +202,9 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, true).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(token.address, null, null, null))
+        testObserver.assertResult(FormData(null, null, null))
         then(detailsRepository).should().loadTransactionDetails(transaction)
         then(tokenRepository).should().loadToken(token.address)
-        then(detailsRepository).shouldHaveNoMoreInteractions()
-        then(tokenRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun observeTokens() {
-        val verifiedTokenNoBalance = ERC20Token(BigInteger.valueOf(42), verified = true, decimals = 7)
-        val verifiedTokenBalance = ERC20Token(BigInteger.valueOf(43), verified = true, decimals = 9)
-        val verifiedTokenZeroBalance = ERC20Token(BigInteger.valueOf(41), verified = true, decimals = 10)
-        given(tokenRepository.loadTokens())
-                .willReturn(Single.just(listOf(verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance)))
-        given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any()))
-                .willReturn(Observable.just(listOf(ETHER_TOKEN to null, verifiedTokenNoBalance to null, verifiedTokenBalance to BigInteger.TEN, verifiedTokenZeroBalance to BigInteger.ZERO)))
-
-        val testObserver = TestObserver<State>()
-        viewModel.observeTokens(BigInteger.ONE, BigInteger.TEN).subscribe(testObserver)
-
-        testObserver.assertResult(State(0, listOf(
-                ERC20TokenWithBalance(ETHER_TOKEN, null),
-                ERC20TokenWithBalance(verifiedTokenNoBalance, null),
-                ERC20TokenWithBalance(verifiedTokenBalance, BigInteger.TEN)
-        )))
-        then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN, verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance))
-        then(tokenRepository).should().loadTokens()
-        then(detailsRepository).shouldHaveNoMoreInteractions()
-        then(tokenRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun observeTokensBalanceError() {
-        val verifiedTokenNoBalance = ERC20Token(BigInteger.valueOf(42), verified = true, decimals = 7)
-        val verifiedTokenBalance = ERC20Token(BigInteger.valueOf(43), verified = true, decimals = 9)
-        val verifiedTokenZeroBalance = ERC20Token(BigInteger.valueOf(41), verified = true, decimals = 10)
-        given(tokenRepository.loadTokens())
-                .willReturn(Single.just(listOf(verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance)))
-        given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any()))
-                .willReturn(Observable.error(IllegalStateException()))
-
-        val testObserver = TestObserver<State>()
-        viewModel.observeTokens(BigInteger.ONE, BigInteger.TEN).subscribe(testObserver)
-
-        testObserver.assertResult(State(0, listOf(
-                ERC20TokenWithBalance(ETHER_TOKEN, null),
-                ERC20TokenWithBalance(verifiedTokenNoBalance, null),
-                ERC20TokenWithBalance(verifiedTokenBalance, null),
-                ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
-        )))
-        then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN, verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance))
-        then(tokenRepository).should().loadTokens()
-        then(detailsRepository).shouldHaveNoMoreInteractions()
-        then(tokenRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun observeTokensNoSafe() {
-        val verifiedTokenNoBalance = ERC20Token(BigInteger.valueOf(42), verified = true, decimals = 7)
-        val verifiedTokenBalance = ERC20Token(BigInteger.valueOf(43), verified = true, decimals = 9)
-        val verifiedTokenZeroBalance = ERC20Token(BigInteger.valueOf(41), verified = true, decimals = 10)
-        given(tokenRepository.loadTokens())
-                .willReturn(Single.just(listOf(verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance)))
-
-        val testObserver = TestObserver<State>()
-        viewModel.observeTokens(BigInteger.valueOf(41), null).subscribe(testObserver)
-
-        testObserver.assertResult(State(3, listOf(
-                ERC20TokenWithBalance(ETHER_TOKEN, null),
-                ERC20TokenWithBalance(verifiedTokenNoBalance, null),
-                ERC20TokenWithBalance(verifiedTokenBalance, null),
-                ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
-        )))
-        then(tokenRepository).should().loadTokens()
-        then(detailsRepository).shouldHaveNoMoreInteractions()
-        then(tokenRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun observeTokensNoDefault() {
-        val verifiedTokenNoBalance = ERC20Token(BigInteger.valueOf(42), verified = true, decimals = 7)
-        val verifiedTokenBalance = ERC20Token(BigInteger.valueOf(43), verified = true, decimals = 9)
-        val verifiedTokenZeroBalance = ERC20Token(BigInteger.valueOf(41), verified = true, decimals = 10)
-        given(tokenRepository.loadTokens())
-                .willReturn(Single.just(listOf(verifiedTokenNoBalance, verifiedTokenBalance, verifiedTokenZeroBalance)))
-
-        val testObserver = TestObserver<State>()
-        viewModel.observeTokens(null, null).subscribe(testObserver)
-
-        testObserver.assertResult(State(0, listOf(
-                ERC20TokenWithBalance(ETHER_TOKEN, null),
-                ERC20TokenWithBalance(verifiedTokenNoBalance, null),
-                ERC20TokenWithBalance(verifiedTokenBalance, null),
-                ERC20TokenWithBalance(verifiedTokenZeroBalance, null)
-        )))
-        then(tokenRepository).should().loadTokens()
-        then(detailsRepository).shouldHaveNoMoreInteractions()
-        then(tokenRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun observeTokensError() {
-        given(tokenRepository.loadTokens())
-                .willReturn(Single.error(IllegalStateException()))
-        given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any()))
-                .willReturn(Observable.error(IllegalStateException()))
-
-        val testObserver = TestObserver<State>()
-        viewModel.observeTokens(null, BigInteger.TEN).subscribe(testObserver)
-
-        testObserver.assertResult(State(0, listOf(
-                ERC20TokenWithBalance(ETHER_TOKEN, null)
-        )))
-        then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(ETHER_TOKEN))
-        then(tokenRepository).should().loadTokens()
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
@@ -346,14 +234,14 @@ class AssetTransferDetailsViewModelTest {
         val transferAmount = Solidity.UInt256(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(tentenToken.decimals)))
         val expectedData = StandardToken.Transfer.encode(transferTo, transferAmount)
         testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0" to true, "123" to false, ERC20TokenWithBalance(tentenToken, null) to false),
+                InputEvent("0x0" to true, "123" to false, tentenToken to false),
                 DataResult(Transaction(BigInteger.TEN, value = null,
                         data = expectedData, nonce = BigInteger.valueOf(1337))),
                 testNo++
         )
         // Valid input with change (ether)
         testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0" to true, "123" to false, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null) to false),
+                InputEvent("0x0" to true, "123" to false, ERC20Token.ETHER_TOKEN to false),
                 DataResult(Transaction(BigInteger.ZERO, value = Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals))),
                         data = null, nonce = BigInteger.valueOf(1337))),
                 testNo++
@@ -409,7 +297,7 @@ class AssetTransferDetailsViewModelTest {
         val transferTo = Solidity.Address(BigInteger.ZERO)
         val transferAmount = Solidity.UInt256(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(tentenToken.decimals)))
         val expectedData = StandardToken.Transfer.encode(transferTo, transferAmount)
-        testPublisher.onNext(InputEvent("0x0" to true, "123" to false, ERC20TokenWithBalance(tentenToken, null) to false))
+        testPublisher.onNext(InputEvent("0x0" to true, "123" to false, tentenToken to false))
         testObserver.assertNoErrors().assertValueCount(testNo)
                 .assertValueAt(testNo - 1, {
                     it is DataResult
@@ -420,7 +308,7 @@ class AssetTransferDetailsViewModelTest {
                 })
         testNo++
         // Valid input with change (ether)
-        testPublisher.onNext(InputEvent("0x0" to true, "123" to false, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null) to false))
+        testPublisher.onNext(InputEvent("0x0" to true, "123" to false, ERC20Token.ETHER_TOKEN to false))
         testObserver.assertNoErrors().assertValueCount(testNo)
                 .assertValueAt(testNo - 1, {
                     it is DataResult
@@ -558,4 +446,30 @@ class AssetTransferDetailsViewModelTest {
         reset(detailsRepository)
     }
 
+    @Test
+    fun testLoadTokenInfo() {
+        val testToken = ERC20Token(BigInteger.ONE, name = "Test Token", symbol = "TT", decimals = 18)
+        val testObserver = TestObserver<Result<ERC20TokenWithBalance>>()
+        given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(Observable.just(listOf(testToken to BigInteger.valueOf(13))))
+
+        viewModel.loadTokenInfo(BigInteger.TEN, testToken).subscribe(testObserver)
+
+        testObserver.assertResult(DataResult(ERC20TokenWithBalance(testToken, BigInteger.valueOf(13))))
+        then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(testToken))
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun testLoadTokenInfoError() {
+        val testToken = ERC20Token(BigInteger.ONE, name = "Test Token", symbol = "TT", decimals = 18)
+        val testObserver = TestObserver<Result<ERC20TokenWithBalance>>()
+        val error = IllegalStateException()
+        given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(Observable.error(error))
+
+        viewModel.loadTokenInfo(BigInteger.TEN, testToken).subscribe(testObserver)
+
+        testObserver.assertResult(ErrorResult(error))
+        then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(testToken))
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
 }

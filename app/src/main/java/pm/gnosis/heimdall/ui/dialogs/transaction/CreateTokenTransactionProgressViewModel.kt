@@ -22,7 +22,9 @@ class CreateTokenTransactionProgressViewModel @Inject constructor(
                 if (tokenAddress?.isValidEthereumAddress() != true) {
                     throw SimpleLocalizedException(context.getString(R.string.error_invalid_token_address))
                 }
-                val data = StandardToken.Transfer.encode(Solidity.Address(BigInteger.ZERO), Solidity.UInt256(BigInteger.ZERO))
+                // 0x0 indicates a ether transfer
+                val data = if (tokenAddress == BigInteger.ZERO) null else
+                    StandardToken.Transfer.encode(Solidity.Address(BigInteger.ZERO), Solidity.UInt256(BigInteger.ZERO))
                 Transaction(tokenAddress, data = data)
             }.subscribeOn(Schedulers.computation())
 

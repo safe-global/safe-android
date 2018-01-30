@@ -45,8 +45,7 @@ class TokenBalancesAdapter @Inject constructor(
                 itemView.layout_tokens_item_symbol.text = if (data.token.symbol.isNullOrEmpty()) data.token.address.toString(16).substring(0, 3) else data.token.symbol
                 itemView.layout_tokens_item_symbol_image.visibility = View.GONE
             }
-            val balanceString = data.balance?.let { "${data.token.convertAmount(it).setScale(5, RoundingMode.DOWN).stringWithNoTrailingZeroes()} ${data.token.symbol}" } ?: "-"
-            itemView.layout_tokens_item_balance.text = balanceString
+            itemView.layout_tokens_item_balance.text = data.displayString()
         }
 
         override fun onClick(v: View?) {
