@@ -68,6 +68,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_gravity="end"
+            android:background="@drawable/selectable_background"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:tint="@color/gnosis_blue"
@@ -137,15 +138,15 @@
 
         <TextView
             android:id="@+id/layout_transaction_details_asset_transfer_max_amount_button"
-            style="@style/PrimaryButton"
+            style="@style/SecondaryButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:paddingBottom="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="4dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
             android:text="@string/max_balance"
             android:visibility="gone"
             tools:visibility="visible" />

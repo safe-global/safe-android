@@ -22,12 +22,13 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
+import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asDecimalString
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import timber.log.Timber
@@ -58,9 +59,9 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         editable = arguments?.getBoolean(ARG_EDITABLE, false) ?: false
         val transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
         originalTransaction = transaction
-        layout_transaction_details_generic_to_input.setText(transaction?.address?.asEthereumAddressStringOrNull())
-        layout_transaction_details_generic_data_input.setText(transaction?.data)
-        layout_transaction_details_generic_value_input.setText(transaction?.value?.value?.asDecimalString())
+        layout_transaction_details_generic_to_input.setDefault(transaction?.address?.asEthereumAddressStringOrNull())
+        layout_transaction_details_generic_data_input.setDefault(transaction?.data)
+        layout_transaction_details_generic_value_input.setDefault(transaction?.value?.value?.asDecimalString())
         toggleTransactionInput(editable)
     }
 
@@ -80,6 +81,10 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
                     GenericTransactionDetailsContract.InputEvent(to.toString() to false, value.toString() to false, data.toString() to false)
                 }
         ).subscribe(inputSubject::onNext, Timber::e)
+
+        layout_transaction_details_generic_scan_to_button.setOnClickListener {
+            scanQrCode()
+        }
     }
 
     override fun inputEnabled(enabled: Boolean) {

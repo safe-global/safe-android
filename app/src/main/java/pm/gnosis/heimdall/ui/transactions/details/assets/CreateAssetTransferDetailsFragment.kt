@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions.details.assets
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,19 +23,15 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.doOnNextForResult
-import pm.gnosis.heimdall.common.utils.snackbar
-import pm.gnosis.heimdall.common.utils.visible
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
+import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
-import pm.gnosis.utils.asEthereumAddressStringOrNull
-import pm.gnosis.utils.hexAsBigIntegerOrNull
-import pm.gnosis.utils.stringWithNoTrailingZeroes
+import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -62,8 +59,8 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
                 .doOnNextForResult({ info ->
                     info.balance?.let { layout_transaction_details_asset_transfer_amount_input.setText(info.token.convertAmount(it).stringWithNoTrailingZeroes()) }
                             ?: run {
-                        snackbar(layout_transaction_details_asset_transfer_amount_input, getString(R.string.error_no_token_info))
-                    }
+                                snackbar(layout_transaction_details_asset_transfer_amount_input, getString(R.string.error_no_token_info))
+                            }
                 })
     }
 
@@ -73,8 +70,7 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
         safeSubject.onNext(arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull().toOptional())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.layout_transaction_details_asset_transfer, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.layout_transaction_details_asset_transfer, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -90,8 +86,8 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
     }
 
     private fun setupForm(info: AssetTransferDetailsContract.FormData) {
-        layout_transaction_details_asset_transfer_to_input.setText(info.to?.asEthereumAddressStringOrNull())
-        layout_transaction_details_asset_transfer_amount_input.setText(info.tokenAmount?.let { info.token?.convertAmount(it)?.stringWithNoTrailingZeroes() })
+        layout_transaction_details_asset_transfer_to_input.setDefault(info.to?.asEthereumAddressStringOrNull())
+        layout_transaction_details_asset_transfer_amount_input.setDefault(info.tokenAmount?.let { info.token?.convertAmount(it)?.stringWithNoTrailingZeroes() })
         layout_transaction_details_asset_transfer_amount_input.setCurrencySymbol(info.token?.symbol)
         // Load info
         info.token?.let { token ->
@@ -115,6 +111,14 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
                     AssetTransferDetailsContract.InputEvent(to.toString() to false, amount.toString() to false, info.token to false)
                 }
         ).subscribe(inputSubject::onNext, Timber::e)
+
+        layout_transaction_details_asset_transfer_scan_to_button.setOnClickListener {
+            scanQrCode()
+        }
+    }
+
+    override fun onAddressScanned(address: BigInteger) {
+        layout_transaction_details_asset_transfer_to_input.setText(address.asEthereumAddressString())
     }
 
     override fun observeTransaction(): Observable<Result<Transaction>> {

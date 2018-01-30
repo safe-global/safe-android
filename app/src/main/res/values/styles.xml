@@ -101,6 +101,18 @@
         <item name="android:paddingBottom">8dp</item>
     </style>
 
+    <style name="SecondaryButton">
+        <item name="android:background">@drawable/secondary_button_inline</item>
+        <item name="android:textColor">@color/secondary_button_text</item>
+        <item name="android:textSize">@dimen/secondary_button_text_size</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="TextButton" parent="TextAppearance.AppCompat.Button">
         <item name="android:textColor">@color/gnosis_blue</item>
         <item name="android:textStyle">normal</item>
