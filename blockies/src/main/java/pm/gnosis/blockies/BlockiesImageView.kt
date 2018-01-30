@@ -77,11 +77,15 @@ class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageVie
     }
 
 
-    private fun createImageData() = (0 until SIZE).map {
-        val leftHalf = DoubleArray(SIZE / 2) { Math.floor(rand() * 2.3) }
-        leftHalf + leftHalf.reversedArray()
-    }.reduce { row1, row2 -> row1 + row2 }
-
+    private fun createImageData() = DoubleArray(64).apply {
+        (0 until SIZE).forEach { row ->
+            (0 until SIZE / 2).forEach { column ->
+                val value = Math.floor(rand() * 2.3)
+                this[row * SIZE + column] = value
+                this[(row + 1) * SIZE - column - 1] = value
+            }
+        }
+    }
 
     private fun createColor(): HSL {
         val h = Math.floor(rand() * 360.0)
