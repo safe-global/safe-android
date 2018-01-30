@@ -1,20 +1,19 @@
 package pm.gnosis.blockies
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.widget.ImageView
 import java.util.*
 
 class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageView(context, attributeSet) {
+    private val canvasPaint = Paint().apply { style = Paint.Style.FILL }
+    private val randSeed = LongArray(4)
+
     private var color: HSL? = null
     private var bgColor: HSL? = null
     private var spotColor: HSL? = null
     private var imageData: DoubleArray? = null
-    private var randSeed = LongArray(4)
-    private var scale = 16
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -27,80 +26,66 @@ class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageVie
         val bgColor = bgColor ?: return
         val spotColor = spotColor ?: return
 
-        val width = Math.sqrt(imageData.size.toDouble()).toInt()
+        canvas.save()
 
-        val w = width * scale
-        val h = width * scale
+        val dimen = Math.min(measuredWidth, measuredHeight).toFloat()
+        val offsetX = measuredWidth - dimen
+        val offsetY = measuredHeight - dimen
 
-        val background = toRGB(bgColor.h.toInt().toFloat(), bgColor.s.toInt().toFloat(), bgColor.l.toInt().toFloat())
+        val path = Path()
+        path.addCircle(offsetX + (dimen / 2), offsetY + (dimen / 2), dimen / 2, Path.Direction.CCW)
+        path.close()
+        canvas.clipPath(path)
 
-        var paint = Paint()
-        paint.style = Paint.Style.FILL
-        paint.color = background
-        canvas.drawRect(0f, 0f, w.toFloat(), h.toFloat(), paint)
+        canvasPaint.color = bgColor.toRgb()
+        canvas.drawRect(
+                offsetX, offsetY, offsetX + dimen, offsetY + dimen,
+                canvasPaint
+        )
 
-        val main = toRGB(color.h.toInt().toFloat(), color.s.toInt().toFloat(), color.l.toInt().toFloat())
-        val scolor = toRGB(spotColor.h.toInt().toFloat(), spotColor.s.toInt().toFloat(), spotColor.l.toInt().toFloat())
+        val scale = dimen / SIZE
+        val main = color.toRgb()
+        val sColor = spotColor.toRgb()
 
         for (i in imageData.indices) {
-            val row = Math.floor((i / width).toDouble()).toInt()
-            val col = i % width
-            paint = Paint()
+            val col = i % SIZE
+            val row = i / SIZE
 
-            paint.color = if (imageData[i] == 1.0) main else scolor
+            canvasPaint.color = if (imageData[i] == 1.0) main else sColor
 
             if (imageData[i] > 0.0) {
-                canvas.drawRect((col * scale).toFloat(), (row * scale).toFloat(), (col * scale + scale).toFloat(), (row * scale + scale).toFloat(), paint)
+                canvas.drawRect(offsetX + (col * scale), offsetY + (row * scale), offsetX + (col * scale + scale), offsetY + (row * scale + scale), canvasPaint)
             }
         }
+
+        canvas.restore()
+    }
+
+    fun getCroppedBitmap(bitmap: Bitmap): Bitmap {
+        val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+
+        val color = -0xbdbdbe
+        val paint = Paint()
+        val rect = Rect(0, 0, bitmap.width, bitmap.height)
+
+        paint.isAntiAlias = true
+        canvas.drawARGB(0, 0, 0, 0)
+        paint.color = color
+        canvas.drawCircle((bitmap.width / 2).toFloat(), (bitmap.height / 2).toFloat(),
+                (bitmap.width / 2).toFloat(), paint)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, rect, rect, paint)
+        return output
     }
 
     fun setAddress(address: String) {
-        seedrand(address)
+        seedFromAddress(address)
         color = createColor()
         bgColor = createColor()
         spotColor = createColor()
         imageData = createImageData()
         invalidate()
-    }
-
-    private fun toRGB(h: Float, s: Float, l: Float): Int {
-        var h = h
-        var s = s
-        var l = l
-        h %= 360.0f
-        h /= 360f
-        s /= 100f
-        l /= 100f
-
-        var q: Float
-
-        q = if (l < 0.5) l * (1 + s) else l + s - s * l
-
-        val p = 2 * l - q
-
-        var r = Math.max(0f, hueToRGB(p, q, h + 1.0f / 3.0f))
-        var g = Math.max(0f, hueToRGB(p, q, h))
-        var b = Math.max(0f, hueToRGB(p, q, h - 1.0f / 3.0f))
-
-        r = Math.min(r, 1.0f)
-        g = Math.min(g, 1.0f)
-        b = Math.min(b, 1.0f)
-
-        val red = (r * 255).toInt()
-        val green = (g * 255).toInt()
-        val blue = (b * 255).toInt()
-        return Color.rgb(red, green, blue)
-    }
-
-    private fun hueToRGB(p: Float, q: Float, h: Float): Float {
-        var hue = h
-        if (hue < 0) hue += 1f
-        if (hue > 1) hue -= 1f
-        if (6 * hue < 1) return p + (q - p) * 6f * hue
-        if (2 * hue < 1) return q
-
-        return if (3 * hue < 2) p + (q - p) * 6f * (2.0f / 3.0f - hue) else p
     }
 
     private fun createImageData(): DoubleArray {
@@ -169,25 +154,49 @@ class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageVie
         return t1 / Integer.MAX_VALUE
     }
 
-    private fun seedrand(seed: String) {
-        for (i in randSeed.indices) {
-            randSeed[i] = 0
-        }
-        for (i in 0 until seed.length) {
-            var test = randSeed[i % 4] shl 5
-            if (test > Integer.MAX_VALUE shl 1 || test < Integer.MIN_VALUE shl 1)
-                test = test.toInt().toLong()
+    private fun seedFromAddress(address: String) {
+        randSeed.indices.forEach { randSeed[it] = 0 }
 
-            val test2 = test - randSeed[i % 4]
-            randSeed[i % 4] = test2 + Character.codePointAt(seed, i)
+        (0 until address.length).forEach {
+            var test = randSeed[it % 4] shl 5
+            if (test > Integer.MAX_VALUE shl 1 || test < Integer.MIN_VALUE shl 1) test = test.toInt().toLong()
+
+            val test2 = test - randSeed[it % 4]
+            randSeed[it % 4] = test2 + Character.codePointAt(address, it)
         }
 
-        for (i in randSeed.indices) randSeed[i] = randSeed[i].toInt().toLong()
+        randSeed.indices.forEach { randSeed[it] = randSeed[it].toInt().toLong() }
     }
 
     companion object {
         const val SIZE = 8
     }
 
-    data class HSL(val h: Double, val s: Double, val l: Double)
+    data class HSL(val h: Double, val s: Double, val l: Double) {
+        fun toRgb(): Int {
+            var h = h.toFloat()
+            var s = s.toFloat()
+            var l = l.toFloat()
+            h %= 360.0f
+            h /= 360f
+            s /= 100f
+            l /= 100f
+
+            val q = if (l < 0.5) l * (1 + s) else l + s - s * l
+            val p = 2 * l - q
+
+            var r = Math.max(0f, hueToRGB(p, q, h + 1.0f / 3.0f))
+            var g = Math.max(0f, hueToRGB(p, q, h))
+            var b = Math.max(0f, hueToRGB(p, q, h - 1.0f / 3.0f))
+
+            r = Math.min(r, 1.0f)
+            g = Math.min(g, 1.0f)
+            b = Math.min(b, 1.0f)
+
+            val red = (r * 255).toInt()
+            val green = (g * 255).toInt()
+            val blue = (b * 255).toInt()
+            return Color.rgb(red, green, blue)
+        }
+    }
 }
