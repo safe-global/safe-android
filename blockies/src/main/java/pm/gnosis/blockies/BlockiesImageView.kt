@@ -9,6 +9,10 @@ import java.util.*
 class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageView(context, attributeSet) {
     private val canvasPaint = Paint().apply { style = Paint.Style.FILL }
     private val randSeed = LongArray(4)
+    private var dimen = 0.0f
+    private var offsetX = 0.0f
+    private var offsetY = 0.0f
+    private val path = Path()
 
     private var color: HSL? = null
     private var bgColor: HSL? = null
@@ -20,6 +24,15 @@ class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageVie
         drawOnCanvas(canvas)
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        dimen = Math.min(measuredWidth, measuredHeight).toFloat()
+        offsetX = measuredWidth - dimen
+        offsetY = measuredHeight - dimen
+        path.addCircle(offsetX + (dimen / 2), offsetY + (dimen / 2), dimen / 2, Path.Direction.CCW)
+        path.close()
+    }
+
     private fun drawOnCanvas(canvas: Canvas) {
         val imageData = imageData ?: return
         val color = color ?: return
@@ -27,16 +40,7 @@ class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageVie
         val spotColor = spotColor ?: return
 
         canvas.save()
-
-        val dimen = Math.min(measuredWidth, measuredHeight).toFloat()
-        val offsetX = measuredWidth - dimen
-        val offsetY = measuredHeight - dimen
-
-        val path = Path()
-        path.addCircle(offsetX + (dimen / 2), offsetY + (dimen / 2), dimen / 2, Path.Direction.CCW)
-        path.close()
         canvas.clipPath(path)
-
         canvasPaint.color = bgColor.toRgb()
         canvas.drawRect(
                 offsetX, offsetY, offsetX + dimen, offsetY + dimen,

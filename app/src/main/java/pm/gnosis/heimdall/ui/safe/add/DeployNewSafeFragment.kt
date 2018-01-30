@@ -26,7 +26,6 @@ import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
@@ -206,9 +205,7 @@ class DeployNewSafeFragment : BaseFragment() {
             rawAddress.asEthereumAddressStringOrNull()?.let { address ->
                 val view = layoutInflater.inflate(R.layout.layout_additional_owner_item, layout_deploy_new_safe_additional_owners_container, false)
                 view.layout_address_item_value.text = address
-                view.layout_address_item_icon.setOnClickListener {
-                    SimpleAddressShareDialog.create(address).show(fragmentManager, null)
-                }
+                view.layout_address_item_icon.setAddress(address)
                 disposables += view.layout_additional_owner_delete_button.clicks()
                         .flatMap { viewModel.removeAdditionalOwner(rawAddress) }
                         .subscribeForResult(
