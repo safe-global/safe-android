@@ -8,5 +8,5 @@ import java.math.BigInteger
 
 abstract class BaseEditableTransactionDetailsContract : ViewModel() {
 
-    abstract fun loadSafeInfo(safe: BigInteger): Observable<Safe>
+    abstract fun observeSafe(safe: BigInteger): Observable<Safe>
 }

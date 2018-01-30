@@ -23,7 +23,7 @@ abstract class BaseEditableTransactionDetailsFragment: BaseTransactionDetailsFra
     lateinit var baseViewModel: BaseEditableTransactionDetailsContract
 
     protected fun updateSafeInfoTransformer(addressView: TextView) = ObservableTransformer<BigInteger, Safe> {
-        it.switchMap { baseViewModel.loadSafeInfo(it) }
+        it.switchMap { baseViewModel.observeSafe(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
                     val safeAddress = it.address.asEthereumAddressStringOrNull()

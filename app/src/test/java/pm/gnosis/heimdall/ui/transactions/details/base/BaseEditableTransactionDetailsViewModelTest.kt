@@ -33,12 +33,12 @@ class BaseEditableTransactionDetailsViewModelTest {
     }
 
     @Test
-    fun testLoadSafe() {
+    fun testObserveSafe() {
         val safeProcessor = PublishProcessor.create<Safe>()
         given(safeRepositoryMock.observeSafe(MockUtils.any())).willReturn(safeProcessor)
         val testObserver = TestObserver<Safe>()
 
-        viewModel.loadSafeInfo(TEST_SAFE).subscribe(testObserver)
+        viewModel.observeSafe(TEST_SAFE).subscribe(testObserver)
         testObserver.assertEmpty()
 
         safeProcessor.offer(Safe(TEST_SAFE, "Some Safe"))

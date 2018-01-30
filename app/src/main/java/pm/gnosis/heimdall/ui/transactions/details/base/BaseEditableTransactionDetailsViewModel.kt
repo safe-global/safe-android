@@ -9,6 +9,6 @@ import javax.inject.Inject
 class BaseEditableTransactionDetailsViewModel @Inject constructor(
         private val safeRepository: GnosisSafeRepository
 ) : BaseEditableTransactionDetailsContract() {
-    override fun loadSafeInfo(safe: BigInteger): Observable<Safe> =
-            safeRepository.observeSafe(safe).toObservable()
+    override fun observeSafe(safeAddress: BigInteger): Observable<Safe> =
+            safeRepository.observeSafe(safeAddress).toObservable()
 }
