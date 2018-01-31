@@ -133,6 +133,9 @@ dependencies {
     implementation "com.google.firebase:firebase-core:$versions.firebase"
     implementation "com.google.firebase:firebase-messaging:$versions.firebase"
 
+    // String formatting
+    implementation "com.squareup.phrase:phrase:$versions.phrase"
+
     //Dagger
     implementation "com.google.dagger:dagger:$versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"

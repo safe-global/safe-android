@@ -4,8 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.Toolbar
+import android.text.Html
 import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
+import com.squareup.phrase.Phrase
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -31,6 +33,7 @@ import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
+import pm.gnosis.heimdall.utils.setFormattedString
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressStringOrNull
@@ -202,14 +205,15 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
         info.status.let {
             val availableConfirmations = (if (it.isOwner) 1 else 0) + info.signatures.size
             val leftConfirmations = Math.max(0, it.requiredConfirmation - availableConfirmations)
-            layout_view_transaction_confirmations_hint_text.text = getString(R.string.confirm_transaction_hint, leftConfirmations.toString())
+
+            layout_view_transaction_confirmations_hint_text.setFormattedString(R.string.confirm_transaction_hint, "required_confirmations" to leftConfirmations.toString())
             layout_view_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, availableConfirmations.toString(), it.requiredConfirmation.toString())
             setViewStates(availableConfirmations >= it.requiredConfirmation)
         }
         layout_view_transaction_confirmations_addresses.removeAllViews()
         // Add current device first
         if (info.status.isOwner) {
-            layout_view_transaction_confirmations_addresses.addView(buildSignerView(getString(R.string.this_device), null, false))
+            layout_view_transaction_confirmations_addresses.addView(buildSignerView(getString(R.string.this_device), info.status.sender, false))
         }
         // Add confirmed devices
         info.status.owners.forEach {
@@ -237,11 +241,12 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
         layout_view_transaction_add_signature_button.visible(canSign)
     }
 
-    private fun buildSignerView(name: String?, address: BigInteger?, pending: Boolean) =
+    private fun buildSignerView(name: String?, address: BigInteger, pending: Boolean) =
             layoutInflater.inflate(R.layout.layout_transaction_confirmation_item, layout_view_transaction_confirmations_addresses, false)
                     .apply {
-                        layout_address_item_value.text = address?.asEthereumAddressStringOrNull()
-                        layout_address_item_value.visible(address != null)
+                        layout_address_item_icon.setAddress(address)
+                        layout_address_item_value.text = address.asEthereumAddressStringOrNull()
+                        layout_address_item_value.visible(name == null)
                         layout_address_item_name.text = name
                         layout_address_item_name.visible(name != null)
                         layout_transaction_confirmation_item_status.setImageResource(if (pending) R.drawable.ic_pending_signature else R.drawable.ic_approved_signature)

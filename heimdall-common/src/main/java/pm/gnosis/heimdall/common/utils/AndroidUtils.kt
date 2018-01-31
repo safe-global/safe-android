@@ -31,9 +31,6 @@ inline fun Toolbar.setup(crossinline func: (Toolbar) -> Unit, @DrawableRes icon:
     setNavigationOnClickListener { func(this) }
 }
 
-fun Boolean.toVisibility(hiddenVisibility: Int = View.GONE) =
-        if (this) View.VISIBLE else hiddenVisibility
-
 fun View.visible(visible: Boolean, hiddenVisibility: Int = View.GONE) {
     this.visibility = if (visible) View.VISIBLE else hiddenVisibility
 }
