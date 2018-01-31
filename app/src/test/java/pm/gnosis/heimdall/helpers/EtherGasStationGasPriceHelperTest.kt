@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.helpers
 
 import android.content.Context
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.reactivex.Single
@@ -47,9 +48,6 @@ class EtherGasStationGasPriceHelperTest {
     lateinit var ethGasStationApi: EthGasStationApi
 
     @Mock
-    lateinit var tickerRepositoryMock: TickerRepository
-
-    @Mock
     lateinit var slowCostsMock: TextView
 
     @Mock
@@ -68,13 +66,13 @@ class EtherGasStationGasPriceHelperTest {
     lateinit var fastTimeMock: TextView
 
     @Mock
-    lateinit var slowFiatMock: TextView
+    lateinit var slowIconMock: ImageView
 
     @Mock
-    lateinit var normalFiatMock: TextView
+    lateinit var normalIconMock: ImageView
 
     @Mock
-    lateinit var fastFiatMock: TextView
+    lateinit var fastIconMock: ImageView
 
     @Mock
     lateinit var rootViewMock: View
@@ -106,18 +104,18 @@ class EtherGasStationGasPriceHelperTest {
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_slow_container, slowContainerMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_slow_costs, slowCostsMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_slow_time, slowTimeMock.setupMock())
-        rootViewMock.mockFindViewById(R.id.include_gas_price_selection_slow_costs_fiat, slowFiatMock.setupMock())
+        rootViewMock.mockFindViewById(R.id.include_gas_price_selection_slow_selected, slowIconMock.setupMock())
 
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_normal_container, normalContainerMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_normal_costs, normalCostsMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_normal_time, normalTimeMock.setupMock())
-        rootViewMock.mockFindViewById(R.id.include_gas_price_selection_normal_costs_fiat, normalFiatMock.setupMock())
+        rootViewMock.mockFindViewById(R.id.include_gas_price_selection_normal_selected, normalIconMock.setupMock())
 
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_container, fastContainerMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_costs, fastCostsMock.setupMock())
         rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_time, fastTimeMock.setupMock())
-        rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_costs_fiat, fastFiatMock.setupMock())
-        helper = EtherGasStationGasPriceHelper(contextMock, ethGasStationApi, tickerRepositoryMock)
+        rootViewMock.mockFindViewById(R.id.include_gas_price_selection_fast_selected, fastIconMock.setupMock())
+        helper = EtherGasStationGasPriceHelper(contextMock, ethGasStationApi)
     }
 
     private fun validateTextUpdate(costsView: TextView, waitTimeView: TextView, costs: Float, waitTime: Float) {
@@ -129,19 +127,17 @@ class EtherGasStationGasPriceHelperTest {
     fun observe() {
         val gasPriceSubject = PublishSubject.create<EthGasStationPrices>()
         given(ethGasStationApi.loadGasPrices()).willReturn(gasPriceSubject)
-        val currencyResult = listOf(BigDecimal(1), BigDecimal(2), BigDecimal(3)) to Currency("id", "name", "CUR", 0, 0, BigDecimal.ONE, Currency.FiatSymbol.USD)
-        given(tickerRepositoryMock.convertToFiat(MockUtils.any<List<Wei>>(), MockUtils.any())).willReturn(Single.just(currencyResult))
         val testObserver = TestObserver<Result<Wei>>()
         helper.setup(rootViewMock)
         helper.observe().subscribe(testObserver)
+
+        // No data has been emitted, so nothing should be updated
+        testObserver.assertEmpty()
 
         // When subscribing we should setup the click listeners
         slowContainerMock.assertClickListenerNotNull()
         normalContainerMock.assertClickListenerNotNull()
         fastContainerMock.assertClickListenerNotNull()
-
-        // No data has been emitted, so nothing should be updated
-        testObserver.assertEmpty()
 
         // Check that the views have been updated with the returned prices
         gasPriceSubject.onNext(EthGasStationPrices(
@@ -154,9 +150,9 @@ class EtherGasStationGasPriceHelperTest {
         validateTextUpdate(fastCostsMock, fastTimeMock, 300f, 0.5f)
 
         testObserver.assertValuesOnly(DataResult(convertToWei(200f)))
-        slowContainerMock.assertBackgroundRes(R.drawable.selectable_background)
-        normalContainerMock.assertBackgroundRes(R.drawable.rounded_border_background)
-        fastContainerMock.assertBackgroundRes(R.drawable.selectable_background)
+        slowContainerMock.assertSelected(false)
+        normalContainerMock.assertSelected(true)
+        fastContainerMock.assertSelected(false)
 
         // If we select normal speed the selected container should change and the costs should be emitted
         normalContainerMock.callOnClick()
@@ -164,9 +160,9 @@ class EtherGasStationGasPriceHelperTest {
                 DataResult(convertToWei(200f)),
                 DataResult(convertToWei(200f)) // New value
         )
-        slowContainerMock.assertBackgroundRes(R.drawable.selectable_background)
-        normalContainerMock.assertBackgroundRes(R.drawable.rounded_border_background)
-        fastContainerMock.assertBackgroundRes(R.drawable.selectable_background)
+        slowContainerMock.assertSelected(false)
+        normalContainerMock.assertSelected(true)
+        fastContainerMock.assertSelected(false)
 
         // If we select fast speed the selected container should change and the costs should be emitted
         fastContainerMock.callOnClick()
@@ -175,9 +171,9 @@ class EtherGasStationGasPriceHelperTest {
                 DataResult(convertToWei(200f)),
                 DataResult(convertToWei(300f)) // New value
         )
-        slowContainerMock.assertBackgroundRes(R.drawable.selectable_background)
-        normalContainerMock.assertBackgroundRes(R.drawable.selectable_background)
-        fastContainerMock.assertBackgroundRes(R.drawable.rounded_border_background)
+        slowContainerMock.assertSelected(false)
+        normalContainerMock.assertSelected(false)
+        fastContainerMock.assertSelected(true)
 
         // If we select slow speed the selected container should change and the costs should be emitted
         slowContainerMock.callOnClick()
@@ -187,9 +183,9 @@ class EtherGasStationGasPriceHelperTest {
                 DataResult(convertToWei(300f)),
                 DataResult(convertToWei(100f)) // New value
         )
-        slowContainerMock.assertBackgroundRes(R.drawable.rounded_border_background)
-        normalContainerMock.assertBackgroundRes(R.drawable.selectable_background)
-        fastContainerMock.assertBackgroundRes(R.drawable.selectable_background)
+        slowContainerMock.assertSelected(true)
+        normalContainerMock.assertSelected(false)
+        fastContainerMock.assertSelected(false)
 
         gasPriceSubject.onError(UnknownHostException())
         // Propagate error
@@ -218,8 +214,6 @@ class EtherGasStationGasPriceHelperTest {
 
         then(ethGasStationApi).should().loadGasPrices()
         then(ethGasStationApi).shouldHaveNoMoreInteractions()
-        then(tickerRepositoryMock).should().convertToFiat(listOf(BigDecimal(100), BigDecimal(200), BigDecimal(300)).map { convertToWei(it.toFloat()) },
-                Currency.FiatSymbol.USD)
     }
 
     private fun convertToWei(price: Float) =
@@ -239,7 +233,7 @@ class EtherGasStationGasPriceHelperTest {
 
     private class TestLinearLayout(context: Context) : LinearLayout(context) {
         private var clickListener: OnClickListener? = null
-        private var backgroundResource: Int = 0
+        private var selected: Boolean = false
 
         override fun setOnClickListener(l: OnClickListener?) {
             super.setOnClickListener(l)
@@ -251,13 +245,12 @@ class EtherGasStationGasPriceHelperTest {
             return super.callOnClick()
         }
 
-        override fun setBackgroundResource(resid: Int) {
-            backgroundResource = resid
-            super.setBackgroundResource(resid)
+        override fun setSelected(selected: Boolean) {
+            this.selected = selected
         }
 
-        fun assertBackgroundRes(resid: Int) =
-                apply { assertEquals("Unexpected background", resid, backgroundResource) }
+        fun assertSelected(expected: Boolean) =
+                apply { assertEquals("Unexpected selected state", expected, selected) }
 
         fun assertClickListenerNotNull() =
                 apply { assertNotNull("Click listener should not be null!", clickListener) }

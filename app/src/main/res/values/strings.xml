@@ -161,7 +161,8 @@
     <string name="safe_name_hint">Safe Name</string>
     <string name="deploy_new_safe">Deploy New Safe</string>
     <string name="estimated_transaction_fee">Estimated Transaction Fee</string>
-    <string name="confirm_transaction_hint">This signing device will initiate and confirm this transaction. Only <u><b>{required_confirmations} other devices</b></u> need to additionally sign and confirm, before this transaction gets submitted.</string>
+    <string name="confirm_transaction_hint">This signing device will initiate and confirm this transaction. Only <u><b>{required_confirmations} other devices</b></u> need to additionally confirm the transaction, before it can be submitted.</string>
+    <string name="submit_transaction_hint">This signing device will initiate and confirm this transaction. All required confirmations have been added and the transaction can be submitted for execution.</string>
     <string name="add_existing_safe">Add existing safe</string>
     <string name="tab_title_add_existing">add existing</string>
     <string name="tab_title_create_new">create new</string>
@@ -237,6 +238,7 @@
     <string name="safe_overview_emtpy_description">Add a new or existing safe and it will show up right here.</string>
     <string name="safe_overview_empty_action">Add a Safe</string>
     <string name="owner">owner</string>
+    <string name="owner_label">Owner</string>
     <string name="owner_x">owner number %s</string>
     <string name="deploying_new_safe">Deploying New Safe:</string>
     <string name="deploying_safe_warning">This process can take up to several minutes</string>
@@ -272,9 +274,9 @@
     <string name="password_change_success">Password successfully changed</string>
     <string name="reveal_security_phrase_warning">This is the security phrase used to get access to your account!  Revealing the security phrase might get your account stolen if you have onlookers (people, recording devices). Please do so in a private environment.</string>
     <string name="show_security_phrase">Show Security Phrase</string>
-    <string name="transaction_description_add_safe_owner">added as an safe owning device</string>
-    <string name="transaction_description_remove_safe_owner">removed as an safe owning device</string>
-    <string name="transaction_description_replace_safe_owner">replacing %s as a safe owning device</string>
+    <string name="transaction_description_add_safe_owner">add an owner</string>
+    <string name="transaction_description_remove_safe_owner">remove an owner</string>
+    <string name="transaction_description_replace_safe_owner">replace an owner</string>
     <string name="signature_request_sent">Request for signatures has been sent!</string>
     <string name="sign_transaction_request_message">You have been requested to sign a transaction</string>
     <string name="sign_transaction_request_title">Sign request</string>
@@ -283,6 +285,9 @@
     <string name="approximately_x">≈ %s</string>
     <string name="error_no_token_info">Could not retrieve balance!</string>
     <string name="new_owner">New Owner</string>
+    <string name="old_owner">Old Owner</string>
     <string name="security">Security</string>
     <string name="asset_transfer_message">This transaction will send</string>
+    <string name="simple_transfer_message">This transaction will</string>
+    <string name="all_signatures_confirmed">All signatures confirmed!</string>
 </resources>

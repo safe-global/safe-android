@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -21,55 +22,74 @@
         style="@style/CurrencyInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="24dp"
-        tools:text="3450 GNO" />
+        android:enabled="false"
+        android:singleLine="true"
+        android:paddingBottom="8dp"
+        tools:text="34555460 GNO" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/transaction_details_cell_height"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:orientation="horizontal">
 
         <TextView
-            style="@style/Content"
+            style="@style/TxLabel"
             android:layout_width="@dimen/create_tx_label_width"
             android:layout_height="wrap_content"
             android:text="@string/from" />
 
         <TextView
             android:id="@+id/layout_review_asset_transfer_from"
-            style="@style/BoldContent"
+            style="@style/TxValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="start"
+            android:layout_marginEnd="8dp"
             android:maxLines="2"
             tools:text="My Safe [0x9bea...eda2]" />
     </LinearLayout>
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:layout_height="@dimen/transaction_details_cell_height"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
-            style="@style/Content"
+            android:id="@+id/layout_review_asset_transfer_to_label"
+            style="@style/TxLabel"
             android:layout_width="@dimen/create_tx_label_width"
             android:layout_height="wrap_content"
-            android:text="@string/to" />
+            android:text="@string/to"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/layout_review_asset_transfer_to_value"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/layout_review_asset_transfer_to"
-            style="@style/BoldContent"
-            android:layout_width="match_parent"
+            android:id="@+id/layout_review_asset_transfer_to_value"
+            style="@style/TxValue"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="start"
             android:maxLines="2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/layout_review_asset_transfer_to_icon"
+            app:layout_constraintStart_toEndOf="@id/layout_review_asset_transfer_to_label"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="My Safe [0x9bea...eda2]" />
-    </LinearLayout>
 
+        <pm.gnosis.blockies.BlockiesImageView
+            android:id="@+id/layout_review_asset_transfer_to_icon"
+            android:layout_width="@dimen/action_circle"
+            android:layout_height="@dimen/action_circle"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
 </LinearLayout>

@@ -58,7 +58,8 @@ class ReviewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFragment(
     }
 
     private fun setupForm(info: AssetTransferDetailsContract.FormData) {
-        layout_review_asset_transfer_to.text = info.to?.asEthereumAddressStringOrNull()
+        layout_review_asset_transfer_to_value.text = info.to?.asEthereumAddressStringOrNull()
+        info.to?.let { layout_review_asset_transfer_to_icon.setAddress(it) }
         val amount = info.tokenAmount?.let { info.token?.convertAmount(it)?.stringWithNoTrailingZeroes() }
         val tokenSymbol = info.token?.symbol ?: getString(R.string.tokens)
         layout_review_asset_transfer_amount.setText(amount)

@@ -4,10 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.Toolbar
-import android.text.Html
 import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
-import com.squareup.phrase.Phrase
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -33,7 +31,7 @@ import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
-import pm.gnosis.heimdall.utils.setFormattedString
+import pm.gnosis.heimdall.utils.setFormattedText
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddressStringOrNull
@@ -202,13 +200,18 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
     }
 
     private fun updateInfo(info: ViewTransactionContract.Info, estimatedFees: Wei?) {
+        val availableConfirmations = (if (info.status.isOwner) 1 else 0) + info.signatures.size
+        val requiredConfirmationsAvailable = availableConfirmations >= info.status.requiredConfirmation
         info.status.let {
-            val availableConfirmations = (if (it.isOwner) 1 else 0) + info.signatures.size
             val leftConfirmations = Math.max(0, it.requiredConfirmation - availableConfirmations)
 
-            layout_view_transaction_confirmations_hint_text.setFormattedString(R.string.confirm_transaction_hint, "required_confirmations" to leftConfirmations.toString())
+            if (leftConfirmations > 0) {
+                layout_view_transaction_confirmations_hint_text.setFormattedText(R.string.confirm_transaction_hint, "required_confirmations" to leftConfirmations.toString())
+            } else {
+                layout_view_transaction_confirmations_hint_text.setText(R.string.submit_transaction_hint)
+            }
             layout_view_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, availableConfirmations.toString(), it.requiredConfirmation.toString())
-            setViewStates(availableConfirmations >= it.requiredConfirmation)
+            setViewStates(requiredConfirmationsAvailable)
         }
         layout_view_transaction_confirmations_addresses.removeAllViews()
         // Add current device first
@@ -221,12 +224,15 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
                 layout_view_transaction_confirmations_addresses.addView(buildSignerView(null, it, false))
             }
         }
-        // Add pending devices
-        info.status.owners.forEach {
-            if (it != info.status.sender && !info.signatures.containsKey(it)) {
-                layout_view_transaction_confirmations_addresses.addView(buildSignerView(null, it, true))
+        // Add pending devices if more confirmations are required
+        if (!requiredConfirmationsAvailable) {
+            info.status.owners.forEach {
+                if (it != info.status.sender && !info.signatures.containsKey(it)) {
+                    layout_view_transaction_confirmations_addresses.addView(buildSignerView(null, it, true))
+                }
             }
         }
+
         if (estimatedFees != null) {
             layout_view_transaction_transaction_fee.text = estimatedFees.displayString(this)
         } else {
@@ -237,6 +243,7 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
     private fun setViewStates(canSubmit: Boolean, canSign: Boolean = !canSubmit) {
         // If we can submit show information for submitting
         layout_view_transaction_submit_button.isEnabled = canSubmit
+        layout_view_transaction_all_confirmed_hint.visible(canSubmit)
         // If we can sign show information for signing
         layout_view_transaction_add_signature_button.visible(canSign)
     }

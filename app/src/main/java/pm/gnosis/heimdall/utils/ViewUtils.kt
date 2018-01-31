@@ -18,7 +18,7 @@ fun String.initials(): String {
             (if (words.size > 1) words.lastOrNull()?.firstOrNull()?.toString() ?: "" else ""))
 }
 
-fun TextView.setFormattedString(res: Int, vararg params: Pair<String, String>) {
+fun TextView.setFormattedText(res: Int, vararg params: Pair<String, String>) {
     text = Phrase.from(this, res).apply {
         params.forEach { (key, value) ->
             put(key, value)

@@ -55,6 +55,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/divider_width"
+                android:layout_marginTop="16dp"
                 android:background="@color/divider" />
 
             <android.support.constraint.ConstraintLayout
@@ -67,11 +68,9 @@
                     style="@style/Content"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="8dp"
                     android:layout_marginTop="8dp"
-                    android:layout_gravity="end|center_vertical"
                     android:background="@drawable/confirmation_count_background"
                     android:drawableEnd="@drawable/confirmation_count_icon_background"
                     android:drawablePadding="8dp"
@@ -80,36 +79,38 @@
                     android:paddingStart="12dp"
                     android:text="-/-"
                     android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="50/50" />
 
                 <ImageView
-                    app:layout_constraintEnd_toEndOf="@id/layout_view_transaction_confirmations"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginTop="6dp"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="end|center_vertical"
+                    android:layout_marginTop="6dp"
                     android:background="@drawable/confirmation_count_icon_background"
                     android:padding="4dp"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_authenticate_small_dark"
-                    android:tint="@color/white" />
+                    android:tint="@color/white"
+                    app:layout_constraintEnd_toEndOf="@id/layout_view_transaction_confirmations"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     style="@style/Content"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:gravity="start"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:text="@string/required_confirmations"
+                    android:textSize="12sp"
                     app:layout_constraintBaseline_toBaselineOf="@+id/layout_view_transaction_confirmations"
                     app:layout_constraintEnd_toStartOf="@+id/layout_view_transaction_confirmations"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/required_confirmations"
-                    android:textSize="12sp" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </android.support.constraint.ConstraintLayout>
 
             <TextView
@@ -134,7 +135,22 @@
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
                 android:layout_marginTop="16dp"
-                android:text="@string/add_signature" />
+                android:text="@string/add_signature"
+                tools:visibility="gone" />
+
+            <TextView
+                android:id="@+id/layout_view_transaction_all_confirmed_hint"
+                style="@style/DarkContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/divider"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/all_signatures_confirmed"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <View
                 android:layout_width="match_parent"

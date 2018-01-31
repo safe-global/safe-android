@@ -108,7 +108,7 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
                         .flatMap {
                             when (it.data) {
                                 is RemoveSafeOwnerData -> loadRemoveSafeOwnerInfo(safeAddress, it.data)
-                                is AddSafeOwnerData -> Single.just(Action.AddOwner(it.data.newOwner.asEthereumAddressString()))
+                                is AddSafeOwnerData -> Single.just(Action.AddOwner(it.data.newOwner))
                                 is ReplaceSafeOwnerData -> loadReplaceSafeOwnerInfo(safeAddress, it.data)
                                 else -> throw IllegalStateException()
                             }
@@ -123,12 +123,12 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
     private fun loadReplaceSafeOwnerInfo(safeAddress: BigInteger?, data: ReplaceSafeOwnerData) =
             loadSafeInfo(safeAddress).map {
                 val oldOwner = getOwnerOrIndex(it.toNullable()?.owners, data.oldOwnerIndex)
-                Action.ReplaceOwner(data.newOwner.asEthereumAddressString(), oldOwner)
+                Action.ReplaceOwner(data.newOwner, oldOwner)
             }.singleOrError()
 
-    private fun getOwnerOrIndex(owners: List<BigInteger>?, index: BigInteger): String {
+    private fun getOwnerOrIndex(owners: List<BigInteger>?, index: BigInteger): BigInteger {
         val oldOwnerIndex = index.toInt()
-        return owners?.getOrNull(oldOwnerIndex)?.asEthereumAddressString() ?: context.getString(R.string.owner_x, (oldOwnerIndex + 1).toString())
+        return owners?.getOrNull(oldOwnerIndex) ?: index
     }
 
     companion object {
