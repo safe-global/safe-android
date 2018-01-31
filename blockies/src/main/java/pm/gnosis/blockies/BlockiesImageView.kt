@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
 import android.widget.ImageView
+import java.math.BigInteger
 
 class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageView(context, attributeSet) {
     private val canvasPaint = Paint().apply { style = Paint.Style.FILL }
@@ -16,14 +17,14 @@ class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageVie
 
     private var blockies: Blockies? = null
 
-    fun setAddress(address: String) {
+    fun setAddress(address: BigInteger) {
         blockies = Blockies.fromAddress(address)
         invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        blockies?.let { drawOnCanvas(canvas, it) }
+        blockies?.let { drawBlockies(canvas, it) }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -31,11 +32,12 @@ class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageVie
         dimen = Math.min(measuredWidth, measuredHeight).toFloat()
         offsetX = measuredWidth - dimen
         offsetY = measuredHeight - dimen
+        path.reset()
         path.addCircle(offsetX + (dimen / 2), offsetY + (dimen / 2), dimen / 2, Path.Direction.CCW)
         path.close()
     }
 
-    private fun drawOnCanvas(canvas: Canvas, blockies: Blockies) {
+    private fun drawBlockies(canvas: Canvas, blockies: Blockies) {
         canvas.save()
         canvas.clipPath(path)
         canvasPaint.color = blockies.backgroundColor

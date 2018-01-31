@@ -78,10 +78,8 @@ class AddExistingSafeFragment : BaseFragment() {
                 view.layout_address_item_name.visibility = View.VISIBLE
                 view.layout_address_item_name.text = getString(R.string.this_device)
             }
-            address.asEthereumAddressStringOrNull()?.let {
-                view.layout_address_item_icon.setAddress(it)
-                view.layout_address_item_value.text = it
-            }
+            view.layout_address_item_icon.setAddress(address)
+            address.asEthereumAddressStringOrNull()?.let { view.layout_address_item_value.text = it }
             layout_add_existing_safe_owners.addView(view)
         }
         if (safeInfo.owners.any { it.isValidEthereumAddress() }) {

@@ -10,6 +10,8 @@ dependencies {
     // one bundled in the android.jar
     testImplementation "junit:junit:$versions.junit"
 
+    implementation project(":utils")
+
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 }

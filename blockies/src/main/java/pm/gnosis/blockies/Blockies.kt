@@ -1,6 +1,8 @@
 package pm.gnosis.blockies
 
 import android.graphics.Color
+import pm.gnosis.utils.asEthereumAddressStringOrNull
+import java.math.BigInteger
 
 internal class Blockies(val primaryColor: Int,
                         val backgroundColor: Int,
@@ -9,8 +11,9 @@ internal class Blockies(val primaryColor: Int,
     companion object {
         const val SIZE = 8
 
-        fun fromAddress(address: String): Blockies? {
-            val seed = seedFromAddress(address)
+        fun fromAddress(address: BigInteger): Blockies? {
+            val seed = address.asEthereumAddressStringOrNull()?.let { seedFromAddress(it) }
+                    ?: return null
 
             // colorFromSeed() and dataFromSeed() change the seed
             // thus order is important

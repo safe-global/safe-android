@@ -32,6 +32,7 @@ import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.asEthereumAddressStringOrNull
+import pm.gnosis.utils.isValidEthereumAddress
 import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import java.math.BigDecimal
@@ -91,11 +92,8 @@ class DeployNewSafeFragment : BaseFragment() {
                         val address = it.asEthereumAddressStringOrNull()
                         layout_address_item_name.visible(true)
                         layout_address_item_name.text = getString(R.string.this_device)
-
-                        address?.let {
-                            layout_address_item_icon.setAddress(it)
-                            layout_address_item_value.text = address
-                        }
+                        layout_address_item_icon.setAddress(it)
+                        address?.let { layout_address_item_value.text = address }
                     }
                 }
                 .flatMapObservable {
@@ -201,13 +199,13 @@ class DeployNewSafeFragment : BaseFragment() {
 
     private fun updateOwners(owners: List<BigInteger>) {
         layout_deploy_new_safe_additional_owners_container.removeAllViews()
-        owners.forEach { rawAddress ->
-            rawAddress.asEthereumAddressStringOrNull()?.let { address ->
+        owners.forEach { address ->
+            if (address.isValidEthereumAddress()) {
                 val view = layoutInflater.inflate(R.layout.layout_additional_owner_item, layout_deploy_new_safe_additional_owners_container, false)
-                view.layout_address_item_value.text = address
+                address.asEthereumAddressStringOrNull()?.let { view.layout_address_item_value.text = it }
                 view.layout_address_item_icon.setAddress(address)
                 disposables += view.layout_additional_owner_delete_button.clicks()
-                        .flatMap { viewModel.removeAdditionalOwner(rawAddress) }
+                        .flatMap { viewModel.removeAdditionalOwner(address) }
                         .subscribeForResult(
                                 { snackbar(layout_deploy_new_safe_additional_owners_container, getString(R.string.removed_x, address)) },
                                 { errorSnackbar(layout_deploy_new_safe_additional_owners_container, it) }

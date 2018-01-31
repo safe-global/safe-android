@@ -157,10 +157,8 @@ class SafeSettingsFragment : BaseFragment() {
 
     private fun addOwner(address: BigInteger, index: Int, count: Int, showDelete: Boolean) {
         val ownerLayout = layoutInflater.inflate(R.layout.layout_additional_owner_item, layout_safe_settings_owners_container, false)
-        address.asEthereumAddressStringOrNull()?.let {
-            ownerLayout.layout_address_item_value.text = it
-            ownerLayout.layout_address_item_icon.setAddress(it)
-        }
+        ownerLayout.layout_address_item_icon.setAddress(address)
+        address.asEthereumAddressStringOrNull()?.let { ownerLayout.layout_address_item_value.text = it }
         ownerLayout.layout_additional_owner_delete_button.visible(showDelete)
         ownerLayout.layout_additional_owner_delete_button.setOnClickListener {
             CreateChangeSafeSettingsTransactionProgressDialog.removeOwner(safeAddress, index.toLong(), count).show(fragmentManager, null)
