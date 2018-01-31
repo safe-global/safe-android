@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.transactions.details.assets
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,10 +27,12 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
-import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
-import pm.gnosis.utils.*
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.asEthereumAddressStringOrNull
+import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -75,6 +76,9 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         layout_transaction_details_asset_transfer_max_amount_button.visibility = View.VISIBLE
+        layout_transaction_details_asset_transfer_amount_input_container.setOnClickListener {
+            layout_transaction_details_asset_transfer_amount_input.showKeyboardForView()
+        }
     }
 
     override fun onStart() {

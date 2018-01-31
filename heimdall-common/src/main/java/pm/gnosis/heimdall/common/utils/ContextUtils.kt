@@ -78,16 +78,15 @@ fun Intent.noHistory(): Intent {
     return this
 }
 
-fun Context.showKeyboardForView(view: View) {
-    (getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager)?.
-            showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+fun View.showKeyboardForView() {
+    requestFocus()
+    (context.getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager)?.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
 fun Activity.hideSoftKeyboard() {
     val view = this.currentFocus
     if (view != null) {
-        (getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager)?.
-                hideSoftInputFromWindow(view.windowToken, 0)
+        (getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
 

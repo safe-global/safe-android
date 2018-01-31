@@ -111,7 +111,7 @@ class UnlockActivity : SecuredBaseActivity() {
                     fingerPrintDisposable?.dispose()
                     layout_unlock_fingerprint.visibility = View.GONE
                     layout_unlock_password_input.visibility = View.VISIBLE
-                    showKeyboardForView(layout_unlock_password_input)
+                    layout_unlock_password_input.showKeyboardForView()
                 }, onError = Timber::e)
     }
 
