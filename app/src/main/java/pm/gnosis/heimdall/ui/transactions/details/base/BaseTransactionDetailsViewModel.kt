@@ -6,9 +6,9 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import java.math.BigInteger
 import javax.inject.Inject
 
-class BaseEditableTransactionDetailsViewModel @Inject constructor(
+class BaseTransactionDetailsViewModel @Inject constructor(
         private val safeRepository: GnosisSafeRepository
-) : BaseEditableTransactionDetailsContract() {
+) : BaseTransactionDetailsContract() {
     override fun observeSafe(safeAddress: BigInteger): Observable<Safe> =
             safeRepository.observeSafe(safeAddress).toObservable()
 }

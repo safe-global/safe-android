@@ -3,51 +3,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp">
+    android:orientation="vertical">
 
     <TextView
-        style="@style/Content"
+        style="@style/CapsText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This transaction will transfer" />
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="24dp"
+        android:text="@string/asset_transfer_message" />
 
-    <TextView
+    <pm.gnosis.heimdall.views.CurrencyEditText
         android:id="@+id/layout_review_asset_transfer_amount"
-        style="@style/BoldContent"
-        android:padding="8dp"
+        style="@style/CurrencyInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="24dp"
         tools:text="3450 GNO" />
 
-    <TextView
-        style="@style/Content"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="from your Safe" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/layout_review_asset_transfer_from"
-        style="@style/BoldContent"
-        android:padding="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Gnosis Safe (0x001234)"/>
+        <TextView
+            style="@style/Content"
+            android:layout_width="@dimen/create_tx_label_width"
+            android:layout_height="wrap_content"
+            android:text="@string/from" />
 
-    <TextView
-        style="@style/Content"
+        <TextView
+            android:id="@+id/layout_review_asset_transfer_from"
+            style="@style/BoldContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="2"
+            tools:text="My Safe [0x9bea...eda2]" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="to" />
+        android:orientation="horizontal"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/layout_review_asset_transfer_to"
-        style="@style/BoldContent"
-        android:padding="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="Michel (0xa01234)" />
+        <TextView
+            style="@style/Content"
+            android:layout_width="@dimen/create_tx_label_width"
+            android:layout_height="wrap_content"
+            android:text="@string/to" />
+
+        <TextView
+            android:id="@+id/layout_review_asset_transfer_to"
+            style="@style/BoldContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="2"
+            tools:text="My Safe [0x9bea...eda2]" />
+    </LinearLayout>
 
 
 </LinearLayout>

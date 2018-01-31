@@ -39,8 +39,7 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
         transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.layout_create_add_safe_owner, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.layout_create_add_safe_owner, container, false)
 
     override fun observeTransaction(): Observable<Result<Transaction>> =
             // Setup initial form data
@@ -75,6 +74,7 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
 
     override fun inputEnabled(enabled: Boolean) {
         layout_create_add_safe_owner_address_input.isEnabled = enabled
+        layout_create_add_safe_owner_scan_address_button.isEnabled = enabled
     }
 
     override fun inject(component: ApplicationComponent) {

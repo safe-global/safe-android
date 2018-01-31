@@ -17,7 +17,7 @@ import pm.gnosis.tests.utils.MockUtils
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
-class BaseEditableTransactionDetailsViewModelTest {
+class BaseTransactionDetailsViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -25,11 +25,11 @@ class BaseEditableTransactionDetailsViewModelTest {
     @Mock
     lateinit var safeRepositoryMock: GnosisSafeRepository
 
-    private lateinit var viewModel: BaseEditableTransactionDetailsViewModel
+    private lateinit var viewModel: BaseTransactionDetailsViewModel
 
     @Before
     fun setUp() {
-        viewModel = BaseEditableTransactionDetailsViewModel(safeRepositoryMock)
+        viewModel = BaseTransactionDetailsViewModel(safeRepositoryMock)
     }
 
     @Test

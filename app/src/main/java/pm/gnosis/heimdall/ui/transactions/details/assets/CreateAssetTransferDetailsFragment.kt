@@ -145,6 +145,7 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
         layout_transaction_details_asset_transfer_to_input.isEnabled = enabled
         layout_transaction_details_asset_transfer_amount_input.isEnabled = enabled
         layout_transaction_details_asset_transfer_max_amount_button.isEnabled = enabled
+        layout_transaction_details_asset_transfer_scan_to_button.isEnabled = enabled
     }
 
     override fun inject(component: ApplicationComponent) {

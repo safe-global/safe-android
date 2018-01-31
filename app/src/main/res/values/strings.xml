@@ -284,4 +284,5 @@
     <string name="error_no_token_info">Could not retrieve balance!</string>
     <string name="new_owner">New Owner</string>
     <string name="security">Security</string>
+    <string name="asset_transfer_message">This transaction will send</string>
 </resources>
