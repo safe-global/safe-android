@@ -92,6 +92,7 @@ dependencies {
     implementation project(':app-core')
     implementation project(':accounts:base')
     implementation project(':accounts:kethereum')
+    implementation project(':blockies')
     implementation project(':heimdall-common')
     implementation project(':crypto')
     implementation project(':mnemonic')

@@ -23,7 +23,6 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
@@ -49,8 +48,7 @@ class SafeSettingsFragment : BaseFragment() {
         viewModel.setup(safeAddress)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = layoutInflater?.inflate(R.layout.layout_safe_settings, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = layoutInflater?.inflate(R.layout.layout_safe_settings, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -159,13 +157,8 @@ class SafeSettingsFragment : BaseFragment() {
 
     private fun addOwner(address: BigInteger, index: Int, count: Int, showDelete: Boolean) {
         val ownerLayout = layoutInflater.inflate(R.layout.layout_additional_owner_item, layout_safe_settings_owners_container, false)
-        val addressString = address.asEthereumAddressStringOrNull()
-        ownerLayout.layout_address_item_value.text = addressString
-        addressString?.let {
-            ownerLayout.layout_address_item_icon.setOnClickListener {
-                SimpleAddressShareDialog.create(addressString).show(fragmentManager, null)
-            }
-        }
+        ownerLayout.layout_address_item_icon.setAddress(address)
+        address.asEthereumAddressStringOrNull()?.let { ownerLayout.layout_address_item_value.text = it }
         ownerLayout.layout_additional_owner_delete_button.visible(showDelete)
         ownerLayout.layout_additional_owner_delete_button.setOnClickListener {
             CreateChangeSafeSettingsTransactionProgressDialog.removeOwner(safeAddress, index.toLong(), count).show(fragmentManager, null)
