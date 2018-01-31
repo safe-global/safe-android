@@ -9,6 +9,7 @@ import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.android.synthetic.main.layout_low_balance.*
 import kotlinx.android.synthetic.main.layout_safe_overview.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -20,6 +21,7 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.reporting.ButtonId
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -27,6 +29,7 @@ import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.settings.SettingsActivity
+import pm.gnosis.heimdall.views.ExpandableLinearLayout
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -35,7 +38,7 @@ class SafesOverviewActivity : BaseActivity() {
     override fun screenId() = ScreenId.SAFE_OVERVIEW
 
     @Inject
-    lateinit var viewModel: SafeOverviewViewModel
+    lateinit var viewModel: SafeOverviewContract
     @Inject
     lateinit var adapter: SafeAdapter
     @Inject
@@ -60,6 +63,15 @@ class SafesOverviewActivity : BaseActivity() {
             eventTracker.submit(Event.ButtonClick(ButtonId.SAFE_OVERVIEW_SCAN_TRANSACTION))
             startActivity(AuthenticateActivity.createIntent(this))
         }
+
+        layout_low_balance_dismiss.setOnClickListener {
+            (layout_safe_overview_low_balance as ExpandableLinearLayout).hide()
+            viewModel.dismissHasLowBalance()
+        }
+
+        layout_low_balance_view_account.setOnClickListener {
+            startActivity(AccountActivity.createIntent(this))
+        }
     }
 
     override fun onStart() {
@@ -79,6 +91,16 @@ class SafesOverviewActivity : BaseActivity() {
         disposables += layout_safe_overview_add_safe.clicks()
                 .subscribeBy(onNext = { startActivity(AddSafeActivity.createIntent(this)) },
                         onError = Timber::e)
+
+        disposables += viewModel.shouldShowLowBalanceView()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = ::shouldShowLowBalanceView, onError = Timber::e)
+    }
+
+    private fun shouldShowLowBalanceView(show: Boolean) {
+        (layout_safe_overview_low_balance as ExpandableLinearLayout).run {
+            if (show) show() else hide()
+        }
     }
 
     private fun onSafes(data: Adapter.Data<AbstractSafe>) {

@@ -15,9 +15,12 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
@@ -38,13 +41,23 @@ class SafeOverviewViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
+    private lateinit var accountsRepositoryMock: AccountsRepository
+
+    @Mock
+    private lateinit var ethereumJsonRepositoryMock: EthereumJsonRpcRepository
+
+    @Mock
+    private lateinit var preferencesManagerMock: PreferencesManager
+
+    @Mock
     private lateinit var repositoryMock: GnosisSafeRepository
 
     private lateinit var viewModel: SafeOverviewViewModel
 
     @Before
     fun setup() {
-        viewModel = SafeOverviewViewModel(repositoryMock)
+        viewModel = SafeOverviewViewModel(accountsRepositoryMock, ethereumJsonRepositoryMock,
+                preferencesManagerMock, repositoryMock)
     }
 
     @Test

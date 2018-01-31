@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.Adapter
+import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class SafeOverviewContract : ViewModel() {
@@ -16,4 +17,10 @@ abstract class SafeOverviewContract : ViewModel() {
     abstract fun observeSafes(): Flowable<Result<Adapter.Data<AbstractSafe>>>
     abstract fun loadSafeInfo(address: BigInteger): Single<SafeInfo>
     abstract fun observeDeployedStatus(hash: String): Observable<String>
+    abstract fun shouldShowLowBalanceView(): Single<Boolean>
+    abstract fun dismissHasLowBalance()
+
+    companion object {
+        val LOW_BALANCE_THRESHOLD = BigDecimal("0.001")
+    }
 }

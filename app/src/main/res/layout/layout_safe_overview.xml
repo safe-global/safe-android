@@ -9,10 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <include
+            android:id="@+id/layout_safe_overview_low_balance"
+            layout="@layout/layout_low_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_below="@id/layout_safe_overview_toolbar" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/layout_safe_overview_toolbar">
+            android:layout_below="@+id/layout_safe_overview_low_balance">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/layout_safe_overview_list"
