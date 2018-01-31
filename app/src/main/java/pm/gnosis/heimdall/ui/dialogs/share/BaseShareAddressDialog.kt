@@ -20,14 +20,12 @@ import java.math.BigInteger
 
 abstract class BaseShareAddressDialog : BaseShareQrCodeDialog() {
 
-    protected lateinit var address: BigInteger
+    protected var address: BigInteger? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val address = arguments?.getString(ADDRESS_EXTRA)?.hexAsEthereumAddressOrNull()
-        if (address == null) {
+        address = arguments?.getString(ADDRESS_EXTRA)?.hexAsEthereumAddressOrNull() ?: run {
             dismiss()
-        } else {
-            this.address = address
+            null
         }
         super.onCreate(savedInstanceState)
     }
@@ -35,7 +33,7 @@ abstract class BaseShareAddressDialog : BaseShareQrCodeDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
             inflater.inflate(R.layout.dialog_address_share, container, false)
 
-    override fun data(): String = address.asEthereumAddressString()
+    override fun data(): String? = address?.asEthereumAddressString()
 
     override fun shareTitle(): String = getString(R.string.address)
 
@@ -56,9 +54,9 @@ abstract class BaseShareAddressDialog : BaseShareQrCodeDialog() {
     }
 
     override fun dataSourceObservable(): Observable<Pair<String?, String?>> =
-            addressSourceObservable().map { it.first to it.second.asEthereumAddressStringOrNull() }
+            addressSourceObservable().map { it.first to it.second?.asEthereumAddressStringOrNull() }
 
-    abstract fun addressSourceObservable(): Observable<Pair<String?, BigInteger>>
+    abstract fun addressSourceObservable(): Observable<Pair<String?, BigInteger?>>
 
     companion object {
         const val ADDRESS_EXTRA = "extra.string.address"
