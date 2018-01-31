@@ -34,14 +34,15 @@
                         android:padding="24dp">
 
                         <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:background="@drawable/circle_settings" />
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/circle_settings"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_account" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
                             android:layout_marginStart="16dp"
                             android:text="@string/my_account"
                             android:textSize="16sp" />
@@ -69,14 +70,15 @@
                         android:padding="24dp">
 
                         <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:background="@drawable/circle_settings" />
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/circle_settings"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_addressbook" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
                             android:layout_marginStart="16dp"
                             android:text="@string/address_book"
                             android:textSize="16sp" />
@@ -104,51 +106,18 @@
                         android:padding="24dp">
 
                         <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:background="@drawable/circle_settings" />
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/circle_settings"
+                            android:scaleType="center"
+                            android:tint="@color/gnosis_dark_blue"
+                            app:srcCompat="@drawable/ic_token_white_24dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
                             android:layout_marginStart="16dp"
                             android:text="@string/manage_verified_tokens"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="#d4d4d4" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layout_settings_network"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/selectable_background"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="24dp">
-
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:background="@drawable/circle_settings" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginStart="16dp"
-                            android:text="@string/network"
                             android:textSize="16sp" />
                     </LinearLayout>
 
@@ -174,16 +143,53 @@
                         android:padding="24dp">
 
                         <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:background="@drawable/circle_settings" />
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/circle_settings"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_security" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
                             android:layout_marginStart="16dp"
-                            android:text="Security"
+                            android:text="@string/security"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#d4d4d4" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_settings_network"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selectable_background"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="24dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/circle_settings"
+                            android:scaleType="center"
+                            android:src="@drawable/ic_settings_network" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/network"
                             android:textSize="16sp" />
                     </LinearLayout>
 
