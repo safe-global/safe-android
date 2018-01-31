@@ -14,6 +14,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.include_gas_price_selection.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
+import kotlinx.android.synthetic.main.layout_transaction_confirmation_item.view.*
 import kotlinx.android.synthetic.main.layout_view_transaction.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -203,14 +204,24 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
             val leftConfirmations = Math.max(0, it.requiredConfirmation - availableConfirmations)
             layout_view_transaction_confirmations_hint_text.text = getString(R.string.confirm_transaction_hint, leftConfirmations.toString())
             layout_view_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, availableConfirmations.toString(), it.requiredConfirmation.toString())
-            setViewVisibilities(availableConfirmations >= it.requiredConfirmation)
+            setViewStates(availableConfirmations >= it.requiredConfirmation)
         }
         layout_view_transaction_confirmations_addresses.removeAllViews()
+        // Add current device first
         if (info.status.isOwner) {
-            layout_view_transaction_confirmations_addresses.addView(buildSignerView(getString(R.string.this_device), null))
+            layout_view_transaction_confirmations_addresses.addView(buildSignerView(getString(R.string.this_device), null, false))
         }
-        info.signatures.forEach {
-            layout_view_transaction_confirmations_addresses.addView(buildSignerView(null, it.key))
+        // Add confirmed devices
+        info.status.owners.forEach {
+            if (it != info.status.sender && info.signatures.containsKey(it)) {
+                layout_view_transaction_confirmations_addresses.addView(buildSignerView(null, it, false))
+            }
+        }
+        // Add pending devices
+        info.status.owners.forEach {
+            if (it != info.status.sender && !info.signatures.containsKey(it)) {
+                layout_view_transaction_confirmations_addresses.addView(buildSignerView(null, it, true))
+            }
         }
         if (estimatedFees != null) {
             layout_view_transaction_transaction_fee.text = estimatedFees.displayString(this)
@@ -219,25 +230,21 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
         }
     }
 
-    private fun setViewVisibilities(canSubmit: Boolean, canSign: Boolean = !canSubmit) {
+    private fun setViewStates(canSubmit: Boolean, canSign: Boolean = !canSubmit) {
         // If we can submit show information for submitting
-        layout_view_transaction_submit_button.visible(canSubmit)
-        layout_view_transaction_confirmations_divider.visible(canSubmit)
-        layout_view_transaction_transaction_fee_divider.visible(canSubmit)
-        layout_view_transaction_transaction_fee_label.visible(canSubmit)
-        layout_view_transaction_transaction_fee.visible(canSubmit)
-        include_gas_price_selection_root_container.visible(canSubmit)
+        layout_view_transaction_submit_button.isEnabled = canSubmit
         // If we can sign show information for signing
         layout_view_transaction_add_signature_button.visible(canSign)
     }
 
-    private fun buildSignerView(name: String?, address: BigInteger?) =
-            layoutInflater.inflate(R.layout.layout_address_item, layout_view_transaction_confirmations_addresses, false)
+    private fun buildSignerView(name: String?, address: BigInteger?, pending: Boolean) =
+            layoutInflater.inflate(R.layout.layout_transaction_confirmation_item, layout_view_transaction_confirmations_addresses, false)
                     .apply {
                         layout_address_item_value.text = address?.asEthereumAddressStringOrNull()
                         layout_address_item_value.visible(address != null)
                         layout_address_item_name.text = name
                         layout_address_item_name.visible(name != null)
+                        layout_transaction_confirmation_item_status.setImageResource(if (pending) R.drawable.ic_pending_signature else R.drawable.ic_approved_signature)
                     }
 
     private fun setUnknownEstimate() {
@@ -248,7 +255,7 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
         setUnknownEstimate()
         layout_view_transaction_confirmations_hint_text.text = getString(R.string.confirm_transaction_hint, "-")
         layout_view_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, "-", "-")
-        setViewVisibilities(false, false)
+        setViewStates(false, false)
     }
 
     override fun inject() {

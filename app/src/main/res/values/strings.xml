@@ -67,7 +67,7 @@
     <string name="invalid_mnemonic_supported_languages">Mnemonic contains words which are not supported.</string>
     <string name="invalid_mnemonic_no_words">Mnemonic has no words. Should have at least 12.</string>
     <string name="owners">Owners</string>
-    <string name="required_confirmations">Required confirmations</string>
+    <string name="required_confirmations">Needed device confirmations</string>
     <string name="deposit">Deposit</string>
     <string name="withdraw">Withdraw</string>
     <string name="tab_title_settings">Settings</string>
