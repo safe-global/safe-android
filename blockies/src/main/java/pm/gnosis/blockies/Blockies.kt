@@ -1,6 +1,5 @@
 package pm.gnosis.blockies
 
-import android.graphics.Color
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import java.math.BigInteger
 
@@ -91,7 +90,7 @@ internal class Blockies(val primaryColor: Int,
             val red = (r * 255).toInt()
             val green = (g * 255).toInt()
             val blue = (b * 255).toInt()
-            return Color.rgb(red, green, blue)
+            return 0xFF shl 24 or (red shl 16) or (green shl 8) or blue
         }
     }
 }
