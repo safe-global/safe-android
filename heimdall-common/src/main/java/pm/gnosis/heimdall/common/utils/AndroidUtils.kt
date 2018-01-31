@@ -40,12 +40,10 @@ inline fun Bundle.build(func: Bundle.() -> Unit): Bundle {
     return this
 }
 
-
 fun Fragment.withArgs(args: Bundle): Fragment {
     this.arguments = args
     return this
 }
-
 
 /**
  * Appends the character sequence `text` and spans `what` over the appended part.
