@@ -303,4 +303,7 @@
     <string name="view_transaction_on">View transaction on</string>
     <string name="etherscan_io">Etherscan.io</string>
     <string name="unknown_transaction_url">Unknown transaction url</string>
+    <string name="low_balance_warning">No sufficient balance in your account to deploy a new safe. Send %1s ETH to your account address.</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="view_account">View Account</string>
 </resources>

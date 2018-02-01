@@ -1,8 +1,10 @@
 package pm.gnosis.heimdall.ui.safe
 
+import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.subjects.PublishSubject
@@ -12,9 +14,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.utils.DataResult
@@ -28,17 +32,20 @@ import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import pm.gnosis.models.Wei
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.tests.utils.TestCompletable
-import pm.gnosis.tests.utils.TestListUpdateCallback
+import pm.gnosis.tests.utils.*
+import java.math.BigDecimal
 import java.math.BigInteger
+import java.util.concurrent.TimeUnit
+
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeOverviewViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
+
+    @Mock
+    private lateinit var contextMock: Context
 
     @Mock
     private lateinit var accountsRepositoryMock: AccountsRepository
@@ -54,10 +61,13 @@ class SafeOverviewViewModelTest {
 
     private lateinit var viewModel: SafeOverviewViewModel
 
+    private val testPreferences = TestPreferences()
+
     @Before
     fun setup() {
         viewModel = SafeOverviewViewModel(accountsRepositoryMock, ethereumJsonRepositoryMock,
                 preferencesManagerMock, repositoryMock)
+        given(contextMock.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())).willReturn(testPreferences)
     }
 
     @Test
@@ -217,5 +227,26 @@ class SafeOverviewViewModelTest {
         testObserver.assertError(exception)
     }
 
+    @Test
+    fun shouldShowLowBalanceView() {
+        runOnTestScheduler { testScheduler ->
+            val testObserver = TestObserver<Result<Boolean>>()
+            val account = Account(BigInteger.ZERO)
+            val balance = Wei.ether(LOW_BALANCE_THRESHOLD.toDouble() + 1)
+            given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+            given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+
+            viewModel.shouldShowLowBalanceView().subscribe(testObserver)
+
+            testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
+
+            testObserver.assertValue { it == DataResult(false) }
+        }
+    }
+
     private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<AbstractSafe>>>()
+
+    companion object {
+        val LOW_BALANCE_THRESHOLD = BigDecimal("0.001")
+    }
 }

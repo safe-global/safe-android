@@ -63,6 +63,8 @@ class SafesOverviewActivity : BaseActivity() {
             startActivity(AuthenticateActivity.createIntent(this))
         }
 
+        layout_low_balance_info.text = getString(R.string.low_balance_warning, SafeOverviewContract.LOW_BALANCE_THRESHOLD.toString())
+
         layout_low_balance_dismiss.setOnClickListener {
             layout_low_balance_root.hide()
             viewModel.dismissHasLowBalance()

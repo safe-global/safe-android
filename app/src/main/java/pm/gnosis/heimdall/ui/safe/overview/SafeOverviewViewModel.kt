@@ -41,12 +41,11 @@ class SafeOverviewViewModel @Inject constructor(
 
     override fun observeDeployedStatus(hash: String) = safeRepository.observeDeployStatus(hash)
 
-    override fun shouldShowLowBalanceView(): Observable<Result<Boolean>> = Observable.interval(0, BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
-            .flatMapSingle {
-                hasLowBalance()
-                        .map { it && !preferencesManager.prefs.getBoolean(PreferencesManager.DISMISS_LOW_BALANCE, false) }
-                        .mapToResult()
-            }
+    override fun shouldShowLowBalanceView(): Observable<Result<Boolean>> = hasLowBalance()
+            .map { it && !preferencesManager.prefs.getBoolean(PreferencesManager.DISMISS_LOW_BALANCE, false) }
+            .mapToResult()
+            .repeatWhen { it.delay(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS) }
+            .toObservable()
 
     private fun hasLowBalance(): Single<Boolean> = accountsRepository.loadActiveAccount()
             .flatMap { ethereumJsonRpcRepository.getBalance(it.address).firstOrError() }
