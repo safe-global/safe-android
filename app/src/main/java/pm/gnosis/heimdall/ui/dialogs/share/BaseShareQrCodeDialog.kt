@@ -35,7 +35,7 @@ abstract class BaseShareQrCodeDialog : BaseDialog() {
 
     abstract fun screenId(): ScreenId
 
-    abstract fun data(): String
+    abstract fun data(): String?
 
     abstract fun shareTitle(): String
 
@@ -51,36 +51,38 @@ abstract class BaseShareQrCodeDialog : BaseDialog() {
         super.onStart()
         disposables += dataSourceObservable()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = { (name, data) -> onResult(name, data) })
+                .subscribeBy(onNext = { (name, data) -> onResult(name, data) }, onError = Timber::e)
 
         // When clicking "outside" of the dialog we should dismiss it
         disposables += root().clicks()
-                .subscribeBy(onNext = { dismiss() })
+                .subscribeBy(onNext = { dismiss() }, onError = Timber::e)
 
         // Override the root clicks (we don't want to dismiss the dialog)
         disposables += include_base_share_qr_code_background.clicks()
-                .subscribeBy()
+                .subscribeBy(onError = Timber::e)
 
         disposables += generateQrCodeSubject
                 .flatMapSingle {
-                    qrCodeGenerator.generateQrCode(data())
-                            .mapToResult()
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnSubscribe { onQrCodeLoading(true) }
-                            .doOnEvent { _, _ -> onQrCodeLoading(false) }
+                    data()?.let {
+                        qrCodeGenerator.generateQrCode(it)
+                                .mapToResult()
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .doOnSubscribe { onQrCodeLoading(true) }
+                                .doOnEvent { _, _ -> onQrCodeLoading(false) }
+                    } ?: throw IllegalStateException()
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(onNext = ::onQrCode, onError = ::onQrCodeError)
 
         disposables += include_base_share_qr_code_retry.clicks()
                 .startWith(Unit)
-                .subscribeBy(onNext = { generateQrCodeSubject.onNext(Unit) })
+                .subscribeBy(onNext = { generateQrCodeSubject.onNext(Unit) }, onError = Timber::e)
 
         disposables += include_base_share_qr_code_qr_code.clicks()
-                .subscribeBy(onNext = { copyDataToClipboard() })
+                .subscribeBy(onNext = { copyDataToClipboard() }, onError = Timber::e)
 
         disposables += include_base_share_qr_code_data.clicks()
-                .subscribeBy(onNext = { copyDataToClipboard() })
+                .subscribeBy(onNext = { copyDataToClipboard() }, onError = Timber::e)
 
         eventTracker.submit(Event.ScreenView(screenId()))
     }

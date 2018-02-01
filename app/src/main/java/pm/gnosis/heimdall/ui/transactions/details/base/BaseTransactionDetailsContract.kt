@@ -6,7 +6,7 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import java.math.BigInteger
 
 
-abstract class BaseEditableTransactionDetailsContract : ViewModel() {
+abstract class BaseTransactionDetailsContract : ViewModel() {
 
-    abstract fun loadSafeInfo(safe: BigInteger): Observable<Safe>
+    abstract fun observeSafe(safeAddress: BigInteger): Observable<Safe>
 }

@@ -8,6 +8,8 @@
 
     <dimen name="primary_button_text_size">16sp</dimen>
 
+    <dimen name="secondary_button_text_size">12sp</dimen>
+
     <dimen name="action_circle">40dp</dimen>
 
     <dimen name="divider_width">1dp</dimen>

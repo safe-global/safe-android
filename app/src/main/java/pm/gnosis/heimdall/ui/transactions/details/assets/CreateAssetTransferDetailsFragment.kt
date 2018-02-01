@@ -1,9 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions.details.assets
 
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +25,6 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
-import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.models.Transaction
@@ -64,8 +60,8 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
                 .doOnNextForResult({ info ->
                     info.balance?.let { layout_transaction_details_asset_transfer_amount_input.setText(info.token.convertAmount(it).stringWithNoTrailingZeroes()) }
                             ?: run {
-                        snackbar(layout_transaction_details_asset_transfer_amount_input, getString(R.string.error_no_token_info))
-                    }
+                                snackbar(layout_transaction_details_asset_transfer_amount_input, getString(R.string.error_no_token_info))
+                            }
                 })
     }
 
@@ -75,12 +71,14 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
         safeSubject.onNext(arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull().toOptional())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.layout_transaction_details_asset_transfer, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.layout_transaction_details_asset_transfer, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         layout_transaction_details_asset_transfer_max_amount_button.visibility = View.VISIBLE
+        layout_transaction_details_asset_transfer_amount_input_container.setOnClickListener {
+            layout_transaction_details_asset_transfer_amount_input.showKeyboardForView()
+        }
     }
 
     override fun onStart() {
@@ -92,8 +90,8 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
     }
 
     private fun setupForm(info: AssetTransferDetailsContract.FormData) {
-        layout_transaction_details_asset_transfer_to_input.setText(info.to?.asEthereumAddressStringOrNull())
-        layout_transaction_details_asset_transfer_amount_input.setText(info.tokenAmount?.let { info.token?.convertAmount(it)?.stringWithNoTrailingZeroes() })
+        layout_transaction_details_asset_transfer_to_input.setDefault(info.to?.asEthereumAddressStringOrNull())
+        layout_transaction_details_asset_transfer_amount_input.setDefault(info.tokenAmount?.let { info.token?.convertAmount(it)?.stringWithNoTrailingZeroes() })
         layout_transaction_details_asset_transfer_amount_input.setCurrencySymbol(info.token?.symbol)
         // Load info
         info.token?.let { token ->
@@ -117,6 +115,14 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
                     AssetTransferDetailsContract.InputEvent(to.toString() to false, amount.toString() to false, info.token to false)
                 }
         ).subscribe(inputSubject::onNext, Timber::e)
+
+        layout_transaction_details_asset_transfer_scan_to_button.setOnClickListener {
+            scanQrCode()
+        }
+    }
+
+    override fun onAddressScanned(address: BigInteger) {
+        layout_transaction_details_asset_transfer_to_input.setText(address.asEthereumAddressString())
     }
 
     override fun observeTransaction(): Observable<Result<Transaction>> {
@@ -143,6 +149,7 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
         layout_transaction_details_asset_transfer_to_input.isEnabled = enabled
         layout_transaction_details_asset_transfer_amount_input.isEnabled = enabled
         layout_transaction_details_asset_transfer_max_amount_button.isEnabled = enabled
+        layout_transaction_details_asset_transfer_scan_to_button.isEnabled = enabled
     }
 
     override fun inject(component: ApplicationComponent) {

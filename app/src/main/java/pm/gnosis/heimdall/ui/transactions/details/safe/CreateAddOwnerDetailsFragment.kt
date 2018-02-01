@@ -15,10 +15,12 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.doOnNextForResult
+import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import java.math.BigInteger
 import javax.inject.Inject
@@ -37,16 +39,17 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
         transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.layout_create_add_safe_owner, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.layout_create_add_safe_owner, container, false)
 
     override fun observeTransaction(): Observable<Result<Transaction>> =
             // Setup initial form data
             subViewModel.loadFormData(transaction)
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSuccess { (address) ->
-                        layout_create_add_safe_owner_address_input.setText(address)
-                        layout_create_add_safe_owner_address_input.setSelection(address.length)
+                        layout_create_add_safe_owner_address_input.setDefault(address)
+                        layout_create_add_safe_owner_scan_address_button.setOnClickListener {
+                            scanQrCode()
+                        }
                     }
                     // Setup input
                     .flatMapObservable {
@@ -62,11 +65,16 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
                         }
                     })
 
+    override fun onAddressScanned(address: BigInteger) {
+        layout_create_add_safe_owner_address_input.setText(address.asEthereumAddressString())
+    }
+
     override fun observeSafe(): Observable<Optional<BigInteger>> =
             Observable.just(safe.toOptional())
 
     override fun inputEnabled(enabled: Boolean) {
         layout_create_add_safe_owner_address_input.isEnabled = enabled
+        layout_create_add_safe_owner_scan_address_button.isEnabled = enabled
     }
 
     override fun inject(component: ApplicationComponent) {

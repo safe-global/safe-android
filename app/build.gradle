@@ -113,6 +113,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$versions.android_support"
     implementation "com.android.support:cardview-v7:$versions.android_support"
     implementation "com.android.support:design:$versions.android_support"
+    implementation "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
 
     //Rx
     implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
@@ -131,6 +132,9 @@ dependencies {
     // Firebase
     implementation "com.google.firebase:firebase-core:$versions.firebase"
     implementation "com.google.firebase:firebase-messaging:$versions.firebase"
+
+    // String formatting
+    implementation "com.squareup.phrase:phrase:$versions.phrase"
 
     //Dagger
     implementation "com.google.dagger:dagger:$versions.dagger"

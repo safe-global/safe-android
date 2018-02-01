@@ -16,8 +16,14 @@
     <color name="gnosis_blue">#10b3d4</color>
     <color name="gnosis_blue_shade">#0083a3</color>
     <color name="gnosis_dark_blue">#21435a</color>
+    <color name="gnosis_dark_blue_alpha_20">#1410b3d4</color>
     <color name="gnosis_dark_blue_alpha_60">#9921435a</color>
     <color name="gnosis_dark_blue_alpha_70">#b221435a</color>
+
+    <color name="secondary_button">#dee2e7</color>
+    <color name="secondary_button_disabled">#e8eaec</color>
+    <color name="secondary_button_pressed">#aaadb1</color>
+    <color name="secondary_button_text">#7e21435a</color>
 
     <color name="error">#f64056</color>
     <color name="error_hint">#b3f64056</color>

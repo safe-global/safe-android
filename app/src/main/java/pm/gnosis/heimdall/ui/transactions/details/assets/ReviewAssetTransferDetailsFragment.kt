@@ -9,6 +9,7 @@ import com.gojuno.koptional.toOptional
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_review_asset_transfer.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
@@ -40,8 +41,7 @@ class ReviewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFragment(
         transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.layout_review_asset_transfer, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.layout_review_asset_transfer, container, false)
 
     override fun onStart() {
         super.onStart()
@@ -49,14 +49,21 @@ class ReviewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFragment(
         disposables += subViewModel.loadFormData(transaction, false)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::setupForm, Timber::e)
+
+        safe?.let {
+            disposables += Observable.just(it)
+                    .compose(updateSafeInfoTransformer(layout_review_asset_transfer_from))
+                    .subscribeBy(onError = Timber::e)
+        }
     }
 
     private fun setupForm(info: AssetTransferDetailsContract.FormData) {
-        layout_review_asset_transfer_to.text = info.to?.asEthereumAddressStringOrNull()
+        layout_review_asset_transfer_to_value.text = info.to?.asEthereumAddressStringOrNull()
+        info.to?.let { layout_review_asset_transfer_to_icon.setAddress(it) }
         val amount = info.tokenAmount?.let { info.token?.convertAmount(it)?.stringWithNoTrailingZeroes() }
         val tokenSymbol = info.token?.symbol ?: getString(R.string.tokens)
-        layout_review_asset_transfer_amount.text = "$amount $tokenSymbol"
-        layout_review_asset_transfer_from.text = safe?.asEthereumAddressStringOrNull()
+        layout_review_asset_transfer_amount.setText(amount)
+        layout_review_asset_transfer_amount.setCurrencySymbol(tokenSymbol)
     }
 
     override fun observeTransaction(): Observable<Result<Transaction>> {

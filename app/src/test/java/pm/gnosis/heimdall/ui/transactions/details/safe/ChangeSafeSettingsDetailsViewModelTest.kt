@@ -266,7 +266,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
 
         viewModel.loadAction(TEST_SAFE, TEST_TX).subscribe(testObserver)
 
-        testObserver.assertResult(ChangeSafeSettingsDetailsContract.Action.AddOwner(TEST_OWNER.asEthereumAddressString()))
+        testObserver.assertResult(ChangeSafeSettingsDetailsContract.Action.AddOwner(TEST_OWNER))
 
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(detailsRepoMock).should().loadTransactionDetails(TEST_TX)
@@ -303,11 +303,11 @@ class ChangeSafeSettingsDetailsViewModelTest {
         val details = Single.just(TransactionDetails(null, TransactionType.REMOVE_SAFE_OWNER, data, TEST_TX))
 
         // Build fallback string with index if we don't have safe info
-        testLoadAction(null, details, ChangeSafeSettingsDetailsContract.Action.RemoveOwner(contextMock.getString(R.string.owner_x, 1)))
+        testLoadAction(null, details, ChangeSafeSettingsDetailsContract.Action.RemoveOwner(BigInteger.ZERO))
 
         // Return owner address if we can retrieve safe info
         val info = SafeInfo(TEST_SAFE.asEthereumAddressString(), Wei.ZERO, 1, listOf(TEST_OWNER), true)
-        testLoadAction(info, details, ChangeSafeSettingsDetailsContract.Action.RemoveOwner(TEST_OWNER.asEthereumAddressString()))
+        testLoadAction(info, details, ChangeSafeSettingsDetailsContract.Action.RemoveOwner(TEST_OWNER))
     }
 
     @Test
@@ -317,11 +317,11 @@ class ChangeSafeSettingsDetailsViewModelTest {
         val details = Single.just(TransactionDetails(null, TransactionType.REPLACE_SAFE_OWNER, data, TEST_TX))
 
         // Build fallback string with index if we don't have safe info
-        testLoadAction(null, details, ChangeSafeSettingsDetailsContract.Action.ReplaceOwner(TEST_OWNER_2.asEthereumAddressString(), contextMock.getString(R.string.owner_x, 1)))
+        testLoadAction(null, details, ChangeSafeSettingsDetailsContract.Action.ReplaceOwner(TEST_OWNER_2, BigInteger.ZERO))
 
         // Return owner address if we can retrieve safe info
         val info = SafeInfo(TEST_SAFE.asEthereumAddressString(), Wei.ZERO, 1, listOf(TEST_OWNER), true)
-        testLoadAction(info, details, ChangeSafeSettingsDetailsContract.Action.ReplaceOwner(TEST_OWNER_2.asEthereumAddressString(), TEST_OWNER.asEthereumAddressString()))
+        testLoadAction(info, details, ChangeSafeSettingsDetailsContract.Action.ReplaceOwner(TEST_OWNER_2, TEST_OWNER))
     }
 
     private fun Int.asString(vararg params: Any) =

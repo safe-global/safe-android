@@ -15,8 +15,8 @@ abstract class ChangeSafeSettingsDetailsContract : ViewModel() {
     abstract fun inputTransformer(safeAddress: BigInteger?): ObservableTransformer<CharSequence, Result<Transaction>>
 
     sealed class Action {
-        data class RemoveOwner(val owner: String) : Action()
-        data class AddOwner(val owner: String) : Action()
-        data class ReplaceOwner(val newOwner: String, val previousOwner: String) : Action()
+        data class RemoveOwner(val owner: BigInteger) : Action()
+        data class AddOwner(val owner: BigInteger) : Action()
+        data class ReplaceOwner(val newOwner: BigInteger, val previousOwner: BigInteger) : Action()
     }
 }

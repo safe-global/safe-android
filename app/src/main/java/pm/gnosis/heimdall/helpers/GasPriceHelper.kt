@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function
@@ -19,9 +18,6 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.DateTimeUtils
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.models.Wei
-import pm.gnosis.ticker.data.repositories.TickerRepository
-import pm.gnosis.ticker.data.repositories.models.Currency
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -29,8 +25,7 @@ import javax.inject.Inject
 @ForView
 class EtherGasStationGasPriceHelper @Inject constructor(
         @ApplicationContext private val context: Context,
-        private val gasStationApi: EthGasStationApi,
-        private val tickerRepository: TickerRepository
+        private val gasStationApi: EthGasStationApi
 ) : GasPriceHelper {
     private lateinit var view: View
 
@@ -73,44 +68,6 @@ class EtherGasStationGasPriceHelper @Inject constructor(
             .mapToResult()
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNextForResult({ updateInfo(it) }, { Timber.e(it) })
-            .flatMapSingle { ethGasStationPrices ->
-                when (ethGasStationPrices) {
-                    is DataResult -> loadFiatPrices(ethGasStationPrices.data)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnSuccess { onFiatValues(it.first[0], it.first[1], it.first[2], it.second) }
-                            .doOnError { onFiatValuesError(it) }
-                            .map { ethGasStationPrices }
-                            .onErrorReturn { ErrorResult(it) }
-                    is ErrorResult -> Single.just(ethGasStationPrices)
-                }
-            }
-
-    private fun loadFiatPrices(ethGasStationPrices: EthGasStationPrices): Single<Pair<List<BigDecimal>, Currency>> =
-            Single.just(listOf(
-                    convertToWei(ethGasStationPrices.slowPrice),
-                    convertToWei(ethGasStationPrices.standardPrice),
-                    convertToWei(ethGasStationPrices.fastPrice)))
-                    .flatMap { tickerRepository.convertToFiat(it) }
-
-    private fun onFiatValues(slow: BigDecimal,
-                             normal: BigDecimal,
-                             fast: BigDecimal,
-                             currency: Currency) {
-        val symbol = currency.getFiatSymbol()
-        view.include_gas_price_selection_slow_costs_fiat.visibility = View.VISIBLE
-        view.include_gas_price_selection_normal_costs_fiat.visibility = View.VISIBLE
-        view.include_gas_price_selection_fast_costs_fiat.visibility = View.VISIBLE
-        view.include_gas_price_selection_slow_costs_fiat.text = context.getString(R.string.fiat_approximation, slow.stringWithNoTrailingZeroes(), symbol)
-        view.include_gas_price_selection_normal_costs_fiat.text = context.getString(R.string.fiat_approximation, normal.stringWithNoTrailingZeroes(), symbol)
-        view.include_gas_price_selection_fast_costs_fiat.text = context.getString(R.string.fiat_approximation, fast.stringWithNoTrailingZeroes(), symbol)
-    }
-
-    private fun onFiatValuesError(throwable: Throwable) {
-        Timber.e(throwable)
-        view.include_gas_price_selection_slow_costs_fiat.visibility = View.GONE
-        view.include_gas_price_selection_normal_costs_fiat.visibility = View.GONE
-        view.include_gas_price_selection_fast_costs_fiat.visibility = View.GONE
-    }
 
     private fun updateInfo(prices: EthGasStationPrices) {
         view.include_gas_price_selection_slow_costs.text = convertToWei(prices.slowPrice).displayString(view.context)
@@ -135,25 +92,26 @@ class EtherGasStationGasPriceHelper @Inject constructor(
     private fun updateSelected(view: View, speed: TransactionSpeed) {
         when (speed) {
             TransactionSpeed.SLOW -> {
-                setBackground(view.include_gas_price_selection_slow_container, true)
-                setBackground(view.include_gas_price_selection_normal_container, false)
-                setBackground(view.include_gas_price_selection_fast_container, false)
+                updateState(view.include_gas_price_selection_slow_container, view.include_gas_price_selection_slow_selected, true)
+                updateState(view.include_gas_price_selection_normal_container, view.include_gas_price_selection_normal_selected, false)
+                updateState(view.include_gas_price_selection_fast_container, view.include_gas_price_selection_fast_selected, false)
             }
             TransactionSpeed.NORMAL -> {
-                setBackground(view.include_gas_price_selection_slow_container, false)
-                setBackground(view.include_gas_price_selection_normal_container, true)
-                setBackground(view.include_gas_price_selection_fast_container, false)
+                updateState(view.include_gas_price_selection_slow_container, view.include_gas_price_selection_slow_selected, false)
+                updateState(view.include_gas_price_selection_normal_container, view.include_gas_price_selection_normal_selected, true)
+                updateState(view.include_gas_price_selection_fast_container, view.include_gas_price_selection_fast_selected, false)
             }
             TransactionSpeed.FAST -> {
-                setBackground(view.include_gas_price_selection_slow_container, false)
-                setBackground(view.include_gas_price_selection_normal_container, false)
-                setBackground(view.include_gas_price_selection_fast_container, true)
+                updateState(view.include_gas_price_selection_slow_container, view.include_gas_price_selection_slow_selected, false)
+                updateState(view.include_gas_price_selection_normal_container, view.include_gas_price_selection_normal_selected, false)
+                updateState(view.include_gas_price_selection_fast_container, view.include_gas_price_selection_fast_selected, true)
             }
         }
     }
 
-    private fun setBackground(view: View, selected: Boolean) {
-        view.setBackgroundResource(if (selected) R.drawable.rounded_border_background else R.drawable.selectable_background)
+    private fun updateState(view: View, checkmarkView: View, selected: Boolean) {
+        view.isSelected = selected
+        checkmarkView.visible(selected)
     }
 
     private fun convertToWei(price: Float) =

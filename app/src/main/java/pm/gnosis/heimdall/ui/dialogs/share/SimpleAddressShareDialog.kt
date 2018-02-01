@@ -14,7 +14,7 @@ class SimpleAddressShareDialog: BaseShareAddressDialog() {
 
     override fun screenId() = ScreenId.DIALOG_SHARE_ADDRESS
 
-    override fun addressSourceObservable(): Observable<Pair<String?, BigInteger>> =
+    override fun addressSourceObservable(): Observable<Pair<String?, BigInteger?>> =
         Observable.just(context?.getString(R.string.share_address) to address)
 
     override fun inject() {

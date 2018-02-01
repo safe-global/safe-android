@@ -55,8 +55,8 @@ import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsViewModel
-import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsViewModel
+import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsViewModel
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsViewModel
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract
@@ -97,8 +97,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(BaseEditableTransactionDetailsContract::class)
-    abstract fun bindsBaseTransactionDetailsContract(viewModel: BaseEditableTransactionDetailsViewModel): ViewModel
+    @ViewModelKey(BaseTransactionDetailsContract::class)
+    abstract fun bindsBaseTransactionDetailsContract(viewModel: BaseTransactionDetailsViewModel): ViewModel
 
     @Binds
     @IntoMap

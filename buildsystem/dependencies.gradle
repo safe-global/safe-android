@@ -1,7 +1,7 @@
 ext {
     versions = [
             // Plug-Ins
-            android_tools          : '3.0.1',
+            android_tools          : '3.1.0-alpha07',
             fabric                 : '1.+',
             google_services        : '3.1.0',
             kotlin                 : '1.2.21',
@@ -11,6 +11,7 @@ ext {
             android_support        : '27.0.2',
             architecture_components: '1.0.0',
             bivrost                : 'v0.6.1',
+            constraint_layout      : '1.0.2',
             crashlytics            : '2.8.0',
             dagger                 : '2.12',
             firebase               : '11.8.0',
@@ -23,6 +24,7 @@ ext {
             multidex               : '1.0.2',
             okhttp                 : '3.9.0',
             okio                   : '1.13.0',
+            phrase                 : '1.1.0',
             retrofit               : '2.3.0',
             rxandroid              : '2.0.1',
             rxbinding              : '2.0.0',
