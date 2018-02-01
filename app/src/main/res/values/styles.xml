@@ -13,6 +13,10 @@
         <item name="colorControlNormal">@color/toolbar_action</item>
     </style>
 
+    <style name="CardTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/card_window_background</item>
+    </style>
+
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>

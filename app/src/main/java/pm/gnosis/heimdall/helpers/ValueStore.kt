@@ -28,7 +28,7 @@ abstract class ValueStore<T> : ObservableStore<T>, ObservableOnSubscribe<T>, Sin
         e.onSuccess(dataSet())
     }
 
-    abstract protected fun dataSet(): T
+    protected abstract fun dataSet(): T
 
     override fun load(): Single<T> = Single.create(this)
 

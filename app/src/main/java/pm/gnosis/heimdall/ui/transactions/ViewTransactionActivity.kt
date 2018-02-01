@@ -36,11 +36,13 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
 
     abstract fun toolbar(): Toolbar
 
+    open fun navIcon() = R.drawable.ic_close_24dp
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout())
 
-        setupToolbar(toolbar(), R.drawable.ic_close_24dp)
+        setupToolbar(toolbar(), navIcon())
     }
 
     override fun loadTransactionDetails() {

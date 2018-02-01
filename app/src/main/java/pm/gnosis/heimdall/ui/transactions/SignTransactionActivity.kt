@@ -28,7 +28,7 @@ import java.math.BigInteger
 
 class SignTransactionActivity : ViewTransactionActivity() {
 
-    override fun screenId() = ScreenId.VIEW_TRANSACTION
+    override fun screenId() = ScreenId.SIGN_TRANSACTION
 
     private var cachedTransactionData: CachedTransactionData? = null
     private var credentialsConfirmed: Boolean = false

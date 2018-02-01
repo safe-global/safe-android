@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_receipt_transaction_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.transactions.ReceiptTransactionActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/layout_receipt_transaction_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_receipt_transaction_toolbar"
+            style="@style/Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            app:navigationIcon="@drawable/ic_arrow_back_24dp"
+            app:title="@string/transaction_details" />
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/layout_receipt_transaction_progress_bar"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:indeterminate="true"
+            android:visibility="visible"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_useIntrinsicPadding="false"
+            tools:visibility="visible" />
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/transaction_receipt_icon_dimen"
+                    android:layout_height="@dimen/transaction_receipt_icon_dimen"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/transaction_icon_background"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_transaction_send" />
+
+                <TextView
+                    android:id="@+id/layout_receipt_transaction_title"
+                    style="@style/DarkContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="Token Transfer"
+                    android:textSize="18sp" />
+
+                <pm.gnosis.heimdall.views.ReceiptDivider
+                    android:layout_marginTop="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <include layout="@layout/merge_transaction_details_container" />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </ScrollView>
+</android.support.design.widget.CoordinatorLayout>

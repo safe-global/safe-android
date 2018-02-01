@@ -289,4 +289,5 @@
     <string name="asset_transfer_message">This transaction will send</string>
     <string name="simple_transfer_message">This transaction will</string>
     <string name="all_signatures_confirmed">All signatures confirmed!</string>
+    <string name="transaction_details">Transaction Details</string>
 </resources>
