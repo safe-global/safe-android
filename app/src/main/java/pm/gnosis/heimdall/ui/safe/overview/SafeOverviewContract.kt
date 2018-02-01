@@ -17,7 +17,7 @@ abstract class SafeOverviewContract : ViewModel() {
     abstract fun observeSafes(): Flowable<Result<Adapter.Data<AbstractSafe>>>
     abstract fun loadSafeInfo(address: BigInteger): Single<SafeInfo>
     abstract fun observeDeployedStatus(hash: String): Observable<String>
-    abstract fun shouldShowLowBalanceView(): Single<Boolean>
+    abstract fun shouldShowLowBalanceView(): Observable<Result<Boolean>>
     abstract fun dismissHasLowBalance()
 
     companion object {

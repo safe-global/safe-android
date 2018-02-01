@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_safe_overview_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,16 +11,17 @@
         android:layout_height="match_parent">
 
         <include
-            android:id="@+id/layout_safe_overview_low_balance"
             layout="@layout/layout_low_balance"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_below="@id/layout_safe_overview_toolbar" />
 
+        <!-- layout_low_balance_root is the root of the included layout -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/layout_safe_overview_low_balance">
+            android:layout_below="@+id/layout_low_balance_root"
+            tools:ignore="UnknownIdInLayout">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/layout_safe_overview_list"

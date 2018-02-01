@@ -29,7 +29,6 @@ import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.settings.SettingsActivity
-import pm.gnosis.heimdall.views.ExpandableLinearLayout
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -65,7 +64,7 @@ class SafesOverviewActivity : BaseActivity() {
         }
 
         layout_low_balance_dismiss.setOnClickListener {
-            (layout_safe_overview_low_balance as ExpandableLinearLayout).hide()
+            layout_low_balance_root.hide()
             viewModel.dismissHasLowBalance()
         }
 
@@ -94,14 +93,10 @@ class SafesOverviewActivity : BaseActivity() {
 
         disposables += viewModel.shouldShowLowBalanceView()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = ::shouldShowLowBalanceView, onError = Timber::e)
+                .subscribeForResult(onNext = ::shouldShowLowBalanceView, onError = Timber::e)
     }
 
-    private fun shouldShowLowBalanceView(show: Boolean) {
-        (layout_safe_overview_low_balance as ExpandableLinearLayout).run {
-            if (show) show() else hide()
-        }
-    }
+    private fun shouldShowLowBalanceView(show: Boolean) = layout_low_balance_root.run { if (show) show() else hide() }
 
     private fun onSafes(data: Adapter.Data<AbstractSafe>) {
         adapter.updateData(data)

@@ -30,12 +30,11 @@
 
         <TextView
             android:id="@+id/layout_pending_safe_item_name"
-            style="@style/Content"
+            style="@style/DarkContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/gnosis_dark_blue"
             android:textSize="15sp"
             tools:text="My Safe" />
 

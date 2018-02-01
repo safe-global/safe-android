@@ -35,7 +35,6 @@
             tools:visibility="visible" />
     </RelativeLayout>
 
-
     <LinearLayout
         android:id="@+id/layout_safe_item_name_container"
         android:layout_width="wrap_content"
@@ -46,12 +45,11 @@
 
         <TextView
             android:id="@+id/layout_safe_item_name"
-            style="@style/Title"
+            style="@style/DarkContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textSize="15sp"
             tools:text="My Safe" />
 
         <TextView
