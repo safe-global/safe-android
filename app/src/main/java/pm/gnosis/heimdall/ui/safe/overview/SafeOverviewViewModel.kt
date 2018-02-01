@@ -49,7 +49,7 @@ class SafeOverviewViewModel @Inject constructor(
 
     private fun hasLowBalance(): Single<Boolean> = accountsRepository.loadActiveAccount()
             .flatMap { ethereumJsonRpcRepository.getBalance(it.address).firstOrError() }
-            .map { it.toEther() < LOW_BALANCE_THRESHOLD }
+            .map { it < LOW_BALANCE_THRESHOLD }
             // As soon as we get a higher balance response we reset the flag
             .doOnSuccess { hasLowBalance -> if (!hasLowBalance) setDismissLowBalance(false) }
 

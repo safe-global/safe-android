@@ -29,6 +29,7 @@ import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.settings.SettingsActivity
+import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -63,7 +64,7 @@ class SafesOverviewActivity : BaseActivity() {
             startActivity(AuthenticateActivity.createIntent(this))
         }
 
-        layout_low_balance_info.text = getString(R.string.low_balance_warning, SafeOverviewContract.LOW_BALANCE_THRESHOLD.toString())
+        layout_low_balance_info.text = getString(R.string.low_balance_warning, SafeOverviewContract.LOW_BALANCE_THRESHOLD.toEther().stringWithNoTrailingZeroes())
 
         layout_low_balance_dismiss.setOnClickListener {
             layout_low_balance_root.hide()

@@ -8,6 +8,8 @@ data class Wei(val value: BigInteger) {
 
     fun toLong() = value.toLong()
 
+    operator fun compareTo(other: Wei) = this.value.compareTo(other.value)
+
     companion object {
         private val WEI_TO_ETHER_MULTIPLIER = BigDecimal(10).pow(18)
         val ZERO = Wei(BigInteger.ZERO)
