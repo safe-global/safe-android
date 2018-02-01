@@ -22,7 +22,7 @@ abstract class SafeTransactionsContract: ViewModel() {
 
     abstract fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus>
 
-    abstract fun transactionSelected(it: Transaction): Single<Intent>
+    abstract fun transactionSelected(id: String): Single<Intent>
 
     data class TransferInfo(val amount: String, val symbol: String?)
 

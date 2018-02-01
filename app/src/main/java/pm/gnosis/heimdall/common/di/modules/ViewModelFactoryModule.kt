@@ -51,6 +51,8 @@ import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesViewModel
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoViewModel
+import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionContract
+import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract
@@ -134,6 +136,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(PasswordSetupContract::class)
     abstract fun bindsPasswordSetupContract(viewModel: PasswordSetupViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ReceiptTransactionContract::class)
+    abstract fun bindsReceiptTransactionContract(viewModel: ReceiptTransactionViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -63,7 +63,7 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
         return true
     }
 
-    override fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
+    private fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
             when (type) {
                 TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
                     ReviewAssetTransferDetailsFragment.createInstance(transaction, safeAddress)

@@ -103,8 +103,6 @@ abstract class BaseTransactionActivity : BaseActivity() {
                 }
             }
 
-    abstract fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment
-
     abstract fun inject()
 
     private class NoSafeSelectedException : Exception()

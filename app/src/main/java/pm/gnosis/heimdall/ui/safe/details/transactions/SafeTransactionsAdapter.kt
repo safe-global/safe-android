@@ -31,7 +31,7 @@ class SafeTransactionsAdapter @Inject constructor(
         @ViewContext private val context: Context,
         private val viewModel: SafeTransactionsContract
 ) : LifecycleAdapter<String, SafeTransactionsAdapter.ViewHolder>(context) {
-    val transactionSelectionSubject: PublishSubject<Transaction> = PublishSubject.create()
+    val transactionSelectionSubject: PublishSubject<String> = PublishSubject.create()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.layout_safe_transactions_item, parent, false)
@@ -91,7 +91,7 @@ class SafeTransactionsAdapter @Inject constructor(
         private fun updateDetails(details: TransactionDetails, transferInfo: SafeTransactionsContract.TransferInfo?) {
             cachedDetails = details
             itemView.setOnClickListener {
-                transactionSelectionSubject.onNext(details.transaction)
+                currentData?.let { transactionSelectionSubject.onNext(it) }
             }
             itemView.layout_safe_transactions_item_subject.apply {
                 text = details.subject
