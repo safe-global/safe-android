@@ -72,14 +72,14 @@ class AssetTransferDetailsViewModelTest {
     @Test
     fun loadFormDataLoadingDetailsError() {
         val transaction = Transaction(BigInteger.ZERO)
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
                 .willReturn(Single.error(IllegalStateException()))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData())
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
@@ -87,14 +87,14 @@ class AssetTransferDetailsViewModelTest {
     @Test
     fun loadFormDataLoadingEtherTransfer() {
         val transaction = Transaction(BigInteger.ZERO, value = Wei(BigInteger.TEN))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.ETHER_TRANSFER, null, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(None))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(BigInteger.ZERO, BigInteger.TEN, ETHER_TOKEN))
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
@@ -102,14 +102,14 @@ class AssetTransferDetailsViewModelTest {
     @Test
     fun loadFormDataLoadingGeneric() {
         val transaction = Transaction(BigInteger.ZERO)
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.GENERIC, null, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(None))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(BigInteger.ZERO, null, ETHER_TOKEN))
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
@@ -117,14 +117,14 @@ class AssetTransferDetailsViewModelTest {
     @Test
     fun loadFormDataLoadingTokenTransferNoData() {
         val transaction = Transaction(BigInteger.ZERO)
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, null, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(None))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(BigInteger.ZERO, null, ETHER_TOKEN))
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
@@ -134,8 +134,8 @@ class AssetTransferDetailsViewModelTest {
         val token = ERC20Token(BigInteger.ZERO, decimals = 42)
         val transaction = Transaction(token.address)
         val transferData = TokenTransferData(BigInteger.ONE, BigInteger.TEN)
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, transferData, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
                 .willReturn(Single.just(token))
 
@@ -143,7 +143,7 @@ class AssetTransferDetailsViewModelTest {
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(BigInteger.ONE, BigInteger.TEN, token))
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -154,8 +154,8 @@ class AssetTransferDetailsViewModelTest {
         val token = ERC20Token(BigInteger.ZERO, decimals = 42)
         val transaction = Transaction(token.address)
         val transferData = TokenTransferData(BigInteger.ONE, BigInteger.TEN)
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, transferData, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
                 .willReturn(Single.error(NoSuchElementException()))
 
@@ -163,7 +163,7 @@ class AssetTransferDetailsViewModelTest {
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(BigInteger.ONE, BigInteger.TEN, null))
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -174,8 +174,8 @@ class AssetTransferDetailsViewModelTest {
         val token = ERC20Token(BigInteger.ZERO, decimals = 42)
         val transaction = Transaction(token.address)
         val transferData = TokenTransferData(BigInteger.ZERO, BigInteger.ZERO)
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, transferData, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
                 .willReturn(Single.error(NoSuchElementException()))
 
@@ -183,7 +183,7 @@ class AssetTransferDetailsViewModelTest {
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
         testObserver.assertResult(FormData(BigInteger.ZERO, BigInteger.ZERO, null))
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -194,8 +194,8 @@ class AssetTransferDetailsViewModelTest {
         val token = ERC20Token(BigInteger.ZERO, decimals = 42)
         val transaction = Transaction(token.address)
         val transferData = TokenTransferData(BigInteger.ZERO, BigInteger.ZERO)
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, transferData, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
                 .willReturn(Single.error(NoSuchElementException()))
 
@@ -203,7 +203,7 @@ class AssetTransferDetailsViewModelTest {
         viewModel.loadFormData(transaction, true).subscribe(testObserver)
 
         testObserver.assertResult(FormData(null, null, null))
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -382,67 +382,65 @@ class AssetTransferDetailsViewModelTest {
 
         // No asset transaction passed
         var transaction = Transaction(BigInteger.valueOf(42))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.GENERIC, null, transaction)))
-        testPublisher.onNext(transaction.toOptional())
-        testObserver.assertNoErrors().assertValueCount(testNo)
-                .assertValueAt(testNo - 1, { it is ErrorResult && it.error is IllegalStateException })
-        testNo++
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(None))
+        testTransactionTransformer(testPublisher, testObserver,
+                transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
+        then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Ether transaction action passed with no value
         transaction = Transaction(BigInteger.valueOf(42))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.ETHER_TRANSFER, null, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(None))
         testTransactionTransformer(testPublisher, testObserver,
                 transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Ether transaction action passed with zero value
         transaction = Transaction(BigInteger.valueOf(42), value = Wei.ZERO)
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.ETHER_TRANSFER, null, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(None))
         testTransactionTransformer(testPublisher, testObserver,
                 transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Ether transaction action passed
         transaction = Transaction(BigInteger.valueOf(42), value = Wei(BigInteger.TEN))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.ETHER_TRANSFER, null, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(None))
         testTransactionTransformer(testPublisher, testObserver,
                 transaction, DataResult(transaction), testNo++)
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Token transaction action passed no data
         transaction = Transaction(BigInteger.valueOf(23))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, null, transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(None))
         testTransactionTransformer(testPublisher, testObserver,
                 transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Token transaction action passed zero tokens
         transaction = Transaction(BigInteger.valueOf(23))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, TokenTransferData(BigInteger.valueOf(42), BigInteger.ZERO), transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(TokenTransferData(BigInteger.valueOf(42), BigInteger.ZERO).toOptional()))
         testTransactionTransformer(testPublisher, testObserver,
                 transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Ether transaction action passed
         transaction = Transaction(BigInteger.valueOf(42))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any()))
-                .willReturn(Single.just(TransactionDetails(null, TransactionType.TOKEN_TRANSFER, TokenTransferData(BigInteger.valueOf(42), BigInteger.TEN), transaction)))
+        given(detailsRepository.loadTransactionData(MockUtils.any()))
+                .willReturn(Single.just(TokenTransferData(BigInteger.valueOf(42), BigInteger.TEN).toOptional()))
         testTransactionTransformer(testPublisher, testObserver,
                 transaction, DataResult(transaction), testNo++)
-        then(detailsRepository).should().loadTransactionDetails(transaction)
+        then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
     }
 

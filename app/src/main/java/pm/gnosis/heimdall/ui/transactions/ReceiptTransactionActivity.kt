@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.transactions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
 import android.view.View
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -25,7 +24,6 @@ import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransacti
 import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeDeviceSettingsDetailsFragment
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -71,11 +69,10 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
     private fun loadTransactionType(intent: Intent?): Boolean {
         intent ?: return false
         val txId = intent.getStringExtra(EXTRA_TX_ID) ?: return false
-        val safe = intent.getStringExtra(EXTRA_SAFE)?.hexAsEthereumAddressOrNull() ?: return false
-        lifetimeDisposables += viewModel.loadTransactionDetails(safe, txId)
+        lifetimeDisposables += viewModel.loadTransactionDetails(txId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    displayTransactionDetails(createDetailsFragment(safe.asEthereumAddressString(), it.type, it.transaction))
+                    displayTransactionDetails(createDetailsFragment(it.safe.asEthereumAddressString(), it.type, it.transaction))
                 }, this::handleError)
         return true
     }
@@ -99,11 +96,9 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
     companion object {
 
         private const val EXTRA_TX_ID = "extra.string.tx_id"
-        private const val EXTRA_SAFE = "extra.string.safe"
 
-        fun createIntent(context: Context, safe: BigInteger, transactionId: String) =
+        fun createIntent(context: Context, transactionId: String) =
                 Intent(context, ReceiptTransactionActivity::class.java).apply {
-                    putExtra(EXTRA_SAFE, safe.asEthereumAddressString())
                     putExtra(EXTRA_TX_ID, transactionId)
                 }
     }

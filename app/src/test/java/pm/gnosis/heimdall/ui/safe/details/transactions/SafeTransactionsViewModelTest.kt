@@ -13,8 +13,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
+import org.mockito.ArgumentMatchers
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
@@ -132,7 +132,7 @@ class SafeTransactionsViewModelTest {
     fun transactionSelected() {
         val observer = TestObserver<Intent>()
         // Should never return an error even if transaction is invalid
-        viewModel.transactionSelected(Transaction(BigInteger.valueOf(2).pow(160)))
+        viewModel.transactionSelected("")
                 .subscribe(observer)
 
         observer.assertNoErrors().assertComplete().assertValueCount(1)
@@ -155,7 +155,7 @@ class SafeTransactionsViewModelTest {
         val testId = "some_transaction_id"
 
         val error = IllegalAccessException()
-        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(detailsRepository.loadTransactionDetails(anyString()))
                 .willReturn(Single.error(error))
 
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
@@ -166,7 +166,7 @@ class SafeTransactionsViewModelTest {
 
         observer.assertFailure(IllegalAccessException::class.java)
 
-        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).should().loadTransactionDetails(testId)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
@@ -175,8 +175,8 @@ class SafeTransactionsViewModelTest {
     fun loadTransactionDetailsNoTransfer() {
         val testId = "some_transaction_id"
 
-        val details = TransactionDetails(testId, TransactionType.GENERIC, null, Transaction(BigInteger.TEN))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        val details = TransactionDetails(testId, TransactionType.GENERIC, null, Transaction(BigInteger.TEN), TEST_SAFE, TEST_TIME)
+        given(detailsRepository.loadTransactionDetails(anyString()))
                 .willReturn(Single.just(details))
 
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
@@ -187,7 +187,7 @@ class SafeTransactionsViewModelTest {
 
         observer.assertResult(details to null)
 
-        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).should().loadTransactionDetails(testId)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
@@ -196,8 +196,8 @@ class SafeTransactionsViewModelTest {
     fun loadTransactionDetailsNoTokenTransferData() {
         val testId = "some_transaction_id"
 
-        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, null, Transaction(BigInteger.TEN))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, null, Transaction(BigInteger.TEN), TEST_SAFE, TEST_TIME)
+        given(detailsRepository.loadTransactionDetails(anyString()))
                 .willReturn(Single.just(details))
 
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
@@ -208,7 +208,7 @@ class SafeTransactionsViewModelTest {
 
         observer.assertResult(details to null)
 
-        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).should().loadTransactionDetails(testId)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
@@ -219,8 +219,8 @@ class SafeTransactionsViewModelTest {
         val tokenAddress = BigInteger.TEN
         val tokenTransferData = TokenTransferData(BigInteger.ONE, BigInteger.valueOf(42))
 
-        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress), TEST_SAFE, TEST_TIME)
+        given(detailsRepository.loadTransactionDetails(anyString()))
                 .willReturn(Single.just(details))
         given(tokenRepository.observeToken(MockUtils.any())).willReturn(Flowable.empty())
 
@@ -232,7 +232,7 @@ class SafeTransactionsViewModelTest {
 
         observer.assertResult(details to null)
 
-        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).should().loadTransactionDetails(testId)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).should().observeToken(tokenAddress)
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -244,8 +244,8 @@ class SafeTransactionsViewModelTest {
         val tokenAddress = BigInteger.TEN
         val tokenTransferData = TokenTransferData(BigInteger.ONE, BigInteger.valueOf(42))
 
-        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress), TEST_SAFE, TEST_TIME)
+        given(detailsRepository.loadTransactionDetails(anyString()))
                 .willReturn(Single.just(details))
         given(tokenRepository.observeToken(MockUtils.any())).willReturn(Flowable.just(ERC20Token(tokenAddress, decimals = 0, symbol = "GNO")))
 
@@ -257,7 +257,7 @@ class SafeTransactionsViewModelTest {
 
         observer.assertResult(details to SafeTransactionsContract.TransferInfo("42", "GNO"))
 
-        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).should().loadTransactionDetails(testId)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).should().observeToken(tokenAddress)
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -268,8 +268,8 @@ class SafeTransactionsViewModelTest {
         val testId = "some_transaction_id"
 
         val amount = BigInteger.valueOf(42) * BigInteger.TEN.pow(18)
-        val details = TransactionDetails(testId, TransactionType.ETHER_TRANSFER, null, Transaction(BigInteger.ONE, value = Wei(amount)))
-        given(detailsRepository.loadTransactionDetails(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        val details = TransactionDetails(testId, TransactionType.ETHER_TRANSFER, null, Transaction(BigInteger.ONE, value = Wei(amount)), TEST_SAFE, TEST_TIME)
+        given(detailsRepository.loadTransactionDetails(anyString()))
                 .willReturn(Single.just(details))
 
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
@@ -280,7 +280,7 @@ class SafeTransactionsViewModelTest {
 
         observer.assertResult(details to SafeTransactionsContract.TransferInfo("42", R.string.currency_eth.toString()))
 
-        then(detailsRepository).should().loadTransactionDetails(testId, testAddress, null)
+        then(detailsRepository).should().loadTransactionDetails(testId)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
@@ -321,6 +321,11 @@ class SafeTransactionsViewModelTest {
             list += "$i"
         }
         return list
+    }
+
+    companion object {
+        const val TEST_TIME = 123456987L
+        val TEST_SAFE = BigInteger.TEN
     }
 
 }

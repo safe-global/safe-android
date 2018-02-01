@@ -12,8 +12,8 @@ class ReceiptTransactionViewModel @Inject constructor(
         private val safeTransactionsRepository: TransactionRepository,
         private val transactionDetailsRepository: TransactionDetailsRepository
 ) : ReceiptTransactionContract() {
-    override fun loadTransactionDetails(safe: BigInteger, id: String): Single<TransactionDetails> =
-            transactionDetailsRepository.loadTransactionDetails(id, safe, null)
+    override fun loadTransactionDetails(id: String): Single<TransactionDetails> =
+            transactionDetailsRepository.loadTransactionDetails(id)
 
     override fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus> =
             safeTransactionsRepository.observePublishStatus(id)

@@ -48,7 +48,7 @@ class SafeTransactionsViewModel @Inject constructor(
 
     override fun loadTransactionDetails(id: String): Single<Pair<TransactionDetails, TransferInfo?>> =
             address?.let {
-                transactionDetailsRepository.loadTransactionDetails(id, it, null)
+                transactionDetailsRepository.loadTransactionDetails(id)
                         .flatMap { details ->
                             when (details.type) {
                                 TransactionType.ETHER_TRANSFER -> {
@@ -72,7 +72,7 @@ class SafeTransactionsViewModel @Inject constructor(
             safeTransactionsRepository.observePublishStatus(id)
 
     override fun transactionSelected(id: String): Single<Intent> =
-            address?.let { Single.just(ReceiptTransactionActivity.createIntent(context, it, id)) } ?: Single.error(IllegalStateException())
+            Single.just(ReceiptTransactionActivity.createIntent(context, id))
 
     private fun loadTokenValue(token: BigInteger, value: BigInteger) =
             tokenRepository.observeToken(token)

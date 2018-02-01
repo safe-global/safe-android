@@ -8,6 +8,6 @@ import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import java.math.BigInteger
 
 abstract class ReceiptTransactionContract: ViewModel() {
-    abstract fun loadTransactionDetails(safe: BigInteger, id: String): Single<TransactionDetails>
+    abstract fun loadTransactionDetails(id: String): Single<TransactionDetails>
     abstract fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus>
 }

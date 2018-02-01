@@ -34,15 +34,16 @@ class AssetTransferDetailsViewModel @Inject constructor(
 
     override fun loadFormData(transaction: Transaction?, clearDefaults: Boolean): Single<FormData> =
             transaction?.let {
-                detailsRepository.loadTransactionDetails(transaction)
-                        .flatMap { details ->
-                            when (details.data) {
+                detailsRepository.loadTransactionData(transaction)
+                        .flatMap {
+                            val data = it.toNullable()
+                            when (data) {
                                 is TokenTransferData -> {
                                     // If recipient is 0x0 we set the value to null to force user input
-                                    val recipient = if (clearDefaults && details.data.recipient == BigInteger.ZERO) null else details.data.recipient
+                                    val recipient = if (clearDefaults && data.recipient == BigInteger.ZERO) null else data.recipient
                                     // If the token count is 0x0 we set it to null to force user input
-                                    val tokens = if (clearDefaults && details.data.tokens == BigInteger.ZERO) null else details.data.tokens
-                                    tokenRepository.loadToken(details.transaction.address)
+                                    val tokens = if (clearDefaults && data.tokens == BigInteger.ZERO) null else data.tokens
+                                    tokenRepository.loadToken(transaction.address)
                                             .map {
                                                 FormData(recipient, tokens, it)
                                             }
@@ -52,8 +53,8 @@ class AssetTransferDetailsViewModel @Inject constructor(
                                 }
                                 else -> {
                                     // If recipient is 0x0 we set the value to null to force user input
-                                    val recipient = if (clearDefaults && details.transaction.address == BigInteger.ZERO) null else details.transaction.address
-                                    Single.just(FormData(recipient, details.transaction.value?.value, ETHER_TOKEN))
+                                    val recipient = if (clearDefaults && transaction.address == BigInteger.ZERO) null else transaction.address
+                                    Single.just(FormData(recipient, transaction.value?.value, ETHER_TOKEN))
                                 }
                             }
                         }
@@ -116,30 +117,32 @@ class AssetTransferDetailsViewModel @Inject constructor(
                 it.flatMapSingle {
                     val transaction = it.toNullable()
                     transaction?.let {
-                        detailsRepository.loadTransactionDetails(it)
+                        detailsRepository.loadTransactionData(transaction)
+                                .map { transaction to it.toNullable() }
                                 .map(::checkDetails)
                                 .mapToResult()
                     } ?: Single.just(ErrorResult(IllegalStateException()))
                 }
             }
 
-    private fun checkDetails(details: TransactionDetails): Transaction {
-        return when (details.type) {
-            TransactionType.TOKEN_TRANSFER -> {
-                val data = details.data as? TokenTransferData
-                if (data == null || data.tokens == BigInteger.ZERO) {
+    private fun checkDetails(data: Pair<Transaction, TransactionTypeData?>): Transaction {
+        val (transaction, typeData) = data
+        return when (typeData) {
+            is TokenTransferData -> {
+                if (typeData.tokens == BigInteger.ZERO) {
                     throw TransactionInputException(context, TransactionInputException.AMOUNT_FIELD, true)
                 }
-                details.transaction
+                transaction
             }
-            TransactionType.ETHER_TRANSFER -> {
-                if (details.transaction.value == null || details.transaction.value?.value == BigInteger.ZERO) {
+            else -> {
+                if (!transaction.data.isNullOrBlank()) {
                     throw TransactionInputException(context, TransactionInputException.AMOUNT_FIELD, true)
                 }
-                details.transaction
+                if (transaction.value == null || transaction.value?.value == BigInteger.ZERO) {
+                    throw TransactionInputException(context, TransactionInputException.AMOUNT_FIELD, true)
+                }
+                transaction
             }
-            else ->
-                throw IllegalStateException()
         }
     }
 

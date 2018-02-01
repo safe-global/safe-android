@@ -1,17 +1,18 @@
 package pm.gnosis.heimdall.data.repositories
 
+import com.gojuno.koptional.Optional
 import io.reactivex.Single
 import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
 interface TransactionDetailsRepository {
-    fun loadTransactionDetails(id: String, address: BigInteger, transactionHash: String?): Single<TransactionDetails>
+    fun loadTransactionDetails(id: String): Single<TransactionDetails>
     fun loadTransactionType(transaction: Transaction): Single<TransactionType>
-    fun loadTransactionDetails(transaction: Transaction): Single<TransactionDetails>
+    fun loadTransactionData(transaction: Transaction): Single<Optional<TransactionTypeData>>
 }
 
-data class TransactionDetails(val transactionId: String?, val type: TransactionType, val data: TransactionTypeData?,
-                              val transaction: Transaction, val subject: String? = null, val timestamp: Long? = null)
+data class TransactionDetails(val transactionId: String, val type: TransactionType, val data: TransactionTypeData?,
+                              val transaction: Transaction, val safe: BigInteger, val timestamp: Long, val subject: String? = null)
 
 sealed class TransactionTypeData
 data class TokenTransferData(val recipient: BigInteger, val tokens: BigInteger) : TransactionTypeData()
