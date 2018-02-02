@@ -32,4 +32,5 @@ interface TransactionRepository {
     }
 
     fun observePublishStatus(id: String): Observable<PublishStatus>
+    fun loadChainHash(id: String): Single<String>
 }

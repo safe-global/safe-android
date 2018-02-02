@@ -17,4 +17,7 @@ class ReceiptTransactionViewModel @Inject constructor(
 
     override fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus> =
             safeTransactionsRepository.observePublishStatus(id)
+
+    override fun loadChainHash(id: String): Single<String> =
+            safeTransactionsRepository.loadChainHash(id)
 }

@@ -3,6 +3,10 @@ package pm.gnosis.heimdall.ui.transactions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.text.SpannableStringBuilder
+import android.text.style.ImageSpan
+import android.text.style.URLSpan
 import android.view.View
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -13,15 +17,15 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.setupToolbar
-import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
+import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus.*
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.transactions.details.assets.ReviewAssetTransferDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.assets.ReceiptAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeDeviceSettingsDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.safe.ReceiptChangeSafeSettingsDetailsFragment
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
@@ -43,6 +47,42 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
         setContentView(R.layout.layout_receipt_transaction)
 
         setupToolbar(layout_receipt_transaction_toolbar, R.drawable.ic_arrow_back_24dp)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val txId = intent.getStringExtra(EXTRA_TX_ID) ?: return
+        disposables += viewModel.observeTransactionStatus(txId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(::updateStatus, Timber::e)
+
+        disposables += viewModel.loadChainHash(txId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(::setupLink, {
+                    layout_receipt_transaction_url.setText(R.string.unknown_transaction_url)
+                })
+    }
+
+    private fun setupLink(hash: String) {
+        val linkDrawable = ContextCompat.getDrawable(this, R.drawable.ic_external_link)!!
+        val txUrl = getString(R.string.etherscan_url, hash)
+        linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
+        layout_receipt_transaction_url.text = SpannableStringBuilder(getString(R.string.view_transaction_on))
+                .append(" ")
+                .appendText(getString(R.string.etherscan_io), URLSpan(txUrl))
+                .append(" ")
+                .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
+        layout_receipt_transaction_url.setOnClickListener {
+            openUrl(txUrl)
+        }
+    }
+
+    private fun updateStatus(status: PublishStatus) {
+        layout_receipt_transaction_title.setText(when (status) {
+            UNKNOWN, PENDING -> R.string.transaction_status_pending
+            FAILED -> R.string.transaction_status_failed
+            SUCCESS -> R.string.transaction_status_success
+        })
     }
 
     override fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any> =
@@ -72,17 +112,18 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
         lifetimeDisposables += viewModel.loadTransactionDetails(txId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    it.transactionId
                     displayTransactionDetails(createDetailsFragment(it.safe.asEthereumAddressString(), it.type, it.transaction))
                 }, this::handleError)
         return true
     }
 
-    private fun createDetailsFragment(safeAddress: String, type: TransactionType, transaction: Transaction): BaseTransactionDetailsFragment  =
+    private fun createDetailsFragment(safeAddress: String, type: TransactionType, transaction: Transaction): BaseTransactionDetailsFragment =
             when (type) {
                 TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
-                    ReviewAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
+                    ReceiptAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
                 TransactionType.REPLACE_SAFE_OWNER, TransactionType.ADD_SAFE_OWNER, TransactionType.REMOVE_SAFE_OWNER ->
-                    ReviewChangeDeviceSettingsDetailsFragment.createInstance(transaction, safeAddress)
+                    ReceiptChangeSafeSettingsDetailsFragment.createInstance(transaction, safeAddress)
                 else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, false)
             }
 

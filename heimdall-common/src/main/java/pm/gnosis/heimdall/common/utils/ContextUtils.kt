@@ -2,13 +2,12 @@ package pm.gnosis.heimdall.common.utils
 
 import android.Manifest
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.content.*
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Context.VIBRATOR_SERVICE
-import android.content.Intent
+import android.net.Uri
 import android.os.Vibrator
+import android.provider.Browser
 import android.support.annotation.PluralsRes
 import android.support.annotation.RequiresPermission
 import android.support.annotation.StringRes
@@ -16,6 +15,7 @@ import android.support.design.widget.Snackbar
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import timber.log.Timber
 
 
 fun Context.toast(text: CharSequence, duration: Int = Toast.LENGTH_LONG) {
@@ -57,6 +57,18 @@ fun Context.shareExternalText(text: String, dialogTitle: String = "") {
 
 fun Context.shareExternalText(text: String, @StringRes stringId: Int) =
         shareExternalText(text, getString(stringId))
+
+fun Context.openUrl(url: String) {
+    val uri = Uri.parse(url)
+    val intent = Intent(Intent.ACTION_VIEW, uri)
+    intent.putExtra(Browser.EXTRA_APPLICATION_ID, packageName)
+    try {
+        startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        Timber.e(e)
+    }
+
+}
 
 fun Activity.startActivity(i: Intent, clearStack: Boolean = false) {
     if (clearStack) {

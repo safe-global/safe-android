@@ -15,9 +15,10 @@
     <color name="pressed_shade">#33000000</color>
     <color name="shadow_shade">#11000000</color>
     <color name="gnosis_blue">#10b3d4</color>
+    <color name="gnosis_blue_alpha_08">#1410b3d4</color>
     <color name="gnosis_blue_shade">#0083a3</color>
     <color name="gnosis_dark_blue">#21435a</color>
-    <color name="gnosis_dark_blue_alpha_20">#1410b3d4</color>
+    <color name="gnosis_dark_blue_alpha_50">#7f21435a</color>
     <color name="gnosis_dark_blue_alpha_60">#9921435a</color>
     <color name="gnosis_dark_blue_alpha_70">#b221435a</color>
 

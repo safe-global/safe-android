@@ -162,6 +162,13 @@
         <item name="android:paddingStart">16dp</item>
     </style>
 
+    <style name="TxLabel.Review">
+        <item name="android:textColor">@color/gnosis_dark_blue_alpha_50</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="TxValue" parent="BoldContent">
         <item name="android:paddingLeft">8dp</item>
         <item name="android:paddingRight">8dp</item>

@@ -14,7 +14,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.transactions.details.assets.ReviewAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeDeviceSettingsDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeSafeSettingsDetailsFragment
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -68,7 +68,7 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
                 TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
                     ReviewAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
                 TransactionType.REPLACE_SAFE_OWNER, TransactionType.ADD_SAFE_OWNER, TransactionType.REMOVE_SAFE_OWNER ->
-                    ReviewChangeDeviceSettingsDetailsFragment.createInstance(transaction, safeAddress)
+                    ReviewChangeSafeSettingsDetailsFragment.createInstance(transaction, safeAddress)
                 else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, false)
             }
 
