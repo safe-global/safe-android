@@ -13,6 +13,6 @@ data class Wei(val value: BigInteger) {
     companion object {
         private val WEI_TO_ETHER_MULTIPLIER = BigDecimal(10).pow(18)
         val ZERO = Wei(BigInteger.ZERO)
-        fun ether(value: Double) = Wei((BigDecimal.valueOf(value) * WEI_TO_ETHER_MULTIPLIER).toBigInteger())
+        fun ether(value: String) = Wei((BigDecimal(value) * WEI_TO_ETHER_MULTIPLIER).toBigInteger())
     }
 }

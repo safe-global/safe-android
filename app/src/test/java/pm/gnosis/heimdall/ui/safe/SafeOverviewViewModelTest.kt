@@ -274,7 +274,7 @@ class SafeOverviewViewModelTest {
     private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<AbstractSafe>>>()
 
     companion object {
-        val LOW_BALANCE_THRESHOLD = Wei(BigInteger("1000000000000000"))
+        val LOW_BALANCE_THRESHOLD = Wei.ether("0.001")
         const val DISMISS_LOW_BALANCE = "prefs.boolean.dismiss_low_balance"
     }
 }

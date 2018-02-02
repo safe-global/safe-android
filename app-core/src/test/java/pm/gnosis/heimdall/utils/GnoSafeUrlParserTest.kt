@@ -24,8 +24,8 @@ class GnoSafeUrlParserTest {
         testSignRequest(Wei.ZERO, null)
         testSignRequest(Wei.ZERO, "")
         testSignRequest(null, "0x313ce567")
-        testSignRequest(Wei.ether(0.0001), null)
-        testSignRequest(Wei.ether(0.0001), "0x313ce567")
+        testSignRequest(Wei.ether("0.0001"), null)
+        testSignRequest(Wei.ether("0.0001"), "0x313ce567")
     }
 
     @Test

@@ -8,41 +8,41 @@ import android.widget.LinearLayout
 
 class ExpandableLinearLayout(context: Context, attributeSet: AttributeSet) : LinearLayout(context, attributeSet) {
     private var currentValueAnimator: ValueAnimator? = null
-    var duration = 250L
+    var animationDuration = 250L
+    private var isShowing = false
 
     fun show() {
-        if (height == 0) doAction(show)
+        isShowing = true
+        doAction(show)
     }
 
     fun hide() {
-        if (height != 0) doAction(hide)
+        isShowing = false
+        doAction(hide)
     }
+
+    fun toggle() = if (isShowing) hide() else show()
 
     private val show: () -> ValueAnimator = {
         measure()
-        ValueAnimator.ofInt(0, measuredHeight)
+        ValueAnimator.ofInt(height, measuredHeight)
     }
 
-    private val hide: () -> ValueAnimator = {
-        measure()
-        ValueAnimator.ofInt(measuredHeight, 0)
-    }
+    private val hide: () -> ValueAnimator = { ValueAnimator.ofInt(height, 0) }
 
-    private fun measure() {
-        measure(View.MeasureSpec.makeMeasureSpec((parent as View).width, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec((parent as View).height, View.MeasureSpec.AT_MOST))
+    private fun measure() = measure(
+            View.MeasureSpec.makeMeasureSpec((parent as View).width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec((parent as View).height, View.MeasureSpec.AT_MOST))
 
-    }
 
     private fun doAction(action: () -> ValueAnimator) {
-        if (currentValueAnimator != null && currentValueAnimator?.isRunning == true) return
-
-        val valueAnimator = action()
-        valueAnimator.addUpdateListener {
-            layoutParams = layoutParams.apply { height = valueAnimator.animatedValue as Int }
+        currentValueAnimator?.cancel()
+        currentValueAnimator = action().apply {
+            addUpdateListener {
+                layoutParams = layoutParams.apply { height = animatedValue as Int }
+            }
+            duration = animationDuration
+            start()
         }
-        valueAnimator.duration = duration
-        valueAnimator.start()
-        this.currentValueAnimator = valueAnimator
     }
 }
