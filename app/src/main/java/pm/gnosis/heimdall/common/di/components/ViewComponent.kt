@@ -22,7 +22,7 @@ import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.safe.add.AddExistingSafeFragment
 import pm.gnosis.heimdall.ui.safe.add.DeployNewSafeFragment
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
-import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsFragment
+import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
@@ -61,7 +61,6 @@ interface ViewComponent {
     fun inject(fragment: DeployNewSafeFragment)
     fun inject(fragment: ReviewAssetTransferDetailsFragment)
     fun inject(fragment: ReviewChangeDeviceSettingsDetailsFragment)
-    fun inject(fragment: SafeSettingsFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)
 
@@ -82,6 +81,7 @@ interface ViewComponent {
     fun inject(activity: RestoreAccountActivity)
     fun inject(activity: RevealMnemonicActivity)
     fun inject(activity: SafeDetailsActivity)
+    fun inject(activity: SafeSettingsActivity)
     fun inject(activity: SafesOverviewActivity)
     fun inject(activity: SecuritySettingsActivity)
     fun inject(activity: SetupSafeIntroActivity)

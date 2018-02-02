@@ -44,22 +44,17 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:tabIndicatorColor="@color/selected_tab"
             app:tabSelectedTextColor="@color/selected_tab"
-            app:tabTextColor="@color/unselected_tab">
-
-            <android.support.design.widget.TabItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/tab_title_settings" />
-
-            <android.support.design.widget.TabItem
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/tab_title_transactions" />
+            app:tabTextColor="@color/white_alpha_70">
 
             <android.support.design.widget.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/tab_title_assets" />
+
+            <android.support.design.widget.TabItem
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tab_title_transactions" />
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
 
