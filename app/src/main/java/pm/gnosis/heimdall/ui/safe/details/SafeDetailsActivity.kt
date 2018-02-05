@@ -22,7 +22,7 @@ import pm.gnosis.heimdall.reporting.TabId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
-import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsFragment
+import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
@@ -32,15 +32,13 @@ import pm.gnosis.utils.hexAsEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
 
-
 class SafeDetailsActivity : BaseActivity() {
-
     override fun screenId() = ScreenId.SAFE_DETAILS
 
     @Inject
     lateinit var viewModel: SafeDetailsContract
 
-    private val items = listOf(R.string.tab_title_assets, R.string.tab_title_transactions, R.string.tab_title_settings)
+    private val items = listOf(R.string.tab_title_assets, R.string.tab_title_transactions)
 
     private lateinit var safeAddress: String
     private var safeName: String? = null
@@ -60,6 +58,7 @@ class SafeDetailsActivity : BaseActivity() {
         layout_safe_details_toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.safe_details_menu_share -> ShareSafeAddressDialog.create(safeAddress).show(supportFragmentManager, null)
+                R.id.safe_details_menu_settings -> startActivity(SafeSettingsActivity.createIntent(this, safeAddress))
             }
             true
         }
@@ -100,25 +99,18 @@ class SafeDetailsActivity : BaseActivity() {
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
 
-    private fun positionToTabID(position: Int) =
-            when (positionToId(position)) {
-                R.string.tab_title_settings -> {
-                    TabId.SAFE_DETAILS_SETTINGS
-                }
-                R.string.tab_title_assets -> {
-                    TabId.SAFE_DETAILS_ASSETS
-                }
-                R.string.tab_title_transactions -> {
-                    TabId.SAFE_DETAILS_TRANSACTIONS
-                }
-                else -> null
-            }
+    private fun positionToTabID(position: Int) = when (positionToId(position)) {
+        R.string.tab_title_assets -> {
+            TabId.SAFE_DETAILS_ASSETS
+        }
+        R.string.tab_title_transactions -> {
+            TabId.SAFE_DETAILS_TRANSACTIONS
+        }
+        else -> null
+    }
 
     private fun pagerAdapter() = FactoryPagerAdapter(supportFragmentManager, FactoryPagerAdapter.Factory(items.size, {
         when (positionToId(it)) {
-            R.string.tab_title_settings -> {
-                SafeSettingsFragment.createInstance(safeAddress.asEthereumAddressString())
-            }
             R.string.tab_title_assets -> {
                 TokenBalancesFragment.createInstance(safeAddress.asEthereumAddressString())
             }

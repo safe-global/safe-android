@@ -10,6 +10,7 @@ import java.math.BigInteger
 
 abstract class SafeSettingsContract : ViewModel() {
     abstract fun setup(address: BigInteger)
+    abstract fun getSafeAddress(): BigInteger
     abstract fun loadSafeInfo(ignoreCache: Boolean): Observable<Result<SafeInfo>>
     abstract fun loadSafeName(): Single<String>
     abstract fun updateSafeName(name: String): Single<Result<String>>

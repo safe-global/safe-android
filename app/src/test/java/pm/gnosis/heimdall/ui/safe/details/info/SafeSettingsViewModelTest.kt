@@ -6,7 +6,7 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -127,7 +127,7 @@ class SafeSettingsViewModelTest {
 
         viewModel.updateSafeName(newName).subscribe(testObserver)
 
-        Assert.assertEquals(1, testCompletable.callCount)
+        assertEquals(1, testCompletable.callCount)
         BDDMockito.then(repositoryMock).should().updateName(BigInteger.ZERO, cleanName)
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(cleanName)).assertNoErrors()
@@ -169,7 +169,7 @@ class SafeSettingsViewModelTest {
 
         viewModel.deleteSafe().subscribe(testObserver)
 
-        Assert.assertEquals(1, testCompletable.callCount)
+        assertEquals(1, testCompletable.callCount)
         BDDMockito.then(repositoryMock).should().remove(BigInteger.ZERO)
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(Unit)).assertNoErrors()
@@ -217,5 +217,11 @@ class SafeSettingsViewModelTest {
         BDDMockito.then(repositoryMock).should().observeSafe(BigInteger.ZERO)
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue("")
+    }
+
+    @Test
+    fun getSafeAddress() {
+        viewModel.setup(BigInteger.ZERO)
+        assertEquals(BigInteger.ZERO, viewModel.getSafeAddress())
     }
 }

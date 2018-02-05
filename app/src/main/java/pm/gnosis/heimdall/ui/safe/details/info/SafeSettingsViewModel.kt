@@ -34,11 +34,12 @@ class SafeSettingsViewModel @Inject constructor(
         cachedInfo = null
     }
 
+    override fun getSafeAddress(): BigInteger = address!!
+
     override fun loadSafeInfo(ignoreCache: Boolean) =
-            (fromCache(ignoreCache) ?:
-                    safeRepository.loadInfo(address!!)
-                            .onErrorResumeNext(Function { errorHandler.observable(it) })
-                            .doOnNext { cachedInfo = it })
+            (fromCache(ignoreCache) ?: safeRepository.loadInfo(address!!)
+                    .onErrorResumeNext(Function { errorHandler.observable(it) })
+                    .doOnNext { cachedInfo = it })
                     .mapToResult()
 
     override fun loadSafeName() =
@@ -52,8 +53,8 @@ class SafeSettingsViewModel @Inject constructor(
                 if (name.isBlank()) throw SimpleLocalizedException(context.getString(R.string.error_blank_name))
                 name.trimWhitespace()
             }.flatMap {
-                safeRepository.updateName(address!!, it).andThen(Single.just(it))
-            }.mapToResult()
+                        safeRepository.updateName(address!!, it).andThen(Single.just(it))
+                    }.mapToResult()
 
     override fun deleteSafe() =
             safeRepository.remove(address!!)

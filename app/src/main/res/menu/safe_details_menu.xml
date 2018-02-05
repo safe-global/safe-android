@@ -3,7 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/safe_details_menu_share"
-        android:icon="@drawable/ic_qr_toolbar_24dp"
         android:title="@string/share_address"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/safe_details_menu_settings"
+        android:title="@string/settings"
+        app:showAsAction="never" />
 </menu>

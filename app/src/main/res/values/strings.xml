@@ -70,7 +70,6 @@
     <string name="required_confirmations">Needed device confirmations</string>
     <string name="deposit">Deposit</string>
     <string name="withdraw">Withdraw</string>
-    <string name="tab_title_settings">Settings</string>
     <string name="tab_title_transactions">Transactions</string>
     <string name="tab_title_assets">Assets</string>
     <string name="address_clipboard_success">Address copied to clipboard</string>
