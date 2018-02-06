@@ -13,8 +13,6 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TO
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.stringWithNoTrailingZeroes
-import java.math.RoundingMode
 import javax.inject.Inject
 
 
@@ -36,16 +34,16 @@ class TokenBalancesAdapter @Inject constructor(
         }
 
         override fun bind(data: ERC20TokenWithBalance, payloads: List<Any>?) {
-            itemView.layout_tokens_item_name.text = if (data.token.name.isNullOrEmpty()) data.token.address.asEthereumAddressString() else data.token.name
+            itemView.layout_tokens_item_balance_name.text = if (data.token.name.isNullOrEmpty()) data.token.address.asEthereumAddressString() else data.token.name
             if (data.token == ETHER_TOKEN) {
-                itemView.layout_tokens_item_symbol.text = null
-                itemView.layout_tokens_item_symbol_image.visibility = View.VISIBLE
-                itemView.layout_tokens_item_symbol_image.setImageResource(R.drawable.ic_ether_symbol)
+                itemView.layout_tokens_item_balance_symbol.text = null
+                itemView.layout_tokens_item_balance_symbol_image.visibility = View.VISIBLE
+                itemView.layout_tokens_item_balance_symbol_image.setImageResource(R.drawable.ic_ether_symbol)
             } else {
-                itemView.layout_tokens_item_symbol.text = if (data.token.symbol.isNullOrEmpty()) data.token.address.toString(16).substring(0, 3) else data.token.symbol
-                itemView.layout_tokens_item_symbol_image.visibility = View.GONE
+                itemView.layout_tokens_item_balance_symbol.text = if (data.token.symbol.isNullOrEmpty()) data.token.address.toString(16).substring(0, 3) else data.token.symbol
+                itemView.layout_tokens_item_balance_symbol_image.visibility = View.GONE
             }
-            itemView.layout_tokens_item_balance.text = data.displayString()
+            itemView.layout_tokens_item_balance_balance.text = data.displayString()
         }
 
         override fun onClick(v: View?) {

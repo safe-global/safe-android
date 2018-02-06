@@ -22,20 +22,24 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="16dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/token_name"
-                        android:textColor="@color/gnosis_blue"
+                        android:text="@string/name"
+                        android:textColor="@color/gnosis_dark_blue_alpha_70"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/layout_token_info_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:textColor="@color/gnosis_dark_blue"
                         tools:text="Gnosis" />
                 </LinearLayout>
 
@@ -47,20 +51,23 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="16dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/token_symbol"
-                        android:textColor="@color/gnosis_blue"
+                        android:text="@string/symbol"
+                        android:textColor="@color/gnosis_dark_blue_alpha_70"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/layout_token_info_symbol"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:textColor="@color/gnosis_dark_blue"
                         tools:text="GNO" />
                 </LinearLayout>
 
@@ -72,20 +79,23 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="16dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
                         android:text="@string/token_decimals"
-                        android:textColor="@color/gnosis_blue"
+                        android:textColor="@color/gnosis_dark_blue_alpha_70"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/layout_token_info_decimals"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:textColor="@color/gnosis_dark_blue"
                         tools:text="18" />
                 </LinearLayout>
 
@@ -97,20 +107,23 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="16dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="70dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/token_contract_address"
-                        android:textColor="@color/gnosis_blue"
+                        android:text="@string/contract_address"
+                        android:textColor="@color/gnosis_dark_blue_alpha_70"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/layout_token_info_address"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:textColor="@color/gnosis_dark_blue"
                         tools:text="0x6810e776880c02933d47db1b9fc05908e5386b96" />
                 </LinearLayout>
 

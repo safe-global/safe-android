@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.utils.setupEtherscanAddressUrl
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import timber.log.Timber
 import java.math.BigInteger
@@ -71,7 +72,13 @@ class TokenInfoActivity : BaseActivity() {
         layout_token_info_name.text = token.name ?: "-"
         layout_token_info_symbol.text = token.symbol ?: "-"
         layout_token_info_decimals.text = token.decimals.toString()
-        layout_token_info_address.text = token.address.asEthereumAddressStringOrNull() ?: "-"
+
+        val tokenAddressString = token.address.asEthereumAddressStringOrNull()
+        if (tokenAddressString != null) {
+            setupEtherscanAddressUrl(layout_token_info_address, tokenAddressString, R.string.view_contract_on)
+        } else {
+            layout_token_info_address.text = "-"
+        }
 
         val menuItem = layout_token_info_toolbar.menu.findItem(R.id.token_info_menu_delete)
         menuItem.isVisible = !token.verified

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="currency_eth" translatable="false">ETH</string>
-    <string name="etherscan_url" translatable="false">https://kovan.etherscan.io/tx/%s</string>
+    <string name="etherscan_transaction_url" translatable="false">https://kovan.etherscan.io/tx/%s</string>
+    <string name="etherscan_address_url" translatable="false">https://kovan.etherscan.io/address/%s</string>
 </resources>
