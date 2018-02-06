@@ -61,9 +61,7 @@ class DeployNewSafeFragment : BaseFragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNextForResult(::updateEstimate)
                 // Request fiat value for price
-                .flatMapSingle {
-                    it.mapSingle({ viewModel.loadFiatConversion(it) })
-                }
+                .flatMapResult({ viewModel.loadFiatConversion(it) })
                 // Update fiat value
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNextForResult(::onFiat, ::onFiatError)

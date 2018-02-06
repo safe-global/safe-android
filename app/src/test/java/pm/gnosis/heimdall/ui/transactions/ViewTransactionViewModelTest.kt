@@ -4,12 +4,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import io.reactivex.Completable
 import io.reactivex.Single
+import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
@@ -465,7 +467,7 @@ class ViewTransactionViewModelTest {
                 .willReturn(Single.just(sigInfo))
 
         val testObserver = TestObserver<Result<Unit>>()
-        viewModel.observePushSignature(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
+        viewModel.observeSignaturePushes(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
 
         then(signaturePushRepositoryMock).should().observe(TEST_SAFE)
         then(signaturePushRepositoryMock).shouldHaveNoMoreInteractions()
@@ -612,7 +614,7 @@ class ViewTransactionViewModelTest {
     }
 
     @Test
-    fun singTransactionFailSigning() {
+    fun signTransactionFailSigning() {
         val error = IllegalStateException()
         given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.error(error))
 
@@ -632,7 +634,7 @@ class ViewTransactionViewModelTest {
     }
 
     @Test
-    fun singTransactionBitmap() {
+    fun signTransactionBitmap() {
         given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
         given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.just(TEST_BITMAP))
 
@@ -653,7 +655,7 @@ class ViewTransactionViewModelTest {
     }
 
     @Test
-    fun singTransactionBitmapFailQRCodeGeneration() {
+    fun signTransactionBitmapFailQRCodeGeneration() {
         val error = IllegalStateException()
         given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
         given(qrCodeGeneratorMock.generateQrCode(anyString(), anyInt(), anyInt(), anyInt())).willReturn(Single.error(error))
@@ -675,7 +677,7 @@ class ViewTransactionViewModelTest {
     }
 
     @Test
-    fun singTransactionPush() {
+    fun signTransactionPush() {
         given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
         given(signaturePushRepositoryMock.send(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
 
@@ -696,7 +698,7 @@ class ViewTransactionViewModelTest {
     }
 
     @Test
-    fun singTransactionPushFailQRCodeGeneration() {
+    fun signTransactionPushFailQRCodeGeneration() {
         val error = IllegalStateException()
         given(transactionRepositoryMock.sign(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(TEST_SIGNATURE))
         given(signaturePushRepositoryMock.send(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Completable.error(error))
@@ -717,13 +719,44 @@ class ViewTransactionViewModelTest {
         testObserver.assertResult(ErrorResult(error))
     }
 
+    @Test
+    fun sendSignature() {
+        val executeInformation = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+                TEST_OWNER, 2, TEST_OWNERS)
+        val info = Info(TEST_SAFE, executeInformation, emptyMap())
+        given(signaturePushRepositoryMock.request(MockUtils.any(), anyString())).willReturn(Completable.complete())
+
+        val testObserver = TestObserver<Result<Unit>>()
+        viewModel.sendSignaturePush(info).subscribe(testObserver)
+        testObserver.assertResult(DataResult(Unit))
+
+        val data = GnoSafeUrlParser.signRequest(TEST_TRANSACTION_HASH, info.selectedSafe, TEST_TRANSACTION.address, TEST_TRANSACTION.value, TEST_TRANSACTION.data, TEST_TRANSACTION.nonce!!)
+        then(signaturePushRepositoryMock).should().request(TEST_SAFE, data)
+    }
+
+    @Test
+    fun sendSignatureError() {
+        val executeInformation = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+                TEST_OWNER, 2, TEST_OWNERS)
+        val info = Info(TEST_SAFE, executeInformation, emptyMap())
+        val error = IllegalStateException()
+        given(signaturePushRepositoryMock.request(MockUtils.any(), anyString())).willReturn(Completable.error(error))
+
+        val testObserver = TestObserver<Result<Unit>>()
+        viewModel.sendSignaturePush(info).subscribe(testObserver)
+        testObserver.assertResult(ErrorResult(error))
+
+        val data = GnoSafeUrlParser.signRequest(TEST_TRANSACTION_HASH, info.selectedSafe, TEST_TRANSACTION.address, TEST_TRANSACTION.value, TEST_TRANSACTION.data, TEST_TRANSACTION.nonce!!)
+        then(signaturePushRepositoryMock).should().request(TEST_SAFE, data)
+    }
+
     private data class TestException(val name: String = "test_exception") : Exception()
 
     companion object {
+        private const val TEST_TRANSACTION_HASH = "SomeHash"
         private val TEST_BITMAP = mock(Bitmap::class.java)
         private val TEST_SIGNATURE = Signature(BigInteger.valueOf(987), BigInteger.valueOf(678), 27)
         private val TEST_SAFE = BigInteger.ZERO
-        private val TEST_TRANSACTION_HASH = "SomeHash"
         private val TEST_TRANSACTION = Transaction(BigInteger.ZERO, nonce = BigInteger.TEN)
         private val TEST_NOT_OWNER = BigInteger.valueOf(12345)
         private val TEST_OWNER = BigInteger.valueOf(5674)

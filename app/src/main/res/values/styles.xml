@@ -74,9 +74,7 @@
     <style name="PrimaryButtonText">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/primary_button_text_size</item>
-        <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="PrimaryButton">
@@ -127,6 +125,10 @@
         <item name="android:paddingBottom">8dp</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <style name="SecondaryTextButton" parent="TextButton">
+        <item name="android:textColor">@color/secondary_button_text</item>
     </style>
 
     <!-- End: Button styles -->
@@ -226,8 +228,4 @@
     </style>
 
     <!-- End: Text styles -->
-
-    <style name="WhiteCircleProgress" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">@color/white</item>
-    </style>
 </resources>

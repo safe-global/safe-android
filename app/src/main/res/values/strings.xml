@@ -85,7 +85,7 @@
         <item quantity="other">%s Confirmations</item>
     </plurals>
     <string name="submit_transaction">Submit Transaction</string>
-    <string name="add_signature">Add signature</string>
+    <string name="scan_signature_qr">Manually scan signature QR</string>
     <string name="cancel">Cancel</string>
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
     <string name="added_safe">Safe Added</string>
@@ -306,4 +306,5 @@
     <string name="low_balance_warning">No sufficient balance in your account to deploy a new safe. Send %1s ETH to your account address.</string>
     <string name="dismiss">Dismiss</string>
     <string name="view_account">View Account</string>
+    <string name="push_signature_request">Push Signature Request</string>
 </resources>
