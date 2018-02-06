@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.subscribeForResult
+import pm.gnosis.heimdall.common.utils.visible
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.reporting.ButtonId
@@ -103,7 +104,7 @@ class SafesOverviewActivity : BaseActivity() {
 
     private fun onSafes(data: Adapter.Data<AbstractSafe>) {
         adapter.updateData(data)
-        layout_safe_overview_empty_view.visibility = if (data.entries.isEmpty()) View.VISIBLE else View.GONE
+        layout_safe_overview_empty_view.visible(data.entries.isEmpty())
     }
 
     private fun onSafesError(throwable: Throwable) {

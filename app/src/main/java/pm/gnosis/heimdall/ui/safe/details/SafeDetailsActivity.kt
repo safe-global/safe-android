@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.reporting.ButtonId
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.reporting.TabId
+import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
@@ -65,7 +66,7 @@ class SafeDetailsActivity : BaseActivity() {
 
         layout_safe_details_fab.setOnClickListener {
             eventTracker.submit(Event.ButtonClick(ButtonId.SAFE_DETAILS_CREATE_TRANSACTION))
-            startActivity(CreateTransactionActivity.createIntent(this, safeAddress.hexAsBigIntegerOrNull(), TransactionType.TOKEN_TRANSFER, null))
+            startActivity(AuthenticateActivity.createIntent(this))
         }
         layout_safe_details_viewpager.adapter = pagerAdapter()
         layout_safe_details_tabbar.setupWithViewPager(layout_safe_details_viewpager)
