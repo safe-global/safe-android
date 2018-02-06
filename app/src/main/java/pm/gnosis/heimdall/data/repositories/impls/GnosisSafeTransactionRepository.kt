@@ -208,7 +208,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
 
     override fun loadChainHash(id: String): Single<String> =
             descriptionsDao.observeStatus(id)
-                    .take(1).singleOrError()
+                    .firstOrError()
                     .map { it.transactionId }
 
     private class TransactionInfoRequest(
