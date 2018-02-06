@@ -1,23 +1,30 @@
 package pm.gnosis.heimdall.ui.safe
 
+import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subscribers.TestSubscriber
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.accounts.base.models.Account
+import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
@@ -25,11 +32,10 @@ import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import pm.gnosis.models.Wei
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.tests.utils.TestCompletable
-import pm.gnosis.tests.utils.TestListUpdateCallback
+import pm.gnosis.tests.utils.*
 import java.math.BigInteger
+import java.util.concurrent.TimeUnit
+
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeOverviewViewModelTest {
@@ -38,13 +44,26 @@ class SafeOverviewViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
+    private lateinit var contextMock: Context
+
+    @Mock
+    private lateinit var accountsRepositoryMock: AccountsRepository
+
+    @Mock
+    private lateinit var ethereumJsonRepositoryMock: EthereumJsonRpcRepository
+
+    @Mock
     private lateinit var repositoryMock: GnosisSafeRepository
 
     private lateinit var viewModel: SafeOverviewViewModel
 
+    private val testPreferences = TestPreferences()
+
     @Before
     fun setup() {
-        viewModel = SafeOverviewViewModel(repositoryMock)
+        given(contextMock.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())).willReturn(testPreferences)
+        viewModel = SafeOverviewViewModel(accountsRepositoryMock, ethereumJsonRepositoryMock,
+                PreferencesManager(contextMock), repositoryMock)
     }
 
     @Test
@@ -204,5 +223,176 @@ class SafeOverviewViewModelTest {
         testObserver.assertError(exception)
     }
 
+    @Test
+    fun shouldShowLowBalanceViewOnHighBalance() = onTestableComputationScheduler {
+        val testObserver = TestObserver<Result<Boolean>>()
+        val account = Account(BigInteger.ZERO)
+        val balance = LOW_BALANCE_THRESHOLD
+
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+
+        // First emission
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+
+        viewModel.shouldShowLowBalanceView().subscribe(testObserver)
+
+        assertFalse(testPreferences.getBoolean(DISMISS_LOW_BALANCE, true))
+        testObserver
+                .assertValueAt(0, DataResult(false))
+                .assertNotComplete()
+
+        // Second emission
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+
+        viewModel.shouldShowLowBalanceView().subscribe(testObserver)
+
+        it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
+        assertFalse(testPreferences.getBoolean(DISMISS_LOW_BALANCE, true))
+        testObserver
+                .assertValueAt(1, DataResult(false))
+                .assertNotComplete()
+
+
+        // Third emission
+        val exception = Exception()
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error(exception))
+
+        viewModel.shouldShowLowBalanceView().subscribe(testObserver)
+
+        it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
+        assertFalse(testPreferences.getBoolean(DISMISS_LOW_BALANCE, true))
+        testObserver
+                .assertValueAt(2, ErrorResult(exception))
+                .assertNotComplete()
+
+        then(accountsRepositoryMock).should(times(3)).loadActiveAccount()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRepositoryMock).should(times(3)).getBalance(account.address)
+        then(ethereumJsonRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun shouldShowLowBalanceViewOnLowBalance() = onTestableComputationScheduler {
+        val testObserver = TestObserver<Result<Boolean>>()
+        val account = Account(BigInteger.ZERO)
+        val balance = Wei(LOW_BALANCE_THRESHOLD.value - BigInteger.ONE)
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+
+        // First emission (balance)
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+
+        viewModel.shouldShowLowBalanceView().subscribe(testObserver)
+
+        testObserver
+                .assertValueAt(0, DataResult(true))
+                .assertNotComplete()
+
+        // Second emission (balance)
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+
+        viewModel.shouldShowLowBalanceView().subscribe(testObserver)
+
+        it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
+        testObserver
+                .assertValueAt(1, DataResult(true))
+                .assertNotComplete()
+
+        // Third emission (error)
+        val exception = Exception()
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error(exception))
+
+        viewModel.shouldShowLowBalanceView().subscribe(testObserver)
+        it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
+
+        testObserver
+                .assertValueAt(2, ErrorResult(exception))
+                .assertNotComplete()
+
+        then(accountsRepositoryMock).should(times(3)).loadActiveAccount()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRepositoryMock).should(times(3)).getBalance(account.address)
+        then(ethereumJsonRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun onceDismissedDoNotShowOnLowBalance() = onTestableComputationScheduler {
+        val testObserver = TestObserver<Result<Boolean>>()
+        val account = Account(BigInteger.ZERO)
+        val balance = Wei(LOW_BALANCE_THRESHOLD.value - BigInteger.ONE)
+
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+
+        viewModel.dismissHasLowBalance()
+        assertTrue(testPreferences.getBoolean(DISMISS_LOW_BALANCE, false))
+        viewModel.shouldShowLowBalanceView().subscribe(testObserver)
+
+        // First emission (balance)
+        testObserver
+                .assertValueAt(0, DataResult(false))
+                .assertNotComplete()
+
+        // Second emission (error)
+        // even if we have an error it should not show
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+
+        viewModel.shouldShowLowBalanceView().subscribe(testObserver)
+
+        it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
+        testObserver
+                .assertValueAt(1, DataResult(false))
+                .assertNotComplete()
+
+        then(accountsRepositoryMock).should(times(2)).loadActiveAccount()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRepositoryMock).should(times(2)).getBalance(account.address)
+        then(ethereumJsonRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun lowBalanceToHighBalanceShouldTurnDismissOff() = onTestableComputationScheduler {
+        val testObserver = TestObserver<Result<Boolean>>()
+        val account = Account(BigInteger.ZERO)
+        val balance = Wei(LOW_BALANCE_THRESHOLD.value)
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+
+        viewModel.dismissHasLowBalance()
+        assertTrue(testPreferences.getBoolean(DISMISS_LOW_BALANCE, false))
+        viewModel.shouldShowLowBalanceView().subscribe(testObserver)
+
+        // First emission (low balance)
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        testObserver
+                .assertValueAt(0, DataResult(false))
+                .assertNotComplete()
+
+        // Second emission (higher balance)
+        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
+        testObserver
+                .assertValueAt(1, DataResult(false))
+                .assertNotComplete()
+        assertFalse(testPreferences.getBoolean(DISMISS_LOW_BALANCE, true))
+
+        then(accountsRepositoryMock).should().loadActiveAccount()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumJsonRepositoryMock).should(times(2)).getBalance(account.address)
+        then(ethereumJsonRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun dismissHasLowBalance() {
+        viewModel.dismissHasLowBalance()
+
+        assertTrue(testPreferences.getBoolean(DISMISS_LOW_BALANCE, false))
+    }
+
     private fun createSubscriber() = TestSubscriber.create<Result<Adapter.Data<AbstractSafe>>>()
+
+    companion object {
+        private val LOW_BALANCE_THRESHOLD = Wei.ether("0.001")
+        private const val DISMISS_LOW_BALANCE = "prefs.boolean.dismiss_low_balance"
+        private const val BALANCE_CHECK_TIME_INTERVAL_SECONDS = 10L
+    }
 }

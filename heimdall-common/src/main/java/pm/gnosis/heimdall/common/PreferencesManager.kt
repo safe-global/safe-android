@@ -14,6 +14,7 @@ class PreferencesManager @Inject constructor(@ApplicationContext context: Contex
         const val PASSPHRASE_KEY = "prefs.string.passphrase"
         const val CURRENT_ACCOUNT_ADDRESS_KEY = "prefs.string.current_account"
         const val MNEMONIC_KEY = "prefs.string.mnemonic"
+        const val DISMISS_LOW_BALANCE = "prefs.boolean.dismiss_low_balance"
     }
 
     val prefs: SharedPreferences = context.getSharedPreferences(GNOSIS_PREFS_NAME, Context.MODE_PRIVATE)
