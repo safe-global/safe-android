@@ -6,7 +6,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.fromDb
 import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
 import pm.gnosis.heimdall.data.repositories.*
@@ -19,10 +19,10 @@ import javax.inject.Singleton
 
 @Singleton
 class SimpleTransactionDetailsRepository @Inject constructor(
-        authenticatorDb: GnosisAuthenticatorDb
+        appDb: ApplicationDb
 ) : TransactionDetailsRepository {
 
-    private val descriptionsDao = authenticatorDb.descriptionsDao()
+    private val descriptionsDao = appDb.descriptionsDao()
 
     override fun loadTransactionData(transaction: Transaction): Single<Optional<TransactionTypeData>> {
         return Single.fromCallable {

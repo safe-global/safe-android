@@ -8,7 +8,7 @@ import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
 import pm.gnosis.heimdall.data.remote.BulkRequest
@@ -30,12 +30,12 @@ import javax.inject.Singleton
 
 @Singleton
 class GnosisSafeTransactionRepository @Inject constructor(
-        authenticatorDb: GnosisAuthenticatorDb,
+        appDb: ApplicationDb,
         private val accountsRepository: AccountsRepository,
         private val ethereumJsonRpcRepository: EthereumJsonRpcRepository
 ) : TransactionRepository {
 
-    private val descriptionsDao = authenticatorDb.descriptionsDao()
+    private val descriptionsDao = appDb.descriptionsDao()
 
     override fun calculateHash(safeAddress: BigInteger, transaction: Transaction): Single<ByteArray> =
             Single.fromCallable {

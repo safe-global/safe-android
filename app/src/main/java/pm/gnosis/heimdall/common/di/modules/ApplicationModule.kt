@@ -11,7 +11,7 @@ import okhttp3.OkHttpClient
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.EthGasStationApi
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.IpfsApi
@@ -112,6 +112,6 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun providesDb(@ApplicationContext context: Context) =
-            Room.databaseBuilder(context, GnosisAuthenticatorDb::class.java, GnosisAuthenticatorDb.DB_NAME)
+            Room.databaseBuilder(context, ApplicationDb::class.java, ApplicationDb.DB_NAME)
                     .build()
 }

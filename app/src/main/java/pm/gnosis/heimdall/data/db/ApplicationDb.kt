@@ -18,9 +18,9 @@ import pm.gnosis.heimdall.data.db.models.*
     TransactionPublishStatusDb::class
 ], version = 1)
 @TypeConverters(BigIntegerConverter::class)
-abstract class GnosisAuthenticatorDb : RoomDatabase() {
+abstract class ApplicationDb : RoomDatabase() {
     companion object {
-        const val DB_NAME = "gnosis-authenticator-db"
+        const val DB_NAME = "gnosis-safe-db"
     }
 
     abstract fun addressBookDao(): AddressBookDao

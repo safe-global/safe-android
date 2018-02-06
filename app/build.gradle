@@ -20,7 +20,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
-        project.ext.set("archivesBaseName", String.format("gnosis-authenticator-%s", defaultConfig.versionCode))
+        project.ext.set("archivesBaseName", String.format("gnosis-safe-%s", defaultConfig.versionCode))
 
         ext.betaDistributionGroupAliases = System.getenv("FABRIC_GROUP_INTERNAL_BETA")
         ext.betaDistributionReleaseNotes = System.getenv("APP_RELEASE_NOTES")

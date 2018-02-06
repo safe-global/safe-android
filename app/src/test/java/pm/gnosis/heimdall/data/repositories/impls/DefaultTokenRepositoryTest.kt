@@ -29,7 +29,7 @@ import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ERC20
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import pm.gnosis.heimdall.data.remote.*
@@ -58,7 +58,7 @@ class DefaultTokenRepositoryTest {
     private lateinit var application: Application
 
     @Mock
-    lateinit var dbMock: GnosisAuthenticatorDb
+    lateinit var dbMock: ApplicationDb
 
     @Mock
     lateinit var erc20DaoMock: ERC20TokenDao
