@@ -14,7 +14,8 @@ import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.transactions.ExecuteTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -47,7 +48,7 @@ class SafeTransactionsViewModel @Inject constructor(
 
     override fun loadTransactionDetails(id: String): Single<Pair<TransactionDetails, TransferInfo?>> =
             address?.let {
-                transactionDetailsRepository.loadTransactionDetails(id, it, null)
+                transactionDetailsRepository.loadTransactionDetails(id)
                         .flatMap { details ->
                             when (details.type) {
                                 TransactionType.ETHER_TRANSFER -> {
@@ -70,8 +71,8 @@ class SafeTransactionsViewModel @Inject constructor(
     override fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus> =
             safeTransactionsRepository.observePublishStatus(id)
 
-    override fun transactionSelected(it: Transaction): Single<Intent> =
-            Single.just(ExecuteTransactionActivity.createIntent(context, address, it))
+    override fun transactionSelected(id: String): Single<Intent> =
+            Single.just(ReceiptTransactionActivity.createIntent(context, id))
 
     private fun loadTokenValue(token: BigInteger, value: BigInteger) =
             tokenRepository.observeToken(token)

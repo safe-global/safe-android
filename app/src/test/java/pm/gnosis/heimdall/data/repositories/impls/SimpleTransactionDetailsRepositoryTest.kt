@@ -22,7 +22,7 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
-class IpfsTransactionDetailsRepositoryTest {
+class SimpleTransactionDetailsRepositoryTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -44,7 +44,7 @@ class IpfsTransactionDetailsRepositoryTest {
     @Before
     fun setUp() {
         given(gnosisAuthenticatorDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
-        repository = SimpleTransactionDetailsRepository(gnosisAuthenticatorDbMock, ethereumJsonRpcRepositoryMock, ipfsApiMock)
+        repository = SimpleTransactionDetailsRepository(gnosisAuthenticatorDbMock)
     }
 
     private fun testLoadTransactionType(transaction: Transaction, expectedType: TransactionType) {

@@ -14,7 +14,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.transactions.details.assets.ReviewAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeDeviceSettingsDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeSafeSettingsDetailsFragment
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -36,11 +36,13 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
 
     abstract fun toolbar(): Toolbar
 
+    open fun navIcon() = R.drawable.ic_close_24dp
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout())
 
-        setupToolbar(toolbar(), R.drawable.ic_close_24dp)
+        setupToolbar(toolbar(), navIcon())
     }
 
     override fun loadTransactionDetails() {
@@ -61,12 +63,12 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
         return true
     }
 
-    override fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
+    private fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
             when (type) {
                 TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
                     ReviewAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
                 TransactionType.REPLACE_SAFE_OWNER, TransactionType.ADD_SAFE_OWNER, TransactionType.REMOVE_SAFE_OWNER ->
-                    ReviewChangeDeviceSettingsDetailsFragment.createInstance(transaction, safeAddress)
+                    ReviewChangeSafeSettingsDetailsFragment.createInstance(transaction, safeAddress)
                 else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, false)
             }
 

@@ -15,7 +15,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.include_gas_price_selection.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_transaction_confirmation_item.view.*
-import kotlinx.android.synthetic.main.layout_view_transaction.*
+import kotlinx.android.synthetic.main.layout_submit_transaction.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -39,9 +39,7 @@ import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
-class ExecuteTransactionActivity : ViewTransactionActivity() {
-
-    override fun screenId() = ScreenId.VIEW_TRANSACTION
+class SubmitTransactionActivity : ViewTransactionActivity() {
 
     @Inject
     lateinit var gasPriceHelper: GasPriceHelper
@@ -82,7 +80,7 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
             ObservableTransformer { up: Observable<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>> ->
                 // We combine the data with the submit button events
                 up.switchMap { infoWithGasPrice ->
-                    layout_view_transaction_submit_button.clicks().map { infoWithGasPrice }
+                    layout_submit_transaction_submit_button.clicks().map { infoWithGasPrice }
                 }
                         .doOnNext { (info, gasPrice) ->
                             (info as? DataResult)?.let {
@@ -97,7 +95,7 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
     private val requestSignatures: ObservableTransformer<Result<ViewTransactionContract.Info>, Any> =
             ObservableTransformer {
                 it.observeOn(AndroidSchedulers.mainThread()).switchMap { info ->
-                    layout_view_transaction_add_signature_button.clicks().map { info }
+                    layout_submit_transaction_add_signature_button.clicks().map { info }
                             .doOnNextForResult({
                                 RequestSignatureDialog
                                         .create(it.status.transactionHash, it.status.transaction, it.selectedSafe)
@@ -112,7 +110,7 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
                     (info as? DataResult)?.let {
                         viewModel.observePushSignature(it.data.selectedSafe, it.data.status.transaction)
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .doOnNextForResult(onError = { errorSnackbar(layout_view_transaction_add_signature_button, it) })
+                                .doOnNextForResult(onError = { errorSnackbar(layout_submit_transaction_add_signature_button, it) })
                     } ?: Observable.empty()
                 }
             }
@@ -133,9 +131,11 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
                 }
             }
 
-    override fun layout() = R.layout.layout_view_transaction
+    override fun screenId() = ScreenId.SUBMIT_TRANSACTION
 
-    override fun toolbar(): Toolbar = layout_view_transaction_toolbar
+    override fun layout() = R.layout.layout_submit_transaction
+
+    override fun toolbar(): Toolbar = layout_submit_transaction_toolbar
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -158,7 +158,7 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
                             startActivity(SafeDetailsActivity.createIntent(this, Safe(it), R.string.tab_title_transactions).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                         }, { showErrorSnackbar(it) })
             } else {
-                snackbar(layout_view_transaction_submit_button, R.string.please_confirm_credentials)
+                snackbar(layout_submit_transaction_submit_button, R.string.please_confirm_credentials)
             }
         }
         cachedTransactionData = null
@@ -167,14 +167,14 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
             disposables += viewModel.addSignature(it)
                     .subscribeBy({
                         Timber.e(it)
-                        errorSnackbar(layout_view_transaction_submit_button, it)
+                        errorSnackbar(layout_submit_transaction_submit_button, it)
                     })
         }
         pendingSignature = null
     }
 
     override fun fragmentRegistered() {
-        layout_view_transaction_progress_bar.visibility = View.GONE
+        layout_submit_transaction_progress_bar.visibility = View.GONE
     }
 
     private fun submitTransaction(safe: BigInteger, transaction: Transaction, gasOverride: Wei?) =
@@ -194,8 +194,8 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
     }
 
     private fun submittingTransaction(loading: Boolean) {
-        layout_view_transaction_progress_bar.visible(loading)
-        layout_view_transaction_submit_button.isEnabled = !loading
+        layout_submit_transaction_progress_bar.visible(loading)
+        layout_submit_transaction_submit_button.isEnabled = !loading
         transactionInputEnabled(!loading)
     }
 
@@ -206,35 +206,35 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
             val leftConfirmations = Math.max(0, it.requiredConfirmation - availableConfirmations)
 
             if (leftConfirmations > 0) {
-                layout_view_transaction_confirmations_hint_text.setFormattedText(R.string.confirm_transaction_hint, "required_confirmations" to leftConfirmations.toString())
+                layout_submit_transaction_confirmations_hint_text.setFormattedText(R.string.confirm_transaction_hint, "required_confirmations" to leftConfirmations.toString())
             } else {
-                layout_view_transaction_confirmations_hint_text.setText(R.string.submit_transaction_hint)
+                layout_submit_transaction_confirmations_hint_text.setText(R.string.submit_transaction_hint)
             }
-            layout_view_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, availableConfirmations.toString(), it.requiredConfirmation.toString())
+            layout_submit_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, availableConfirmations.toString(), it.requiredConfirmation.toString())
             setViewStates(requiredConfirmationsAvailable)
         }
-        layout_view_transaction_confirmations_addresses.removeAllViews()
+        layout_submit_transaction_confirmations_addresses.removeAllViews()
         // Add current device first
         if (info.status.isOwner) {
-            layout_view_transaction_confirmations_addresses.addView(buildSignerView(getString(R.string.this_device), info.status.sender, false))
+            layout_submit_transaction_confirmations_addresses.addView(buildSignerView(getString(R.string.this_device), info.status.sender, false))
         }
         // Add confirmed devices
         info.status.owners.forEach {
             if (it != info.status.sender && info.signatures.containsKey(it)) {
-                layout_view_transaction_confirmations_addresses.addView(buildSignerView(null, it, false))
+                layout_submit_transaction_confirmations_addresses.addView(buildSignerView(null, it, false))
             }
         }
         // Add pending devices if more confirmations are required
         if (!requiredConfirmationsAvailable) {
             info.status.owners.forEach {
                 if (it != info.status.sender && !info.signatures.containsKey(it)) {
-                    layout_view_transaction_confirmations_addresses.addView(buildSignerView(null, it, true))
+                    layout_submit_transaction_confirmations_addresses.addView(buildSignerView(null, it, true))
                 }
             }
         }
 
         if (estimatedFees != null) {
-            layout_view_transaction_transaction_fee.text = estimatedFees.displayString(this)
+            layout_submit_transaction_transaction_fee.text = estimatedFees.displayString(this)
         } else {
             setUnknownEstimate()
         }
@@ -242,14 +242,14 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
 
     private fun setViewStates(canSubmit: Boolean, canSign: Boolean = !canSubmit) {
         // If we can submit show information for submitting
-        layout_view_transaction_submit_button.isEnabled = canSubmit
-        layout_view_transaction_all_confirmed_hint.visible(canSubmit)
+        layout_submit_transaction_submit_button.isEnabled = canSubmit
+        layout_submit_transaction_all_confirmed_hint.visible(canSubmit)
         // If we can sign show information for signing
-        layout_view_transaction_add_signature_button.visible(canSign)
+        layout_submit_transaction_add_signature_button.visible(canSign)
     }
 
     private fun buildSignerView(name: String?, address: BigInteger, pending: Boolean) =
-            layoutInflater.inflate(R.layout.layout_transaction_confirmation_item, layout_view_transaction_confirmations_addresses, false)
+            layoutInflater.inflate(R.layout.layout_transaction_confirmation_item, layout_submit_transaction_confirmations_addresses, false)
                     .apply {
                         layout_address_item_icon.setAddress(address)
                         layout_address_item_value.text = address.asEthereumAddressStringOrNull()
@@ -260,13 +260,13 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
                     }
 
     private fun setUnknownEstimate() {
-        layout_view_transaction_transaction_fee.text = "-"
+        layout_submit_transaction_transaction_fee.text = "-"
     }
 
     private fun setUnknownTransactionInfo() {
         setUnknownEstimate()
-        layout_view_transaction_confirmations_hint_text.text = getString(R.string.confirm_transaction_hint, "-")
-        layout_view_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, "-", "-")
+        layout_submit_transaction_confirmations_hint_text.setFormattedText(R.string.confirm_transaction_hint, "required_confirmations" to "-")
+        layout_submit_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, "-", "-")
         setViewStates(false, false)
     }
 
@@ -284,7 +284,7 @@ class ExecuteTransactionActivity : ViewTransactionActivity() {
         private const val REQUEST_CODE_CONFIRM_CREDENTIALS = 2342
 
         fun createIntent(context: Context, safeAddress: BigInteger?, transaction: Transaction) =
-                Intent(context, ExecuteTransactionActivity::class.java).apply {
+                Intent(context, SubmitTransactionActivity::class.java).apply {
                     putExtras(createBundle(safeAddress, transaction))
                 }
     }

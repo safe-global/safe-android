@@ -1,6 +1,9 @@
 package pm.gnosis.heimdall.ui.transactions.details.safe
 
 import android.content.Context
+import com.gojuno.koptional.None
+import com.gojuno.koptional.Optional
+import com.gojuno.koptional.toOptional
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -66,24 +69,22 @@ class ChangeSafeSettingsDetailsViewModelTest {
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
 
         // We don't have an add transaction, this should return empty form data and should not cache
-        val removeDetails = TransactionDetails(null, TransactionType.REMOVE_SAFE_OWNER, RemoveSafeOwnerData(BigInteger.ONE, 1), TEST_TX)
-        given(detailsRepoMock.loadTransactionDetails(MockUtils.any())).willReturn(Single.just(removeDetails))
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(RemoveSafeOwnerData(BigInteger.ONE, 1).toOptional()))
 
         val removeOwnerObserver = TestObserver<Pair<String, Int>>()
         viewModel.loadFormData(TEST_TX).subscribe(removeOwnerObserver)
 
         removeOwnerObserver.assertResult(EMPTY_FORM_DATA)
-        then(detailsRepoMock).should().loadTransactionDetails(TEST_TX)
+        then(detailsRepoMock).should().loadTransactionData(TEST_TX)
 
         // We have an add transaction, so we should get the owner and new threshold
-        val addDetails = TransactionDetails(null, TransactionType.ADD_SAFE_OWNER, AddSafeOwnerData(BigInteger.ONE, 1), TEST_TX)
-        given(detailsRepoMock.loadTransactionDetails(MockUtils.any())).willReturn(Single.just(addDetails))
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(AddSafeOwnerData(BigInteger.ONE, 1).toOptional()))
 
         val testObserver = TestObserver<Pair<String, Int>>()
         viewModel.loadFormData(TEST_TX).subscribe(testObserver)
 
         testObserver.assertResult(BigInteger.ONE.asEthereumAddressString() to 1)
-        then(detailsRepoMock).should(times(2)).loadTransactionDetails(TEST_TX)
+        then(detailsRepoMock).should(times(2)).loadTransactionData(TEST_TX)
 
         // If we had a result it should be cached
         val cachedObserver = TestObserver<Pair<String, Int>>()
@@ -96,14 +97,13 @@ class ChangeSafeSettingsDetailsViewModelTest {
     @Test
     fun loadFormDataClearDefaults() {
         // Address 0x0 should be cleared (=> "")
-        val addDetails = TransactionDetails(null, TransactionType.ADD_SAFE_OWNER, AddSafeOwnerData(BigInteger.ZERO, 1), TEST_TX)
-        given(detailsRepoMock.loadTransactionDetails(MockUtils.any())).willReturn(Single.just(addDetails))
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(AddSafeOwnerData(BigInteger.ZERO, 1).toOptional()))
 
         val testObserver = TestObserver<Pair<String, Int>>()
         viewModel.loadFormData(TEST_TX).subscribe(testObserver)
 
         testObserver.assertResult("" to 1)
-        then(detailsRepoMock).should().loadTransactionDetails(TEST_TX)
+        then(detailsRepoMock).should().loadTransactionData(TEST_TX)
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
     }
 
@@ -171,14 +171,13 @@ class ChangeSafeSettingsDetailsViewModelTest {
         contextMock.mockGetStringWithArgs()
 
         // We have an add transaction, so we should get the owner and new threshold
-        val addDetails = TransactionDetails(null, TransactionType.ADD_SAFE_OWNER, AddSafeOwnerData(BigInteger.ZERO, 1), TEST_TX)
-        given(detailsRepoMock.loadTransactionDetails(MockUtils.any())).willReturn(Single.just(addDetails))
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(AddSafeOwnerData(BigInteger.ZERO, 1).toOptional()))
 
         val testObserver = TestObserver<Pair<String, Int>>()
         viewModel.loadFormData(TEST_TX).subscribe(testObserver)
 
         testObserver.assertResult("" to 1)
-        then(detailsRepoMock).should().loadTransactionDetails(TEST_TX)
+        then(detailsRepoMock).should().loadTransactionData(TEST_TX)
 
         // Check that the cached data is used
         given(safeRepoMock.loadInfo(MockUtils.any())).willReturn(Observable.error(UnknownHostException()))
@@ -245,15 +244,14 @@ class ChangeSafeSettingsDetailsViewModelTest {
     fun loadActionUnsupportedAction() {
         val testObserver = TestObserver<ChangeSafeSettingsDetailsContract.Action>()
 
-        val details = Single.just(TransactionDetails(null, TransactionType.ETHER_TRANSFER, null, TEST_TX))
-        given(detailsRepoMock.loadTransactionDetails(MockUtils.any())).willReturn(details)
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(None))
 
         viewModel.loadAction(TEST_SAFE, TEST_TX).subscribe(testObserver)
 
         testObserver.assertFailure(IllegalStateException::class.java)
 
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(detailsRepoMock).should().loadTransactionDetails(TEST_TX)
+        then(detailsRepoMock).should().loadTransactionData(TEST_TX)
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
     }
 
@@ -261,22 +259,21 @@ class ChangeSafeSettingsDetailsViewModelTest {
     fun loadAddOwnerAction() {
         val testObserver = TestObserver<ChangeSafeSettingsDetailsContract.Action>()
         val data = AddSafeOwnerData(TEST_OWNER, 1)
-        val details = Single.just(TransactionDetails(null, TransactionType.ADD_SAFE_OWNER, data, TEST_TX))
-        given(detailsRepoMock.loadTransactionDetails(MockUtils.any())).willReturn(details)
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(data.toOptional()))
 
         viewModel.loadAction(TEST_SAFE, TEST_TX).subscribe(testObserver)
 
         testObserver.assertResult(ChangeSafeSettingsDetailsContract.Action.AddOwner(TEST_OWNER))
 
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(detailsRepoMock).should().loadTransactionDetails(TEST_TX)
+        then(detailsRepoMock).should().loadTransactionData(TEST_TX)
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
     }
 
-    private fun testLoadAction(info: SafeInfo?, details: Single<TransactionDetails>,
+    private fun testLoadAction(info: SafeInfo?, details: Single<Optional<TransactionTypeData>>,
                                result: ChangeSafeSettingsDetailsContract.Action) {
         val testObserver = TestObserver<ChangeSafeSettingsDetailsContract.Action>()
-        given(detailsRepoMock.loadTransactionDetails(MockUtils.any())).willReturn(details)
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(details)
 
         if (info != null) {
             given(safeRepoMock.loadInfo(MockUtils.any())).willReturn(Observable.just(info))
@@ -290,7 +287,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
             then(safeRepoMock).should().loadInfo(TEST_SAFE)
         }
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(detailsRepoMock).should().loadTransactionDetails(TEST_TX)
+        then(detailsRepoMock).should().loadTransactionData(TEST_TX)
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
         Mockito.reset(safeRepoMock)
         Mockito.reset(detailsRepoMock)
@@ -300,7 +297,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
     fun loadRemoveOwnerAction() {
         contextMock.mockGetStringWithArgs()
         val data = RemoveSafeOwnerData(BigInteger.ZERO, 1)
-        val details = Single.just(TransactionDetails(null, TransactionType.REMOVE_SAFE_OWNER, data, TEST_TX))
+        val details = Single.just<Optional<TransactionTypeData>>(data.toOptional())
 
         // Build fallback string with index if we don't have safe info
         testLoadAction(null, details, ChangeSafeSettingsDetailsContract.Action.RemoveOwner(BigInteger.ZERO))
@@ -314,7 +311,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
     fun loadReplaceOwnerAction() {
         contextMock.mockGetStringWithArgs()
         val data = ReplaceSafeOwnerData(BigInteger.ZERO, TEST_OWNER_2)
-        val details = Single.just(TransactionDetails(null, TransactionType.REPLACE_SAFE_OWNER, data, TEST_TX))
+        val details = Single.just<Optional<TransactionTypeData>>(data.toOptional())
 
         // Build fallback string with index if we don't have safe info
         testLoadAction(null, details, ChangeSafeSettingsDetailsContract.Action.ReplaceOwner(TEST_OWNER_2, BigInteger.ZERO))

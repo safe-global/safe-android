@@ -40,10 +40,11 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
             cachedAddOwnerInfo?.let { Single.just(it) } ?:
                     // Else parse preset to extract address
                     preset?.let {
-                        detailsRepository.loadTransactionDetails(preset)
+                        detailsRepository.loadTransactionData(preset)
                                 .map {
-                                    when (it.data) {
-                                        is AddSafeOwnerData -> it.data.let {
+                                    val data = it.toNullable()
+                                    when (data) {
+                                        is AddSafeOwnerData -> data.let {
                                             val address =
                                                     if (it.newOwner == BigInteger.ZERO) ""
                                                     else it.newOwner.asEthereumAddressString()
@@ -104,12 +105,13 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
 
     override fun loadAction(safeAddress: BigInteger?, transaction: Transaction?): Single<Action> =
             transaction?.let {
-                detailsRepository.loadTransactionDetails(transaction)
+                detailsRepository.loadTransactionData(transaction)
                         .flatMap {
-                            when (it.data) {
-                                is RemoveSafeOwnerData -> loadRemoveSafeOwnerInfo(safeAddress, it.data)
-                                is AddSafeOwnerData -> Single.just(Action.AddOwner(it.data.newOwner))
-                                is ReplaceSafeOwnerData -> loadReplaceSafeOwnerInfo(safeAddress, it.data)
+                            val data = it.toNullable()
+                            when (data) {
+                                is RemoveSafeOwnerData -> loadRemoveSafeOwnerInfo(safeAddress, data)
+                                is AddSafeOwnerData -> Single.just(Action.AddOwner(data.newOwner))
+                                is ReplaceSafeOwnerData -> loadReplaceSafeOwnerInfo(safeAddress, data)
                                 else -> throw IllegalStateException()
                             }
                         }

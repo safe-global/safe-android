@@ -11,7 +11,6 @@
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -96,7 +95,7 @@
             android:name=".ui.transactions.SignTransactionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.transactions.ExecuteTransactionActivity"
+            android:name=".ui.transactions.SubmitTransactionActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.settings.security.revealmnemonic.RevealMnemonicActivity"
@@ -107,6 +106,10 @@
         <activity
             android:name=".ui.safe.details.info.SafeSettingsActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.transactions.ReceiptTransactionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CardTheme" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

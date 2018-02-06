@@ -32,6 +32,7 @@ import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
+import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionContract
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsContract
@@ -107,6 +108,18 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
+    fun providesRestoreAccountContract(provider: ViewModelProvider) = provider[RestoreAccountContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesReceiptTransactionContract(provider: ViewModelProvider) = provider[ReceiptTransactionContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesRevealMnemonicContract(provider: ViewModelProvider) = provider[RevealMnemonicContract::class.java]
+
+    @Provides
+    @ForView
     fun providesSafeDetailsContract(provider: ViewModelProvider) = provider[SafeDetailsContract::class.java]
 
     @Provides
@@ -124,14 +137,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesSecuritySettingsContract(provider: ViewModelProvider) = provider[SecuritySettingsContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesRestoreAccountContract(provider: ViewModelProvider) = provider[RestoreAccountContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesRevealMnemonicContract(provider: ViewModelProvider) = provider[RevealMnemonicContract::class.java]
 
     @Provides
     @ForView

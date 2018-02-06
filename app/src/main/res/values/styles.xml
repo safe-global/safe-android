@@ -13,6 +13,10 @@
         <item name="colorControlNormal">@color/toolbar_action</item>
     </style>
 
+    <style name="CardTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/card_window_background</item>
+    </style>
+
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
@@ -156,6 +160,13 @@
     <style name="TxLabel" parent="Content">
         <item name="android:textColor">@color/light_text</item>
         <item name="android:paddingStart">16dp</item>
+    </style>
+
+    <style name="TxLabel.Review">
+        <item name="android:textColor">@color/gnosis_dark_blue_alpha_50</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="TxValue" parent="BoldContent">

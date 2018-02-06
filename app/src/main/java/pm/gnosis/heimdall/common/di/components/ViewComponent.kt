@@ -36,13 +36,14 @@ import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoActivity
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
-import pm.gnosis.heimdall.ui.transactions.ExecuteTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.assets.ReviewAssetTransferDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.assets.ViewAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.CreateAddOwnerDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeDeviceSettingsDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.safe.ViewChangeSafeSettingsDetailsFragment
 
 @ForView
 @Component(
@@ -59,10 +60,10 @@ interface ViewComponent {
     fun inject(fragment: CreateAddOwnerDetailsFragment)
     fun inject(fragment: CreateGenericTransactionDetailsFragment)
     fun inject(fragment: DeployNewSafeFragment)
-    fun inject(fragment: ReviewAssetTransferDetailsFragment)
-    fun inject(fragment: ReviewChangeDeviceSettingsDetailsFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)
+    fun inject(fragment: ViewAssetTransferDetailsFragment)
+    fun inject(fragment: ViewChangeSafeSettingsDetailsFragment)
 
     // Activities
 
@@ -74,10 +75,10 @@ interface ViewComponent {
     fun inject(activity: AuthenticateActivity)
     fun inject(activity: ChangePasswordActivity)
     fun inject(activity: CreateTransactionActivity)
-    fun inject(activity: ExecuteTransactionActivity)
     fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: NetworkSettingsActivity)
     fun inject(activity: PasswordSetupActivity)
+    fun inject(activity: ReceiptTransactionActivity)
     fun inject(activity: RestoreAccountActivity)
     fun inject(activity: RevealMnemonicActivity)
     fun inject(activity: SafeDetailsActivity)
@@ -87,6 +88,7 @@ interface ViewComponent {
     fun inject(activity: SetupSafeIntroActivity)
     fun inject(activity: SignTransactionActivity)
     fun inject(activity: SplashActivity)
+    fun inject(activity: SubmitTransactionActivity)
     fun inject(activity: TokenManagementActivity)
     fun inject(activity: TokenInfoActivity)
     fun inject(activity: UnlockActivity)

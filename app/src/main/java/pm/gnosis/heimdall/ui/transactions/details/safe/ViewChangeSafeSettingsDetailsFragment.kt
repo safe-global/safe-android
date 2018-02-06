@@ -1,6 +1,8 @@
 package pm.gnosis.heimdall.ui.transactions.details.safe
 
 import android.os.Bundle
+import android.support.annotation.LayoutRes
+import android.support.annotation.StringRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +12,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.layout_review_change_safe_owner.*
+import kotlinx.android.synthetic.main.layout_receipt_change_safe.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -29,12 +31,24 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 
-class ReviewChangeDeviceSettingsDetailsFragment : BaseReviewTransactionDetailsFragment() {
+abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDetailsFragment() {
     @Inject
     lateinit var subViewModel: ChangeSafeSettingsDetailsContract
 
     private var transaction: Transaction? = null
     private var safe: BigInteger? = null
+
+    @LayoutRes
+    abstract fun layout(): Int
+
+    @StringRes
+    abstract fun removedOwnerMessage(): Int
+
+    @StringRes
+    abstract fun addedOwnerMessage(): Int
+
+    @StringRes
+    abstract fun replacedOwnerMessage(): Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +56,7 @@ class ReviewChangeDeviceSettingsDetailsFragment : BaseReviewTransactionDetailsFr
         transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.layout_review_change_safe_owner, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(layout(), container, false)
 
     override fun onStart() {
         super.onStart()
@@ -54,7 +67,7 @@ class ReviewChangeDeviceSettingsDetailsFragment : BaseReviewTransactionDetailsFr
 
         safe?.let {
             disposables += Observable.just(it)
-                    .compose(updateSafeInfoTransformer(layout_review_change_safe_address))
+                    .compose(updateSafeInfoTransformer(layout_view_change_safe_address))
                     .subscribeBy(onError = Timber::e)
         }
     }
@@ -62,28 +75,28 @@ class ReviewChangeDeviceSettingsDetailsFragment : BaseReviewTransactionDetailsFr
     private fun setupForm(action: ChangeSafeSettingsDetailsContract.Action) {
         when (action) {
             is RemoveOwner -> {
-                layout_review_change_safe_primary_target_label.setText(R.string.old_owner)
-                layout_review_change_safe_primary_target_value.text = action.owner.asEthereumAddressStringOrNull()
-                layout_review_change_safe_primary_target_icon.setAddress(action.owner)
-                layout_review_change_safe_secondary_target_container.visible(false)
-                layout_review_change_safe_action.setText(R.string.transaction_description_remove_safe_owner)
+                layout_view_change_safe_primary_target_label.setText(R.string.old_owner)
+                layout_view_change_safe_primary_target_value.text = action.owner.asEthereumAddressStringOrNull()
+                layout_view_change_safe_primary_target_icon.setAddress(action.owner)
+                layout_view_change_safe_secondary_target_container.visible(false)
+                layout_view_change_safe_action.setText(removedOwnerMessage())
             }
             is AddOwner -> {
-                layout_review_change_safe_primary_target_label.setText(R.string.new_owner)
-                layout_review_change_safe_primary_target_value.text = action.owner.asEthereumAddressStringOrNull()
-                layout_review_change_safe_primary_target_icon.setAddress(action.owner)
-                layout_review_change_safe_secondary_target_container.visible(false)
-                layout_review_change_safe_action.setText(R.string.transaction_description_add_safe_owner)
+                layout_view_change_safe_primary_target_label.setText(R.string.new_owner)
+                layout_view_change_safe_primary_target_value.text = action.owner.asEthereumAddressStringOrNull()
+                layout_view_change_safe_primary_target_icon.setAddress(action.owner)
+                layout_view_change_safe_secondary_target_container.visible(false)
+                layout_view_change_safe_action.setText(addedOwnerMessage())
             }
             is ReplaceOwner -> {
-                layout_review_change_safe_primary_target_label.setText(R.string.new_owner)
-                layout_review_change_safe_primary_target_value.text = action.newOwner.asEthereumAddressStringOrNull()
-                layout_review_change_safe_primary_target_icon.setAddress(action.newOwner)
-                layout_review_change_safe_secondary_target_container.visible(true)
-                layout_review_change_safe_secondary_target_label.setText(R.string.old_owner)
-                layout_review_change_safe_secondary_target_value.text = action.previousOwner.asEthereumAddressStringOrNull()
-                layout_review_change_safe_primary_target_icon.setAddress(action.previousOwner)
-                layout_review_change_safe_action.setText(R.string.transaction_description_replace_safe_owner)
+                layout_view_change_safe_primary_target_label.setText(R.string.new_owner)
+                layout_view_change_safe_primary_target_value.text = action.newOwner.asEthereumAddressStringOrNull()
+                layout_view_change_safe_primary_target_icon.setAddress(action.newOwner)
+                layout_view_change_safe_secondary_target_container.visible(true)
+                layout_view_change_safe_secondary_target_label.setText(R.string.old_owner)
+                layout_view_change_safe_secondary_target_value.text = action.previousOwner.asEthereumAddressStringOrNull()
+                layout_view_change_safe_secondary_target_icon.setAddress(action.previousOwner)
+                layout_view_change_safe_action.setText(replacedOwnerMessage())
             }
         }
     }
@@ -109,12 +122,10 @@ class ReviewChangeDeviceSettingsDetailsFragment : BaseReviewTransactionDetailsFr
         private const val ARG_TRANSACTION = "argument.parcelable.transaction"
         private const val ARG_SAFE = "argument.string.safe"
 
-        fun createInstance(transaction: Transaction?, safeAddress: String?) =
-                ReviewChangeDeviceSettingsDetailsFragment().apply {
-                    arguments = Bundle().apply {
-                        putParcelable(ARG_TRANSACTION, transaction?.parcelable())
-                        putString(ARG_SAFE, safeAddress)
-                    }
+        fun createBundle(transaction: Transaction?, safeAddress: String?) =
+                Bundle().apply {
+                    putParcelable(ARG_TRANSACTION, transaction?.parcelable())
+                    putString(ARG_SAFE, safeAddress)
                 }
     }
 

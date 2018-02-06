@@ -276,6 +276,9 @@
     <string name="transaction_description_add_safe_owner">add an owner</string>
     <string name="transaction_description_remove_safe_owner">remove an owner</string>
     <string name="transaction_description_replace_safe_owner">replace an owner</string>
+    <string name="transaction_description_added_safe_owner">added an owner</string>
+    <string name="transaction_description_removed_safe_owner">removed an owner</string>
+    <string name="transaction_description_replaced_safe_owner">replaced an owner</string>
     <string name="signature_request_sent">Request for signatures has been sent!</string>
     <string name="sign_transaction_request_message">You have been requested to sign a transaction</string>
     <string name="sign_transaction_request_title">Sign request</string>
@@ -286,7 +289,18 @@
     <string name="new_owner">New Owner</string>
     <string name="old_owner">Old Owner</string>
     <string name="security">Security</string>
-    <string name="asset_transfer_message">This transaction will send</string>
-    <string name="simple_transfer_message">This transaction will</string>
+    <string name="review_asset_transfer_message">This transaction will send</string>
+    <string name="review_simple_transfer_message">This transaction will</string>
+    <string name="receipt_asset_transfer_message">This transaction sent</string>
+    <string name="receipt_simple_transfer_message">This transaction</string>
     <string name="all_signatures_confirmed">All signatures confirmed!</string>
+    <string name="transaction_details">Transaction Details</string>
+    <string name="fee">fee</string>
+    <string name="url">url</string>
+    <string name="transaction_status_failed">Failed Transaction</string>
+    <string name="transaction_status_pending">Pending Transaction</string>
+    <string name="transaction_status_success">Successful Transaction</string>
+    <string name="view_transaction_on">View transaction on</string>
+    <string name="etherscan_io">Etherscan.io</string>
+    <string name="unknown_transaction_url">Unknown transaction url</string>
 </resources>

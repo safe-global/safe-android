@@ -2,17 +2,17 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout_view_transaction_coordinator"
+    android:id="@+id/layout_submit_transaction_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/layout_view_transaction_appbar"
+        android:id="@+id/layout_submit_transaction_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/layout_view_transaction_toolbar"
+            android:id="@+id/layout_submit_transaction_toolbar"
             style="@style/LightToolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
@@ -21,7 +21,7 @@
             app:title="@string/submit_transaction" />
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-            android:id="@+id/layout_view_transaction_progress_bar"
+            android:id="@+id/layout_submit_transaction_progress_bar"
             style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="4dp"
@@ -64,7 +64,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/layout_view_transaction_confirmations"
+                    android:id="@+id/layout_submit_transaction_confirmations"
                     style="@style/Content"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
@@ -93,7 +93,7 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_authenticate_small_dark"
                     android:tint="@color/white"
-                    app:layout_constraintEnd_toEndOf="@id/layout_view_transaction_confirmations"
+                    app:layout_constraintEnd_toEndOf="@id/layout_submit_transaction_confirmations"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -107,14 +107,14 @@
                     android:paddingRight="16dp"
                     android:text="@string/required_confirmations"
                     android:textSize="12sp"
-                    app:layout_constraintBaseline_toBaselineOf="@+id/layout_view_transaction_confirmations"
-                    app:layout_constraintEnd_toStartOf="@+id/layout_view_transaction_confirmations"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/layout_submit_transaction_confirmations"
+                    app:layout_constraintEnd_toStartOf="@+id/layout_submit_transaction_confirmations"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </android.support.constraint.ConstraintLayout>
 
             <TextView
-                android:id="@+id/layout_view_transaction_confirmations_hint_text"
+                android:id="@+id/layout_submit_transaction_confirmations_hint_text"
                 style="@style/Content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -122,13 +122,13 @@
                 android:text="@string/confirm_transaction_hint" />
 
             <LinearLayout
-                android:id="@+id/layout_view_transaction_confirmations_addresses"
+                android:id="@+id/layout_submit_transaction_confirmations_addresses"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
             <TextView
-                android:id="@+id/layout_view_transaction_add_signature_button"
+                android:id="@+id/layout_submit_transaction_add_signature_button"
                 style="@style/PrimaryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
                 tools:visibility="gone" />
 
             <TextView
-                android:id="@+id/layout_view_transaction_all_confirmed_hint"
+                android:id="@+id/layout_submit_transaction_all_confirmed_hint"
                 style="@style/DarkContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -160,13 +160,13 @@
             <include layout="@layout/include_gas_price_selection" />
 
             <View
-                android:id="@+id/layout_view_transaction_transaction_fee_divider"
+                android:id="@+id/layout_submit_transaction_transaction_fee_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/divider_width"
                 android:background="@color/divider" />
 
             <TextView
-                android:id="@+id/layout_view_transaction_transaction_fee_label"
+                android:id="@+id/layout_submit_transaction_transaction_fee_label"
                 style="@style/Content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
                 android:text="@string/estimated_transaction_fee" />
 
             <TextView
-                android:id="@+id/layout_view_transaction_transaction_fee"
+                android:id="@+id/layout_submit_transaction_transaction_fee"
                 style="@style/BoldContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
                 android:text="@string/loading" />
 
             <TextView
-                android:id="@+id/layout_view_transaction_submit_button"
+                android:id="@+id/layout_submit_transaction_submit_button"
                 style="@style/PrimaryButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -206,6 +206,11 @@ class GnosisSafeTransactionRepository @Inject constructor(
                     .startWith(PublishStatus.PENDING)
                     .onErrorReturnItem(PublishStatus.UNKNOWN)
 
+    override fun loadChainHash(id: String): Single<String> =
+            descriptionsDao.observeStatus(id)
+                    .firstOrError()
+                    .map { it.transactionId }
+
     private class TransactionInfoRequest(
             val requiredConfirmation: SubRequest<Int>,
             val nonce: SubRequest<BigInteger>,

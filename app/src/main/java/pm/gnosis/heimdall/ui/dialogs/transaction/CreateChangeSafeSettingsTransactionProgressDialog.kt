@@ -6,7 +6,7 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
-import pm.gnosis.heimdall.ui.transactions.ExecuteTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
 import pm.gnosis.heimdall.utils.GnosisSafeUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -55,7 +55,7 @@ class CreateChangeSafeSettingsTransactionProgressDialog : BaseCreateSafeTransact
     override fun showTransaction(safe: BigInteger?, transaction: Transaction) {
         startActivity(when (type) {
             SETTINGS_TYPE_REMOVE_OWNER ->
-                ExecuteTransactionActivity.createIntent(context!!, safe, transaction)
+                SubmitTransactionActivity.createIntent(context!!, safe, transaction)
             else ->
                 CreateTransactionActivity.createIntent(context!!, safe, mapType(), transaction)
         })

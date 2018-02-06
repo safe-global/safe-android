@@ -50,7 +50,6 @@
 
             <include layout="@layout/merge_transaction_details_container" />
 
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/divider_width"

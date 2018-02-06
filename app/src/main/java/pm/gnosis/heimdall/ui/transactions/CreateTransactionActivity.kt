@@ -66,7 +66,7 @@ class CreateTransactionActivity : BaseTransactionActivity() {
         return true
     }
 
-    override fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
+    private fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
             when (type) {
                 TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
                     CreateAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
@@ -91,7 +91,7 @@ class CreateTransactionActivity : BaseTransactionActivity() {
                 }
                         .map {
                             when (it) {
-                                is DataResult -> startActivity(ExecuteTransactionActivity.createIntent(this, it.data.first, it.data.second))
+                                is DataResult -> startActivity(SubmitTransactionActivity.createIntent(this, it.data.first, it.data.second))
                                 is ErrorResult -> handleInputError(it.error)
                             }
                         }
