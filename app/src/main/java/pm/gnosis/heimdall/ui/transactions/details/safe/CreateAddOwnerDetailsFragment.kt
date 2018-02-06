@@ -8,6 +8,8 @@ import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_create_add_safe_owner.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
@@ -22,6 +24,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigIntegerOrNull
+import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -40,6 +43,16 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.layout_create_add_safe_owner, container, false)
+
+    override fun onStart() {
+        super.onStart()
+
+        disposables += observeSafe()
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap { it.toNullable()?.let { Observable.just(it) } ?: Observable.empty() }
+                .compose(updateSafeInfoTransformer(layout_create_add_safe_owner_safe_address))
+                .subscribeBy(onError = Timber::e)
+    }
 
     override fun observeTransaction(): Observable<Result<Transaction>> =
             // Setup initial form data
