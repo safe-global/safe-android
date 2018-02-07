@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Gnosis Safe</string>
     <string name="scan_instructions">
-        <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Reminder:</b> The account of this application (found in the account section) must be one of the owners of the Safe. The number of confirmations should be adjusted accordingly.
+        <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Note:</b> This device must be one of the owners of the safe the transaction is for, in order to sign the confirmation.
     </string>
     <string name="error_try_again">An error occurred. Please try again!</string>
     <string name="pin_repeat_wrong">The two PINs are not the same!</string>
@@ -310,4 +310,5 @@
     <string name="push_signature_request">Push Signature Request</string>
     <string name="contract_address">Contract Address</string>
     <string name="symbol">Symbol</string>
+    <string name="transaction">Transaction</string>
 </resources>

@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.authenticate
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_authenticate.*
 import pm.gnosis.heimdall.HeimdallApplication
@@ -10,18 +11,18 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.scanQrCode
+import pm.gnosis.heimdall.common.utils.setupToolbar
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import timber.log.Timber
 import javax.inject.Inject
 
 class AuthenticateActivity : BaseActivity() {
 
     override fun screenId() = ScreenId.AUTHENTICATE
-
-    private var scannedResults: AuthenticateContract.ActivityResults? = null
 
     @Inject
     lateinit var viewModel: AuthenticateContract
@@ -30,26 +31,28 @@ class AuthenticateActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_authenticate)
-        registerToolbar(layout_authenticate_toolbar)
+        setupToolbar(layout_authenticate_toolbar, R.drawable.ic_close_24dp)
     }
 
     override fun onStart() {
         super.onStart()
 
-        layout_authenticate_scan.setOnClickListener {
+        layout_authenticate_transaction_input_button.setOnClickListener {
             scanQrCode()
         }
 
-        scannedResults?.let {
-            disposables += viewModel.checkResult(it)
-                    .subscribeForResult(::startActivity, ::handleError)
-            scannedResults = null
-        }
+        disposables += layout_authenticate_review_button.clicks()
+                .switchMap {
+                    viewModel.checkResult(layout_authenticate_transaction_input.text.toString())
+                }
+                .subscribeForResult(::startActivity, ::handleError)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        scannedResults = AuthenticateContract.ActivityResults(requestCode, resultCode, data)
+        handleQrCodeActivityResult(requestCode, resultCode, data, {
+            layout_authenticate_transaction_input.setText(it)
+        }, {})
     }
 
     private fun handleError(throwable: Throwable) {
