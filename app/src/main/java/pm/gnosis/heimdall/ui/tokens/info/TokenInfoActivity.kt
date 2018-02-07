@@ -75,7 +75,7 @@ class TokenInfoActivity : BaseActivity() {
 
         val tokenAddressString = token.address.asEthereumAddressStringOrNull()
         if (tokenAddressString != null) {
-            setupEtherscanAddressUrl(layout_token_info_address, tokenAddressString, R.string.view_contract_on)
+            layout_token_info_address.setupEtherscanAddressUrl(tokenAddressString, R.string.view_contract_on)
         } else {
             layout_token_info_address.text = "-"
         }

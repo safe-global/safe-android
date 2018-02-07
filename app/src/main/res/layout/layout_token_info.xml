@@ -27,19 +27,17 @@
                     android:padding="16dp">
 
                     <TextView
+                        style="@style/Content"
                         android:layout_width="70dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/name"
-                        android:textColor="@color/gnosis_dark_blue_alpha_70"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
+                        android:text="@string/name" />
 
                     <TextView
                         android:id="@+id/layout_token_info_name"
+                        style="@style/DarkContent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:textColor="@color/gnosis_dark_blue"
                         tools:text="Gnosis" />
                 </LinearLayout>
 
@@ -56,18 +54,17 @@
                     android:padding="16dp">
 
                     <TextView
+                        style="@style/Content"
                         android:layout_width="70dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/symbol"
-                        android:textColor="@color/gnosis_dark_blue_alpha_70"
-                        android:textStyle="bold" />
+                        android:text="@string/symbol" />
 
                     <TextView
                         android:id="@+id/layout_token_info_symbol"
+                        style="@style/DarkContent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:textColor="@color/gnosis_dark_blue"
                         tools:text="GNO" />
                 </LinearLayout>
 
@@ -84,18 +81,17 @@
                     android:padding="16dp">
 
                     <TextView
+                        style="@style/Content"
                         android:layout_width="70dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/token_decimals"
-                        android:textColor="@color/gnosis_dark_blue_alpha_70"
-                        android:textStyle="bold" />
+                        android:text="@string/token_decimals" />
 
                     <TextView
                         android:id="@+id/layout_token_info_decimals"
+                        style="@style/DarkContent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:textColor="@color/gnosis_dark_blue"
                         tools:text="18" />
                 </LinearLayout>
 
@@ -112,18 +108,17 @@
                     android:padding="16dp">
 
                     <TextView
+                        style="@style/Content"
                         android:layout_width="70dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/contract_address"
-                        android:textColor="@color/gnosis_dark_blue_alpha_70"
-                        android:textStyle="bold" />
+                        android:text="@string/contract_address" />
 
                     <TextView
                         android:id="@+id/layout_token_info_address"
+                        style="@style/DarkContent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:textColor="@color/gnosis_dark_blue"
                         tools:text="0x6810e776880c02933d47db1b9fc05908e5386b96" />
                 </LinearLayout>
 

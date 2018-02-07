@@ -59,7 +59,7 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
         disposables += viewModel.loadChainHash(txId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = {
-                    setupEtherscanTransactionUrl(layout_receipt_transaction_url, it, R.string.view_transaction_on)
+                    layout_receipt_transaction_url.setupEtherscanTransactionUrl(it, R.string.view_transaction_on)
                 }, onError = { layout_receipt_transaction_url.setText(R.string.unknown_transaction_url) })
     }
 

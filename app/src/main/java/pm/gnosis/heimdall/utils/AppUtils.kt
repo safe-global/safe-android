@@ -39,29 +39,29 @@ fun handleQrCodeActivityResult(requestCode: Int, resultCode: Int, data: Intent?,
     }
 }
 
-fun Context.setupEtherscanTransactionUrl(forView: TextView, transactionHash: String, @StringRes stringId: Int) {
-    setupEtherscanTransactionUrl(forView, transactionHash, getString(stringId))
+fun TextView.setupEtherscanTransactionUrl(transactionHash: String, @StringRes stringId: Int) {
+    setupEtherscanTransactionUrl(transactionHash, context.getString(stringId))
 }
 
-fun Context.setupEtherscanTransactionUrl(forView: TextView, transactionHash: String, text: String) {
-    setupEtherscanLink(forView, getString(R.string.etherscan_transaction_url, transactionHash), text)
+fun TextView.setupEtherscanTransactionUrl(transactionHash: String, text: String) {
+    setupEtherscanLink(context.getString(R.string.etherscan_transaction_url, transactionHash), text)
 }
 
-fun Context.setupEtherscanAddressUrl(forView: TextView, address: String, @StringRes stringId: Int) {
-    setupEtherscanAddressUrl(forView, address, getString(stringId))
+fun TextView.setupEtherscanAddressUrl(address: String, @StringRes stringId: Int) {
+    setupEtherscanAddressUrl(address, context.getString(stringId))
 }
 
-fun Context.setupEtherscanAddressUrl(forView: TextView, address: String, text: String) {
-    setupEtherscanLink(forView, getString(R.string.etherscan_address_url, address), text)
+fun TextView.setupEtherscanAddressUrl(address: String, text: String) {
+    setupEtherscanLink(context.getString(R.string.etherscan_address_url, address), text)
 }
 
-private fun Context.setupEtherscanLink(forView: TextView, url: String, text: String) {
-    val linkDrawable = ContextCompat.getDrawable(this, R.drawable.ic_external_link)!!
+private fun TextView.setupEtherscanLink(url: String, text: String) {
+    val linkDrawable = ContextCompat.getDrawable(this.context, R.drawable.ic_external_link)!!
     linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
-    forView.text = SpannableStringBuilder(text)
+    this.text = SpannableStringBuilder(text)
             .append(" ")
-            .appendText(getString(R.string.etherscan_io), URLSpan(url))
+            .appendText(context.getString(R.string.etherscan_io), URLSpan(url))
             .append(" ")
             .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
-    forView.setOnClickListener { openUrl(url) }
+    setOnClickListener { this.context.openUrl(url) }
 }
