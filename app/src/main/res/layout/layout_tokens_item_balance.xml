@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"
     android:layout_centerVertical="true"
     android:background="@drawable/selectable_background"
@@ -12,11 +11,10 @@
     android:padding="16dp">
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/layout_tokens_item_symbol"
+        android:id="@+id/layout_tokens_item_balance_symbol"
         style="@style/Title"
         android:layout_width="@dimen/action_circle"
         android:layout_height="@dimen/action_circle"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:background="@drawable/action_circle_background"
         android:ellipsize="end"
@@ -24,16 +22,15 @@
         android:maxLines="1"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        app:autoSizeMinTextSize="8sp"
         app:autoSizeMaxTextSize="14sp"
+        app:autoSizeMinTextSize="8sp"
         app:autoSizeTextType="uniform"
         tools:text="WAVES" />
 
     <ImageView
-        android:id="@+id/layout_tokens_item_symbol_image"
+        android:id="@+id/layout_tokens_item_balance_symbol_image"
         android:layout_width="@dimen/action_circle"
         android:layout_height="@dimen/action_circle"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:scaleType="center"
         android:visibility="gone"
@@ -41,14 +38,13 @@
         tools:visibility="visible" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/layout_tokens_item_balance"
+        android:id="@+id/layout_tokens_item_balance_balance"
         style="@style/Content"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:gravity="right"
+        android:gravity="end"
         android:maxLines="2"
         app:autoSizeMaxTextSize="14sp"
         app:autoSizeMinTextSize="8sp"
@@ -56,15 +52,15 @@
         tools:text="3342434.23545 WAVES" />
 
     <TextView
-        android:id="@+id/layout_tokens_item_name"
+        android:id="@+id/layout_tokens_item_balance_name"
         style="@style/BoldContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@id/layout_tokens_item_balance"
-        android:layout_toRightOf="@id/layout_tokens_item_symbol"
+        android:layout_toEndOf="@id/layout_tokens_item_balance_symbol"
+        android:layout_toStartOf="@id/layout_tokens_item_balance_balance"
         android:maxLines="2"
         tools:text="Gnosis" />
 </RelativeLayout>
