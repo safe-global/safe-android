@@ -10,7 +10,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.IpfsApi
@@ -34,7 +34,7 @@ class SimpleTransactionDetailsRepositoryTest {
     lateinit var descriptionsDaoMock: DescriptionsDao
 
     @Mock
-    lateinit var gnosisAuthenticatorDbMock: GnosisAuthenticatorDb
+    lateinit var appDbMock: ApplicationDb
 
     @Mock
     lateinit var ipfsApiMock: IpfsApi
@@ -43,8 +43,8 @@ class SimpleTransactionDetailsRepositoryTest {
 
     @Before
     fun setUp() {
-        given(gnosisAuthenticatorDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
-        repository = SimpleTransactionDetailsRepository(gnosisAuthenticatorDbMock)
+        given(appDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
+        repository = SimpleTransactionDetailsRepository(appDbMock)
     }
 
     private fun testLoadTransactionType(transaction: Transaction, expectedType: TransactionType) {

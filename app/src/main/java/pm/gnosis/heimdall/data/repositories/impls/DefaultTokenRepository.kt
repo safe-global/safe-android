@@ -15,7 +15,7 @@ import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.ERC20
 import pm.gnosis.heimdall.common.utils.edit
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import pm.gnosis.heimdall.data.remote.BulkRequest
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
@@ -35,13 +35,13 @@ import javax.inject.Singleton
 
 @Singleton
 class DefaultTokenRepository @Inject constructor(
-        gnosisAuthenticatorDb: GnosisAuthenticatorDb,
+        appDb: ApplicationDb,
         private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
         private val preferencesManager: PreferencesManager,
         private val moshi: Moshi,
         @ApplicationContext private val context: Context
 ) : TokenRepository {
-    private val erc20TokenDao = gnosisAuthenticatorDb.erc20TokenDao()
+    private val erc20TokenDao = appDb.erc20TokenDao()
 
     override fun observeTokens(): Flowable<List<ERC20Token>> =
             erc20TokenDao.observeTokens()

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/text_grey_background"
     android:gravity="center_vertical"
     android:padding="16dp">
@@ -12,7 +13,7 @@
         android:layout_height="@dimen/action_circle"
         android:background="@drawable/progress_circle_background"
         android:padding="8dp"
-        android:theme="@style/WhiteCircleProgress" />
+        app:mpb_indeterminateTint="@color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"

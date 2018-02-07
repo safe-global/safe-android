@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.AddressBookEntryDb
 import pm.gnosis.heimdall.data.db.models.fromDB
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
@@ -14,10 +14,10 @@ import javax.inject.Singleton
 
 @Singleton
 class DefaultAddressBookRepository @Inject constructor(
-        gnosisAuthenticatorDb: GnosisAuthenticatorDb
+        appDb: ApplicationDb
 ) : AddressBookRepository {
 
-    private val addressBookDao = gnosisAuthenticatorDb.addressBookDao()
+    private val addressBookDao = appDb.addressBookDao()
 
     override fun addAddressBookEntry(address: BigInteger, name: String, description: String): Completable =
             Completable.fromCallable {

@@ -11,7 +11,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.model.Solidity
@@ -38,14 +38,14 @@ class GnosisSafeTransactionRepositoryTest {
     lateinit var descriptionsDaoMock: DescriptionsDao
 
     @Mock
-    lateinit var gnosisAuthenticatorDbMock: GnosisAuthenticatorDb
+    lateinit var appDbMock: ApplicationDb
 
     private lateinit var repository: GnosisSafeTransactionRepository
 
     @Before
     fun setUp() {
-        given(gnosisAuthenticatorDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
-        repository = GnosisSafeTransactionRepository(gnosisAuthenticatorDbMock, accountRepositoryMock, ethereumJsonRpcRepositoryMock)
+        given(appDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
+        repository = GnosisSafeTransactionRepository(appDbMock, accountRepositoryMock, ethereumJsonRpcRepositoryMock)
     }
 
     private fun verifyHash(safe: BigInteger, transaction: Transaction, expected: String) {

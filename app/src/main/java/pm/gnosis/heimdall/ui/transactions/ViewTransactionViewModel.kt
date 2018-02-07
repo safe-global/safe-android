@@ -4,8 +4,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.heimdall.common.di.ApplicationContext
@@ -43,7 +45,7 @@ class ViewTransactionViewModel @Inject constructor(
             transactionRepository.checkSignature(safe, transaction, signature)
                     .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_signature))) }
 
-    override fun observePushSignature(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Unit>> =
+    override fun observeSignaturePushes(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Unit>> =
             signaturePushRepository.observe(safeAddress)
                     .flatMapSingle {
                         checkSignature(safeAddress, transaction, it)
@@ -51,12 +53,25 @@ class ViewTransactionViewModel @Inject constructor(
                                 .mapToResult()
                     }
 
+    override fun sendSignaturePush(info: Info): Single<Result<Unit>> =
+            Single.fromCallable {
+                val transaction = info.status.transaction
+                val transactionHash = info.status.transactionHash
+                GnoSafeUrlParser.signRequest(transactionHash, info.selectedSafe, transaction.address, transaction.value, transaction.data, transaction.nonce!!)
+            }
+                    .subscribeOn(Schedulers.computation())
+                    .flatMapCompletable {
+                        signaturePushRepository.request(info.selectedSafe, it)
+                    }
+                    .mapToResult()
+
     override fun addSignature(encodedSignatureUrl: String): Completable {
         return signatureStore.loadSingingInfo()
                 .flatMap { (safe, transaction) ->
                     (GnoSafeUrlParser.parse(encodedSignatureUrl) as? GnoSafeUrlParser.Parsed.SignResponse)?.let {
                         checkSignature(safe, transaction, it.signature)
-                    } ?: throw SimpleLocalizedException(context.getString(R.string.invalid_signature_uri))
+                    }
+                            ?: throw SimpleLocalizedException(context.getString(R.string.invalid_signature_uri))
                 }
                 .map(signatureStore::add)
                 .toCompletable()

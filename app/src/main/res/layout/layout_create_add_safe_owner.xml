@@ -31,11 +31,19 @@
             style="@style/Content"
             android:layout_width="@dimen/create_tx_label_width"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
             android:paddingStart="16dp"
             android:text="@string/safe" />
 
-        <include layout="@layout/layout_create_transaction_safe_info" />
+
+        <TextView
+            android:id="@+id/layout_create_add_safe_owner_safe_address"
+            style="@style/BoldContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="2"
+            tools:text="My Safe [0x9bea...eda2]" />
     </LinearLayout>
 
     <View
@@ -52,10 +60,8 @@
             style="@style/Content"
             android:layout_width="@dimen/create_tx_label_width"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:paddingLeft="16dp"
             android:paddingStart="16dp"
             android:text="@string/new_owner" />
 
@@ -64,7 +70,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_gravity="end"
             android:background="@drawable/selectable_background"
@@ -78,7 +83,6 @@
             android:layout_width="@dimen/divider_width"
             android:layout_height="match_parent"
             android:layout_alignWithParentIfMissing="true"
-            android:layout_toLeftOf="@+id/layout_create_add_safe_owner_scan_address_button"
             android:layout_toStartOf="@+id/layout_create_add_safe_owner_scan_address_button"
             android:background="@color/divider" />
 
@@ -90,7 +94,6 @@
             android:layout_alignWithParentIfMissing="true"
             android:layout_gravity="bottom"
             android:layout_toEndOf="@id/layout_create_add_safe_owner_address_label"
-            android:layout_toLeftOf="@id/layout_create_add_safe_owner_divider_qr_code"
             android:layout_toRightOf="@id/layout_create_add_safe_owner_address_label"
             android:layout_toStartOf="@id/layout_create_add_safe_owner_divider_qr_code"
             android:hint="@string/address_hint"

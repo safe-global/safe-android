@@ -51,6 +51,14 @@ fun <K, D> MutableMap<K, Observable<D>>.getSharedObservable(key: K, source: Obse
                     .autoConnect()
         })
 
+fun <D, O> Observable<Result<D>>.flatMapResult(
+        mapper: (D) -> Single<Result<O>>,
+        errorMapper: ((Throwable) -> Single<Result<O>>)? = null
+): Observable<Result<O>> =
+        flatMapSingle {
+            it.mapSingle(mapper, errorMapper)
+        }
+
 sealed class Result<out D> {
     fun handle(dataFun: ((D) -> Unit)?, errorFun: ((Throwable) -> Unit)?) {
         when (this) {

@@ -92,10 +92,10 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                         }
             }
 
-    private val requestSignatures: ObservableTransformer<Result<ViewTransactionContract.Info>, Any> =
+    private val requestSignaturesQR: ObservableTransformer<Result<ViewTransactionContract.Info>, Any> =
             ObservableTransformer {
                 it.observeOn(AndroidSchedulers.mainThread()).switchMap { info ->
-                    layout_submit_transaction_add_signature_button.clicks().map { info }
+                    layout_submit_transaction_scan_signature_qr_button.clicks().map { info }
                             .doOnNextForResult({
                                 RequestSignatureDialog
                                         .create(it.status.transactionHash, it.status.transaction, it.selectedSafe)
@@ -104,13 +104,29 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 }
             }
 
+    private val requestSignaturesPush: ObservableTransformer<Result<ViewTransactionContract.Info>, Result<Unit>> =
+            ObservableTransformer {
+                it.observeOn(AndroidSchedulers.mainThread()).switchMap { info ->
+                    layout_submit_transaction_send_signature_push_button.clicks().map { info }
+                }
+                        .flatMapResult(::requestSignatureViaPush)
+                        .doOnNextForResult(
+                                onNext = {
+                                    snackbar(layout_submit_transaction_send_signature_push_button, R.string.signature_request_sent)
+                                },
+                                onError = {
+                                    errorSnackbar(layout_submit_transaction_send_signature_push_button, it)
+                                }
+                        )
+            }
+
     private val signaturePushes: ObservableTransformer<Result<ViewTransactionContract.Info>, Any> =
             ObservableTransformer {
                 it.switchMap { info ->
                     (info as? DataResult)?.let {
-                        viewModel.observePushSignature(it.data.selectedSafe, it.data.status.transaction)
+                        viewModel.observeSignaturePushes(it.data.selectedSafe, it.data.status.transaction)
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .doOnNextForResult(onError = { errorSnackbar(layout_submit_transaction_add_signature_button, it) })
+                                .doOnNextForResult(onError = { errorSnackbar(layout_submit_transaction_send_signature_push_button, it) })
                     } ?: Observable.empty()
                 }
             }
@@ -124,7 +140,8 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                             // Combine execution information and price data to update the displayed information
                             it.compose(displayTransactionInformation),
                             // Use execution information to allow adding signatures
-                            it.compose(requestSignatures),
+                            it.compose(requestSignaturesQR),
+                            it.compose(requestSignaturesPush),
                             // Use execution information and observe signatures
                             it.compose(signaturePushes)
                     )
@@ -176,6 +193,18 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
     override fun fragmentRegistered() {
         layout_submit_transaction_progress_bar.visibility = View.GONE
     }
+
+    private fun requestSignatureViaPush(info: ViewTransactionContract.Info) =
+            viewModel.sendSignaturePush(info)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe {
+                        layout_submit_transaction_send_signature_push_button.isEnabled = false
+                        layout_submit_transaction_send_signature_push_progress.visible(true)
+                    }
+                    .doAfterTerminate {
+                        layout_submit_transaction_send_signature_push_button.isEnabled = true
+                        layout_submit_transaction_send_signature_push_progress.visible(false)
+                    }
 
     private fun submitTransaction(safe: BigInteger, transaction: Transaction, gasOverride: Wei?) =
             viewModel.submitTransaction(safe, transaction, gasOverride)
@@ -245,7 +274,8 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         layout_submit_transaction_submit_button.isEnabled = canSubmit
         layout_submit_transaction_all_confirmed_hint.visible(canSubmit)
         // If we can sign show information for signing
-        layout_submit_transaction_add_signature_button.visible(canSign)
+        layout_submit_transaction_scan_signature_qr_button.visible(canSign)
+        layout_submit_transaction_send_signature_push_button.visible(canSign)
     }
 
     private fun buildSignerView(name: String?, address: BigInteger, pending: Boolean) =

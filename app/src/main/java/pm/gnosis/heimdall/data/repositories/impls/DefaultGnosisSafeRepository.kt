@@ -12,7 +12,7 @@ import pm.gnosis.heimdall.GnosisSafe.Threshold
 import pm.gnosis.heimdall.ProxyFactory
 import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.data.db.GnosisAuthenticatorDb
+import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
@@ -43,7 +43,7 @@ import javax.inject.Singleton
 
 @Singleton
 class DefaultGnosisSafeRepository @Inject constructor(
-        gnosisAuthenticatorDb: GnosisAuthenticatorDb,
+        gnosisAuthenticatorDb: ApplicationDb,
         private val accountsRepository: AccountsRepository,
         private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
         private val settingsRepository: SettingsRepository
