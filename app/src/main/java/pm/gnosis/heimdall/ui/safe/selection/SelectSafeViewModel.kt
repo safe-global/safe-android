@@ -33,7 +33,7 @@ class SelectSafeViewModel @Inject constructor(
             detailRepository.loadTransactionType(transaction)
                     .map {
                         safe
-                                ?: SimpleLocalizedException(context.getString(R.string.no_safe_selected_error))
+                                ?: throw SimpleLocalizedException(context.getString(R.string.no_safe_selected_error))
                         when (it) {
                             TransactionType.REMOVE_SAFE_OWNER ->
                                 SubmitTransactionActivity.createIntent(context, safe, transaction)

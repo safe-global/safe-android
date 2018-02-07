@@ -60,17 +60,17 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <Spinner
+                    <android.support.v7.widget.AppCompatSpinner
                         android:id="@+id/layout_select_safe_spinner"
-                        style="@style/InlineInput"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:hint="@string/address_hint"
+                        app:backgroundTint="@color/gnosis_dark_blue_alpha_50"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/layout_select_safe_label"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:listitem="@layout/layout_simple_spinner_item"/>
+                        tools:listitem="@layout/layout_simple_spinner_item" />
                 </android.support.constraint.ConstraintLayout>
 
                 <View
