@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
 import pm.gnosis.heimdall.utils.ERC67Parser
@@ -35,6 +36,6 @@ class AuthenticateViewModel @Inject constructor(
         }
         val parsedData = ERC67Parser.parse(qrCodeData) ?:
                 throw SimpleLocalizedException(context.getString(R.string.invalid_erc67))
-        return SubmitTransactionActivity.createIntent(context, null, parsedData.transaction)
+        return SelectSafeActivity.createIntent(context, parsedData.transaction)
     }
 }

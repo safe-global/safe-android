@@ -44,11 +44,11 @@ class SimpleTransactionDetailsRepository @Inject constructor(
 
     private fun parseTransactionType(value: BigInteger?, data: String?): TransactionType =
             when {
+                data.isNullOrBlank() -> TransactionType.ETHER_TRANSFER // If we have no data we default to ether transfer
                 data?.isSolidityMethod(StandardToken.Transfer.METHOD_ID) == true -> TransactionType.TOKEN_TRANSFER
                 data?.isSolidityMethod(GnosisSafe.AddOwner.METHOD_ID) == true -> TransactionType.ADD_SAFE_OWNER
                 data?.isSolidityMethod(GnosisSafe.RemoveOwner.METHOD_ID) == true -> TransactionType.REMOVE_SAFE_OWNER
                 data?.isSolidityMethod(GnosisSafe.ReplaceOwner.METHOD_ID) == true -> TransactionType.REPLACE_SAFE_OWNER
-                data.isNullOrBlank() && value != null -> TransactionType.ETHER_TRANSFER
                 else -> TransactionType.GENERIC
             }
 
