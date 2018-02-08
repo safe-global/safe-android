@@ -69,7 +69,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
 
         // We don't have an add transaction, this should return empty form data and should not cache
-        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(RemoveSafeOwnerData(BigInteger.ONE, 1).toOptional()))
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(RemoveSafeOwnerData(BigInteger.ONE, TEST_OWNER,1).toOptional()))
 
         val removeOwnerObserver = TestObserver<Pair<String, Int>>()
         viewModel.loadFormData(TEST_TX).subscribe(removeOwnerObserver)
@@ -270,22 +270,15 @@ class ChangeSafeSettingsDetailsViewModelTest {
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
     }
 
-    private fun testLoadAction(info: SafeInfo?, details: Single<Optional<TransactionTypeData>>,
+    private fun testLoadAction(safe: BigInteger?, details: Single<Optional<TransactionTypeData>>,
                                result: ChangeSafeSettingsDetailsContract.Action) {
         val testObserver = TestObserver<ChangeSafeSettingsDetailsContract.Action>()
         given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(details)
 
-        if (info != null) {
-            given(safeRepoMock.loadInfo(MockUtils.any())).willReturn(Observable.just(info))
-        }
-
-        viewModel.loadAction(info?.let { TEST_SAFE }, TEST_TX).subscribe(testObserver)
+        viewModel.loadAction(safe, TEST_TX).subscribe(testObserver)
 
         testObserver.assertResult(result)
 
-        if (info != null) {
-            then(safeRepoMock).should().loadInfo(TEST_SAFE)
-        }
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(detailsRepoMock).should().loadTransactionData(TEST_TX)
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
@@ -296,29 +289,27 @@ class ChangeSafeSettingsDetailsViewModelTest {
     @Test
     fun loadRemoveOwnerAction() {
         contextMock.mockGetStringWithArgs()
-        val data = RemoveSafeOwnerData(BigInteger.ZERO, 1)
+        val data = RemoveSafeOwnerData(BigInteger.ZERO, TEST_OWNER,1)
         val details = Single.just<Optional<TransactionTypeData>>(data.toOptional())
 
-        // Build fallback string with index if we don't have safe info
-        testLoadAction(null, details, ChangeSafeSettingsDetailsContract.Action.RemoveOwner(BigInteger.ZERO))
+        // Get correct info without safe
+        testLoadAction(null, details, ChangeSafeSettingsDetailsContract.Action.RemoveOwner(TEST_OWNER))
 
-        // Return owner address if we can retrieve safe info
-        val info = SafeInfo(TEST_SAFE.asEthereumAddressString(), Wei.ZERO, 1, listOf(TEST_OWNER), true)
-        testLoadAction(info, details, ChangeSafeSettingsDetailsContract.Action.RemoveOwner(TEST_OWNER))
+        // Get correct info with safe
+        testLoadAction(TEST_SAFE, details, ChangeSafeSettingsDetailsContract.Action.RemoveOwner(TEST_OWNER))
     }
 
     @Test
     fun loadReplaceOwnerAction() {
         contextMock.mockGetStringWithArgs()
-        val data = ReplaceSafeOwnerData(BigInteger.ZERO, TEST_OWNER_2)
+        val data = ReplaceSafeOwnerData(BigInteger.ZERO, TEST_OWNER, TEST_OWNER_2)
         val details = Single.just<Optional<TransactionTypeData>>(data.toOptional())
 
-        // Build fallback string with index if we don't have safe info
-        testLoadAction(null, details, ChangeSafeSettingsDetailsContract.Action.ReplaceOwner(TEST_OWNER_2, BigInteger.ZERO))
+        // Get correct info without safe
+        testLoadAction(null, details, ChangeSafeSettingsDetailsContract.Action.ReplaceOwner(TEST_OWNER_2, TEST_OWNER))
 
-        // Return owner address if we can retrieve safe info
-        val info = SafeInfo(TEST_SAFE.asEthereumAddressString(), Wei.ZERO, 1, listOf(TEST_OWNER), true)
-        testLoadAction(info, details, ChangeSafeSettingsDetailsContract.Action.ReplaceOwner(TEST_OWNER_2, TEST_OWNER))
+        // Get correct info with safe
+        testLoadAction(TEST_SAFE, details, ChangeSafeSettingsDetailsContract.Action.ReplaceOwner(TEST_OWNER_2, TEST_OWNER))
     }
 
     private fun Int.asString(vararg params: Any) =

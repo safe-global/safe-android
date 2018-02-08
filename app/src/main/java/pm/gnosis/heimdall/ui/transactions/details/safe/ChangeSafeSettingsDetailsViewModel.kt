@@ -109,29 +109,13 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
                         .flatMap {
                             val data = it.toNullable()
                             when (data) {
-                                is RemoveSafeOwnerData -> loadRemoveSafeOwnerInfo(safeAddress, data)
+                                is RemoveSafeOwnerData -> Single.just(Action.RemoveOwner(data.owner))
                                 is AddSafeOwnerData -> Single.just(Action.AddOwner(data.newOwner))
-                                is ReplaceSafeOwnerData -> loadReplaceSafeOwnerInfo(safeAddress, data)
+                                is ReplaceSafeOwnerData -> Single.just(Action.ReplaceOwner(data.newOwner, data.owner))
                                 else -> throw IllegalStateException()
                             }
                         }
             } ?: Single.error<Action>(IllegalStateException())
-
-    private fun loadRemoveSafeOwnerInfo(safeAddress: BigInteger?, data: RemoveSafeOwnerData) =
-            loadSafeInfo(safeAddress).map {
-                Action.RemoveOwner(getOwnerOrIndex(it.toNullable()?.owners, data.ownerIndex))
-            }.singleOrError()
-
-    private fun loadReplaceSafeOwnerInfo(safeAddress: BigInteger?, data: ReplaceSafeOwnerData) =
-            loadSafeInfo(safeAddress).map {
-                val oldOwner = getOwnerOrIndex(it.toNullable()?.owners, data.oldOwnerIndex)
-                Action.ReplaceOwner(data.newOwner, oldOwner)
-            }.singleOrError()
-
-    private fun getOwnerOrIndex(owners: List<BigInteger>?, index: BigInteger): BigInteger {
-        val oldOwnerIndex = index.toInt()
-        return owners?.getOrNull(oldOwnerIndex) ?: index
-    }
 
     companion object {
         val EMPTY_FORM_DATA = "" to -1
