@@ -3,6 +3,9 @@ package pm.gnosis.heimdall.ui.safe.add
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +21,7 @@ import kotlinx.android.synthetic.main.include_gas_price_selection.*
 import kotlinx.android.synthetic.main.layout_additional_owner_item.view.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_deploy_new_safe.*
+import kotlinx.android.synthetic.main.layout_security_bars.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -87,11 +91,10 @@ class DeployNewSafeFragment : BaseFragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
                     layout_deploy_new_safe_device_info.apply {
-                        val address = it.asEthereumAddressStringOrNull()
+                        layout_address_item_icon.setAddress(it)
                         layout_address_item_name.visible(true)
                         layout_address_item_name.text = getString(R.string.this_device)
-                        layout_address_item_icon.setAddress(it)
-                        address?.let { layout_address_item_value.text = address }
+                        layout_address_item_value.visible(false)
                     }
                 }
                 .flatMapObservable {
@@ -154,7 +157,10 @@ class DeployNewSafeFragment : BaseFragment() {
                 })
                 .setNeutralButton("Scan", { _, _ ->
                     scanQrCode()
-                }).show()
+                })
+                .setOnDismissListener {
+                    activity?.hideSoftKeyboard()
+                }.show()
     }
 
     private fun addOwner(address: String) {
@@ -178,7 +184,7 @@ class DeployNewSafeFragment : BaseFragment() {
     }
 
     private fun updateEstimate(estimate: Wei) {
-        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.GONE
+        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.INVISIBLE
         layout_deploy_new_safe_transaction_fee.text = estimate.displayString(context!!)
     }
 
@@ -195,9 +201,9 @@ class DeployNewSafeFragment : BaseFragment() {
         layout_deploy_new_safe_transaction_fee_fiat.visibility = View.GONE
     }
 
-    private fun updateOwners(owners: List<BigInteger>) {
+    private fun updateOwners(additionalOwners: List<BigInteger>) {
         layout_deploy_new_safe_additional_owners_container.removeAllViews()
-        owners.forEach { address ->
+        additionalOwners.forEach { address ->
             if (address.isValidEthereumAddress()) {
                 val view = layoutInflater.inflate(R.layout.layout_additional_owner_item, layout_deploy_new_safe_additional_owners_container, false)
                 address.asEthereumAddressStringOrNull()?.let { view.layout_address_item_value.text = it }
@@ -212,7 +218,40 @@ class DeployNewSafeFragment : BaseFragment() {
             }
         }
 
-        layout_deploy_new_safe_add_owner_button.visible(owners.size < 2)
+        layout_deploy_new_safe_add_owner_button.visible(additionalOwners.size < 2)
+        updateSecurityBar(additionalOwners.size)
+    }
+
+    private fun updateSecurityBar(additionalOwners: Int) {
+        val spannableStringBuilder = SpannableStringBuilder("")
+                .appendText(getString(R.string.security_level), ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.gnosis_dark_blue)))
+                .append(": ")
+        when (additionalOwners) {
+            0 -> {
+                layout_security_bars_first.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_low))
+                layout_security_bars_second.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_default))
+                layout_security_bars_third.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_default))
+                layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
+                        .appendText("weak", ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_low)))
+                layout_deploy_new_safe_security_info.text = getString(R.string.security_info_weak)
+            }
+            1 -> {
+                layout_security_bars_first.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_good))
+                layout_security_bars_second.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_good))
+                layout_security_bars_third.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_default))
+                layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
+                        .appendText("good", ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_good)))
+                layout_deploy_new_safe_security_info.text = getString(R.string.security_info_good)
+            }
+            2 -> {
+                layout_security_bars_first.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_best))
+                layout_security_bars_second.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_best))
+                layout_security_bars_third.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_best))
+                layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
+                        .appendText("best", ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_best)))
+                layout_deploy_new_safe_security_info.text = getString(R.string.security_info_best)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =

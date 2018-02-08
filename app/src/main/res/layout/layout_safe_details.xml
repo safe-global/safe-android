@@ -44,7 +44,7 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:tabIndicatorColor="@color/selected_tab"
             app:tabSelectedTextColor="@color/selected_tab"
-            app:tabTextColor="@color/white_alpha_70">
+            app:tabTextColor="@color/unselected_tab">
 
             <android.support.design.widget.TabItem
                 android:layout_width="match_parent"
