@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">Gnosis Safe</string>
     <string name="scan_instructions">
-        <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Reminder:</b> The account of this application (found in the account section) must be one of the owners of the Safe. The number of confirmations should be adjusted accordingly.
+        <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Note:</b> This device must be one of the owners of the safe the transaction is for, in order to sign the confirmation.
     </string>
+    <string name="select_safe_message">Please select a safe to use for this transaction</string>
     <string name="error_try_again">An error occurred. Please try again!</string>
     <string name="pin_repeat_wrong">The two PINs are not the same!</string>
     <string name="error_wrong_credentials">The entered credentials are wrong.</string>
@@ -28,6 +29,7 @@
     <string name="your_account_address">Your account address</string>
     <string name="balance">Balance</string>
     <string name="confirm_safe_transaction">Confirm Safe Transaction</string>
+    <string name="select_safe">Select Safe</string>
     <string name="scan_confirmation">Scan confirmation</string>
     <string name="create_new_account">Create new Account</string>
     <string name="mnemonic_generate_reminder">Write the words below in a secure place. They\'ll be used to generate your account.</string>
@@ -310,4 +312,6 @@
     <string name="push_signature_request">Push Signature Request</string>
     <string name="contract_address">Contract Address</string>
     <string name="symbol">Symbol</string>
+    <string name="transaction">Transaction</string>
+    <string name="no_safe_selected_error">Please select a Safe to proceed!</string>
 </resources>

@@ -11,7 +11,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/layout_authenticate_review_button"
+            android:id="@+id/layout_select_safe_review_button"
             style="@style/PrimaryButton.FullWidth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,8 +22,8 @@
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/layout_authenticate_review_button"
-            android:layout_below="@+id/layout_authenticate_toolbar">
+            android:layout_above="@id/layout_select_safe_review_button"
+            android:layout_below="@+id/layout_select_safe_toolbar">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -35,7 +35,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="@string/scan_instructions" />
+                    android:text="@string/select_safe_message" />
 
                 <View
                     android:layout_width="match_parent"
@@ -48,50 +48,29 @@
                     android:minHeight="@dimen/transaction_details_cell_height">
 
                     <TextView
-                        android:id="@+id/layout_authenticate_transaction_input_label"
+                        android:id="@+id/layout_select_safe_label"
                         style="@style/TxLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
                         android:gravity="center"
                         android:paddingEnd="8dp"
-                        android:text="@string/transaction"
+                        android:text="@string/safe"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/layout_authenticate_transaction_input_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/selectable_background"
-                        android:paddingEnd="12dp"
-                        android:paddingStart="12dp"
-                        android:tint="@color/gnosis_blue"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:srcCompat="@drawable/ic_qrcode_scan_dark" />
-
-                    <View
-                        android:id="@+id/layout_authenticate_transaction_input_divider_qr_code"
-                        android:layout_width="@dimen/divider_width"
-                        android:layout_height="match_parent"
-                        android:layout_alignWithParentIfMissing="true"
-                        android:background="@color/divider"
-                        app:layout_constraintEnd_toStartOf="@+id/layout_authenticate_transaction_input_button" />
-
-                    <EditText
-                        android:id="@+id/layout_authenticate_transaction_input"
-                        style="@style/InlineInput"
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/layout_select_safe_spinner"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:hint="@string/address_hint"
+                        app:backgroundTint="@color/gnosis_dark_blue_alpha_50"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/layout_authenticate_transaction_input_divider_qr_code"
-                        app:layout_constraintStart_toEndOf="@id/layout_authenticate_transaction_input_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/layout_select_safe_label"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="https://ipfs.infura.io/U34920344542523211121323dfkalhgksadfgfdkhgflhgksadfgfdkhgflhgksadfgfdkhgflhgksadfgfdkhgfdk adsfsdakhjhg2" />
+                        tools:listitem="@layout/layout_simple_spinner_item" />
                 </android.support.constraint.ConstraintLayout>
 
                 <View
@@ -103,17 +82,17 @@
         </android.support.v4.widget.NestedScrollView>
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/layout_authenticate_toolbar"
+            android:id="@+id/layout_select_safe_toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
             app:navigationIcon="@drawable/ic_close_24dp"
             app:theme="@style/LightToolbarTheme"
-            app:title="@string/confirm_safe_transaction" />
+            app:title="@string/select_safe" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/divider_width"
-            android:layout_below="@id/layout_authenticate_toolbar"
+            android:layout_below="@id/layout_select_safe_toolbar"
             android:background="@color/divider" />
 
     </RelativeLayout>
