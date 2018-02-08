@@ -5,7 +5,6 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
-import java.math.BigInteger
 import javax.inject.Inject
 
 class ReceiptTransactionViewModel @Inject constructor(

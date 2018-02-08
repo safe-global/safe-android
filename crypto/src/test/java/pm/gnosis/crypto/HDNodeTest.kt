@@ -1,7 +1,8 @@
 package pm.gnosis.crypto
 
 import okio.ByteString
-import org.junit.Assert.*
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import pm.gnosis.tests.utils.Asserts.assertThrow
 import pm.gnosis.utils.hexStringToByteArray

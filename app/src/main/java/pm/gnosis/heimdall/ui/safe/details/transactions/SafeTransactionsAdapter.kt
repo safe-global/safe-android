@@ -20,7 +20,6 @@ import pm.gnosis.heimdall.data.repositories.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.heimdall.utils.formatAsLongDate
-import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import java.util.concurrent.TimeUnit

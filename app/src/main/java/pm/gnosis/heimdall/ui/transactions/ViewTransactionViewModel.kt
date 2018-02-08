@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers

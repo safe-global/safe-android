@@ -2,8 +2,6 @@ package pm.gnosis.heimdall.security.db
 
 import android.arch.persistence.room.TypeConverter
 import pm.gnosis.heimdall.security.EncryptionManager
-import pm.gnosis.utils.hexStringToByteArray
-import pm.gnosis.utils.toHexString
 import pm.gnosis.utils.utf8String
 
 private interface Encrypted<out T> {

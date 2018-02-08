@@ -18,7 +18,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.reset
 import org.mockito.junit.MockitoJUnitRunner
@@ -40,8 +41,10 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
-import pm.gnosis.utils.*
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.exceptions.InvalidAddressException
+import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.net.UnknownHostException
 

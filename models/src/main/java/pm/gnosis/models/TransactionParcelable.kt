@@ -2,7 +2,9 @@ package pm.gnosis.models
 
 import android.os.Parcel
 import android.os.Parcelable
-import pm.gnosis.utils.*
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.nullOnThrow
 
 data class TransactionParcelable(val transaction: Transaction) : Parcelable {
     constructor(parcel: Parcel) : this(Transaction(

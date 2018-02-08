@@ -23,7 +23,6 @@ import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.nullOnThrow
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 

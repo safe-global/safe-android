@@ -14,8 +14,8 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.include_gas_price_selection.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
-import kotlinx.android.synthetic.main.layout_transaction_confirmation_item.view.*
 import kotlinx.android.synthetic.main.layout_submit_transaction.*
+import kotlinx.android.synthetic.main.layout_transaction_confirmation_item.view.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent

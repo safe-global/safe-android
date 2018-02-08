@@ -4,9 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
-import android.view.Gravity
 import android.view.View
 import pm.gnosis.heimdall.R
 

@@ -1,8 +1,7 @@
 package pm.gnosis.heimdall.accounts.base.models
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 import java.math.BigInteger
 
 class SignatureTest {

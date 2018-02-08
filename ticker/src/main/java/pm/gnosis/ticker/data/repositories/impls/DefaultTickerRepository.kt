@@ -10,7 +10,6 @@ import pm.gnosis.ticker.data.repositories.models.fromDb
 import pm.gnosis.ticker.data.repositories.models.fromNetwork
 import pm.gnosis.ticker.data.repositories.models.toDb
 import java.math.BigDecimal
-import java.math.RoundingMode
 import javax.inject.Inject
 import javax.inject.Singleton
 

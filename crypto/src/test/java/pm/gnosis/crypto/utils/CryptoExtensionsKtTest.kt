@@ -1,9 +1,8 @@
 package pm.gnosis.crypto.utils
 
 import okio.ByteString
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 class CryptoExtensionsKtTest {
 

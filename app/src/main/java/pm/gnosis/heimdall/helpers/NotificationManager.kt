@@ -11,7 +11,6 @@ import android.os.Build
 import android.support.v4.app.NotificationCompat
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.services.HeimdallFirebaseService
 import javax.inject.Inject
 import javax.inject.Singleton
 

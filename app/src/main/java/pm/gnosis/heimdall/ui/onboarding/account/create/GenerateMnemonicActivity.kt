@@ -16,9 +16,11 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.common.utils.copyToClipboard
+import pm.gnosis.heimdall.common.utils.snackbar
+import pm.gnosis.heimdall.common.utils.startActivity
+import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.heimdall.utils.disableAccessibility

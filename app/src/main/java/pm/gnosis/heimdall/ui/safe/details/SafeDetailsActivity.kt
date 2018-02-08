@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.reporting.ButtonId
 import pm.gnosis.heimdall.reporting.Event
@@ -26,9 +25,7 @@ import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
-import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigIntegerOrNull
 import pm.gnosis.utils.hexAsEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject

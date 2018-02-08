@@ -4,14 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
