@@ -31,6 +31,7 @@ class TokenManagementAdapter @Inject constructor(
 
         override fun bind(data: ERC20Token, payloads: List<Any>?) {
             itemView.layout_tokens_item_name.text = data.name ?: data.address.asEthereumAddressString()
+            itemView.layout_tokens_item_symbol.text = if (data.symbol.isNullOrEmpty()) data.address.toString(16).substring(0, 3) else data.symbol
         }
     }
 }

@@ -301,10 +301,13 @@
     <string name="transaction_status_pending">Pending Transaction</string>
     <string name="transaction_status_success">Successful Transaction</string>
     <string name="view_transaction_on">View transaction on</string>
+    <string name="view_contract_on">View contract on</string>
     <string name="etherscan_io">Etherscan.io</string>
     <string name="unknown_transaction_url">Unknown transaction url</string>
     <string name="low_balance_warning">No sufficient balance in your account to deploy a new safe. Send %1s ETH to your account address.</string>
     <string name="dismiss">Dismiss</string>
     <string name="view_account">View Account</string>
     <string name="push_signature_request">Push Signature Request</string>
+    <string name="contract_address">Contract Address</string>
+    <string name="symbol">Symbol</string>
 </resources>

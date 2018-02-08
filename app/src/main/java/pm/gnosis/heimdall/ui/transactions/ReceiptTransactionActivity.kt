@@ -3,21 +3,20 @@ package pm.gnosis.heimdall.ui.transactions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.text.SpannableStringBuilder
-import android.text.style.ImageSpan
-import android.text.style.URLSpan
 import android.view.View
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_receipt_transaction.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.common.utils.setupToolbar
+import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus.*
 import pm.gnosis.heimdall.data.repositories.TransactionType
@@ -26,6 +25,7 @@ import pm.gnosis.heimdall.ui.transactions.details.assets.ReceiptAssetTransferDet
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ReceiptChangeSafeSettingsDetailsFragment
+import pm.gnosis.heimdall.utils.setupEtherscanTransactionUrl
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
@@ -58,23 +58,9 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
 
         disposables += viewModel.loadChainHash(txId)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::setupLink, {
-                    layout_receipt_transaction_url.setText(R.string.unknown_transaction_url)
-                })
-    }
-
-    private fun setupLink(hash: String) {
-        val linkDrawable = ContextCompat.getDrawable(this, R.drawable.ic_external_link)!!
-        val txUrl = getString(R.string.etherscan_url, hash)
-        linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
-        layout_receipt_transaction_url.text = SpannableStringBuilder(getString(R.string.view_transaction_on))
-                .append(" ")
-                .appendText(getString(R.string.etherscan_io), URLSpan(txUrl))
-                .append(" ")
-                .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
-        layout_receipt_transaction_url.setOnClickListener {
-            openUrl(txUrl)
-        }
+                .subscribeBy(onSuccess = {
+                    layout_receipt_transaction_url.setupEtherscanTransactionUrl(it, R.string.view_transaction_on)
+                }, onError = { layout_receipt_transaction_url.setText(R.string.unknown_transaction_url) })
     }
 
     private fun updateStatus(status: PublishStatus) {
