@@ -111,6 +111,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/CardTheme" />
 
+        <activity android:name=".ui.safe.selection.SelectSafeActivity"
+            android:screenOrientation="portrait" />
+
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
