@@ -15,11 +15,10 @@ abstract class SimpleSpinnerAdapter<T>(context: Context) : ArrayAdapter<T>(conte
     abstract fun title(item: T): String?
     abstract fun subTitle(item: T): String?
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val view = getDropDownView(position, convertView, parent)
-        view.setPadding(0, 0, 0, 0)
-        return view
-    }
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?) =
+            getDropDownView(position, convertView, parent).apply {
+                setPadding(0, 0, 0, 0)
+            }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val viewHolder = getViewHolder(convertView, parent)
@@ -30,15 +29,14 @@ abstract class SimpleSpinnerAdapter<T>(context: Context) : ArrayAdapter<T>(conte
     }
 
     private fun getViewHolder(convertView: View?, parent: ViewGroup?): ViewHolder {
-        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.layout_simple_spinner_item, parent, false)
+        val view = convertView
+                ?: LayoutInflater.from(context).inflate(R.layout.layout_simple_spinner_item, parent, false)
         return (view.tag as? ViewHolder) ?: createAndSetViewHolder(view)
     }
 
-    private fun createAndSetViewHolder(view: View): ViewHolder {
-        val viewHolder = ViewHolder(view, view.layout_simple_spinner_item_name, view.layout_simple_spinner_item_address)
-        view.tag = viewHolder
-        return viewHolder
-    }
+    private fun createAndSetViewHolder(view: View) =
+            ViewHolder(view, view.layout_simple_spinner_item_name, view.layout_simple_spinner_item_address)
+                    .apply { view.tag = this }
 
     data class ViewHolder(val itemView: View, val titleText: TextView, val subtitleText: TextView)
 }
