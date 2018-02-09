@@ -41,7 +41,7 @@ subprojects {
                 }
 
                 buildTypes {
-                    mainnet {
+                    dev {
                     }
                 }
                 lintOptions {

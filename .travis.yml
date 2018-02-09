@@ -40,11 +40,14 @@ script:
 after_success:
   - bash <(curl -s https://codecov.io/bash) -f '*TestCoverage.xml'
 
+before_deploy:
+  - ./ci/build_dev_version.sh
+
 deploy:
   provider: releases
   api_key: "${GITHUB_API_KEY}"
   file_glob: true
-  file: app/build/outputs/apk/*/*.apk
+  file: app/build/outputs/apk/*/*-dev.apk
   skip_cleanup: true
   on:
     tags: true
