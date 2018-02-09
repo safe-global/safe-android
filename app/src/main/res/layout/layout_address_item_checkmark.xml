@@ -4,17 +4,17 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/layout_additional_owner_delete_button"
+        android:id="@+id/layout_address_item_checkmark_image"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_cross_action" />
+        android:src="@drawable/ic_approved_signature" />
 
     <include
         layout="@layout/layout_address_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@id/layout_additional_owner_delete_button" />
+        android:layout_toStartOf="@id/layout_address_item_checkmark_image" />
 </RelativeLayout>

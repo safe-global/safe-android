@@ -3,10 +3,11 @@ package pm.gnosis.heimdall.ui.safe.add
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
@@ -14,10 +15,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.android.synthetic.main.dialog_address_input.view.*
 import kotlinx.android.synthetic.main.include_gas_price_selection.*
 import kotlinx.android.synthetic.main.layout_additional_owner_item.view.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_deploy_new_safe.*
+import kotlinx.android.synthetic.main.layout_security_bars.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -29,6 +32,7 @@ import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
+import pm.gnosis.heimdall.utils.setColorFilterCompat
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.asEthereumAddressStringOrNull
@@ -87,11 +91,10 @@ class DeployNewSafeFragment : BaseFragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
                     layout_deploy_new_safe_device_info.apply {
-                        val address = it.asEthereumAddressStringOrNull()
+                        layout_address_item_icon.setAddress(it)
                         layout_address_item_name.visible(true)
                         layout_address_item_name.text = getString(R.string.this_device)
-                        layout_address_item_icon.setAddress(it)
-                        address?.let { layout_address_item_value.text = address }
+                        layout_address_item_value.visible(false)
                     }
                 }
                 .flatMapObservable {
@@ -146,15 +149,13 @@ class DeployNewSafeFragment : BaseFragment() {
 
     private fun showAddOwnerDialog() {
         // TODO: add proper dialog once design is known
-        val input = EditText(context)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_address_input, null)
         AlertDialog.Builder(context)
-                .setView(input)
-                .setPositiveButton(R.string.add, { _, _ ->
-                    addOwner(input.text.toString())
-                })
-                .setNeutralButton("Scan", { _, _ ->
-                    scanQrCode()
-                }).show()
+                .setView(dialogView)
+                .setPositiveButton(R.string.add, { _, _ -> addOwner(dialogView.dialog_address_input_address.text.toString()) })
+                .setNeutralButton(R.string.scan, { _, _ -> scanQrCode() })
+                .setOnDismissListener { activity?.hideSoftKeyboard() }
+                .show()
     }
 
     private fun addOwner(address: String) {
@@ -178,7 +179,7 @@ class DeployNewSafeFragment : BaseFragment() {
     }
 
     private fun updateEstimate(estimate: Wei) {
-        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.GONE
+        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.INVISIBLE
         layout_deploy_new_safe_transaction_fee.text = estimate.displayString(context!!)
     }
 
@@ -195,9 +196,9 @@ class DeployNewSafeFragment : BaseFragment() {
         layout_deploy_new_safe_transaction_fee_fiat.visibility = View.GONE
     }
 
-    private fun updateOwners(owners: List<BigInteger>) {
+    private fun updateOwners(additionalOwners: List<BigInteger>) {
         layout_deploy_new_safe_additional_owners_container.removeAllViews()
-        owners.forEach { address ->
+        additionalOwners.forEach { address ->
             if (address.isValidEthereumAddress()) {
                 val view = layoutInflater.inflate(R.layout.layout_additional_owner_item, layout_deploy_new_safe_additional_owners_container, false)
                 address.asEthereumAddressStringOrNull()?.let { view.layout_address_item_value.text = it }
@@ -212,7 +213,37 @@ class DeployNewSafeFragment : BaseFragment() {
             }
         }
 
-        layout_deploy_new_safe_add_owner_button.visible(owners.size < 2)
+        layout_deploy_new_safe_add_owner_button.visible(additionalOwners.size < 2)
+        updateSecurityBar(additionalOwners.size)
+    }
+
+
+    private fun updateSecurityBar(additionalOwners: Int) {
+        val securityInfoTextResource: Int
+        val colorResource: Int
+        when (additionalOwners) {
+            0 -> {
+                securityInfoTextResource = R.string.security_info_weak
+                colorResource = R.color.security_bar_low
+            }
+            1 -> {
+                securityInfoTextResource = R.string.security_info_good
+                colorResource = R.color.security_bar_good
+            }
+            else -> {
+                securityInfoTextResource = R.string.security_info_best
+                colorResource = R.color.security_bar_best
+            }
+        }
+
+        layout_security_bars_first.setColorFilterCompat(if (additionalOwners >= 0) colorResource else R.color.security_bar_default)
+        layout_security_bars_second.setColorFilterCompat(if (additionalOwners >= 1) colorResource else R.color.security_bar_default)
+        layout_security_bars_third.setColorFilterCompat(if (additionalOwners >= 2) colorResource else R.color.security_bar_default)
+        layout_deploy_new_safe_security_level_text.text = SpannableStringBuilder("")
+                .appendText(getString(R.string.security_level), ForegroundColorSpan(context!!.getColorCompat(R.color.gnosis_dark_blue)))
+                .append(": ")
+                .appendText(getString(R.string.weak), ForegroundColorSpan(context!!.getColorCompat(colorResource)))
+        layout_deploy_new_safe_security_info.text = getString(securityInfoTextResource)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =

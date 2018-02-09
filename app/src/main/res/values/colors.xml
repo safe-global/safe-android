@@ -36,7 +36,7 @@
     <color name="list_divider">#e4e3e3</color>
 
     <color name="selected_tab">@color/white</color>
-    <color name="unselected_tab">@color/toolbar_action</color>
+    <color name="unselected_tab">@color/white_alpha_70</color>
     <color name="default_icon">#4a4a4a</color>
 
     <color name="enabled_input">@color/accent</color>
@@ -49,4 +49,9 @@
     <color name="divider">#e3e5ec</color>
 
     <color name="out_transaction">#de2c42</color>
+
+    <color name="security_bar_default">#e3e5ec</color>
+    <color name="security_bar_low">#eab41c</color>
+    <color name="security_bar_good">#09a862</color>
+    <color name="security_bar_best">#10b3d4</color>
 </resources>

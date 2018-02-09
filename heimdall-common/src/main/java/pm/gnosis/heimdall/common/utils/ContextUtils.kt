@@ -8,10 +8,12 @@ import android.content.Context.VIBRATOR_SERVICE
 import android.net.Uri
 import android.os.Vibrator
 import android.provider.Browser
+import android.support.annotation.ColorRes
 import android.support.annotation.PluralsRes
 import android.support.annotation.RequiresPermission
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -105,3 +107,5 @@ fun Activity.hideSoftKeyboard() {
 @RequiresPermission(Manifest.permission.VIBRATE)
 fun Context.vibrate(milliseconds: Long) =
         (getSystemService(VIBRATOR_SERVICE) as? Vibrator)?.vibrate(milliseconds)
+
+fun Context.getColorCompat(@ColorRes color: Int) = ContextCompat.getColor(this, color)

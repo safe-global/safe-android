@@ -7,6 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
         android:orientation="vertical">
 
         <FrameLayout
@@ -22,21 +24,28 @@
                 tools:visibility="visible" />
         </FrameLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/safe_name_hint"
+            android:orientation="horizontal"
             android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"
+                android:textColor="@color/gnosis_dark_blue_alpha_70" />
 
             <EditText
                 android:id="@+id/layout_deploy_new_safe_name_input"
-                style="@style/Input"
+                style="@style/InlineInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                tools:text="Gno Sa" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginStart="12dp"
+                android:hint="@string/enter_safe_name"
+                android:inputType="text"
+                android:singleLine="true" />
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -44,27 +53,59 @@
             android:background="@color/divider" />
 
         <TextView
-            style="@style/Label"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp"
-            android:text="Current Owner" />
-
-        <include android:id="@+id/layout_deploy_new_safe_device_info"
-            layout="@layout/layout_address_item" />
+            android:layout_marginTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="@string/authenticating_owner_devices"
+            android:textColor="@color/gnosis_dark_blue_alpha_70" />
 
         <TextView
-            style="@style/Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="@string/deploy_new_safe_security_info"
+            android:textColor="@color/gnosis_dark_blue" />
+
+        <TextView
+            android:id="@+id/layout_deploy_new_safe_security_level_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp"
-            android:text="Additional Owners" />
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="16dp"
+            android:drawablePadding="8dp"
+            android:drawableStart="@drawable/ic_settings_security"
+            android:gravity="center"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="@string/security_level" />
+
+        <include
+            layout="@layout/layout_security_bars"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp" />
+
+        <TextView
+            android:id="@+id/layout_deploy_new_safe_security_info"
+            style="@style/Content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp" />
+
+        <include
+            android:id="@+id/layout_deploy_new_safe_device_info"
+            layout="@layout/layout_address_item_checkmark" />
 
         <LinearLayout
             android:id="@+id/layout_deploy_new_safe_additional_owners_container"
@@ -75,11 +116,13 @@
         <TextView
             android:id="@+id/layout_deploy_new_safe_add_owner_button"
             style="@style/PrimaryButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="@string/add_safe_owner" />
+            android:text="@string/add_device" />
 
         <View
             android:layout_width="match_parent"
@@ -88,11 +131,6 @@
             android:background="@color/divider" />
 
         <include layout="@layout/include_gas_price_selection" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/divider_width"
-            android:background="@color/divider" />
 
         <TextView
             style="@style/Label"
@@ -121,7 +159,7 @@
             android:paddingBottom="16dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:visibility="gone"
+            android:visibility="invisible"
             tools:text="42$"
             tools:visibility="visible" />
 

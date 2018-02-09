@@ -15,14 +15,13 @@
         android:id="@+id/layout_address_item_icon"
         android:layout_width="@dimen/action_circle"
         android:layout_height="@dimen/action_circle"
-        android:scaleType="fitCenter"
         android:background="@drawable/action_circle_background"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:scaleType="fitCenter" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:orientation="vertical">
 
