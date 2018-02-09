@@ -160,7 +160,9 @@ class SafeSettingsActivity : BaseActivity() {
         address.asEthereumAddressStringOrNull()?.let { ownerLayout.layout_address_item_value.text = it }
         ownerLayout.layout_additional_owner_delete_button.visible(showDelete)
         ownerLayout.layout_additional_owner_delete_button.setOnClickListener {
-            CreateChangeSafeSettingsTransactionProgressDialog.removeOwner(viewModel.getSafeAddress(), index.toLong(), count).show(supportFragmentManager, null)
+            CreateChangeSafeSettingsTransactionProgressDialog
+                    .removeOwner(viewModel.getSafeAddress(), address, index.toLong(), count)
+                    .show(supportFragmentManager, null)
         }
         layout_safe_settings_owners_container.addView(ownerLayout)
     }

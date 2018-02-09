@@ -314,4 +314,6 @@
     <string name="symbol">Symbol</string>
     <string name="transaction">Transaction</string>
     <string name="no_safe_selected_error">Please select a Safe to proceed!</string>
+    <string name="channel_signing_request_name">Signing Requests</string>
+    <string name="channel_signing_request_description">Requests to sign transactions.</string>
 </resources>

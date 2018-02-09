@@ -9,7 +9,6 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
 

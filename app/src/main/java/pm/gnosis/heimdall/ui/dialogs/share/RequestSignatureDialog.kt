@@ -15,7 +15,6 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.common.utils.toast
-import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.models.Transaction
@@ -23,7 +22,6 @@ import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import java.math.BigInteger
-import javax.inject.Inject
 
 class RequestSignatureDialog : BaseShareQrCodeDialog() {
 

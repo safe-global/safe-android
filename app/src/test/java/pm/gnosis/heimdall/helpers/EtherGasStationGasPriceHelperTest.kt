@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import org.junit.Assert.*
@@ -27,11 +26,8 @@ import pm.gnosis.heimdall.utils.DateTimeUtils
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.tests.utils.mockGetStringWithArgs
-import pm.gnosis.ticker.data.repositories.TickerRepository
-import pm.gnosis.ticker.data.repositories.models.Currency
 import java.math.BigDecimal
 import java.net.UnknownHostException
 

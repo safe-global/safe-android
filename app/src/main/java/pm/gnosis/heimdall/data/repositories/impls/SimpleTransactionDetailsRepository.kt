@@ -72,11 +72,11 @@ class SimpleTransactionDetailsRepository @Inject constructor(
                 }
                 TransactionType.REMOVE_SAFE_OWNER -> {
                     val arguments = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.RemoveOwner.METHOD_ID)
-                    GnosisSafe.RemoveOwner.decodeArguments(arguments).let { RemoveSafeOwnerData(it.ownerindex.value, it._threshold.value.toInt()) }
+                    GnosisSafe.RemoveOwner.decodeArguments(arguments).let { RemoveSafeOwnerData(it.ownerindex.value, it.owner.value, it._threshold.value.toInt()) }
                 }
                 TransactionType.REPLACE_SAFE_OWNER -> {
                     val arguments = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.ReplaceOwner.METHOD_ID)
-                    GnosisSafe.ReplaceOwner.decodeArguments(arguments).let { ReplaceSafeOwnerData(it.oldownerindex.value, it.newowner.value) }
+                    GnosisSafe.ReplaceOwner.decodeArguments(arguments).let { ReplaceSafeOwnerData(it.oldownerindex.value, it.oldowner.value, it.newowner.value) }
                 }
                 else -> null
             }

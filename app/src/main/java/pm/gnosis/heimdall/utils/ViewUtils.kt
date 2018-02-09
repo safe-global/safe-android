@@ -3,9 +3,7 @@ package pm.gnosis.heimdall.utils
 import android.support.v4.view.ViewCompat
 import android.view.View
 import android.widget.TextView
-import com.jakewharton.rxbinding2.widget.editorActions
 import com.squareup.phrase.Phrase
-import io.reactivex.Observable
 
 fun View.disableAccessibility() {
     ViewCompat.setImportantForAccessibility(this, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)

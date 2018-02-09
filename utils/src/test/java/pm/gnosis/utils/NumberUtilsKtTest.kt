@@ -1,8 +1,7 @@
 package pm.gnosis.utils
 
-import org.junit.Test
-
 import org.junit.Assert.*
+import org.junit.Test
 import pm.gnosis.tests.utils.Asserts.assertThrow
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigDecimal

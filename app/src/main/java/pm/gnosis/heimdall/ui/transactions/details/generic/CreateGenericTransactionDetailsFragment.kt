@@ -29,7 +29,6 @@ import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asDecimalString
-import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import timber.log.Timber
@@ -52,8 +51,7 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         safeSubject.onNext(arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull().toOptional())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.layout_transaction_details_generic, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.layout_transaction_details_generic, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,7 +60,9 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         originalTransaction = transaction
         layout_transaction_details_generic_to_input.setDefault(transaction?.address?.asEthereumAddressStringOrNull())
         layout_transaction_details_generic_data_input.setDefault(transaction?.data)
-        layout_transaction_details_generic_value_input.setDefault(transaction?.value?.value?.asDecimalString())
+        // If it is editable we leave the field empty if no value is present
+        val value = (transaction?.value?.value ?: if (editable) null else BigInteger.ZERO)
+        layout_transaction_details_generic_value_input.setDefault(value?.asDecimalString())
         layout_transaction_details_generic_scan_to_button.visible(editable)
         layout_transaction_details_generic_divider_qr_code.visible(editable)
         toggleTransactionInput(editable)

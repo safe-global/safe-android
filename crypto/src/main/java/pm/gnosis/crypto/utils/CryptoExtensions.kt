@@ -1,10 +1,8 @@
 package pm.gnosis.crypto.utils
 
 import okio.ByteString
-import org.spongycastle.crypto.digests.RIPEMD160Digest
 import org.spongycastle.jcajce.provider.digest.RIPEMD160
 import java.lang.AssertionError
-import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
 

@@ -16,9 +16,9 @@ data class TransactionDetails(val transactionId: String, val type: TransactionTy
 
 sealed class TransactionTypeData
 data class TokenTransferData(val recipient: BigInteger, val tokens: BigInteger) : TransactionTypeData()
-data class RemoveSafeOwnerData(val ownerIndex: BigInteger, val newThreshold: Int) : TransactionTypeData()
+data class RemoveSafeOwnerData(val ownerIndex: BigInteger, val owner: BigInteger, val newThreshold: Int) : TransactionTypeData()
 data class AddSafeOwnerData(val newOwner: BigInteger, val newThreshold: Int) : TransactionTypeData()
-data class ReplaceSafeOwnerData(val oldOwnerIndex: BigInteger, val newOwner: BigInteger) : TransactionTypeData()
+data class ReplaceSafeOwnerData(val oldOwnerIndex: BigInteger, val owner: BigInteger, val newOwner: BigInteger) : TransactionTypeData()
 
 enum class TransactionType {
     GENERIC,

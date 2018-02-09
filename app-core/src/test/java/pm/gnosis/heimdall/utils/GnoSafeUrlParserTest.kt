@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.utils
 
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
-
-import org.junit.Assert.*
 import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei

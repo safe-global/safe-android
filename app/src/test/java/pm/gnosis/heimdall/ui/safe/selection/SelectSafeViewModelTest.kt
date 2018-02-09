@@ -6,12 +6,12 @@ import io.reactivex.Single
 import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
-import io.reactivex.subjects.PublishSubject
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
@@ -29,7 +29,7 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockGetString
 import java.math.BigInteger
-import java.util.NoSuchElementException
+import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class SelectSafeViewModelTest {

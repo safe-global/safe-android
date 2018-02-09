@@ -1,6 +1,7 @@
 package pm.gnosis.crypto.utils
 
-import org.junit.Assert.*
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import pm.gnosis.utils.hexStringToByteArray
 

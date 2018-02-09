@@ -24,6 +24,24 @@
       "constant": false,
       "inputs": [
         {
+          "name": "extensionIndex",
+          "type": "uint256"
+        },
+        {
+          "name": "extension",
+          "type": "address"
+        }
+      ],
+      "name": "removeExtension",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
           "name": "owner",
           "type": "address"
         },
@@ -36,6 +54,25 @@
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "transactionHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getConfirmationCount",
+      "outputs": [
+        {
+          "name": "confirmationCount",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -88,6 +125,36 @@
       "type": "function"
     },
     {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        },
+        {
+          "name": "operation",
+          "type": "uint8"
+        },
+        {
+          "name": "_nonce",
+          "type": "uint256"
+        }
+      ],
+      "name": "confirmTransaction",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "constant": true,
       "inputs": [
         {
@@ -128,25 +195,15 @@
           "type": "uint256"
         },
         {
+          "name": "oldOwner",
+          "type": "address"
+        },
+        {
           "name": "newOwner",
           "type": "address"
         }
       ],
       "name": "replaceOwner",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "transactionHash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "confirmTransaction",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -201,6 +258,28 @@
       ],
       "payable": false,
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "ownerIndex",
+          "type": "uint256"
+        },
+        {
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "name": "_threshold",
+          "type": "uint8"
+        }
+      ],
+      "name": "removeOwner",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -316,17 +395,22 @@
       "type": "function"
     },
     {
-      "constant": false,
+      "constant": true,
       "inputs": [
         {
-          "name": "extensionIndex",
-          "type": "uint256"
+          "name": "transactionHash",
+          "type": "bytes32"
         }
       ],
-      "name": "removeExtension",
-      "outputs": [],
+      "name": "getConfirmingOwners",
+      "outputs": [
+        {
+          "name": "confirmingOwners",
+          "type": "address[]"
+        }
+      ],
       "payable": false,
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -346,24 +430,6 @@
       ],
       "payable": false,
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "ownerIndex",
-          "type": "uint256"
-        },
-        {
-          "name": "_threshold",
-          "type": "uint8"
-        }
-      ],
-      "name": "removeOwner",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

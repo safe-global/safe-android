@@ -15,9 +15,7 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionActivity
-import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
 import pm.gnosis.heimdall.utils.scanToAdapterData
-import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.stringWithNoTrailingZeroes
 import java.math.BigInteger

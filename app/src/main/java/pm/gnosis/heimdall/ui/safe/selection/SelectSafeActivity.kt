@@ -23,7 +23,6 @@ import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.nullOnThrow
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 
@@ -32,7 +31,7 @@ class SelectSafeActivity : BaseActivity() {
     @Inject
     lateinit var viewModel: SelectSafeContract
 
-    private val tranaction by lazy {
+    private val transaction by lazy {
         intent?.getParcelableExtra<TransactionParcelable>(EXTRA_TRANSACTION)?.transaction
     }
 
@@ -49,9 +48,7 @@ class SelectSafeActivity : BaseActivity() {
         setContentView(R.layout.layout_select_safe)
         setupToolbar(layout_select_safe_toolbar, R.drawable.ic_close_24dp)
         layout_select_safe_spinner.adapter = adapter
-        tranaction ?: run {
-            finish()
-        }
+        transaction ?: finish()
     }
 
     private fun inject() {
@@ -71,7 +68,7 @@ class SelectSafeActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMapSingle {
                     val safe = nullOnThrow { adapter.getItem(layout_select_safe_spinner.selectedItemPosition) }
-                    viewModel.reviewTransaction(safe?.address, tranaction!!)
+                    viewModel.reviewTransaction(safe?.address, transaction!!)
                 }
                 .subscribeForResult(::startActivity, { errorSnackbar(layout_select_safe_review_button, it) })
     }

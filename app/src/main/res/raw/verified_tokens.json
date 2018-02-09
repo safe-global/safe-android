@@ -1,26 +1,20 @@
 [
   {
-    "address" : "0x826921230178969e9142acdfb9bd2f57330ede18",
+    "address" : "0x975be7f72cea31fd83d0cb2a197f9136f38696b7",
     "name" : "World Energy",
     "symbol" : "WE",
     "decimals" : 4
   },
   {
-    "address" : "0x9d3de1be7309764824211f9e4219e01a5f223d99",
+    "address" : "0xb3a4bc89d8517e0e2c9b66703d09d3029ffa1e6d",
     "name" : "Love",
     "symbol" : "<3",
     "decimals" : 6
   },
   {
-    "address" : "0x4A01f5a50C5140cA021e0B52135B2154f652A497",
+    "address" : "0x5f92161588c6178130ede8cbdc181acec66a9731",
     "name" : "Gnosis Token",
     "symbol" : "GNO",
-    "decimals" : 18
-  },
-  {
-    "address" : "0x746c32e1a3a46fd87468323c897b3ad216cb374e",
-    "name" : "Universe Answer Token",
-    "symbol" : "UAT",
     "decimals" : 18
   }
 ]

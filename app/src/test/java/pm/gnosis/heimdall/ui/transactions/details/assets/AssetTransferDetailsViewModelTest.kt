@@ -19,11 +19,14 @@ import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.common.utils.DataResult
 import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.TokenRepository
+import pm.gnosis.heimdall.data.repositories.TokenTransferData
+import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
-import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract.*
+import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract.FormData
+import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract.InputEvent
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.AMOUNT_FIELD
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.TOKEN_FIELD
