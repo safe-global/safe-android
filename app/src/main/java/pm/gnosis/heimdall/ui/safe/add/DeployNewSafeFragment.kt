@@ -15,7 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.dialog_address_input.*
+import kotlinx.android.synthetic.main.dialog_address_input.view.*
 import kotlinx.android.synthetic.main.include_gas_price_selection.*
 import kotlinx.android.synthetic.main.layout_additional_owner_item.view.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
@@ -149,9 +149,10 @@ class DeployNewSafeFragment : BaseFragment() {
 
     private fun showAddOwnerDialog() {
         // TODO: add proper dialog once design is known
+        val dialogView = layoutInflater.inflate(R.layout.dialog_address_input, null)
         AlertDialog.Builder(context)
-                .setView(layoutInflater.inflate(R.layout.dialog_address_input, null))
-                .setPositiveButton(R.string.add, { _, _ -> addOwner(dialog_address_input_address.text.toString()) })
+                .setView(dialogView)
+                .setPositiveButton(R.string.add, { _, _ -> addOwner(dialogView.dialog_address_input_address.text.toString()) })
                 .setNeutralButton(R.string.scan, { _, _ -> scanQrCode() })
                 .setOnDismissListener { activity?.hideSoftKeyboard() }
                 .show()
@@ -216,36 +217,33 @@ class DeployNewSafeFragment : BaseFragment() {
         updateSecurityBar(additionalOwners.size)
     }
 
+
     private fun updateSecurityBar(additionalOwners: Int) {
-        val spannableStringBuilder = SpannableStringBuilder("")
-                .appendText(getString(R.string.security_level), ForegroundColorSpan(context!!.getColorCompat(R.color.gnosis_dark_blue)))
-                .append(": ")
+        val securityInfoTextResource: Int
+        val colorResource: Int
         when (additionalOwners) {
             0 -> {
-                layout_security_bars_first.setColorFilterCompat(R.color.security_bar_low)
-                layout_security_bars_second.setColorFilterCompat(R.color.security_bar_default)
-                layout_security_bars_third.setColorFilterCompat(R.color.security_bar_default)
-                layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
-                        .appendText(getString(R.string.weak), ForegroundColorSpan(context!!.getColorCompat(R.color.security_bar_low)))
-                layout_deploy_new_safe_security_info.text = getString(R.string.security_info_weak)
+                securityInfoTextResource = R.string.security_info_weak
+                colorResource = R.color.security_bar_low
             }
             1 -> {
-                layout_security_bars_first.setColorFilterCompat(R.color.security_bar_good)
-                layout_security_bars_second.setColorFilterCompat(R.color.security_bar_good)
-                layout_security_bars_third.setColorFilterCompat(R.color.security_bar_default)
-                layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
-                        .appendText(getString(R.string.good), ForegroundColorSpan(context!!.getColorCompat(R.color.security_bar_good)))
-                layout_deploy_new_safe_security_info.text = getString(R.string.security_info_good)
+                securityInfoTextResource = R.string.security_info_good
+                colorResource = R.color.security_bar_good
             }
             else -> {
-                layout_security_bars_first.setColorFilterCompat(R.color.security_bar_best)
-                layout_security_bars_second.setColorFilterCompat(R.color.security_bar_best)
-                layout_security_bars_third.setColorFilterCompat(R.color.security_bar_best)
-                layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
-                        .appendText(getString(R.string.best), ForegroundColorSpan(context!!.getColorCompat(R.color.security_bar_best)))
-                layout_deploy_new_safe_security_info.text = getString(R.string.security_info_best)
+                securityInfoTextResource = R.string.security_info_best
+                colorResource = R.color.security_bar_best
             }
         }
+
+        layout_security_bars_first.setColorFilterCompat(if (additionalOwners >= 0) colorResource else R.color.security_bar_default)
+        layout_security_bars_second.setColorFilterCompat(if (additionalOwners >= 1) colorResource else R.color.security_bar_default)
+        layout_security_bars_third.setColorFilterCompat(if (additionalOwners >= 2) colorResource else R.color.security_bar_default)
+        layout_deploy_new_safe_security_level_text.text = SpannableStringBuilder("")
+                .appendText(getString(R.string.security_level), ForegroundColorSpan(context!!.getColorCompat(R.color.gnosis_dark_blue)))
+                .append(": ")
+                .appendText(getString(R.string.weak), ForegroundColorSpan(context!!.getColorCompat(colorResource)))
+        layout_deploy_new_safe_security_info.text = getString(securityInfoTextResource)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
