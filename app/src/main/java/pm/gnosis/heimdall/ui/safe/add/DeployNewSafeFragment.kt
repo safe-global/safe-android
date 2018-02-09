@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.safe.add
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
@@ -33,6 +32,7 @@ import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
+import pm.gnosis.heimdall.utils.setColorFilterCompat
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.asEthereumAddressStringOrNull
@@ -224,31 +224,31 @@ class DeployNewSafeFragment : BaseFragment() {
 
     private fun updateSecurityBar(additionalOwners: Int) {
         val spannableStringBuilder = SpannableStringBuilder("")
-                .appendText(getString(R.string.security_level), ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.gnosis_dark_blue)))
+                .appendText(getString(R.string.security_level), ForegroundColorSpan(context!!.getColorCompat(R.color.gnosis_dark_blue)))
                 .append(": ")
         when (additionalOwners) {
             0 -> {
-                layout_security_bars_first.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_low))
-                layout_security_bars_second.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_default))
-                layout_security_bars_third.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_default))
+                layout_security_bars_first.setColorFilterCompat(R.color.security_bar_low)
+                layout_security_bars_second.setColorFilterCompat(R.color.security_bar_default)
+                layout_security_bars_third.setColorFilterCompat(R.color.security_bar_default)
                 layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
-                        .appendText(getString(R.string.weak), ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_low)))
+                        .appendText(getString(R.string.weak), ForegroundColorSpan(context!!.getColorCompat(R.color.security_bar_low)))
                 layout_deploy_new_safe_security_info.text = getString(R.string.security_info_weak)
             }
             1 -> {
-                layout_security_bars_first.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_good))
-                layout_security_bars_second.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_good))
-                layout_security_bars_third.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_default))
+                layout_security_bars_first.setColorFilterCompat(R.color.security_bar_good)
+                layout_security_bars_second.setColorFilterCompat(R.color.security_bar_good)
+                layout_security_bars_third.setColorFilterCompat(R.color.security_bar_default)
                 layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
-                        .appendText(getString(R.string.good), ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_good)))
+                        .appendText(getString(R.string.good), ForegroundColorSpan(context!!.getColorCompat(R.color.security_bar_good)))
                 layout_deploy_new_safe_security_info.text = getString(R.string.security_info_good)
             }
             else -> {
-                layout_security_bars_first.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_best))
-                layout_security_bars_second.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_best))
-                layout_security_bars_third.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_best))
+                layout_security_bars_first.setColorFilterCompat(R.color.security_bar_best)
+                layout_security_bars_second.setColorFilterCompat(R.color.security_bar_best)
+                layout_security_bars_third.setColorFilterCompat(R.color.security_bar_best)
                 layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
-                        .appendText(getString(R.string.best), ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_best)))
+                        .appendText(getString(R.string.best), ForegroundColorSpan(context!!.getColorCompat(R.color.security_bar_best)))
                 layout_deploy_new_safe_security_info.text = getString(R.string.security_info_best)
             }
         }
