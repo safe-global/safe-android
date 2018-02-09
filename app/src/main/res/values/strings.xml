@@ -319,9 +319,12 @@
     <string name="add_device">Add device</string>
     <string name="security_level">Security level</string>
     <string name="security_info_weak">Only this device needs to sign to confirm transactions. No recovery option if access to one device is lost.</string>
-    <string name="security_info_good">Two devices needed to sign to confirm transactions. No recovery option if access to one device is lost.</string>
+    <string name="security_info_good">Only one device needs to sign to confirm transactions. The additional device can be used for recovering access to your safe.</string>
     <string name="security_info_best">Two devices needed to sign to confirm transactions. An additional device is used for recovering access to your safe.</string>
     <string name="enter_safe_name">Enter a name for your safe</string>
     <string name="authenticating_owner_devices">Authenticating owner devices</string>
     <string name="deploy_new_safe_security_info">Adding more authenticating devices will increase the security of your safe.</string>
+    <string name="weak">weak</string>
+    <string name="good">good</string>
+    <string name="best">best</string>
 </resources>

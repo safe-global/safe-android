@@ -232,7 +232,7 @@ class DeployNewSafeFragment : BaseFragment() {
                 layout_security_bars_second.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_default))
                 layout_security_bars_third.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_default))
                 layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
-                        .appendText("weak", ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_low)))
+                        .appendText(getString(R.string.weak), ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_low)))
                 layout_deploy_new_safe_security_info.text = getString(R.string.security_info_weak)
             }
             1 -> {
@@ -240,15 +240,15 @@ class DeployNewSafeFragment : BaseFragment() {
                 layout_security_bars_second.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_good))
                 layout_security_bars_third.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_default))
                 layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
-                        .appendText("good", ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_good)))
+                        .appendText(getString(R.string.good), ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_good)))
                 layout_deploy_new_safe_security_info.text = getString(R.string.security_info_good)
             }
-            2 -> {
+            else -> {
                 layout_security_bars_first.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_best))
                 layout_security_bars_second.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_best))
                 layout_security_bars_third.setColorFilter(ContextCompat.getColor(context!!, R.color.security_bar_best))
                 layout_deploy_new_safe_security_level_text.text = spannableStringBuilder
-                        .appendText("best", ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_best)))
+                        .appendText(getString(R.string.best), ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.security_bar_best)))
                 layout_deploy_new_safe_security_info.text = getString(R.string.security_info_best)
             }
         }
