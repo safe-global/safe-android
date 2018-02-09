@@ -8,7 +8,6 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
@@ -16,6 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.android.synthetic.main.dialog_address_input.*
 import kotlinx.android.synthetic.main.include_gas_price_selection.*
 import kotlinx.android.synthetic.main.layout_additional_owner_item.view.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
@@ -149,18 +149,12 @@ class DeployNewSafeFragment : BaseFragment() {
 
     private fun showAddOwnerDialog() {
         // TODO: add proper dialog once design is known
-        val input = EditText(context)
         AlertDialog.Builder(context)
-                .setView(input)
-                .setPositiveButton(R.string.add, { _, _ ->
-                    addOwner(input.text.toString())
-                })
-                .setNeutralButton("Scan", { _, _ ->
-                    scanQrCode()
-                })
-                .setOnDismissListener {
-                    activity?.hideSoftKeyboard()
-                }.show()
+                .setView(layoutInflater.inflate(R.layout.dialog_address_input, null))
+                .setPositiveButton(R.string.add, { _, _ -> addOwner(dialog_address_input_address.text.toString()) })
+                .setNeutralButton(R.string.scan, { _, _ -> scanQrCode() })
+                .setOnDismissListener { activity?.hideSoftKeyboard() }
+                .show()
     }
 
     private fun addOwner(address: String) {

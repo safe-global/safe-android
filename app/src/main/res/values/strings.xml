@@ -327,4 +327,5 @@
     <string name="weak">weak</string>
     <string name="good">good</string>
     <string name="best">best</string>
+    <string name="scan">Scan</string>
 </resources>
