@@ -1,13 +1,17 @@
 package pm.gnosis.heimdall.data.remote.models
 
+import com.squareup.moshi.Json
 import java.math.BigInteger
 
 
 data class TransactionReceipt(
-        val status: BigInteger?,
-        val transactionHash: String,
-        val contractAddress: String?,
-        val logs: List<Event>
+        @Json(name = "status") val status: BigInteger?,
+        @Json(name = "transactionHash") val transactionHash: String,
+        @Json(name = "contractAddress") val contractAddress: String?,
+        @Json(name = "logs") val logs: List<Event>
 ) {
-    data class Event(val logIndex: BigInteger, val data: String, val topics: List<String>)
+    data class Event(
+            @Json(name = "logIndex")  val logIndex: BigInteger,
+            @Json(name = "data")  val data: String,
+            @Json(name = "topics")  val topics: List<String>)
 }

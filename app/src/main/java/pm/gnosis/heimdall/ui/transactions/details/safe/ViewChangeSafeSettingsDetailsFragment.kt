@@ -78,6 +78,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
                 layout_view_change_safe_primary_target_label.setText(R.string.old_owner)
                 layout_view_change_safe_primary_target_value.text = action.owner.asEthereumAddressStringOrNull()
                 layout_view_change_safe_primary_target_icon.setAddress(action.owner)
+                layout_view_change_safe_secondary_target_label.visible(false)
                 layout_view_change_safe_secondary_target_container.visible(false)
                 layout_view_change_safe_action.setText(removedOwnerMessage())
             }
@@ -85,6 +86,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
                 layout_view_change_safe_primary_target_label.setText(R.string.new_owner)
                 layout_view_change_safe_primary_target_value.text = action.owner.asEthereumAddressStringOrNull()
                 layout_view_change_safe_primary_target_icon.setAddress(action.owner)
+                layout_view_change_safe_secondary_target_label.visible(false)
                 layout_view_change_safe_secondary_target_container.visible(false)
                 layout_view_change_safe_action.setText(addedOwnerMessage())
             }
@@ -92,6 +94,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
                 layout_view_change_safe_primary_target_label.setText(R.string.new_owner)
                 layout_view_change_safe_primary_target_value.text = action.newOwner.asEthereumAddressStringOrNull()
                 layout_view_change_safe_primary_target_icon.setAddress(action.newOwner)
+                layout_view_change_safe_secondary_target_label.visible(true)
                 layout_view_change_safe_secondary_target_container.visible(true)
                 layout_view_change_safe_secondary_target_label.setText(R.string.old_owner)
                 layout_view_change_safe_secondary_target_value.text = action.previousOwner.asEthereumAddressStringOrNull()
