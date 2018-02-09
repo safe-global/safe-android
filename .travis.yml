@@ -42,7 +42,6 @@ before_install:
 
 script:
   - . ./ci/prepare_env.sh
-  - ./ci/build_dev_version.sh
   - ./ci/build_debug.sh
   - ./ci/release_internal_beta.sh
 
