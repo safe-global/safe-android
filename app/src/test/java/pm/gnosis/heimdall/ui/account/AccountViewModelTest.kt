@@ -27,8 +27,11 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.ticker.data.repositories.TickerRepository
+import pm.gnosis.ticker.data.repositories.models.Currency
 import retrofit2.HttpException
 import retrofit2.Response
+import java.math.BigDecimal
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -41,19 +44,23 @@ class AccountViewModelTest {
     lateinit var contextMock: Context
 
     @Mock
-    lateinit var accountRepositoryMock: AccountsRepository
+    private lateinit var accountRepositoryMock: AccountsRepository
 
     @Mock
-    lateinit var ethereumJsonRpcRepositoryMock: EthereumJsonRpcRepository
+    private lateinit var ethereumJsonRpcRepositoryMock: EthereumJsonRpcRepository
 
     @Mock
-    lateinit var qrCodeGeneratorMock: QrCodeGenerator
+    private lateinit var qrCodeGeneratorMock: QrCodeGenerator
+
+    @Mock
+    private lateinit var tickerRepositoryMock: TickerRepository
 
     lateinit var viewModel: AccountViewModel
 
     @Before
     fun setup() {
-        viewModel = AccountViewModel(contextMock, accountRepositoryMock, ethereumJsonRpcRepositoryMock, qrCodeGeneratorMock)
+        viewModel = AccountViewModel(contextMock, accountRepositoryMock, ethereumJsonRpcRepositoryMock,
+                qrCodeGeneratorMock, tickerRepositoryMock)
         given(contextMock.getString(Mockito.anyInt())).willReturn(TEST_STRING)
     }
 
@@ -193,8 +200,36 @@ class AccountViewModelTest {
                 .assertValue(DataResult(balance))
     }
 
-    private fun <D> createObserver() =
-            TestObserver.create<Result<D>>()
+    @Test
+    fun loadFiatConversion() {
+        val amount = Wei(BigInteger.ZERO)
+        val testObserver = TestObserver.create<Result<Pair<BigDecimal, Currency>>>()
+        val currency = Currency("", "", "", 0, 0, BigDecimal.ZERO, Currency.FiatSymbol.USD)
+        val fiatResult = BigDecimal.ZERO to currency
+        given(tickerRepositoryMock.convertToFiat(MockUtils.any<Wei>(), MockUtils.any())).willReturn(Single.just(fiatResult))
+
+        viewModel.loadFiatConversion(amount).subscribe(testObserver)
+
+        then(tickerRepositoryMock).should().convertToFiat(amount)
+        then(tickerRepositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(DataResult(fiatResult))
+    }
+
+    @Test
+    fun loadFiatConversionError() {
+        val amount = Wei(BigInteger.ZERO)
+        val testObserver = TestObserver.create<Result<Pair<BigDecimal, Currency>>>()
+        val exception = IllegalArgumentException()
+        given(tickerRepositoryMock.convertToFiat(MockUtils.any<Wei>(), MockUtils.any())).willReturn(Single.error(exception))
+
+        viewModel.loadFiatConversion(amount).subscribe(testObserver)
+
+        then(tickerRepositoryMock).should().convertToFiat(amount)
+        then(tickerRepositoryMock).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(ErrorResult(exception))
+    }
+
+    private fun <D> createObserver() = TestObserver.create<Result<D>>()
 
     companion object {
         const val TEST_STRING = "TEST"

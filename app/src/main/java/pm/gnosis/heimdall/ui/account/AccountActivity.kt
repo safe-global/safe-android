@@ -4,26 +4,29 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.jakewharton.rxbinding2.support.v4.widget.refreshes
-import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_account.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.copyToClipboard
-import pm.gnosis.heimdall.common.utils.shareExternalText
-import pm.gnosis.heimdall.common.utils.snackbar
+import pm.gnosis.heimdall.common.utils.doOnNextForResult
+import pm.gnosis.heimdall.common.utils.flatMapResult
 import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
-import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.format
 import pm.gnosis.models.Wei
+import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.isValidEthereumAddress
+import pm.gnosis.utils.stringWithNoTrailingZeroes
+import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -38,20 +41,22 @@ class AccountActivity : BaseActivity() {
         inject()
         setContentView(R.layout.layout_account)
         registerToolbar(layout_account_toolbar)
+        layout_account_toolbar.inflateMenu(R.menu.account_menu)
+        layout_account_toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.account_menu_share -> if (layout_account_address.text.toString().isValidEthereumAddress()) {
+                    SimpleAddressShareDialog.create(layout_account_address.text.toString()).show(supportFragmentManager, null)
+                }
+            }
+            true
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        disposables += accountAddress()
-
-        layout_account_clipboard.setOnClickListener {
-            copyToClipboard(getString(R.string.address), layout_account_address.text.toString())
-            snackbar(layout_account_coordinator_layout, getString(R.string.address_clipboard_success))
-        }
-
-        layout_account_share.setOnClickListener {
-            shareExternalText(layout_account_address.text.toString(), getString(R.string.share_your_address))
-        }
+        disposables += viewModel.getAccountAddress()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeForResult(this::onAccountAddress, ::handleError)
 
         // We delay the initial value, else the progress bar is not visible
         disposables += layout_account_refresh_layout.refreshes()
@@ -62,27 +67,35 @@ class AccountActivity : BaseActivity() {
                 // flap map, else the loading spinner is triggered on the wrong thread
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap { accountBalance() }
-                .subscribeForResult(::onAccountBalance, ::handleError)
-
-        disposables += layout_account_qrcode.clicks()
-                .subscribe {
-                    SimpleAddressShareDialog.create(layout_account_address.text.toString()).show(supportFragmentManager, null)
-                }
+                .observeOn(AndroidSchedulers.mainThread())
+                // Update balance view
+                .doOnNextForResult(onNext = ::onAccountBalance)
+                .flatMapResult(mapper = { viewModel.loadFiatConversion(it) })
+                .observeOn(AndroidSchedulers.mainThread())
+                // Update Fiat view
+                .doOnNextForResult(onNext = ::onFiat)
+                .subscribeForResult(onNext = {}, onError = ::handleError)
     }
 
-    private fun accountAddress() = viewModel.getAccountAddress()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeForResult({
-                layout_account_address.text = it.address.asEthereumAddressString()
-            }, ::handleError)
+    private fun onFiat(currency: Pair<BigDecimal, Currency>) {
+        layout_account_fiat.text = getString(R.string.fiat_approximation_parentheses,
+                currency.first.stringWithNoTrailingZeroes(), currency.second.getFiatSymbol())
+    }
 
     private fun accountBalance() = viewModel.getAccountBalance()
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { onAccountBalanceLoading(true) }
             .doOnTerminate { onAccountBalanceLoading(false) }
 
+    private fun onAccountAddress(account: Account) {
+        layout_account_address.text = account.address.asEthereumAddressString()
+        layout_account_blockies.setAddress(account.address)
+    }
+
     private fun onAccountBalance(wei: Wei) {
-        layout_account_balance.text = wei.displayString(this)
+        val formattedValue = wei.format(this)
+        layout_account_balance.setText(formattedValue.first)
+        layout_account_balance.setCurrencySymbol(formattedValue.second)
     }
 
     private fun onAccountBalanceLoading(isLoading: Boolean) {
