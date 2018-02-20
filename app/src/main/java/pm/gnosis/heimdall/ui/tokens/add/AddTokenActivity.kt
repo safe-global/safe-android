@@ -88,7 +88,7 @@ class AddTokenActivity : BaseActivity() {
             } else {
                 snackbar(layout_add_token_coordinator, R.string.invalid_ethereum_address)
             }
-        }, { snackbar(layout_add_token_coordinator, R.string.qr_code_scan_cancel) })
+        })
     }
 
     private fun onTokenInfo(erC20Token: ERC20Token) {

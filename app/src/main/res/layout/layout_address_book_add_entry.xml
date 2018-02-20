@@ -97,8 +97,10 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/layout_add_address_book_entry_toolbar"
+            style="@style/Toolbar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_height" />
+            android:layout_height="@dimen/toolbar_height"
+            app:title="@string/add_address"/>
 
         <View
             android:layout_width="match_parent"

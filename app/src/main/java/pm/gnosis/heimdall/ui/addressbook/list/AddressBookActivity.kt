@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.addressbook.list
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -19,9 +20,12 @@ import pm.gnosis.heimdall.common.utils.snackbar
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
+import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -58,6 +62,10 @@ class AddressBookActivity : BaseActivity() {
         disposables += viewModel.observeAddressBook()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onNext = ::onAddressBook, onError = ::onAddressBookError)
+
+        disposables += adapter.clicks
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onNext = ::handleEntryClick, onError = Timber::e)
     }
 
     private fun onAddressBook(adapterData: Adapter.Data<AddressBookEntry>) {
@@ -70,6 +78,16 @@ class AddressBookActivity : BaseActivity() {
         snackbar(layout_address_book_coordinator, R.string.error_try_again)
     }
 
+    private fun handleEntryClick(entry: AddressBookEntry) {
+        callingActivity?.apply {
+            // Was started with startActivityForResult therefore we return the selected entry
+            setResult(Activity.RESULT_OK, createResult(entry))
+            finish()
+        } ?: run {
+            startActivity(AddressBookEntryDetailsActivity.createIntent(this, entry.address))
+        }
+    }
+
     private fun inject() {
         DaggerViewComponent.builder()
                 .applicationComponent(HeimdallApplication[this].component)
@@ -79,6 +97,27 @@ class AddressBookActivity : BaseActivity() {
     }
 
     companion object {
+
+        val REQUEST_CODE = 0x00001337 // Only use bottom 16 bits
+        private const val RESULT_ENTRY_NAME = "result.string.entry_name"
+        private const val RESULT_ENTRY_ADDRESS = "result.string.entry_address"
+        private const val RESULT_ENTRY_DESCRIPTION = "result.string.entry_description"
+
+        private fun createResult(entry: AddressBookEntry): Intent =
+                Intent().apply {
+                    putExtra(RESULT_ENTRY_ADDRESS, entry.address.asEthereumAddressString())
+                    putExtra(RESULT_ENTRY_NAME, entry.name)
+                    putExtra(RESULT_ENTRY_DESCRIPTION, entry.description)
+                }
+
+        fun parseResult(intent: Intent?): AddressBookEntry? {
+            intent ?: return null
+            val address = intent.getStringExtra(RESULT_ENTRY_ADDRESS).hexAsEthereumAddressOrNull() ?: return null
+            val name = intent.getStringExtra(RESULT_ENTRY_NAME) ?: return null
+            val description = intent.getStringExtra(RESULT_ENTRY_DESCRIPTION) ?: return null
+            return AddressBookEntry(address, name, description)
+        }
+
         fun createIntent(context: Context) = Intent(context, AddressBookActivity::class.java)
     }
 }

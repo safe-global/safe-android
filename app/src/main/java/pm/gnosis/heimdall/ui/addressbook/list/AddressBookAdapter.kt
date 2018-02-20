@@ -1,22 +1,21 @@
 package pm.gnosis.heimdall.ui.addressbook.list
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_address_book_entry_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.common.di.ViewContext
-import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.models.AddressBookEntry
 import javax.inject.Inject
 
 @ForView
 class AddressBookAdapter @Inject constructor(
-        @ViewContext private val context: Context
 ) : Adapter<AddressBookEntry, AddressBookAdapter.ViewHolder>() {
+
+    val clicks: PublishSubject<AddressBookEntry> = PublishSubject.create<AddressBookEntry>()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) =
             ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.layout_address_book_entry_item, parent, false))
@@ -32,7 +31,7 @@ class AddressBookAdapter @Inject constructor(
         }
 
         override fun onClick(view: View?) {
-            context.startActivity(AddressBookEntryDetailsActivity.createIntent(context, items[adapterPosition].address))
+            clicks.onNext(items[adapterPosition])
         }
     }
 }

@@ -14,10 +14,7 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.scanQrCode
-import pm.gnosis.heimdall.common.utils.snackbar
-import pm.gnosis.heimdall.common.utils.subscribeForResult
-import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -39,8 +36,7 @@ class AddressBookAddEntryActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_address_book_add_entry)
-        registerToolbar(layout_add_address_book_entry_toolbar)
-        layout_add_address_book_entry_toolbar.title = getString(R.string.add_address)
+        setupToolbar(layout_add_address_book_entry_toolbar, R.drawable.ic_arrow_back_24dp)
     }
 
     override fun onStart() {
@@ -88,10 +84,10 @@ class AddressBookAddEntryActivity : BaseActivity() {
                     if (it.isValidEthereumAddress()) {
                         layout_add_address_book_entry_address.setText(it)
                     } else {
-                        snackbar(layout_address_book_coordinator, R.string.invalid_ethereum_address)
+                        snackbar(layout_add_address_book_entry_coordinator, R.string.invalid_ethereum_address)
                     }
 
-                }, { snackbar(layout_address_book_coordinator, R.string.qr_code_scan_cancel) })
+                })
     }
 
     private fun inject() {

@@ -27,6 +27,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
+import pm.gnosis.heimdall.utils.selectFromAddressBook
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -119,9 +120,13 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
         layout_transaction_details_asset_transfer_scan_to_button.setOnClickListener {
             scanQrCode()
         }
+
+        layout_transaction_details_asset_transfer_address_book_button.setOnClickListener {
+            selectFromAddressBook()
+        }
     }
 
-    override fun onAddressScanned(address: BigInteger) {
+    override fun onAddressProvided(address: BigInteger) {
         layout_transaction_details_asset_transfer_to_input.setText(address.asEthereumAddressString())
     }
 
@@ -150,6 +155,7 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
         layout_transaction_details_asset_transfer_amount_input.isEnabled = enabled
         layout_transaction_details_asset_transfer_max_amount_button.isEnabled = enabled
         layout_transaction_details_asset_transfer_scan_to_button.isEnabled = enabled
+        layout_transaction_details_asset_transfer_address_book_button.isEnabled = enabled
     }
 
     override fun inject(component: ApplicationComponent) {

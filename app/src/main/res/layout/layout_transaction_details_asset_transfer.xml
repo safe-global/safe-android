@@ -32,7 +32,6 @@
             style="@style/Content"
             android:layout_width="@dimen/create_tx_label_width"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
             android:paddingStart="16dp"
             android:text="@string/from" />
 
@@ -53,10 +52,8 @@
             style="@style/Content"
             android:layout_width="@dimen/create_tx_label_width"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:paddingLeft="16dp"
             android:paddingStart="16dp"
             android:text="@string/to" />
 
@@ -65,7 +62,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_gravity="end"
             android:background="@drawable/selectable_background"
@@ -79,8 +75,28 @@
             android:layout_width="@dimen/divider_width"
             android:layout_height="match_parent"
             android:layout_alignWithParentIfMissing="true"
-            android:layout_toLeftOf="@+id/layout_transaction_details_asset_transfer_scan_to_button"
             android:layout_toStartOf="@+id/layout_transaction_details_asset_transfer_scan_to_button"
+            android:background="@color/divider" />
+
+        <ImageView
+            android:id="@+id/layout_transaction_details_asset_transfer_address_book_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toStartOf="@id/layout_transaction_details_asset_transfer_scan_to_button"
+            android:layout_centerVertical="true"
+            android:layout_gravity="end"
+            android:background="@drawable/selectable_background"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:tint="@color/gnosis_blue"
+            app:srcCompat="@drawable/ic_add_from_addressbook" />
+
+        <View
+            android:id="@+id/layout_transaction_details_asset_transfer_divider_address_book"
+            android:layout_width="@dimen/divider_width"
+            android:layout_height="match_parent"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_toStartOf="@+id/layout_transaction_details_asset_transfer_address_book_button"
             android:background="@color/divider" />
 
         <EditText
@@ -91,9 +107,7 @@
             android:layout_alignWithParentIfMissing="true"
             android:layout_gravity="bottom"
             android:layout_toEndOf="@id/layout_transaction_details_asset_transfer_to_label"
-            android:layout_toLeftOf="@id/layout_transaction_details_asset_transfer_divider_qr_code"
-            android:layout_toRightOf="@id/layout_transaction_details_asset_transfer_to_label"
-            android:layout_toStartOf="@id/layout_transaction_details_asset_transfer_divider_qr_code"
+            android:layout_toStartOf="@id/layout_transaction_details_asset_transfer_divider_address_book"
             android:hint="@string/address_hint"
             tools:text="" />
     </RelativeLayout>
@@ -107,7 +121,6 @@
         android:id="@+id/layout_transaction_details_asset_transfer_amount_input_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/create_tx_label_width"
         android:paddingStart="@dimen/create_tx_label_width"
         android:orientation="vertical"
         android:padding="8dp">

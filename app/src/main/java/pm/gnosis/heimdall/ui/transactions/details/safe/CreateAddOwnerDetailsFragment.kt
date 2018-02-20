@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.common.utils.doOnNextForResult
 import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
+import pm.gnosis.heimdall.utils.selectFromAddressBook
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -63,6 +64,9 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
                         layout_create_add_safe_owner_scan_address_button.setOnClickListener {
                             scanQrCode()
                         }
+                        layout_create_add_safe_owner_scan_address_button.setOnClickListener {
+                            selectFromAddressBook()
+                        }
                     }
                     // Setup input
                     .flatMapObservable {
@@ -78,7 +82,7 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
                         }
                     })
 
-    override fun onAddressScanned(address: BigInteger) {
+    override fun onAddressProvided(address: BigInteger) {
         layout_create_add_safe_owner_address_input.setText(address.asEthereumAddressString())
     }
 
@@ -88,6 +92,7 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
     override fun inputEnabled(enabled: Boolean) {
         layout_create_add_safe_owner_address_input.isEnabled = enabled
         layout_create_add_safe_owner_scan_address_button.isEnabled = enabled
+        layout_create_add_safe_owner_address_book_button.isEnabled = enabled
     }
 
     override fun inject(component: ApplicationComponent) {

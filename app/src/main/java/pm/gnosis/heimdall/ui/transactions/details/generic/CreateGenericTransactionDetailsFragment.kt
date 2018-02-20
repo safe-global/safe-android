@@ -26,6 +26,7 @@ import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.common.utils.visible
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
+import pm.gnosis.heimdall.utils.selectFromAddressBook
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asDecimalString
@@ -65,6 +66,8 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         layout_transaction_details_generic_value_input.setDefault(value?.asDecimalString())
         layout_transaction_details_generic_scan_to_button.visible(editable)
         layout_transaction_details_generic_divider_qr_code.visible(editable)
+        layout_transaction_details_generic_address_book_button.visible(editable)
+        layout_transaction_details_generic_divider_address_book.visible(editable)
         toggleTransactionInput(editable)
     }
 
@@ -88,6 +91,10 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         layout_transaction_details_generic_scan_to_button.setOnClickListener {
             scanQrCode()
         }
+
+        layout_transaction_details_generic_address_book_button.setOnClickListener {
+            selectFromAddressBook()
+        }
     }
 
     override fun inputEnabled(enabled: Boolean) {
@@ -101,6 +108,7 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         layout_transaction_details_generic_data_input.isEnabled = enabled
         layout_transaction_details_generic_value_input.isEnabled = enabled
         layout_transaction_details_generic_scan_to_button.isEnabled = enabled
+        layout_transaction_details_generic_address_book_button.isEnabled = enabled
     }
 
     override fun observeTransaction(): Observable<Result<Transaction>> {

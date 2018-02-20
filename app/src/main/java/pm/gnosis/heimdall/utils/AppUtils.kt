@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
@@ -14,7 +15,9 @@ import android.widget.TextView
 import android.widget.Toast
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.models.AddressBookEntry
 
 fun errorSnackbar(view: View, throwable: Throwable, duration: Int = Snackbar.LENGTH_LONG) {
     val message = (throwable as? LocalizedException)?.localizedMessage()
@@ -29,14 +32,32 @@ fun Context.errorToast(throwable: Throwable, duration: Int = Toast.LENGTH_LONG) 
 }
 
 fun handleQrCodeActivityResult(requestCode: Int, resultCode: Int, data: Intent?,
-                               onQrCodeResult: (String) -> Unit, onCancelledResult: () -> Unit) {
+                               onQrCodeResult: (String) -> Unit, onCancelledResult: (() -> Unit)? = null): Boolean {
     if (requestCode == ZxingIntentIntegrator.REQUEST_CODE) {
         if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)) {
             onQrCodeResult(data.getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA))
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            onCancelledResult()
+            onCancelledResult?.invoke()
         }
+        return true
     }
+    return false
+}
+
+fun Activity.selectFromAddressBook() = startActivityForResult(AddressBookActivity.createIntent(this), AddressBookActivity.REQUEST_CODE)
+fun Fragment.selectFromAddressBook() = startActivityForResult(AddressBookActivity.createIntent(context!!), AddressBookActivity.REQUEST_CODE)
+
+fun handleAddressBookResult(requestCode: Int, resultCode: Int, data: Intent?,
+                            onResult: (AddressBookEntry) -> Unit, onCancelled: (() -> Unit)? = null): Boolean {
+    if (requestCode == AddressBookActivity.REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK) {
+            AddressBookActivity.parseResult(data)?.let { onResult(it) }
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            onCancelled?.invoke()
+        }
+        return true
+    }
+    return false
 }
 
 fun TextView.setupEtherscanTransactionUrl(transactionHash: String, @StringRes stringId: Int) {
