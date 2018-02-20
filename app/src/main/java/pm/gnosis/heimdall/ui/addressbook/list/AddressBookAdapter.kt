@@ -10,18 +10,16 @@ import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.utils.initials
 import pm.gnosis.models.AddressBookEntry
 import javax.inject.Inject
 
 @ForView
-class AddressBookRecyclerView @Inject constructor(
+class AddressBookAdapter @Inject constructor(
         @ViewContext private val context: Context
-) : Adapter<AddressBookEntry, AddressBookRecyclerView.ViewHolder>() {
+) : Adapter<AddressBookEntry, AddressBookAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) =
             ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.layout_address_book_entry_item, parent, false))
-
 
     inner class ViewHolder(itemView: View) : Adapter.ViewHolder<AddressBookEntry>(itemView), View.OnClickListener {
         init {
@@ -30,7 +28,7 @@ class AddressBookRecyclerView @Inject constructor(
 
         override fun bind(data: AddressBookEntry, payloads: List<Any>?) {
             itemView.layout_address_book_entry_item_name.text = data.name
-            itemView.layout_address_book_entry_initials.text = data.name.initials().toUpperCase()
+            itemView.layout_address_book_entry_icon.setAddress(data.address)
         }
 
         override fun onClick(view: View?) {

@@ -33,7 +33,7 @@ class AddressBookActivity : BaseActivity() {
     lateinit var viewModel: AddressBookContract
 
     @Inject
-    lateinit var adapter: AddressBookRecyclerView
+    lateinit var adapter: AddressBookAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
