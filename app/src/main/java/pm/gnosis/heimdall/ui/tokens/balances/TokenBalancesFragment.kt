@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.tokens.balances
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -24,18 +23,17 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
-import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
-import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
 class TokenBalancesFragment : BaseFragment() {
-    @Inject lateinit var viewModel: TokenBalancesContract
-    @Inject lateinit var adapter: TokenBalancesAdapter
+    @Inject
+    lateinit var viewModel: TokenBalancesContract
+    @Inject
+    lateinit var adapter: TokenBalancesAdapter
 
     private var safeAddress: BigInteger? = null
 
@@ -59,17 +57,6 @@ class TokenBalancesFragment : BaseFragment() {
         layout_tokens_list.layoutManager = layoutManager
         layout_tokens_list.adapter = adapter
         layout_tokens_list.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        handleQrCodeActivityResult(requestCode, resultCode, data, {
-            if (it.isValidEthereumAddress()) {
-                startActivity(AddTokenActivity.createIntent(activity!!, it))
-            } else {
-                snackbar(layout_tokens_coordinator_layout, R.string.invalid_ethereum_address)
-            }
-        })
     }
 
     override fun onStart() {

@@ -11,7 +11,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.utils.handleAddressBookResult
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
+import pm.gnosis.heimdall.utils.parseEthereumAddress
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
@@ -36,7 +36,7 @@ abstract class BaseEditableTransactionDetailsFragment : BaseTransactionDetailsFr
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (handleQrCodeActivityResult(requestCode, resultCode, data, {
-                    it.hexAsEthereumAddressOrNull()?.let {
+                    (parseEthereumAddress(it))?.let {
                         onAddressProvided(it)
                     } ?: run {
                         onInvalidAddressScanned(it)

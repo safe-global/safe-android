@@ -16,7 +16,9 @@ import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.heimdall.utils.GnosisSafeUtils
+import pm.gnosis.heimdall.utils.parseEthereumAddress
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
@@ -49,13 +51,14 @@ class AddSafeViewModel @Inject constructor(
     override fun addExistingSafe(name: String, address: String): Observable<Result<Unit>> {
         return Observable.fromCallable {
             checkName(name)
-            val parsedAddress = address.hexAsEthereumAddressOrNull() ?: throw SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))
+            val parsedAddress = address.hexAsEthereumAddressOrNull()
+                    ?: throw SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))
             parsedAddress to name
         }.flatMap { (address, name) ->
-            repository.add(address, name)
-                    .andThen(Observable.just(Unit))
-                    .onErrorResumeNext(Function { errorHandler.observable(it) })
-        }
+                    repository.add(address, name)
+                            .andThen(Observable.just(Unit))
+                            .onErrorResumeNext(Function { errorHandler.observable(it) })
+                }
                 .mapToResult()
     }
 
@@ -64,13 +67,13 @@ class AddSafeViewModel @Inject constructor(
             checkName(name)
             name
         }.flatMap {
-            addressStore.load().flatMapCompletable {
-                // We add 1 owner because the current device will automatically be added as an owner
-                repository.deploy(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1), overrideGasPrice)
-            }
-                    .andThen(Observable.just(Unit))
-                    .onErrorResumeNext(Function { errorHandler.observable(it) })
-        }
+                    addressStore.load().flatMapCompletable {
+                        // We add 1 owner because the current device will automatically be added as an owner
+                        repository.deploy(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1), overrideGasPrice)
+                    }
+                            .andThen(Observable.just(Unit))
+                            .onErrorResumeNext(Function { errorHandler.observable(it) })
+                }
                 .mapToResult()
     }
 
@@ -110,7 +113,8 @@ class AddSafeViewModel @Inject constructor(
             Observable.fromCallable {
                 val address = input.hexAsEthereumAddressOrNull()
                 SimpleLocalizedException.assert(address != null, context, R.string.invalid_ethereum_address)
-                SimpleLocalizedException.assert(deviceInfo?.let { it != address } ?: false, context, R.string.error_owner_already_added)
+                SimpleLocalizedException.assert(deviceInfo?.let { it != address }
+                        ?: false, context, R.string.error_owner_already_added)
                 SimpleLocalizedException.assert(!addressStore.contains(address!!), context, R.string.error_owner_already_added)
                 addressStore.add(address)
             }
@@ -122,8 +126,8 @@ class AddSafeViewModel @Inject constructor(
             Single.fromCallable {
                 address.hexAsEthereumAddressOrNull() ?: throw InvalidAddressException()
             }.flatMapObservable {
-                repository.loadInfo(it)
-            }.mapToResult()
+                        repository.loadInfo(it)
+                    }.mapToResult()
 
     override fun loadActiveAccount(): Observable<Account> = accountsRepository.loadActiveAccount().toObservable()
             .onErrorResumeNext { t: Throwable -> Timber.d(t); Observable.empty<Account>() }

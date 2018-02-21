@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
+import pm.gnosis.heimdall.utils.parseEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.isValidEthereumAddress
@@ -83,9 +84,9 @@ class AddTokenActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         handleQrCodeActivityResult(requestCode, resultCode, data, { contents ->
-            if (contents.isValidEthereumAddress()) {
-                layout_add_token_address.setText(contents.asEthereumAddressString())
-            } else {
+            parseEthereumAddress(contents)?.let {
+                layout_add_token_address.setText(it.asEthereumAddressString())
+            } ?: run {
                 snackbar(layout_add_token_coordinator, R.string.invalid_ethereum_address)
             }
         })

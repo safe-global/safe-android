@@ -8,7 +8,6 @@ import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.layout_address_book.*
 import kotlinx.android.synthetic.main.layout_address_book_add_entry.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -19,9 +18,10 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
+import pm.gnosis.heimdall.utils.parseEthereumAddress
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.exceptions.InvalidAddressException
-import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -81,12 +81,11 @@ class AddressBookAddEntryActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         handleQrCodeActivityResult(requestCode, resultCode, data,
                 {
-                    if (it.isValidEthereumAddress()) {
-                        layout_add_address_book_entry_address.setText(it)
-                    } else {
+                    parseEthereumAddress(it)?.let {
+                        layout_add_address_book_entry_address.setText(it.asEthereumAddressString())
+                    } ?: run {
                         snackbar(layout_add_address_book_entry_coordinator, R.string.invalid_ethereum_address)
                     }
-
                 })
     }
 

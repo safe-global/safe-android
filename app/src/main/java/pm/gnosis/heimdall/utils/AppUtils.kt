@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.utils.hexAsEthereumAddressOrNull
 
 fun errorSnackbar(view: View, throwable: Throwable, duration: Int = Snackbar.LENGTH_LONG) {
     val message = (throwable as? LocalizedException)?.localizedMessage()
@@ -59,6 +60,9 @@ fun handleAddressBookResult(requestCode: Int, resultCode: Int, data: Intent?,
     }
     return false
 }
+
+fun parseEthereumAddress(address: String) =
+        address.hexAsEthereumAddressOrNull() ?: ERC67Parser.parse(address)?.transaction?.address
 
 fun TextView.setupEtherscanTransactionUrl(transactionHash: String, @StringRes stringId: Int) {
     setupEtherscanTransactionUrl(transactionHash, context.getString(stringId))
