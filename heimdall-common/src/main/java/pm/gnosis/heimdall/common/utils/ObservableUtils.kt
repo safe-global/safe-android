@@ -17,7 +17,7 @@ fun <D> Observable<D>.onErrorDefaultBeforeThrow(default: D?): Observable<D> =
 
 fun <D> Observable<D>.thenThrow(throwable: Throwable): Observable<D> = this.concatWith(Observable.error(throwable))
 
-fun <D> Observable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)?): Disposable =
+fun <D> Observable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)? = null, onError: ((Throwable) -> Unit)?): Disposable =
         subscribe({ it.handle(onNext, onError) }, {
             Timber.e(WhatTheFuck(it))
             onError?.invoke(it)
@@ -26,7 +26,7 @@ fun <D> Observable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onE
 fun <D> Observable<Result<D>>.doOnNextForResult(onNext: ((D) -> Unit)? = null, onError: ((Throwable) -> Unit)? = null): Observable<Result<D>> =
         doOnNext { it.handle(onNext, onError) }
 
-fun <D> Flowable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)?, onError: ((Throwable) -> Unit)?): Disposable =
+fun <D> Flowable<out Result<D>>.subscribeForResult(onNext: ((D) -> Unit)? = null, onError: ((Throwable) -> Unit)?): Disposable =
         subscribe({ it.handle(onNext, onError) }, {
             Timber.e(WhatTheFuck(it))
             onError?.invoke(it)

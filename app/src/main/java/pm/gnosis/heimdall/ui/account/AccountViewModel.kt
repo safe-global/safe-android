@@ -29,21 +29,21 @@ class AccountViewModel @Inject constructor(
             .add({ it is EmptyResultSetException }, R.string.no_account_available)
             .build()
 
-    override fun getQrCode(contents: String) = qrCodeGenerator.generateQrCode(contents)
-            .mapToResult()
+    override fun getQrCode(contents: String) = qrCodeGenerator.generateQrCode(contents).mapToResult()
 
-    override fun getAccountAddress() = accountsRepository.loadActiveAccount()
-            .toObservable()
-            .onErrorResumeNext(Function { errorHandler.observable<Account>(it) })
-            .mapToResult()
+    override fun getAccountAddress() =
+            accountsRepository.loadActiveAccount()
+                    .toObservable()
+                    .onErrorResumeNext(Function { errorHandler.observable<Account>(it) })
+                    .mapToResult()
 
-    override fun getAccountBalance(): Observable<Result<Wei>> = accountsRepository.loadActiveAccount()
-            .flatMapObservable {
-                ethereumJsonRpcRepository.getBalance(it.address)
-                        .onErrorResumeNext(Function { errorHandler.observable<Wei>(it) })
-                        .mapToResult()
-            }
+    override fun getAccountBalance(): Observable<Result<Wei>> =
+            accountsRepository.loadActiveAccount()
+                    .flatMapObservable {
+                        ethereumJsonRpcRepository.getBalance(it.address)
+                                .onErrorResumeNext(Function { errorHandler.observable<Wei>(it) })
+                                .mapToResult()
+                    }
 
-    override fun loadFiatConversion(amount: Wei) = tickerRepository.convertToFiat(amount)
-            .mapToResult()
+    override fun loadFiatConversion(amount: Wei) = tickerRepository.convertToFiat(amount).mapToResult()
 }

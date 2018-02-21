@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.jakewharton.rxbinding2.support.v4.widget.refreshes
+import com.jakewharton.rxbinding2.support.v7.widget.itemClicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_account.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -42,18 +44,19 @@ class AccountActivity : BaseActivity() {
         setContentView(R.layout.layout_account)
         registerToolbar(layout_account_toolbar)
         layout_account_toolbar.inflateMenu(R.menu.account_menu)
-        layout_account_toolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.account_menu_share -> if (layout_account_address.text.toString().isValidEthereumAddress()) {
-                    SimpleAddressShareDialog.create(layout_account_address.text.toString()).show(supportFragmentManager, null)
-                }
-            }
-            true
-        }
     }
 
     override fun onStart() {
         super.onStart()
+        disposables += layout_account_toolbar.itemClicks()
+                .subscribeBy(onNext = {
+                    when (it.itemId) {
+                        R.id.account_menu_share -> if (layout_account_address.text.toString().isValidEthereumAddress()) {
+                            SimpleAddressShareDialog.create(layout_account_address.text.toString()).show(supportFragmentManager, null)
+                        }
+                    }
+                })
+
         disposables += viewModel.getAccountAddress()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeForResult(this::onAccountAddress, ::handleError)
@@ -74,7 +77,7 @@ class AccountActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 // Update Fiat view
                 .doOnNextForResult(onNext = ::onFiat)
-                .subscribeForResult(onNext = {}, onError = ::handleError)
+                .subscribeForResult(onError = ::handleError)
     }
 
     private fun onFiat(currency: Pair<BigDecimal, Currency>) {
