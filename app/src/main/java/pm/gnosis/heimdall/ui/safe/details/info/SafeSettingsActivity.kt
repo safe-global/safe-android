@@ -25,6 +25,8 @@ import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.common.utils.visible
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
+import pm.gnosis.heimdall.ui.addressbook.helpers.InflatingViewFactory
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
@@ -37,12 +39,15 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SafeSettingsActivity : BaseActivity() {
-    override fun screenId() = ScreenId.SAFE_SETTINGS
 
     @Inject
     lateinit var viewModel: SafeSettingsContract
 
     private val removeSafeClicks = PublishSubject.create<Unit>()
+
+    private val viewFactory by lazy { InflatingViewFactory(layoutInflater, layout_safe_settings_owners_container, R.layout.layout_additional_owner_item) }
+
+    override fun screenId() = ScreenId.SAFE_SETTINGS
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -155,16 +160,16 @@ class SafeSettingsActivity : BaseActivity() {
     }
 
     private fun addOwner(address: BigInteger, index: Int, count: Int, showDelete: Boolean) {
-        val ownerLayout = layoutInflater.inflate(R.layout.layout_additional_owner_item, layout_safe_settings_owners_container, false)
-        ownerLayout.layout_address_item_icon.setAddress(address)
-        address.asEthereumAddressStringOrNull()?.let { ownerLayout.layout_address_item_value.text = it }
-        ownerLayout.layout_additional_owner_delete_button.visible(showDelete)
-        ownerLayout.layout_additional_owner_delete_button.setOnClickListener {
-            CreateChangeSafeSettingsTransactionProgressDialog
-                    .removeOwner(viewModel.getSafeAddress(), address, index.toLong(), count)
-                    .show(supportFragmentManager, null)
+        AddressInfoViewHolder(this, viewFactory).apply {
+            bind(address)
+            view.layout_additional_owner_delete_button.visible(showDelete)
+            view.layout_additional_owner_delete_button.setOnClickListener {
+                CreateChangeSafeSettingsTransactionProgressDialog
+                        .removeOwner(viewModel.getSafeAddress(), address, index.toLong(), count)
+                        .show(supportFragmentManager, null)
+            }
+            layout_safe_settings_owners_container.addView(view)
         }
-        layout_safe_settings_owners_container.addView(ownerLayout)
     }
 
     companion object {

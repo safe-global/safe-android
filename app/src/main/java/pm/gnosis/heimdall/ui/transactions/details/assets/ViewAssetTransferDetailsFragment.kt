@@ -17,6 +17,8 @@ import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
+import pm.gnosis.heimdall.ui.addressbook.helpers.InflatedViewFactory
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseReviewTransactionDetailsFragment
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
@@ -63,8 +65,11 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
     }
 
     private fun setupForm(info: AssetTransferDetailsContract.FormData) {
-        layout_view_asset_transfer_to_value.text = info.to?.asEthereumAddressStringOrNull()
-        info.to?.let { layout_view_asset_transfer_to_icon.setAddress(it) }
+        info.to?.let {
+            AddressInfoViewHolder(this, InflatedViewFactory(layout_view_asset_transfer_to_container)).apply {
+                bind(it)
+            }
+        }
         val amount = info.tokenAmount?.let { info.token?.convertAmount(it)?.stringWithNoTrailingZeroes() }
         val tokenSymbol = info.token?.symbol ?: getString(R.string.tokens)
         layout_view_asset_transfer_amount.setText(amount)

@@ -12,6 +12,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.android.synthetic.main.include_address_item_with_label_start_and_icon.view.*
 import kotlinx.android.synthetic.main.layout_receipt_change_safe.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
@@ -20,6 +21,8 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.common.utils.visible
+import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
+import pm.gnosis.heimdall.ui.addressbook.helpers.InflatedViewFactory
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseReviewTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract.Action.*
 import pm.gnosis.models.Transaction
@@ -32,6 +35,10 @@ import javax.inject.Inject
 
 
 abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDetailsFragment() {
+
+    private val primaryTargetViewFactory by lazy { InflatedViewFactory(layout_view_change_safe_primary_target_container) }
+    private val secondaryTargetViewFactory by lazy { InflatedViewFactory(layout_view_change_safe_secondary_target_container) }
+
     @Inject
     lateinit var subViewModel: ChangeSafeSettingsDetailsContract
 
@@ -75,30 +82,32 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
     private fun setupForm(action: ChangeSafeSettingsDetailsContract.Action) {
         when (action) {
             is RemoveOwner -> {
-                layout_view_change_safe_primary_target_label.setText(R.string.old_owner)
-                layout_view_change_safe_primary_target_value.text = action.owner.asEthereumAddressStringOrNull()
-                layout_view_change_safe_primary_target_icon.setAddress(action.owner)
-                layout_view_change_safe_secondary_target_label.visible(false)
+                AddressInfoViewHolder(this, primaryTargetViewFactory).apply {
+                    bind(action.owner)
+                    view.layout_address_item_label.setText(R.string.old_owner)
+                }
                 layout_view_change_safe_secondary_target_container.visible(false)
                 layout_view_change_safe_action.setText(removedOwnerMessage())
             }
             is AddOwner -> {
-                layout_view_change_safe_primary_target_label.setText(R.string.new_owner)
-                layout_view_change_safe_primary_target_value.text = action.owner.asEthereumAddressStringOrNull()
-                layout_view_change_safe_primary_target_icon.setAddress(action.owner)
-                layout_view_change_safe_secondary_target_label.visible(false)
+                AddressInfoViewHolder(this, primaryTargetViewFactory).apply {
+                    bind(action.owner)
+                    view.layout_address_item_label.setText(R.string.new_owner)
+                }
                 layout_view_change_safe_secondary_target_container.visible(false)
                 layout_view_change_safe_action.setText(addedOwnerMessage())
             }
             is ReplaceOwner -> {
-                layout_view_change_safe_primary_target_label.setText(R.string.new_owner)
-                layout_view_change_safe_primary_target_value.text = action.newOwner.asEthereumAddressStringOrNull()
-                layout_view_change_safe_primary_target_icon.setAddress(action.newOwner)
-                layout_view_change_safe_secondary_target_label.visible(true)
+                AddressInfoViewHolder(this, primaryTargetViewFactory).apply {
+                    bind(action.newOwner)
+                    view.layout_address_item_label.setText(R.string.new_owner)
+                }
+
                 layout_view_change_safe_secondary_target_container.visible(true)
-                layout_view_change_safe_secondary_target_label.setText(R.string.old_owner)
-                layout_view_change_safe_secondary_target_value.text = action.previousOwner.asEthereumAddressStringOrNull()
-                layout_view_change_safe_secondary_target_icon.setAddress(action.previousOwner)
+                AddressInfoViewHolder(this, secondaryTargetViewFactory).apply {
+                    bind(action.previousOwner)
+                    view.layout_address_item_label.setText(R.string.new_owner)
+                }
                 layout_view_change_safe_action.setText(replacedOwnerMessage())
             }
         }
