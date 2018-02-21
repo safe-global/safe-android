@@ -26,6 +26,7 @@ import pm.gnosis.heimdall.utils.DateTimeUtils
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.mockFindViewById
 import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.tests.utils.mockGetStringWithArgs
 import java.math.BigDecimal
@@ -77,10 +78,6 @@ class EtherGasStationGasPriceHelperTest {
     private lateinit var normalContainerMock: TestLinearLayout
     private lateinit var fastContainerMock: TestLinearLayout
     private lateinit var helper: EtherGasStationGasPriceHelper
-
-    private fun View.mockFindViewById(id: Int, mock: View) {
-        given(findViewById<View>(id)).willReturn(mock)
-    }
 
     private fun View.setupMock(): View {
         given(context).willReturn(contextMock)

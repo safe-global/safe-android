@@ -32,7 +32,7 @@ class InflatedViewFactory(private val view: View) : ViewFactory {
     override fun get() = view
 }
 
-open class AddressInfoViewHolder(val lifecycleOwner: LifecycleOwner, viewFactory: ViewFactory) : View.OnAttachStateChangeListener, LifecycleObserver {
+open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, viewFactory: ViewFactory) : View.OnAttachStateChangeListener, LifecycleObserver {
 
     private val addressBookRepository: AddressBookRepository
     private val disposables = CompositeDisposable()

@@ -1,6 +1,7 @@
 package pm.gnosis.tests.utils
 
 import android.content.Context
+import android.view.View
 import org.mockito.BDDMockito.anyInt
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito
@@ -39,3 +40,8 @@ fun Context.mockGetStringWithArgs(): Context {
 }
 
 fun Context.getTestString(id: Int, vararg params: Any): String = getString(id, params)
+
+fun View.mockFindViewById(id: Int, mock: View) {
+    given(findViewById<View>(id)).willReturn(mock)
+}
+
