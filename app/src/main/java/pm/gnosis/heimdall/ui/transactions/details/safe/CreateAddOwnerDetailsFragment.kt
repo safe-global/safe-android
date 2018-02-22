@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -53,6 +54,11 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
                 .flatMap { it.toNullable()?.let { Observable.just(it) } ?: Observable.empty() }
                 .compose(updateSafeInfoTransformer(layout_create_add_safe_owner_safe_address))
                 .subscribeBy(onError = Timber::e)
+
+        disposables += layout_create_add_safe_owner_address_book_button.clicks()
+                .subscribeBy(onNext = {
+                    selectFromAddressBook()
+                }, onError = Timber::e)
     }
 
     override fun observeTransaction(): Observable<Result<Transaction>> =
