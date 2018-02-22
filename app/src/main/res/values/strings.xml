@@ -259,6 +259,7 @@
     <string name="just_a_moment_ago">Just a moment ago</string>
     <string name="error_deploying_safe">There was an error deploying the safe. Therefore it was removed!</string>
     <string name="fiat_approximation">≈ %1s%2s</string>
+    <string name="fiat_approximation_parentheses">(≈ %1s%2s)</string>
     <string name="sign_transaction">Sign Transaction</string>
     <string name="this_device">This device</string>
     <string name="scan_signature">Scan Signature</string>
@@ -328,4 +329,6 @@
     <string name="good">good</string>
     <string name="best">best</string>
     <string name="scan">Scan</string>
+    <string name="account_balance">Account Balance</string>
+    <string name="this_device_address">This device address</string>
 </resources>

@@ -23,71 +23,83 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:orientation="vertical">
 
                     <TextView
-                        style="@style/Label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/your_account_address" />
-
-                    <TextView
-                        android:id="@+id/layout_account_address"
-                        style="@style/Title"
+                        style="@style/DarkContent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        tools:text="0x01ca023012ab3123" />
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:paddingEnd="16dp"
+                        android:paddingStart="16dp"
+                        android:paddingTop="16dp"
+                        android:text="@string/account_balance"
+                        android:textAllCaps="true" />
 
-                    <LinearLayout
+                    <pm.gnosis.heimdall.views.CurrencyEditText
+                        android:id="@+id/layout_account_balance"
+                        style="@style/CurrencyInput"
                         android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="18dp"
+                        android:enabled="false"
+                        android:paddingEnd="16dp"
+                        android:paddingStart="16dp"
+                        android:text="-"
+                        tools:text="12 ETH" />
+
+                    <TextView
+                        android:id="@+id/layout_account_fiat"
+                        style="@style/Content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:paddingEnd="16dp"
+                        android:paddingStart="16dp"
+                        tools:text="(≈ $1403.234)" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="24dp"
+                        android:background="@color/divider" />
+
+                    <TextView
+                        style="@style/Content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:orientation="horizontal">
+                        android:paddingEnd="16dp"
+                        android:paddingStart="16dp"
+                        android:text="@string/this_device_address" />
 
-                        <ImageView
-                            android:id="@+id/layout_account_clipboard"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:background="@drawable/selectable_circle_background"
-                            app:srcCompat="@drawable/ic_content_copy_24dp" />
-
-                        <ImageView
-                            android:id="@+id/layout_account_share"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_marginLeft="24dp"
-                            android:layout_marginStart="24dp"
-                            android:background="@drawable/selectable_circle_background"
-                            app:srcCompat="@drawable/ic_share_24dp" />
-
-                        <ImageView
-                            android:id="@+id/layout_account_qrcode"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_marginLeft="24dp"
-                            android:layout_marginStart="24dp"
-                            android:background="@drawable/selectable_circle_background"
-                            app:srcCompat="@drawable/ic_qr_24dp" />
-
-                    </LinearLayout>
-
-                    <TextView
-                        style="@style/Label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="32dp"
-                        android:text="@string/balance" />
-
-                    <TextView
-                        android:id="@+id/layout_account_balance"
-                        style="@style/Title"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="42sp"
-                        tools:text="42 Ξ" />
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
 
+                        <pm.gnosis.blockies.BlockiesImageView
+                            android:id="@+id/layout_account_blockies"
+                            android:layout_width="@dimen/action_circle"
+                            android:layout_height="@dimen/action_circle" />
+
+                        <TextView
+                            android:id="@+id/layout_account_address"
+                            style="@style/DarkContent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:lineSpacingExtra="7sp"
+                            android:textSize="16sp"
+                            tools:text="0xC52584bE423c196111569e1a6b22182073DDD66f" />
+                    </LinearLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </android.support.v4.widget.SwipeRefreshLayout>
