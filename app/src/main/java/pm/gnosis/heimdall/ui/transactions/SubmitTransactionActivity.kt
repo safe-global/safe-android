@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.transactions
 
 import android.app.Activity
+import android.arch.lifecycle.LifecycleOwner
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.Toolbar
@@ -25,6 +26,8 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
+import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
@@ -32,14 +35,17 @@ import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.heimdall.utils.setFormattedText
+import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.utils.asEthereumAddressStringOrNull
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
+import javax.inject.Provider
 
 class SubmitTransactionActivity : ViewTransactionActivity() {
+
+    private val viewProvider by lazy { InflatingViewProvider(layoutInflater, layout_submit_transaction_confirmations_addresses, R.layout.layout_transaction_confirmation_item) }
 
     @Inject
     lateinit var gasPriceHelper: GasPriceHelper
@@ -242,30 +248,47 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             layout_submit_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, availableConfirmations.toString(), it.requiredConfirmation.toString())
             setViewStates(requiredConfirmationsAvailable)
         }
-        layout_submit_transaction_confirmations_addresses.removeAllViews()
+        var childIndex = 0
         // Add current device first
         if (info.status.isOwner) {
-            layout_submit_transaction_confirmations_addresses.addView(buildSignerView(getString(R.string.this_device), info.status.sender, false))
+            addSignerView(childIndex++, info.status.sender, false, getString(R.string.this_device))
         }
         // Add confirmed devices
         info.status.owners.forEach {
             if (it != info.status.sender && info.signatures.containsKey(it)) {
-                layout_submit_transaction_confirmations_addresses.addView(buildSignerView(null, it, false))
+                addSignerView(childIndex++, it, false)
             }
         }
         // Add pending devices if more confirmations are required
         if (!requiredConfirmationsAvailable) {
             info.status.owners.forEach {
                 if (it != info.status.sender && !info.signatures.containsKey(it)) {
-                    layout_submit_transaction_confirmations_addresses.addView(buildSignerView(null, it, true))
+                    addSignerView(childIndex++, it, true)
                 }
             }
+        }
+        (childIndex until layout_submit_transaction_confirmations_addresses.childCount).forEach {
+            layout_submit_transaction_confirmations_addresses.removeViewAt(it)
         }
 
         if (estimatedFees != null) {
             layout_submit_transaction_transaction_fee.text = estimatedFees.displayString(this)
         } else {
             setUnknownEstimate()
+        }
+    }
+
+    private fun addSignerView(index: Int, address: BigInteger, pending: Boolean, name: String? = null) {
+        val child = layout_submit_transaction_confirmations_addresses.getChildAt(index)
+        val vh = child?.tag as? SignatureAddressInfoViewHolder
+        if (vh?.currentAddress == address) {
+            vh.bind(name, address, pending)
+        } else {
+            child?.let { layout_submit_transaction_confirmations_addresses.removeView(it) }
+            SignatureAddressInfoViewHolder(this, viewProvider).apply {
+                bind(name, address, pending)
+                layout_submit_transaction_confirmations_addresses.addView(view)
+            }
         }
     }
 
@@ -277,17 +300,6 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         layout_submit_transaction_scan_signature_qr_button.visible(canSign)
         layout_submit_transaction_send_signature_push_button.visible(canSign)
     }
-
-    private fun buildSignerView(name: String?, address: BigInteger, pending: Boolean) =
-            layoutInflater.inflate(R.layout.layout_transaction_confirmation_item, layout_submit_transaction_confirmations_addresses, false)
-                    .apply {
-                        layout_address_item_icon.setAddress(address)
-                        layout_address_item_value.text = address.asEthereumAddressStringOrNull()
-                        layout_address_item_value.visible(name == null)
-                        layout_address_item_name.text = name
-                        layout_address_item_name.visible(name != null)
-                        layout_transaction_confirmation_item_status.setImageResource(if (pending) R.drawable.ic_pending_signature else R.drawable.ic_approved_signature)
-                    }
 
     private fun setUnknownEstimate() {
         layout_submit_transaction_transaction_fee.text = "-"
@@ -306,6 +318,35 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 .viewModule(ViewModule(this))
                 .build()
                 .inject(this)
+    }
+
+    private class SignatureAddressInfoViewHolder(lifecycleOwner: LifecycleOwner, viewProvider: Provider<View>) :
+            AddressInfoViewHolder(lifecycleOwner, viewProvider) {
+
+        private var currentName: String? = null
+
+        fun bind(name: String?, address: BigInteger, pending: Boolean) {
+            currentName = currentName ?: name
+            bind(address)
+            view.apply {
+                layout_address_item_value.visible(name == null)
+                layout_address_item_name.text = currentName
+                layout_address_item_name.visible(currentName != null)
+                layout_transaction_confirmation_item_status.setImageResource(if (pending) R.drawable.ic_pending_signature else R.drawable.ic_approved_signature)
+            }
+        }
+
+        override fun onAddressInfo(entry: AddressBookEntry) {
+            super.onAddressInfo(entry)
+            currentName = entry.name
+        }
+
+        override fun start() {
+            if (currentName == null) {
+                // If we don't have a preset name load
+                super.start()
+            }
+        }
     }
 
     private data class CachedTransactionData(val safeAddress: BigInteger, val transaction: Transaction, val overrideGasPrice: Wei?)

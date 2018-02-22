@@ -8,13 +8,11 @@
     android:orientation="horizontal"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/layout_address_book_entry_initials"
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/layout_address_book_entry_icon"
         android:layout_width="@dimen/action_circle"
         android:layout_height="@dimen/action_circle"
-        android:background="@drawable/action_circle_background"
-        android:gravity="center"
-        tools:text="DO" />
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/layout_address_book_entry_item_name"

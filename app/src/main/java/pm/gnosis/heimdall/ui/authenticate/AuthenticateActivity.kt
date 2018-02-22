@@ -52,7 +52,7 @@ class AuthenticateActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         handleQrCodeActivityResult(requestCode, resultCode, data, {
             layout_authenticate_transaction_input.setText(it)
-        }, {})
+        })
     }
 
     private fun handleError(throwable: Throwable) {

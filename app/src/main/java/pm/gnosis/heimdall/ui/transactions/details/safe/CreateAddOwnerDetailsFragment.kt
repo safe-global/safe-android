@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -20,6 +21,7 @@ import pm.gnosis.heimdall.common.utils.doOnNextForResult
 import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
+import pm.gnosis.heimdall.utils.selectFromAddressBook
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -52,6 +54,11 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
                 .flatMap { it.toNullable()?.let { Observable.just(it) } ?: Observable.empty() }
                 .compose(updateSafeInfoTransformer(layout_create_add_safe_owner_safe_address))
                 .subscribeBy(onError = Timber::e)
+
+        disposables += layout_create_add_safe_owner_address_book_button.clicks()
+                .subscribeBy(onNext = {
+                    selectFromAddressBook()
+                }, onError = Timber::e)
     }
 
     override fun observeTransaction(): Observable<Result<Transaction>> =
@@ -62,6 +69,9 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
                         layout_create_add_safe_owner_address_input.setDefault(address)
                         layout_create_add_safe_owner_scan_address_button.setOnClickListener {
                             scanQrCode()
+                        }
+                        layout_create_add_safe_owner_scan_address_button.setOnClickListener {
+                            selectFromAddressBook()
                         }
                     }
                     // Setup input
@@ -78,7 +88,7 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
                         }
                     })
 
-    override fun onAddressScanned(address: BigInteger) {
+    override fun onAddressProvided(address: BigInteger) {
         layout_create_add_safe_owner_address_input.setText(address.asEthereumAddressString())
     }
 
@@ -88,6 +98,7 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
     override fun inputEnabled(enabled: Boolean) {
         layout_create_add_safe_owner_address_input.isEnabled = enabled
         layout_create_add_safe_owner_scan_address_button.isEnabled = enabled
+        layout_create_add_safe_owner_address_book_button.isEnabled = enabled
     }
 
     override fun inject(component: ApplicationComponent) {

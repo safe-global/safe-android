@@ -69,7 +69,7 @@ class TokenBalancesFragment : BaseFragment() {
             } else {
                 snackbar(layout_tokens_coordinator_layout, R.string.invalid_ethereum_address)
             }
-        }, { snackbar(layout_tokens_coordinator_layout, R.string.qr_code_scan_cancel) })
+        })
     }
 
     override fun onStart() {

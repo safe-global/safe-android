@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.widget.ImageView
 import java.math.BigInteger
 
-class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageView(context, attributeSet) {
+open class BlockiesImageView(context: Context, attributeSet: AttributeSet) : ImageView(context, attributeSet) {
     private val canvasPaint = Paint().apply { style = Paint.Style.FILL }
     private var dimen = 0.0f
     private var offsetX = 0.0f

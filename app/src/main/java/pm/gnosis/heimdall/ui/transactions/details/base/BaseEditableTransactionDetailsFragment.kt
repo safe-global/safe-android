@@ -9,13 +9,14 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.heimdall.utils.handleAddressBookResult
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
 
-abstract class BaseEditableTransactionDetailsFragment: BaseTransactionDetailsFragment() {
+abstract class BaseEditableTransactionDetailsFragment : BaseTransactionDetailsFragment() {
 
     protected fun prepareInput(input: TextView): Observable<CharSequence> =
             input
@@ -34,16 +35,18 @@ abstract class BaseEditableTransactionDetailsFragment: BaseTransactionDetailsFra
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        handleQrCodeActivityResult(requestCode, resultCode, data, {
-            it.hexAsEthereumAddressOrNull()?.let {
-                onAddressScanned(it)
-            } ?: run {
-                onInvalidAddressScanned(it)
-            }
-        }, {})
+        if (handleQrCodeActivityResult(requestCode, resultCode, data, {
+                    it.hexAsEthereumAddressOrNull()?.let {
+                        onAddressProvided(it)
+                    } ?: run {
+                        onInvalidAddressScanned(it)
+                    }
+                })) return
+
+        handleAddressBookResult(requestCode, resultCode, data, { onAddressProvided(it.address) })
     }
 
-    protected open fun onAddressScanned(address: BigInteger) {}
+    protected open fun onAddressProvided(address: BigInteger) {}
 
     protected open fun onInvalidAddressScanned(input: String) {
         context!!.toast(R.string.invalid_ethereum_address)

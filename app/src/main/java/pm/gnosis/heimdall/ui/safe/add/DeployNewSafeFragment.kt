@@ -165,9 +165,7 @@ class DeployNewSafeFragment : BaseFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        handleQrCodeActivityResult(requestCode, resultCode, data,
-                { addOwner(it) },
-                { snackbar(layout_deploy_new_safe_name_input, R.string.qr_code_scan_cancel) })
+        handleQrCodeActivityResult(requestCode, resultCode, data, { addOwner(it) })
     }
 
     private fun safeDeployed(ignored: Unit) {
