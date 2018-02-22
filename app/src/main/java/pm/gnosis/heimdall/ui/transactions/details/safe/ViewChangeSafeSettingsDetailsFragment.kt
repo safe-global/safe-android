@@ -35,8 +35,8 @@ import javax.inject.Inject
 
 abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDetailsFragment() {
 
-    private val primaryTargetViewFactory by lazy { InflatedViewProvider(layout_view_change_safe_primary_target_container) }
-    private val secondaryTargetViewFactory by lazy { InflatedViewProvider(layout_view_change_safe_secondary_target_container) }
+    private val primaryTargetViewProvider by lazy { InflatedViewProvider(layout_view_change_safe_primary_target_container) }
+    private val secondaryTargetViewProvider by lazy { InflatedViewProvider(layout_view_change_safe_secondary_target_container) }
 
     @Inject
     lateinit var subViewModel: ChangeSafeSettingsDetailsContract
@@ -81,7 +81,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
     private fun setupForm(action: ChangeSafeSettingsDetailsContract.Action) {
         when (action) {
             is RemoveOwner -> {
-                AddressInfoViewHolder(this, primaryTargetViewFactory).apply {
+                AddressInfoViewHolder(this, primaryTargetViewProvider).apply {
                     bind(action.owner)
                     view.layout_address_item_label.setText(R.string.old_owner)
                 }
@@ -89,7 +89,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
                 layout_view_change_safe_action.setText(removedOwnerMessage())
             }
             is AddOwner -> {
-                AddressInfoViewHolder(this, primaryTargetViewFactory).apply {
+                AddressInfoViewHolder(this, primaryTargetViewProvider).apply {
                     bind(action.owner)
                     view.layout_address_item_label.setText(R.string.new_owner)
                 }
@@ -97,13 +97,13 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
                 layout_view_change_safe_action.setText(addedOwnerMessage())
             }
             is ReplaceOwner -> {
-                AddressInfoViewHolder(this, primaryTargetViewFactory).apply {
+                AddressInfoViewHolder(this, primaryTargetViewProvider).apply {
                     bind(action.newOwner)
                     view.layout_address_item_label.setText(R.string.new_owner)
                 }
 
                 layout_view_change_safe_secondary_target_container.visible(true)
-                AddressInfoViewHolder(this, secondaryTargetViewFactory).apply {
+                AddressInfoViewHolder(this, secondaryTargetViewProvider).apply {
                     bind(action.previousOwner)
                     view.layout_address_item_label.setText(R.string.new_owner)
                 }

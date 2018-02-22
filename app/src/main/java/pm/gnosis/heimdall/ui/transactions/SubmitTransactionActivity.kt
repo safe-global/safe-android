@@ -45,7 +45,7 @@ import javax.inject.Provider
 
 class SubmitTransactionActivity : ViewTransactionActivity() {
 
-    private val viewFactory by lazy { InflatingViewProvider(layoutInflater, layout_submit_transaction_confirmations_addresses, R.layout.layout_transaction_confirmation_item) }
+    private val viewProvider by lazy { InflatingViewProvider(layoutInflater, layout_submit_transaction_confirmations_addresses, R.layout.layout_transaction_confirmation_item) }
 
     @Inject
     lateinit var gasPriceHelper: GasPriceHelper
@@ -285,7 +285,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             vh.bind(name, address, pending)
         } else {
             child?.let { layout_submit_transaction_confirmations_addresses.removeView(it) }
-            SignatureAddressInfoViewHolder(this, viewFactory).apply {
+            SignatureAddressInfoViewHolder(this, viewProvider).apply {
                 bind(name, address, pending)
                 layout_submit_transaction_confirmations_addresses.addView(view)
             }

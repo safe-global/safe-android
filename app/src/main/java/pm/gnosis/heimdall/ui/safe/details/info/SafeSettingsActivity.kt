@@ -43,7 +43,7 @@ class SafeSettingsActivity : BaseActivity() {
 
     private val removeSafeClicks = PublishSubject.create<Unit>()
 
-    private val viewFactory by lazy { InflatingViewProvider(layoutInflater, layout_safe_settings_owners_container, R.layout.layout_additional_owner_item) }
+    private val viewProvider by lazy { InflatingViewProvider(layoutInflater, layout_safe_settings_owners_container, R.layout.layout_additional_owner_item) }
 
     override fun screenId() = ScreenId.SAFE_SETTINGS
 
@@ -158,7 +158,7 @@ class SafeSettingsActivity : BaseActivity() {
     }
 
     private fun addOwner(address: BigInteger, index: Int, count: Int, showDelete: Boolean) {
-        AddressInfoViewHolder(this, viewFactory).apply {
+        AddressInfoViewHolder(this, viewProvider).apply {
             bind(address)
             view.layout_additional_owner_delete_button.visible(showDelete)
             view.layout_additional_owner_delete_button.setOnClickListener {
