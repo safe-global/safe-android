@@ -22,12 +22,11 @@ import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.common.utils.visible
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
-import pm.gnosis.heimdall.ui.addressbook.helpers.InflatedViewFactory
+import pm.gnosis.heimdall.ui.base.InflatedViewProvider
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseReviewTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract.Action.*
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
-import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import timber.log.Timber
 import java.math.BigInteger
@@ -36,8 +35,8 @@ import javax.inject.Inject
 
 abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDetailsFragment() {
 
-    private val primaryTargetViewFactory by lazy { InflatedViewFactory(layout_view_change_safe_primary_target_container) }
-    private val secondaryTargetViewFactory by lazy { InflatedViewFactory(layout_view_change_safe_secondary_target_container) }
+    private val primaryTargetViewFactory by lazy { InflatedViewProvider(layout_view_change_safe_primary_target_container) }
+    private val secondaryTargetViewFactory by lazy { InflatedViewProvider(layout_view_change_safe_secondary_target_container) }
 
     @Inject
     lateinit var subViewModel: ChangeSafeSettingsDetailsContract

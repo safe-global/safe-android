@@ -26,7 +26,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.base.InflatingViewFactory
+import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
@@ -43,7 +43,7 @@ class SafeSettingsActivity : BaseActivity() {
 
     private val removeSafeClicks = PublishSubject.create<Unit>()
 
-    private val viewFactory by lazy { InflatingViewFactory(layoutInflater, layout_safe_settings_owners_container, R.layout.layout_additional_owner_item) }
+    private val viewFactory by lazy { InflatingViewProvider(layoutInflater, layout_safe_settings_owners_container, R.layout.layout_additional_owner_item) }
 
     override fun screenId() = ScreenId.SAFE_SETTINGS
 

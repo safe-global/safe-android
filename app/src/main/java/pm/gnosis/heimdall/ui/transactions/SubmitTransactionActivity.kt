@@ -27,7 +27,7 @@ import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
-import pm.gnosis.heimdall.ui.base.InflatingViewFactory
+import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
@@ -45,7 +45,7 @@ import javax.inject.Provider
 
 class SubmitTransactionActivity : ViewTransactionActivity() {
 
-    private val viewFactory by lazy { InflatingViewFactory(layoutInflater, layout_submit_transaction_confirmations_addresses, R.layout.layout_transaction_confirmation_item) }
+    private val viewFactory by lazy { InflatingViewProvider(layoutInflater, layout_submit_transaction_confirmations_addresses, R.layout.layout_transaction_confirmation_item) }
 
     @Inject
     lateinit var gasPriceHelper: GasPriceHelper
