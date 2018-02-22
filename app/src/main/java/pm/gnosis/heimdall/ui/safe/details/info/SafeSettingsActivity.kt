@@ -13,7 +13,6 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_additional_owner_item.view.*
-import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_safe_settings.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -26,12 +25,11 @@ import pm.gnosis.heimdall.common.utils.visible
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
-import pm.gnosis.heimdall.ui.addressbook.helpers.InflatingViewFactory
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.InflatingViewFactory
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import timber.log.Timber
 import java.math.BigInteger

@@ -27,8 +27,7 @@ import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
-import pm.gnosis.heimdall.ui.addressbook.helpers.InflatingViewFactory
-import pm.gnosis.heimdall.ui.addressbook.helpers.ViewFactory
+import pm.gnosis.heimdall.ui.base.InflatingViewFactory
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
@@ -42,6 +41,7 @@ import pm.gnosis.models.Wei
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
+import javax.inject.Provider
 
 class SubmitTransactionActivity : ViewTransactionActivity() {
 
@@ -320,8 +320,8 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 .inject(this)
     }
 
-    private class SignatureAddressInfoViewHolder(lifecycleOwner: LifecycleOwner, viewFactory: ViewFactory) :
-            AddressInfoViewHolder(lifecycleOwner, viewFactory) {
+    private class SignatureAddressInfoViewHolder(lifecycleOwner: LifecycleOwner, viewProvider: Provider<View>) :
+            AddressInfoViewHolder(lifecycleOwner, viewProvider) {
 
         private var currentName: String? = null
 

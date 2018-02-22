@@ -26,6 +26,7 @@ import pm.gnosis.tests.utils.TestFlowableFactory
 import pm.gnosis.tests.utils.mockFindViewById
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
+import javax.inject.Provider
 
 @RunWith(MockitoJUnitRunner::class)
 class AddressInfoViewHolderTest {
@@ -46,7 +47,7 @@ class AddressInfoViewHolderTest {
     private lateinit var lifecycleOwnerMock: LifecycleOwner
 
     @Mock
-    private lateinit var viewFactoryMock: ViewFactory
+    private lateinit var viewProviderMock: Provider<View>
 
     @Mock
     private lateinit var viewMock: View
@@ -82,8 +83,8 @@ class AddressInfoViewHolderTest {
         viewMock.mockFindViewById(R.id.layout_address_item_value, valueViewMock)
         viewMock.mockFindViewById(R.id.layout_address_item_name, nameViewMock)
         given(lifecycleOwnerMock.lifecycle).willReturn(lifecycleMock)
-        given(viewFactoryMock.get()).willReturn(viewMock)
-        viewHolder = AddressInfoViewHolder(lifecycleOwnerMock, viewFactoryMock)
+        given(viewProviderMock.get()).willReturn(viewMock)
+        viewHolder = AddressInfoViewHolder(lifecycleOwnerMock, viewProviderMock)
     }
 
     @Test

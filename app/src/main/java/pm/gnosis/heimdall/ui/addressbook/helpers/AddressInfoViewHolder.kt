@@ -4,9 +4,7 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.OnLifecycleEvent
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -19,24 +17,13 @@ import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import timber.log.Timber
 import java.math.BigInteger
+import javax.inject.Provider
 
-interface ViewFactory {
-    fun get(): View
-}
-
-class InflatingViewFactory(private val inflater: LayoutInflater, private val container: ViewGroup, private val layout: Int) : ViewFactory {
-    override fun get() = inflater.inflate(layout, container, false)!!
-}
-
-class InflatedViewFactory(private val view: View) : ViewFactory {
-    override fun get() = view
-}
-
-open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, viewFactory: ViewFactory) : View.OnAttachStateChangeListener, LifecycleObserver {
+open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, viewProvider: Provider<View>) : View.OnAttachStateChangeListener, LifecycleObserver {
 
     private val addressBookRepository: AddressBookRepository
     private val disposables = CompositeDisposable()
-    val view = viewFactory.get()
+    val view = viewProvider.get()
 
     var currentAddress: BigInteger? = null
         private set
