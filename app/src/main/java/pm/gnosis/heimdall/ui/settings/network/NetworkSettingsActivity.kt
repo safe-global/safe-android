@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.setupToolbar
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -33,7 +34,7 @@ class NetworkSettingsActivity : BaseActivity() {
         inject()
         setContentView(R.layout.layout_network_settings)
 
-        registerToolbar(layout_network_settings_toolbar)
+        setupToolbar(layout_network_settings_toolbar)
     }
 
     override fun onStart() {

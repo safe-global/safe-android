@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
+import pm.gnosis.heimdall.utils.setupToolbar
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -41,7 +42,7 @@ class GenerateMnemonicActivity : SecuredBaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_generate_mnemonic)
-        registerToolbar(layout_generate_mnemonic_toolbar)
+        setupToolbar(layout_generate_mnemonic_toolbar)
 
         layout_generate_mnemonic_mnemonic.disableAccessibility()
 

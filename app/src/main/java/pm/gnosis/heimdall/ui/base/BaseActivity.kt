@@ -2,13 +2,11 @@ package pm.gnosis.heimdall.ui.base
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.WindowManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.HeimdallApplication
-import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -52,11 +50,6 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         disposables.clear()
-    }
-
-    protected fun registerToolbar(toolbar: Toolbar) {
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
     protected fun skipSecurityCheck() {

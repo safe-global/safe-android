@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.setupToolbar
 import javax.inject.Inject
 
 class ChangePasswordActivity : BaseActivity() {
@@ -28,7 +29,7 @@ class ChangePasswordActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_change_password)
-        registerToolbar(layout_change_password_toolbar)
+        setupToolbar(layout_change_password_toolbar)
     }
 
     override fun onStart() {

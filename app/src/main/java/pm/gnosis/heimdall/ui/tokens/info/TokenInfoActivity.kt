@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.setupEtherscanAddressUrl
+import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import timber.log.Timber
 import java.math.BigInteger
@@ -45,7 +46,7 @@ class TokenInfoActivity : BaseActivity() {
         }
 
         setContentView(R.layout.layout_token_info)
-        registerToolbar(layout_token_info_toolbar)
+        setupToolbar(layout_token_info_toolbar)
         layout_token_info_toolbar.inflateMenu(R.menu.token_info_menu)
         layout_token_info_toolbar.setOnMenuItemClickListener {
             when (it.itemId) {

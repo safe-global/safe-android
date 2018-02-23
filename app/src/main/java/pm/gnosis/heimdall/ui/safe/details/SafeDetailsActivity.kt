@@ -25,6 +25,7 @@ import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
+import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsEthereumAddress
 import timber.log.Timber
@@ -51,7 +52,7 @@ class SafeDetailsActivity : BaseActivity() {
         updateTitle()
         viewModel.setup(safeAddress.hexAsEthereumAddress(), safeName)
 
-        registerToolbar(layout_safe_details_toolbar)
+        setupToolbar(layout_safe_details_toolbar)
         layout_safe_details_toolbar.inflateMenu(R.menu.safe_details_menu)
         layout_safe_details_toolbar.setOnMenuItemClickListener {
             when (it.itemId) {

@@ -13,13 +13,17 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
+import pm.gnosis.heimdall.common.utils.DataResult
+import pm.gnosis.heimdall.common.utils.ErrorResult
+import pm.gnosis.heimdall.common.utils.Result
+import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.CreateAddOwnerDetailsFragment
+import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -42,7 +46,6 @@ class CreateTransactionActivity : BaseTransactionActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_create_transaction)
-
         setupToolbar(layout_create_transaction_toolbar, R.drawable.ic_close_24dp)
     }
 

@@ -1,13 +1,10 @@
 package pm.gnosis.heimdall.common.utils
 
-import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.annotation.DrawableRes
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
-import android.support.v7.widget.Toolbar
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.view.View
@@ -20,15 +17,6 @@ inline fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
 
 inline fun FragmentManager.transaction(func: FragmentTransaction.() -> FragmentTransaction) {
     beginTransaction().func().commit()
-}
-
-fun Activity.setupToolbar(toolbar: Toolbar, @DrawableRes icon: Int) {
-    toolbar.setup({ finish() }, icon)
-}
-
-inline fun Toolbar.setup(crossinline func: (Toolbar) -> Unit, @DrawableRes icon: Int) {
-    setNavigationIcon(icon)
-    setNavigationOnClickListener { func(this) }
 }
 
 fun View.visible(visible: Boolean, hiddenVisibility: Int = View.GONE) {

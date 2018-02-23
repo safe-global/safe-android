@@ -11,6 +11,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.reporting.TabId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
+import pm.gnosis.heimdall.utils.setupToolbar
 
 
 class AddSafeActivity : BaseActivity() {
@@ -23,7 +24,7 @@ class AddSafeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_add_safe)
 
-        registerToolbar(layout_add_safe_toolbar)
+        setupToolbar(layout_add_safe_toolbar)
         layout_add_safe_toolbar.setTitle(R.string.add_safe)
 
         layout_add_safe_viewpager.adapter = pagerAdapter()
