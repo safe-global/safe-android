@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
+import pm.gnosis.heimdall.utils.setupToolbar
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -35,7 +36,7 @@ class TokenManagementActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_token_management)
-        registerToolbar(layout_token_management_toolbar)
+        setupToolbar(layout_token_management_toolbar)
 
         layout_token_management_fab.setOnClickListener {
             startActivity(AddTokenActivity.createIntent(this))

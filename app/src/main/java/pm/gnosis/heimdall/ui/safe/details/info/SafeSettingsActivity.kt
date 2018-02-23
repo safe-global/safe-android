@@ -30,6 +30,7 @@ import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import timber.log.Timber
 import java.math.BigInteger
@@ -51,7 +52,7 @@ class SafeSettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_safe_settings)
-        registerToolbar(layout_safe_settings_toolbar)
+        setupToolbar(layout_safe_settings_toolbar)
 
         intent.extras.getString(EXTRA_SAFE_ADDRESS).hexAsEthereumAddressOrNull()?.let {
             viewModel.setup(it)

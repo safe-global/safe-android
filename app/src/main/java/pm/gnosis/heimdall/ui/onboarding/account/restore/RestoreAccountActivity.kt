@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.utils.trimWhitespace
 import pm.gnosis.utils.words
 import timber.log.Timber
@@ -35,7 +36,7 @@ class RestoreAccountActivity : SecuredBaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_restore_account)
-        registerToolbar(layout_restore_account_toolbar)
+        setupToolbar(layout_restore_account_toolbar)
 
         layout_restore_account_mnemonic.disableAccessibility()
     }

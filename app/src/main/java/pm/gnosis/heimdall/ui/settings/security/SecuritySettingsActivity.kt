@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
 import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordActivity
 import pm.gnosis.heimdall.ui.settings.security.revealmnemonic.RevealMnemonicActivity
+import pm.gnosis.heimdall.utils.setupToolbar
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -37,7 +38,7 @@ class SecuritySettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_security_settings)
-        registerToolbar(layout_security_settings_toolbar)
+        setupToolbar(layout_security_settings_toolbar)
     }
 
     override fun onStart() {

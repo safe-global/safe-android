@@ -8,13 +8,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.setupToolbar
 import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.transactions.details.assets.ReviewAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeSafeSettingsDetailsFragment
+import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.utils.asEthereumAddressString
@@ -53,7 +53,8 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
 
     private fun loadTransactionType(intent: Intent?): Boolean {
         intent ?: return false
-        val transaction = intent.getParcelableExtra<TransactionParcelable>(EXTRA_TRANSACTION)?.transaction ?: return false
+        val transaction = intent.getParcelableExtra<TransactionParcelable>(EXTRA_TRANSACTION)?.transaction
+                ?: return false
         val safe = intent.getStringExtra(EXTRA_SAFE)
         lifetimeDisposables += viewModel.checkTransactionType(transaction)
                 .observeOn(AndroidSchedulers.mainThread())

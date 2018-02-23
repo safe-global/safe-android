@@ -15,7 +15,6 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.setupToolbar
 import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus.*
@@ -26,6 +25,7 @@ import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFra
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ReceiptChangeSafeSettingsDetailsFragment
 import pm.gnosis.heimdall.utils.setupEtherscanTransactionUrl
+import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
@@ -46,7 +46,7 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_receipt_transaction)
 
-        setupToolbar(layout_receipt_transaction_toolbar, R.drawable.ic_arrow_back_24dp)
+        setupToolbar(layout_receipt_transaction_toolbar)
     }
 
     override fun onStart() {

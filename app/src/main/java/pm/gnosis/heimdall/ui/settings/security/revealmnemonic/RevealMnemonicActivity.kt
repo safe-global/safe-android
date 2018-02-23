@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.errorToast
+import pm.gnosis.heimdall.utils.setupToolbar
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,7 +37,7 @@ class RevealMnemonicActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_reveal_mnemonic)
-        registerToolbar(layout_reveal_mnemonic_toolbar)
+        setupToolbar(layout_reveal_mnemonic_toolbar)
 
         layout_reveal_mnemonic_mnemonic.disableAccessibility()
         layout_reveal_mnemonic_mnemonic.setOnLongClickListener {

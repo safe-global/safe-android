@@ -3,10 +3,12 @@ package pm.gnosis.heimdall.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.Toolbar
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
 import android.text.style.URLSpan
@@ -89,4 +91,11 @@ private fun TextView.setupEtherscanLink(url: String, text: String) {
             .append(" ")
             .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
     setOnClickListener { this.context.openUrl(url) }
+}
+
+fun Activity.setupToolbar(toolbar: Toolbar,
+                          @DrawableRes icon: Int = R.drawable.ic_arrow_back_24dp,
+                          clickListener: (View) -> Unit = { onBackPressed() }) {
+    toolbar.setNavigationIcon(icon)
+    toolbar.setNavigationOnClickListener(clickListener)
 }

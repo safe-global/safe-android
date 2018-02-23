@@ -22,6 +22,7 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.heimdall.utils.parseEthereumAddress
+import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.isValidEthereumAddress
@@ -39,7 +40,7 @@ class AddTokenActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_add_token)
         inject()
-        registerToolbar(layout_add_token_toolbar)
+        setupToolbar(layout_add_token_toolbar)
         layout_add_token_toolbar.title = getString(R.string.add_token)
 
         layout_add_token_scan_qr_code.setOnClickListener { scanQrCode() }

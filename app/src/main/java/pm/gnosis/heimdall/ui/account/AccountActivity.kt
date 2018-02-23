@@ -23,6 +23,7 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.format
+import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.asEthereumAddressString
@@ -42,7 +43,7 @@ class AccountActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_account)
-        registerToolbar(layout_account_toolbar)
+        setupToolbar(layout_account_toolbar)
         layout_account_toolbar.inflateMenu(R.menu.account_menu)
     }
 

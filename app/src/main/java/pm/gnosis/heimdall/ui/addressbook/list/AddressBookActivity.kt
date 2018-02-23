@@ -23,6 +23,7 @@ import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
@@ -44,7 +45,7 @@ class AddressBookActivity : BaseActivity() {
         setContentView(R.layout.layout_address_book)
         inject()
 
-        registerToolbar(layout_address_book_toolbar)
+        setupToolbar(layout_address_book_toolbar)
         layout_address_book_toolbar.title = getString(R.string.address_book)
 
         val layoutManager = LinearLayoutManager(this)
