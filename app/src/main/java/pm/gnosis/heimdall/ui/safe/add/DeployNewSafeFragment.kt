@@ -29,12 +29,10 @@ import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.utils.displayString
-import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
-import pm.gnosis.heimdall.utils.setColorFilterCompat
+import pm.gnosis.heimdall.utils.*
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.models.Currency
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.isValidEthereumAddress
 import pm.gnosis.utils.stringWithNoTrailingZeroes
@@ -160,12 +158,13 @@ class DeployNewSafeFragment : BaseFragment() {
 
     private fun addOwner(address: String) {
         disposables += viewModel.addAdditionalOwner(address)
-                .subscribeBy(onError = { errorSnackbar(layout_deploy_new_safe_name_input, it) })
+                .subscribeForResult(onError = { errorSnackbar(layout_deploy_new_safe_name_input, it) })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        handleQrCodeActivityResult(requestCode, resultCode, data, { addOwner(it) })
+        handleQrCodeActivityResult(requestCode, resultCode, data,
+                { parseEthereumAddress(it)?.let { addOwner(it.asEthereumAddressString()) } })
     }
 
     private fun safeDeployed(ignored: Unit) {
@@ -219,18 +218,22 @@ class DeployNewSafeFragment : BaseFragment() {
     private fun updateSecurityBar(additionalOwners: Int) {
         val securityInfoTextResource: Int
         val colorResource: Int
+        val securityLevelTextResource: Int
         when (additionalOwners) {
             0 -> {
                 securityInfoTextResource = R.string.security_info_weak
                 colorResource = R.color.security_bar_low
+                securityLevelTextResource = R.string.weak
             }
             1 -> {
                 securityInfoTextResource = R.string.security_info_good
                 colorResource = R.color.security_bar_good
+                securityLevelTextResource = R.string.good
             }
             else -> {
                 securityInfoTextResource = R.string.security_info_best
                 colorResource = R.color.security_bar_best
+                securityLevelTextResource = R.string.best
             }
         }
 
@@ -240,7 +243,7 @@ class DeployNewSafeFragment : BaseFragment() {
         layout_deploy_new_safe_security_level_text.text = SpannableStringBuilder("")
                 .appendText(getString(R.string.security_level), ForegroundColorSpan(context!!.getColorCompat(R.color.gnosis_dark_blue)))
                 .append(": ")
-                .appendText(getString(R.string.weak), ForegroundColorSpan(context!!.getColorCompat(colorResource)))
+                .appendText(getString(securityLevelTextResource), ForegroundColorSpan(context!!.getColorCompat(colorResource)))
         layout_deploy_new_safe_security_info.text = getString(securityInfoTextResource)
     }
 
