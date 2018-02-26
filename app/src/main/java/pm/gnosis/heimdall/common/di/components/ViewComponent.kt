@@ -48,8 +48,8 @@ import pm.gnosis.heimdall.ui.transactions.details.safe.ViewChangeSafeSettingsDet
 
 @ForView
 @Component(
-        dependencies = [ApplicationComponent::class],
-        modules = [ViewModule::class, ViewBindingsModule::class]
+    dependencies = [ApplicationComponent::class],
+    modules = [ViewModule::class, ViewBindingsModule::class]
 )
 interface ViewComponent {
     fun gasPriceHelper(): GasPriceHelper

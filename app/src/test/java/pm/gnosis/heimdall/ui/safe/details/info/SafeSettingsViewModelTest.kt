@@ -53,9 +53,11 @@ class SafeSettingsViewModelTest {
         viewModel = SafeSettingsViewModel(contextMock, repositoryMock)
     }
 
-    private fun callSetupAndCheck(address: BigInteger, info: SafeInfo,
-                                  repositoryInvocations: Int = 1, totalInvocations: Int = repositoryInvocations,
-                                  ignoreCached: Boolean = false) {
+    private fun callSetupAndCheck(
+        address: BigInteger, info: SafeInfo,
+        repositoryInvocations: Int = 1, totalInvocations: Int = repositoryInvocations,
+        ignoreCached: Boolean = false
+    ) {
         // Setup with address
         viewModel.setup(address)
 

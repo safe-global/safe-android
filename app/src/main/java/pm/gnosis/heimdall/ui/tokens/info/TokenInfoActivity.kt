@@ -59,13 +59,13 @@ class TokenInfoActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += viewModel.observeToken()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::onTokenInfo, ::onTokenInfoError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(::onTokenInfo, ::onTokenInfoError)
 
         disposables += removeClicksSubject
-                .flatMap { viewModel.removeToken() }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult({ onTokenDeleted() }, ::onTokenDeleteError)
+            .flatMap { viewModel.removeToken() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult({ onTokenDeleted() }, ::onTokenDeleteError)
     }
 
     private fun onTokenInfo(token: ERC20Token) {
@@ -103,25 +103,25 @@ class TokenInfoActivity : BaseActivity() {
 
     private fun showDeleteDialog() {
         AlertDialog.Builder(this)
-                .setMessage(R.string.dialog_remove_token_message)
-                .setPositiveButton(R.string.remove, { _, _ -> removeClicksSubject.onNext(Unit) })
-                .setNegativeButton(R.string.cancel, { _, _ -> })
-                .show()
+            .setMessage(R.string.dialog_remove_token_message)
+            .setPositiveButton(R.string.remove, { _, _ -> removeClicksSubject.onNext(Unit) })
+            .setNegativeButton(R.string.cancel, { _, _ -> })
+            .show()
     }
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {
         private const val ADDRESS_EXTRA = "extra.string.address"
 
         fun createIntent(context: Context, tokenAddress: BigInteger) =
-                Intent(context, TokenInfoActivity::class.java)
-                        .apply { putExtra(ADDRESS_EXTRA, tokenAddress.asEthereumAddressStringOrNull()) }
+            Intent(context, TokenInfoActivity::class.java)
+                .apply { putExtra(ADDRESS_EXTRA, tokenAddress.asEthereumAddressStringOrNull()) }
     }
 }

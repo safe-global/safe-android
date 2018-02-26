@@ -44,17 +44,17 @@
 
     <include
         android:id="@+id/layout_view_change_safe_primary_target_container"
-        android:layout_marginTop="16dp"
+        layout="@layout/include_address_item_with_label_above_and_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/include_address_item_with_label_above_and_icon" />
+        android:layout_marginTop="16dp" />
 
     <include
         android:id="@+id/layout_view_change_safe_secondary_target_container"
-        android:layout_marginTop="16dp"
+        layout="@layout/include_address_item_with_label_above_and_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/include_address_item_with_label_above_and_icon" />
+        android:layout_marginTop="16dp" />
 
 
 </LinearLayout>

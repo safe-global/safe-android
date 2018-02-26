@@ -14,33 +14,33 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import javax.inject.Inject
 
 class UnlockViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val encryptionManager: EncryptionManager
+    @ApplicationContext private val context: Context,
+    private val encryptionManager: EncryptionManager
 ) : UnlockContract() {
 
     override fun observeFingerprint(): Observable<Result<FingerprintUnlockResult>> =
-            encryptionManager.observeFingerprintForUnlock()
-                    .mapToResult()
+        encryptionManager.observeFingerprintForUnlock()
+            .mapToResult()
 
     override fun checkState(forceConfirmCredentials: Boolean) =
-            (if (forceConfirmCredentials) Single.just(false) else encryptionManager.unlocked())
-                    .flatMap({
-                        if (it) Single.just(State.UNLOCKED)
+        (if (forceConfirmCredentials) Single.just(false) else encryptionManager.unlocked())
+            .flatMap({
+                if (it) Single.just(State.UNLOCKED)
+                else
+                    encryptionManager.initialized().map {
+                        if (it)
+                            State.LOCKED
                         else
-                            encryptionManager.initialized().map {
-                                if (it)
-                                    State.LOCKED
-                                else
-                                    State.UNINITIALIZED
-                            }
-                    })
-                    .subscribeOn(Schedulers.io())
-                    .toObservable().mapToResult()
+                            State.UNINITIALIZED
+                    }
+            })
+            .subscribeOn(Schedulers.io())
+            .toObservable().mapToResult()
 
     override fun unlock(password: String) =
-            encryptionManager.unlockWithPassword(password.toByteArray())
-                    .map {
-                        SimpleLocalizedException.assert(it, context, R.string.error_wrong_credentials)
-                        State.UNLOCKED
-                    }.toObservable().mapToResult()
+        encryptionManager.unlockWithPassword(password.toByteArray())
+            .map {
+                SimpleLocalizedException.assert(it, context, R.string.error_wrong_credentials)
+                State.UNLOCKED
+            }.toObservable().mapToResult()
 }

@@ -29,7 +29,7 @@ abstract class BaseCreateSafeTransactionProgressDialog : BaseDialog() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.dialog_base_create_safe_transaction_progress, container, false)
+        inflater.inflate(R.layout.dialog_base_create_safe_transaction_progress, container, false)
 
     abstract fun createTransaction(): Single<Transaction>
 
@@ -38,15 +38,15 @@ abstract class BaseCreateSafeTransactionProgressDialog : BaseDialog() {
     override fun onStart() {
         super.onStart()
         disposables += createTransaction()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doAfterTerminate {
-                    dismiss()
-                }
-                .subscribe({
-                    showTransaction(safeAddress, it)
-                }, {
-                    context!!.errorToast(it)
-                })
+            .observeOn(AndroidSchedulers.mainThread())
+            .doAfterTerminate {
+                dismiss()
+            }
+            .subscribe({
+                showTransaction(safeAddress, it)
+            }, {
+                context!!.errorToast(it)
+            })
     }
 
     companion object {

@@ -56,3 +56,5 @@ After getting access to the file, move it to the `app` module.
 
 ### Contribute
 You can contribute to this repo by creating a Pull Request or an issue. Please follow the default template set for the Pull Requests.
+
+Make sure that you apply the [Kotlin coding conventions](https://kotlinlang.org/docs/reference/coding-conventions.html).

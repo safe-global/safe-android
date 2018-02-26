@@ -51,8 +51,8 @@ class GenerateMnemonicViewModelTest {
         then(bip39Mock).should().generateMnemonic(languageId = R.id.english)
         then(bip39Mock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors()
-                .assertComplete()
-                .assertValue { it is DataResult && it.data == testMnemonic }
+            .assertComplete()
+            .assertValue { it is DataResult && it.data == testMnemonic }
     }
 
     @Test
@@ -66,8 +66,8 @@ class GenerateMnemonicViewModelTest {
         then(bip39Mock).should().generateMnemonic(languageId = R.id.english)
         then(bip39Mock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors()
-                .assertComplete()
-                .assertValue { it is ErrorResult && it.error == exception }
+            .assertComplete()
+            .assertValue { it is ErrorResult && it.error == exception }
     }
 
     @Test

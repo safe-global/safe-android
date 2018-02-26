@@ -7,8 +7,8 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class BaseTransactionDetailsViewModel @Inject constructor(
-        private val safeRepository: GnosisSafeRepository
+    private val safeRepository: GnosisSafeRepository
 ) : BaseTransactionDetailsContract() {
     override fun observeSafe(safeAddress: BigInteger): Observable<Safe> =
-            safeRepository.observeSafe(safeAddress).toObservable()
+        safeRepository.observeSafe(safeAddress).toObservable()
 }

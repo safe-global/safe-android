@@ -18,7 +18,7 @@ class AddressBookAdapter @Inject constructor(
     val clicks: PublishSubject<AddressBookEntry> = PublishSubject.create<AddressBookEntry>()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) =
-            ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.layout_address_book_entry_item, parent, false))
+        ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.layout_address_book_entry_item, parent, false))
 
     inner class ViewHolder(itemView: View) : Adapter.ViewHolder<AddressBookEntry>(itemView), View.OnClickListener {
         init {

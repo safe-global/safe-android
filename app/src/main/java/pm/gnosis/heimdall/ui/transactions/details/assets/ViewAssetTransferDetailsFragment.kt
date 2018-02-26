@@ -47,19 +47,19 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(layout(), container, false)
+        inflater.inflate(layout(), container, false)
 
     override fun onStart() {
         super.onStart()
 
         disposables += subViewModel.loadFormData(transaction, false)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::setupForm, Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(::setupForm, Timber::e)
 
         safe?.let {
             disposables += Observable.just(it)
-                    .compose(updateSafeInfoTransformer(layout_view_asset_transfer_from))
-                    .subscribeBy(onError = Timber::e)
+                .compose(updateSafeInfoTransformer(layout_view_asset_transfer_from))
+                .subscribeBy(onError = Timber::e)
         }
     }
 
@@ -77,18 +77,18 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
 
     override fun observeTransaction(): Observable<Result<Transaction>> {
         return Observable.just(transaction.toOptional())
-                // Check that the transaction we are displaying is legit
-                .compose(subViewModel.transactionTransformer())
+            // Check that the transaction we are displaying is legit
+            .compose(subViewModel.transactionTransformer())
     }
 
     override fun observeSafe(): Observable<Optional<BigInteger>> =
-            Observable.just(safe.toOptional())
+        Observable.just(safe.toOptional())
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
-                .applicationComponent(component)
-                .viewModule(ViewModule(activity!!))
-                .build().inject(this)
+            .applicationComponent(component)
+            .viewModule(ViewModule(activity!!))
+            .build().inject(this)
     }
 
     companion object {
@@ -97,9 +97,9 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
         private const val ARG_SAFE = "argument.string.safe"
 
         fun createBundle(transaction: Transaction?, safeAddress: String?) =
-                Bundle().apply {
-                    putParcelable(ARG_TRANSACTION, transaction?.parcelable())
-                    putString(ARG_SAFE, safeAddress)
-                }
+            Bundle().apply {
+                putParcelable(ARG_TRANSACTION, transaction?.parcelable())
+                putString(ARG_SAFE, safeAddress)
+            }
     }
 }

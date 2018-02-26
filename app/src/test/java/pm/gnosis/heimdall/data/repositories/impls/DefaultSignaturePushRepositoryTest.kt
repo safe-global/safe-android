@@ -72,11 +72,18 @@ class DefaultSignaturePushRepositoryTest {
     fun setUp() {
         given(application.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())).willReturn(preferences)
         preferencesManager = PreferencesManager(application)
-        repository = DefaultSignaturePushRepository(accountRepoMock, messagingQueueRepositoryMock, preferencesManager, pushServiceApiMock, safeRepositoryMock, transactionRepositoryMock)
+        repository = DefaultSignaturePushRepository(
+            accountRepoMock,
+            messagingQueueRepositoryMock,
+            preferencesManager,
+            pushServiceApiMock,
+            safeRepositoryMock,
+            transactionRepositoryMock
+        )
     }
 
     private fun cleanAddress(address: BigInteger) =
-            address.asEthereumAddressString().toLowerCase().removeHexPrefix()
+        address.asEthereumAddressString().toLowerCase().removeHexPrefix()
 
     @Test
     fun initEmptySafes() {
@@ -133,7 +140,7 @@ class DefaultSignaturePushRepositoryTest {
     fun request() {
         given(accountRepoMock.sign(MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
         given(pushServiceApiMock.requestSignatures(anyString(), anyString(), MockUtils.any()))
-                .willReturn(Completable.complete())
+            .willReturn(Completable.complete())
 
         val testObserver = TestObserver<Unit>()
         repository.request(TEST_SAFE_1, "some_request_url").subscribe(testObserver)
@@ -142,7 +149,7 @@ class DefaultSignaturePushRepositoryTest {
 
         then(accountRepoMock).should().sign(Sha3Utils.keccak(cleanAddress(TEST_SAFE_1).hexStringToByteArray()))
         then(pushServiceApiMock).should()
-                .requestSignatures(TEST_SIGNATURE.toString(), cleanAddress(TEST_SAFE_1), RequestSignatureData("some_request_url"))
+            .requestSignatures(TEST_SIGNATURE.toString(), cleanAddress(TEST_SAFE_1), RequestSignatureData("some_request_url"))
 
         then(accountRepoMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
@@ -153,7 +160,7 @@ class DefaultSignaturePushRepositoryTest {
         val error = IllegalStateException()
         given(accountRepoMock.sign(MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
         given(pushServiceApiMock.requestSignatures(anyString(), anyString(), MockUtils.any()))
-                .willReturn(Completable.error(error))
+            .willReturn(Completable.error(error))
 
         val testObserver = TestObserver<Unit>()
         repository.request(TEST_SAFE_1, "some_request_url").subscribe(testObserver)
@@ -162,7 +169,7 @@ class DefaultSignaturePushRepositoryTest {
 
         then(accountRepoMock).should().sign(Sha3Utils.keccak(cleanAddress(TEST_SAFE_1).hexStringToByteArray()))
         then(pushServiceApiMock).should()
-                .requestSignatures(TEST_SIGNATURE.toString(), cleanAddress(TEST_SAFE_1), RequestSignatureData("some_request_url"))
+            .requestSignatures(TEST_SIGNATURE.toString(), cleanAddress(TEST_SAFE_1), RequestSignatureData("some_request_url"))
 
         then(accountRepoMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
@@ -188,10 +195,10 @@ class DefaultSignaturePushRepositoryTest {
     fun send() {
         val testHash = "ThisShouldBeAHash".toByteArray()
         given(transactionRepositoryMock.calculateHash(MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.just(testHash))
+            .willReturn(Single.just(testHash))
 
         given(pushServiceApiMock.sendSignature(anyString(), MockUtils.any()))
-                .willReturn(Completable.complete())
+            .willReturn(Completable.complete())
 
         val testObserver = TestObserver<Unit>()
         repository.send(TEST_SAFE_1, TEST_TRANSACTION, TEST_SIGNATURE).subscribe(testObserver)
@@ -200,7 +207,7 @@ class DefaultSignaturePushRepositoryTest {
 
         then(transactionRepositoryMock).should().calculateHash(TEST_SAFE_1, TEST_TRANSACTION)
         then(pushServiceApiMock).should()
-                .sendSignature(cleanAddress(TEST_SAFE_1), SendSignatureData(GnoSafeUrlParser.signResponse(TEST_SIGNATURE), testHash.toHexString()))
+            .sendSignature(cleanAddress(TEST_SAFE_1), SendSignatureData(GnoSafeUrlParser.signResponse(TEST_SIGNATURE), testHash.toHexString()))
 
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
@@ -211,10 +218,10 @@ class DefaultSignaturePushRepositoryTest {
         val error = IllegalStateException()
         val testHash = "ThisShouldBeAHash".toByteArray()
         given(transactionRepositoryMock.calculateHash(MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.just(testHash))
+            .willReturn(Single.just(testHash))
 
         given(pushServiceApiMock.sendSignature(anyString(), MockUtils.any()))
-                .willReturn(Completable.error(error))
+            .willReturn(Completable.error(error))
 
         val testObserver = TestObserver<Unit>()
         repository.send(TEST_SAFE_1, TEST_TRANSACTION, TEST_SIGNATURE).subscribe(testObserver)
@@ -223,7 +230,7 @@ class DefaultSignaturePushRepositoryTest {
 
         then(transactionRepositoryMock).should().calculateHash(TEST_SAFE_1, TEST_TRANSACTION)
         then(pushServiceApiMock).should()
-                .sendSignature(cleanAddress(TEST_SAFE_1), SendSignatureData(GnoSafeUrlParser.signResponse(TEST_SIGNATURE), testHash.toHexString()))
+            .sendSignature(cleanAddress(TEST_SAFE_1), SendSignatureData(GnoSafeUrlParser.signResponse(TEST_SIGNATURE), testHash.toHexString()))
 
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
@@ -233,7 +240,7 @@ class DefaultSignaturePushRepositoryTest {
     fun sendHashFailure() {
         val error = IllegalStateException()
         given(transactionRepositoryMock.calculateHash(MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.error(error))
+            .willReturn(Single.error(error))
 
         val testObserver = TestObserver<Unit>()
         repository.send(TEST_SAFE_1, TEST_TRANSACTION, TEST_SIGNATURE).subscribe(testObserver)

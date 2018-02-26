@@ -15,12 +15,12 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class SafeSettingsViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val safeRepository: GnosisSafeRepository
+    @ApplicationContext private val context: Context,
+    private val safeRepository: GnosisSafeRepository
 ) : SafeSettingsContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
-            .build()
+        .build()
 
     private var cachedInfo: SafeInfo? = null
 
@@ -37,30 +37,30 @@ class SafeSettingsViewModel @Inject constructor(
     override fun getSafeAddress(): BigInteger = address!!
 
     override fun loadSafeInfo(ignoreCache: Boolean) =
-            (fromCache(ignoreCache) ?: safeRepository.loadInfo(address!!)
-                    .onErrorResumeNext(Function { errorHandler.observable(it) })
-                    .doOnNext { cachedInfo = it })
-                    .mapToResult()
+        (fromCache(ignoreCache) ?: safeRepository.loadInfo(address!!)
+            .onErrorResumeNext(Function { errorHandler.observable(it) })
+            .doOnNext { cachedInfo = it })
+            .mapToResult()
 
     override fun loadSafeName() =
-            safeRepository.observeSafe(address!!)
-                    .firstOrError()
-                    .map { it.name ?: "" }
-                    .onErrorReturnItem("")!!
+        safeRepository.observeSafe(address!!)
+            .firstOrError()
+            .map { it.name ?: "" }
+            .onErrorReturnItem("")!!
 
     override fun updateSafeName(name: String) =
-            Single.fromCallable {
-                if (name.isBlank()) throw SimpleLocalizedException(context.getString(R.string.error_blank_name))
-                name.trimWhitespace()
-            }.flatMap {
-                        safeRepository.updateName(address!!, it).andThen(Single.just(it))
-                    }.mapToResult()
+        Single.fromCallable {
+            if (name.isBlank()) throw SimpleLocalizedException(context.getString(R.string.error_blank_name))
+            name.trimWhitespace()
+        }.flatMap {
+                safeRepository.updateName(address!!, it).andThen(Single.just(it))
+            }.mapToResult()
 
     override fun deleteSafe() =
-            safeRepository.remove(address!!)
-                    .andThen(Single.just(Unit))
-                    .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
-                    .mapToResult()
+        safeRepository.remove(address!!)
+            .andThen(Single.just(Unit))
+            .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
+            .mapToResult()
 
     private fun fromCache(ignoreCache: Boolean): Observable<SafeInfo>? {
         if (!ignoreCache) {

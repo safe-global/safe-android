@@ -18,18 +18,18 @@ class ShareSafeAddressDialog : BaseShareAddressDialog() {
     override fun screenId() = ScreenId.DIALOG_SHARE_SAFE
 
     override fun addressSourceObservable(): Observable<Pair<String?, BigInteger?>> =
-            address?.let {
-                safeRepository.observeSafe(it)
-                        .toObservable()
-                        .map { it.name to address }
-            } ?: Observable.just<Pair<String?, BigInteger?>>("" to address)
+        address?.let {
+            safeRepository.observeSafe(it)
+                .toObservable()
+                .map { it.name to address }
+        } ?: Observable.just<Pair<String?, BigInteger?>>("" to address)
 
     override fun inject() {
         DaggerViewComponent.builder()
-                .viewModule(ViewModule(context!!))
-                .applicationComponent(HeimdallApplication[context!!].component)
-                .build()
-                .inject(this)
+            .viewModule(ViewModule(context!!))
+            .applicationComponent(HeimdallApplication[context!!].component)
+            .build()
+            .inject(this)
     }
 
     companion object {

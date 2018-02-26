@@ -10,36 +10,36 @@ import java.math.BigInteger
 
 @Entity(tableName = TransactionDescriptionDb.TABLE_NAME)
 data class TransactionDescriptionDb(
-        @PrimaryKey
-        @ColumnInfo(name = COL_ID)
-        var id: String,
+    @PrimaryKey
+    @ColumnInfo(name = COL_ID)
+    var id: String,
 
-        @ColumnInfo(name = COL_SAFE_ADDRESS)
-        var safeAddress: BigInteger,
+    @ColumnInfo(name = COL_SAFE_ADDRESS)
+    var safeAddress: BigInteger,
 
-        @ColumnInfo(name = COL_TO)
-        var to: BigInteger,
+    @ColumnInfo(name = COL_TO)
+    var to: BigInteger,
 
-        @ColumnInfo(name = COL_VALUE)
-        var value: BigInteger,
+    @ColumnInfo(name = COL_VALUE)
+    var value: BigInteger,
 
-        @ColumnInfo(name = COL_DATA)
-        var data: String,
+    @ColumnInfo(name = COL_DATA)
+    var data: String,
 
-        @ColumnInfo(name = COL_OPERATION)
-        var operation: BigInteger,
+    @ColumnInfo(name = COL_OPERATION)
+    var operation: BigInteger,
 
-        @ColumnInfo(name = COL_NONCE)
-        var nonce: BigInteger,
+    @ColumnInfo(name = COL_NONCE)
+    var nonce: BigInteger,
 
-        @ColumnInfo(name = COL_SUBMITTED_AT)
-        var submittedAt: Long,
+    @ColumnInfo(name = COL_SUBMITTED_AT)
+    var submittedAt: Long,
 
-        @ColumnInfo(name = COL_SUBJECT)
-        var subject: String?,
+    @ColumnInfo(name = COL_SUBJECT)
+    var subject: String?,
 
-        @ColumnInfo(name = COL_TX_HASH)
-        var transactionHash: String
+    @ColumnInfo(name = COL_TX_HASH)
+    var transactionHash: String
 ) {
     companion object {
         const val TABLE_NAME = "transaction_details"
@@ -57,7 +57,7 @@ data class TransactionDescriptionDb(
 }
 
 fun GnosisSafeTransactionDescription.toDb(descriptionHash: String) =
-        TransactionDescriptionDb(descriptionHash, safeAddress, to, value.value, data, operation, nonce, submittedAt, subject, transactionHash)
+    TransactionDescriptionDb(descriptionHash, safeAddress, to, value.value, data, operation, nonce, submittedAt, subject, transactionHash)
 
 fun TransactionDescriptionDb.fromDb() =
-        GnosisSafeTransactionDescription(safeAddress, to, Wei(value), data, operation, nonce, submittedAt, subject, transactionHash)
+    GnosisSafeTransactionDescription(safeAddress, to, Wei(value), data, operation, nonce, submittedAt, subject, transactionHash)

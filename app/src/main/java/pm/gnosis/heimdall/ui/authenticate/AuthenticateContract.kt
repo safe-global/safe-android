@@ -6,6 +6,6 @@ import io.reactivex.Observable
 import pm.gnosis.heimdall.common.utils.Result
 
 
-abstract class AuthenticateContract: ViewModel() {
+abstract class AuthenticateContract : ViewModel() {
     abstract fun checkResult(input: String): Observable<Result<Intent>>
 }

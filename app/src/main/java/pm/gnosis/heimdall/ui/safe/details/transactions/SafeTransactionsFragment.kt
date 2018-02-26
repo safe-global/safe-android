@@ -34,8 +34,8 @@ class SafeTransactionsFragment : BaseFragment() {
         viewModel.setup(address)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = layoutInflater?.inflate(R.layout.layout_safe_transactions, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        layoutInflater?.inflate(R.layout.layout_safe_transactions, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,23 +47,23 @@ class SafeTransactionsFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         disposables += adapter.transactionSelectionSubject
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMapSingle {
-                    viewModel.transactionSelected(it)
-                }
-                .subscribe({
-                    startActivity(it)
-                }, Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMapSingle {
+                viewModel.transactionSelected(it)
+            }
+            .subscribe({
+                startActivity(it)
+            }, Timber::e)
         disposables += viewModel.observeTransactions()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe {
-                    layout_safe_transactions_progress_bar.visibility = View.VISIBLE
-                }
-                .doOnNext {
-                    layout_safe_transactions_progress_bar.visibility = View.GONE
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(::displayTransactions, Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe {
+                layout_safe_transactions_progress_bar.visibility = View.VISIBLE
+            }
+            .doOnNext {
+                layout_safe_transactions_progress_bar.visibility = View.GONE
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(::displayTransactions, Timber::e)
     }
 
     private fun displayTransactions(transactions: Adapter.Data<String>) {
@@ -77,9 +77,9 @@ class SafeTransactionsFragment : BaseFragment() {
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
-                .applicationComponent(component)
-                .viewModule(ViewModule(context!!))
-                .build().inject(this)
+            .applicationComponent(component)
+            .viewModule(ViewModule(context!!))
+            .build().inject(this)
     }
 
 
@@ -87,8 +87,8 @@ class SafeTransactionsFragment : BaseFragment() {
         private const val ARGUMENT_SAFE_ADDRESS = "argument.string.safe_address"
 
         fun createInstance(address: String) =
-                SafeTransactionsFragment().withArgs(
-                        Bundle().build { putString(ARGUMENT_SAFE_ADDRESS, address) }
-                )
+            SafeTransactionsFragment().withArgs(
+                Bundle().build { putString(ARGUMENT_SAFE_ADDRESS, address) }
+            )
     }
 }

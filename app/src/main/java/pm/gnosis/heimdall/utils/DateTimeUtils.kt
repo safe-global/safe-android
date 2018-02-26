@@ -70,4 +70,4 @@ object DateTimeUtils {
 }
 
 fun Context.formatAsLongDate(referenceTime: Long): String =
-        DateTimeUtils.getLongTimeString(this, referenceTime)
+    DateTimeUtils.getLongTimeString(this, referenceTime)

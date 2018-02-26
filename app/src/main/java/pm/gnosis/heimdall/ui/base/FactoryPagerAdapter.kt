@@ -9,8 +9,8 @@ import android.util.SparseArray
  * All fragments are lazily instantiated and cached until the adapter is gc'd.
  * Should not be used with a large amount of items
  */
-class FactoryPagerAdapter(fragmentManager: FragmentManager, val factory: Factory):
-        FragmentPagerAdapter(fragmentManager) {
+class FactoryPagerAdapter(fragmentManager: FragmentManager, val factory: Factory) :
+    FragmentPagerAdapter(fragmentManager) {
 
     private val fragments: SparseArray<Fragment> = SparseArray()
 
@@ -27,8 +27,7 @@ class FactoryPagerAdapter(fragmentManager: FragmentManager, val factory: Factory
 
     override fun getCount() = factory.itemCount
 
-    override fun getPageTitle(position: Int): CharSequence?
-        = factory.title?.invoke(position)
+    override fun getPageTitle(position: Int): CharSequence? = factory.title?.invoke(position)
 
     class Factory(val itemCount: Int, val provider: ((Int) -> Fragment), val title: ((Int) -> CharSequence)? = null)
 }

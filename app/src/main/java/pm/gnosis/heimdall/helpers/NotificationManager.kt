@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AndroidLocalNotificationManager @Inject constructor(
-        private @ApplicationContext val context: Context
+    private @ApplicationContext val context: Context
 ) : LocalNotificationManager {
 
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
@@ -48,16 +48,16 @@ class AndroidLocalNotificationManager @Inject constructor(
     }
 
     override fun show(id: Int, title: String, message: String, intent: Intent) {
-        val builder =  NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_stat_gno)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setVibrate(VIBRATE_PATTERN)
-                .setLights(LIGHT_COLOR, 100, 100)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_stat_gno)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setAutoCancel(true)
+            .setVibrate(VIBRATE_PATTERN)
+            .setLights(LIGHT_COLOR, 100, 100)
+            .setDefaults(Notification.DEFAULT_ALL)
+            .setPriority(Notification.PRIORITY_HIGH)
+            .setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT))
 
         notificationManager?.notify(id, builder.build())
     }

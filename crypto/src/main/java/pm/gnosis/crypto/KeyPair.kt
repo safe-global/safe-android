@@ -68,10 +68,10 @@ import java.util.*
  * See [ECKey on GitHub](https://raw.githubusercontent.com/ethereumj/ethereumj/master/ethereumj-core/src/main/java/org/ethereum/crypto/ECKey.java)
  */
 class KeyPair(
-        // The two parts of the key. If "priv" is set, "pub" can always be calculated. If "pub" is set but not "priv", we
-        // can only verify signatures not make them.
-        private val priv: BigInteger?,
-        private val pubKeyPoint: ECPoint
+    // The two parts of the key. If "priv" is set, "pub" can always be calculated. If "pub" is set but not "priv", we
+    // can only verify signatures not make them.
+    private val priv: BigInteger?,
+    private val pubKeyPoint: ECPoint
 ) : Serializable {
 
     private val pubKeyHash by lazy {

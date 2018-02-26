@@ -32,14 +32,14 @@ import java.math.BigInteger
 class CreateTransactionActivity : BaseTransactionActivity() {
 
     private val transactionDataTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Result<Pair<BigInteger, Transaction>>> =
-            ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
-                up
-                        .checkedFlatMap { safeAddress, transaction ->
-                            Observable.just<Result<Pair<BigInteger, Transaction>>>(DataResult(safeAddress to transaction))
-                        }
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext({ it.handle(::handleTransactionDataUpdate, ::handleTransactionDataError) })
-            }
+        ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
+            up
+                .checkedFlatMap { safeAddress, transaction ->
+                    Observable.just<Result<Pair<BigInteger, Transaction>>>(DataResult(safeAddress to transaction))
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext({ it.handle(::handleTransactionDataUpdate, ::handleTransactionDataError) })
+        }
 
     override fun screenId() = ScreenId.CREATE_TRANSACTION
 
@@ -70,13 +70,13 @@ class CreateTransactionActivity : BaseTransactionActivity() {
     }
 
     private fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
-            when (type) {
-                TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
-                    CreateAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
-                TransactionType.ADD_SAFE_OWNER ->
-                    CreateAddOwnerDetailsFragment.createInstance(transaction, safeAddress)
-                else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, true)
-            }
+        when (type) {
+            TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
+                CreateAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
+            TransactionType.ADD_SAFE_OWNER ->
+                CreateAddOwnerDetailsFragment.createInstance(transaction, safeAddress)
+            else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, true)
+        }
 
     private fun handleTransactionDataUpdate(data: Pair<BigInteger?, Transaction>) {
         layout_create_transaction_review_button.isEnabled = true
@@ -88,25 +88,25 @@ class CreateTransactionActivity : BaseTransactionActivity() {
     }
 
     override fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any> =
-            ObservableTransformer {
-                it.compose(transactionDataTransformer).switchMap { data ->
-                    layout_create_transaction_review_button.clicks().map { data }
-                }
-                        .map {
-                            when (it) {
-                                is DataResult -> startActivity(SubmitTransactionActivity.createIntent(this, it.data.first, it.data.second))
-                                is ErrorResult -> handleInputError(it.error)
-                            }
-                        }
+        ObservableTransformer {
+            it.compose(transactionDataTransformer).switchMap { data ->
+                layout_create_transaction_review_button.clicks().map { data }
             }
+                .map {
+                    when (it) {
+                        is DataResult -> startActivity(SubmitTransactionActivity.createIntent(this, it.data.first, it.data.second))
+                        is ErrorResult -> handleInputError(it.error)
+                    }
+                }
+        }
 
 
     override fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
 
@@ -116,10 +116,10 @@ class CreateTransactionActivity : BaseTransactionActivity() {
         private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"
 
         fun createIntent(context: Context, safeAddress: BigInteger?, type: TransactionType, transaction: Transaction?) =
-                Intent(context, CreateTransactionActivity::class.java).apply {
-                    putExtra(EXTRA_SAFE, safeAddress?.asEthereumAddressString())
-                    putExtra(EXTRA_TYPE, type.ordinal)
-                    putExtra(EXTRA_TRANSACTION, transaction?.parcelable())
-                }
+            Intent(context, CreateTransactionActivity::class.java).apply {
+                putExtra(EXTRA_SAFE, safeAddress?.asEthereumAddressString())
+                putExtra(EXTRA_TYPE, type.ordinal)
+                putExtra(EXTRA_TRANSACTION, transaction?.parcelable())
+            }
     }
 }

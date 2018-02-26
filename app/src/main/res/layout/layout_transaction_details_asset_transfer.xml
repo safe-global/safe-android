@@ -82,9 +82,9 @@
             android:id="@+id/layout_transaction_details_asset_transfer_address_book_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toStartOf="@id/layout_transaction_details_asset_transfer_scan_to_button"
             android:layout_centerVertical="true"
             android:layout_gravity="end"
+            android:layout_toStartOf="@id/layout_transaction_details_asset_transfer_scan_to_button"
             android:background="@drawable/selectable_background"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -121,9 +121,9 @@
         android:id="@+id/layout_transaction_details_asset_transfer_amount_input_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/create_tx_label_width"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:paddingStart="@dimen/create_tx_label_width">
 
         <pm.gnosis.heimdall.views.CurrencyEditText
             android:id="@+id/layout_transaction_details_asset_transfer_amount_input"

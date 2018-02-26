@@ -13,8 +13,8 @@ import javax.inject.Singleton
 
 @Singleton
 class FabricCore @Inject constructor(
-        @ApplicationContext context: Context,
-        preferencesManager: PreferencesManager
+    @ApplicationContext context: Context,
+    preferencesManager: PreferencesManager
 ) {
     val instance = Fabric.with(context, Crashlytics())!!
 

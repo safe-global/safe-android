@@ -21,10 +21,10 @@ interface QrCodeGenerator {
 @Singleton
 class ZxingQrCodeGenerator @Inject constructor() : QrCodeGenerator {
     override fun generateQrCode(contents: String, width: Int, height: Int, @ColorInt backgroundColor: Int): Single<Bitmap> =
-            Single.fromCallable {
-                generateQrCodeSync(contents, width, height, backgroundColor)
-            }
-                    .subscribeOn(Schedulers.computation())
+        Single.fromCallable {
+            generateQrCodeSync(contents, width, height, backgroundColor)
+        }
+            .subscribeOn(Schedulers.computation())
 
     override fun generateQrCodeSync(contents: String, width: Int, height: Int, @ColorInt backgroundColor: Int): Bitmap {
         val writer = QRCodeWriter()

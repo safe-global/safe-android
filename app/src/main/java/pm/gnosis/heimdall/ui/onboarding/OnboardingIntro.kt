@@ -26,9 +26,10 @@ class OnboardingIntro : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += layout_onboarding_intro_get_started.clicks()
-                .subscribeBy(
-                        onNext = { startActivity(PasswordSetupActivity.createIntent(this)) },
-                        onError = Timber::e)
+            .subscribeBy(
+                onNext = { startActivity(PasswordSetupActivity.createIntent(this)) },
+                onError = Timber::e
+            )
     }
 
     companion object {

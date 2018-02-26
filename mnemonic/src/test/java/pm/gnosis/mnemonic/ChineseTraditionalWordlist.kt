@@ -2,7 +2,8 @@ package pm.gnosis.mnemonic
 
 import pm.gnosis.mnemonic.wordlists.WordList
 
-val CHINESE_TRADITIONAL_WORD_LIST = WordList(" ", listOf(
+val CHINESE_TRADITIONAL_WORD_LIST = WordList(
+    " ", listOf(
         "的",
         "一",
         "是",
@@ -2050,4 +2051,6 @@ val CHINESE_TRADITIONAL_WORD_LIST = WordList(" ", listOf(
         "韋",
         "怨",
         "矮",
-        "歇"))
+        "歇"
+    )
+)

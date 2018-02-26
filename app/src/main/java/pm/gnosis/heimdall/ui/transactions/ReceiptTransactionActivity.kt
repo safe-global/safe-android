@@ -53,28 +53,30 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
         super.onStart()
         val txId = intent.getStringExtra(EXTRA_TX_ID) ?: return
         disposables += viewModel.observeTransactionStatus(txId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::updateStatus, Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(::updateStatus, Timber::e)
 
         disposables += viewModel.loadChainHash(txId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = {
-                    layout_receipt_transaction_url.setupEtherscanTransactionUrl(it, R.string.view_transaction_on)
-                }, onError = { layout_receipt_transaction_url.setText(R.string.unknown_transaction_url) })
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onSuccess = {
+                layout_receipt_transaction_url.setupEtherscanTransactionUrl(it, R.string.view_transaction_on)
+            }, onError = { layout_receipt_transaction_url.setText(R.string.unknown_transaction_url) })
     }
 
     private fun updateStatus(status: PublishStatus) {
-        layout_receipt_transaction_title.setText(when (status) {
-            UNKNOWN, PENDING -> R.string.transaction_status_pending
-            FAILED -> R.string.transaction_status_failed
-            SUCCESS -> R.string.transaction_status_success
-        })
+        layout_receipt_transaction_title.setText(
+            when (status) {
+                UNKNOWN, PENDING -> R.string.transaction_status_pending
+                FAILED -> R.string.transaction_status_failed
+                SUCCESS -> R.string.transaction_status_success
+            }
+        )
     }
 
     override fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any> =
-            ObservableTransformer {
-                it.map { Any() }
-            }
+        ObservableTransformer {
+            it.map { Any() }
+        }
 
     override fun fragmentRegistered() {
         layout_receipt_transaction_progress_bar.visibility = View.GONE
@@ -96,28 +98,28 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
         intent ?: return false
         val txId = intent.getStringExtra(EXTRA_TX_ID) ?: return false
         lifetimeDisposables += viewModel.loadTransactionDetails(txId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    it.transactionId
-                    displayTransactionDetails(createDetailsFragment(it.safe.asEthereumAddressString(), it.type, it.transaction))
-                }, this::handleError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                it.transactionId
+                displayTransactionDetails(createDetailsFragment(it.safe.asEthereumAddressString(), it.type, it.transaction))
+            }, this::handleError)
         return true
     }
 
     private fun createDetailsFragment(safeAddress: String, type: TransactionType, transaction: Transaction): BaseTransactionDetailsFragment =
-            when (type) {
-                TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
-                    ReceiptAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
-                TransactionType.REPLACE_SAFE_OWNER, TransactionType.ADD_SAFE_OWNER, TransactionType.REMOVE_SAFE_OWNER ->
-                    ReceiptChangeSafeSettingsDetailsFragment.createInstance(transaction, safeAddress)
-                else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, false)
-            }
+        when (type) {
+            TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
+                ReceiptAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
+            TransactionType.REPLACE_SAFE_OWNER, TransactionType.ADD_SAFE_OWNER, TransactionType.REMOVE_SAFE_OWNER ->
+                ReceiptChangeSafeSettingsDetailsFragment.createInstance(transaction, safeAddress)
+            else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, false)
+        }
 
     override fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 
     companion object {
@@ -125,9 +127,9 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
         private const val EXTRA_TX_ID = "extra.string.tx_id"
 
         fun createIntent(context: Context, transactionId: String) =
-                Intent(context, ReceiptTransactionActivity::class.java).apply {
-                    putExtra(EXTRA_TX_ID, transactionId)
-                }
+            Intent(context, ReceiptTransactionActivity::class.java).apply {
+                putExtra(EXTRA_TX_ID, transactionId)
+            }
     }
 
 }

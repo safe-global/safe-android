@@ -49,5 +49,5 @@ class ERC67Parser {
         }
     }
 
-    data class Data(val transaction: Transaction, val descriptionHash : String?)
+    data class Data(val transaction: Transaction, val descriptionHash: String?)
 }

@@ -2,7 +2,8 @@ package pm.gnosis.mnemonic
 
 import pm.gnosis.mnemonic.wordlists.WordList
 
-val ENGLISH_WORD_LIST = WordList(" ", listOf(
+val ENGLISH_WORD_LIST = WordList(
+    " ", listOf(
         "abandon",
         "ability",
         "able",
@@ -2050,4 +2051,6 @@ val ENGLISH_WORD_LIST = WordList(" ", listOf(
         "zebra",
         "zero",
         "zone",
-        "zoo"))
+        "zoo"
+    )
+)

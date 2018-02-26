@@ -72,20 +72,32 @@ class SimpleTransactionDetailsRepositoryTest {
     companion object {
         private val TEST_OWNER = Solidity.Address(BigInteger.valueOf(13))
         private val TESTS = listOf(
-                // Empty transaction = Ether transfer
-                Transaction(BigInteger.ZERO) to TransactionType.ETHER_TRANSFER,
-                // Ether transfer
-                Transaction(BigInteger.ZERO, value = Wei(BigInteger.TEN)) to TransactionType.ETHER_TRANSFER,
-                // Token transfer
-                Transaction(BigInteger.ZERO, data = StandardToken.Transfer.encode(Solidity.Address(BigInteger.ONE), Solidity.UInt256(BigInteger.TEN))) to TransactionType.TOKEN_TRANSFER,
-                // Add safe owners
-                Transaction(BigInteger.ZERO, data = GnosisSafe.AddOwner.encode(TEST_OWNER, Solidity.UInt8(BigInteger.ONE))) to TransactionType.ADD_SAFE_OWNER,
-                // Remove safe owners
-                Transaction(BigInteger.ZERO, data = GnosisSafe.RemoveOwner.encode(Solidity.UInt256(BigInteger.TEN), TEST_OWNER, Solidity.UInt8(BigInteger.ONE))) to TransactionType.REMOVE_SAFE_OWNER,
-                // Replace safe owners
-                Transaction(BigInteger.ZERO, data = GnosisSafe.ReplaceOwner.encode(Solidity.UInt256(BigInteger.TEN), TEST_OWNER, Solidity.Address(BigInteger.TEN))) to TransactionType.REPLACE_SAFE_OWNER,
-                // Unknown data = Generic transaction
-                Transaction(BigInteger.ZERO, data = GnosisSafe.Owners.encode(Solidity.UInt256(BigInteger.ZERO))) to TransactionType.GENERIC
+            // Empty transaction = Ether transfer
+            Transaction(BigInteger.ZERO) to TransactionType.ETHER_TRANSFER,
+            // Ether transfer
+            Transaction(BigInteger.ZERO, value = Wei(BigInteger.TEN)) to TransactionType.ETHER_TRANSFER,
+            // Token transfer
+            Transaction(
+                BigInteger.ZERO,
+                data = StandardToken.Transfer.encode(Solidity.Address(BigInteger.ONE), Solidity.UInt256(BigInteger.TEN))
+            ) to TransactionType.TOKEN_TRANSFER,
+            // Add safe owners
+            Transaction(
+                BigInteger.ZERO,
+                data = GnosisSafe.AddOwner.encode(TEST_OWNER, Solidity.UInt8(BigInteger.ONE))
+            ) to TransactionType.ADD_SAFE_OWNER,
+            // Remove safe owners
+            Transaction(
+                BigInteger.ZERO,
+                data = GnosisSafe.RemoveOwner.encode(Solidity.UInt256(BigInteger.TEN), TEST_OWNER, Solidity.UInt8(BigInteger.ONE))
+            ) to TransactionType.REMOVE_SAFE_OWNER,
+            // Replace safe owners
+            Transaction(
+                BigInteger.ZERO,
+                data = GnosisSafe.ReplaceOwner.encode(Solidity.UInt256(BigInteger.TEN), TEST_OWNER, Solidity.Address(BigInteger.TEN))
+            ) to TransactionType.REPLACE_SAFE_OWNER,
+            // Unknown data = Generic transaction
+            Transaction(BigInteger.ZERO, data = GnosisSafe.Owners.encode(Solidity.UInt256(BigInteger.ZERO))) to TransactionType.GENERIC
         )
     }
 

@@ -10,8 +10,8 @@ import java.math.BigInteger
  * components can be useful for doing further EC maths on them.
  */
 class ECDSASignature(
-        /** The two components of the signature.  */
-        val r: BigInteger, val s: BigInteger
+    /** The two components of the signature.  */
+    val r: BigInteger, val s: BigInteger
 ) {
     var v: Byte = 0
 

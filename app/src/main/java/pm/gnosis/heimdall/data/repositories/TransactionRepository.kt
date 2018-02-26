@@ -15,10 +15,28 @@ interface TransactionRepository {
     fun loadExecuteInformation(safeAddress: BigInteger, transaction: Transaction): Single<ExecuteInformation>
     fun sign(safeAddress: BigInteger, transaction: Transaction): Single<Signature>
     fun checkSignature(safeAddress: BigInteger, transaction: Transaction, signature: Signature): Single<Pair<BigInteger, Signature>>
-    fun estimateFees(safeAddress: BigInteger, transaction: Transaction, signatures: Map<BigInteger, Signature>, senderIsOwner: Boolean): Single<GasEstimate>
-    fun submit(safeAddress: BigInteger, transaction: Transaction, signatures: Map<BigInteger, Signature>, senderIsOwner: Boolean, overrideGasPrice: Wei? = null): Completable
+    fun estimateFees(
+        safeAddress: BigInteger,
+        transaction: Transaction,
+        signatures: Map<BigInteger, Signature>,
+        senderIsOwner: Boolean
+    ): Single<GasEstimate>
 
-    data class ExecuteInformation(val transactionHash: String, val transaction: Transaction, val sender: BigInteger, val requiredConfirmation: Int, val owners: List<BigInteger>) {
+    fun submit(
+        safeAddress: BigInteger,
+        transaction: Transaction,
+        signatures: Map<BigInteger, Signature>,
+        senderIsOwner: Boolean,
+        overrideGasPrice: Wei? = null
+    ): Completable
+
+    data class ExecuteInformation(
+        val transactionHash: String,
+        val transaction: Transaction,
+        val sender: BigInteger,
+        val requiredConfirmation: Int,
+        val owners: List<BigInteger>
+    ) {
         val isOwner by lazy {
             owners.contains(sender)
         }

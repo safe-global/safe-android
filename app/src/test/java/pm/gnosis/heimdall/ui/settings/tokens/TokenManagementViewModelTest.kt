@@ -46,15 +46,15 @@ class TokenManagementViewModelTest {
         then(tokenRepositoryMock).should().observeTokens()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testSubscriber
-                .assertValueCount(2)
-                .assertValueAt(0, Adapter.Data())
-                .assertValueAt(1, { it.entries == list })
+            .assertValueCount(2)
+            .assertValueAt(0, Adapter.Data())
+            .assertValueAt(1, { it.entries == list })
 
         val previous = testSubscriber.values()[1]
         val list2 = listOf(ERC20Token(BigInteger.ZERO, decimals = 18))
         processor.offer(list2)
         testSubscriber.assertValueCount(3)
-                .assertValueAt(2, { it.diff != null && it.parentId == previous.id && it.entries == list2 })
+            .assertValueAt(2, { it.diff != null && it.parentId == previous.id && it.entries == list2 })
     }
 
     @Test
@@ -68,7 +68,7 @@ class TokenManagementViewModelTest {
         then(tokenRepositoryMock).should().observeTokens()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testSubscriber.assertValueCount(1)
-                .assertValueAt(0, Adapter.Data())
-                .assertError(exception)
+            .assertValueAt(0, Adapter.Data())
+            .assertError(exception)
     }
 }

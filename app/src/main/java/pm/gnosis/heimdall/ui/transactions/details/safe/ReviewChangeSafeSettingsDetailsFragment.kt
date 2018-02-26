@@ -16,9 +16,9 @@ class ReviewChangeSafeSettingsDetailsFragment : ViewChangeSafeSettingsDetailsFra
 
     companion object {
         fun createInstance(transaction: Transaction?, safeAddress: String?) =
-                ReviewChangeSafeSettingsDetailsFragment().apply {
-                    arguments = createBundle(transaction, safeAddress)
-                }
+            ReviewChangeSafeSettingsDetailsFragment().apply {
+                arguments = createBundle(transaction, safeAddress)
+            }
     }
 
 }

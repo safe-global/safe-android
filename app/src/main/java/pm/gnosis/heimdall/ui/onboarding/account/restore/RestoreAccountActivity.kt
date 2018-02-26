@@ -56,25 +56,26 @@ class RestoreAccountActivity : SecuredBaseActivity() {
     }
 
     private fun mnemonicValidatorDisposable() =
-            layout_restore_account_restore.clicks()
-                    .map { layout_restore_account_mnemonic.text.toString().trimWhitespace() }
-                    .flatMap {
-                        viewModel.saveAccountWithMnemonic(it)
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .doOnSubscribe { onSavingAccount(isSaving = true) }
-                                .doAfterTerminate { onSavingAccount(isSaving = false) }
-                    }
+        layout_restore_account_restore.clicks()
+            .map { layout_restore_account_mnemonic.text.toString().trimWhitespace() }
+            .flatMap {
+                viewModel.saveAccountWithMnemonic(it)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeForResult(::onAccountSaved, ::onAccountSaveError)
+                    .doOnSubscribe { onSavingAccount(isSaving = true) }
+                    .doAfterTerminate { onSavingAccount(isSaving = false) }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(::onAccountSaved, ::onAccountSaveError)
 
     private fun mnemonicChangesDisposable() =
-            layout_restore_account_mnemonic.textChanges()
-                    .map { it.toString() }
-                    .subscribeBy(
-                            onNext = {
-                                updateWordCounter(it)
-                            },
-                            onError = Timber::e)
+        layout_restore_account_mnemonic.textChanges()
+            .map { it.toString() }
+            .subscribeBy(
+                onNext = {
+                    updateWordCounter(it)
+                },
+                onError = Timber::e
+            )
 
     private fun updateWordCounter(mnemonic: String) {
         layout_restore_account_word_counter.text = getString(R.string.mnemonic_required_words, mnemonic.words().count(), 12)
@@ -94,9 +95,9 @@ class RestoreAccountActivity : SecuredBaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 
     companion object {

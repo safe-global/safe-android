@@ -35,25 +35,26 @@ class ChangePasswordActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += layout_change_password_button.clicks()
-                .flatMap {
-                    viewModel.setPassword(
-                            layout_change_password_current.text.toString(),
-                            layout_change_password_new.text.toString(),
-                            layout_change_password_new_repeat.text.toString())
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = {
-                    toast(R.string.password_change_success)
-                    finish()
-                }, onError = { errorSnackbar(layout_change_password_coordinator, it) })
+            .flatMap {
+                viewModel.setPassword(
+                    layout_change_password_current.text.toString(),
+                    layout_change_password_new.text.toString(),
+                    layout_change_password_new_repeat.text.toString()
+                )
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = {
+                toast(R.string.password_change_success)
+                finish()
+            }, onError = { errorSnackbar(layout_change_password_coordinator, it) })
     }
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {

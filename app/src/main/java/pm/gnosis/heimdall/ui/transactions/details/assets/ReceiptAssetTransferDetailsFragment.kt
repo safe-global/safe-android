@@ -11,8 +11,8 @@ class ReceiptAssetTransferDetailsFragment : ViewAssetTransferDetailsFragment() {
     companion object {
 
         fun createInstance(transaction: Transaction?, safeAddress: String?) =
-                ReceiptAssetTransferDetailsFragment().apply {
-                    arguments = createBundle(transaction, safeAddress)
-                }
+            ReceiptAssetTransferDetailsFragment().apply {
+                arguments = createBundle(transaction, safeAddress)
+            }
     }
 }

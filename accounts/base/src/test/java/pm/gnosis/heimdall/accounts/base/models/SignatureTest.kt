@@ -12,7 +12,10 @@ class SignatureTest {
         val v = 27.toByte()
         val sig = Signature(r, s, v)
         val encoded = sig.toString()
-        assertEquals("6c65af8fabdf55b026300ccb4cf1c19f27592a81c78aba86abe83409563d9c13256a9a9e87604e89f083983f7449f58a456ac7929265f7114d585538fe226e1f1b", encoded)
+        assertEquals(
+            "6c65af8fabdf55b026300ccb4cf1c19f27592a81c78aba86abe83409563d9c13256a9a9e87604e89f083983f7449f58a456ac7929265f7114d585538fe226e1f1b",
+            encoded
+        )
         assertEquals(sig, Signature.from(encoded))
     }
 

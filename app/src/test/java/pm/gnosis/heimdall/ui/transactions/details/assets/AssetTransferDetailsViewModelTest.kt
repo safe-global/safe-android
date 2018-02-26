@@ -76,7 +76,7 @@ class AssetTransferDetailsViewModelTest {
     fun loadFormDataLoadingDetailsError() {
         val transaction = Transaction(BigInteger.ZERO)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.error(IllegalStateException()))
+            .willReturn(Single.error(IllegalStateException()))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
@@ -91,7 +91,7 @@ class AssetTransferDetailsViewModelTest {
     fun loadFormDataLoadingEtherTransfer() {
         val transaction = Transaction(BigInteger.ZERO, value = Wei(BigInteger.TEN))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(None))
+            .willReturn(Single.just(None))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
@@ -106,7 +106,7 @@ class AssetTransferDetailsViewModelTest {
     fun loadFormDataLoadingGeneric() {
         val transaction = Transaction(BigInteger.ZERO)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(None))
+            .willReturn(Single.just(None))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
@@ -121,7 +121,7 @@ class AssetTransferDetailsViewModelTest {
     fun loadFormDataLoadingTokenTransferNoData() {
         val transaction = Transaction(BigInteger.ZERO)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(None))
+            .willReturn(Single.just(None))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
@@ -138,9 +138,9 @@ class AssetTransferDetailsViewModelTest {
         val transaction = Transaction(token.address)
         val transferData = TokenTransferData(BigInteger.ONE, BigInteger.TEN)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(transferData.toOptional()))
+            .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
-                .willReturn(Single.just(token))
+            .willReturn(Single.just(token))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
@@ -158,9 +158,9 @@ class AssetTransferDetailsViewModelTest {
         val transaction = Transaction(token.address)
         val transferData = TokenTransferData(BigInteger.ONE, BigInteger.TEN)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(transferData.toOptional()))
+            .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
-                .willReturn(Single.error(NoSuchElementException()))
+            .willReturn(Single.error(NoSuchElementException()))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
@@ -178,9 +178,9 @@ class AssetTransferDetailsViewModelTest {
         val transaction = Transaction(token.address)
         val transferData = TokenTransferData(BigInteger.ZERO, BigInteger.ZERO)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(transferData.toOptional()))
+            .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
-                .willReturn(Single.error(NoSuchElementException()))
+            .willReturn(Single.error(NoSuchElementException()))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
@@ -198,9 +198,9 @@ class AssetTransferDetailsViewModelTest {
         val transaction = Transaction(token.address)
         val transferData = TokenTransferData(BigInteger.ZERO, BigInteger.ZERO)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(transferData.toOptional()))
+            .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
-                .willReturn(Single.error(NoSuchElementException()))
+            .willReturn(Single.error(NoSuchElementException()))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, true).subscribe(testObserver)
@@ -212,11 +212,13 @@ class AssetTransferDetailsViewModelTest {
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
-    private fun testInputTransformer(inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<Transaction>>,
-                                     input: InputEvent, expectedOutput: Result<Transaction>, testNo: Int) {
+    private fun testInputTransformer(
+        inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<Transaction>>,
+        input: InputEvent, expectedOutput: Result<Transaction>, testNo: Int
+    ) {
         inputStream.onNext(input)
         outputStream.assertNoErrors().assertValueCount(testNo)
-                .assertValueAt(testNo - 1, expectedOutput)
+            .assertValueAt(testNo - 1, expectedOutput)
     }
 
     @Test
@@ -227,7 +229,7 @@ class AssetTransferDetailsViewModelTest {
         val originalTransaction = Transaction(BigInteger.TEN, nonce = BigInteger.valueOf(1337))
 
         testPublisher.compose(viewModel.inputTransformer(originalTransaction))
-                .subscribe(testObserver)
+            .subscribe(testObserver)
         testObserver.assertNoValues()
 
         var testNo = 1
@@ -236,51 +238,73 @@ class AssetTransferDetailsViewModelTest {
         val transferTo = Solidity.Address(BigInteger.ZERO)
         val transferAmount = Solidity.UInt256(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(tentenToken.decimals)))
         val expectedData = StandardToken.Transfer.encode(transferTo, transferAmount)
-        testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0" to true, "123" to false, tentenToken to false),
-                DataResult(Transaction(BigInteger.TEN, value = null,
-                        data = expectedData, nonce = BigInteger.valueOf(1337))),
-                testNo++
+        testInputTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0" to true, "123" to false, tentenToken to false),
+            DataResult(
+                Transaction(
+                    BigInteger.TEN, value = null,
+                    data = expectedData, nonce = BigInteger.valueOf(1337)
+                )
+            ),
+            testNo++
         )
         // Valid input with change (ether)
-        testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0" to true, "123" to false, ERC20Token.ETHER_TOKEN to false),
-                DataResult(Transaction(BigInteger.ZERO, value = Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals))),
-                        data = null, nonce = BigInteger.valueOf(1337))),
-                testNo++
+        testInputTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0" to true, "123" to false, ERC20Token.ETHER_TOKEN to false),
+            DataResult(
+                Transaction(
+                    BigInteger.ZERO, value = Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals))),
+                    data = null, nonce = BigInteger.valueOf(1337)
+                )
+            ),
+            testNo++
         )
         // Invalid input with change
         // Third changed (compared to last value -> valid input)
-        testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0" to false, "123" to true, null to false),
-                ErrorResult(TransactionInputException(
-                        mockContext, TOKEN_FIELD, true
-                )),
-                testNo++
+        testInputTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0" to false, "123" to true, null to false),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TOKEN_FIELD, true
+                )
+            ),
+            testNo++
         )
         // Second changed
-        testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0" to false, "123y" to false, null to true),
-                ErrorResult(TransactionInputException(
-                        mockContext, AMOUNT_FIELD or TOKEN_FIELD, true
-                )),
-                testNo++
+        testInputTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0" to false, "123y" to false, null to true),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, AMOUNT_FIELD or TOKEN_FIELD, true
+                )
+            ),
+            testNo++
         )
         // First changed
-        testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123y" to false, null to true),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, true
-                )),
-                testNo++
+        testInputTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123y" to false, null to true),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, true
+                )
+            ),
+            testNo++
         )
         // No change
-        testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123y" to false, null to false),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, false
-                )),
-                testNo++
+        testInputTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123y" to false, null to false),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, false
+                )
+            ),
+            testNo++
         )
     }
 
@@ -291,7 +315,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<Result<Transaction>>()
 
         testPublisher.compose(viewModel.inputTransformer(null))
-                .subscribe(testObserver)
+            .subscribe(testObserver)
         testObserver.assertNoValues()
 
         var testNo = 1
@@ -302,65 +326,79 @@ class AssetTransferDetailsViewModelTest {
         val expectedData = StandardToken.Transfer.encode(transferTo, transferAmount)
         testPublisher.onNext(InputEvent("0x0" to true, "123" to false, tentenToken to false))
         testObserver.assertNoErrors().assertValueCount(testNo)
-                .assertValueAt(testNo - 1, {
-                    it is DataResult
-                            && it.data.address == BigInteger.TEN
-                            && it.data.value == null
-                            && it.data.data == expectedData
-                            && it.data.nonce == null
-                })
+            .assertValueAt(testNo - 1, {
+                it is DataResult
+                        && it.data.address == BigInteger.TEN
+                        && it.data.value == null
+                        && it.data.data == expectedData
+                        && it.data.nonce == null
+            })
         testNo++
         // Valid input with change (ether)
         testPublisher.onNext(InputEvent("0x0" to true, "123" to false, ERC20Token.ETHER_TOKEN to false))
         testObserver.assertNoErrors().assertValueCount(testNo)
-                .assertValueAt(testNo - 1, {
-                    it is DataResult
-                            && it.data.address == BigInteger.ZERO
-                            && it.data.value == Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals)))
-                            && it.data.data == null
-                            && it.data.nonce == null
-                })
+            .assertValueAt(testNo - 1, {
+                it is DataResult
+                        && it.data.address == BigInteger.ZERO
+                        && it.data.value == Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals)))
+                        && it.data.data == null
+                        && it.data.nonce == null
+            })
         testNo++
         // Invalid input with change
         // Third changed (compared to last value -> valid input)
-        testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0" to false, "123" to true, null to false),
-                ErrorResult(TransactionInputException(
-                        mockContext, TOKEN_FIELD, true
-                )),
-                testNo++
+        testInputTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0" to false, "123" to true, null to false),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TOKEN_FIELD, true
+                )
+            ),
+            testNo++
         )
         // Second changed
-        testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0" to false, "123y" to false, null to true),
-                ErrorResult(TransactionInputException(
-                        mockContext, AMOUNT_FIELD or TOKEN_FIELD, true
-                )),
-                testNo++
+        testInputTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0" to false, "123y" to false, null to true),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, AMOUNT_FIELD or TOKEN_FIELD, true
+                )
+            ),
+            testNo++
         )
         // First changed
-        testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123y" to false, null to true),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, true
-                )),
-                testNo++
+        testInputTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123y" to false, null to true),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, true
+                )
+            ),
+            testNo++
         )
         // No change
-        testInputTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123y" to false, null to false),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, false
-                )),
-                testNo++
+        testInputTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123y" to false, null to false),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or AMOUNT_FIELD or TOKEN_FIELD, false
+                )
+            ),
+            testNo++
         )
     }
 
-    private fun testTransactionTransformer(inputStream: PublishSubject<Optional<Transaction>>, outputStream: TestObserver<Result<Transaction>>,
-                                           input: Transaction?, expectedOutput: Result<Transaction>, testNo: Int) {
+    private fun testTransactionTransformer(
+        inputStream: PublishSubject<Optional<Transaction>>, outputStream: TestObserver<Result<Transaction>>,
+        input: Transaction?, expectedOutput: Result<Transaction>, testNo: Int
+    ) {
         inputStream.onNext(input.toOptional())
         outputStream.assertNoErrors().assertValueCount(testNo)
-                .assertValueAt(testNo - 1, expectedOutput)
+            .assertValueAt(testNo - 1, expectedOutput)
     }
 
     @Test
@@ -370,7 +408,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<Result<Transaction>>()
 
         testPublisher.compose(viewModel.transactionTransformer())
-                .subscribe(testObserver)
+            .subscribe(testObserver)
         testObserver.assertNoValues()
 
         var testNo = 1
@@ -378,7 +416,7 @@ class AssetTransferDetailsViewModelTest {
         // No transaction passed
         testPublisher.onNext(None)
         testObserver.assertNoErrors().assertValueCount(testNo)
-                .assertValueAt(testNo - 1, { it is ErrorResult && it.error is IllegalStateException })
+            .assertValueAt(testNo - 1, { it is ErrorResult && it.error is IllegalStateException })
         testNo++
         then(detailsRepository).shouldHaveNoMoreInteractions()
         reset(detailsRepository)
@@ -386,63 +424,77 @@ class AssetTransferDetailsViewModelTest {
         // No asset transaction passed
         var transaction = Transaction(BigInteger.valueOf(42))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(None))
-        testTransactionTransformer(testPublisher, testObserver,
-                transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
+            .willReturn(Single.just(None))
+        testTransactionTransformer(
+            testPublisher, testObserver,
+            transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
+        )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Ether transaction action passed with no value
         transaction = Transaction(BigInteger.valueOf(42))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(None))
-        testTransactionTransformer(testPublisher, testObserver,
-                transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
+            .willReturn(Single.just(None))
+        testTransactionTransformer(
+            testPublisher, testObserver,
+            transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
+        )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Ether transaction action passed with zero value
         transaction = Transaction(BigInteger.valueOf(42), value = Wei.ZERO)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(None))
-        testTransactionTransformer(testPublisher, testObserver,
-                transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
+            .willReturn(Single.just(None))
+        testTransactionTransformer(
+            testPublisher, testObserver,
+            transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
+        )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Ether transaction action passed
         transaction = Transaction(BigInteger.valueOf(42), value = Wei(BigInteger.TEN))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(None))
-        testTransactionTransformer(testPublisher, testObserver,
-                transaction, DataResult(transaction), testNo++)
+            .willReturn(Single.just(None))
+        testTransactionTransformer(
+            testPublisher, testObserver,
+            transaction, DataResult(transaction), testNo++
+        )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Token transaction action passed no data
         transaction = Transaction(BigInteger.valueOf(23))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(None))
-        testTransactionTransformer(testPublisher, testObserver,
-                transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
+            .willReturn(Single.just(None))
+        testTransactionTransformer(
+            testPublisher, testObserver,
+            transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
+        )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Token transaction action passed zero tokens
         transaction = Transaction(BigInteger.valueOf(23))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(TokenTransferData(BigInteger.valueOf(42), BigInteger.ZERO).toOptional()))
-        testTransactionTransformer(testPublisher, testObserver,
-                transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++)
+            .willReturn(Single.just(TokenTransferData(BigInteger.valueOf(42), BigInteger.ZERO).toOptional()))
+        testTransactionTransformer(
+            testPublisher, testObserver,
+            transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
+        )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
 
         // Ether transaction action passed
         transaction = Transaction(BigInteger.valueOf(42))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-                .willReturn(Single.just(TokenTransferData(BigInteger.valueOf(42), BigInteger.TEN).toOptional()))
-        testTransactionTransformer(testPublisher, testObserver,
-                transaction, DataResult(transaction), testNo++)
+            .willReturn(Single.just(TokenTransferData(BigInteger.valueOf(42), BigInteger.TEN).toOptional()))
+        testTransactionTransformer(
+            testPublisher, testObserver,
+            transaction, DataResult(transaction), testNo++
+        )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
     }
@@ -451,7 +503,15 @@ class AssetTransferDetailsViewModelTest {
     fun testLoadTokenInfo() {
         val testToken = ERC20Token(BigInteger.ONE, name = "Test Token", symbol = "TT", decimals = 18)
         val testObserver = TestObserver<Result<ERC20TokenWithBalance>>()
-        given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(Observable.just(listOf(testToken to BigInteger.valueOf(13))))
+        given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(
+            Observable.just(
+                listOf(
+                    testToken to BigInteger.valueOf(
+                        13
+                    )
+                )
+            )
+        )
 
         viewModel.loadTokenInfo(BigInteger.TEN, testToken).subscribe(testObserver)
 

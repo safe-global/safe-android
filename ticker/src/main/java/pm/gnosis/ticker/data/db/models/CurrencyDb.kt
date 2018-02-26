@@ -8,27 +8,27 @@ import java.math.BigDecimal
 
 @Entity(tableName = CurrencyDb.TABLE_NAME)
 data class CurrencyDb(
-        @PrimaryKey
-        @ColumnInfo(name = ID_COL)
-        var id: String,
+    @PrimaryKey
+    @ColumnInfo(name = ID_COL)
+    var id: String,
 
-        @ColumnInfo(name = NAME_COL)
-        var name: String,
+    @ColumnInfo(name = NAME_COL)
+    var name: String,
 
-        @ColumnInfo(name = SYMBOL_COL)
-        val symbol: String,
+    @ColumnInfo(name = SYMBOL_COL)
+    val symbol: String,
 
-        @ColumnInfo(name = RANK_COL)
-        val rank: Long,
+    @ColumnInfo(name = RANK_COL)
+    val rank: Long,
 
-        @ColumnInfo(name = LAST_UPDATED_COL)
-        val lastUpdated: Long,
+    @ColumnInfo(name = LAST_UPDATED_COL)
+    val lastUpdated: Long,
 
-        @ColumnInfo(name = PRICE_COL)
-        val price: BigDecimal,
+    @ColumnInfo(name = PRICE_COL)
+    val price: BigDecimal,
 
-        @ColumnInfo(name = FIAT_SYMBOL_COL)
-        val fiatSymbol: Currency.FiatSymbol
+    @ColumnInfo(name = FIAT_SYMBOL_COL)
+    val fiatSymbol: Currency.FiatSymbol
 ) {
     companion object {
         const val TABLE_NAME = "ticker_currency"

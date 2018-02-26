@@ -50,46 +50,48 @@ class AccountActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += layout_account_toolbar.itemClicks()
-                .subscribeBy(onNext = {
-                    when (it.itemId) {
-                        R.id.account_menu_share -> if (layout_account_address.text.toString().isValidEthereumAddress()) {
-                            SimpleAddressShareDialog.create(layout_account_address.text.toString()).show(supportFragmentManager, null)
-                        }
+            .subscribeBy(onNext = {
+                when (it.itemId) {
+                    R.id.account_menu_share -> if (layout_account_address.text.toString().isValidEthereumAddress()) {
+                        SimpleAddressShareDialog.create(layout_account_address.text.toString()).show(supportFragmentManager, null)
                     }
-                })
+                }
+            })
 
         disposables += viewModel.getAccountAddress()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(this::onAccountAddress, ::handleError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(this::onAccountAddress, ::handleError)
 
         // We delay the initial value, else the progress bar is not visible
         disposables += layout_account_refresh_layout.refreshes()
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .startWith(Observable.just(Unit).delay(100, TimeUnit.MILLISECONDS))
-                // We need to switch the observing scheduler here because `delay` forces the
-                // computation scheduler and we need the ui thread scheduler when subscribing in the
-                // flap map, else the loading spinner is triggered on the wrong thread
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap { accountBalance() }
-                .observeOn(AndroidSchedulers.mainThread())
-                // Update balance view
-                .doOnNextForResult(onNext = ::onAccountBalance)
-                .flatMapResult(mapper = { viewModel.loadFiatConversion(it) })
-                .observeOn(AndroidSchedulers.mainThread())
-                // Update Fiat view
-                .doOnNextForResult(onNext = ::onFiat)
-                .subscribeForResult(onError = ::handleError)
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .startWith(Observable.just(Unit).delay(100, TimeUnit.MILLISECONDS))
+            // We need to switch the observing scheduler here because `delay` forces the
+            // computation scheduler and we need the ui thread scheduler when subscribing in the
+            // flap map, else the loading spinner is triggered on the wrong thread
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap { accountBalance() }
+            .observeOn(AndroidSchedulers.mainThread())
+            // Update balance view
+            .doOnNextForResult(onNext = ::onAccountBalance)
+            .flatMapResult(mapper = { viewModel.loadFiatConversion(it) })
+            .observeOn(AndroidSchedulers.mainThread())
+            // Update Fiat view
+            .doOnNextForResult(onNext = ::onFiat)
+            .subscribeForResult(onError = ::handleError)
     }
 
     private fun onFiat(currency: Pair<BigDecimal, Currency>) {
-        layout_account_fiat.text = getString(R.string.fiat_approximation_parentheses,
-                currency.first.stringWithNoTrailingZeroes(), currency.second.getFiatSymbol())
+        layout_account_fiat.text = getString(
+            R.string.fiat_approximation_parentheses,
+            currency.first.stringWithNoTrailingZeroes(), currency.second.getFiatSymbol()
+        )
     }
 
     private fun accountBalance() = viewModel.getAccountBalance()
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { onAccountBalanceLoading(true) }
-            .doOnTerminate { onAccountBalanceLoading(false) }
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnSubscribe { onAccountBalanceLoading(true) }
+        .doOnTerminate { onAccountBalanceLoading(false) }
 
     private fun onAccountAddress(account: Account) {
         layout_account_address.text = account.address.asEthereumAddressString()
@@ -112,10 +114,10 @@ class AccountActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {

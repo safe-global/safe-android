@@ -43,7 +43,7 @@ class ReceiptTransactionViewModelTest {
     fun loadTransactionDetails() {
         val details = TransactionDetails(TEST_ID, TransactionType.ETHER_TRANSFER, null, Transaction(BigInteger.TEN), BigInteger.ONE, 13)
         given(transactionDetailsRepository.loadTransactionDetails(TEST_ID))
-                .willReturn(Single.just(details))
+            .willReturn(Single.just(details))
 
         val testObserver = TestObserver<TransactionDetails>()
         viewModel.loadTransactionDetails(TEST_ID).subscribe(testObserver)
@@ -56,7 +56,7 @@ class ReceiptTransactionViewModelTest {
     fun loadTransactionDetailsError() {
         val error = IllegalStateException()
         given(transactionDetailsRepository.loadTransactionDetails(TEST_ID))
-                .willReturn(Single.error(error))
+            .willReturn(Single.error(error))
 
         val testObserver = TestObserver<TransactionDetails>()
         viewModel.loadTransactionDetails(TEST_ID).subscribe(testObserver)
@@ -69,7 +69,7 @@ class ReceiptTransactionViewModelTest {
     fun loadChainHash() {
         val details = "ChainHash"
         given(transactionRepository.loadChainHash(TEST_ID))
-                .willReturn(Single.just(details))
+            .willReturn(Single.just(details))
 
         val testObserver = TestObserver<String>()
         viewModel.loadChainHash(TEST_ID).subscribe(testObserver)
@@ -82,7 +82,7 @@ class ReceiptTransactionViewModelTest {
     fun loadChainHashError() {
         val error = IllegalStateException()
         given(transactionRepository.loadChainHash(TEST_ID))
-                .willReturn(Single.error(error))
+            .willReturn(Single.error(error))
 
         val testObserver = TestObserver<String>()
         viewModel.loadChainHash(TEST_ID).subscribe(testObserver)
@@ -109,8 +109,8 @@ class ReceiptTransactionViewModelTest {
         val error = IllegalStateException()
         subject.onError(error)
         testObserver.assertFailure(
-                Predicate { error == it },
-                TransactionRepository.PublishStatus.SUCCESS
+            Predicate { error == it },
+            TransactionRepository.PublishStatus.SUCCESS
         )
 
         then(transactionRepository).shouldHaveNoMoreInteractions()

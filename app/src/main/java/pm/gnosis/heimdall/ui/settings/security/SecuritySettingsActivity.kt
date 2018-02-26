@@ -46,40 +46,40 @@ class SecuritySettingsActivity : BaseActivity() {
         if (viewModel.isFingerprintAvailable()) setupFingerprintAction()
 
         disposables += layout_security_settings_show_mnemonic.clicks()
-                .subscribeBy(onNext = {
-                    startActivity(RevealMnemonicActivity.createIntent(this))
-                }, onError = Timber::e)
+            .subscribeBy(onNext = {
+                startActivity(RevealMnemonicActivity.createIntent(this))
+            }, onError = Timber::e)
 
         disposables += layout_security_settings_change_password.clicks()
-                .subscribeBy(onNext = {
-                    startActivity(ChangePasswordActivity.createIntent(this))
-                }, onError = Timber::e)
+            .subscribeBy(onNext = {
+                startActivity(ChangePasswordActivity.createIntent(this))
+            }, onError = Timber::e)
     }
 
     private fun setupFingerprintAction() {
         layout_security_settings_fingerprint_switch_container.visibility = View.VISIBLE
         disposables += layout_security_settings_fingerprint_switch_container.clicks()
-                .subscribeBy(onNext = {
-                    if (layout_security_settings_switch.isChecked) {
-                        removeFingerprintClick.onNext(Unit)
-                    } else {
-                        showDialog()
-                    }
-                }, onError = Timber::e)
+            .subscribeBy(onNext = {
+                if (layout_security_settings_switch.isChecked) {
+                    removeFingerprintClick.onNext(Unit)
+                } else {
+                    showDialog()
+                }
+            }, onError = Timber::e)
 
         disposables += removeFingerprintClick
-                .flatMapSingle { viewModel.clearFingerprintData() }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = {
-                    layout_security_settings_switch.isChecked = false
-                    toast(R.string.fingerprint_unlock_disabled)
-                }, onError = Timber::e)
+            .flatMapSingle { viewModel.clearFingerprintData() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = {
+                layout_security_settings_switch.isChecked = false
+                toast(R.string.fingerprint_unlock_disabled)
+            }, onError = Timber::e)
 
         disposables += getFingerprintStateSubject.flatMapSingle { encryptionManager.isFingerPrintSet() }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = {
-                    layout_security_settings_switch.isChecked = it
-                }, onError = Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = {
+                layout_security_settings_switch.isChecked = it
+            }, onError = Timber::e)
         getFingerprintStateSubject.onNext(Unit)
     }
 
@@ -91,9 +91,9 @@ class SecuritySettingsActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 
     companion object {

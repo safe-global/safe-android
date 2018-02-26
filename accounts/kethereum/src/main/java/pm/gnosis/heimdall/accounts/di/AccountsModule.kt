@@ -12,5 +12,6 @@ import javax.inject.Singleton
 class AccountsModule {
     @Provides
     @Singleton
-    fun providesAccountsDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(context, AccountsDatabase::class.java, AccountsDatabase.DB_NAME).build()
+    fun providesAccountsDatabase(@ApplicationContext context: Context) =
+        Room.databaseBuilder(context, AccountsDatabase::class.java, AccountsDatabase.DB_NAME).build()
 }

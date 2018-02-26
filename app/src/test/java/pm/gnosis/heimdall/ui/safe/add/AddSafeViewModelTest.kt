@@ -64,8 +64,10 @@ class AddSafeViewModelTest {
     @Before
     fun setUp() {
         context.mockGetString()
-        viewModel = AddSafeViewModel(context, accountsRepository, addressStore,
-                safeRepositoryMock, tickerRepositoryMock)
+        viewModel = AddSafeViewModel(
+            context, accountsRepository, addressStore,
+            safeRepositoryMock, tickerRepositoryMock
+        )
     }
 
     @Test
@@ -118,12 +120,14 @@ class AddSafeViewModelTest {
     }
 
     private fun subscribeDeploySafe(name: String, price: Wei?) =
-            TestObserver.create<Result<Unit>>().apply {
-                viewModel.deployNewSafe(name, price).subscribe(this)
-            }
+        TestObserver.create<Result<Unit>>().apply {
+            viewModel.deployNewSafe(name, price).subscribe(this)
+        }
 
-    private fun testDeploySafe(name: String, additionalOwners: Set<BigInteger>, expectedError: Exception? = null,
-                               storeException: Exception? = null, repoException: Exception? = null) {
+    private fun testDeploySafe(
+        name: String, additionalOwners: Set<BigInteger>, expectedError: Exception? = null,
+        storeException: Exception? = null, repoException: Exception? = null
+    ) {
         val hasStoreInteractions = expectedError == null || repoException != null || storeException != null
         val hasRepoInteractions = expectedError == null || (storeException == null && repoException != null)
         if (hasStoreInteractions) {
@@ -198,8 +202,8 @@ class AddSafeViewModelTest {
         addressPublisher.onNext(setOf(BigInteger.ONE, BigInteger.TEN))
 
         testObserver.assertValuesOnly(
-                DataResult(estimate),
-                DataResult(estimate) // New Value
+            DataResult(estimate),
+            DataResult(estimate) // New Value
         )
         then(safeRepositoryMock).should().estimateDeployCosts(setOf(BigInteger.ONE, BigInteger.TEN), 2)
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
@@ -208,9 +212,9 @@ class AddSafeViewModelTest {
         addressPublisher.onError(error)
 
         testObserver.assertResult(
-                DataResult(estimate),
-                DataResult(estimate),
-                ErrorResult(error) // New Value
+            DataResult(estimate),
+            DataResult(estimate),
+            ErrorResult(error) // New Value
         )
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
@@ -246,24 +250,24 @@ class AddSafeViewModelTest {
 
         addressPublisher.onNext(setOf(BigInteger.ONE, BigInteger.TEN))
         testObserver.assertValuesOnly(
-                listOf(BigInteger.ONE),
-                listOf(BigInteger.ONE, BigInteger.TEN) // New Value
+            listOf(BigInteger.ONE),
+            listOf(BigInteger.ONE, BigInteger.TEN) // New Value
         )
 
         addressPublisher.onNext(setOf(BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO))
         testObserver.assertValuesOnly(
-                listOf(BigInteger.ONE),
-                listOf(BigInteger.ONE, BigInteger.TEN),
-                listOf(BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN) // New Value
+            listOf(BigInteger.ONE),
+            listOf(BigInteger.ONE, BigInteger.TEN),
+            listOf(BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN) // New Value
         )
 
         val error = IllegalStateException()
         addressPublisher.onError(error)
         testObserver.assertFailure(
-                Predicate { it == error }, // New Error
-                listOf(BigInteger.ONE),
-                listOf(BigInteger.ONE, BigInteger.TEN),
-                listOf(BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN)
+            Predicate { it == error }, // New Error
+            listOf(BigInteger.ONE),
+            listOf(BigInteger.ONE, BigInteger.TEN),
+            listOf(BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN)
         )
 
         then(addressStore).should().observe()
@@ -396,7 +400,7 @@ class AddSafeViewModelTest {
 
         then(safeRepositoryMock).shouldHaveZeroInteractions()
         testObserver.assertValue { it is ErrorResult && it.error is InvalidAddressException }
-                .assertNoErrors()
+            .assertNoErrors()
     }
 
     @Test
@@ -438,5 +442,5 @@ class AddSafeViewModelTest {
     }
 
     private fun localizedExceptionResult(res: Int) =
-            ErrorResult<Unit>(SimpleLocalizedException(context.getTestString(res)))
+        ErrorResult<Unit>(SimpleLocalizedException(context.getTestString(res)))
 }

@@ -24,8 +24,8 @@ import javax.inject.Inject
 
 @ForView
 class EtherGasStationGasPriceHelper @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val gasStationApi: EthGasStationApi
+    @ApplicationContext private val context: Context,
+    private val gasStationApi: EthGasStationApi
 ) : GasPriceHelper {
     private lateinit var view: View
 
@@ -37,37 +37,37 @@ class EtherGasStationGasPriceHelper @Inject constructor(
 
     override fun observe(): Observable<Result<Wei>> {
         return Observable.combineLatest(
-                viewSpeedClicksObservable(),
-                loadGasPrices(),
-                BiFunction { speed: TransactionSpeed, prices: Result<EthGasStationPrices> ->
-                    when (prices) {
-                        is ErrorResult -> ErrorResult<Wei>(prices.error)
-                        is DataResult -> {
-                            val costsWithTime = when (speed) {
-                                TransactionSpeed.SLOW -> convertToWei(prices.data.slowPrice)
-                                TransactionSpeed.NORMAL -> convertToWei(prices.data.standardPrice)
-                                TransactionSpeed.FAST -> convertToWei(prices.data.fastPrice)
-                            }
-                            DataResult(costsWithTime)
+            viewSpeedClicksObservable(),
+            loadGasPrices(),
+            BiFunction { speed: TransactionSpeed, prices: Result<EthGasStationPrices> ->
+                when (prices) {
+                    is ErrorResult -> ErrorResult<Wei>(prices.error)
+                    is DataResult -> {
+                        val costsWithTime = when (speed) {
+                            TransactionSpeed.SLOW -> convertToWei(prices.data.slowPrice)
+                            TransactionSpeed.NORMAL -> convertToWei(prices.data.standardPrice)
+                            TransactionSpeed.FAST -> convertToWei(prices.data.fastPrice)
                         }
+                        DataResult(costsWithTime)
                     }
                 }
+            }
         )
     }
 
     private fun viewSpeedClicksObservable() = Observable
-            .merge(view.include_gas_price_selection_slow_container.clicks().map { TransactionSpeed.SLOW },
-                    view.include_gas_price_selection_normal_container.clicks().map { TransactionSpeed.NORMAL },
-                    view.include_gas_price_selection_fast_container.clicks().map { TransactionSpeed.FAST })
-            .startWith(TransactionSpeed.NORMAL)
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { updateSelected(view, it) }
+        .merge(view.include_gas_price_selection_slow_container.clicks().map { TransactionSpeed.SLOW },
+            view.include_gas_price_selection_normal_container.clicks().map { TransactionSpeed.NORMAL },
+            view.include_gas_price_selection_fast_container.clicks().map { TransactionSpeed.FAST })
+        .startWith(TransactionSpeed.NORMAL)
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnNext { updateSelected(view, it) }
 
     private fun loadGasPrices() = gasStationApi.loadGasPrices()
-            .onErrorResumeNext(Function { errorHandler.observable(it) })
-            .mapToResult()
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNextForResult({ updateInfo(it) }, { Timber.e(it) })
+        .onErrorResumeNext(Function { errorHandler.observable(it) })
+        .mapToResult()
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnNextForResult({ updateInfo(it) }, { Timber.e(it) })
 
     private fun updateInfo(prices: EthGasStationPrices) {
         view.include_gas_price_selection_slow_costs.text = convertToWei(prices.slowPrice).displayString(view.context)
@@ -81,13 +81,13 @@ class EtherGasStationGasPriceHelper @Inject constructor(
     }
 
     private fun setExecutionTimeEstimate(context: Context, waitTime: Float) =
-            convertToMs(waitTime).let {
-                if (it < DateTimeUtils.MINUTE_IN_MS) {
-                    context.getString(R.string.transaction_execution_time_estimate_sec, (it / DateTimeUtils.SECOND_IN_MS).toString())
-                } else {
-                    context.getString(R.string.transaction_execution_time_estimate_min, (it / DateTimeUtils.MINUTE_IN_MS).toString())
-                }
+        convertToMs(waitTime).let {
+            if (it < DateTimeUtils.MINUTE_IN_MS) {
+                context.getString(R.string.transaction_execution_time_estimate_sec, (it / DateTimeUtils.SECOND_IN_MS).toString())
+            } else {
+                context.getString(R.string.transaction_execution_time_estimate_min, (it / DateTimeUtils.MINUTE_IN_MS).toString())
             }
+        }
 
     private fun updateSelected(view: View, speed: TransactionSpeed) {
         when (speed) {
@@ -115,10 +115,10 @@ class EtherGasStationGasPriceHelper @Inject constructor(
     }
 
     private fun convertToWei(price: Float) =
-            Wei(BigDecimal.valueOf(price.toDouble()).multiply(BigDecimal.TEN.pow(8)).toBigInteger())
+        Wei(BigDecimal.valueOf(price.toDouble()).multiply(BigDecimal.TEN.pow(8)).toBigInteger())
 
     private fun convertToMs(waitTime: Float) =
-            (waitTime * DateTimeUtils.MINUTE_IN_MS).toLong()
+        (waitTime * DateTimeUtils.MINUTE_IN_MS).toLong()
 }
 
 private enum class TransactionSpeed {

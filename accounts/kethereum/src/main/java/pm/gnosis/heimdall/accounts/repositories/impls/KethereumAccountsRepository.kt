@@ -30,40 +30,40 @@ import javax.inject.Singleton
 
 @Singleton
 class KethereumAccountsRepository @Inject internal constructor(
-        private val accountsDatabase: AccountsDatabase,
-        private val encryptionManager: EncryptionManager,
-        private val preferencesManager: PreferencesManager
+    private val accountsDatabase: AccountsDatabase,
+    private val encryptionManager: EncryptionManager,
+    private val preferencesManager: PreferencesManager
 ) : AccountsRepository {
 
     private val encryptedStringConverter = EncryptedString.Converter()
 
     override fun loadActiveAccount(): Single<Account> {
         return accountsDatabase.accountsDao().observeAccounts()
-                .subscribeOn(Schedulers.io())
-                .map { Account(it.address) }
+            .subscribeOn(Schedulers.io())
+            .map { Account(it.address) }
     }
 
     override fun signTransaction(transaction: Transaction): Single<String> {
         if (!transaction.signable()) return Single.error(InvalidTransactionParams())
         return keyPairFromActiveAccount()
-                .map { transaction.rlp(it.sign(transaction.hash())).toHexString().addHexPrefix() }
+            .map { transaction.rlp(it.sign(transaction.hash())).toHexString().addHexPrefix() }
     }
 
     override fun sign(data: ByteArray): Single<Signature> {
         return keyPairFromActiveAccount()
-                .map { it.sign(data).let { Signature(it.r, it.s, it.v) } }
+            .map { it.sign(data).let { Signature(it.r, it.s, it.v) } }
     }
 
     override fun recover(data: ByteArray, signature: Signature): Single<BigInteger> =
-            Single.fromCallable {
-                KeyPair.signatureToKey(data, signature.v, signature.r, signature.s).address.asBigInteger()
-            }
+        Single.fromCallable {
+            KeyPair.signatureToKey(data, signature.v, signature.r, signature.s).address.asBigInteger()
+        }
 
     private fun keyPairFromActiveAccount(): Single<KeyPair> {
         return accountsDatabase.accountsDao().observeAccounts()
-                .subscribeOn(Schedulers.io())
-                .map { it.privateKey.value(encryptionManager).asBigInteger() }
-                .map { KeyPair.fromPrivate(it) }
+            .subscribeOn(Schedulers.io())
+            .map { it.privateKey.value(encryptionManager).asBigInteger() }
+            .map { KeyPair.fromPrivate(it) }
     }
 
     override fun saveAccountFromMnemonicSeed(mnemonicSeed: ByteArray, accountIndex: Long): Completable = Completable.fromAction {

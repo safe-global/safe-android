@@ -42,8 +42,8 @@ open class BlockiesImageView(context: Context, attributeSet: AttributeSet) : Ima
         canvas.clipPath(path)
         canvasPaint.color = blockies.backgroundColor
         canvas.drawRect(
-                offsetX, offsetY, offsetX + dimen, offsetY + dimen,
-                canvasPaint
+            offsetX, offsetY, offsetX + dimen, offsetY + dimen,
+            canvasPaint
         )
 
         val scale = dimen / Blockies.SIZE
@@ -57,7 +57,13 @@ open class BlockiesImageView(context: Context, attributeSet: AttributeSet) : Ima
             canvasPaint.color = if (blockies.data[i] == 1.0) main else sColor
 
             if (blockies.data[i] > 0.0) {
-                canvas.drawRect(offsetX + (col * scale), offsetY + (row * scale), offsetX + (col * scale + scale), offsetY + (row * scale + scale), canvasPaint)
+                canvas.drawRect(
+                    offsetX + (col * scale),
+                    offsetY + (row * scale),
+                    offsetX + (col * scale + scale),
+                    offsetY + (row * scale + scale),
+                    canvasPaint
+                )
             }
         }
 

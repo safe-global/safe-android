@@ -25,114 +25,122 @@ import javax.inject.Inject
 
 
 class ViewTransactionViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val qrCodeGenerator: QrCodeGenerator,
-        private val signaturePushRepository: SignaturePushRepository,
-        private val signatureStore: SignatureStore,
-        private val transactionRepository: TransactionRepository,
-        private val transactionDetailsRepository: TransactionDetailsRepository
+    @ApplicationContext private val context: Context,
+    private val qrCodeGenerator: QrCodeGenerator,
+    private val signaturePushRepository: SignaturePushRepository,
+    private val signatureStore: SignatureStore,
+    private val transactionRepository: TransactionRepository,
+    private val transactionDetailsRepository: TransactionDetailsRepository
 ) : ViewTransactionContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
-            .build()
+        .build()
 
     override fun checkTransactionType(transaction: Transaction): Single<TransactionType> {
         return transactionDetailsRepository.loadTransactionType(transaction)
     }
 
     private fun checkSignature(safe: BigInteger, transaction: Transaction, signature: Signature) =
-            transactionRepository.checkSignature(safe, transaction, signature)
-                    .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_signature))) }
+        transactionRepository.checkSignature(safe, transaction, signature)
+            .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_signature))) }
 
     override fun observeSignaturePushes(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Unit>> =
-            signaturePushRepository.observe(safeAddress)
-                    .flatMapSingle {
-                        checkSignature(safeAddress, transaction, it)
-                                .map(signatureStore::add)
-                                .mapToResult()
-                    }
+        signaturePushRepository.observe(safeAddress)
+            .flatMapSingle {
+                checkSignature(safeAddress, transaction, it)
+                    .map(signatureStore::add)
+                    .mapToResult()
+            }
 
     override fun sendSignaturePush(info: Info): Single<Result<Unit>> =
-            Single.fromCallable {
-                val transaction = info.status.transaction
-                val transactionHash = info.status.transactionHash
-                GnoSafeUrlParser.signRequest(transactionHash, info.selectedSafe, transaction.address, transaction.value, transaction.data, transaction.nonce!!)
+        Single.fromCallable {
+            val transaction = info.status.transaction
+            val transactionHash = info.status.transactionHash
+            GnoSafeUrlParser.signRequest(
+                transactionHash,
+                info.selectedSafe,
+                transaction.address,
+                transaction.value,
+                transaction.data,
+                transaction.nonce!!
+            )
+        }
+            .subscribeOn(Schedulers.computation())
+            .flatMapCompletable {
+                signaturePushRepository.request(info.selectedSafe, it)
             }
-                    .subscribeOn(Schedulers.computation())
-                    .flatMapCompletable {
-                        signaturePushRepository.request(info.selectedSafe, it)
-                    }
-                    .mapToResult()
+            .mapToResult()
 
     override fun addSignature(encodedSignatureUrl: String): Completable {
         return signatureStore.loadSingingInfo()
-                .flatMap { (safe, transaction) ->
-                    (GnoSafeUrlParser.parse(encodedSignatureUrl) as? GnoSafeUrlParser.Parsed.SignResponse)?.let {
-                        checkSignature(safe, transaction, it.signature)
-                    }
-                            ?: throw SimpleLocalizedException(context.getString(R.string.invalid_signature_uri))
+            .flatMap { (safe, transaction) ->
+                (GnoSafeUrlParser.parse(encodedSignatureUrl) as? GnoSafeUrlParser.Parsed.SignResponse)?.let {
+                    checkSignature(safe, transaction, it.signature)
                 }
-                .map(signatureStore::add)
-                .toCompletable()
+                        ?: throw SimpleLocalizedException(context.getString(R.string.invalid_signature_uri))
+            }
+            .map(signatureStore::add)
+            .toCompletable()
     }
 
     override fun loadExecuteInfo(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Info>> {
         return transactionRepository.loadExecuteInformation(safeAddress, transaction)
-                .flatMapObservable { info ->
-                    // Observe local signature store
-                    signatureStore.flatMapInfo(safeAddress, info)
-                            .onErrorReturnItem(emptyMap())
-                            .map { info to it }
-                }
-                .flatMap { (info, signatures) ->
-                    Observable.concatDelayError(listOf(
-                            Observable.just(DataResult(Info(safeAddress, info, signatures))),
-                            info.checkMap(signatures)
-                                    .flatMapSingle { transactionRepository.estimateFees(safeAddress, info.transaction, signatures, info.isOwner) }
-                                    .map { Info(safeAddress, info, signatures, it) }
-                                    .onErrorResumeNext(Function { errorHandler.observable(it) })
-                                    .mapToResult()
-                    ))
-                }
-                .onErrorReturn { ErrorResult(it) }
+            .flatMapObservable { info ->
+                // Observe local signature store
+                signatureStore.flatMapInfo(safeAddress, info)
+                    .onErrorReturnItem(emptyMap())
+                    .map { info to it }
+            }
+            .flatMap { (info, signatures) ->
+                Observable.concatDelayError(listOf(
+                    Observable.just(DataResult(Info(safeAddress, info, signatures))),
+                    info.checkMap(signatures)
+                        .flatMapSingle { transactionRepository.estimateFees(safeAddress, info.transaction, signatures, info.isOwner) }
+                        .map { Info(safeAddress, info, signatures, it) }
+                        .onErrorResumeNext(Function { errorHandler.observable(it) })
+                        .mapToResult()
+                )
+                )
+            }
+            .onErrorReturn { ErrorResult(it) }
     }
 
     override fun submitTransaction(safeAddress: BigInteger, transaction: Transaction, overrideGasPrice: Wei?): Single<Result<BigInteger>> {
         return transactionRepository.loadExecuteInformation(safeAddress, transaction)
-                .flatMapCompletable { info ->
-                    // Observe local signature store
-                    signatureStore.load()
-                            .map { info.check(it); it }
-                            .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, info.isOwner, overrideGasPrice) }
-                }
-                .andThen(Single.just(safeAddress))
-                .onErrorResumeNext({ errorHandler.single(it) })
-                .mapToResult()
+            .flatMapCompletable { info ->
+                // Observe local signature store
+                signatureStore.load()
+                    .map { info.check(it); it }
+                    .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, info.isOwner, overrideGasPrice) }
+            }
+            .andThen(Single.just(safeAddress))
+            .onErrorResumeNext({ errorHandler.single(it) })
+            .mapToResult()
     }
 
     override fun signTransaction(safeAddress: BigInteger, transaction: Transaction, sendViaPush: Boolean): Single<Result<Pair<String, Bitmap?>>> {
         return transactionRepository.sign(safeAddress, transaction)
-                .flatMap { signature ->
-                    if (sendViaPush)
-                        signaturePushRepository.send(safeAddress, transaction, signature)
-                                .andThen(Single.just(signature.toString() to null))
-                    else
-                        qrCodeGenerator
-                                .generateQrCode(GnoSafeUrlParser.signResponse(signature))
-                                .map { signature.toString() to it }
-                }
-                .onErrorResumeNext({ errorHandler.single(it) })
-                .mapToResult()
+            .flatMap { signature ->
+                if (sendViaPush)
+                    signaturePushRepository.send(safeAddress, transaction, signature)
+                        .andThen(Single.just(signature.toString() to null))
+                else
+                    qrCodeGenerator
+                        .generateQrCode(GnoSafeUrlParser.signResponse(signature))
+                        .map { signature.toString() to it }
+            }
+            .onErrorResumeNext({ errorHandler.single(it) })
+            .mapToResult()
     }
 
     private fun TransactionRepository.ExecuteInformation.check(signatures: Map<BigInteger, Signature>): TransactionRepository.ExecuteInformation =
-            when {
-                requiredConfirmation - signatures.size - (if (isOwner) 1 else 0) > 0 ->
-                    throw SimpleLocalizedException(context.getString(R.string.error_not_enough_confirmations))
-                else -> this
-            }
+        when {
+            requiredConfirmation - signatures.size - (if (isOwner) 1 else 0) > 0 ->
+                throw SimpleLocalizedException(context.getString(R.string.error_not_enough_confirmations))
+            else -> this
+        }
 
     private fun TransactionRepository.ExecuteInformation.checkMap(signatures: Map<BigInteger, Signature>) =
-            Observable.fromCallable { check(signatures) }.onErrorResumeNext(Function { Observable.empty<TransactionRepository.ExecuteInformation>() })
+        Observable.fromCallable { check(signatures) }.onErrorResumeNext(Function { Observable.empty<TransactionRepository.ExecuteInformation>() })
 
 }

@@ -60,8 +60,8 @@ class GenerateMnemonicActivity : SecuredBaseActivity() {
         super.onStart()
         disposables += saveAccountConfirmationDisposable()
         disposables += confirmDialogClick
-                .flatMapSingle { viewModel.saveAccountWithMnemonic(it) }
-                .subscribeForResult(onNext = { onAccountSaved() }, onError = ::onAccountSaveError)
+            .flatMapSingle { viewModel.saveAccountWithMnemonic(it) }
+            .subscribeForResult(onNext = { onAccountSaved() }, onError = ::onAccountSaveError)
     }
 
     private fun onAccountSaved() {
@@ -73,10 +73,10 @@ class GenerateMnemonicActivity : SecuredBaseActivity() {
     }
 
     private fun generateMnemonicDisposable() =
-            layout_generate_mnemonic_regenerate_button.clicks()
-                    .flatMapSingle { viewModel.generateMnemonic() }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeForResult(onNext = ::onMnemonic, onError = ::onMnemonicError)
+        layout_generate_mnemonic_regenerate_button.clicks()
+            .flatMapSingle { viewModel.generateMnemonic() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onMnemonic, onError = ::onMnemonicError)
 
     private fun onMnemonic(mnemonic: String) {
         layout_generate_mnemonic_mnemonic.text = mnemonic
@@ -87,20 +87,22 @@ class GenerateMnemonicActivity : SecuredBaseActivity() {
     }
 
     private fun saveAccountConfirmationDisposable() =
-            layout_generate_mnemonic_save.clicks()
-                    .subscribeBy(onNext = { showConfirmationDialog(layout_generate_mnemonic_mnemonic.text.toString()) },
-                            onError = Timber::e)
+        layout_generate_mnemonic_save.clicks()
+            .subscribeBy(
+                onNext = { showConfirmationDialog(layout_generate_mnemonic_mnemonic.text.toString()) },
+                onError = Timber::e
+            )
 
 
     private fun showConfirmationDialog(mnemonic: String) {
         AlertDialog.Builder(this)
-                .setPositiveButton(getString(R.string.yes), { _, _ ->
-                    confirmDialogClick.onNext(layout_generate_mnemonic_mnemonic.text.toString())
-                })
-                .setNegativeButton(getString(R.string.no), { _, _ -> })
-                .setTitle(getString(R.string.dialog_title_save_mnemonic))
-                .setMessage(Html.fromHtml(resources.getString(R.string.generate_mnemonic_activity_dialog, mnemonic)))
-                .show()
+            .setPositiveButton(getString(R.string.yes), { _, _ ->
+                confirmDialogClick.onNext(layout_generate_mnemonic_mnemonic.text.toString())
+            })
+            .setNegativeButton(getString(R.string.no), { _, _ -> })
+            .setTitle(getString(R.string.dialog_title_save_mnemonic))
+            .setMessage(Html.fromHtml(resources.getString(R.string.generate_mnemonic_activity_dialog, mnemonic)))
+            .show()
     }
 
     override fun onDestroy() {
@@ -110,9 +112,9 @@ class GenerateMnemonicActivity : SecuredBaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 
     companion object {

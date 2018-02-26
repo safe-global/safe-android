@@ -21,15 +21,16 @@ class TickerModule {
     @Singleton
     fun providesTickerApi(moshi: Moshi, client: OkHttpClient): TickerApi {
         val retrofit = Retrofit.Builder()
-                .client(client)
-                .baseUrl(TickerApi.BASE_URL)
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-                .build()
+            .client(client)
+            .baseUrl(TickerApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
         return retrofit.create(TickerApi::class.java)
     }
 
     @Provides
     @Singleton
-    fun providesTickerDb(@ApplicationContext context: Context) = Room.databaseBuilder(context, TickerDatabase::class.java, TickerDatabase.DB_NAME).build()
+    fun providesTickerDb(@ApplicationContext context: Context) =
+        Room.databaseBuilder(context, TickerDatabase::class.java, TickerDatabase.DB_NAME).build()
 }

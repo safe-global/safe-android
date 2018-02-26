@@ -76,23 +76,23 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += viewModel.observeAddressBookEntry(address)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = ::onAddressBookEntry)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = ::onAddressBookEntry)
 
         disposables += generateQrCodeSubject
-                .flatMap {
-                    viewModel.generateQrCode(address, ContextCompat.getColor(this, R.color.window_background))
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnSubscribe { layout_address_book_entry_details_qr_code_loading.visibility = View.VISIBLE }
-                            .doOnTerminate { layout_address_book_entry_details_qr_code_loading.visibility = View.GONE }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onQrCodeGenerated, onError = ::onQrCodeGenerateError)
+            .flatMap {
+                viewModel.generateQrCode(address, ContextCompat.getColor(this, R.color.window_background))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { layout_address_book_entry_details_qr_code_loading.visibility = View.VISIBLE }
+                    .doOnTerminate { layout_address_book_entry_details_qr_code_loading.visibility = View.GONE }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onQrCodeGenerated, onError = ::onQrCodeGenerateError)
 
         disposables += deleteEntryClickSubject
-                .flatMap { viewModel.deleteAddressBookEntry(address) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onAddressBookEntryDeleted, onError = ::onAddressBookEntryDeleteError)
+            .flatMap { viewModel.deleteAddressBookEntry(address) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onAddressBookEntryDeleted, onError = ::onAddressBookEntryDeleteError)
     }
 
     private fun onAddressBookEntry(entry: AddressBookEntry) {
@@ -119,8 +119,8 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
         Timber.e(throwable)
         layout_address_book_entry_details_qr_code.visibility = View.INVISIBLE
         snackbar(layout_address_book_entry_details_coordinator, R.string.qr_code_error,
-                duration = Snackbar.LENGTH_INDEFINITE,
-                action = R.string.retry to { _: View -> generateQrCodeSubject.onNext(Unit) })
+            duration = Snackbar.LENGTH_INDEFINITE,
+            action = R.string.retry to { _: View -> generateQrCodeSubject.onNext(Unit) })
     }
 
     private fun onAddressBookEntryDeleted(address: BigInteger) {
@@ -135,25 +135,25 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
 
     private fun showDeleteDialog() {
         AlertDialog.Builder(this)
-                .setMessage(getString(R.string.dialog_delete_address_entry_message))
-                .setPositiveButton(R.string.delete, { _, _ -> deleteEntryClickSubject.onNext(Unit) })
-                .setNegativeButton(R.string.cancel, { _, _ -> })
-                .show()
+            .setMessage(getString(R.string.dialog_delete_address_entry_message))
+            .setPositiveButton(R.string.delete, { _, _ -> deleteEntryClickSubject.onNext(Unit) })
+            .setNegativeButton(R.string.cancel, { _, _ -> })
+            .show()
     }
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {
         private const val EXTRA_ADDRESS_ENTRY = "extra.string.address_entry"
 
         fun createIntent(context: Context, address: BigInteger) =
-                Intent(context, AddressBookEntryDetailsActivity::class.java)
-                        .apply { putExtra(EXTRA_ADDRESS_ENTRY, address.asEthereumAddressString()) }
+            Intent(context, AddressBookEntryDetailsActivity::class.java)
+                .apply { putExtra(EXTRA_ADDRESS_ENTRY, address.asEthereumAddressString()) }
     }
 }

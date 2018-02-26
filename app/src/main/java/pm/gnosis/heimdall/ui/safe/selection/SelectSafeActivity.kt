@@ -53,24 +53,24 @@ class SelectSafeActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 
     override fun onStart() {
         super.onStart()
         disposables += viewModel.loadSafes()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::setSpinnerData, Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(::setSpinnerData, Timber::e)
 
         disposables += layout_select_safe_review_button.clicks()
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMapSingle {
-                    val safe = nullOnThrow { adapter.getItem(layout_select_safe_spinner.selectedItemPosition) }
-                    viewModel.reviewTransaction(safe?.address, transaction!!)
-                }
-                .subscribeForResult(::startActivity, { errorSnackbar(layout_select_safe_review_button, it) })
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMapSingle {
+                val safe = nullOnThrow { adapter.getItem(layout_select_safe_spinner.selectedItemPosition) }
+                viewModel.reviewTransaction(safe?.address, transaction!!)
+            }
+            .subscribeForResult(::startActivity, { errorSnackbar(layout_select_safe_review_button, it) })
     }
 
     private fun setSpinnerData(data: List<Safe>) {
@@ -81,10 +81,10 @@ class SelectSafeActivity : BaseActivity() {
 
     private class SafesSpinnerAdapter(context: Context) : SimpleSpinnerAdapter<Safe>(context) {
         override fun title(item: Safe) =
-                item.name
+            item.name
 
         override fun subTitle(item: Safe) =
-                item.address.asEthereumAddressString()
+            item.address.asEthereumAddressString()
     }
 
     companion object {
@@ -92,8 +92,8 @@ class SelectSafeActivity : BaseActivity() {
         private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"
 
         fun createIntent(context: Context, transaction: Transaction) =
-                Intent(context, SelectSafeActivity::class.java).apply {
-                    putExtra(EXTRA_TRANSACTION, transaction.parcelable())
-                }
+            Intent(context, SelectSafeActivity::class.java).apply {
+                putExtra(EXTRA_TRANSACTION, transaction.parcelable())
+            }
     }
 }

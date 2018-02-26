@@ -9,7 +9,7 @@ import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
 
-abstract class SelectSafeContract: ViewModel() {
+abstract class SelectSafeContract : ViewModel() {
     abstract fun loadSafes(): Single<List<Safe>>
     abstract fun reviewTransaction(safe: BigInteger?, transaction: Transaction): Single<Result<Intent>>
 }

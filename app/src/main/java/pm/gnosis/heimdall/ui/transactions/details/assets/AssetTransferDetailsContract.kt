@@ -22,11 +22,11 @@ abstract class AssetTransferDetailsContract : ViewModel() {
 
     data class InputEvent(val to: Pair<String, Boolean>, val amount: Pair<String, Boolean>, val token: Pair<ERC20Token?, Boolean>) {
         fun diff(other: InputEvent): InputEvent =
-                InputEvent(check(this.to, other.to), check(this.amount, other.amount), check(this.token, other.token))
+            InputEvent(check(this.to, other.to), check(this.amount, other.amount), check(this.token, other.token))
 
         companion object {
             private fun <T> check(current: Pair<T, Boolean>, change: Pair<T, Boolean>): Pair<T, Boolean> =
-                    change.first to (current.first != change.first)
+                change.first to (current.first != change.first)
         }
     }
 }

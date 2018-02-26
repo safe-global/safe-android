@@ -9,9 +9,10 @@ class TestWorldListProvider : WordListProvider {
         const val CHINESE_SIMPLIFIED = 2
 
         val MAP = mapOf(
-                ENGLISH to ENGLISH_WORD_LIST,
-                CHINESE_TRADITIONAL to CHINESE_TRADITIONAL_WORD_LIST,
-                CHINESE_SIMPLIFIED to CHINESE_SIMPLIFIED_WORD_LIST)
+            ENGLISH to ENGLISH_WORD_LIST,
+            CHINESE_TRADITIONAL to CHINESE_TRADITIONAL_WORD_LIST,
+            CHINESE_SIMPLIFIED to CHINESE_SIMPLIFIED_WORD_LIST
+        )
     }
 
     override fun all() = MAP.values

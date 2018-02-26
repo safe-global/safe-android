@@ -31,14 +31,15 @@ abstract class BaseTransactionDetailsFragment : BaseFragment() {
 
     protected fun updateSafeInfoTransformer(addressView: TextView) = ObservableTransformer<BigInteger, Safe> {
         it.switchMap { baseViewModel.observeSafe(it) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext {
-                    val safeAddress = it.address.asEthereumAddressStringOrNull()
-                    val shortenedSafeAddress = safeAddress?.let { " [${safeAddress.substring(0, 6)}...${safeAddress.substring(safeAddress.length - 4)}]" } ?: ""
-                    val safeDetails = SpannableStringBuilder(it.name ?: "")
-                            .appendText(shortenedSafeAddress, ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.light_text)))
-                    addressView.text = safeDetails
-                }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                val safeAddress = it.address.asEthereumAddressStringOrNull()
+                val shortenedSafeAddress =
+                    safeAddress?.let { " [${safeAddress.substring(0, 6)}...${safeAddress.substring(safeAddress.length - 4)}]" } ?: ""
+                val safeDetails = SpannableStringBuilder(it.name ?: "")
+                    .appendText(shortenedSafeAddress, ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.light_text)))
+                addressView.text = safeDetails
+            }
     }
 
     override fun onStart() {

@@ -44,7 +44,13 @@ class SafeSettingsActivity : BaseActivity() {
 
     private val removeSafeClicks = PublishSubject.create<Unit>()
 
-    private val viewProvider by lazy { InflatingViewProvider(layoutInflater, layout_safe_settings_owners_container, R.layout.layout_additional_owner_item) }
+    private val viewProvider by lazy {
+        InflatingViewProvider(
+            layoutInflater,
+            layout_safe_settings_owners_container,
+            R.layout.layout_additional_owner_item
+        )
+    }
 
     override fun screenId() = ScreenId.SAFE_SETTINGS
 
@@ -62,46 +68,46 @@ class SafeSettingsActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += layout_safe_settings_swipe_refresh.refreshes()
-                .map { true }
-                .startWith(false)
-                .flatMap {
-                    viewModel.loadSafeInfo(it)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnSubscribe { showLoading(true) }
-                            .doOnComplete { showLoading(false) }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(::updateInfo, ::handleError)
+            .map { true }
+            .startWith(false)
+            .flatMap {
+                viewModel.loadSafeInfo(it)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { showLoading(true) }
+                    .doOnComplete { showLoading(false) }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(::updateInfo, ::handleError)
 
         disposables += layout_safe_settings_name_input.textChanges()
-                .skipInitialValue()
-                .debounce(500, TimeUnit.MILLISECONDS)
-                // We need to map to string else distinctUntilChanged will not work
-                .map { it.toString() }
-                .distinctUntilChanged()
-                .flatMapSingle {
-                    viewModel.updateSafeName(it)
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult({}, { errorSnackbar(layout_safe_settings_name_input, it) })
+            .skipInitialValue()
+            .debounce(500, TimeUnit.MILLISECONDS)
+            // We need to map to string else distinctUntilChanged will not work
+            .map { it.toString() }
+            .distinctUntilChanged()
+            .flatMapSingle {
+                viewModel.updateSafeName(it)
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult({}, { errorSnackbar(layout_safe_settings_name_input, it) })
 
         disposables += viewModel.loadSafeName()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { layout_safe_settings_name_input.isEnabled = false }
-                .doAfterTerminate { layout_safe_settings_name_input.isEnabled = true }
-                .subscribeBy(onSuccess = {
-                    layout_safe_settings_toolbar.title = it
-                    layout_safe_settings_name_input.setText(it)
-                    layout_safe_settings_name_input.setSelection(it.length)
-                }, onError = Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { layout_safe_settings_name_input.isEnabled = false }
+            .doAfterTerminate { layout_safe_settings_name_input.isEnabled = true }
+            .subscribeBy(onSuccess = {
+                layout_safe_settings_toolbar.title = it
+                layout_safe_settings_name_input.setText(it)
+                layout_safe_settings_name_input.setSelection(it.length)
+            }, onError = Timber::e)
 
         disposables += layout_safe_settings_delete_button.clicks()
-                .subscribeBy(onNext = { showRemoveDialog() }, onError = Timber::e)
+            .subscribeBy(onNext = { showRemoveDialog() }, onError = Timber::e)
 
         disposables += removeSafeClicks
-                .flatMapSingle { viewModel.deleteSafe() }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = { onSafeRemoved() }, onError = ::onSafeRemoveError)
+            .flatMapSingle { viewModel.deleteSafe() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = { onSafeRemoved() }, onError = ::onSafeRemoveError)
     }
 
     private fun safeNameOrPlaceHolder(@StringRes placeholderRef: Int): String {
@@ -120,18 +126,18 @@ class SafeSettingsActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 
     private fun showRemoveDialog() {
         AlertDialog.Builder(this)
-                .setTitle(R.string.remove_safe_dialog_title)
-                .setMessage(getString(R.string.remove_safe_dialog_description, safeNameOrPlaceHolder(R.string.this_safe)))
-                .setPositiveButton(R.string.remove, { _, _ -> removeSafeClicks.onNext(Unit) })
-                .setNegativeButton(R.string.cancel, { _, _ -> })
-                .show()
+            .setTitle(R.string.remove_safe_dialog_title)
+            .setMessage(getString(R.string.remove_safe_dialog_description, safeNameOrPlaceHolder(R.string.this_safe)))
+            .setPositiveButton(R.string.remove, { _, _ -> removeSafeClicks.onNext(Unit) })
+            .setNegativeButton(R.string.cancel, { _, _ -> })
+            .show()
     }
 
     private fun showLoading(loading: Boolean) {
@@ -143,7 +149,8 @@ class SafeSettingsActivity : BaseActivity() {
     }
 
     private fun updateInfo(info: SafeInfo) {
-        layout_safe_settings_confirmations.text = getString(R.string.safe_confirmations_text, info.requiredConfirmations.toString(), info.owners.size.toString())
+        layout_safe_settings_confirmations.text =
+                getString(R.string.safe_confirmations_text, info.requiredConfirmations.toString(), info.owners.size.toString())
 
         layout_safe_settings_owners_container.removeAllViews()
         val ownerCount = info.owners.size
@@ -153,8 +160,8 @@ class SafeSettingsActivity : BaseActivity() {
         layout_safe_settings_add_owner_button.visible(ownerCount < 3)
         layout_safe_settings_add_owner_button.setOnClickListener {
             CreateChangeSafeSettingsTransactionProgressDialog
-                    .addOwner(viewModel.getSafeAddress(), info.owners.size)
-                    .show(supportFragmentManager, null)
+                .addOwner(viewModel.getSafeAddress(), info.owners.size)
+                .show(supportFragmentManager, null)
         }
     }
 
@@ -164,8 +171,8 @@ class SafeSettingsActivity : BaseActivity() {
             view.layout_additional_owner_delete_button.visible(showDelete)
             view.layout_additional_owner_delete_button.setOnClickListener {
                 CreateChangeSafeSettingsTransactionProgressDialog
-                        .removeOwner(viewModel.getSafeAddress(), address, index.toLong(), count)
-                        .show(supportFragmentManager, null)
+                    .removeOwner(viewModel.getSafeAddress(), address, index.toLong(), count)
+                    .show(supportFragmentManager, null)
             }
             layout_safe_settings_owners_container.addView(view)
         }
@@ -175,8 +182,8 @@ class SafeSettingsActivity : BaseActivity() {
         private const val EXTRA_SAFE_ADDRESS = "argument.string.safe_address"
 
         fun createIntent(context: Context, address: String) =
-                Intent(context, SafeSettingsActivity::class.java).apply {
-                    putExtra(EXTRA_SAFE_ADDRESS, address)
-                }
+            Intent(context, SafeSettingsActivity::class.java).apply {
+                putExtra(EXTRA_SAFE_ADDRESS, address)
+            }
     }
 }

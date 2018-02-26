@@ -3,10 +3,12 @@ package pm.gnosis.blockies
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import java.math.BigInteger
 
-internal class Blockies(val primaryColor: Int,
-                        val backgroundColor: Int,
-                        val spotColor: Int,
-                        val data: DoubleArray) {
+internal class Blockies(
+    val primaryColor: Int,
+    val backgroundColor: Int,
+    val spotColor: Int,
+    val data: DoubleArray
+) {
     companion object {
         const val SIZE = 8
 

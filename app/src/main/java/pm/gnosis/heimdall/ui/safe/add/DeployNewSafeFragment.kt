@@ -52,85 +52,85 @@ class DeployNewSafeFragment : BaseFragment() {
 
     private var displayFeesTransformer = ObservableTransformer<Pair<Result<GasEstimate>, Result<Wei>>, Result<Pair<BigDecimal, Currency>>> {
         it
-                .map { (estimate, overrideGasPrice) ->
-                    // If we have an estimate calculate the price
-                    estimate.map {
-                        val override = (overrideGasPrice as? DataResult)?.data
-                        Wei((override ?: it.gasPrice).value * it.gasCosts)
-                    }
+            .map { (estimate, overrideGasPrice) ->
+                // If we have an estimate calculate the price
+                estimate.map {
+                    val override = (overrideGasPrice as? DataResult)?.data
+                    Wei((override ?: it.gasPrice).value * it.gasCosts)
                 }
-                // Update price
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNextForResult(::updateEstimate)
-                // Request fiat value for price
-                .flatMapResult({ viewModel.loadFiatConversion(it) })
-                // Update fiat value
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNextForResult(::onFiat, ::onFiatError)
+            }
+            // Update price
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNextForResult(::updateEstimate)
+            // Request fiat value for price
+            .flatMapResult({ viewModel.loadFiatConversion(it) })
+            // Update fiat value
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNextForResult(::onFiat, ::onFiatError)
     }
 
     private var deployButtonTransformer = ObservableTransformer<Pair<Result<GasEstimate>, Result<Wei>>, Result<Unit>> {
         it.switchMap { (_, overrideGasPrice) ->
             layout_deploy_new_safe_deploy_button.clicks()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .flatMap {
-                        viewModel.deployNewSafe(layout_deploy_new_safe_name_input.text.toString(), (overrideGasPrice as? DataResult)?.data)
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .doOnSubscribe { toggleDeploying(true) }
-                                .doAfterTerminate { toggleDeploying(false) }
-                    }
-                    .doOnNextForResult(::safeDeployed, ::errorDeploying)
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap {
+                    viewModel.deployNewSafe(layout_deploy_new_safe_name_input.text.toString(), (overrideGasPrice as? DataResult)?.data)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSubscribe { toggleDeploying(true) }
+                        .doAfterTerminate { toggleDeploying(false) }
+                }
+                .doOnNextForResult(::safeDeployed, ::errorDeploying)
         }
     }
 
     override fun onStart() {
         super.onStart()
         disposables += viewModel.setupDeploy()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    layout_deploy_new_safe_device_info.apply {
-                        layout_address_item_icon.setAddress(it)
-                        layout_address_item_name.visible(true)
-                        layout_address_item_name.text = getString(R.string.this_device)
-                        layout_address_item_value.visible(false)
-                    }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess {
+                layout_deploy_new_safe_device_info.apply {
+                    layout_address_item_icon.setAddress(it)
+                    layout_address_item_name.visible(true)
+                    layout_address_item_name.text = getString(R.string.this_device)
+                    layout_address_item_value.visible(false)
                 }
-                .flatMapObservable {
-                    handleUserInput()
-                }
-                .subscribeBy(onError = Timber::e)
+            }
+            .flatMapObservable {
+                handleUserInput()
+            }
+            .subscribeBy(onError = Timber::e)
 
         disposables += viewModel.observeAdditionalOwners()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(::updateOwners, Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(::updateOwners, Timber::e)
     }
 
     private fun handleUserInput() =
-            Observable.merge(
-                    setupDeploySafe(),
-                    setupAddAddress()
-            )
+        Observable.merge(
+            setupDeploySafe(),
+            setupAddAddress()
+        )
 
     private fun setupDeploySafe() =
-            Observable.combineLatest(
-                    // Estimates to deploy safe
-                    viewModel.observeEstimate(),
-                    // Price data
-                    gasPriceHelper.let {
-                        it.setup(include_gas_price_selection_root_container)
-                        it.observe()
-                    }.startWith(ErrorResult(Exception())),
-                    BiFunction { estimate: Result<GasEstimate>, prices: Result<Wei> -> estimate to prices }
-            )
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .publish {
-                        Observable.merge(
-                                // Display fees
-                                it.compose(displayFeesTransformer),
-                                // Setup deploy button
-                                it.compose(deployButtonTransformer)
-                        )
-                    }
+        Observable.combineLatest(
+            // Estimates to deploy safe
+            viewModel.observeEstimate(),
+            // Price data
+            gasPriceHelper.let {
+                it.setup(include_gas_price_selection_root_container)
+                it.observe()
+            }.startWith(ErrorResult(Exception())),
+            BiFunction { estimate: Result<GasEstimate>, prices: Result<Wei> -> estimate to prices }
+        )
+            .observeOn(AndroidSchedulers.mainThread())
+            .publish {
+                Observable.merge(
+                    // Display fees
+                    it.compose(displayFeesTransformer),
+                    // Setup deploy button
+                    it.compose(deployButtonTransformer)
+                )
+            }
 
     private fun toggleDeploying(inProgress: Boolean) {
         layout_deploy_new_safe_deploy_button.isEnabled = !inProgress
@@ -139,32 +139,32 @@ class DeployNewSafeFragment : BaseFragment() {
     }
 
     private fun setupAddAddress() =
-            layout_deploy_new_safe_add_owner_button.clicks()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext {
-                        showAddOwnerDialog()
-                    }
+        layout_deploy_new_safe_add_owner_button.clicks()
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                showAddOwnerDialog()
+            }
 
     private fun showAddOwnerDialog() {
         // TODO: add proper dialog once design is known
         val dialogView = layoutInflater.inflate(R.layout.dialog_address_input, null)
         AlertDialog.Builder(context)
-                .setView(dialogView)
-                .setPositiveButton(R.string.add, { _, _ -> addOwner(dialogView.dialog_address_input_address.text.toString()) })
-                .setNeutralButton(R.string.scan, { _, _ -> scanQrCode() })
-                .setOnDismissListener { activity?.hideSoftKeyboard() }
-                .show()
+            .setView(dialogView)
+            .setPositiveButton(R.string.add, { _, _ -> addOwner(dialogView.dialog_address_input_address.text.toString()) })
+            .setNeutralButton(R.string.scan, { _, _ -> scanQrCode() })
+            .setOnDismissListener { activity?.hideSoftKeyboard() }
+            .show()
     }
 
     private fun addOwner(address: String) {
         disposables += viewModel.addAdditionalOwner(address)
-                .subscribeForResult(onError = { errorSnackbar(layout_deploy_new_safe_name_input, it) })
+            .subscribeForResult(onError = { errorSnackbar(layout_deploy_new_safe_name_input, it) })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         handleQrCodeActivityResult(requestCode, resultCode, data,
-                { parseEthereumAddress(it)?.let { addOwner(it.asEthereumAddressString()) } })
+            { parseEthereumAddress(it)?.let { addOwner(it.asEthereumAddressString()) } })
     }
 
     private fun safeDeployed(ignored: Unit) {
@@ -183,9 +183,11 @@ class DeployNewSafeFragment : BaseFragment() {
     private fun onFiat(fiat: Pair<BigDecimal, Currency>) {
         layout_deploy_new_safe_transaction_fee_fiat.visibility = View.VISIBLE
         layout_deploy_new_safe_transaction_fee_fiat.text =
-                getString(R.string.fiat_approximation,
-                        fiat.first.stringWithNoTrailingZeroes(),
-                        fiat.second.getFiatSymbol())
+                getString(
+                    R.string.fiat_approximation,
+                    fiat.first.stringWithNoTrailingZeroes(),
+                    fiat.second.getFiatSymbol()
+                )
     }
 
     private fun onFiatError(throwable: Throwable) {
@@ -201,11 +203,11 @@ class DeployNewSafeFragment : BaseFragment() {
                 address.asEthereumAddressStringOrNull()?.let { view.layout_address_item_value.text = it }
                 view.layout_address_item_icon.setAddress(address)
                 disposables += view.layout_additional_owner_delete_button.clicks()
-                        .flatMap { viewModel.removeAdditionalOwner(address) }
-                        .subscribeForResult(
-                                { snackbar(layout_deploy_new_safe_additional_owners_container, getString(R.string.removed_x, address)) },
-                                { errorSnackbar(layout_deploy_new_safe_additional_owners_container, it) }
-                        )
+                    .flatMap { viewModel.removeAdditionalOwner(address) }
+                    .subscribeForResult(
+                        { snackbar(layout_deploy_new_safe_additional_owners_container, getString(R.string.removed_x, address)) },
+                        { errorSnackbar(layout_deploy_new_safe_additional_owners_container, it) }
+                    )
                 layout_deploy_new_safe_additional_owners_container.addView(view)
             }
         }
@@ -241,20 +243,20 @@ class DeployNewSafeFragment : BaseFragment() {
         layout_security_bars_second.setColorFilterCompat(if (additionalOwners >= 1) colorResource else R.color.security_bar_default)
         layout_security_bars_third.setColorFilterCompat(if (additionalOwners >= 2) colorResource else R.color.security_bar_default)
         layout_deploy_new_safe_security_level_text.text = SpannableStringBuilder("")
-                .appendText(getString(R.string.security_level), ForegroundColorSpan(context!!.getColorCompat(R.color.gnosis_dark_blue)))
-                .append(": ")
-                .appendText(getString(securityLevelTextResource), ForegroundColorSpan(context!!.getColorCompat(colorResource)))
+            .appendText(getString(R.string.security_level), ForegroundColorSpan(context!!.getColorCompat(R.color.gnosis_dark_blue)))
+            .append(": ")
+            .appendText(getString(securityLevelTextResource), ForegroundColorSpan(context!!.getColorCompat(colorResource)))
         layout_deploy_new_safe_security_info.text = getString(securityInfoTextResource)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
-            inflater.inflate(R.layout.layout_deploy_new_safe, container, false)!!
+        inflater.inflate(R.layout.layout_deploy_new_safe, container, false)!!
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
-                .applicationComponent(component)
-                .viewModule(ViewModule(context!!))
-                .build().inject(this)
+            .applicationComponent(component)
+            .viewModule(ViewModule(context!!))
+            .build().inject(this)
     }
 
     companion object {

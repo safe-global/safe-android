@@ -67,18 +67,27 @@ class ViewTransactionViewModelTest {
     @Before
     fun setUp() {
         contextMock.mockGetString()
-        viewModel = ViewTransactionViewModel(contextMock, qrCodeGeneratorMock, signaturePushRepositoryMock, signatureStoreMock, transactionRepositoryMock, transactionDetailsRepositoryMock)
+        viewModel = ViewTransactionViewModel(
+            contextMock,
+            qrCodeGeneratorMock,
+            signaturePushRepositoryMock,
+            signatureStoreMock,
+            transactionRepositoryMock,
+            transactionDetailsRepositoryMock
+        )
     }
 
     @Test
     fun loadExecuteInfo2OwnersWithSignatures() {
-        val info = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
-                TEST_OWNER, 2, TEST_OWNERS)
+        val info = TransactionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_OWNER, 2, TEST_OWNERS
+        )
         given(transactionRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.just(info))
+            .willReturn(Single.just(info))
 
         given(transactionRepositoryMock.estimateFees(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()))
-                .willReturn(Single.just(TEST_TRANSACTION_FEES))
+            .willReturn(Single.just(TEST_TRANSACTION_FEES))
 
         val signaturesSubject = PublishSubject.create<Map<BigInteger, Signature>>()
         given(signatureStoreMock.flatMapInfo(TEST_SAFE, info)).willReturn(signaturesSubject)
@@ -96,7 +105,8 @@ class ViewTransactionViewModelTest {
         val noSignatures = emptyMap<BigInteger, Signature>()
         signaturesSubject.onNext(noSignatures)
         testObserver.assertValuesOnly(
-                DataResult(Info(TEST_SAFE, info, noSignatures)))
+            DataResult(Info(TEST_SAFE, info, noSignatures))
+        )
 
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
 
@@ -104,11 +114,12 @@ class ViewTransactionViewModelTest {
         val singleSignature = mapOf(TEST_OWNERS.first() to TEST_SIGNATURE)
         signaturesSubject.onNext(singleSignature)
         testObserver.assertValuesOnly(
-                // Previous values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                // New values
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES)))
+            // Previous values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            // New values
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES))
+        )
 
         then(transactionRepositoryMock).should().estimateFees(TEST_SAFE, TEST_TRANSACTION, singleSignature, info.isOwner)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
@@ -116,32 +127,34 @@ class ViewTransactionViewModelTest {
         // We emit 1 signature again but estimation fails
         val error = IllegalStateException()
         given(transactionRepositoryMock.estimateFees(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()))
-                .willReturn(Single.error<GasEstimate>(error))
+            .willReturn(Single.error<GasEstimate>(error))
         signaturesSubject.onNext(singleSignature)
         testObserver.assertValuesOnly(
-                // Previous values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES)),
-                // New values
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                ErrorResult(error))
+            // Previous values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES)),
+            // New values
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            ErrorResult(error)
+        )
 
         then(transactionRepositoryMock).should(times(2))
-                .estimateFees(TEST_SAFE, TEST_TRANSACTION, singleSignature, info.isOwner)
+            .estimateFees(TEST_SAFE, TEST_TRANSACTION, singleSignature, info.isOwner)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Signature store fails => no signatures
         signaturesSubject.onError(Exception())
         testObserver.assertResult(
-                // Previous values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES)),
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                ErrorResult(error),
-                // New values
-                DataResult(Info(TEST_SAFE, info, noSignatures)))
+            // Previous values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES)),
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            ErrorResult(error),
+            // New values
+            DataResult(Info(TEST_SAFE, info, noSignatures))
+        )
 
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
@@ -149,13 +162,15 @@ class ViewTransactionViewModelTest {
 
     @Test
     fun loadExecuteInfoSingleOwner() {
-        val info = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
-                TEST_OWNER, 1, TEST_OWNERS)
+        val info = TransactionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_OWNER, 1, TEST_OWNERS
+        )
         given(transactionRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.just(info))
+            .willReturn(Single.just(info))
 
         given(transactionRepositoryMock.estimateFees(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()))
-                .willReturn(Single.just(TEST_TRANSACTION_FEES))
+            .willReturn(Single.just(TEST_TRANSACTION_FEES))
 
         val signaturesSubject = PublishSubject.create<Map<BigInteger, Signature>>()
         given(signatureStoreMock.flatMapInfo(TEST_SAFE, info)).willReturn(signaturesSubject)
@@ -173,8 +188,9 @@ class ViewTransactionViewModelTest {
         val noSignatures = emptyMap<BigInteger, Signature>()
         signaturesSubject.onNext(noSignatures)
         testObserver.assertValuesOnly(
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                DataResult(Info(TEST_SAFE, info, noSignatures, TEST_TRANSACTION_FEES)))
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            DataResult(Info(TEST_SAFE, info, noSignatures, TEST_TRANSACTION_FEES))
+        )
 
         then(transactionRepositoryMock).should().estimateFees(TEST_SAFE, TEST_TRANSACTION, noSignatures, info.isOwner)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
@@ -183,12 +199,13 @@ class ViewTransactionViewModelTest {
         val singleSignature = mapOf(TEST_OWNERS.first() to TEST_SIGNATURE)
         signaturesSubject.onNext(singleSignature)
         testObserver.assertValuesOnly(
-                // Previous values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                DataResult(Info(TEST_SAFE, info, noSignatures, TEST_TRANSACTION_FEES)),
-                // New values
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES)))
+            // Previous values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            DataResult(Info(TEST_SAFE, info, noSignatures, TEST_TRANSACTION_FEES)),
+            // New values
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES))
+        )
 
         then(transactionRepositoryMock).should().estimateFees(TEST_SAFE, TEST_TRANSACTION, singleSignature, info.isOwner)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
@@ -196,53 +213,57 @@ class ViewTransactionViewModelTest {
         // We emit 1 signature again but estimation fails
         val error = IllegalStateException()
         given(transactionRepositoryMock.estimateFees(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()))
-                .willReturn(Single.error<GasEstimate>(error))
+            .willReturn(Single.error<GasEstimate>(error))
         signaturesSubject.onNext(singleSignature)
         testObserver.assertValuesOnly(
-                // Previous values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                DataResult(Info(TEST_SAFE, info, noSignatures, TEST_TRANSACTION_FEES)),
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES)),
-                // New values
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                ErrorResult(error))
+            // Previous values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            DataResult(Info(TEST_SAFE, info, noSignatures, TEST_TRANSACTION_FEES)),
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES)),
+            // New values
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            ErrorResult(error)
+        )
 
         then(transactionRepositoryMock).should(times(2))
-                .estimateFees(TEST_SAFE, TEST_TRANSACTION, singleSignature, info.isOwner)
+            .estimateFees(TEST_SAFE, TEST_TRANSACTION, singleSignature, info.isOwner)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Signature store fails => no signatures
         given(transactionRepositoryMock.estimateFees(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()))
-                .willReturn(Single.just(TEST_TRANSACTION_FEES))
+            .willReturn(Single.just(TEST_TRANSACTION_FEES))
         signaturesSubject.onError(Exception())
         testObserver.assertResult(
-                // Previous values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                DataResult(Info(TEST_SAFE, info, noSignatures, TEST_TRANSACTION_FEES)),
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES)),
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                ErrorResult(error),
-                // New values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                DataResult(Info(TEST_SAFE, info, noSignatures, TEST_TRANSACTION_FEES)))
+            // Previous values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            DataResult(Info(TEST_SAFE, info, noSignatures, TEST_TRANSACTION_FEES)),
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            DataResult(Info(TEST_SAFE, info, singleSignature, TEST_TRANSACTION_FEES)),
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            ErrorResult(error),
+            // New values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            DataResult(Info(TEST_SAFE, info, noSignatures, TEST_TRANSACTION_FEES))
+        )
 
         then(transactionRepositoryMock).should(times(2))
-                .estimateFees(TEST_SAFE, TEST_TRANSACTION, noSignatures, info.isOwner)
+            .estimateFees(TEST_SAFE, TEST_TRANSACTION, noSignatures, info.isOwner)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun loadExecuteInfoSingleOwnerSignatures() {
-        val info = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
-                TEST_NOT_OWNER, 2, TEST_OWNERS)
+        val info = TransactionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_NOT_OWNER, 2, TEST_OWNERS
+        )
         given(transactionRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.just(info))
+            .willReturn(Single.just(info))
 
         given(transactionRepositoryMock.estimateFees(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()))
-                .willReturn(Single.just(TEST_TRANSACTION_FEES))
+            .willReturn(Single.just(TEST_TRANSACTION_FEES))
 
         val signaturesSubject = PublishSubject.create<Map<BigInteger, Signature>>()
         given(signatureStoreMock.flatMapInfo(TEST_SAFE, info)).willReturn(signaturesSubject)
@@ -260,7 +281,8 @@ class ViewTransactionViewModelTest {
         val noSignatures = emptyMap<BigInteger, Signature>()
         signaturesSubject.onNext(noSignatures)
         testObserver.assertValuesOnly(
-                DataResult(Info(TEST_SAFE, info, noSignatures)))
+            DataResult(Info(TEST_SAFE, info, noSignatures))
+        )
 
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
 
@@ -268,22 +290,24 @@ class ViewTransactionViewModelTest {
         val singleSignature = mapOf(TEST_OWNERS.first() to TEST_SIGNATURE)
         signaturesSubject.onNext(singleSignature)
         testObserver.assertValuesOnly(
-                // Previous values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                // New values
-                DataResult(Info(TEST_SAFE, info, singleSignature)))
+            // Previous values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            // New values
+            DataResult(Info(TEST_SAFE, info, singleSignature))
+        )
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
 
         // We emit 2 signature
         val twoSignatures = mapOf(TEST_OWNERS.first() to TEST_SIGNATURE, TEST_OWNERS.last() to TEST_SIGNATURE)
         signaturesSubject.onNext(twoSignatures)
         testObserver.assertValuesOnly(
-                // Previous values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                // New values
-                DataResult(Info(TEST_SAFE, info, twoSignatures)),
-                DataResult(Info(TEST_SAFE, info, twoSignatures, TEST_TRANSACTION_FEES)))
+            // Previous values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            // New values
+            DataResult(Info(TEST_SAFE, info, twoSignatures)),
+            DataResult(Info(TEST_SAFE, info, twoSignatures, TEST_TRANSACTION_FEES))
+        )
 
         then(transactionRepositoryMock).should().estimateFees(TEST_SAFE, TEST_TRANSACTION, twoSignatures, info.isOwner)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
@@ -291,34 +315,36 @@ class ViewTransactionViewModelTest {
         // We emit 2 signature again but estimation fails
         val error = IllegalStateException()
         given(transactionRepositoryMock.estimateFees(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()))
-                .willReturn(Single.error<GasEstimate>(error))
+            .willReturn(Single.error<GasEstimate>(error))
         signaturesSubject.onNext(twoSignatures)
         testObserver.assertValuesOnly(
-                // Previous values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                DataResult(Info(TEST_SAFE, info, twoSignatures)),
-                DataResult(Info(TEST_SAFE, info, twoSignatures, TEST_TRANSACTION_FEES)),
-                // New values
-                DataResult(Info(TEST_SAFE, info, twoSignatures)),
-                ErrorResult(error))
+            // Previous values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            DataResult(Info(TEST_SAFE, info, twoSignatures)),
+            DataResult(Info(TEST_SAFE, info, twoSignatures, TEST_TRANSACTION_FEES)),
+            // New values
+            DataResult(Info(TEST_SAFE, info, twoSignatures)),
+            ErrorResult(error)
+        )
 
         then(transactionRepositoryMock).should(times(2))
-                .estimateFees(TEST_SAFE, TEST_TRANSACTION, twoSignatures, info.isOwner)
+            .estimateFees(TEST_SAFE, TEST_TRANSACTION, twoSignatures, info.isOwner)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Signature store fails => no signatures
         signaturesSubject.onError(Exception())
         testObserver.assertResult(
-                // Previous values
-                DataResult(Info(TEST_SAFE, info, noSignatures)),
-                DataResult(Info(TEST_SAFE, info, singleSignature)),
-                DataResult(Info(TEST_SAFE, info, twoSignatures)),
-                DataResult(Info(TEST_SAFE, info, twoSignatures, TEST_TRANSACTION_FEES)),
-                DataResult(Info(TEST_SAFE, info, twoSignatures)),
-                ErrorResult(error),
-                // New values
-                DataResult(Info(TEST_SAFE, info, noSignatures)))
+            // Previous values
+            DataResult(Info(TEST_SAFE, info, noSignatures)),
+            DataResult(Info(TEST_SAFE, info, singleSignature)),
+            DataResult(Info(TEST_SAFE, info, twoSignatures)),
+            DataResult(Info(TEST_SAFE, info, twoSignatures, TEST_TRANSACTION_FEES)),
+            DataResult(Info(TEST_SAFE, info, twoSignatures)),
+            ErrorResult(error),
+            // New values
+            DataResult(Info(TEST_SAFE, info, noSignatures))
+        )
 
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
@@ -333,18 +359,20 @@ class ViewTransactionViewModelTest {
         viewModel.loadExecuteInfo(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
 
         testObserver.assertNoErrors()
-                .assertValue(ErrorResult(error))
-                .assertComplete()
+            .assertValue(ErrorResult(error))
+            .assertComplete()
 
         then(transactionRepositoryMock).should().loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
     }
 
-    private fun testSubmitTransactionWithGas(info: TransactionRepository.ExecuteInformation, submitError: Throwable?,
-                                             expectingSubmit: Boolean, gasOverride: Wei?,
-                                             signatures: Map<BigInteger, Signature>?,
-                                             expectedResult: Result<BigInteger>) {
+    private fun testSubmitTransactionWithGas(
+        info: TransactionRepository.ExecuteInformation, submitError: Throwable?,
+        expectingSubmit: Boolean, gasOverride: Wei?,
+        signatures: Map<BigInteger, Signature>?,
+        expectedResult: Result<BigInteger>
+    ) {
 
         given(transactionRepositoryMock.loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(info))
 
@@ -353,7 +381,9 @@ class ViewTransactionViewModelTest {
 
         if (expectingSubmit) {
             val submitReturn = submitError?.let { Completable.error(it) } ?: Completable.complete()
-            given(transactionRepositoryMock.submit(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(), MockUtils.any())).willReturn(submitReturn)
+            given(transactionRepositoryMock.submit(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(), MockUtils.any())).willReturn(
+                submitReturn
+            )
         }
 
         val testObserverDefaultGas = TestObserver<Result<BigInteger>>()
@@ -369,9 +399,11 @@ class ViewTransactionViewModelTest {
         BDDMockito.reset(transactionRepositoryMock)
     }
 
-    private fun testSubmitTransaction(info: TransactionRepository.ExecuteInformation, submitError: Throwable?,
-                                      expectingSubmit: Boolean, signatures: Map<BigInteger, Signature>?,
-                                      expectedResult: Result<BigInteger>) {
+    private fun testSubmitTransaction(
+        info: TransactionRepository.ExecuteInformation, submitError: Throwable?,
+        expectingSubmit: Boolean, signatures: Map<BigInteger, Signature>?,
+        expectedResult: Result<BigInteger>
+    ) {
         testSubmitTransactionWithGas(info, submitError, expectingSubmit, null, signatures, expectedResult)
         testSubmitTransactionWithGas(info, submitError, expectingSubmit, TEST_GAS_OVERRIDE, signatures, expectedResult)
     }
@@ -380,32 +412,48 @@ class ViewTransactionViewModelTest {
     fun submitTransaction() {
 
         // Test execute
-        val execute = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
-                TEST_OWNER, 1, TEST_OWNERS)
+        val execute = TransactionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_OWNER, 1, TEST_OWNERS
+        )
         testSubmitTransaction(execute, null, true, emptyMap(), DataResult(TEST_SAFE))
 
         // Test not owner and no signatures
-        val notOwner = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
-                TEST_NOT_OWNER, 1, TEST_OWNERS)
-        testSubmitTransaction(notOwner, null,
-                false, emptyMap(), ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
+        val notOwner = TransactionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_NOT_OWNER, 1, TEST_OWNERS
+        )
+        testSubmitTransaction(
+            notOwner, null,
+            false, emptyMap(), ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString()))
+        )
 
         // Test not owner but has signatures
         val twoSignatures = mapOf(TEST_OWNERS.first() to TEST_SIGNATURE, TEST_OWNERS.last() to TEST_SIGNATURE)
-        val notOwnerSignatures = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
-                TEST_NOT_OWNER, 2, TEST_OWNERS)
-        testSubmitTransaction(notOwnerSignatures, null,
-                true, twoSignatures, DataResult(TEST_SAFE))
+        val notOwnerSignatures = TransactionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_NOT_OWNER, 2, TEST_OWNERS
+        )
+        testSubmitTransaction(
+            notOwnerSignatures, null,
+            true, twoSignatures, DataResult(TEST_SAFE)
+        )
 
         // Test owner but missing signatures
-        val ownerMultipleConfirms = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
-                TEST_OWNER, 2, TEST_OWNERS)
-        testSubmitTransaction(ownerMultipleConfirms, null,
-                false, emptyMap(), ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString())))
+        val ownerMultipleConfirms = TransactionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_OWNER, 2, TEST_OWNERS
+        )
+        testSubmitTransaction(
+            ownerMultipleConfirms, null,
+            false, emptyMap(), ErrorResult(SimpleLocalizedException(R.string.error_not_enough_confirmations.toString()))
+        )
 
         // Test owner but missing signatures
-        testSubmitTransaction(execute, null,
-                false, null, ErrorResult(TestException()))
+        testSubmitTransaction(
+            execute, null,
+            false, null, ErrorResult(TestException())
+        )
 
         // Test error submitting transaction
         val error = IllegalStateException()
@@ -421,8 +469,8 @@ class ViewTransactionViewModelTest {
         viewModel.submitTransaction(TEST_SAFE, TEST_TRANSACTION, null).subscribe(testObserver)
 
         testObserver.assertNoErrors()
-                .assertValue(ErrorResult(error))
-                .assertComplete()
+            .assertValue(ErrorResult(error))
+            .assertComplete()
 
         then(transactionRepositoryMock).should().loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
@@ -432,7 +480,7 @@ class ViewTransactionViewModelTest {
     @Test
     fun checkTransactionType() {
         given(transactionDetailsRepositoryMock.loadTransactionType(MockUtils.any()))
-                .willReturn(Single.just(TransactionType.GENERIC))
+            .willReturn(Single.just(TransactionType.GENERIC))
 
         val testObserver = TestObserver<TransactionType>()
         val transaction = Transaction(BigInteger.ZERO)
@@ -446,7 +494,7 @@ class ViewTransactionViewModelTest {
     fun checkTransactionTypeError() {
         val error = IllegalStateException()
         given(transactionDetailsRepositoryMock.loadTransactionType(MockUtils.any()))
-                .willReturn(Single.error(error))
+            .willReturn(Single.error(error))
 
         val testObserver = TestObserver<TransactionType>()
         val transaction = Transaction(BigInteger.ZERO)
@@ -462,7 +510,7 @@ class ViewTransactionViewModelTest {
         given(signaturePushRepositoryMock.observe(TEST_SAFE)).willReturn(signatureSubject)
         val sigInfo = TEST_OWNER to TEST_SIGNATURE
         given(transactionRepositoryMock.checkSignature(MockUtils.any(), MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.just(sigInfo))
+            .willReturn(Single.just(sigInfo))
 
         val testObserver = TestObserver<Result<Unit>>()
         viewModel.observeSignaturePushes(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
@@ -485,11 +533,13 @@ class ViewTransactionViewModelTest {
 
         // Failure adding to storage
         given(signatureStoreMock.add(MockUtils.any()))
-                .will { throw SimpleLocalizedException(R.string.error_owner_already_added.toString()) }
+            .will { throw SimpleLocalizedException(R.string.error_owner_already_added.toString()) }
         signatureSubject.onNext(TEST_SIGNATURE)
 
-        testObserver.assertValuesOnly(DataResult(Unit),
-                ErrorResult(SimpleLocalizedException(R.string.error_owner_already_added.toString()))) // New value
+        testObserver.assertValuesOnly(
+            DataResult(Unit),
+            ErrorResult(SimpleLocalizedException(R.string.error_owner_already_added.toString()))
+        ) // New value
 
         then(signatureStoreMock).should(times(2)).add(sigInfo)
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
@@ -499,13 +549,14 @@ class ViewTransactionViewModelTest {
 
         // Failure verifying signature
         given(transactionRepositoryMock.checkSignature(MockUtils.any(), MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.error(IllegalArgumentException()))
+            .willReturn(Single.error(IllegalArgumentException()))
         signatureSubject.onNext(TEST_SIGNATURE)
 
         testObserver.assertValuesOnly(
-                DataResult(Unit),
-                ErrorResult(SimpleLocalizedException(R.string.error_owner_already_added.toString())),
-                ErrorResult(SimpleLocalizedException(R.string.invalid_signature.toString()))) // New value
+            DataResult(Unit),
+            ErrorResult(SimpleLocalizedException(R.string.error_owner_already_added.toString())),
+            ErrorResult(SimpleLocalizedException(R.string.invalid_signature.toString()))
+        ) // New value
 
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
 
@@ -515,10 +566,12 @@ class ViewTransactionViewModelTest {
         // Failure from upstream
         signatureSubject.onError(IllegalStateException())
 
-        testObserver.assertFailure(IllegalStateException::class.java,
-                DataResult(Unit),
-                ErrorResult(SimpleLocalizedException(R.string.error_owner_already_added.toString())),
-                ErrorResult(SimpleLocalizedException(R.string.invalid_signature.toString())))
+        testObserver.assertFailure(
+            IllegalStateException::class.java,
+            DataResult(Unit),
+            ErrorResult(SimpleLocalizedException(R.string.error_owner_already_added.toString())),
+            ErrorResult(SimpleLocalizedException(R.string.invalid_signature.toString()))
+        )
 
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
         then(signaturePushRepositoryMock).shouldHaveNoMoreInteractions()
@@ -530,7 +583,7 @@ class ViewTransactionViewModelTest {
         val sigInfo = TEST_OWNER to TEST_SIGNATURE
         given(signatureStoreMock.loadSingingInfo()).willReturn(Single.just(TEST_SAFE to TEST_TRANSACTION))
         given(transactionRepositoryMock.checkSignature(MockUtils.any(), MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.just(sigInfo))
+            .willReturn(Single.just(sigInfo))
 
         val testObserver = TestObserver<Unit>()
         viewModel.addSignature(GnoSafeUrlParser.signResponse(TEST_SIGNATURE)).subscribe(testObserver)
@@ -562,7 +615,7 @@ class ViewTransactionViewModelTest {
     fun addSignatureInvalidSignature() {
         given(signatureStoreMock.loadSingingInfo()).willReturn(Single.just(TEST_SAFE to TEST_TRANSACTION))
         given(transactionRepositoryMock.checkSignature(MockUtils.any(), MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.error(Exception()))
+            .willReturn(Single.error(Exception()))
 
         val testObserver = TestObserver<Unit>()
         viewModel.addSignature(GnoSafeUrlParser.signResponse(TEST_SIGNATURE)).subscribe(testObserver)
@@ -593,11 +646,11 @@ class ViewTransactionViewModelTest {
     @Test
     fun addSignatureStoreFailure() {
         given(signatureStoreMock.add(MockUtils.any()))
-                .will { throw SimpleLocalizedException(R.string.error_owner_already_added.toString()) }
+            .will { throw SimpleLocalizedException(R.string.error_owner_already_added.toString()) }
         val sigInfo = TEST_OWNER to TEST_SIGNATURE
         given(signatureStoreMock.loadSingingInfo()).willReturn(Single.just(TEST_SAFE to TEST_TRANSACTION))
         given(transactionRepositoryMock.checkSignature(MockUtils.any(), MockUtils.any(), MockUtils.any()))
-                .willReturn(Single.just(sigInfo))
+            .willReturn(Single.just(sigInfo))
 
         val testObserver = TestObserver<Unit>()
         viewModel.addSignature(GnoSafeUrlParser.signResponse(TEST_SIGNATURE)).subscribe(testObserver)
@@ -719,8 +772,10 @@ class ViewTransactionViewModelTest {
 
     @Test
     fun sendSignature() {
-        val executeInformation = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
-                TEST_OWNER, 2, TEST_OWNERS)
+        val executeInformation = TransactionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_OWNER, 2, TEST_OWNERS
+        )
         val info = Info(TEST_SAFE, executeInformation, emptyMap())
         given(signaturePushRepositoryMock.request(MockUtils.any(), anyString())).willReturn(Completable.complete())
 
@@ -728,14 +783,23 @@ class ViewTransactionViewModelTest {
         viewModel.sendSignaturePush(info).subscribe(testObserver)
         testObserver.assertResult(DataResult(Unit))
 
-        val data = GnoSafeUrlParser.signRequest(TEST_TRANSACTION_HASH, info.selectedSafe, TEST_TRANSACTION.address, TEST_TRANSACTION.value, TEST_TRANSACTION.data, TEST_TRANSACTION.nonce!!)
+        val data = GnoSafeUrlParser.signRequest(
+            TEST_TRANSACTION_HASH,
+            info.selectedSafe,
+            TEST_TRANSACTION.address,
+            TEST_TRANSACTION.value,
+            TEST_TRANSACTION.data,
+            TEST_TRANSACTION.nonce!!
+        )
         then(signaturePushRepositoryMock).should().request(TEST_SAFE, data)
     }
 
     @Test
     fun sendSignatureError() {
-        val executeInformation = TransactionRepository.ExecuteInformation(TEST_TRANSACTION_HASH, TEST_TRANSACTION,
-                TEST_OWNER, 2, TEST_OWNERS)
+        val executeInformation = TransactionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_OWNER, 2, TEST_OWNERS
+        )
         val info = Info(TEST_SAFE, executeInformation, emptyMap())
         val error = IllegalStateException()
         given(signaturePushRepositoryMock.request(MockUtils.any(), anyString())).willReturn(Completable.error(error))
@@ -744,7 +808,14 @@ class ViewTransactionViewModelTest {
         viewModel.sendSignaturePush(info).subscribe(testObserver)
         testObserver.assertResult(ErrorResult(error))
 
-        val data = GnoSafeUrlParser.signRequest(TEST_TRANSACTION_HASH, info.selectedSafe, TEST_TRANSACTION.address, TEST_TRANSACTION.value, TEST_TRANSACTION.data, TEST_TRANSACTION.nonce!!)
+        val data = GnoSafeUrlParser.signRequest(
+            TEST_TRANSACTION_HASH,
+            info.selectedSafe,
+            TEST_TRANSACTION.address,
+            TEST_TRANSACTION.value,
+            TEST_TRANSACTION.data,
+            TEST_TRANSACTION.nonce!!
+        )
         then(signaturePushRepositoryMock).should().request(TEST_SAFE, data)
     }
 

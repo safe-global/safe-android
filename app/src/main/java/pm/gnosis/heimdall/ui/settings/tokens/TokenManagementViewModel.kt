@@ -8,9 +8,9 @@ import pm.gnosis.heimdall.utils.scanToAdapterData
 import javax.inject.Inject
 
 class TokenManagementViewModel @Inject constructor(
-        private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository
 ) : TokenManagementContract() {
     override fun observeVerifiedTokens(): Flowable<Adapter.Data<ERC20Token>> =
-            tokenRepository.observeTokens()
-                    .scanToAdapterData({ it.address })
+        tokenRepository.observeTokens()
+            .scanToAdapterData({ it.address })
 }

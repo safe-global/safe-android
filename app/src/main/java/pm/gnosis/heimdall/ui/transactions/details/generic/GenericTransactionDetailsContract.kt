@@ -13,11 +13,11 @@ abstract class GenericTransactionDetailsContract : ViewModel() {
 
     data class InputEvent(val to: Pair<String, Boolean>, val value: Pair<String, Boolean>, val data: Pair<String, Boolean>) {
         fun diff(other: InputEvent): InputEvent =
-                InputEvent(check(this.to, other.to), check(this.value, other.value), check(this.data, other.data))
+            InputEvent(check(this.to, other.to), check(this.value, other.value), check(this.data, other.data))
 
         companion object {
             private fun check(current: Pair<String, Boolean>, change: Pair<String, Boolean>): Pair<String, Boolean> =
-                    change.first to (current.first != change.first)
+                change.first to (current.first != change.first)
         }
     }
 }

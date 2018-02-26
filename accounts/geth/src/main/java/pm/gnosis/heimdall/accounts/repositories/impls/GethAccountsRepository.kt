@@ -28,10 +28,10 @@ import javax.inject.Singleton
 
 @Singleton
 class GethAccountsRepository @Inject constructor(
-        private val encryptionManager: EncryptionManager,
-        private val gethAccountManager: GethAccountManager,
-        private val gethKeyStore: KeyStore,
-        private val preferencesManager: PreferencesManager
+    private val encryptionManager: EncryptionManager,
+    private val gethAccountManager: GethAccountManager,
+    private val gethKeyStore: KeyStore,
+    private val preferencesManager: PreferencesManager
 ) : AccountsRepository {
     private val encryptedStringConverter = EncryptedString.Converter()
 
@@ -50,15 +50,17 @@ class GethAccountsRepository @Inject constructor(
             }
 
             val tx = Geth.newTransaction(
-                    transaction.nonce!!.toLong(),
-                    Address(transaction.address.asEthereumAddressString()),
-                    BigInt(transaction.value?.toLong() ?: 0),
-                    BigInt(transaction.gas!!.toLong()),
-                    BigInt(transaction.gasPrice!!.toLong()),
-                    transaction.data?.hexStringToByteArray() ?: ByteArray(0))
+                transaction.nonce!!.toLong(),
+                Address(transaction.address.asEthereumAddressString()),
+                BigInt(transaction.value?.toLong() ?: 0),
+                BigInt(transaction.gas!!.toLong()),
+                BigInt(transaction.gasPrice!!.toLong()),
+                transaction.data?.hexStringToByteArray() ?: ByteArray(0)
+            )
 
             val signed = gethKeyStore.signTxPassphrase(
-                    account, gethAccountManager.getAccountPassphrase(), tx, BigInt(transaction.chainId.toLong()))
+                account, gethAccountManager.getAccountPassphrase(), tx, BigInt(transaction.chainId.toLong())
+            )
 
             signed.encodeRLP().toHexString()
         }
@@ -83,8 +85,9 @@ class GethAccountsRepository @Inject constructor(
         val hdNode = KeyGenerator.masterNode(ByteString.of(*mnemonicSeed))
         val key = hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(accountIndex).keyPair
         gethKeyStore.importECDSAKey(
-                key.privKeyBytes ?: throw IllegalStateException("Private key must not be null"),
-                gethAccountManager.getAccountPassphrase())
+            key.privKeyBytes ?: throw IllegalStateException("Private key must not be null"),
+            gethAccountManager.getAccountPassphrase()
+        )
     }
 
     override fun saveMnemonic(mnemonic: String): Completable = Completable.fromCallable {

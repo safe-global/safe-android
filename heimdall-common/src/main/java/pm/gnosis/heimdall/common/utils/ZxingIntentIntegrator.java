@@ -109,17 +109,11 @@ import java.util.Map;
  */
 public class ZxingIntentIntegrator {
     public static final int REQUEST_CODE = 0x0000c0de; // Only use bottom 16 bits
-    private static final String TAG = ZxingIntentIntegrator.class.getSimpleName();
-
     public static final String DEFAULT_TITLE = "Install Barcode Scanner?";
     public static final String DEFAULT_MESSAGE =
             "This application requires Barcode Scanner. Would you like to install it?";
     public static final String DEFAULT_YES = "Yes";
     public static final String DEFAULT_NO = "No";
-
-    private static final String BS_PACKAGE = "com.google.zxing.client.android";
-    private static final String BSPLUS_PACKAGE = "com.srowen.bs.android";
-
     // supported barcode formats
     public static final Collection<String> PRODUCT_CODE_TYPES = list("UPC_A", "UPC_E", "EAN_8", "EAN_13", "RSS_14");
     public static final Collection<String> ONE_D_CODE_TYPES =
@@ -127,32 +121,30 @@ public class ZxingIntentIntegrator {
                     "ITF", "RSS_14", "RSS_EXPANDED");
     public static final Collection<String> QR_CODE_TYPES = Collections.singleton("QR_CODE");
     public static final Collection<String> DATA_MATRIX_TYPES = Collections.singleton("DATA_MATRIX");
-
     public static final Collection<String> ALL_CODE_TYPES = null;
-
+    public static final String SCAN_RESULT_EXTRA = "SCAN_RESULT";
+    public static final String SCAN_RESULT_FORMAT_EXTRA = "SCAN_RESULT_FORMAT";
+    public static final String SCAN_RESULT_BYTES_EXTRA = "SCAN_RESULT_BYTES";
+    public static final String SCAN_RESULT_ORIENTATION_EXTRA = "SCAN_RESULT_ORIENTATION";
+    public static final String SCAN_RESULT_ERROR_CORRECTION_LEVEL = "SCAN_RESULT_ERROR_CORRECTION_LEVEL";
+    private static final String TAG = ZxingIntentIntegrator.class.getSimpleName();
+    private static final String BS_PACKAGE = "com.google.zxing.client.android";
     public static final List<String> TARGET_BARCODE_SCANNER_ONLY = Collections.singletonList(BS_PACKAGE);
+    private static final String BSPLUS_PACKAGE = "com.srowen.bs.android";
     public static final List<String> TARGET_ALL_KNOWN = list(
             BSPLUS_PACKAGE,             // Barcode Scanner+
             BSPLUS_PACKAGE + ".simple", // Barcode Scanner+ Simple
             BS_PACKAGE                  // Barcode Scanner
             // What else supports this intent?
     );
-
     private final Activity activity;
     private final Fragment fragment;
-
+    private final Map<String, Object> moreExtras = new HashMap<>(3);
     private String title;
     private String message;
     private String buttonYes;
     private String buttonNo;
     private List<String> targetApplications;
-    private final Map<String, Object> moreExtras = new HashMap<>(3);
-
-    public static final String SCAN_RESULT_EXTRA = "SCAN_RESULT";
-    public static final String SCAN_RESULT_FORMAT_EXTRA = "SCAN_RESULT_FORMAT";
-    public static final String SCAN_RESULT_BYTES_EXTRA = "SCAN_RESULT_BYTES";
-    public static final String SCAN_RESULT_ORIENTATION_EXTRA = "SCAN_RESULT_ORIENTATION";
-    public static final String SCAN_RESULT_ERROR_CORRECTION_LEVEL = "SCAN_RESULT_ERROR_CORRECTION_LEVEL";
 
     /**
      * @param activity {@link Activity} invoking the integration
@@ -172,6 +164,20 @@ public class ZxingIntentIntegrator {
         this.activity = fragment.getActivity();
         this.fragment = fragment;
         initializeConfiguration();
+    }
+
+    private static boolean contains(Iterable<ResolveInfo> availableApps, String targetApp) {
+        for (ResolveInfo availableApp : availableApps) {
+            String packageName = availableApp.activityInfo.packageName;
+            if (targetApp.equals(packageName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static List<String> list(String... values) {
+        return Collections.unmodifiableList(Arrays.asList(values));
     }
 
     private void initializeConfiguration() {
@@ -361,16 +367,6 @@ public class ZxingIntentIntegrator {
         return null;
     }
 
-    private static boolean contains(Iterable<ResolveInfo> availableApps, String targetApp) {
-        for (ResolveInfo availableApp : availableApps) {
-            String packageName = availableApp.activityInfo.packageName;
-            if (targetApp.equals(packageName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private AlertDialog showDownloadDialog() {
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(activity);
         downloadDialog.setTitle(title);
@@ -446,10 +442,6 @@ public class ZxingIntentIntegrator {
             fragment.startActivity(intent);
         }
         return null;
-    }
-
-    private static List<String> list(String... values) {
-        return Collections.unmodifiableList(Arrays.asList(values));
     }
 
     private void attachMoreExtras(Intent intent) {

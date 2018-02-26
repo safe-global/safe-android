@@ -52,7 +52,12 @@ class KethereumAccountsRepositoryTest {
     fun setup() {
         accountsDao = mock(AccountDao::class.java)
         given(accountsDatabase.accountsDao()).willReturn(accountsDao)
-        given(encryptionManager.encrypt(MockUtils.any())).willAnswer { EncryptionManager.CryptoData(it.arguments.first() as ByteArray, "iv".toByteArray()) }
+        given(encryptionManager.encrypt(MockUtils.any())).willAnswer {
+            EncryptionManager.CryptoData(
+                it.arguments.first() as ByteArray,
+                "iv".toByteArray()
+            )
+        }
         given(encryptionManager.decrypt(MockUtils.any())).willAnswer { (it.arguments.first() as EncryptionManager.CryptoData).data }
         repository = KethereumAccountsRepository(accountsDatabase, encryptionManager, preferencesManager)
     }
@@ -82,7 +87,8 @@ class KethereumAccountsRepositoryTest {
 
         repository.signTransaction(transaction).subscribe(testObserver)
 
-        val expectedTx = "0xf86c098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a76400008025a028ef61340bd939bc2195fe537567866003e1a15d3c71ff63e1590620aa636276a067cbe9d8997f761aecb703304b3800ccf555c9f3dc64214b297fb1966a3b6d83"
+        val expectedTx =
+            "0xf86c098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a76400008025a028ef61340bd939bc2195fe537567866003e1a15d3c71ff63e1590620aa636276a067cbe9d8997f761aecb703304b3800ccf555c9f3dc64214b297fb1966a3b6d83"
         testObserver.assertResult(expectedTx)
     }
 
@@ -120,7 +126,8 @@ class KethereumAccountsRepositoryTest {
 
         repository.signTransaction(transaction).subscribe(testObserver)
 
-        val expectedTx = "0xf8ea0d8504a817c800831f0c589419fd8863ea1185d8ef7ab3f2a8f4d469dc35dd5280b884e411526d000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001000000000000000000000000a5056c8efadb5d6a1a6eb0176615692b6e6483131ba067f34dee111e9ab4a034eccb458403b1ee5b80ac801f161d8151f75faa5fbb71a05c88f85eaa2bd540c6d7778787016c27ac92e706dbb19e07c61433d61bf6925f"
+        val expectedTx =
+            "0xf8ea0d8504a817c800831f0c589419fd8863ea1185d8ef7ab3f2a8f4d469dc35dd5280b884e411526d000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001000000000000000000000000a5056c8efadb5d6a1a6eb0176615692b6e6483131ba067f34dee111e9ab4a034eccb458403b1ee5b80ac801f161d8151f75faa5fbb71a05c88f85eaa2bd540c6d7778787016c27ac92e706dbb19e07c61433d61bf6925f"
         testObserver.assertResult(expectedTx)
     }
 
@@ -136,8 +143,9 @@ class KethereumAccountsRepositoryTest {
         repository.sign(data).subscribe(testObserver)
 
         val expectedSignature = Signature(
-                "6c65af8fabdf55b026300ccb4cf1c19f27592a81c78aba86abe83409563d9c13".hexAsBigInteger(),
-                "256a9a9e87604e89f083983f7449f58a456ac7929265f7114d585538fe226e1f".hexAsBigInteger(), 27)
+            "6c65af8fabdf55b026300ccb4cf1c19f27592a81c78aba86abe83409563d9c13".hexAsBigInteger(),
+            "256a9a9e87604e89f083983f7449f58a456ac7929265f7114d585538fe226e1f".hexAsBigInteger(), 27
+        )
         testObserver.assertResult(expectedSignature)
 
         val recoverObserver = TestObserver<BigInteger>()

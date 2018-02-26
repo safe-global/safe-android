@@ -15,17 +15,17 @@ import javax.inject.Inject
 
 
 class CreateTokenTransactionProgressViewModel @Inject constructor(
-        @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) : CreateTokenTransactionProgressContract() {
     override fun loadCreateTokenTransaction(tokenAddress: BigInteger?): Single<Transaction> =
-            Single.fromCallable {
-                if (tokenAddress?.isValidEthereumAddress() != true) {
-                    throw SimpleLocalizedException(context.getString(R.string.error_invalid_token_address))
-                }
-                // 0x0 indicates a ether transfer
-                val data = if (tokenAddress == BigInteger.ZERO) null else
-                    StandardToken.Transfer.encode(Solidity.Address(BigInteger.ZERO), Solidity.UInt256(BigInteger.ZERO))
-                Transaction(tokenAddress, data = data)
-            }.subscribeOn(Schedulers.computation())
+        Single.fromCallable {
+            if (tokenAddress?.isValidEthereumAddress() != true) {
+                throw SimpleLocalizedException(context.getString(R.string.error_invalid_token_address))
+            }
+            // 0x0 indicates a ether transfer
+            val data = if (tokenAddress == BigInteger.ZERO) null else
+                StandardToken.Transfer.encode(Solidity.Address(BigInteger.ZERO), Solidity.UInt256(BigInteger.ZERO))
+            Transaction(tokenAddress, data = data)
+        }.subscribeOn(Schedulers.computation())
 
 }

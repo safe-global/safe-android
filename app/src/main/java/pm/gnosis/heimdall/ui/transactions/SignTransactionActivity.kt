@@ -32,20 +32,20 @@ class SignTransactionActivity : ViewTransactionActivity() {
     private var sendViaPush: Boolean = false
 
     private val signTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, *> =
-            ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
-                // We combine the data with the submit button events
-                up.switchMap { infoWithGasPrice ->
-                    layout_sign_transaction_sign_button.clicks().map { infoWithGasPrice }
-                }
-                        .doOnNext { (safe, transaction) ->
-                            if (safe != null && transaction is DataResult) {
-                                cachedTransactionData = CachedTransactionData(safe, transaction.data)
-                                startActivityForResult(UnlockActivity.createConfirmIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
-                            } else {
-                                cachedTransactionData = null
-                            }
-                        }
+        ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
+            // We combine the data with the submit button events
+            up.switchMap { infoWithGasPrice ->
+                layout_sign_transaction_sign_button.clicks().map { infoWithGasPrice }
             }
+                .doOnNext { (safe, transaction) ->
+                    if (safe != null && transaction is DataResult) {
+                        cachedTransactionData = CachedTransactionData(safe, transaction.data)
+                        startActivityForResult(UnlockActivity.createConfirmIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
+                    } else {
+                        cachedTransactionData = null
+                    }
+                }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,15 +66,15 @@ class SignTransactionActivity : ViewTransactionActivity() {
         cachedTransactionData?.let {
             if (credentialsConfirmed) {
                 disposables += signTransaction(it.safeAddress, it.transaction)
-                        .subscribeForResult({ (signature, qrCode) ->
-                            if (qrCode == null) finish()
-                            eventTracker.submit(Event.SignedTransaction())
-                            layout_sign_transaction_qr_code.setImageBitmap(qrCode)
-                            layout_sign_transaction_qr_code.visibility = View.VISIBLE
-                            layout_sign_transaction_signature.text = signature
-                            layout_sign_transaction_signature.visibility = View.VISIBLE
-                            layout_sign_transaction_sign_button.visibility = View.GONE
-                        }, { showErrorSnackbar(it) })
+                    .subscribeForResult({ (signature, qrCode) ->
+                        if (qrCode == null) finish()
+                        eventTracker.submit(Event.SignedTransaction())
+                        layout_sign_transaction_qr_code.setImageBitmap(qrCode)
+                        layout_sign_transaction_qr_code.visibility = View.VISIBLE
+                        layout_sign_transaction_signature.text = signature
+                        layout_sign_transaction_signature.visibility = View.VISIBLE
+                        layout_sign_transaction_sign_button.visibility = View.GONE
+                    }, { showErrorSnackbar(it) })
             } else {
                 snackbar(layout_sign_transaction_sign_button, R.string.please_confirm_credentials)
             }
@@ -88,19 +88,19 @@ class SignTransactionActivity : ViewTransactionActivity() {
     }
 
     override fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any> =
-            ObservableTransformer {
-                it
-                        .doOnNext { layout_sign_transaction_sign_button.isEnabled = it.first != null && it.second is DataResult }
-                        .compose(signTransformer)
-            }
+        ObservableTransformer {
+            it
+                .doOnNext { layout_sign_transaction_sign_button.isEnabled = it.first != null && it.second is DataResult }
+                .compose(signTransformer)
+        }
 
     private fun signTransaction(safe: BigInteger, transaction: Transaction) =
-            viewModel.signTransaction(safe, transaction, sendViaPush)
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe { signingTransaction(true) }
-                    .doAfterTerminate { signingTransaction(false) }
-                    .toObservable()
+        viewModel.signTransaction(safe, transaction, sendViaPush)
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { signingTransaction(true) }
+            .doAfterTerminate { signingTransaction(false) }
+            .toObservable()
 
     private fun signingTransaction(loading: Boolean) {
         layout_sign_transaction_progress_bar.visible(loading)
@@ -110,10 +110,10 @@ class SignTransactionActivity : ViewTransactionActivity() {
 
     override fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     private data class CachedTransactionData(val safeAddress: BigInteger, val transaction: Transaction)
@@ -123,9 +123,9 @@ class SignTransactionActivity : ViewTransactionActivity() {
         private const val EXTRA_SEND_VIA_PUSH = "extra.boolean.send_via_push"
 
         fun createIntent(context: Context, safeAddress: BigInteger?, transaction: Transaction, sendViaPush: Boolean = false) =
-                Intent(context, SignTransactionActivity::class.java).apply {
-                    putExtras(createBundle(safeAddress, transaction))
-                    putExtra(EXTRA_SEND_VIA_PUSH, sendViaPush)
-                }
+            Intent(context, SignTransactionActivity::class.java).apply {
+                putExtras(createBundle(safeAddress, transaction))
+                putExtra(EXTRA_SEND_VIA_PUSH, sendViaPush)
+            }
     }
 }

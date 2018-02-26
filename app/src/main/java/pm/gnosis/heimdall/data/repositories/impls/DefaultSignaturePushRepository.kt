@@ -26,12 +26,12 @@ import javax.inject.Singleton
 
 @Singleton
 class DefaultSignaturePushRepository @Inject constructor(
-        private val accountsRepository: AccountsRepository,
-        private val messageQueueRepository: MessageQueueRepository,
-        private val preferencesManager: PreferencesManager,
-        private val pushServiceApi: PushServiceApi,
-        private val safeRepository: GnosisSafeRepository,
-        private val transactionRepository: GnosisSafeTransactionRepository
+    private val accountsRepository: AccountsRepository,
+    private val messageQueueRepository: MessageQueueRepository,
+    private val preferencesManager: PreferencesManager,
+    private val pushServiceApi: PushServiceApi,
+    private val safeRepository: GnosisSafeRepository,
+    private val transactionRepository: GnosisSafeTransactionRepository
 ) : SignaturePushRepository {
 
     private var cachedSafes: List<Safe>? = null
@@ -42,7 +42,7 @@ class DefaultSignaturePushRepository @Inject constructor(
         }
         preferencesManager.prefs.edit { putStringSet(PREFS_OBSERVED_SAFES, emptySet()) }
         safeRepository.observeDeployedSafes()
-                .subscribe(::handleSafes)
+            .subscribe(::handleSafes)
     }
 
     private fun handleSafes(safes: List<Safe>) {
@@ -58,9 +58,9 @@ class DefaultSignaturePushRepository @Inject constructor(
     override fun request(safe: BigInteger, data: String): Completable {
         val safeAddress = cleanAddress(safe)
         return accountsRepository.sign(Sha3Utils.keccak(safeAddress.hexStringToByteArray()))
-                .flatMapCompletable {
-                    pushServiceApi.requestSignatures(it.toString(), safeAddress, RequestSignatureData(data))
-                }
+            .flatMapCompletable {
+                pushServiceApi.requestSignatures(it.toString(), safeAddress, RequestSignatureData(data))
+            }
     }
 
     override fun send(safe: BigInteger, transaction: Transaction, signature: Signature): Completable {
@@ -81,20 +81,20 @@ class DefaultSignaturePushRepository @Inject constructor(
     }
 
     override fun observe(safe: BigInteger): Observable<Signature> =
-            observedSafes.getOrPut(safe, {
-                ReceiveSignatureObservable(messageQueueRepository, preferencesManager, {
-                    observedSafes.remove(safe)
-                }, cleanAddress(safe))
-            }).observe()
+        observedSafes.getOrPut(safe, {
+            ReceiveSignatureObservable(messageQueueRepository, preferencesManager, {
+                observedSafes.remove(safe)
+            }, cleanAddress(safe))
+        }).observe()
 
     private fun cleanAddress(address: BigInteger) =
-            address.asEthereumAddressString().toLowerCase().removeHexPrefix()
+        address.asEthereumAddressString().toLowerCase().removeHexPrefix()
 
     private class ReceiveSignatureObservable(
-            private val messageQueueRepository: MessageQueueRepository,
-            private val preferencesManager: PreferencesManager,
-            private val releaseCallback: (ReceiveSignatureObservable) -> Unit,
-            private val safeAddress: String
+        private val messageQueueRepository: MessageQueueRepository,
+        private val preferencesManager: PreferencesManager,
+        private val releaseCallback: (ReceiveSignatureObservable) -> Unit,
+        private val safeAddress: String
     ) : ObservableOnSubscribe<Signature> {
         private val emitters = CopyOnWriteArraySet<ObservableEmitter<Signature>>()
 

@@ -48,9 +48,9 @@
 
     <include
         android:id="@+id/layout_view_asset_transfer_to_container"
-        android:layout_marginTop="16dp"
+        layout="@layout/include_address_item_with_label_above_and_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/include_address_item_with_label_above_and_icon" />
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

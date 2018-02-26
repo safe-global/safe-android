@@ -12,12 +12,28 @@ class FloatingActionButtonScrollBehavior(context: Context, attrs: AttributeSet) 
     private var acumulator = 0
     private var threshold = 0
 
-    override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: FloatingActionMenu, directTargetChild: View, target: View, axes: Int, type: Int): Boolean {
+    override fun onStartNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: FloatingActionMenu,
+        directTargetChild: View,
+        target: View,
+        axes: Int,
+        type: Int
+    ): Boolean {
         threshold = (if (child.childCount > 0) child.getChildAt(0).height else child.height) / 2
         return true
     }
 
-    override fun onNestedScroll(coordinatorLayout: CoordinatorLayout, child: FloatingActionMenu, target: View, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int, type: Int) {
+    override fun onNestedScroll(
+        coordinatorLayout: CoordinatorLayout,
+        child: FloatingActionMenu,
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int,
+        type: Int
+    ) {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type)
 
         if (!sameSign(acumulator, dyConsumed)) { //scroll direction change

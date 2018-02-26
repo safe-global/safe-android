@@ -11,8 +11,10 @@ interface TransactionDetailsRepository {
     fun loadTransactionData(transaction: Transaction): Single<Optional<TransactionTypeData>>
 }
 
-data class TransactionDetails(val transactionId: String, val type: TransactionType, val data: TransactionTypeData?,
-                              val transaction: Transaction, val safe: BigInteger, val timestamp: Long, val subject: String? = null)
+data class TransactionDetails(
+    val transactionId: String, val type: TransactionType, val data: TransactionTypeData?,
+    val transaction: Transaction, val safe: BigInteger, val timestamp: Long, val subject: String? = null
+)
 
 sealed class TransactionTypeData
 data class TokenTransferData(val recipient: BigInteger, val tokens: BigInteger) : TransactionTypeData()

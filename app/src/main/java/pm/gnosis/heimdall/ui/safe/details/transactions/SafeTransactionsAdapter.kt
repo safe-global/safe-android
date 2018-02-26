@@ -27,8 +27,8 @@ import javax.inject.Inject
 
 @ForView
 class SafeTransactionsAdapter @Inject constructor(
-        @ViewContext private val context: Context,
-        private val viewModel: SafeTransactionsContract
+    @ViewContext private val context: Context,
+    private val viewModel: SafeTransactionsContract
 ) : LifecycleAdapter<String, SafeTransactionsAdapter.ViewHolder>(context) {
     val transactionSelectionSubject: PublishSubject<String> = PublishSubject.create()
 
@@ -57,14 +57,14 @@ class SafeTransactionsAdapter @Inject constructor(
             disposables.clear()
             val transactionId = currentData ?: return
             disposables += viewModel.loadTransactionDetails(transactionId)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ (details, transferInfo) -> updateDetails(details, transferInfo) }, {
-                        Timber.e(it)
-                        itemView.layout_safe_transactions_item_timestamp.text = itemView.context.getString(R.string.transaction_details_error)
-                    })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ (details, transferInfo) -> updateDetails(details, transferInfo) }, {
+                    Timber.e(it)
+                    itemView.layout_safe_transactions_item_timestamp.text = itemView.context.getString(R.string.transaction_details_error)
+                })
             disposables += viewModel.observeTransactionStatus(transactionId)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(::updateStatus, Timber::e)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(::updateStatus, Timber::e)
         }
 
         private fun updateStatus(status: TransactionRepository.PublishStatus) {
@@ -98,15 +98,16 @@ class SafeTransactionsAdapter @Inject constructor(
             }
             itemView.layout_safe_transactions_item_to.text = details.transaction.address.asEthereumAddressString()
             if (transferInfo != null) {
-                itemView.layout_safe_transactions_item_value.text = context.getString(R.string.outgoing_transaction_value, transferInfo.amount, transferInfo.symbol)
+                itemView.layout_safe_transactions_item_value.text =
+                        context.getString(R.string.outgoing_transaction_value, transferInfo.amount, transferInfo.symbol)
                 itemView.layout_safe_transactions_item_value.visibility = View.VISIBLE
             } else {
                 itemView.layout_safe_transactions_item_value.visibility = View.GONE
             }
             updateTimestamp()
             disposables += Observable.interval(60, TimeUnit.SECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ updateTimestamp() }, Timber::e)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ updateTimestamp() }, Timber::e)
         }
 
         private fun updateTimestamp() {

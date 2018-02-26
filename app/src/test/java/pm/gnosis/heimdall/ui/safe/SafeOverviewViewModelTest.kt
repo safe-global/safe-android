@@ -62,8 +62,10 @@ class SafeOverviewViewModelTest {
     @Before
     fun setup() {
         given(contextMock.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())).willReturn(testPreferences)
-        viewModel = SafeOverviewViewModel(accountsRepositoryMock, ethereumJsonRepositoryMock,
-                PreferencesManager(contextMock), repositoryMock)
+        viewModel = SafeOverviewViewModel(
+            accountsRepositoryMock, ethereumJsonRepositoryMock,
+            PreferencesManager(contextMock), repositoryMock
+        )
     }
 
     @Test
@@ -78,43 +80,43 @@ class SafeOverviewViewModelTest {
         then(repositoryMock).shouldHaveNoMoreInteractions()
         // Check that the initial value is emitted
         subscriber.assertNoErrors()
-                .assertValueCount(1)
-                .assertValue { it is DataResult && it.data.parentId == null && it.data.diff == null && it.data.entries.isEmpty() }
+            .assertValueCount(1)
+            .assertValue { it is DataResult && it.data.parentId == null && it.data.diff == null && it.data.entries.isEmpty() }
         val initialDataId = (subscriber.values().first() as DataResult).data.id
 
         val results = listOf(Safe(BigInteger.ZERO), Safe(BigInteger.ONE))
         processor.offer(results)
         // Check that the results are emitted
         subscriber.assertNoErrors()
-                .assertValueCount(2)
-                .assertValueAt(1, { it is DataResult && it.data.parentId == initialDataId && it.data.diff != null && it.data.entries == results })
+            .assertValueCount(2)
+            .assertValueAt(1, { it is DataResult && it.data.parentId == initialDataId && it.data.diff != null && it.data.entries == results })
 
         val firstData = (subscriber.values()[1] as DataResult).data
         val firstDataId = firstData.id
         val callback = TestListUpdateCallback()
         callback.apply(firstData.diff!!)
-                .assertNoChanges().assertNoRemoves().assertNoMoves()
-                .assertInsertsCount(2).assertInserts(0, 2)
-                .reset()
+            .assertNoChanges().assertNoRemoves().assertNoMoves()
+            .assertInsertsCount(2).assertInserts(0, 2)
+            .reset()
 
         val moreResults = listOf(Safe(BigInteger.ONE), Safe(BigInteger.ZERO), Safe(BigInteger.valueOf(3)))
         processor.offer(moreResults)
         // Check that the diff are calculated correctly
         subscriber.assertNoErrors()
-                .assertValueCount(3)
-                .assertValueAt(2, { it is DataResult && it.data.parentId == firstDataId && it.data.diff != null && it.data.entries == moreResults })
+            .assertValueCount(3)
+            .assertValueAt(2, { it is DataResult && it.data.parentId == firstDataId && it.data.diff != null && it.data.entries == moreResults })
 
         val secondData = (subscriber.values()[2] as DataResult).data
         callback.apply(secondData.diff!!)
-                .assertNoRemoves()
-                // A remove might become a move (if it has an insert). So as "1" is "removed" it
-                // stays at the end of the list. Once all the removes and inserts are done the moves
-                // are calculated. Therefore it is a move from 2 to 0
-                .assertMovesCount(1).assertMove(TestListUpdateCallback.Move(2, 0))
-                .assertChangesCount(0)
-                // Inserts are calculated from the back
-                .assertInsertsCount(1).assertInsert(1)
-                .reset()
+            .assertNoRemoves()
+            // A remove might become a move (if it has an insert). So as "1" is "removed" it
+            // stays at the end of the list. Once all the removes and inserts are done the moves
+            // are calculated. Therefore it is a move from 2 to 0
+            .assertMovesCount(1).assertMove(TestListUpdateCallback.Move(2, 0))
+            .assertChangesCount(0)
+            // Inserts are calculated from the back
+            .assertInsertsCount(1).assertInsert(1)
+            .reset()
     }
 
     @Test
@@ -129,9 +131,9 @@ class SafeOverviewViewModelTest {
         then(repositoryMock).shouldHaveNoMoreInteractions()
         // Check that the results are emitted
         subscriber.assertNoErrors()
-                .assertValueCount(2)
-                .assertValueAt(0, { it is DataResult && it.data.parentId == null && it.data.diff == null && it.data.entries.isEmpty() })
-                .assertValueAt(1, { it is ErrorResult && it.error == error })
+            .assertValueCount(2)
+            .assertValueAt(0, { it is DataResult && it.data.parentId == null && it.data.diff == null && it.data.entries.isEmpty() })
+            .assertValueAt(1, { it is ErrorResult && it.error == error })
     }
 
     @Test
@@ -159,7 +161,7 @@ class SafeOverviewViewModelTest {
         then(repositoryMock).should().remove(BigInteger.ZERO)
         then(repositoryMock).shouldHaveNoMoreInteractions()
         observer.assertTerminated().assertNoValues()
-                .assertError(error)
+            .assertError(error)
     }
 
     @Test
@@ -238,8 +240,8 @@ class SafeOverviewViewModelTest {
 
         assertFalse(testPreferences.getBoolean(DISMISS_LOW_BALANCE, true))
         testObserver
-                .assertValueAt(0, DataResult(false))
-                .assertNotComplete()
+            .assertValueAt(0, DataResult(false))
+            .assertNotComplete()
 
         // Second emission
         given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
@@ -249,8 +251,8 @@ class SafeOverviewViewModelTest {
         it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
         assertFalse(testPreferences.getBoolean(DISMISS_LOW_BALANCE, true))
         testObserver
-                .assertValueAt(1, DataResult(false))
-                .assertNotComplete()
+            .assertValueAt(1, DataResult(false))
+            .assertNotComplete()
 
 
         // Third emission
@@ -262,8 +264,8 @@ class SafeOverviewViewModelTest {
         it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
         assertFalse(testPreferences.getBoolean(DISMISS_LOW_BALANCE, true))
         testObserver
-                .assertValueAt(2, ErrorResult(exception))
-                .assertNotComplete()
+            .assertValueAt(2, ErrorResult(exception))
+            .assertNotComplete()
 
         then(accountsRepositoryMock).should(times(3)).loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -284,8 +286,8 @@ class SafeOverviewViewModelTest {
         viewModel.shouldShowLowBalanceView().subscribe(testObserver)
 
         testObserver
-                .assertValueAt(0, DataResult(true))
-                .assertNotComplete()
+            .assertValueAt(0, DataResult(true))
+            .assertNotComplete()
 
         // Second emission (balance)
         given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
@@ -294,8 +296,8 @@ class SafeOverviewViewModelTest {
 
         it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
         testObserver
-                .assertValueAt(1, DataResult(true))
-                .assertNotComplete()
+            .assertValueAt(1, DataResult(true))
+            .assertNotComplete()
 
         // Third emission (error)
         val exception = Exception()
@@ -305,8 +307,8 @@ class SafeOverviewViewModelTest {
         it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
 
         testObserver
-                .assertValueAt(2, ErrorResult(exception))
-                .assertNotComplete()
+            .assertValueAt(2, ErrorResult(exception))
+            .assertNotComplete()
 
         then(accountsRepositoryMock).should(times(3)).loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -329,8 +331,8 @@ class SafeOverviewViewModelTest {
 
         // First emission (balance)
         testObserver
-                .assertValueAt(0, DataResult(false))
-                .assertNotComplete()
+            .assertValueAt(0, DataResult(false))
+            .assertNotComplete()
 
         // Second emission (error)
         // even if we have an error it should not show
@@ -340,8 +342,8 @@ class SafeOverviewViewModelTest {
 
         it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
         testObserver
-                .assertValueAt(1, DataResult(false))
-                .assertNotComplete()
+            .assertValueAt(1, DataResult(false))
+            .assertNotComplete()
 
         then(accountsRepositoryMock).should(times(2)).loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -364,15 +366,15 @@ class SafeOverviewViewModelTest {
         // First emission (low balance)
         given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
         testObserver
-                .assertValueAt(0, DataResult(false))
-                .assertNotComplete()
+            .assertValueAt(0, DataResult(false))
+            .assertNotComplete()
 
         // Second emission (higher balance)
         given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
         it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
         testObserver
-                .assertValueAt(1, DataResult(false))
-                .assertNotComplete()
+            .assertValueAt(1, DataResult(false))
+            .assertNotComplete()
         assertFalse(testPreferences.getBoolean(DISMISS_LOW_BALANCE, true))
 
         then(accountsRepositoryMock).should().loadActiveAccount()

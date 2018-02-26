@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ViewModelFactory @Inject constructor(
-        private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
+    private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

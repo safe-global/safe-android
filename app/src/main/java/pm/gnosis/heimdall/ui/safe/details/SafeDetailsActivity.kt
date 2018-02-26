@@ -89,11 +89,11 @@ class SafeDetailsActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += viewModel.observeSafe()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = {
-                    safeName = it.name
-                    updateTitle()
-                }, onError = Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = {
+                safeName = it.name
+                updateTitle()
+            }, onError = Timber::e)
     }
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
@@ -124,10 +124,10 @@ class SafeDetailsActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {

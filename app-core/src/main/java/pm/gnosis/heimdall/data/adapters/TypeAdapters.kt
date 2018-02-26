@@ -9,7 +9,7 @@ import java.math.BigInteger
 class WeiAdapter {
     @ToJson
     fun toJson(wei: Wei): String =
-            StringBuilder("0x").append(wei.value.toString(16)).toString()
+        StringBuilder("0x").append(wei.value.toString(16)).toString()
 
     @FromJson
     fun fromJson(wei: String): Wei {

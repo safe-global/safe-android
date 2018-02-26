@@ -8,15 +8,15 @@ import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import javax.inject.Inject
 
 class ReceiptTransactionViewModel @Inject constructor(
-        private val safeTransactionsRepository: TransactionRepository,
-        private val transactionDetailsRepository: TransactionDetailsRepository
+    private val safeTransactionsRepository: TransactionRepository,
+    private val transactionDetailsRepository: TransactionDetailsRepository
 ) : ReceiptTransactionContract() {
     override fun loadTransactionDetails(id: String): Single<TransactionDetails> =
-            transactionDetailsRepository.loadTransactionDetails(id)
+        transactionDetailsRepository.loadTransactionDetails(id)
 
     override fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus> =
-            safeTransactionsRepository.observePublishStatus(id)
+        safeTransactionsRepository.observePublishStatus(id)
 
     override fun loadChainHash(id: String): Single<String> =
-            safeTransactionsRepository.loadChainHash(id)
+        safeTransactionsRepository.loadChainHash(id)
 }
