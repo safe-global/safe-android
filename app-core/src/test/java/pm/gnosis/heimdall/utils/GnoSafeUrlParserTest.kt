@@ -38,10 +38,22 @@ class GnoSafeUrlParserTest {
 
     @Test
     fun parseUnknown() {
-        assertNull("No gnosafe scheme", GnoSafeUrlParser.parse("url_without_gnosafe_scheme://sign_res/000000000000000000000000000000000000000000000000000000000006f68100000000000000000000000000000000000000000000000000000000000f12061b"))
-        assertNull("Invalid sign response", GnoSafeUrlParser.parse("gnosafe://sign_res/000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f12061b"))
-        assertNull("Invalid sign request", GnoSafeUrlParser.parse("gnosafe://sign_req/000000000000000000000000000000000000000000000000000000000000f12061b"))
-        assertNull("Unknown type", GnoSafeUrlParser.parse("gnosafe://unknown_type/000000000000000000000000000000000000000000000000000000000000f12061b"))
+        assertNull(
+            "No gnosafe scheme",
+            GnoSafeUrlParser.parse("url_without_gnosafe_scheme://sign_res/000000000000000000000000000000000000000000000000000000000006f68100000000000000000000000000000000000000000000000000000000000f12061b")
+        )
+        assertNull(
+            "Invalid sign response",
+            GnoSafeUrlParser.parse("gnosafe://sign_res/000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f12061b")
+        )
+        assertNull(
+            "Invalid sign request",
+            GnoSafeUrlParser.parse("gnosafe://sign_req/000000000000000000000000000000000000000000000000000000000000f12061b")
+        )
+        assertNull(
+            "Unknown type",
+            GnoSafeUrlParser.parse("gnosafe://unknown_type/000000000000000000000000000000000000000000000000000000000000f12061b")
+        )
     }
 
     companion object {

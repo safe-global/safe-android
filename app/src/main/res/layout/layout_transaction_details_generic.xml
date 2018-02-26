@@ -81,9 +81,9 @@
             android:id="@+id/layout_transaction_details_generic_address_book_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toStartOf="@id/layout_transaction_details_generic_divider_qr_code"
             android:layout_centerVertical="true"
             android:layout_gravity="end"
+            android:layout_toStartOf="@id/layout_transaction_details_generic_divider_qr_code"
             android:background="@drawable/selectable_background"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -165,11 +165,11 @@
         <EditText
             android:id="@+id/layout_transaction_details_generic_data_input"
             style="@style/InlineInput"
-            android:maxLines="10000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:hint="@string/data_hint"
+            android:maxLines="10000"
             tools:text="skghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfbskghfdsbkhfb" />
     </LinearLayout>
 </LinearLayout>

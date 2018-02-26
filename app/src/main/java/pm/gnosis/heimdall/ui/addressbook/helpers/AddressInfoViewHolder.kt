@@ -19,7 +19,8 @@ import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Provider
 
-open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, viewProvider: Provider<View>) : View.OnAttachStateChangeListener, LifecycleObserver {
+open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, viewProvider: Provider<View>) : View.OnAttachStateChangeListener,
+    LifecycleObserver {
 
     private val addressBookRepository: AddressBookRepository
     private val disposables = CompositeDisposable()
@@ -59,8 +60,8 @@ open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, vie
     open fun start() {
         val address = currentAddress ?: return
         disposables += addressBookRepository.observeAddressBookEntry(address)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = ::onAddressInfo, onError = Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = ::onAddressInfo, onError = Timber::e)
     }
 
     protected open fun onAddressInfo(entry: AddressBookEntry) {

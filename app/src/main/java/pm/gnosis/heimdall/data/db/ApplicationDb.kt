@@ -9,14 +9,16 @@ import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
 import pm.gnosis.heimdall.data.db.models.*
 
-@Database(entities = [
-    AddressBookEntryDb::class,
-    ERC20TokenDb::class,
-    GnosisSafeDb::class,
-    PendingGnosisSafeDb::class,
-    TransactionDescriptionDb::class,
-    TransactionPublishStatusDb::class
-], version = 1)
+@Database(
+    entities = [
+        AddressBookEntryDb::class,
+        ERC20TokenDb::class,
+        GnosisSafeDb::class,
+        PendingGnosisSafeDb::class,
+        TransactionDescriptionDb::class,
+        TransactionPublishStatusDb::class
+    ], version = 1
+)
 @TypeConverters(BigIntegerConverter::class)
 abstract class ApplicationDb : RoomDatabase() {
     companion object {

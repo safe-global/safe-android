@@ -49,28 +49,28 @@ class AddTokenActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += layout_add_token_address.textChanges()
-                .map { it.toString() }
-                .subscribeBy(onNext = {
-                    layout_add_token_load_info_button.isEnabled = true
-                    layout_add_token_add_token_button.isEnabled = false
-                    layout_add_token_address_input_layout.error = null
-                }, onError = Timber::e)
+            .map { it.toString() }
+            .subscribeBy(onNext = {
+                layout_add_token_load_info_button.isEnabled = true
+                layout_add_token_add_token_button.isEnabled = false
+                layout_add_token_address_input_layout.error = null
+            }, onError = Timber::e)
 
         disposables += layout_add_token_load_info_button.clicks()
-                .flatMap {
-                    viewModel.loadTokenInfo(layout_add_token_address.text.toString())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnSubscribe { onTokenInfoLoading(true) }
-                            .doOnTerminate { onTokenInfoLoading(false) }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onTokenInfo, onError = ::onTokenInfoError)
+            .flatMap {
+                viewModel.loadTokenInfo(layout_add_token_address.text.toString())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { onTokenInfoLoading(true) }
+                    .doOnTerminate { onTokenInfoLoading(false) }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onTokenInfo, onError = ::onTokenInfoError)
 
 
         disposables += layout_add_token_add_token_button.clicks()
-                .flatMapSingle { viewModel.addToken() }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = { onTokenAdded() }, onError = ::onTokenAddError)
+            .flatMapSingle { viewModel.addToken() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = { onTokenAdded() }, onError = ::onTokenAddError)
 
         intent?.getStringExtra(ADDRESS_EXTRA)?.let { address ->
             if (address.isValidEthereumAddress()) {
@@ -128,10 +128,10 @@ class AddTokenActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {

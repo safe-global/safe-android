@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -53,7 +52,6 @@
 
     <include
         android:id="@+id/layout_view_asset_transfer_to_container"
-        layout="@layout/include_address_item_with_label_start_and_icon"
-        />
+        layout="@layout/include_address_item_with_label_start_and_icon" />
 
 </LinearLayout>

@@ -4,11 +4,16 @@ import android.content.Context
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 
-data class TransactionInputException(private val internalMessage: String, val errorFields: Int, val showSnackbar: Boolean): Exception(internalMessage), LocalizedException {
+data class TransactionInputException(private val internalMessage: String, val errorFields: Int, val showSnackbar: Boolean) :
+    Exception(internalMessage), LocalizedException {
 
     override fun localizedMessage(): String = internalMessage
 
-    constructor(context: Context, errorFields: Int, showSnackbar: Boolean) : this(context.getString(R.string.error_transaction_params), errorFields, showSnackbar)
+    constructor(context: Context, errorFields: Int, showSnackbar: Boolean) : this(
+        context.getString(R.string.error_transaction_params),
+        errorFields,
+        showSnackbar
+    )
 
     companion object {
         // Transaction fields

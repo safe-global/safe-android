@@ -57,21 +57,21 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
                 ?: return false
         val safe = intent.getStringExtra(EXTRA_SAFE)
         lifetimeDisposables += viewModel.checkTransactionType(transaction)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    displayTransactionDetails(createDetailsFragment(safe, it, transaction))
-                }, this::handleError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                displayTransactionDetails(createDetailsFragment(safe, it, transaction))
+            }, this::handleError)
         return true
     }
 
     private fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
-            when (type) {
-                TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
-                    ReviewAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
-                TransactionType.REPLACE_SAFE_OWNER, TransactionType.ADD_SAFE_OWNER, TransactionType.REMOVE_SAFE_OWNER ->
-                    ReviewChangeSafeSettingsDetailsFragment.createInstance(transaction, safeAddress)
-                else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, false)
-            }
+        when (type) {
+            TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
+                ReviewAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
+            TransactionType.REPLACE_SAFE_OWNER, TransactionType.ADD_SAFE_OWNER, TransactionType.REMOVE_SAFE_OWNER ->
+                ReviewChangeSafeSettingsDetailsFragment.createInstance(transaction, safeAddress)
+            else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, false)
+        }
 
     private fun handleError(throwable: Throwable? = null) {
         throwable?.let { Timber.e(throwable) }
@@ -90,9 +90,9 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
         private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"
 
         fun createBundle(safeAddress: BigInteger?, transaction: Transaction) =
-                Bundle().apply {
-                    putString(EXTRA_SAFE, safeAddress?.asEthereumAddressString())
-                    putParcelable(EXTRA_TRANSACTION, transaction.parcelable())
-                }
+            Bundle().apply {
+                putString(EXTRA_SAFE, safeAddress?.asEthereumAddressString())
+                putParcelable(EXTRA_TRANSACTION, transaction.parcelable())
+            }
     }
 }

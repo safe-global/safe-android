@@ -45,7 +45,13 @@ import javax.inject.Provider
 
 class SubmitTransactionActivity : ViewTransactionActivity() {
 
-    private val viewProvider by lazy { InflatingViewProvider(layoutInflater, layout_submit_transaction_confirmations_addresses, R.layout.layout_transaction_confirmation_item) }
+    private val viewProvider by lazy {
+        InflatingViewProvider(
+            layoutInflater,
+            layout_submit_transaction_confirmations_addresses,
+            R.layout.layout_transaction_confirmation_item
+        )
+    }
 
     @Inject
     lateinit var gasPriceHelper: GasPriceHelper
@@ -55,104 +61,105 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
     private var pendingSignature: String? = null
 
     private val transactionInfoTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Result<ViewTransactionContract.Info>> =
-            ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
-                up
-                        .doOnNext { setUnknownTransactionInfo() }
-                        .checkedFlatMap { safeAddress, transaction ->
-                            viewModel.loadExecuteInfo(safeAddress, transaction)
-                        }
-            }
+        ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
+            up
+                .doOnNext { setUnknownTransactionInfo() }
+                .checkedFlatMap { safeAddress, transaction ->
+                    viewModel.loadExecuteInfo(safeAddress, transaction)
+                }
+        }
 
     private val displayTransactionInformation: ObservableTransformer<Result<ViewTransactionContract.Info>, Any> =
-            ObservableTransformer {
-                Observable.combineLatest(
-                        // Transaction Data
-                        it,
-                        // Price data
-                        gasPriceHelper.let {
-                            it.setup(include_gas_price_selection_root_container)
-                            it.observe()
-                        }.startWith(ErrorResult(Exception())),
-                        BiFunction { info: Result<ViewTransactionContract.Info>, prices: Result<Wei> -> info to prices }
-                )
-                        .observeOn(AndroidSchedulers.mainThread())
-                        // Update displayed information
-                        .doOnNext({ (info: Result<ViewTransactionContract.Info>, prices: Result<Wei>) -> handleInfoWithPrices(info, prices) })
-                        // Pass on data for submit
-                        .compose(submitTransformer)
-            }
+        ObservableTransformer {
+            Observable.combineLatest(
+                // Transaction Data
+                it,
+                // Price data
+                gasPriceHelper.let {
+                    it.setup(include_gas_price_selection_root_container)
+                    it.observe()
+                }.startWith(ErrorResult(Exception())),
+                BiFunction { info: Result<ViewTransactionContract.Info>, prices: Result<Wei> -> info to prices }
+            )
+                .observeOn(AndroidSchedulers.mainThread())
+                // Update displayed information
+                .doOnNext({ (info: Result<ViewTransactionContract.Info>, prices: Result<Wei>) -> handleInfoWithPrices(info, prices) })
+                // Pass on data for submit
+                .compose(submitTransformer)
+        }
 
     private val submitTransformer: ObservableTransformer<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>, *> =
-            ObservableTransformer { up: Observable<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>> ->
-                // We combine the data with the submit button events
-                up.switchMap { infoWithGasPrice ->
-                    layout_submit_transaction_submit_button.clicks().map { infoWithGasPrice }
-                }
-                        .doOnNext { (info, gasPrice) ->
-                            (info as? DataResult)?.let {
-                                cachedTransactionData = CachedTransactionData(it.data.selectedSafe, it.data.status.transaction, (gasPrice as? DataResult)?.data)
-                                startActivityForResult(UnlockActivity.createConfirmIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
-                            } ?: run {
-                                cachedTransactionData = null
-                            }
-                        }
+        ObservableTransformer { up: Observable<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>> ->
+            // We combine the data with the submit button events
+            up.switchMap { infoWithGasPrice ->
+                layout_submit_transaction_submit_button.clicks().map { infoWithGasPrice }
             }
+                .doOnNext { (info, gasPrice) ->
+                    (info as? DataResult)?.let {
+                        cachedTransactionData =
+                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction, (gasPrice as? DataResult)?.data)
+                        startActivityForResult(UnlockActivity.createConfirmIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
+                    } ?: run {
+                        cachedTransactionData = null
+                    }
+                }
+        }
 
     private val requestSignaturesQR: ObservableTransformer<Result<ViewTransactionContract.Info>, Any> =
-            ObservableTransformer {
-                it.observeOn(AndroidSchedulers.mainThread()).switchMap { info ->
-                    layout_submit_transaction_scan_signature_qr_button.clicks().map { info }
-                            .doOnNextForResult({
-                                RequestSignatureDialog
-                                        .create(it.status.transactionHash, it.status.transaction, it.selectedSafe)
-                                        .show(supportFragmentManager, null)
-                            })
-                }
+        ObservableTransformer {
+            it.observeOn(AndroidSchedulers.mainThread()).switchMap { info ->
+                layout_submit_transaction_scan_signature_qr_button.clicks().map { info }
+                    .doOnNextForResult({
+                        RequestSignatureDialog
+                            .create(it.status.transactionHash, it.status.transaction, it.selectedSafe)
+                            .show(supportFragmentManager, null)
+                    })
             }
+        }
 
     private val requestSignaturesPush: ObservableTransformer<Result<ViewTransactionContract.Info>, Result<Unit>> =
-            ObservableTransformer {
-                it.observeOn(AndroidSchedulers.mainThread()).switchMap { info ->
-                    layout_submit_transaction_send_signature_push_button.clicks().map { info }
-                }
-                        .flatMapResult(::requestSignatureViaPush)
-                        .doOnNextForResult(
-                                onNext = {
-                                    snackbar(layout_submit_transaction_send_signature_push_button, R.string.signature_request_sent)
-                                },
-                                onError = {
-                                    errorSnackbar(layout_submit_transaction_send_signature_push_button, it)
-                                }
-                        )
+        ObservableTransformer {
+            it.observeOn(AndroidSchedulers.mainThread()).switchMap { info ->
+                layout_submit_transaction_send_signature_push_button.clicks().map { info }
             }
+                .flatMapResult(::requestSignatureViaPush)
+                .doOnNextForResult(
+                    onNext = {
+                        snackbar(layout_submit_transaction_send_signature_push_button, R.string.signature_request_sent)
+                    },
+                    onError = {
+                        errorSnackbar(layout_submit_transaction_send_signature_push_button, it)
+                    }
+                )
+        }
 
     private val signaturePushes: ObservableTransformer<Result<ViewTransactionContract.Info>, Any> =
-            ObservableTransformer {
-                it.switchMap { info ->
-                    (info as? DataResult)?.let {
-                        viewModel.observeSignaturePushes(it.data.selectedSafe, it.data.status.transaction)
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .doOnNextForResult(onError = { errorSnackbar(layout_submit_transaction_send_signature_push_button, it) })
-                    } ?: Observable.empty()
-                }
+        ObservableTransformer {
+            it.switchMap { info ->
+                (info as? DataResult)?.let {
+                    viewModel.observeSignaturePushes(it.data.selectedSafe, it.data.status.transaction)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnNextForResult(onError = { errorSnackbar(layout_submit_transaction_send_signature_push_button, it) })
+                } ?: Observable.empty()
             }
+        }
 
     override fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any> =
-            ObservableTransformer {
-                // Load execution information (hash, transaction with correct nonce, owner info)
-                it.compose(transactionInfoTransformer).publish {
-                    // Split execution information stream into two sub-streams
-                    Observable.merge(
-                            // Combine execution information and price data to update the displayed information
-                            it.compose(displayTransactionInformation),
-                            // Use execution information to allow adding signatures
-                            it.compose(requestSignaturesQR),
-                            it.compose(requestSignaturesPush),
-                            // Use execution information and observe signatures
-                            it.compose(signaturePushes)
-                    )
-                }
+        ObservableTransformer {
+            // Load execution information (hash, transaction with correct nonce, owner info)
+            it.compose(transactionInfoTransformer).publish {
+                // Split execution information stream into two sub-streams
+                Observable.merge(
+                    // Combine execution information and price data to update the displayed information
+                    it.compose(displayTransactionInformation),
+                    // Use execution information to allow adding signatures
+                    it.compose(requestSignaturesQR),
+                    it.compose(requestSignaturesPush),
+                    // Use execution information and observe signatures
+                    it.compose(signaturePushes)
+                )
             }
+        }
 
     override fun screenId() = ScreenId.SUBMIT_TRANSACTION
 
@@ -176,10 +183,16 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         cachedTransactionData?.let {
             if (credentialsConfirmed) {
                 disposables += submitTransaction(it.safeAddress, it.transaction, it.overrideGasPrice)
-                        .subscribeForResult({
-                            eventTracker.submit(Event.SubmittedTransaction())
-                            startActivity(SafeDetailsActivity.createIntent(this, Safe(it), R.string.tab_title_transactions).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                        }, { showErrorSnackbar(it) })
+                    .subscribeForResult({
+                        eventTracker.submit(Event.SubmittedTransaction())
+                        startActivity(
+                            SafeDetailsActivity.createIntent(
+                                this,
+                                Safe(it),
+                                R.string.tab_title_transactions
+                            ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        )
+                    }, { showErrorSnackbar(it) })
             } else {
                 snackbar(layout_submit_transaction_submit_button, R.string.please_confirm_credentials)
             }
@@ -188,10 +201,10 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         credentialsConfirmed = false
         pendingSignature?.let {
             disposables += viewModel.addSignature(it)
-                    .subscribeBy({
-                        Timber.e(it)
-                        errorSnackbar(layout_submit_transaction_submit_button, it)
-                    })
+                .subscribeBy({
+                    Timber.e(it)
+                    errorSnackbar(layout_submit_transaction_submit_button, it)
+                })
         }
         pendingSignature = null
     }
@@ -201,23 +214,23 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
     }
 
     private fun requestSignatureViaPush(info: ViewTransactionContract.Info) =
-            viewModel.sendSignaturePush(info)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe {
-                        layout_submit_transaction_send_signature_push_button.isEnabled = false
-                        layout_submit_transaction_send_signature_push_progress.visible(true)
-                    }
-                    .doAfterTerminate {
-                        layout_submit_transaction_send_signature_push_button.isEnabled = true
-                        layout_submit_transaction_send_signature_push_progress.visible(false)
-                    }
+        viewModel.sendSignaturePush(info)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe {
+                layout_submit_transaction_send_signature_push_button.isEnabled = false
+                layout_submit_transaction_send_signature_push_progress.visible(true)
+            }
+            .doAfterTerminate {
+                layout_submit_transaction_send_signature_push_button.isEnabled = true
+                layout_submit_transaction_send_signature_push_progress.visible(false)
+            }
 
     private fun submitTransaction(safe: BigInteger, transaction: Transaction, gasOverride: Wei?) =
-            viewModel.submitTransaction(safe, transaction, gasOverride)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe { submittingTransaction(true) }
-                    .doAfterTerminate { submittingTransaction(false) }
-                    .toObservable()
+        viewModel.submitTransaction(safe, transaction, gasOverride)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { submittingTransaction(true) }
+            .doAfterTerminate { submittingTransaction(false) }
+            .toObservable()
 
     private fun handleInfoWithPrices(info: Result<ViewTransactionContract.Info>, prices: Result<Wei>) {
         info.handle({
@@ -241,11 +254,15 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             val leftConfirmations = Math.max(0, it.requiredConfirmation - availableConfirmations)
 
             if (leftConfirmations > 0) {
-                layout_submit_transaction_confirmations_hint_text.setFormattedText(R.string.confirm_transaction_hint, "required_confirmations" to leftConfirmations.toString())
+                layout_submit_transaction_confirmations_hint_text.setFormattedText(
+                    R.string.confirm_transaction_hint,
+                    "required_confirmations" to leftConfirmations.toString()
+                )
             } else {
                 layout_submit_transaction_confirmations_hint_text.setText(R.string.submit_transaction_hint)
             }
-            layout_submit_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, availableConfirmations.toString(), it.requiredConfirmation.toString())
+            layout_submit_transaction_confirmations.text =
+                    getString(R.string.x_of_x_confirmations, availableConfirmations.toString(), it.requiredConfirmation.toString())
             setViewStates(requiredConfirmationsAvailable)
         }
         var childIndex = 0
@@ -314,14 +331,14 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
 
     override fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     private class SignatureAddressInfoViewHolder(lifecycleOwner: LifecycleOwner, viewProvider: Provider<View>) :
-            AddressInfoViewHolder(lifecycleOwner, viewProvider) {
+        AddressInfoViewHolder(lifecycleOwner, viewProvider) {
 
         private var currentName: String? = null
 
@@ -355,8 +372,8 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         private const val REQUEST_CODE_CONFIRM_CREDENTIALS = 2342
 
         fun createIntent(context: Context, safeAddress: BigInteger?, transaction: Transaction) =
-                Intent(context, SubmitTransactionActivity::class.java).apply {
-                    putExtras(createBundle(safeAddress, transaction))
-                }
+            Intent(context, SubmitTransactionActivity::class.java).apply {
+                putExtras(createBundle(safeAddress, transaction))
+            }
     }
 }

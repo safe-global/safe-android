@@ -69,7 +69,15 @@ class ChangeSafeSettingsDetailsViewModelTest {
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
 
         // We don't have an add transaction, this should return empty form data and should not cache
-        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(RemoveSafeOwnerData(BigInteger.ONE, TEST_OWNER,1).toOptional()))
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(
+            Single.just(
+                RemoveSafeOwnerData(
+                    BigInteger.ONE,
+                    TEST_OWNER,
+                    1
+                ).toOptional()
+            )
+        )
 
         val removeOwnerObserver = TestObserver<Pair<String, Int>>()
         viewModel.loadFormData(TEST_TX).subscribe(removeOwnerObserver)
@@ -114,12 +122,13 @@ class ChangeSafeSettingsDetailsViewModelTest {
         val info = SafeInfo(TEST_SAFE.asEthereumAddressString(), Wei.ZERO, 1, listOf(TEST_OWNER), false)
         given(safeRepoMock.loadInfo(MockUtils.any())).willReturn(Observable.just(info))
         val data = GnosisSafe.AddOwner.encode(Solidity.Address(BigInteger.valueOf(2)), Solidity.UInt8(BigInteger.valueOf(1)))
-        testInputTransformer(TEST_SAFE,
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, false)),
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
-                ErrorResult(TransactionInputException(R.string.error_owner_already_added.toString(), TransactionInputException.TARGET_FIELD, true)),
-                DataResult(Transaction(TEST_SAFE, data = data))
+        testInputTransformer(
+            TEST_SAFE,
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, false)),
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
+            ErrorResult(TransactionInputException(R.string.error_owner_already_added.toString(), TransactionInputException.TARGET_FIELD, true)),
+            DataResult(Transaction(TEST_SAFE, data = data))
         )
 
         // We have no preset, so repo should not be called
@@ -136,12 +145,13 @@ class ChangeSafeSettingsDetailsViewModelTest {
         contextMock.mockGetString()
         contextMock.mockGetStringWithArgs()
 
-        testInputTransformer(null,
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, false)),
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
-                ErrorResult(SimpleLocalizedException(R.string.unknown_error.asString())),
-                ErrorResult(SimpleLocalizedException(R.string.unknown_error.asString()))
+        testInputTransformer(
+            null,
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, false)),
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
+            ErrorResult(SimpleLocalizedException(R.string.unknown_error.asString())),
+            ErrorResult(SimpleLocalizedException(R.string.unknown_error.asString()))
         )
 
         then(safeRepoMock).shouldHaveNoMoreInteractions()
@@ -153,12 +163,13 @@ class ChangeSafeSettingsDetailsViewModelTest {
         contextMock.mockGetStringWithArgs()
 
         given(safeRepoMock.loadInfo(MockUtils.any())).willReturn(Observable.error(UnknownHostException()))
-        testInputTransformer(TEST_SAFE,
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, false)),
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
-                ErrorResult(SimpleLocalizedException(R.string.unknown_error.asString())),
-                ErrorResult(SimpleLocalizedException(R.string.unknown_error.asString()))
+        testInputTransformer(
+            TEST_SAFE,
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, false)),
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
+            ErrorResult(SimpleLocalizedException(R.string.unknown_error.asString())),
+            ErrorResult(SimpleLocalizedException(R.string.unknown_error.asString()))
         )
 
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
@@ -183,12 +194,13 @@ class ChangeSafeSettingsDetailsViewModelTest {
         given(safeRepoMock.loadInfo(MockUtils.any())).willReturn(Observable.error(UnknownHostException()))
         val data1 = GnosisSafe.AddOwner.encode(Solidity.Address(TEST_OWNER), Solidity.UInt8(BigInteger.valueOf(1)))
         val data2 = GnosisSafe.AddOwner.encode(Solidity.Address(BigInteger.valueOf(2)), Solidity.UInt8(BigInteger.valueOf(1)))
-        testInputTransformer(TEST_SAFE,
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, false)),
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
-                ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
-                DataResult(Transaction(TEST_SAFE, data = data1)),
-                DataResult(Transaction(TEST_SAFE, data = data2))
+        testInputTransformer(
+            TEST_SAFE,
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, false)),
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
+            ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
+            DataResult(Transaction(TEST_SAFE, data = data1)),
+            DataResult(Transaction(TEST_SAFE, data = data2))
         )
 
         // We have no preset, so repo should not be called
@@ -213,19 +225,23 @@ class ChangeSafeSettingsDetailsViewModelTest {
 
         inputs.onNext("BlaBlaInvalidAddress")
         testObserver.assertValuesOnly(
-                outputs.first(), outputs.getOrNull(1))
+            outputs.first(), outputs.getOrNull(1)
+        )
 
         inputs.onNext("0x0")
         testObserver.assertValuesOnly(
-                outputs.first(), outputs.getOrNull(1), outputs.getOrNull(2))
+            outputs.first(), outputs.getOrNull(1), outputs.getOrNull(2)
+        )
 
         inputs.onNext(TEST_OWNER.asEthereumAddressString())
         testObserver.assertValuesOnly(
-                outputs.first(), outputs.getOrNull(1), outputs.getOrNull(2), outputs.getOrNull(3))
+            outputs.first(), outputs.getOrNull(1), outputs.getOrNull(2), outputs.getOrNull(3)
+        )
 
         inputs.onNext("0x2")
         testObserver.assertValuesOnly(
-                outputs.first(), outputs.getOrNull(1), outputs.getOrNull(2), outputs.getOrNull(3), outputs.getOrNull(4))
+            outputs.first(), outputs.getOrNull(1), outputs.getOrNull(2), outputs.getOrNull(3), outputs.getOrNull(4)
+        )
     }
 
     @Test
@@ -270,8 +286,10 @@ class ChangeSafeSettingsDetailsViewModelTest {
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
     }
 
-    private fun testLoadAction(safe: BigInteger?, details: Single<Optional<TransactionTypeData>>,
-                               result: ChangeSafeSettingsDetailsContract.Action) {
+    private fun testLoadAction(
+        safe: BigInteger?, details: Single<Optional<TransactionTypeData>>,
+        result: ChangeSafeSettingsDetailsContract.Action
+    ) {
         val testObserver = TestObserver<ChangeSafeSettingsDetailsContract.Action>()
         given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(details)
 
@@ -289,7 +307,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
     @Test
     fun loadRemoveOwnerAction() {
         contextMock.mockGetStringWithArgs()
-        val data = RemoveSafeOwnerData(BigInteger.ZERO, TEST_OWNER,1)
+        val data = RemoveSafeOwnerData(BigInteger.ZERO, TEST_OWNER, 1)
         val details = Single.just<Optional<TransactionTypeData>>(data.toOptional())
 
         // Get correct info without safe
@@ -313,7 +331,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
     }
 
     private fun Int.asString(vararg params: Any) =
-            contextMock.getString(this, params)
+        contextMock.getString(this, params)
 
     companion object {
         private val TEST_OWNER = BigInteger.valueOf(40320)

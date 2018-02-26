@@ -47,37 +47,37 @@ class NetworkSettingsActivity : BaseActivity() {
     private fun setupSafeFactoryInput(address: String) {
         layout_settings_safe_factory_input.setText(address)
         disposables += layout_settings_safe_factory_input.textChanges()
-                .skipInitialValue()
-                .debounce(TIMEOUT, TIMEOUT_UNIT)
-                .flatMapSingle {
-                    viewModel.updateProxyFactoryAddress(it.toString())
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(this::handleSuccess, this::handleError)
+            .skipInitialValue()
+            .debounce(TIMEOUT, TIMEOUT_UNIT)
+            .flatMapSingle {
+                viewModel.updateProxyFactoryAddress(it.toString())
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(this::handleSuccess, this::handleError)
     }
 
     private fun setupRpcInput(url: String) {
         layout_network_settings_rpc_input.setText(url)
         disposables += layout_network_settings_rpc_input.textChanges()
-                .skipInitialValue()
-                .debounce(TIMEOUT, TIMEOUT_UNIT)
-                .flatMapSingle {
-                    viewModel.updateRpcUrl(it.toString())
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(::handleSuccess, ::handleError)
+            .skipInitialValue()
+            .debounce(TIMEOUT, TIMEOUT_UNIT)
+            .flatMapSingle {
+                viewModel.updateRpcUrl(it.toString())
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(::handleSuccess, ::handleError)
     }
 
     private fun setupIpfsInput(url: String) {
         layout_network_settings_ipfs_input.setText(url)
         disposables += layout_network_settings_ipfs_input.textChanges()
-                .skipInitialValue()
-                .debounce(TIMEOUT, TIMEOUT_UNIT)
-                .flatMapSingle {
-                    viewModel.updateIpfsUrl(it.toString())
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(::handleSuccess, ::handleError)
+            .skipInitialValue()
+            .debounce(TIMEOUT, TIMEOUT_UNIT)
+            .flatMapSingle {
+                viewModel.updateIpfsUrl(it.toString())
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(::handleSuccess, ::handleError)
     }
 
     private fun handleSetupError(throwable: Throwable) {
@@ -95,10 +95,10 @@ class NetworkSettingsActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {

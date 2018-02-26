@@ -48,12 +48,13 @@ class PasswordSetupActivity : SecuredBaseActivity() {
     override fun onStart() {
         super.onStart()
         layout_password_setup_next.clicks()
-                .flatMap {
-                    viewModel.setPassword(
-                            layout_password_setup_password.text.toString(),
-                            layout_password_setup_confirmation.text.toString())
-                }
-                .subscribeForResult(onNext = { onPasswordSet() }, onError = ::onPasswordSetError)
+            .flatMap {
+                viewModel.setPassword(
+                    layout_password_setup_password.text.toString(),
+                    layout_password_setup_confirmation.text.toString()
+                )
+            }
+            .subscribeForResult(onNext = { onPasswordSet() }, onError = ::onPasswordSetError)
     }
 
     private fun onPasswordSet() {
@@ -67,10 +68,10 @@ class PasswordSetupActivity : SecuredBaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {

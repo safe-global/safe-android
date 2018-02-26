@@ -44,8 +44,10 @@ abstract class Adapter<T, VH : Adapter.ViewHolder<T>> : RecyclerView.Adapter<VH>
         currentDataId = data.id
     }
 
-    data class Data<out T>(val parentId: String? = null, val entries: List<T> = emptyList(),
-                           val diff: DiffUtil.DiffResult? = null) {
+    data class Data<out T>(
+        val parentId: String? = null, val entries: List<T> = emptyList(),
+        val diff: DiffUtil.DiffResult? = null
+    ) {
         val id: String = UUID.randomUUID().toString()
     }
 

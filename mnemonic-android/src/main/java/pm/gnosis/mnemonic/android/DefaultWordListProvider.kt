@@ -7,19 +7,20 @@ import pm.gnosis.mnemonic.wordlists.WordListProvider
 import javax.inject.Inject
 
 class DefaultWordListProvider @Inject constructor(
-        @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) : WordListProvider {
     companion object {
         val supportedWordList = mapOf(
-                R.id.english to R.raw.english,
-                R.id.chinese_simplified to R.raw.chinese_simplified,
-                R.id.chinese_traditional to R.raw.chinese_traditional)
+            R.id.english to R.raw.english,
+            R.id.chinese_simplified to R.raw.chinese_simplified,
+            R.id.chinese_traditional to R.raw.chinese_traditional
+        )
     }
 
     private val cache = mutableMapOf<Int, WordList?>()
 
     override fun all() = supportedWordList
-            .mapNotNull { (languageId, _) -> get(languageId) }.toCollection(mutableListOf())
+        .mapNotNull { (languageId, _) -> get(languageId) }.toCollection(mutableListOf())
 
     override fun get(id: Int) = cache.getOrElse(id, { readWordlistFromResource(id)?.also { cache[id] = it } })
 

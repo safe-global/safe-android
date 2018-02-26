@@ -49,7 +49,7 @@ fun BigInteger.toBytes(numBytes: Int): ByteArray {
 }
 
 fun String.hexStringToByteArrayOrNull() =
-        nullOnThrow { hexStringToByteArray() }
+    nullOnThrow { hexStringToByteArray() }
 
 fun String.hexStringToByteArray(): ByteArray {
     val s = this.removeHexPrefix()

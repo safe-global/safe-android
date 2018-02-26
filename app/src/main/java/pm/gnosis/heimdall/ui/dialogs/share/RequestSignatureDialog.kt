@@ -46,10 +46,10 @@ class RequestSignatureDialog : BaseShareQrCodeDialog() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.dialog_request_signature, container, false)
+        inflater.inflate(R.layout.dialog_request_signature, container, false)
 
     override fun data(): String =
-            GnoSafeUrlParser.signRequest(transactionHash, safe, transaction.address, transaction.value, transaction.data, transaction.nonce!!)
+        GnoSafeUrlParser.signRequest(transactionHash, safe, transaction.address, transaction.value, transaction.data, transaction.nonce!!)
 
     override fun shareTitle(): String = getString(R.string.transaction_hash)
 
@@ -59,23 +59,23 @@ class RequestSignatureDialog : BaseShareQrCodeDialog() {
 
     override fun inject() {
         DaggerViewComponent.builder()
-                .viewModule(ViewModule(context!!))
-                .applicationComponent(HeimdallApplication[context!!].component)
-                .build()
-                .inject(this)
+            .viewModule(ViewModule(context!!))
+            .applicationComponent(HeimdallApplication[context!!].component)
+            .build()
+            .inject(this)
     }
 
     override fun dataSourceObservable(): Observable<Pair<String?, String?>> =
-            Observable.just(getString(R.string.request_signature) to transactionHash)
+        Observable.just(getString(R.string.request_signature) to transactionHash)
 
     override fun onStart() {
         super.onStart()
         disposables += dialog_request_signature_scan.clicks()
-                .subscribe {
-                    // We use the parent activity, so that it handles the result
-                    activity?.scanQrCode()
-                    dismiss()
-                }
+            .subscribe {
+                // We use the parent activity, so that it handles the result
+                activity?.scanQrCode()
+                dismiss()
+            }
     }
 
     override fun onCopiedToClipboard() {

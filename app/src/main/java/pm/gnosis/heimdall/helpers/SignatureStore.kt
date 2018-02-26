@@ -13,7 +13,7 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class SimpleSignatureStore @Inject constructor(
-        @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) : ValueStore<Map<BigInteger, Signature>>(), SignatureStore {
 
     private val signatures = HashMap<BigInteger, Signature>()
@@ -45,14 +45,16 @@ class SimpleSignatureStore @Inject constructor(
     }
 
     override fun loadSingingInfo(): Single<Pair<BigInteger, Transaction>> =
-            info?.let { Single.just(safeAddress!! to info!!.transaction) } ?: Single.error(IllegalStateException())
+        info?.let { Single.just(safeAddress!! to info!!.transaction) } ?: Single.error(IllegalStateException())
 
     override fun add(signature: Pair<BigInteger, Signature>) {
         transaction {
             SimpleLocalizedException.assert(info?.owners?.contains(signature.first) == true, context, R.string.error_signature_not_owner)
             SimpleLocalizedException.assert(info?.sender != signature.first, context, R.string.error_signature_already_exists)
             SimpleLocalizedException.assert(!signatures.containsKey(signature.first), context, R.string.error_signature_already_exists)
-            SimpleLocalizedException.assert(info?.requiredConfirmation?.let { signatures.size < it } == true, context, R.string.error_signature_already_exists)
+            SimpleLocalizedException.assert(info?.requiredConfirmation?.let { signatures.size < it } == true,
+                context,
+                R.string.error_signature_already_exists)
             signatures.put(signature.first, signature.second)
         }
         // We only emit a copy of the signatures

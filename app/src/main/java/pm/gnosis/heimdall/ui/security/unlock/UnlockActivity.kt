@@ -78,41 +78,41 @@ class UnlockActivity : SecuredBaseActivity() {
     override fun onStart() {
         super.onStart()
         fingerPrintDisposable = encryptionManager.isFingerPrintSet()
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    layout_unlock_fingerprint.visible(it)
-                    layout_unlock_password_input.visible(!it)
-                }
-                .flatMapObservable {
-                    if (it) viewModel.observeFingerprint() else Observable.empty()
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onFingerprintResult, onError = ::onFingerprintError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess {
+                layout_unlock_fingerprint.visible(it)
+                layout_unlock_password_input.visible(!it)
+            }
+            .flatMapObservable {
+                if (it) viewModel.observeFingerprint() else Observable.empty()
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onFingerprintResult, onError = ::onFingerprintError)
 
         disposables += viewModel.checkState(forceConfirmCredentials)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onState, onError = ::onStateCheckError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onState, onError = ::onStateCheckError)
 
         disposables += nextClickSubject
-                .flatMap { viewModel.unlock(layout_unlock_password_input.text.toString()) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onState, onError = ::onUnlockError)
+            .flatMap { viewModel.unlock(layout_unlock_password_input.text.toString()) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onState, onError = ::onUnlockError)
 
         disposables += layout_unlock_password_input.textChanges()
-                .window(200, TimeUnit.MILLISECONDS)
-                .flatMapMaybe { it.lastElement() }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    animateHandle(it.length * 15f, interpolator = DecelerateInterpolator())
-                }, Timber::e)
+            .window(200, TimeUnit.MILLISECONDS)
+            .flatMapMaybe { it.lastElement() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                animateHandle(it.length * 15f, interpolator = DecelerateInterpolator())
+            }, Timber::e)
 
         disposables += layout_unlock_switch_to_password.clicks()
-                .subscribeBy(onNext = {
-                    fingerPrintDisposable?.dispose()
-                    layout_unlock_fingerprint.visibility = View.GONE
-                    layout_unlock_password_input.visibility = View.VISIBLE
-                    layout_unlock_password_input.showKeyboardForView()
-                }, onError = Timber::e)
+            .subscribeBy(onNext = {
+                fingerPrintDisposable?.dispose()
+                layout_unlock_fingerprint.visibility = View.GONE
+                layout_unlock_password_input.visibility = View.VISIBLE
+                layout_unlock_password_input.showKeyboardForView()
+            }, onError = Timber::e)
     }
 
     private fun onFingerprintResult(result: FingerprintUnlockResult) {
@@ -158,10 +158,10 @@ class UnlockActivity : SecuredBaseActivity() {
         handleRotation = rotation
         layout_unlock_handle.clearAnimation()
         layout_unlock_handle.animate()
-                .rotation(handleRotation)
-                .setDuration(300)
-                .setInterpolator(interpolator)
-                .withEndAction(endAction)
+            .rotation(handleRotation)
+            .setDuration(300)
+            .setInterpolator(interpolator)
+            .withEndAction(endAction)
     }
 
     override fun onStop() {
@@ -191,23 +191,25 @@ class UnlockActivity : SecuredBaseActivity() {
     }
 
     private fun animateHandleOnError() {
-        val rotationAnimation = RotateAnimation(0f, 20f,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f)
-                .apply {
-                    duration = 50
-                    repeatCount = 3
-                    repeatMode = Animation.REVERSE
-                }
+        val rotationAnimation = RotateAnimation(
+            0f, 20f,
+            Animation.RELATIVE_TO_SELF, 0.5f,
+            Animation.RELATIVE_TO_SELF, 0.5f
+        )
+            .apply {
+                duration = 50
+                repeatCount = 3
+                repeatMode = Animation.REVERSE
+            }
         layout_unlock_handle.startAnimation(rotationAnimation)
     }
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {

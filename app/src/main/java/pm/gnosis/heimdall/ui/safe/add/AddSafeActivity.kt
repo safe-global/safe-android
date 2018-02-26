@@ -38,15 +38,15 @@ class AddSafeActivity : BaseActivity() {
     }
 
     private fun positionToTabID(position: Int) =
-            when (positionToId(position)) {
-                R.string.tab_title_add_existing -> {
-                    TabId.ADD_SAFE_EXISTING
-                }
-                R.string.tab_title_create_new -> {
-                    TabId.ADD_NEW_SAFE
-                }
-                else -> null
+        when (positionToId(position)) {
+            R.string.tab_title_add_existing -> {
+                TabId.ADD_SAFE_EXISTING
             }
+            R.string.tab_title_create_new -> {
+                TabId.ADD_NEW_SAFE
+            }
+            else -> null
+        }
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
 

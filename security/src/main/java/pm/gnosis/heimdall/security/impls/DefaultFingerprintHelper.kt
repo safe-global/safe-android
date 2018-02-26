@@ -23,18 +23,20 @@ import javax.inject.Singleton
 
 @Singleton
 class DefaultFingerprintHelper @Inject constructor(
-        @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context
 ) : FingerprintHelper {
     private val keyStore by lazy { KeyStore.getInstance(ANDROID_KEY_STORE) }
     private val keyGenerator by lazy { KeyGenerator.getInstance(AES, ANDROID_KEY_STORE) }
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun createKey(): SecretKey {
-        val builder = KeyGenParameterSpec.Builder(FINGERPRINT_KEY,
-                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                .setUserAuthenticationRequired(true)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+        val builder = KeyGenParameterSpec.Builder(
+            FINGERPRINT_KEY,
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        )
+            .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+            .setUserAuthenticationRequired(true)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
         keyGenerator.init(builder.setKeySize(256).build())
         return keyGenerator.generateKey()
     }
@@ -45,9 +47,9 @@ class DefaultFingerprintHelper @Inject constructor(
     }.subscribeOn(Schedulers.io())
 
     override fun systemHasFingerprintsEnrolled() =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    nullOnThrow { context.getSystemService(KeyguardManager::class.java).isKeyguardSecure == true } ?: false &&
-                    nullOnThrow { FingerprintManagerCompat.from(context).hasEnrolledFingerprints() } ?: false
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                nullOnThrow { context.getSystemService(KeyguardManager::class.java).isKeyguardSecure == true } ?: false &&
+                nullOnThrow { FingerprintManagerCompat.from(context).hasEnrolledFingerprints() } ?: false
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun getOrCreateKey(): SecretKey {
@@ -62,21 +64,24 @@ class DefaultFingerprintHelper @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun createCipher(iv: ByteArray?) =
-            Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
+        Cipher.getInstance(
+            KeyProperties.KEY_ALGORITHM_AES + "/"
                     + KeyProperties.BLOCK_MODE_CBC + "/"
-                    + KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                    .apply {
-                        if (iv == null) init(Cipher.ENCRYPT_MODE, getOrCreateKey())
-                        else init(Cipher.DECRYPT_MODE, getOrCreateKey(), IvParameterSpec(iv))
-                    }
+                    + KeyProperties.ENCRYPTION_PADDING_PKCS7
+        )
+            .apply {
+                if (iv == null) init(Cipher.ENCRYPT_MODE, getOrCreateKey())
+                else init(Cipher.DECRYPT_MODE, getOrCreateKey(), IvParameterSpec(iv))
+            }
 
     override fun authenticate(iv: ByteArray?): Observable<AuthenticationResult> =
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) Observable.error(FingerprintNotAvailable("Android version not supported (${Build.VERSION.SDK_INT})"))
-            else Observable.create(AuthenticateObservable(context, iv, ::createCipher))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) Observable.error(FingerprintNotAvailable("Android version not supported (${Build.VERSION.SDK_INT})"))
+        else Observable.create(AuthenticateObservable(context, iv, ::createCipher))
 
-    private class AuthenticateObservable(context: Context, private val iv: ByteArray? = null,
-                                         private val cipherProvider: (ByteArray?) -> Cipher)
-        : FingerprintManagerCompat.AuthenticationCallback(), ObservableOnSubscribe<AuthenticationResult> {
+    private class AuthenticateObservable(
+        context: Context, private val iv: ByteArray? = null,
+        private val cipherProvider: (ByteArray?) -> Cipher
+    ) : FingerprintManagerCompat.AuthenticationCallback(), ObservableOnSubscribe<AuthenticationResult> {
 
         private val fingerprintManager = FingerprintManagerCompat.from(context)
         private var emitter: ObservableEmitter<AuthenticationResult>? = null

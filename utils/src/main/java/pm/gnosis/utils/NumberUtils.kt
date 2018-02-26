@@ -41,8 +41,8 @@ fun BigInteger.isValidTransactionHash() = this <= BigInteger.valueOf(2).pow(256)
 fun BigInteger.asDecimalString(): String = this.toString(10)
 fun BigDecimal.stringWithNoTrailingZeroes(): String =
         //Issue: http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6480539
-        if (this.unscaledValue() == BigInteger.ZERO) "0"
-        else this.stripTrailingZeros().toPlainString()
+    if (this.unscaledValue() == BigInteger.ZERO) "0"
+    else this.stripTrailingZeros().toPlainString()
 
 fun String.isValidEthereumAddress() = this.removePrefix("0x").length == 40 &&
         nullOnThrow { this.hexAsBigInteger() } != null

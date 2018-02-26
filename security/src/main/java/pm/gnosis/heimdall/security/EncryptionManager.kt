@@ -28,12 +28,12 @@ interface EncryptionManager {
         companion object {
             const val SEPARATOR = "####"
             fun fromString(encoded: String) =
-                    encoded.split(SEPARATOR).let {
-                        if (it.size != 2) throw IllegalArgumentException("Not correctly encoded!")
-                        val data = it[0].hexStringToByteArrayOrNull() ?: throw IllegalArgumentException("Could not decode data!")
-                        val iv = it[1].hexStringToByteArrayOrNull() ?: throw IllegalArgumentException("Could not decode iv!")
-                        CryptoData(data, iv)
-                    }
+                encoded.split(SEPARATOR).let {
+                    if (it.size != 2) throw IllegalArgumentException("Not correctly encoded!")
+                    val data = it[0].hexStringToByteArrayOrNull() ?: throw IllegalArgumentException("Could not decode data!")
+                    val iv = it[1].hexStringToByteArrayOrNull() ?: throw IllegalArgumentException("Could not decode iv!")
+                    CryptoData(data, iv)
+                }
         }
     }
 }

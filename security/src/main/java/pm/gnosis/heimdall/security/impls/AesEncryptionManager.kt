@@ -29,9 +29,9 @@ import javax.inject.Singleton
 
 @Singleton
 class AesEncryptionManager @Inject constructor(
-        application: Application,
-        private val preferencesManager: PreferencesManager,
-        private val fingerprintHelper: FingerprintHelper
+    application: Application,
+    private val preferencesManager: PreferencesManager,
+    private val fingerprintHelper: FingerprintHelper
 ) : EncryptionManager {
 
     private val secureRandom = SecureRandom()
@@ -145,7 +145,7 @@ class AesEncryptionManager @Inject constructor(
     }
 
     private fun keyChecksum(key: ByteArray) =
-            Sha3Utils.sha3String(key).substring(0, 6).toByteArray()
+        Sha3Utils.sha3String(key).substring(0, 6).toByteArray()
 
     private fun buildPasswordKeyIfValid(key: ByteArray?, checksum: String): ByteArray? {
         key ?: return null
@@ -170,59 +170,61 @@ class AesEncryptionManager @Inject constructor(
     }
 
     override fun canSetupFingerprint() =
-            nullOnThrow { fingerprintHelper.systemHasFingerprintsEnrolled() } ?: false
+        nullOnThrow { fingerprintHelper.systemHasFingerprintsEnrolled() } ?: false
 
     override fun observeFingerprintForSetup(): Observable<Boolean> =
-            fingerprintHelper.authenticate()
-                    .subscribeOn(Schedulers.io())
-                    .map { result ->
-                        when (result) {
-                            is AuthenticationResultSuccess -> {
-                                key?.let { key ->
-                                    preferencesManager.prefs.edit {
-                                        val cryptoData = CryptoData(result.cipher.doFinal(key),
-                                                result.cipher.parameters.getParameterSpec(IvParameterSpec::class.java).iv)
-                                        putString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, cryptoData.toString())
-                                    }
-                                    true
-                                } ?: false
+        fingerprintHelper.authenticate()
+            .subscribeOn(Schedulers.io())
+            .map { result ->
+                when (result) {
+                    is AuthenticationResultSuccess -> {
+                        key?.let { key ->
+                            preferencesManager.prefs.edit {
+                                val cryptoData = CryptoData(
+                                    result.cipher.doFinal(key),
+                                    result.cipher.parameters.getParameterSpec(IvParameterSpec::class.java).iv
+                                )
+                                putString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, cryptoData.toString())
                             }
-                            else -> false
-                        }
+                            true
+                        } ?: false
                     }
+                    else -> false
+                }
+            }
 
     override fun observeFingerprintForUnlock(): Observable<FingerprintUnlockResult> =
-            Observable
-                    .fromCallable {
-                        val cryptedData = preferencesManager.prefs.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null) ?: throw FingerprintUnlockError()
-                        CryptoData.fromString(cryptedData)
-                    }
-                    .flatMap { cryptedData -> fingerprintHelper.authenticate(cryptedData.iv).map { cryptedData to it } }
-                    .subscribeOn(Schedulers.io())
-                    .map { (cryptedData, authResult) ->
-                        when (authResult) {
-                            is AuthenticationResultSuccess -> {
-                                synchronized(keyLock) {
-                                    key = authResult.cipher.doFinal(cryptedData.data)
-                                }
-                                if (key != null) FingerprintUnlockSuccessful() else throw FingerprintUnlockError()
-                            }
-                            is AuthenticationFailed -> FingerprintUnlockFailed()
-                            is AuthenticationHelp -> FingerprintUnlockHelp(authResult.helpString)
+        Observable
+            .fromCallable {
+                val cryptedData = preferencesManager.prefs.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null) ?: throw FingerprintUnlockError()
+                CryptoData.fromString(cryptedData)
+            }
+            .flatMap { cryptedData -> fingerprintHelper.authenticate(cryptedData.iv).map { cryptedData to it } }
+            .subscribeOn(Schedulers.io())
+            .map { (cryptedData, authResult) ->
+                when (authResult) {
+                    is AuthenticationResultSuccess -> {
+                        synchronized(keyLock) {
+                            key = authResult.cipher.doFinal(cryptedData.data)
                         }
+                        if (key != null) FingerprintUnlockSuccessful() else throw FingerprintUnlockError()
                     }
+                    is AuthenticationFailed -> FingerprintUnlockFailed()
+                    is AuthenticationHelp -> FingerprintUnlockHelp(authResult.helpString)
+                }
+            }
 
     override fun isFingerPrintSet(): Single<Boolean> =
-            fingerprintHelper.isKeySet()
-                    .map { it && preferencesManager.prefs.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null) != null }
-                    .onErrorReturn { false }
+        fingerprintHelper.isKeySet()
+            .map { it && preferencesManager.prefs.getString(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY, null) != null }
+            .onErrorReturn { false }
 
     override fun clearFingerprintData(): Completable =
-            Completable.fromCallable {
-                preferencesManager.prefs.edit {
-                    remove(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY)
-                }
-            }.andThen(fingerprintHelper.removeKey())
+        Completable.fromCallable {
+            preferencesManager.prefs.edit {
+                remove(PREF_KEY_FINGERPRINT_ENCRYPTED_APP_KEY)
+            }
+        }.andThen(fingerprintHelper.removeKey())
 
     private fun useCipher(encrypt: Boolean, key: ByteArray, wrapper: CryptoData): CryptoData {
         val padding = PKCS7Padding()

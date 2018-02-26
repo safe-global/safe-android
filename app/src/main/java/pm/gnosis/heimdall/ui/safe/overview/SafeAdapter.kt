@@ -31,8 +31,8 @@ import javax.inject.Inject
 
 @ForView
 class SafeAdapter @Inject constructor(
-        @ViewContext private val context: Context,
-        private val viewModel: SafeOverviewContract
+    @ViewContext private val context: Context,
+    private val viewModel: SafeOverviewContract
 ) : LifecycleAdapter<AbstractSafe, SafeAdapter.CastingViewHolder<out AbstractSafe>>(context) {
 
     companion object {
@@ -100,8 +100,8 @@ class SafeAdapter @Inject constructor(
             disposables.clear()
             currentEntry?.address?.let { address ->
                 disposables += viewModel.loadSafeInfo(address)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeBy(onSuccess = ::onSafeInfo, onError = Timber::e)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onSuccess = ::onSafeInfo, onError = Timber::e)
             }
         }
 
@@ -143,11 +143,11 @@ class SafeAdapter @Inject constructor(
             disposables.clear()
             val pendingSafe = currentEntry ?: return
             disposables += viewModel.observeDeployedStatus(pendingSafe.hash.asTransactionHash())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onError = {
-                        context.toast(R.string.error_deploying_safe)
-                        Timber.e(it)
-                    })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onError = {
+                    context.toast(R.string.error_deploying_safe)
+                    Timber.e(it)
+                })
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

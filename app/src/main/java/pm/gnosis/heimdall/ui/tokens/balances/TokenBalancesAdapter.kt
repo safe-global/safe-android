@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @ForView
 class TokenBalancesAdapter @Inject constructor(
-        @ViewContext private val context: Context
+    @ViewContext private val context: Context
 ) : Adapter<ERC20TokenWithBalance, TokenBalancesAdapter.ViewHolder>() {
 
     val tokenSelectedSubject = PublishSubject.create<ERC20TokenWithBalance>()!!
@@ -34,13 +34,15 @@ class TokenBalancesAdapter @Inject constructor(
         }
 
         override fun bind(data: ERC20TokenWithBalance, payloads: List<Any>?) {
-            itemView.layout_tokens_item_balance_name.text = if (data.token.name.isNullOrEmpty()) data.token.address.asEthereumAddressString() else data.token.name
+            itemView.layout_tokens_item_balance_name.text =
+                    if (data.token.name.isNullOrEmpty()) data.token.address.asEthereumAddressString() else data.token.name
             if (data.token == ETHER_TOKEN) {
                 itemView.layout_tokens_item_balance_symbol.text = null
                 itemView.layout_tokens_item_balance_symbol_image.visibility = View.VISIBLE
                 itemView.layout_tokens_item_balance_symbol_image.setImageResource(R.drawable.ic_ether_symbol)
             } else {
-                itemView.layout_tokens_item_balance_symbol.text = if (data.token.symbol.isNullOrEmpty()) data.token.address.toString(16).substring(0, 3) else data.token.symbol
+                itemView.layout_tokens_item_balance_symbol.text =
+                        if (data.token.symbol.isNullOrEmpty()) data.token.address.toString(16).substring(0, 3) else data.token.symbol
                 itemView.layout_tokens_item_balance_symbol_image.visibility = View.GONE
             }
             itemView.layout_tokens_item_balance_balance.text = data.displayString()

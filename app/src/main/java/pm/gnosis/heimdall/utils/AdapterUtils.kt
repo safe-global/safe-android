@@ -8,46 +8,55 @@ import pm.gnosis.heimdall.common.utils.ErrorResult
 import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.ui.base.Adapter
 
-fun <D> Flowable<List<D>>.scanToAdapterData(idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null): Flowable<Adapter.Data<D>> =
-        scan(Adapter.Data(), scanner(idExtractor, payloadCalc))
+fun <D> Flowable<List<D>>.scanToAdapterData(
+    idExtractor: ((D) -> Any) = defaultIdExtractor(),
+    payloadCalc: ((D, D) -> Any?)? = null
+): Flowable<Adapter.Data<D>> =
+    scan(Adapter.Data(), scanner(idExtractor, payloadCalc))
 
-fun <D> Observable<List<D>>.scanToAdapterData(idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null): Observable<Adapter.Data<D>> =
-        scan(Adapter.Data(), scanner(idExtractor, payloadCalc))
+fun <D> Observable<List<D>>.scanToAdapterData(
+    idExtractor: ((D) -> Any) = defaultIdExtractor(),
+    payloadCalc: ((D, D) -> Any?)? = null
+): Observable<Adapter.Data<D>> =
+    scan(Adapter.Data(), scanner(idExtractor, payloadCalc))
 
-fun <D> Observable<Result<List<D>>>.scanToAdapterDataResult(idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null): Observable<out Result<Adapter.Data<D>>> {
+fun <D> Observable<Result<List<D>>>.scanToAdapterDataResult(
+    idExtractor: ((D) -> Any) = defaultIdExtractor(),
+    payloadCalc: ((D, D) -> Any?)? = null
+): Observable<out Result<Adapter.Data<D>>> {
     val initialData = Adapter.Data<D>()
     return mapScanToAdapterDataResult({ _, i -> i }, initialData, idExtractor, payloadCalc)
 }
 
 fun <D> Observable<Result<List<D>>>.mapScanToAdapterDataResult(
-        inMapper: ((Adapter.Data<D>, List<D>) -> List<D>), initialData: Adapter.Data<D>,
-        idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null
+    inMapper: ((Adapter.Data<D>, List<D>) -> List<D>), initialData: Adapter.Data<D>,
+    idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null
 ): Observable<out Result<Adapter.Data<D>>> {
     return mapScanToMappedResult(inMapper, { _, o -> o }, initialData, initialData, idExtractor, payloadCalc)
 }
 
 fun <I, O, D> Observable<Result<I>>.mapScanToMappedResult(
-        inMapper: ((Adapter.Data<D>, I) -> List<D>), outMapper: ((I, Adapter.Data<D>) -> O),
-        initialData: Adapter.Data<D>, initialOutput: O,
-        idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null
+    inMapper: ((Adapter.Data<D>, I) -> List<D>), outMapper: ((I, Adapter.Data<D>) -> O),
+    initialData: Adapter.Data<D>, initialOutput: O,
+    idExtractor: ((D) -> Any) = defaultIdExtractor(), payloadCalc: ((D, D) -> Any?)? = null
 ): Observable<out Result<O>> =
-        scan<CachedScanResult<O, D>>(
-                CachedScanResult(initialData, DataResult(initialOutput)),
-                { old, new ->
-                    when (new) {
-                        is ErrorResult -> old.copy(result = ErrorResult(new.error))
-                        is DataResult -> {
-                            calculateCachedScanResults(inMapper, outMapper, idExtractor, payloadCalc, old.data, new.data)
-                        }
-                    }
-                }).map { it.result }
+    scan<CachedScanResult<O, D>>(
+        CachedScanResult(initialData, DataResult(initialOutput)),
+        { old, new ->
+            when (new) {
+                is ErrorResult -> old.copy(result = ErrorResult(new.error))
+                is DataResult -> {
+                    calculateCachedScanResults(inMapper, outMapper, idExtractor, payloadCalc, old.data, new.data)
+                }
+            }
+        }).map { it.result }
 
 private fun <D> defaultIdExtractor(): (D) -> Any = { entry -> entry as Any }
 
 private fun <I, O, D> calculateCachedScanResults(
-        inMapper: ((Adapter.Data<D>, I) -> List<D>), outMapper: ((I, Adapter.Data<D>) -> O),
-        idExtractor: ((D) -> Any), payloadCalc: ((D, D) -> Any?)?,
-        cachedData: Adapter.Data<D>, input: I
+    inMapper: ((Adapter.Data<D>, I) -> List<D>), outMapper: ((I, Adapter.Data<D>) -> O),
+    idExtractor: ((D) -> Any), payloadCalc: ((D, D) -> Any?)?,
+    cachedData: Adapter.Data<D>, input: I
 ): CachedScanResult<O, D> {
     val mappedData = inMapper(cachedData, input)
     val adapterData = scanner(idExtractor, payloadCalc)(cachedData, mappedData)
@@ -64,8 +73,8 @@ private fun <D> scanner(idExtractor: ((D) -> Any), payloadCalc: ((D, D) -> Any?)
 private data class CachedScanResult<out W, out D>(val data: Adapter.Data<D>, val result: Result<W>)
 
 private class SimpleDiffCallback<D>(
-        private val prevEntries: List<D>, private val newEntries: List<D>,
-        private val idExtractor: ((D) -> Any), private val payloadCalc: ((D, D) -> Any?)?
+    private val prevEntries: List<D>, private val newEntries: List<D>,
+    private val idExtractor: ((D) -> Any), private val payloadCalc: ((D, D) -> Any?)?
 ) : DiffUtil.Callback() {
     override fun getOldListSize() = prevEntries.size
 

@@ -24,14 +24,14 @@ class AccountSetupActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += layout_account_setup_create.clicks()
-                .subscribeBy(onNext = {
-                    startActivity(GenerateMnemonicActivity.createIntent(this))
-                })
+            .subscribeBy(onNext = {
+                startActivity(GenerateMnemonicActivity.createIntent(this))
+            })
 
         disposables += layout_account_setup_restore.clicks()
-                .subscribeBy(onNext = {
-                    startActivity(RestoreAccountActivity.createIntent(this))
-                })
+            .subscribeBy(onNext = {
+                startActivity(RestoreAccountActivity.createIntent(this))
+            })
     }
 
     companion object {

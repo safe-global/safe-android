@@ -6,15 +6,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FirebaseMessageQueueRepository @Inject constructor():
-        MessageQueueRepository {
+class FirebaseMessageQueueRepository @Inject constructor() :
+    MessageQueueRepository {
 
     private val firebase = FirebaseMessaging.getInstance()
 
     override fun unsubscribe(topic: String) =
-            firebase.unsubscribeFromTopic(topic)
+        firebase.unsubscribeFromTopic(topic)
 
     override fun subscribe(topic: String) =
-            firebase.subscribeToTopic(topic)
+        firebase.subscribeToTopic(topic)
 
 }

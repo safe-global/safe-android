@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FabricEventTracker @Inject constructor(
-        private val fabricCore: FabricCore
+    private val fabricCore: FabricCore
 ) : EventTracker {
 
     private val answers = Answers.getInstance()

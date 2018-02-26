@@ -163,10 +163,14 @@ class AesEncryptionManagerTest {
         val unlockObserver = TestObserver.create<FingerprintUnlockResult>()
         manager.observeFingerprintForUnlock().subscribe(unlockObserver)
         unlockObserver.assertSubscribed()
-                .assertValue { it is FingerprintUnlockSuccessful }
-                .assertNoErrors()
-                .assertComplete()
-        assertEquals("Encrypted app key should the same that has be returned on setup", encryptDoFinalAnswer.output.toHexString(), decryptDoFinalAnswer.input?.toHexString())
+            .assertValue { it is FingerprintUnlockSuccessful }
+            .assertNoErrors()
+            .assertComplete()
+        assertEquals(
+            "Encrypted app key should the same that has be returned on setup",
+            encryptDoFinalAnswer.output.toHexString(),
+            decryptDoFinalAnswer.input?.toHexString()
+        )
         then(fingerprintHelperMock).should().authenticate(ivParameterSpecMock.iv)
 
         // Check that decrypted data is correct

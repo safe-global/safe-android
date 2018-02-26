@@ -1,11 +1,11 @@
 ext {
     javaTypes = [
-            NULL: "null",
-            TRUE: "true",
-            FALSE: "false",
+            NULL   : "null",
+            TRUE   : "true",
+            FALSE  : "false",
             BOOLEAN: "boolean",
-            STRING: "String",
-            INT: "int",
-            LONG: "long"
+            STRING : "String",
+            INT    : "int",
+            LONG   : "long"
     ]
 }

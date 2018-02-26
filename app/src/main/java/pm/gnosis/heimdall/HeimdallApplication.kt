@@ -13,8 +13,8 @@ import java.security.Security
 
 class HeimdallApplication : MultiDexApplication() {
     val component: ApplicationComponent = DaggerApplicationComponent.builder()
-            .coreModule(CoreModule(this))
-            .build()
+        .coreModule(CoreModule(this))
+        .build()
 
     override fun onCreate() {
         super.onCreate()

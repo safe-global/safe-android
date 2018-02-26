@@ -17,11 +17,13 @@ import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 import javax.inject.Inject
 
-class TokenBalancesViewModel @Inject constructor(@ApplicationContext private val context: Context,
-                                                 private val tokenRepository: TokenRepository) : TokenBalancesContract() {
+class TokenBalancesViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val tokenRepository: TokenRepository
+) : TokenBalancesContract() {
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
-            .add({ it is InvalidAddressException }, R.string.invalid_ethereum_address)
-            .build()
+        .add({ it is InvalidAddressException }, R.string.invalid_ethereum_address)
+        .build()
 
     private lateinit var address: BigInteger
     private val loadingSubject = PublishSubject.create<Boolean>()
@@ -32,34 +34,34 @@ class TokenBalancesViewModel @Inject constructor(@ApplicationContext private val
     }
 
     override fun observeTokens(refreshEvents: Observable<Unit>) =
-            Observable
-                    .combineLatest(refreshEvents.map { false }.startWith(true), tokenRepository.observeTokens().toObservable(),
-                            BiFunction { initialLoad: Boolean, tokens: List<ERC20Token> -> initialLoad to tokens })
-                    .flatMap { (initialLoad, tokens) ->
-                        val tokensWithEther = listOf(ETHER_TOKEN) + tokens
-                        loadTokenBalances(address, tokensWithEther, initialLoad).mapToResult()
-                    }
-                    .scanToAdapterDataResult({ it.token.address to it.balance })
+        Observable
+            .combineLatest(refreshEvents.map { false }.startWith(true), tokenRepository.observeTokens().toObservable(),
+                BiFunction { initialLoad: Boolean, tokens: List<ERC20Token> -> initialLoad to tokens })
+            .flatMap { (initialLoad, tokens) ->
+                val tokensWithEther = listOf(ETHER_TOKEN) + tokens
+                loadTokenBalances(address, tokensWithEther, initialLoad).mapToResult()
+            }
+            .scanToAdapterDataResult({ it.token.address to it.balance })
 
     private fun loadTokenBalances(ofAddress: BigInteger, tokens: List<ERC20Token>, initialLoad: Boolean) =
-            tokenRepository.loadTokenBalances(ofAddress, tokens)
-                    .map {
-                        it.mapNotNull { (token, balance) ->
-                            if (token.verified && (balance == BigInteger.ZERO)) null
-                            else ERC20TokenWithBalance(token, balance)
-                        }
-                    }
-                    .onErrorResumeNext { throwable: Throwable ->
-                        val mappedError = errorHandler.observable<List<ERC20TokenWithBalance>>(throwable)
-                        if (initialLoad) {
-                            // If we have an error on the initial load we want to show all tokens without balance
-                            mappedError.startWith(tokens.map { ERC20TokenWithBalance(it, null) })
-                        } else {
-                            mappedError
-                        }
-                    }
-                    .doOnSubscribe { tokensLoading(true) }
-                    .doOnTerminate { tokensLoading(false) }
+        tokenRepository.loadTokenBalances(ofAddress, tokens)
+            .map {
+                it.mapNotNull { (token, balance) ->
+                    if (token.verified && (balance == BigInteger.ZERO)) null
+                    else ERC20TokenWithBalance(token, balance)
+                }
+            }
+            .onErrorResumeNext { throwable: Throwable ->
+                val mappedError = errorHandler.observable<List<ERC20TokenWithBalance>>(throwable)
+                if (initialLoad) {
+                    // If we have an error on the initial load we want to show all tokens without balance
+                    mappedError.startWith(tokens.map { ERC20TokenWithBalance(it, null) })
+                } else {
+                    mappedError
+                }
+            }
+            .doOnSubscribe { tokensLoading(true) }
+            .doOnTerminate { tokensLoading(false) }
 
     override fun observeLoadingStatus(): Observable<Boolean> = loadingSubject
 

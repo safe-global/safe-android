@@ -133,11 +133,13 @@ class EtherGasStationGasPriceHelperTest {
         fastContainerMock.assertClickListenerNotNull()
 
         // Check that the views have been updated with the returned prices
-        gasPriceSubject.onNext(EthGasStationPrices(
+        gasPriceSubject.onNext(
+            EthGasStationPrices(
                 100f, 60f,
                 200f, 1f,
                 300f, 0.5f
-        ))
+            )
+        )
         validateTextUpdate(slowCostsMock, slowTimeMock, 100f, 60f)
         validateTextUpdate(normalCostsMock, normalTimeMock, 200f, 1f)
         validateTextUpdate(fastCostsMock, fastTimeMock, 300f, 0.5f)
@@ -150,8 +152,8 @@ class EtherGasStationGasPriceHelperTest {
         // If we select normal speed the selected container should change and the costs should be emitted
         normalContainerMock.callOnClick()
         testObserver.assertValuesOnly(
-                DataResult(convertToWei(200f)),
-                DataResult(convertToWei(200f)) // New value
+            DataResult(convertToWei(200f)),
+            DataResult(convertToWei(200f)) // New value
         )
         slowContainerMock.assertSelected(false)
         normalContainerMock.assertSelected(true)
@@ -160,9 +162,9 @@ class EtherGasStationGasPriceHelperTest {
         // If we select fast speed the selected container should change and the costs should be emitted
         fastContainerMock.callOnClick()
         testObserver.assertValuesOnly(
-                DataResult(convertToWei(200f)),
-                DataResult(convertToWei(200f)),
-                DataResult(convertToWei(300f)) // New value
+            DataResult(convertToWei(200f)),
+            DataResult(convertToWei(200f)),
+            DataResult(convertToWei(300f)) // New value
         )
         slowContainerMock.assertSelected(false)
         normalContainerMock.assertSelected(false)
@@ -171,10 +173,10 @@ class EtherGasStationGasPriceHelperTest {
         // If we select slow speed the selected container should change and the costs should be emitted
         slowContainerMock.callOnClick()
         testObserver.assertValuesOnly(
-                DataResult(convertToWei(200f)),
-                DataResult(convertToWei(200f)),
-                DataResult(convertToWei(300f)),
-                DataResult(convertToWei(100f)) // New value
+            DataResult(convertToWei(200f)),
+            DataResult(convertToWei(200f)),
+            DataResult(convertToWei(300f)),
+            DataResult(convertToWei(100f)) // New value
         )
         slowContainerMock.assertSelected(true)
         normalContainerMock.assertSelected(false)
@@ -183,11 +185,11 @@ class EtherGasStationGasPriceHelperTest {
         gasPriceSubject.onError(UnknownHostException())
         // Propagate error
         testObserver.assertValuesOnly(
-                DataResult(convertToWei(200f)),
-                DataResult(convertToWei(200f)),
-                DataResult(convertToWei(300f)),
-                DataResult(convertToWei(100f)),
-                ErrorResult(SimpleLocalizedException(R.string.error_check_internet_connection.toString())) // New value
+            DataResult(convertToWei(200f)),
+            DataResult(convertToWei(200f)),
+            DataResult(convertToWei(300f)),
+            DataResult(convertToWei(100f)),
+            ErrorResult(SimpleLocalizedException(R.string.error_check_internet_connection.toString())) // New value
         )
         testObserver.dispose()
 
@@ -210,19 +212,19 @@ class EtherGasStationGasPriceHelperTest {
     }
 
     private fun convertToWei(price: Float) =
-            Wei(BigDecimal.valueOf(price.toDouble()).multiply(BigDecimal.TEN.pow(8)).toBigInteger())
+        Wei(BigDecimal.valueOf(price.toDouble()).multiply(BigDecimal.TEN.pow(8)).toBigInteger())
 
     private fun convertToMs(waitTime: Float) =
-            (waitTime * DateTimeUtils.MINUTE_IN_MS).toLong()
+        (waitTime * DateTimeUtils.MINUTE_IN_MS).toLong()
 
     private fun timeString(waitTime: Float) =
-            convertToMs(waitTime).let {
-                if (it < DateTimeUtils.MINUTE_IN_MS) {
-                    contextMock.getString(R.string.transaction_execution_time_estimate_sec, (it / DateTimeUtils.SECOND_IN_MS).toString())
-                } else {
-                    contextMock.getString(R.string.transaction_execution_time_estimate_min, (it / DateTimeUtils.MINUTE_IN_MS).toString())
-                }
+        convertToMs(waitTime).let {
+            if (it < DateTimeUtils.MINUTE_IN_MS) {
+                contextMock.getString(R.string.transaction_execution_time_estimate_sec, (it / DateTimeUtils.SECOND_IN_MS).toString())
+            } else {
+                contextMock.getString(R.string.transaction_execution_time_estimate_min, (it / DateTimeUtils.MINUTE_IN_MS).toString())
             }
+        }
 
     private class TestLinearLayout(context: Context) : LinearLayout(context) {
         private var clickListener: OnClickListener? = null
@@ -243,12 +245,12 @@ class EtherGasStationGasPriceHelperTest {
         }
 
         fun assertSelected(expected: Boolean) =
-                apply { assertEquals("Unexpected selected state", expected, selected) }
+            apply { assertEquals("Unexpected selected state", expected, selected) }
 
         fun assertClickListenerNotNull() =
-                apply { assertNotNull("Click listener should not be null!", clickListener) }
+            apply { assertNotNull("Click listener should not be null!", clickListener) }
 
         fun assertClickListenerNull() =
-                apply { assertNull("Click listener should be null!", clickListener) }
+            apply { assertNull("Click listener should be null!", clickListener) }
     }
 }

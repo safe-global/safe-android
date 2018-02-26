@@ -50,39 +50,39 @@ abstract class BaseShareQrCodeDialog : BaseDialog() {
     override fun onStart() {
         super.onStart()
         disposables += dataSourceObservable()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = { (name, data) -> onResult(name, data) }, onError = Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = { (name, data) -> onResult(name, data) }, onError = Timber::e)
 
         // When clicking "outside" of the dialog we should dismiss it
         disposables += root().clicks()
-                .subscribeBy(onNext = { dismiss() }, onError = Timber::e)
+            .subscribeBy(onNext = { dismiss() }, onError = Timber::e)
 
         // Override the root clicks (we don't want to dismiss the dialog)
         disposables += include_base_share_qr_code_background.clicks()
-                .subscribeBy(onError = Timber::e)
+            .subscribeBy(onError = Timber::e)
 
         disposables += generateQrCodeSubject
-                .flatMapSingle {
-                    data()?.let {
-                        qrCodeGenerator.generateQrCode(it)
-                                .mapToResult()
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .doOnSubscribe { onQrCodeLoading(true) }
-                                .doOnEvent { _, _ -> onQrCodeLoading(false) }
-                    } ?: throw IllegalStateException()
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onQrCode, onError = ::onQrCodeError)
+            .flatMapSingle {
+                data()?.let {
+                    qrCodeGenerator.generateQrCode(it)
+                        .mapToResult()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnSubscribe { onQrCodeLoading(true) }
+                        .doOnEvent { _, _ -> onQrCodeLoading(false) }
+                } ?: throw IllegalStateException()
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onQrCode, onError = ::onQrCodeError)
 
         disposables += include_base_share_qr_code_retry.clicks()
-                .startWith(Unit)
-                .subscribeBy(onNext = { generateQrCodeSubject.onNext(Unit) }, onError = Timber::e)
+            .startWith(Unit)
+            .subscribeBy(onNext = { generateQrCodeSubject.onNext(Unit) }, onError = Timber::e)
 
         disposables += include_base_share_qr_code_qr_code.clicks()
-                .subscribeBy(onNext = { copyDataToClipboard() }, onError = Timber::e)
+            .subscribeBy(onNext = { copyDataToClipboard() }, onError = Timber::e)
 
         disposables += include_base_share_qr_code_data.clicks()
-                .subscribeBy(onNext = { copyDataToClipboard() }, onError = Timber::e)
+            .subscribeBy(onNext = { copyDataToClipboard() }, onError = Timber::e)
 
         eventTracker.submit(Event.ScreenView(screenId()))
     }

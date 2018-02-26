@@ -23,11 +23,11 @@ import javax.inject.Inject
 
 
 class SafeTransactionsViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val safeRepository: GnosisSafeRepository,
-        private val safeTransactionsRepository: GnosisSafeTransactionRepository,
-        private val tokenRepository: TokenRepository,
-        private val transactionDetailsRepository: TransactionDetailsRepository
+    @ApplicationContext private val context: Context,
+    private val safeRepository: GnosisSafeRepository,
+    private val safeTransactionsRepository: GnosisSafeTransactionRepository,
+    private val tokenRepository: TokenRepository,
+    private val transactionDetailsRepository: TransactionDetailsRepository
 ) : SafeTransactionsContract() {
 
     private var address: BigInteger? = null
@@ -39,42 +39,42 @@ class SafeTransactionsViewModel @Inject constructor(
     override fun observeTransactions(): Flowable<out Result<Adapter.Data<String>>> {
         return this.address?.let {
             safeRepository.observeTransactionDescriptions(it)
-                    .scanToAdapterData()
-                    .mapToResult()
+                .scanToAdapterData()
+                .mapToResult()
         } ?: Flowable.empty<Result<Adapter.Data<String>>>()
     }
 
     override fun loadTransactionDetails(id: String): Single<Pair<TransactionDetails, TransferInfo?>> =
-            address?.let {
-                transactionDetailsRepository.loadTransactionDetails(id)
-                        .flatMap { details ->
-                            when (details.type) {
-                                TransactionType.ETHER_TRANSFER -> {
-                                    // We always want to display the complete amount (all 18 decimals)
-                                    val value = (details.transaction.value ?: Wei.ZERO).toEther().stringWithNoTrailingZeroes()
-                                    val symbol = context.getString(R.string.currency_eth)
-                                    Single.just(details to TransferInfo(value, symbol))
-                                }
-                                TransactionType.TOKEN_TRANSFER -> {
-                                    (details.data as? TokenTransferData)?.let {
-                                        loadTokenValue(details.transaction.address, it.tokens)
-                                                .map { details to it.toNullable() }
-                                    }
-                                }
-                                else -> null
-                            } ?: Single.just(details to null)
+        address?.let {
+            transactionDetailsRepository.loadTransactionDetails(id)
+                .flatMap { details ->
+                    when (details.type) {
+                        TransactionType.ETHER_TRANSFER -> {
+                            // We always want to display the complete amount (all 18 decimals)
+                            val value = (details.transaction.value ?: Wei.ZERO).toEther().stringWithNoTrailingZeroes()
+                            val symbol = context.getString(R.string.currency_eth)
+                            Single.just(details to TransferInfo(value, symbol))
                         }
-            } ?: Single.error(IllegalStateException())
+                        TransactionType.TOKEN_TRANSFER -> {
+                            (details.data as? TokenTransferData)?.let {
+                                loadTokenValue(details.transaction.address, it.tokens)
+                                    .map { details to it.toNullable() }
+                            }
+                        }
+                        else -> null
+                    } ?: Single.just(details to null)
+                }
+        } ?: Single.error(IllegalStateException())
 
     override fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus> =
-            safeTransactionsRepository.observePublishStatus(id)
+        safeTransactionsRepository.observePublishStatus(id)
 
     override fun transactionSelected(id: String): Single<Intent> =
-            Single.just(ReceiptTransactionActivity.createIntent(context, id))
+        Single.just(ReceiptTransactionActivity.createIntent(context, id))
 
     private fun loadTokenValue(token: BigInteger, value: BigInteger) =
-            tokenRepository.observeToken(token)
-                    .map { TransferInfo(it.convertAmount(value).setScale(5).stringWithNoTrailingZeroes(), it.symbol).toOptional() }
-                    .first(None)
+        tokenRepository.observeToken(token)
+            .map { TransferInfo(it.convertAmount(value).setScale(5).stringWithNoTrailingZeroes(), it.symbol).toOptional() }
+            .first(None)
 
 }

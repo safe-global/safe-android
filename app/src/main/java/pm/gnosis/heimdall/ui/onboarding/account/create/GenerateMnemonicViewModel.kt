@@ -10,19 +10,19 @@ import pm.gnosis.mnemonic.Bip39
 import javax.inject.Inject
 
 class GenerateMnemonicViewModel @Inject constructor(
-        private val accountsRepository: AccountsRepository,
-        private val bip39: Bip39
+    private val accountsRepository: AccountsRepository,
+    private val bip39: Bip39
 ) : GenerateMnemonicContract() {
     override fun generateMnemonic(): Single<Result<String>> = Single
-            .fromCallable { bip39.generateMnemonic(languageId = R.id.english) }
-            .mapToResult()
-            .subscribeOn(Schedulers.io())
+        .fromCallable { bip39.generateMnemonic(languageId = R.id.english) }
+        .mapToResult()
+        .subscribeOn(Schedulers.io())
 
     override fun saveAccountWithMnemonic(mnemonic: String): Single<Result<Unit>> =
-            Single.fromCallable { bip39.mnemonicToSeed(mnemonic) }
-                    .flatMapCompletable { accountsRepository.saveAccountFromMnemonicSeed(it) }
-                    .andThen(accountsRepository.saveMnemonic(mnemonic))
-                    .andThen(Single.just(Unit))
-                    .mapToResult()
-                    .subscribeOn(Schedulers.io())
+        Single.fromCallable { bip39.mnemonicToSeed(mnemonic) }
+            .flatMapCompletable { accountsRepository.saveAccountFromMnemonicSeed(it) }
+            .andThen(accountsRepository.saveMnemonic(mnemonic))
+            .andThen(Single.just(Unit))
+            .mapToResult()
+            .subscribeOn(Schedulers.io())
 }

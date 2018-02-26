@@ -31,8 +31,9 @@ class ExpandableLinearLayout(context: Context, attributeSet: AttributeSet) : Lin
     private val hide: () -> ValueAnimator = { ValueAnimator.ofInt(height, 0) }
 
     private fun measure() = measure(
-            View.MeasureSpec.makeMeasureSpec((parent as View).width, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec((parent as View).height, View.MeasureSpec.AT_MOST))
+        View.MeasureSpec.makeMeasureSpec((parent as View).width, View.MeasureSpec.EXACTLY),
+        View.MeasureSpec.makeMeasureSpec((parent as View).height, View.MeasureSpec.AT_MOST)
+    )
 
 
     private fun doAction(action: () -> ValueAnimator) {

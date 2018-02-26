@@ -34,21 +34,21 @@ class ApplicationModule {
     @Singleton
     fun providesMoshi(): Moshi {
         return Moshi.Builder()
-                .add(WeiAdapter())
-                .add(HexNumberAdapter())
-                .add(TickerAdapter())
-                .build()
+            .add(WeiAdapter())
+            .add(HexNumberAdapter())
+            .add(TickerAdapter())
+            .build()
     }
 
     @Provides
     @Singleton
     fun providesIpfsApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): IpfsApi {
         val retrofit = Retrofit.Builder()
-                .client(client)
-                .baseUrl(IpfsApi.BASE_URL)
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-                .build()
+            .client(client)
+            .baseUrl(IpfsApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
         return retrofit.create(IpfsApi::class.java)
     }
 
@@ -57,11 +57,11 @@ class ApplicationModule {
     fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient)
             : EthereumJsonRpcApi {
         val retrofit = Retrofit.Builder()
-                .client(client)
-                .baseUrl(EthereumJsonRpcApi.BASE_URL)
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-                .build()
+            .client(client)
+            .baseUrl(EthereumJsonRpcApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
         return retrofit.create(EthereumJsonRpcApi::class.java)
     }
 
@@ -69,11 +69,11 @@ class ApplicationModule {
     @Singleton
     fun providesEthGasStationApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): EthGasStationApi {
         val retrofit = Retrofit.Builder()
-                .client(client)
-                .baseUrl(EthGasStationApi.BASE_URL)
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-                .build()
+            .client(client)
+            .baseUrl(EthGasStationApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
         return retrofit.create(EthGasStationApi::class.java)
     }
 
@@ -81,12 +81,12 @@ class ApplicationModule {
     @Singleton
     fun providesPushServiceApi(moshi: Moshi, client: OkHttpClient): PushServiceApi {
         val retrofit = Retrofit.Builder()
-                // Increase timeout since our server goes to sleeps
-                .client(client.newBuilder().readTimeout(30, TimeUnit.SECONDS).build())
-                .baseUrl(PushServiceApi.BASE_URL)
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-                .build()
+            // Increase timeout since our server goes to sleeps
+            .client(client.newBuilder().readTimeout(30, TimeUnit.SECONDS).build())
+            .baseUrl(PushServiceApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
         return retrofit.create(PushServiceApi::class.java)
     }
 
@@ -112,6 +112,6 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun providesDb(@ApplicationContext context: Context) =
-            Room.databaseBuilder(context, ApplicationDb::class.java, ApplicationDb.DB_NAME)
-                    .build()
+        Room.databaseBuilder(context, ApplicationDb::class.java, ApplicationDb.DB_NAME)
+            .build()
 }

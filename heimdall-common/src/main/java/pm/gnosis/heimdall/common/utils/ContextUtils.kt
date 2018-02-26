@@ -41,7 +41,7 @@ fun snackbar(view: View, @StringRes textId: Int, duration: Int = Snackbar.LENGTH
 }
 
 fun Context.getSimplePlural(@PluralsRes stringId: Int, quantity: Long): String =
-        resources.getQuantityString(stringId, quantity.toInt(), quantity)
+    resources.getQuantityString(stringId, quantity.toInt(), quantity)
 
 fun Context.copyToClipboard(label: String, text: String, onCopy: (String) -> Unit = {}) {
     val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -58,7 +58,7 @@ fun Context.shareExternalText(text: String, dialogTitle: String = "") {
 }
 
 fun Context.shareExternalText(text: String, @StringRes stringId: Int) =
-        shareExternalText(text, getString(stringId))
+    shareExternalText(text, getString(stringId))
 
 fun Context.openUrl(url: String) {
     val uri = Uri.parse(url)
@@ -106,6 +106,6 @@ fun Activity.hideSoftKeyboard() {
 
 @RequiresPermission(Manifest.permission.VIBRATE)
 fun Context.vibrate(milliseconds: Long) =
-        (getSystemService(VIBRATOR_SERVICE) as? Vibrator)?.vibrate(milliseconds)
+    (getSystemService(VIBRATOR_SERVICE) as? Vibrator)?.vibrate(milliseconds)
 
 fun Context.getColorCompat(@ColorRes color: Int) = ContextCompat.getColor(this, color)

@@ -19,39 +19,39 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SafeOverviewViewModel @Inject constructor(
-        private val accountsRepository: AccountsRepository,
-        private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
-        private val preferencesManager: PreferencesManager,
-        private val safeRepository: GnosisSafeRepository
+    private val accountsRepository: AccountsRepository,
+    private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
+    private val preferencesManager: PreferencesManager,
+    private val safeRepository: GnosisSafeRepository
 ) : SafeOverviewContract() {
     private val infoCache = mutableMapOf<BigInteger, SafeInfo>()
 
     override fun observeSafes(): Flowable<Result<Adapter.Data<AbstractSafe>>> = safeRepository.observeSafes()
-            .scanToAdapterData()
-            .mapToResult()
+        .scanToAdapterData()
+        .mapToResult()
 
     override fun removeSafe(address: BigInteger) = safeRepository.remove(address)
 
     override fun loadSafeInfo(address: BigInteger): Single<SafeInfo> =
-            safeRepository.loadInfo(address).firstOrError()
-                    .doOnSuccess { infoCache.put(address, it) }
-                    .onErrorResumeNext {
-                        infoCache[address]?.let { Single.just(it) } ?: Single.error(it)
-                    }
+        safeRepository.loadInfo(address).firstOrError()
+            .doOnSuccess { infoCache.put(address, it) }
+            .onErrorResumeNext {
+                infoCache[address]?.let { Single.just(it) } ?: Single.error(it)
+            }
 
     override fun observeDeployedStatus(hash: String) = safeRepository.observeDeployStatus(hash)
 
     override fun shouldShowLowBalanceView(): Observable<Result<Boolean>> = hasLowBalance()
-            .map { it && !preferencesManager.prefs.getBoolean(PreferencesManager.DISMISS_LOW_BALANCE, false) }
-            .mapToResult()
-            .repeatWhen { it.delay(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS) }
-            .toObservable()
+        .map { it && !preferencesManager.prefs.getBoolean(PreferencesManager.DISMISS_LOW_BALANCE, false) }
+        .mapToResult()
+        .repeatWhen { it.delay(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS) }
+        .toObservable()
 
     private fun hasLowBalance(): Single<Boolean> = accountsRepository.loadActiveAccount()
-            .flatMap { ethereumJsonRpcRepository.getBalance(it.address).firstOrError() }
-            .map { it < LOW_BALANCE_THRESHOLD }
-            // As soon as we get a higher balance response we reset the flag
-            .doOnSuccess { hasLowBalance -> if (!hasLowBalance) setDismissLowBalance(false) }
+        .flatMap { ethereumJsonRpcRepository.getBalance(it.address).firstOrError() }
+        .map { it < LOW_BALANCE_THRESHOLD }
+        // As soon as we get a higher balance response we reset the flag
+        .doOnSuccess { hasLowBalance -> if (!hasLowBalance) setDismissLowBalance(false) }
 
     override fun dismissHasLowBalance() = setDismissLowBalance(true)
 

@@ -24,7 +24,10 @@ class ExtensionsKtTest {
         assertEquals("", byteArrayOf().toHexString())
         assertEquals("0f", byteArrayOf(15.toByte()).toHexString())
         assertEquals("10", byteArrayOf(16.toByte()).toHexString())
-        assertEquals("00de23dc54f047bcbd66a12ded71adcf3f34369c35", BigInteger("de23dc54f047bcbd66a12ded71adcf3f34369c35", 16).toByteArray().toHexString())
+        assertEquals(
+            "00de23dc54f047bcbd66a12ded71adcf3f34369c35",
+            BigInteger("de23dc54f047bcbd66a12ded71adcf3f34369c35", 16).toByteArray().toHexString()
+        )
     }
 
     @Test

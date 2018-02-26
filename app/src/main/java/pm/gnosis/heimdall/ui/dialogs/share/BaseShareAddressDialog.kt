@@ -31,7 +31,7 @@ abstract class BaseShareAddressDialog : BaseShareQrCodeDialog() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.dialog_address_share, container, false)
+        inflater.inflate(R.layout.dialog_address_share, container, false)
 
     override fun data(): String? = address?.asEthereumAddressString()
 
@@ -42,11 +42,11 @@ abstract class BaseShareAddressDialog : BaseShareQrCodeDialog() {
     override fun onStart() {
         super.onStart()
         disposables += dialog_address_share_share.clicks()
-                .subscribeBy(onNext = {
-                    nullOnThrow { data() }?.let {
-                        context?.shareExternalText(it, shareTitle())
-                    }
-                })
+            .subscribeBy(onNext = {
+                nullOnThrow { data() }?.let {
+                    context?.shareExternalText(it, shareTitle())
+                }
+            })
     }
 
     override fun onCopiedToClipboard() {
@@ -54,7 +54,7 @@ abstract class BaseShareAddressDialog : BaseShareQrCodeDialog() {
     }
 
     override fun dataSourceObservable(): Observable<Pair<String?, String?>> =
-            addressSourceObservable().map { it.first to it.second?.asEthereumAddressStringOrNull() }
+        addressSourceObservable().map { it.first to it.second?.asEthereumAddressStringOrNull() }
 
     abstract fun addressSourceObservable(): Observable<Pair<String?, BigInteger?>>
 

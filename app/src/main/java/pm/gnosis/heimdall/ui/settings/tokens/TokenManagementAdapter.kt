@@ -16,9 +16,10 @@ import javax.inject.Inject
 
 @ForView
 class TokenManagementAdapter @Inject constructor(
-        @ViewContext private val context: Context) : Adapter<ERC20Token, TokenManagementAdapter.ViewHolder>() {
+    @ViewContext private val context: Context
+) : Adapter<ERC20Token, TokenManagementAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder =
-            ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.layout_tokens_item, parent, false))
+        ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.layout_tokens_item, parent, false))
 
 
     inner class ViewHolder(itemView: View) : Adapter.ViewHolder<ERC20Token>(itemView) {

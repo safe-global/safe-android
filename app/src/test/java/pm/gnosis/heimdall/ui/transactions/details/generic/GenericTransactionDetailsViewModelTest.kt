@@ -37,11 +37,13 @@ class GenericTransactionDetailsViewModelTest {
         viewModel = GenericTransactionDetailsViewModel()
     }
 
-    private fun testTransformer(inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<Transaction>>,
-                                input: InputEvent, expectedOutput: Result<Transaction>, testNo: Int) {
+    private fun testTransformer(
+        inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<Transaction>>,
+        input: InputEvent, expectedOutput: Result<Transaction>, testNo: Int
+    ) {
         inputStream.onNext(input)
         outputStream.assertNoErrors().assertValueCount(testNo)
-                .assertValueAt(testNo - 1, expectedOutput)
+            .assertValueAt(testNo - 1, expectedOutput)
     }
 
     @Test
@@ -52,57 +54,77 @@ class GenericTransactionDetailsViewModelTest {
         val originalTransaction = Transaction(BigInteger.TEN, nonce = BigInteger.valueOf(1337))
 
         testPublisher.compose(viewModel.inputTransformer(mockContext, originalTransaction))
-                .subscribe(testObserver)
+            .subscribe(testObserver)
         testObserver.assertNoValues()
 
         var testNo = 1
         // Valid input with change
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0" to true, "123" to false, "" to false),
-                DataResult(Transaction(BigInteger.ZERO, value = Wei(BigInteger.valueOf(123)),
-                        data = null, nonce = BigInteger.valueOf(1337))),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0" to true, "123" to false, "" to false),
+            DataResult(
+                Transaction(
+                    BigInteger.ZERO, value = Wei(BigInteger.valueOf(123)),
+                    data = null, nonce = BigInteger.valueOf(1337)
+                )
+            ),
+            testNo++
         )
         // Invalid input with change
         // All changed (compared to last value -> valid input)
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0s" to false, "123x" to false, "üp" to false),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
-                )),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0s" to false, "123x" to false, "üp" to false),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
+                )
+            ),
+            testNo++
         )
         // First changed
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123x" to true, "üp" to false),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
-                )),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123x" to true, "üp" to false),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
+                )
+            ),
+            testNo++
         )
         // Second changed
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123y" to false, "üp" to true),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
-                )),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123y" to false, "üp" to true),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
+                )
+            ),
+            testNo++
         )
         // Third changed
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123y" to false, "öp" to true),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
-                )),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123y" to false, "öp" to true),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
+                )
+            ),
+            testNo++
         )
         // No change
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123y" to false, "öp" to true),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, false
-                )),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123y" to false, "öp" to true),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, false
+                )
+            ),
+            testNo++
         )
     }
 
@@ -113,61 +135,76 @@ class GenericTransactionDetailsViewModelTest {
         val mockContext = mock(Context::class.java).mockGetString()
 
         testPublisher.compose(viewModel.inputTransformer(mockContext, null))
-                .subscribe(testObserver)
+            .subscribe(testObserver)
         testObserver.assertNoValues()
 
         var testNo = 1
         // Valid input with change
         testPublisher.onNext(InputEvent("0x0" to true, "123" to false, "" to false))
         testObserver.assertNoErrors().assertValueCount(testNo)
-                .assertValueAt(testNo - 1, {
-                    it is DataResult
-                            && it.data.address == BigInteger.ZERO
-                            && it.data.value == Wei(BigInteger.valueOf(123))
-                            && it.data.data == null
-                            && it.data.nonce == null
-                })
+            .assertValueAt(testNo - 1, {
+                it is DataResult
+                        && it.data.address == BigInteger.ZERO
+                        && it.data.value == Wei(BigInteger.valueOf(123))
+                        && it.data.data == null
+                        && it.data.nonce == null
+            })
         testNo++
         // Invalid input with change
         // All changed (compared to last value -> valid input)
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0s" to false, "123x" to false, "üp" to false),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
-                )),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0s" to false, "123x" to false, "üp" to false),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
+                )
+            ),
+            testNo++
         )
         // First changed
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123x" to true, "üp" to false),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
-                )),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123x" to true, "üp" to false),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
+                )
+            ),
+            testNo++
         )
         // Second changed
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123y" to false, "üp" to true),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
-                )),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123y" to false, "üp" to true),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
+                )
+            ),
+            testNo++
         )
         // Third changed
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123y" to false, "öp" to true),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
-                )),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123y" to false, "öp" to true),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, true
+                )
+            ),
+            testNo++
         )
         // No change
-        testTransformer(testPublisher, testObserver,
-                InputEvent("0x0t" to false, "123y" to false, "öp" to true),
-                ErrorResult(TransactionInputException(
-                        mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, false
-                )),
-                testNo++
+        testTransformer(
+            testPublisher, testObserver,
+            InputEvent("0x0t" to false, "123y" to false, "öp" to true),
+            ErrorResult(
+                TransactionInputException(
+                    mockContext, TO_FIELD or VALUE_FIELD or DATA_FIELD, false
+                )
+            ),
+            testNo++
         )
     }
 }

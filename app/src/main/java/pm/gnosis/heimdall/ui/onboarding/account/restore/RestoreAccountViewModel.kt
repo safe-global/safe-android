@@ -16,27 +16,27 @@ import pm.gnosis.mnemonic.*
 import javax.inject.Inject
 
 class RestoreAccountViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val accountsRepository: AccountsRepository,
-        private val bip39: Bip39
+    @ApplicationContext private val context: Context,
+    private val accountsRepository: AccountsRepository,
+    private val bip39: Bip39
 ) : RestoreAccountContract() {
 
     private val errorHandler = SimpleLocalizedException.Handler.Builder(context)
-            .add({ it is EmptyMnemonic }, R.string.invalid_mnemonic_no_words)
-            .add({ it is InvalidEntropy || it is InvalidChecksum || it is UnknownMnemonicError }, R.string.invalid_mnemonic)
-            .add({ it is MnemonicNotInWordlist }, R.string.invalid_mnemonic_supported_languages)
-            .build()
+        .add({ it is EmptyMnemonic }, R.string.invalid_mnemonic_no_words)
+        .add({ it is InvalidEntropy || it is InvalidChecksum || it is UnknownMnemonicError }, R.string.invalid_mnemonic)
+        .add({ it is MnemonicNotInWordlist }, R.string.invalid_mnemonic_supported_languages)
+        .build()
 
     override fun saveAccountWithMnemonic(mnemonic: String): Observable<Result<Intent>> =
-            Single.fromCallable { bip39.validateMnemonic(mnemonic) }
-                    .subscribeOn(Schedulers.computation())
-                    .flatMap {
-                        accountsRepository.saveAccountFromMnemonicSeed(bip39.mnemonicToSeed(mnemonic))
-                                .andThen(accountsRepository.saveMnemonic(mnemonic))
-                                .toSingle({ SetupSafeIntroActivity.createIntent(context) })
-                                .subscribeOn(Schedulers.io())
-                    }
-                    .onErrorResumeNext({ errorHandler.single<Intent>(it) })
-                    .toObservable()
-                    .mapToResult()
+        Single.fromCallable { bip39.validateMnemonic(mnemonic) }
+            .subscribeOn(Schedulers.computation())
+            .flatMap {
+                accountsRepository.saveAccountFromMnemonicSeed(bip39.mnemonicToSeed(mnemonic))
+                    .andThen(accountsRepository.saveMnemonic(mnemonic))
+                    .toSingle({ SetupSafeIntroActivity.createIntent(context) })
+                    .subscribeOn(Schedulers.io())
+            }
+            .onErrorResumeNext({ errorHandler.single<Intent>(it) })
+            .toObservable()
+            .mapToResult()
 }

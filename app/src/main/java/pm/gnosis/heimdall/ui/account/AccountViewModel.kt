@@ -18,32 +18,32 @@ import pm.gnosis.ticker.data.repositories.TickerRepository
 import javax.inject.Inject
 
 class AccountViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val accountsRepository: AccountsRepository,
-        private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
-        private val qrCodeGenerator: QrCodeGenerator,
-        private val tickerRepository: TickerRepository
+    @ApplicationContext private val context: Context,
+    private val accountsRepository: AccountsRepository,
+    private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
+    private val qrCodeGenerator: QrCodeGenerator,
+    private val tickerRepository: TickerRepository
 ) : AccountContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
-            .add({ it is EmptyResultSetException }, R.string.no_account_available)
-            .build()
+        .add({ it is EmptyResultSetException }, R.string.no_account_available)
+        .build()
 
     override fun getQrCode(contents: String) = qrCodeGenerator.generateQrCode(contents).mapToResult()
 
     override fun getAccountAddress() =
-            accountsRepository.loadActiveAccount()
-                    .toObservable()
-                    .onErrorResumeNext(Function { errorHandler.observable<Account>(it) })
-                    .mapToResult()
+        accountsRepository.loadActiveAccount()
+            .toObservable()
+            .onErrorResumeNext(Function { errorHandler.observable<Account>(it) })
+            .mapToResult()
 
     override fun getAccountBalance(): Observable<Result<Wei>> =
-            accountsRepository.loadActiveAccount()
-                    .flatMapObservable {
-                        ethereumJsonRpcRepository.getBalance(it.address)
-                                .onErrorResumeNext(Function { errorHandler.observable<Wei>(it) })
-                                .mapToResult()
-                    }
+        accountsRepository.loadActiveAccount()
+            .flatMapObservable {
+                ethereumJsonRpcRepository.getBalance(it.address)
+                    .onErrorResumeNext(Function { errorHandler.observable<Wei>(it) })
+                    .mapToResult()
+            }
 
     override fun loadFiatConversion(amount: Wei) = tickerRepository.convertToFiat(amount).mapToResult()
 }

@@ -100,7 +100,7 @@
             style="@style/Toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
-            app:title="@string/add_address"/>
+            app:title="@string/add_address" />
 
         <View
             android:layout_width="match_parent"

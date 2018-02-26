@@ -15,13 +15,13 @@ import pm.gnosis.utils.hexAsEthereumAddress
 import javax.inject.Inject
 
 class AddTokenViewModel @Inject constructor(
-        @ApplicationContext context: Context,
-        private val tokenRepository: TokenRepository
+    @ApplicationContext context: Context,
+    private val tokenRepository: TokenRepository
 ) : AddTokenContract() {
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
-            .add({ it is InvalidAddressException }, R.string.invalid_ethereum_address)
-            .add({ it is NoTokenSetException }, R.string.no_token_loaded)
-            .build()
+        .add({ it is InvalidAddressException }, R.string.invalid_ethereum_address)
+        .add({ it is NoTokenSetException }, R.string.no_token_loaded)
+        .build()
     private var erc20Token: ERC20Token? = null
 
     override fun addToken(): Single<Result<Unit>> {
@@ -31,17 +31,17 @@ class AddTokenViewModel @Inject constructor(
         } else {
             tokenRepository.addToken(token).andThen(Single.just(Unit))
         }
-                .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
-                .mapToResult()
+            .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
+            .mapToResult()
     }
 
     override fun loadTokenInfo(tokenAddress: String): Observable<Result<ERC20Token>> =
-            Observable
-                    .fromCallable { tokenAddress.hexAsEthereumAddress() }
-                    .flatMap { tokenRepository.loadTokenInfo(it) }
-                    .doOnNext { this.erc20Token = it }
-                    .onErrorResumeNext { throwable: Throwable -> errorHandler.observable(throwable) }
-                    .mapToResult()
+        Observable
+            .fromCallable { tokenAddress.hexAsEthereumAddress() }
+            .flatMap { tokenRepository.loadTokenInfo(it) }
+            .doOnNext { this.erc20Token = it }
+            .onErrorResumeNext { throwable: Throwable -> errorHandler.observable(throwable) }
+            .mapToResult()
 
     private class NoTokenSetException : Exception()
 }

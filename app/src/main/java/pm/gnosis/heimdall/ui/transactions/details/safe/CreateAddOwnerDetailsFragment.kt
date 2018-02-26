@@ -44,56 +44,57 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
         transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.layout_create_add_safe_owner, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.layout_create_add_safe_owner, container, false)
 
     override fun onStart() {
         super.onStart()
 
         disposables += observeSafe()
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap { it.toNullable()?.let { Observable.just(it) } ?: Observable.empty() }
-                .compose(updateSafeInfoTransformer(layout_create_add_safe_owner_safe_address))
-                .subscribeBy(onError = Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap { it.toNullable()?.let { Observable.just(it) } ?: Observable.empty() }
+            .compose(updateSafeInfoTransformer(layout_create_add_safe_owner_safe_address))
+            .subscribeBy(onError = Timber::e)
 
         disposables += layout_create_add_safe_owner_address_book_button.clicks()
-                .subscribeBy(onNext = {
-                    selectFromAddressBook()
-                }, onError = Timber::e)
+            .subscribeBy(onNext = {
+                selectFromAddressBook()
+            }, onError = Timber::e)
     }
 
     override fun observeTransaction(): Observable<Result<Transaction>> =
             // Setup initial form data
-            subViewModel.loadFormData(transaction)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSuccess { (address) ->
-                        layout_create_add_safe_owner_address_input.setDefault(address)
-                        layout_create_add_safe_owner_scan_address_button.setOnClickListener {
-                            scanQrCode()
-                        }
-                        layout_create_add_safe_owner_scan_address_button.setOnClickListener {
-                            selectFromAddressBook()
-                        }
+        subViewModel.loadFormData(transaction)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { (address) ->
+                layout_create_add_safe_owner_address_input.setDefault(address)
+                layout_create_add_safe_owner_scan_address_button.setOnClickListener {
+                    scanQrCode()
+                }
+                layout_create_add_safe_owner_scan_address_button.setOnClickListener {
+                    selectFromAddressBook()
+                }
+            }
+            // Setup input
+            .flatMapObservable {
+                prepareInput(layout_create_add_safe_owner_address_input)
+            }
+            .compose(subViewModel.inputTransformer(safe))
+            // Update for errors
+            .doOnNextForResult(onError = {
+                (it as? TransactionInputException)?.let {
+                    if (it.errorFields and TransactionInputException.TARGET_FIELD != 0) {
+                        setInputError(layout_create_add_safe_owner_address_input)
                     }
-                    // Setup input
-                    .flatMapObservable {
-                        prepareInput(layout_create_add_safe_owner_address_input)
-                    }
-                    .compose(subViewModel.inputTransformer(safe))
-                    // Update for errors
-                    .doOnNextForResult(onError = {
-                        (it as? TransactionInputException)?.let {
-                            if (it.errorFields and TransactionInputException.TARGET_FIELD != 0) {
-                                setInputError(layout_create_add_safe_owner_address_input)
-                            }
-                        }
-                    })
+                }
+            })
 
     override fun onAddressProvided(address: BigInteger) {
         layout_create_add_safe_owner_address_input.setText(address.asEthereumAddressString())
     }
 
     override fun observeSafe(): Observable<Optional<BigInteger>> =
-            Observable.just(safe.toOptional())
+        Observable.just(safe.toOptional())
 
     override fun inputEnabled(enabled: Boolean) {
         layout_create_add_safe_owner_address_input.isEnabled = enabled
@@ -103,9 +104,9 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
-                .applicationComponent(component)
-                .viewModule(ViewModule(activity!!))
-                .build().inject(this)
+            .applicationComponent(component)
+            .viewModule(ViewModule(activity!!))
+            .build().inject(this)
     }
 
     companion object {
@@ -114,12 +115,12 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
         private const val ARG_SAFE = "argument.string.safe"
 
         fun createInstance(transaction: Transaction?, safeAddress: String?) =
-                CreateAddOwnerDetailsFragment().apply {
-                    arguments = Bundle().apply {
-                        putParcelable(ARG_TRANSACTION, transaction?.parcelable())
-                        putString(ARG_SAFE, safeAddress)
-                    }
+            CreateAddOwnerDetailsFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARG_TRANSACTION, transaction?.parcelable())
+                    putString(ARG_SAFE, safeAddress)
                 }
+            }
     }
 
 }

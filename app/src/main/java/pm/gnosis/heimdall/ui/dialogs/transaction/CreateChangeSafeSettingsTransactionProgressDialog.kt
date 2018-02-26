@@ -31,43 +31,45 @@ class CreateChangeSafeSettingsTransactionProgressDialog : BaseCreateSafeTransact
     }
 
     override fun createTransaction(): Single<Transaction> =
-            Single.fromCallable {
-                val data = when (type) {
-                    SETTINGS_TYPE_ADD_OWNER -> {
-                        val newThreshold = GnosisSafeUtils.calculateThresholdAsUInt8(ownerCount + 1)
-                        GnosisSafe.AddOwner.encode(Solidity.Address(BigInteger.ZERO), newThreshold)
-                    }
-                    SETTINGS_TYPE_REMOVE_OWNER -> {
-                        val ownerIndex = arguments?.getLong(EXTRA_OWNER_INDEX)
-                                ?: throw IllegalArgumentException()
-                        val owner = arguments?.getString(EXTRA_OWNER)?.hexAsEthereumAddressOrNull()
-                                ?: throw IllegalArgumentException()
-                        val newThreshold = GnosisSafeUtils.calculateThresholdAsUInt8(ownerCount - 1)
-                        GnosisSafe.RemoveOwner.encode(Solidity.UInt256(BigInteger.valueOf(ownerIndex)), Solidity.Address(owner), newThreshold)
-                    }
-                    SETTINGS_TYPE_REPLACE_OWNER -> {
-                        val ownerIndex = arguments?.getLong(EXTRA_OWNER_INDEX)
-                                ?: throw IllegalArgumentException()
-                        val owner = arguments?.getString(EXTRA_OWNER)?.hexAsEthereumAddressOrNull()
-                                ?: throw IllegalArgumentException()
-                        GnosisSafe.ReplaceOwner.encode(
-                                Solidity.UInt256(BigInteger.valueOf(ownerIndex)),
-                                Solidity.Address(owner),
-                                Solidity.Address(BigInteger.ZERO)
-                        )
-                    }
-                    else -> throw UnsupportedOperationException()
+        Single.fromCallable {
+            val data = when (type) {
+                SETTINGS_TYPE_ADD_OWNER -> {
+                    val newThreshold = GnosisSafeUtils.calculateThresholdAsUInt8(ownerCount + 1)
+                    GnosisSafe.AddOwner.encode(Solidity.Address(BigInteger.ZERO), newThreshold)
                 }
-                Transaction(safeAddress!!, data = data)
-            }.subscribeOn(Schedulers.computation())
+                SETTINGS_TYPE_REMOVE_OWNER -> {
+                    val ownerIndex = arguments?.getLong(EXTRA_OWNER_INDEX)
+                            ?: throw IllegalArgumentException()
+                    val owner = arguments?.getString(EXTRA_OWNER)?.hexAsEthereumAddressOrNull()
+                            ?: throw IllegalArgumentException()
+                    val newThreshold = GnosisSafeUtils.calculateThresholdAsUInt8(ownerCount - 1)
+                    GnosisSafe.RemoveOwner.encode(Solidity.UInt256(BigInteger.valueOf(ownerIndex)), Solidity.Address(owner), newThreshold)
+                }
+                SETTINGS_TYPE_REPLACE_OWNER -> {
+                    val ownerIndex = arguments?.getLong(EXTRA_OWNER_INDEX)
+                            ?: throw IllegalArgumentException()
+                    val owner = arguments?.getString(EXTRA_OWNER)?.hexAsEthereumAddressOrNull()
+                            ?: throw IllegalArgumentException()
+                    GnosisSafe.ReplaceOwner.encode(
+                        Solidity.UInt256(BigInteger.valueOf(ownerIndex)),
+                        Solidity.Address(owner),
+                        Solidity.Address(BigInteger.ZERO)
+                    )
+                }
+                else -> throw UnsupportedOperationException()
+            }
+            Transaction(safeAddress!!, data = data)
+        }.subscribeOn(Schedulers.computation())
 
     override fun showTransaction(safe: BigInteger?, transaction: Transaction) {
-        startActivity(when (type) {
-            SETTINGS_TYPE_REMOVE_OWNER ->
-                SubmitTransactionActivity.createIntent(context!!, safe, transaction)
-            else ->
-                CreateTransactionActivity.createIntent(context!!, safe, mapType(), transaction)
-        })
+        startActivity(
+            when (type) {
+                SETTINGS_TYPE_REMOVE_OWNER ->
+                    SubmitTransactionActivity.createIntent(context!!, safe, transaction)
+                else ->
+                    CreateTransactionActivity.createIntent(context!!, safe, mapType(), transaction)
+            }
+        )
     }
 
     private fun mapType() = when (type) {
@@ -88,27 +90,27 @@ class CreateChangeSafeSettingsTransactionProgressDialog : BaseCreateSafeTransact
         private const val SETTINGS_TYPE_REPLACE_OWNER = 3
 
         fun addOwner(safeAddress: BigInteger, ownerCount: Int) =
-                create(safeAddress, SETTINGS_TYPE_ADD_OWNER, ownerCount)
+            create(safeAddress, SETTINGS_TYPE_ADD_OWNER, ownerCount)
 
         fun removeOwner(safeAddress: BigInteger, owner: BigInteger, ownerIndex: Long, ownerCount: Int) =
-                create(safeAddress, SETTINGS_TYPE_REMOVE_OWNER, ownerCount, Bundle().apply {
-                    putString(EXTRA_OWNER, owner.asEthereumAddressString())
-                    putLong(EXTRA_OWNER_INDEX, ownerIndex)
-                })
+            create(safeAddress, SETTINGS_TYPE_REMOVE_OWNER, ownerCount, Bundle().apply {
+                putString(EXTRA_OWNER, owner.asEthereumAddressString())
+                putLong(EXTRA_OWNER_INDEX, ownerIndex)
+            })
 
         fun replaceOwner(safeAddress: BigInteger, owner: BigInteger, ownerIndex: Long, ownerCount: Int) =
-                create(safeAddress, SETTINGS_TYPE_REPLACE_OWNER, ownerCount, Bundle().apply {
-                    putString(EXTRA_OWNER, owner.asEthereumAddressString())
-                    putLong(EXTRA_OWNER_INDEX, ownerIndex)
-                })
+            create(safeAddress, SETTINGS_TYPE_REPLACE_OWNER, ownerCount, Bundle().apply {
+                putString(EXTRA_OWNER, owner.asEthereumAddressString())
+                putLong(EXTRA_OWNER_INDEX, ownerIndex)
+            })
 
         private fun create(safeAddress: BigInteger, type: Int, ownerCount: Int, params: Bundle? = null) =
-                CreateChangeSafeSettingsTransactionProgressDialog().apply {
-                    arguments = BaseCreateSafeTransactionProgressDialog.createBundle(safeAddress).apply {
-                        putInt(EXTRA_SETTINGS_TYPE, type)
-                        putInt(EXTRA_OWNER_COUNT, ownerCount)
-                        params?.let { putAll(it) }
-                    }
+            CreateChangeSafeSettingsTransactionProgressDialog().apply {
+                arguments = BaseCreateSafeTransactionProgressDialog.createBundle(safeAddress).apply {
+                    putInt(EXTRA_SETTINGS_TYPE, type)
+                    putInt(EXTRA_OWNER_COUNT, ownerCount)
+                    params?.let { putAll(it) }
                 }
+            }
     }
 }

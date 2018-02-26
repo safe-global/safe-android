@@ -19,14 +19,14 @@ import java.util.concurrent.TimeUnit
 abstract class BaseEditableTransactionDetailsFragment : BaseTransactionDetailsFragment() {
 
     protected fun prepareInput(input: TextView): Observable<CharSequence> =
-            input
-                    .textChanges()
-                    .debounce(INPUT_DELAY_MS, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext {
-                        input.setTextColor(ContextCompat.getColor(context!!, R.color.gnosis_dark_blue))
-                        input.setHintTextColor(ContextCompat.getColor(context!!, R.color.gnosis_dark_blue_alpha_70))
-                    }
+        input
+            .textChanges()
+            .debounce(INPUT_DELAY_MS, TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                input.setTextColor(ContextCompat.getColor(context!!, R.color.gnosis_dark_blue))
+                input.setHintTextColor(ContextCompat.getColor(context!!, R.color.gnosis_dark_blue_alpha_70))
+            }
 
     protected fun setInputError(input: TextView) {
         input.setTextColor(ContextCompat.getColor(context!!, R.color.error))
@@ -36,12 +36,12 @@ abstract class BaseEditableTransactionDetailsFragment : BaseTransactionDetailsFr
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (handleQrCodeActivityResult(requestCode, resultCode, data, {
-                    (parseEthereumAddress(it))?.let {
-                        onAddressProvided(it)
-                    } ?: run {
-                        onInvalidAddressScanned(it)
-                    }
-                })) return
+                (parseEthereumAddress(it))?.let {
+                    onAddressProvided(it)
+                } ?: run {
+                    onInvalidAddressScanned(it)
+                }
+            })) return
 
         handleAddressBookResult(requestCode, resultCode, data, { onAddressProvided(it.address) })
     }

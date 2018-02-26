@@ -60,15 +60,20 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
         if (targets.isEmpty()) return
 
         disposables += accountsRepo.loadActiveAccount()
-                .subscribe({
-                    if (targets.contains(it.address.asEthereumAddressString().removeHexPrefix().toLowerCase())) {
-                        showNotification(parsed)
-                    }
-                }, Timber::e)
+            .subscribe({
+                if (targets.contains(it.address.asEthereumAddressString().removeHexPrefix().toLowerCase())) {
+                    showNotification(parsed)
+                }
+            }, Timber::e)
     }
 
     private fun showNotification(signRequest: GnoSafeUrlParser.Parsed.SignRequest) {
         val intent = SignTransactionActivity.createIntent(this, signRequest.safe, signRequest.transaction, true)
-        notificationManager.show(signRequest.transactionHash.hashCode(), getString(R.string.sign_transaction_request_title), getString(R.string.sign_transaction_request_message), intent)
+        notificationManager.show(
+            signRequest.transactionHash.hashCode(),
+            getString(R.string.sign_transaction_request_title),
+            getString(R.string.sign_transaction_request_message),
+            intent
+        )
     }
 }

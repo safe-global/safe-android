@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 
 class AuthenticateViewModel @Inject constructor(
-        private @ApplicationContext val context: Context
+    private @ApplicationContext val context: Context
 ) : AuthenticateContract() {
     override fun checkResult(input: String): Observable<Result<Intent>> {
         return Observable.fromCallable {
@@ -33,8 +33,7 @@ class AuthenticateViewModel @Inject constructor(
                 else -> null
             }
         }
-        val parsedData = ERC67Parser.parse(qrCodeData) ?:
-                throw SimpleLocalizedException(context.getString(R.string.invalid_erc67))
+        val parsedData = ERC67Parser.parse(qrCodeData) ?: throw SimpleLocalizedException(context.getString(R.string.invalid_erc67))
         return SelectSafeActivity.createIntent(context, parsedData.transaction)
     }
 }

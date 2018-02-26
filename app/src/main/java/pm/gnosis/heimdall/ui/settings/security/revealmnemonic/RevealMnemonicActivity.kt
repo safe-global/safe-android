@@ -53,16 +53,16 @@ class RevealMnemonicActivity : BaseActivity() {
         setUi(showMnemonic = false)
 
         disposables += layout_reveal_mnemonic_button.clicks()
-                .subscribeBy(onNext = {
-                    startActivityForResult(UnlockActivity.createConfirmIntent(this), UNLOCK_REQUEST)
-                }, onError = Timber::e)
+            .subscribeBy(onNext = {
+                startActivityForResult(UnlockActivity.createConfirmIntent(this), UNLOCK_REQUEST)
+            }, onError = Timber::e)
 
         if (confirmedUnlock) {
             setUi(showMnemonic = true)
             confirmedUnlock = false
             disposables += viewModel.loadMnemonic()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onSuccess = ::onMnemonic, onError = ::onMnemonicError)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = ::onMnemonic, onError = ::onMnemonicError)
         }
     }
 
@@ -95,10 +95,10 @@ class RevealMnemonicActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {

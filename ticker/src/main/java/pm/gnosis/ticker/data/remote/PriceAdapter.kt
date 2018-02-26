@@ -16,14 +16,14 @@ class TickerAdapter {
             }
         }
         return CurrencyNetwork(
-                map["id"]!!,
-                map["name"]!!,
-                map["symbol"]!!,
-                map["rank"]!!,
-                map["price_usd"]!!,
-                map["price_btc"]!!,
-                map["last_updated"]!!.toLong(),
-                map["price"]
+            map["id"]!!,
+            map["name"]!!,
+            map["symbol"]!!,
+            map["rank"]!!,
+            map["price_usd"]!!,
+            map["price_btc"]!!,
+            map["last_updated"]!!.toLong(),
+            map["price"]
         )
     }
 }

@@ -11,7 +11,7 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class TokenInfoViewModel @Inject constructor(
-        private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository
 ) : TokenInfoContract() {
     private lateinit var tokenAddress: BigInteger
 
@@ -20,11 +20,11 @@ class TokenInfoViewModel @Inject constructor(
     }
 
     override fun observeToken(): Observable<ERC20Token> =
-            tokenRepository.observeToken(tokenAddress)
-                    .toObservable()
+        tokenRepository.observeToken(tokenAddress)
+            .toObservable()
 
     override fun removeToken(): Observable<Result<Unit>> =
-            tokenRepository.removeToken(tokenAddress)
-                    .andThen(Observable.just(Unit))
-                    .mapToResult()
+        tokenRepository.removeToken(tokenAddress)
+            .andThen(Observable.just(Unit))
+            .mapToResult()
 }

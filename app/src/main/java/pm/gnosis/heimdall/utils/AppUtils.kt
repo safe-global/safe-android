@@ -34,8 +34,10 @@ fun Context.errorToast(throwable: Throwable, duration: Int = Toast.LENGTH_LONG) 
     toast(message, duration)
 }
 
-fun handleQrCodeActivityResult(requestCode: Int, resultCode: Int, data: Intent?,
-                               onQrCodeResult: (String) -> Unit, onCancelledResult: (() -> Unit)? = null): Boolean {
+fun handleQrCodeActivityResult(
+    requestCode: Int, resultCode: Int, data: Intent?,
+    onQrCodeResult: (String) -> Unit, onCancelledResult: (() -> Unit)? = null
+): Boolean {
     if (requestCode == ZxingIntentIntegrator.REQUEST_CODE) {
         if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)) {
             onQrCodeResult(data.getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA))
@@ -50,8 +52,10 @@ fun handleQrCodeActivityResult(requestCode: Int, resultCode: Int, data: Intent?,
 fun Activity.selectFromAddressBook() = startActivityForResult(AddressBookActivity.createIntent(this), AddressBookActivity.REQUEST_CODE)
 fun Fragment.selectFromAddressBook() = startActivityForResult(AddressBookActivity.createIntent(context!!), AddressBookActivity.REQUEST_CODE)
 
-fun handleAddressBookResult(requestCode: Int, resultCode: Int, data: Intent?,
-                            onResult: (AddressBookEntry) -> Unit, onCancelled: (() -> Unit)? = null): Boolean {
+fun handleAddressBookResult(
+    requestCode: Int, resultCode: Int, data: Intent?,
+    onResult: (AddressBookEntry) -> Unit, onCancelled: (() -> Unit)? = null
+): Boolean {
     if (requestCode == AddressBookActivity.REQUEST_CODE) {
         if (resultCode == Activity.RESULT_OK) {
             AddressBookActivity.parseResult(data)?.let { onResult(it) }
@@ -64,7 +68,7 @@ fun handleAddressBookResult(requestCode: Int, resultCode: Int, data: Intent?,
 }
 
 fun parseEthereumAddress(address: String) =
-        address.hexAsEthereumAddressOrNull() ?: ERC67Parser.parse(address)?.transaction?.address
+    address.hexAsEthereumAddressOrNull() ?: ERC67Parser.parse(address)?.transaction?.address
 
 fun TextView.setupEtherscanTransactionUrl(transactionHash: String, @StringRes stringId: Int) {
     setupEtherscanTransactionUrl(transactionHash, context.getString(stringId))
@@ -86,16 +90,18 @@ private fun TextView.setupEtherscanLink(url: String, text: String) {
     val linkDrawable = ContextCompat.getDrawable(this.context, R.drawable.ic_external_link)!!
     linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
     this.text = SpannableStringBuilder(text)
-            .append(" ")
-            .appendText(context.getString(R.string.etherscan_io), URLSpan(url))
-            .append(" ")
-            .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
+        .append(" ")
+        .appendText(context.getString(R.string.etherscan_io), URLSpan(url))
+        .append(" ")
+        .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
     setOnClickListener { this.context.openUrl(url) }
 }
 
-fun Activity.setupToolbar(toolbar: Toolbar,
-                          @DrawableRes icon: Int = R.drawable.ic_arrow_back_24dp,
-                          clickListener: (View) -> Unit = { onBackPressed() }) {
+fun Activity.setupToolbar(
+    toolbar: Toolbar,
+    @DrawableRes icon: Int = R.drawable.ic_arrow_back_24dp,
+    clickListener: (View) -> Unit = { onBackPressed() }
+) {
     toolbar.setNavigationIcon(icon)
     toolbar.setNavigationOnClickListener(clickListener)
 }

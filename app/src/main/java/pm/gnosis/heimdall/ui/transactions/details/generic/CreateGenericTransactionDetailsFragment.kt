@@ -52,7 +52,8 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         safeSubject.onNext(arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull().toOptional())
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.layout_transaction_details_generic, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.layout_transaction_details_generic, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -74,18 +75,18 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
     override fun onStart() {
         super.onStart()
         disposables += observeSafe()
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap { it.toNullable()?.let { Observable.just(it) } ?: Observable.empty() }
-                .compose(updateSafeInfoTransformer(layout_create_transaction_safe_info_address))
-                .subscribeBy(onError = Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMap { it.toNullable()?.let { Observable.just(it) } ?: Observable.empty() }
+            .compose(updateSafeInfoTransformer(layout_create_transaction_safe_info_address))
+            .subscribeBy(onError = Timber::e)
 
         disposables += Observable.combineLatest(
-                prepareInput(layout_transaction_details_generic_to_input),
-                prepareInput(layout_transaction_details_generic_value_input),
-                prepareInput(layout_transaction_details_generic_data_input),
-                Function3 { to: CharSequence, value: CharSequence, data: CharSequence ->
-                    GenericTransactionDetailsContract.InputEvent(to.toString() to false, value.toString() to false, data.toString() to false)
-                }
+            prepareInput(layout_transaction_details_generic_to_input),
+            prepareInput(layout_transaction_details_generic_value_input),
+            prepareInput(layout_transaction_details_generic_data_input),
+            Function3 { to: CharSequence, value: CharSequence, data: CharSequence ->
+                GenericTransactionDetailsContract.InputEvent(to.toString() to false, value.toString() to false, data.toString() to false)
+            }
         ).subscribe(inputSubject::onNext, Timber::e)
 
         layout_transaction_details_generic_scan_to_button.setOnClickListener {
@@ -113,32 +114,32 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
 
     override fun observeTransaction(): Observable<Result<Transaction>> {
         return inputSubject
-                .compose(subViewModel.inputTransformer(context!!, originalTransaction))
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext {
-                    (it as? ErrorResult)?.let {
-                        (it.error as? TransactionInputException)?.let {
-                            if (it.errorFields and TransactionInputException.TO_FIELD != 0) {
-                                setInputError(layout_transaction_details_generic_to_input)
-                            }
-                            if (it.errorFields and TransactionInputException.DATA_FIELD != 0) {
-                                setInputError(layout_transaction_details_generic_data_input)
-                            }
-                            if (it.errorFields and TransactionInputException.VALUE_FIELD != 0) {
-                                setInputError(layout_transaction_details_generic_value_input)
-                            }
+            .compose(subViewModel.inputTransformer(context!!, originalTransaction))
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                (it as? ErrorResult)?.let {
+                    (it.error as? TransactionInputException)?.let {
+                        if (it.errorFields and TransactionInputException.TO_FIELD != 0) {
+                            setInputError(layout_transaction_details_generic_to_input)
+                        }
+                        if (it.errorFields and TransactionInputException.DATA_FIELD != 0) {
+                            setInputError(layout_transaction_details_generic_data_input)
+                        }
+                        if (it.errorFields and TransactionInputException.VALUE_FIELD != 0) {
+                            setInputError(layout_transaction_details_generic_value_input)
                         }
                     }
                 }
+            }
     }
 
     override fun observeSafe(): Observable<Optional<BigInteger>> = safeSubject
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
-                .applicationComponent(component)
-                .viewModule(ViewModule(activity!!))
-                .build().inject(this)
+            .applicationComponent(component)
+            .viewModule(ViewModule(activity!!))
+            .build().inject(this)
     }
 
     companion object {
@@ -148,12 +149,12 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         private const val ARG_EDITABLE = "argument.boolean.editable"
 
         fun createInstance(transaction: Transaction?, safeAddress: String?, editable: Boolean) =
-                CreateGenericTransactionDetailsFragment().apply {
-                    arguments = Bundle().apply {
-                        putBoolean(ARG_EDITABLE, editable)
-                        putParcelable(ARG_TRANSACTION, transaction?.parcelable())
-                        putString(ARG_SAFE, safeAddress)
-                    }
+            CreateGenericTransactionDetailsFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean(ARG_EDITABLE, editable)
+                    putParcelable(ARG_TRANSACTION, transaction?.parcelable())
+                    putString(ARG_SAFE, safeAddress)
                 }
+            }
     }
 }

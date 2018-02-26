@@ -28,58 +28,58 @@ import javax.inject.Inject
 
 
 class ChangeSafeSettingsDetailsViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val detailsRepository: TransactionDetailsRepository,
-        private val safeRepository: GnosisSafeRepository
+    @ApplicationContext private val context: Context,
+    private val detailsRepository: TransactionDetailsRepository,
+    private val safeRepository: GnosisSafeRepository
 ) : ChangeSafeSettingsDetailsContract() {
 
     private var cachedAddOwnerInfo: Pair<String, Int>? = null
 
     override fun loadFormData(preset: Transaction?): Single<Pair<String, Int>> =
             // Check if we have a cached value
-            cachedAddOwnerInfo?.let { Single.just(it) } ?:
-                    // Else parse preset to extract address
-                    preset?.let {
-                        detailsRepository.loadTransactionData(preset)
-                                .map {
-                                    val data = it.toNullable()
-                                    when (data) {
-                                        is AddSafeOwnerData -> data.let {
-                                            val address =
-                                                    if (it.newOwner == BigInteger.ZERO) ""
-                                                    else it.newOwner.asEthereumAddressString()
-                                            address to it.newThreshold
-                                        }
-                                        else -> throw IllegalArgumentException()
-                                    }
-                                }
-                                .doOnSuccess {
-                                    cachedAddOwnerInfo = it
-                                }
-                                .onErrorReturnItem(EMPTY_FORM_DATA)
-                    } ?: Single.just(EMPTY_FORM_DATA)
+        cachedAddOwnerInfo?.let { Single.just(it) } ?:
+        // Else parse preset to extract address
+        preset?.let {
+            detailsRepository.loadTransactionData(preset)
+                .map {
+                    val data = it.toNullable()
+                    when (data) {
+                        is AddSafeOwnerData -> data.let {
+                            val address =
+                                if (it.newOwner == BigInteger.ZERO) ""
+                                else it.newOwner.asEthereumAddressString()
+                            address to it.newThreshold
+                        }
+                        else -> throw IllegalArgumentException()
+                    }
+                }
+                .doOnSuccess {
+                    cachedAddOwnerInfo = it
+                }
+                .onErrorReturnItem(EMPTY_FORM_DATA)
+        } ?: Single.just(EMPTY_FORM_DATA)
 
     override fun inputTransformer(safeAddress: BigInteger?) = ObservableTransformer<CharSequence, Result<Transaction>> {
         Observable.combineLatest(
-                loadSafeInfo(safeAddress),
-                it,
-                BiFunction { info: Optional<SafeInfo>, input: CharSequence -> info.toNullable() to input.toString() }
+            loadSafeInfo(safeAddress),
+            it,
+            BiFunction { info: Optional<SafeInfo>, input: CharSequence -> info.toNullable() to input.toString() }
         )
-                .map { (safeInfo, input) ->
-                    try {
-                        DataResult(buildTransaction(input, safeAddress, safeInfo))
-                    } catch (t: Throwable) {
-                        ErrorResult<Transaction>(t)
-                    }
+            .map { (safeInfo, input) ->
+                try {
+                    DataResult(buildTransaction(input, safeAddress, safeInfo))
+                } catch (t: Throwable) {
+                    ErrorResult<Transaction>(t)
                 }
+            }
     }
 
     private fun loadSafeInfo(safeAddress: BigInteger?) =
-            safeAddress?.let {
-                safeRepository.loadInfo(safeAddress)
-                        .map { it.toOptional() }
-                        .onErrorReturnItem(None)
-            } ?: Observable.just(None)
+        safeAddress?.let {
+            safeRepository.loadInfo(safeAddress)
+                .map { it.toOptional() }
+                .onErrorReturnItem(None)
+        } ?: Observable.just(None)
 
     private fun buildTransaction(input: String, safe: BigInteger?, safeInfo: SafeInfo?): Transaction {
         if (input.isBlank()) {
@@ -104,18 +104,18 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
     }
 
     override fun loadAction(safeAddress: BigInteger?, transaction: Transaction?): Single<Action> =
-            transaction?.let {
-                detailsRepository.loadTransactionData(transaction)
-                        .flatMap {
-                            val data = it.toNullable()
-                            when (data) {
-                                is RemoveSafeOwnerData -> Single.just(Action.RemoveOwner(data.owner))
-                                is AddSafeOwnerData -> Single.just(Action.AddOwner(data.newOwner))
-                                is ReplaceSafeOwnerData -> Single.just(Action.ReplaceOwner(data.newOwner, data.owner))
-                                else -> throw IllegalStateException()
-                            }
-                        }
-            } ?: Single.error<Action>(IllegalStateException())
+        transaction?.let {
+            detailsRepository.loadTransactionData(transaction)
+                .flatMap {
+                    val data = it.toNullable()
+                    when (data) {
+                        is RemoveSafeOwnerData -> Single.just(Action.RemoveOwner(data.owner))
+                        is AddSafeOwnerData -> Single.just(Action.AddOwner(data.newOwner))
+                        is ReplaceSafeOwnerData -> Single.just(Action.ReplaceOwner(data.newOwner, data.owner))
+                        else -> throw IllegalStateException()
+                    }
+                }
+        } ?: Single.error<Action>(IllegalStateException())
 
     companion object {
         val EMPTY_FORM_DATA = "" to -1

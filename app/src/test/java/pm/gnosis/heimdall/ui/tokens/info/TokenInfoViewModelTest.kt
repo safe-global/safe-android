@@ -100,8 +100,8 @@ class TokenInfoViewModelTest {
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, testCompletable.callCount)
         testObserver
-                .assertValue(DataResult(Unit))
-                .assertNoErrors()
+            .assertValue(DataResult(Unit))
+            .assertNoErrors()
     }
 
     @Test
@@ -116,7 +116,7 @@ class TokenInfoViewModelTest {
         then(tokenRepositoryMock).should().removeToken(BigInteger.ZERO)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver
-                .assertValue(ErrorResult(exception))
-                .assertNoErrors()
+            .assertValue(ErrorResult(exception))
+            .assertNoErrors()
     }
 }

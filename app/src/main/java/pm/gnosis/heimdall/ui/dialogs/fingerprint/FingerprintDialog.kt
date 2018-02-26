@@ -30,13 +30,13 @@ class FingerprintDialog : BaseDialog() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.dialog_fingerprint_scan, container, false)
+        inflater.inflate(R.layout.dialog_fingerprint_scan, container, false)
 
     override fun onStart() {
         super.onStart()
         disposables += encryptionManager.observeFingerprintForSetup()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = ::onFingerprintResult, onError = ::onFingerprintUnrecoverableError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = ::onFingerprintResult, onError = ::onFingerprintUnrecoverableError)
     }
 
     private fun onFingerprintResult(isSuccessful: Boolean) {
@@ -59,10 +59,10 @@ class FingerprintDialog : BaseDialog() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .viewModule(ViewModule(context!!))
-                .applicationComponent(HeimdallApplication[context!!].component)
-                .build()
-                .inject(this)
+            .viewModule(ViewModule(context!!))
+            .applicationComponent(HeimdallApplication[context!!].component)
+            .build()
+            .inject(this)
     }
 
     companion object {

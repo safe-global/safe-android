@@ -32,10 +32,10 @@ interface SettingsRepository {
 
 fun HttpUrl.override(override: SettingsRepository.UrlOverride): HttpUrl {
     return newBuilder()
-            .scheme(if (override.isHttps) "https" else "http")
-            .host(override.host)
-            .apply { override.port?.let { port(it) } }
-            .build()
+        .scheme(if (override.isHttps) "https" else "http")
+        .host(override.host)
+        .apply { override.port?.let { port(it) } }
+        .build()
 }
 
 fun Request.changeUrl(override: SettingsRepository.UrlOverride?): Request {

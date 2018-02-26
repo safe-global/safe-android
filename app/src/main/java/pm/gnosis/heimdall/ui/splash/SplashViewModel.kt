@@ -9,9 +9,9 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
-        private val accountsRepository: AccountsRepository,
-        private val encryptionManager: EncryptionManager,
-        private val tokenRepository: TokenRepository
+    private val accountsRepository: AccountsRepository,
+    private val encryptionManager: EncryptionManager,
+    private val tokenRepository: TokenRepository
 ) : SplashContract() {
     companion object {
         const val LAUNCH_DELAY = 500L
@@ -19,28 +19,28 @@ class SplashViewModel @Inject constructor(
 
     override fun initialSetup(): Single<ViewAction> {
         return tokenRepository.setup()
-                .onErrorComplete()
-                .andThen(encryptionManager.initialized())
-                .flatMap { isEncryptionInitialized ->
-                    if (isEncryptionInitialized) {
-                        checkAccount()
-                    } else {
-                        Single.just(StartPasswordSetup())
-                    }
+            .onErrorComplete()
+            .andThen(encryptionManager.initialized())
+            .flatMap { isEncryptionInitialized ->
+                if (isEncryptionInitialized) {
+                    checkAccount()
+                } else {
+                    Single.just(StartPasswordSetup())
                 }
-                // We need a short delay to avoid weird flickering
-                .delay(LAUNCH_DELAY, TimeUnit.MILLISECONDS)
+            }
+            // We need a short delay to avoid weird flickering
+            .delay(LAUNCH_DELAY, TimeUnit.MILLISECONDS)
     }
 
     private fun checkAccount(): Single<ViewAction> =
-            accountsRepository.loadActiveAccount()
-                    .map { StartMain() as ViewAction }
-                    .onErrorReturn {
-                        when (it) {
-                            is EmptyResultSetException, is NoSuchElementException ->
-                                StartAccountSetup()
-                            else ->
-                                StartMain()
-                        }
-                    }
+        accountsRepository.loadActiveAccount()
+            .map { StartMain() as ViewAction }
+            .onErrorReturn {
+                when (it) {
+                    is EmptyResultSetException, is NoSuchElementException ->
+                        StartAccountSetup()
+                    else ->
+                        StartMain()
+                }
+            }
 }

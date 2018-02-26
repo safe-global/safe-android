@@ -57,16 +57,16 @@ class AddressBookActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += layout_address_book_add
-                .clicks()
-                .subscribeBy(onNext = { startActivity(AddressBookAddEntryActivity.createIntent(this)) })
+            .clicks()
+            .subscribeBy(onNext = { startActivity(AddressBookAddEntryActivity.createIntent(this)) })
 
         disposables += viewModel.observeAddressBook()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = ::onAddressBook, onError = ::onAddressBookError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = ::onAddressBook, onError = ::onAddressBookError)
 
         disposables += adapter.clicks
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = ::handleEntryClick, onError = Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = ::handleEntryClick, onError = Timber::e)
     }
 
     private fun onAddressBook(adapterData: Adapter.Data<AddressBookEntry>) {
@@ -91,10 +91,10 @@ class AddressBookActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {
@@ -105,11 +105,11 @@ class AddressBookActivity : BaseActivity() {
         private const val RESULT_ENTRY_DESCRIPTION = "result.string.entry_description"
 
         private fun createResult(entry: AddressBookEntry): Intent =
-                Intent().apply {
-                    putExtra(RESULT_ENTRY_ADDRESS, entry.address.asEthereumAddressString())
-                    putExtra(RESULT_ENTRY_NAME, entry.name)
-                    putExtra(RESULT_ENTRY_DESCRIPTION, entry.description)
-                }
+            Intent().apply {
+                putExtra(RESULT_ENTRY_ADDRESS, entry.address.asEthereumAddressString())
+                putExtra(RESULT_ENTRY_NAME, entry.name)
+                putExtra(RESULT_ENTRY_DESCRIPTION, entry.description)
+            }
 
         fun parseResult(intent: Intent?): AddressBookEntry? {
             intent ?: return null

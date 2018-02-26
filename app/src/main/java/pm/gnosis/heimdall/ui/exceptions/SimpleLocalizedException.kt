@@ -19,8 +19,10 @@ data class SimpleLocalizedException(override val message: String) : Exception(me
 
     override fun localizedMessage() = message
 
-    class Handler private constructor(private val context: Context, private val translators: List<Translator>,
-                                      private val logException: Boolean = true) {
+    class Handler private constructor(
+        private val context: Context, private val translators: List<Translator>,
+        private val logException: Boolean = true
+    ) {
 
         fun translate(exception: Throwable): Throwable {
             if (logException) {
@@ -81,15 +83,17 @@ data class SimpleLocalizedException(override val message: String) : Exception(me
     companion object {
 
         fun networkErrorHandlerBuilder(context: Context) = Handler.Builder(context)
-                .add({ it is HttpException }, { c, throwable ->
-                    when ((throwable as HttpException).code()) {
-                        HttpCodes.FORBIDDEN, HttpCodes.UNAUTHORIZED -> c.getString(R.string.error_not_authorized_for_action)
-                        HttpCodes.SERVER_ERROR, HttpCodes.BAD_REQUEST -> c.getString(R.string.error_try_again)
-                        else -> context.getString(R.string.error_try_again)
-                    }
-                })
-                .add({ it is SSLHandshakeException || it.cause is SSLHandshakeException }, { c, _ -> c.getString(R.string.error_ssl_handshake) })
-                .add({ it is UnknownHostException || it is SocketTimeoutException || it is ConnectException }, { c, _ -> c.getString(R.string.error_check_internet_connection) })
+            .add({ it is HttpException }, { c, throwable ->
+                when ((throwable as HttpException).code()) {
+                    HttpCodes.FORBIDDEN, HttpCodes.UNAUTHORIZED -> c.getString(R.string.error_not_authorized_for_action)
+                    HttpCodes.SERVER_ERROR, HttpCodes.BAD_REQUEST -> c.getString(R.string.error_try_again)
+                    else -> context.getString(R.string.error_try_again)
+                }
+            })
+            .add({ it is SSLHandshakeException || it.cause is SSLHandshakeException }, { c, _ -> c.getString(R.string.error_ssl_handshake) })
+            .add(
+                { it is UnknownHostException || it is SocketTimeoutException || it is ConnectException },
+                { c, _ -> c.getString(R.string.error_check_internet_connection) })
 
         fun assert(condition: Boolean, context: Context, @StringRes messagedId: Int, vararg params: Any) {
             if (!condition) {

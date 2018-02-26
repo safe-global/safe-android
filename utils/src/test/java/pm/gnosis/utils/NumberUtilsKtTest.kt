@@ -14,8 +14,14 @@ class NumberUtilsKtTest {
         assertNull("ffffffffffffffffffffffffffffffffffffffffff".hexAsEthereumAddressOrNull())
         assertNull("0xffffffffffffffffffffffffffffffffffffffffff".hexAsEthereumAddressOrNull())
         assertNull("thisisporbablynotahexnumber".hexAsEthereumAddressOrNull())
-        assertEquals(BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16), "ffffffffffffffffffffffffffffffffffffffff".hexAsEthereumAddressOrNull())
-        assertEquals(BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16), "0xffffffffffffffffffffffffffffffffffffffff".hexAsEthereumAddressOrNull())
+        assertEquals(
+            BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16),
+            "ffffffffffffffffffffffffffffffffffffffff".hexAsEthereumAddressOrNull()
+        )
+        assertEquals(
+            BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16),
+            "0xffffffffffffffffffffffffffffffffffffffff".hexAsEthereumAddressOrNull()
+        )
         assertEquals(BigInteger("abcd", 16), "abcd".hexAsEthereumAddressOrNull())
         assertEquals(BigInteger("abcd", 16), "0xabcd".hexAsEthereumAddressOrNull())
     }
@@ -46,11 +52,13 @@ class NumberUtilsKtTest {
     fun hexAsBigInteger() {
         assertThrow({ "thisisporbablynotahexnumber".hexAsBigInteger() })
         assertEquals(
-                BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16),
-                "ffffffffffffffffffffffffffffffffffffffffff".hexAsBigInteger())
+            BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16),
+            "ffffffffffffffffffffffffffffffffffffffffff".hexAsBigInteger()
+        )
         assertEquals(
-                BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16),
-                "0xffffffffffffffffffffffffffffffffffffffffff".hexAsBigInteger())
+            BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16),
+            "0xffffffffffffffffffffffffffffffffffffffffff".hexAsBigInteger()
+        )
         assertEquals(BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16), "ffffffffffffffffffffffffffffffffffffffff".hexAsBigInteger())
         assertEquals(BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16), "0xffffffffffffffffffffffffffffffffffffffff".hexAsBigInteger())
         assertEquals(BigInteger("abcd", 16), "abcd".hexAsBigInteger())
@@ -61,11 +69,13 @@ class NumberUtilsKtTest {
     fun hexAsBigIntegerOrNull() {
         assertNull("thisisporbablynotahexnumber".hexAsBigIntegerOrNull())
         assertEquals(
-                BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16),
-                "ffffffffffffffffffffffffffffffffffffffffff".hexAsBigIntegerOrNull())
+            BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16),
+            "ffffffffffffffffffffffffffffffffffffffffff".hexAsBigIntegerOrNull()
+        )
         assertEquals(
-                BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16),
-                "0xffffffffffffffffffffffffffffffffffffffffff".hexAsBigIntegerOrNull())
+            BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16),
+            "0xffffffffffffffffffffffffffffffffffffffffff".hexAsBigIntegerOrNull()
+        )
         assertEquals(BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16), "ffffffffffffffffffffffffffffffffffffffff".hexAsBigIntegerOrNull())
         assertEquals(BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16), "0xffffffffffffffffffffffffffffffffffffffff".hexAsBigIntegerOrNull())
         assertEquals(BigInteger("abcd", 16), "abcd".hexAsBigIntegerOrNull())
@@ -77,7 +87,10 @@ class NumberUtilsKtTest {
         assertThrow({ "thisisporbablynotadecimalnumber".decimalAsBigInteger() })
         assertThrow({ "ffffffffffffffffffffffffffffffffffffffffff".decimalAsBigInteger() })
         assertEquals(BigInteger.valueOf(123456), "123456".decimalAsBigInteger())
-        assertEquals(BigInteger("123456789101112131415161718192021222324252627282930"), "123456789101112131415161718192021222324252627282930".decimalAsBigInteger())
+        assertEquals(
+            BigInteger("123456789101112131415161718192021222324252627282930"),
+            "123456789101112131415161718192021222324252627282930".decimalAsBigInteger()
+        )
     }
 
     @Test
@@ -85,7 +98,10 @@ class NumberUtilsKtTest {
         assertNull("thisisporbablynotadecimalnumber".decimalAsBigIntegerOrNull())
         assertNull("ffffffffffffffffffffffffffffffffffffffffff".decimalAsBigIntegerOrNull())
         assertEquals(BigInteger.valueOf(123456), "123456".decimalAsBigIntegerOrNull())
-        assertEquals(BigInteger("123456789101112131415161718192021222324252627282930"), "123456789101112131415161718192021222324252627282930".decimalAsBigIntegerOrNull())
+        assertEquals(
+            BigInteger("123456789101112131415161718192021222324252627282930"),
+            "123456789101112131415161718192021222324252627282930".decimalAsBigIntegerOrNull()
+        )
     }
 
     @Test
@@ -96,9 +112,15 @@ class NumberUtilsKtTest {
 
     @Test
     fun asEthereumAddressStringOrNull() {
-        assertNull("0x0000000000000000000000000000000000000001", BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16).asEthereumAddressStringOrNull())
+        assertNull(
+            "0x0000000000000000000000000000000000000001",
+            BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16).asEthereumAddressStringOrNull()
+        )
         assertEquals("0x0000000000000000000000000000000000000001", BigInteger.ONE.asEthereumAddressStringOrNull())
-        assertEquals("0xffffffffffffffffffffffffffffffffffffffff", BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16).asEthereumAddressStringOrNull())
+        assertEquals(
+            "0xffffffffffffffffffffffffffffffffffffffff",
+            BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16).asEthereumAddressStringOrNull()
+        )
         assertEquals("0x000000000000000000000000000000000000abcd", BigInteger("abcd", 16).asEthereumAddressStringOrNull())
     }
 
@@ -106,7 +128,10 @@ class NumberUtilsKtTest {
     fun asEthereumAddressString() {
         assertThrow({ BigInteger("ffffffffffffffffffffffffffffffffffffffffff", 16).asEthereumAddressString() })
         assertEquals("0x0000000000000000000000000000000000000001", BigInteger.ONE.asEthereumAddressString())
-        assertEquals("0xffffffffffffffffffffffffffffffffffffffff", BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16).asEthereumAddressString())
+        assertEquals(
+            "0xffffffffffffffffffffffffffffffffffffffff",
+            BigInteger("ffffffffffffffffffffffffffffffffffffffff", 16).asEthereumAddressString()
+        )
         assertEquals("0x000000000000000000000000000000000000abcd", BigInteger("abcd", 16).asEthereumAddressString())
     }
 
@@ -122,7 +147,10 @@ class NumberUtilsKtTest {
     fun asTransactionHash() {
         assertThrow({ BigInteger("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16).asTransactionHash() })
         assertEquals("0x0000000000000000000000000000000000000000000000000000000000000001", BigInteger.ONE.asTransactionHash())
-        assertEquals("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", BigInteger("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16).asTransactionHash())
+        assertEquals(
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            BigInteger("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16).asTransactionHash()
+        )
         assertEquals("0x000000000000000000000000000000000000000000000000000000000000abcd", BigInteger("abcd", 16).asTransactionHash())
     }
 
@@ -138,7 +166,10 @@ class NumberUtilsKtTest {
     fun asDecimalString() {
         assertEquals("0", BigInteger.ZERO.asDecimalString())
         assertEquals("123456", BigInteger.valueOf(123456).asDecimalString())
-        assertEquals("123456789101112131415161718192021222324252627282930", BigInteger("123456789101112131415161718192021222324252627282930").asDecimalString())
+        assertEquals(
+            "123456789101112131415161718192021222324252627282930",
+            BigInteger("123456789101112131415161718192021222324252627282930").asDecimalString()
+        )
     }
 
     @Test

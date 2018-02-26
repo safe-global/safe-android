@@ -8,15 +8,15 @@ import java.math.BigInteger
 
 @Entity(tableName = AddressBookEntryDb.TABLE_NAME)
 data class AddressBookEntryDb(
-        @PrimaryKey
-        @ColumnInfo(name = COL_ADDRESS)
-        val address: BigInteger,
+    @PrimaryKey
+    @ColumnInfo(name = COL_ADDRESS)
+    val address: BigInteger,
 
-        @ColumnInfo(name = COL_NAME)
-        val name: String,
+    @ColumnInfo(name = COL_NAME)
+    val name: String,
 
-        @ColumnInfo(name = COL_DESCRIPTION)
-        val description: String
+    @ColumnInfo(name = COL_DESCRIPTION)
+    val description: String
 ) {
     companion object {
         const val TABLE_NAME = "address_book"

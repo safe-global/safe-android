@@ -57,7 +57,8 @@ class Bip39Generator @Inject constructor(private val wordListProvider: WordListP
 
         val concatenated = bytes.toBinaryString() + checksum
 
-        val wordIndexes = (0 until concatenated.length step 11).map { concatenated.subSequence(it, it + 11) }.map { Integer.parseInt(it.toString(), 2) }.toList()
+        val wordIndexes =
+            (0 until concatenated.length step 11).map { concatenated.subSequence(it, it + 11) }.map { Integer.parseInt(it.toString(), 2) }.toList()
 
         return wordIndexes.joinToString(wordList.separator) { wordList.words[it] }
     }
@@ -73,14 +74,19 @@ class Bip39Generator @Inject constructor(private val wordListProvider: WordListP
         }
 
         val wordList = wordListProvider.all()
-                .firstOrNull { it.words.containsAll(words) }
+            .firstOrNull { it.words.containsAll(words) }
                 ?: throw MnemonicNotInWordlist(mnemonic)
 
         val binaryIndexes = wordList.words.getIndexes(words).joinToString("") { Integer.toBinaryString(it).padStart(11, '0') }
 
         val checksum = binaryIndexes.subSequence(entropyNBits, binaryIndexes.length)
         val originalEntropy = binaryIndexes.subSequence(0, binaryIndexes.length - checksumNBits)
-        val originalBytes = (0 until originalEntropy.length step 8).map { (Integer.valueOf((originalEntropy.subSequence(it, it + 8).toString()), 2) and 0xFF).toByte() }.toByteArray()
+        val originalBytes = (0 until originalEntropy.length step 8).map {
+            (Integer.valueOf(
+                (originalEntropy.subSequence(it, it + 8).toString()),
+                2
+            ) and 0xFF).toByte()
+        }.toByteArray()
 
         val sha256 = SHA256.Digest().digest(originalBytes)
         val generatedChecksum = sha256.toBinaryString().subSequence(0, checksumNBits)

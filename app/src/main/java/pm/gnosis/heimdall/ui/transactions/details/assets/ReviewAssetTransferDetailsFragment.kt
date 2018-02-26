@@ -11,8 +11,8 @@ class ReviewAssetTransferDetailsFragment : ViewAssetTransferDetailsFragment() {
     companion object {
 
         fun createInstance(transaction: Transaction?, safeAddress: String?) =
-                ReviewAssetTransferDetailsFragment().apply {
-                    arguments = createBundle(transaction, safeAddress)
-                }
+            ReviewAssetTransferDetailsFragment().apply {
+                arguments = createBundle(transaction, safeAddress)
+            }
     }
 }

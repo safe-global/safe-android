@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class DefaultSettingsRepository @Inject constructor(
-        preferencesManager: PreferencesManager
+    preferencesManager: PreferencesManager
 ) : SettingsRepository {
 
     companion object {
@@ -30,8 +30,10 @@ class DefaultSettingsRepository @Inject constructor(
     private val preferences = preferencesManager.prefs
 
     override fun setEthereumRPCUrl(isHttps: Boolean, host: String?, port: Int?) {
-        overrideUrlToPreferences(PREF_KEY_RPC_IS_HTTPS, PREF_KEY_RPC_HOST, PREF_KEY_RPC_PORT,
-                isHttps, host, port)
+        overrideUrlToPreferences(
+            PREF_KEY_RPC_IS_HTTPS, PREF_KEY_RPC_HOST, PREF_KEY_RPC_PORT,
+            isHttps, host, port
+        )
     }
 
     override fun getEthereumRPCUrl(): SettingsRepository.UrlOverride? {
@@ -39,8 +41,10 @@ class DefaultSettingsRepository @Inject constructor(
     }
 
     override fun setIpfsUrl(isHttps: Boolean, host: String?, port: Int?) {
-        overrideUrlToPreferences(PREF_KEY_IPFS_IS_HTTPS, PREF_KEY_IPFS_HOST, PREF_KEY_IPFS_PORT,
-                isHttps, host, port)
+        overrideUrlToPreferences(
+            PREF_KEY_IPFS_IS_HTTPS, PREF_KEY_IPFS_HOST, PREF_KEY_IPFS_PORT,
+            isHttps, host, port
+        )
     }
 
     override fun getIpfsUrl(): SettingsRepository.UrlOverride? {
@@ -83,8 +87,10 @@ class DefaultSettingsRepository @Inject constructor(
         }
     }
 
-    private fun overrideUrlToPreferences(isHttpsKey: String, hostKey: String, portKey: String,
-                                         isHttps: Boolean, host: String?, port: Int?) {
+    private fun overrideUrlToPreferences(
+        isHttpsKey: String, hostKey: String, portKey: String,
+        isHttps: Boolean, host: String?, port: Int?
+    ) {
         preferences.edit {
             putBoolean(isHttpsKey, isHttps)
             putString(hostKey, host)

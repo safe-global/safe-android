@@ -9,12 +9,12 @@ import java.math.BigInteger
 
 @Entity(tableName = GnosisSafeDb.TABLE_NAME)
 data class GnosisSafeDb(
-        @PrimaryKey
-        @ColumnInfo(name = COL_ADDRESS)
-        var address: BigInteger,
+    @PrimaryKey
+    @ColumnInfo(name = COL_ADDRESS)
+    var address: BigInteger,
 
-        @ColumnInfo(name = COL_NAME)
-        var name: String?
+    @ColumnInfo(name = COL_NAME)
+    var name: String?
 ) {
     companion object {
         const val TABLE_NAME = "gnosis_safes"
@@ -28,12 +28,12 @@ fun GnosisSafeDb.fromDb() = Safe(address, name)
 
 @Entity(tableName = PendingGnosisSafeDb.TABLE_NAME)
 data class PendingGnosisSafeDb(
-        @PrimaryKey
-        @ColumnInfo(name = COL_TX_HASH)
-        var transactionHash: BigInteger,
+    @PrimaryKey
+    @ColumnInfo(name = COL_TX_HASH)
+    var transactionHash: BigInteger,
 
-        @ColumnInfo(name = COL_NAME)
-        var name: String?
+    @ColumnInfo(name = COL_NAME)
+    var name: String?
 ) {
     companion object {
         const val TABLE_NAME = "gnosis_pending_safes"

@@ -38,7 +38,7 @@ class TokenBalancesFragment : BaseFragment() {
     private var safeAddress: BigInteger? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.layout_token_balances, container, false)
+        inflater.inflate(R.layout.layout_token_balances, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,21 +63,21 @@ class TokenBalancesFragment : BaseFragment() {
         super.onStart()
 
         disposables += viewModel.observeLoadingStatus()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = {
-                    layout_tokens_swipe_refresh.isRefreshing = it
-                }, onError = Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = {
+                layout_tokens_swipe_refresh.isRefreshing = it
+            }, onError = Timber::e)
 
         disposables += viewModel.observeTokens(layout_tokens_swipe_refresh.refreshes())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onTokensList, onError = ::onTokensListError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onTokensList, onError = ::onTokensListError)
 
         disposables += adapter.tokenSelectedSubject
-                .subscribe({ tokenWithBalance ->
-                    safeAddress?.let {
-                        CreateTokenTransactionProgressDialog.create(it, tokenWithBalance.token.address).show(fragmentManager, null)
-                    }
-                }, Timber::e)
+            .subscribe({ tokenWithBalance ->
+                safeAddress?.let {
+                    CreateTokenTransactionProgressDialog.create(it, tokenWithBalance.token.address).show(fragmentManager, null)
+                }
+            }, Timber::e)
     }
 
     private fun onTokensList(tokens: Adapter.Data<ERC20TokenWithBalance>) {
@@ -91,15 +91,15 @@ class TokenBalancesFragment : BaseFragment() {
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()
-                .applicationComponent(component)
-                .viewModule(ViewModule(context!!))
-                .build().inject(this)
+            .applicationComponent(component)
+            .viewModule(ViewModule(context!!))
+            .build().inject(this)
     }
 
     companion object {
         private const val ARGUMENT_ADDRESS = "argument.string.address"
 
         fun createInstance(address: String) =
-                TokenBalancesFragment().withArgs(Bundle().build { putString(ARGUMENT_ADDRESS, address) })
+            TokenBalancesFragment().withArgs(Bundle().build { putString(ARGUMENT_ADDRESS, address) })
     }
 }

@@ -10,7 +10,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import java.math.BigInteger
 
 
-class SimpleAddressShareDialog: BaseShareAddressDialog() {
+class SimpleAddressShareDialog : BaseShareAddressDialog() {
 
     override fun screenId() = ScreenId.DIALOG_SHARE_ADDRESS
 
@@ -19,10 +19,10 @@ class SimpleAddressShareDialog: BaseShareAddressDialog() {
 
     override fun inject() {
         DaggerViewComponent.builder()
-                .viewModule(ViewModule(context!!))
-                .applicationComponent(HeimdallApplication[context!!].component)
-                .build()
-                .inject(this)
+            .viewModule(ViewModule(context!!))
+            .applicationComponent(HeimdallApplication[context!!].component)
+            .build()
+            .inject(this)
     }
 
     companion object {

@@ -68,12 +68,15 @@ abstract class BaseTransactionActivity : BaseActivity() {
         if (currentFragment != fragment) {
             return
         }
-        disposables += Observable.combineLatest(fragment.observeSafe(), fragment.observeTransaction(), BiFunction { safeAddress: Optional<BigInteger>, transaction: Result<Transaction> ->
-            safeAddress.toNullable() to transaction
-        })
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(transactionDataTransformer())
-                .subscribeBy(onError = Timber::e)
+        disposables += Observable.combineLatest(
+            fragment.observeSafe(),
+            fragment.observeTransaction(),
+            BiFunction { safeAddress: Optional<BigInteger>, transaction: Result<Transaction> ->
+                safeAddress.toNullable() to transaction
+            })
+            .observeOn(AndroidSchedulers.mainThread())
+            .compose(transactionDataTransformer())
+            .subscribeBy(onError = Timber::e)
         fragmentRegistered()
     }
 
@@ -91,16 +94,16 @@ abstract class BaseTransactionActivity : BaseActivity() {
     }
 
     protected fun <T> Observable<Pair<BigInteger?, Result<Transaction>>>.checkedFlatMap(action: (BigInteger, Transaction) -> Observable<Result<T>>): Observable<Result<T>> =
-            flatMap {
-                it.let { (safeAddress, transaction) ->
-                    safeAddress?.let {
-                        when (transaction) {
-                            is DataResult -> action(safeAddress, transaction.data)
-                            is ErrorResult -> Observable.just(ErrorResult(transaction.error))
-                        }
-                    } ?: Observable.just(ErrorResult(NoSafeSelectedException()))
-                }
+        flatMap {
+            it.let { (safeAddress, transaction) ->
+                safeAddress?.let {
+                    when (transaction) {
+                        is DataResult -> action(safeAddress, transaction.data)
+                        is ErrorResult -> Observable.just(ErrorResult(transaction.error))
+                    }
+                } ?: Observable.just(ErrorResult(NoSafeSelectedException()))
             }
+        }
 
     abstract fun inject()
 

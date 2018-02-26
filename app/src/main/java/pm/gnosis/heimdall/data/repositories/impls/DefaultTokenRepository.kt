@@ -35,63 +35,77 @@ import javax.inject.Singleton
 
 @Singleton
 class DefaultTokenRepository @Inject constructor(
-        appDb: ApplicationDb,
-        private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
-        private val preferencesManager: PreferencesManager,
-        private val moshi: Moshi,
-        @ApplicationContext private val context: Context
+    appDb: ApplicationDb,
+    private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
+    private val preferencesManager: PreferencesManager,
+    private val moshi: Moshi,
+    @ApplicationContext private val context: Context
 ) : TokenRepository {
     private val erc20TokenDao = appDb.erc20TokenDao()
 
     override fun observeTokens(): Flowable<List<ERC20Token>> =
-            erc20TokenDao.observeTokens()
-                    .subscribeOn(Schedulers.io())
-                    .map { it.map { it.fromDb() } }
+        erc20TokenDao.observeTokens()
+            .subscribeOn(Schedulers.io())
+            .map { it.map { it.fromDb() } }
 
     override fun observeToken(address: BigInteger): Flowable<ERC20Token> =
-            erc20TokenDao.observeToken(address)
-                    .map { it.fromDb() }
-                    .subscribeOn(Schedulers.io())
+        erc20TokenDao.observeToken(address)
+            .map { it.fromDb() }
+            .subscribeOn(Schedulers.io())
 
     override fun loadTokens(): Single<List<ERC20Token>> =
-            erc20TokenDao.loadTokens()
-                    .subscribeOn(Schedulers.io())
-                    .map { it.map { it.fromDb() } }
+        erc20TokenDao.loadTokens()
+            .subscribeOn(Schedulers.io())
+            .map { it.map { it.fromDb() } }
 
     override fun loadToken(address: BigInteger): Single<ERC20Token> =
-            erc20TokenDao.loadToken(address)
-                    .map { it.fromDb() }
-                    .subscribeOn(Schedulers.io())
+        erc20TokenDao.loadToken(address)
+            .map { it.fromDb() }
+            .subscribeOn(Schedulers.io())
 
     override fun loadTokenInfo(contractAddress: BigInteger): Observable<ERC20Token> {
         if (!contractAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(contractAddress))
         val request = TokenInfoRequest(
-                BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.NAME_METHOD_ID}").callRequest(0),
-                        { it.checkedResult().hexStringToByteArrayOrNull()?.utf8String()?.trim() }),
-                BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.SYMBOL_METHOD_ID}").callRequest(1),
-                        { it.checkedResult().hexStringToByteArrayOrNull()?.utf8String()?.trim() }),
-                BulkRequest.SubRequest(TransactionCallParams(to = contractAddress.asEthereumAddressString(), data = "0x${ERC20.DECIMALS_METHOD_ID}").callRequest(2),
-                        { it.checkedResult().hexAsBigIntegerOrNull() }))
-        return ethereumJsonRpcRepository.bulk(request).map { ERC20Token(contractAddress, it.name.value, it.symbol.value, it.decimals.value?.toInt() ?: 0) }
+            BulkRequest.SubRequest(TransactionCallParams(
+                to = contractAddress.asEthereumAddressString(),
+                data = "0x${ERC20.NAME_METHOD_ID}"
+            ).callRequest(0),
+                { it.checkedResult().hexStringToByteArrayOrNull()?.utf8String()?.trim() }),
+            BulkRequest.SubRequest(TransactionCallParams(
+                to = contractAddress.asEthereumAddressString(),
+                data = "0x${ERC20.SYMBOL_METHOD_ID}"
+            ).callRequest(1),
+                { it.checkedResult().hexStringToByteArrayOrNull()?.utf8String()?.trim() }),
+            BulkRequest.SubRequest(TransactionCallParams(
+                to = contractAddress.asEthereumAddressString(),
+                data = "0x${ERC20.DECIMALS_METHOD_ID}"
+            ).callRequest(2),
+                { it.checkedResult().hexAsBigIntegerOrNull() })
+        )
+        return ethereumJsonRpcRepository.bulk(request)
+            .map { ERC20Token(contractAddress, it.name.value, it.symbol.value, it.decimals.value?.toInt() ?: 0) }
     }
 
     override fun loadTokenBalances(ofAddress: BigInteger, erC20Tokens: List<ERC20Token>): Observable<List<Pair<ERC20Token, BigInteger?>>> {
         if (!ofAddress.isValidEthereumAddress()) return Observable.error(InvalidAddressException(ofAddress))
         val requests = TokenBalancesRequest(
-                erC20Tokens.mapIndexed { index, token ->
-                    if (token == ETHER_TOKEN) {
-                        BulkRequest.SubRequest(JsonRpcRequest(
-                                id = index,
-                                method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
-                                params = arrayListOf(ofAddress.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)),
-                                { nullOnThrow { it.checkedResult().hexAsBigInteger() } })
-                    } else {
-                        BulkRequest.SubRequest(TransactionCallParams(
-                                to = token.address.asEthereumAddressString(),
-                                data = StandardToken.BalanceOf.encode(Solidity.Address(ofAddress))).callRequest(index),
-                                { nullOnThrow { StandardToken.BalanceOf.decode(it.checkedResult()).param0.value } })
-                    }
-                }.toList())
+            erC20Tokens.mapIndexed { index, token ->
+                if (token == ETHER_TOKEN) {
+                    BulkRequest.SubRequest(JsonRpcRequest(
+                        id = index,
+                        method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
+                        params = arrayListOf(ofAddress.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)
+                    ),
+                        { nullOnThrow { it.checkedResult().hexAsBigInteger() } })
+                } else {
+                    BulkRequest.SubRequest(TransactionCallParams(
+                        to = token.address.asEthereumAddressString(),
+                        data = StandardToken.BalanceOf.encode(Solidity.Address(ofAddress))
+                    ).callRequest(index),
+                        { nullOnThrow { StandardToken.BalanceOf.decode(it.checkedResult()).param0.value } })
+                }
+            }.toList()
+        )
 
 
         return ethereumJsonRpcRepository.bulk(requests).map {
@@ -118,21 +132,25 @@ class DefaultTokenRepository @Inject constructor(
             val verifiedTokens = adapter.fromJson(json)
 
             verifiedTokens.map {
-                ERC20TokenDb(address = it.address, name = it.name, symbol = it.symbol,
-                        decimals = it.decimals, verified = true)
+                ERC20TokenDb(
+                    address = it.address, name = it.name, symbol = it.symbol,
+                    decimals = it.decimals, verified = true
+                )
             }.let { erc20TokenDao.insertERC20Tokens(it) }
 
             preferencesManager.prefs.edit { putBoolean(PreferencesManager.FINISHED_TOKENS_SETUP, true) }
         }
     }
 
-    private data class VerifiedTokenJson(@Json(name = "address") val address: BigInteger,
-                                         @Json(name = "name") val name: String,
-                                         @Json(name = "symbol") val symbol: String,
-                                         @Json(name = "decimals") val decimals: Int)
+    private data class VerifiedTokenJson(
+        @Json(name = "address") val address: BigInteger,
+        @Json(name = "name") val name: String,
+        @Json(name = "symbol") val symbol: String,
+        @Json(name = "decimals") val decimals: Int
+    )
 
     private class TokenInfoRequest(val name: SubRequest<String?>, val symbol: SubRequest<String?>, val decimals: SubRequest<BigInteger?>) :
-            BulkRequest(name, symbol, decimals)
+        BulkRequest(name, symbol, decimals)
 
     private class TokenBalancesRequest(val balancesRequest: List<BulkRequest.SubRequest<BigInteger?>>) : BulkRequest(balancesRequest)
 }

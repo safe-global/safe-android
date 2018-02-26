@@ -12,7 +12,7 @@ import pm.gnosis.heimdall.ui.base.Adapter
 import java.math.BigInteger
 
 
-abstract class SafeTransactionsContract: ViewModel() {
+abstract class SafeTransactionsContract : ViewModel() {
     abstract fun setup(address: BigInteger)
 
     abstract fun observeTransactions(): Flowable<out Result<Adapter.Data<String>>>

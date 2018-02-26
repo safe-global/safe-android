@@ -70,8 +70,8 @@ class RestoreAccountViewModelTest {
         assertEquals(1, saveAccountFromMnemonicCompletable.callCount)
         assertEquals(1, saveMnemonicCompletable.callCount)
         testObserver.assertValue({ it is DataResult })
-                .assertNoErrors()
-                .assertTerminated()
+            .assertNoErrors()
+            .assertTerminated()
     }
 
     @Test
@@ -85,8 +85,8 @@ class RestoreAccountViewModelTest {
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveZeroInteractions()
         testObserver.assertValue({ it is ErrorResult })
-                .assertNoErrors()
-                .assertTerminated()
+            .assertNoErrors()
+            .assertTerminated()
     }
 
     @Test
@@ -109,8 +109,8 @@ class RestoreAccountViewModelTest {
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(0, saveMnemonicCompletable.callCount)
         testObserver.assertValue({ it is ErrorResult })
-                .assertNoErrors()
-                .assertTerminated()
+            .assertNoErrors()
+            .assertTerminated()
     }
 
     @Test
@@ -133,7 +133,7 @@ class RestoreAccountViewModelTest {
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, saveAccountFromMnemonicCompletable.callCount)
         testObserver.assertValue({ it is ErrorResult })
-                .assertNoErrors()
-                .assertTerminated()
+            .assertNoErrors()
+            .assertTerminated()
     }
 }

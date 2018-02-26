@@ -13,8 +13,8 @@ import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class NetworkSettingsViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val settingsRepository: SettingsRepository
+    @ApplicationContext private val context: Context,
+    private val settingsRepository: SettingsRepository
 ) : NetworkSettingsContract() {
     override fun loadIpfsUrl(): Single<String> {
         return Single.fromCallable {
@@ -73,8 +73,8 @@ class NetworkSettingsViewModel @Inject constructor(
             settingsRepository.setProxyFactoryAddress(address)
             address
         }
-                .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))) }
-                .mapToResult()
+            .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))) }
+            .mapToResult()
     }
 
     override fun loadSafeMasterCopyAddress(): Single<String> {
@@ -88,7 +88,7 @@ class NetworkSettingsViewModel @Inject constructor(
             settingsRepository.setSafeMasterCopyAddress(address)
             address
         }
-                .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))) }
-                .mapToResult()
+            .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))) }
+            .mapToResult()
     }
 }

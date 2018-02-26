@@ -39,10 +39,10 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onStart()
         if (performSecurityCheck) {
             disposables += encryptionManager.unlocked()
-                    // We block the ui thread here to avoid exposing the ui before the app is unlocked
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(::checkSecurity, ::handleCheckError)
+                // We block the ui thread here to avoid exposing the ui before the app is unlocked
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(::checkSecurity, ::handleCheckError)
         }
         eventTracker.submit(Event.ScreenView(screenId()))
     }

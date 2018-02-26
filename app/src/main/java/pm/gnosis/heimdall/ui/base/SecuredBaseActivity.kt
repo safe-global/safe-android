@@ -5,7 +5,7 @@ import android.widget.Toast
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.utils.toast
 
-abstract class SecuredBaseActivity: BaseActivity() {
+abstract class SecuredBaseActivity : BaseActivity() {
 
     // Once set to true the activity needs to be restarted
     private var obscuredWindow: Boolean = false

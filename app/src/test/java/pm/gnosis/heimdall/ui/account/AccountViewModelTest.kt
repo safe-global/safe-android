@@ -59,8 +59,10 @@ class AccountViewModelTest {
 
     @Before
     fun setup() {
-        viewModel = AccountViewModel(contextMock, accountRepositoryMock, ethereumJsonRpcRepositoryMock,
-                qrCodeGeneratorMock, tickerRepositoryMock)
+        viewModel = AccountViewModel(
+            contextMock, accountRepositoryMock, ethereumJsonRpcRepositoryMock,
+            qrCodeGeneratorMock, tickerRepositoryMock
+        )
         given(contextMock.getString(Mockito.anyInt())).willReturn(TEST_STRING)
     }
 
@@ -75,8 +77,8 @@ class AccountViewModelTest {
         then(qrCodeGeneratorMock).should().generateQrCode("DATA")
         then(qrCodeGeneratorMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
-                .assertValueCount(1)
-                .assertValue { it is DataResult && it.data == bitmap }
+            .assertValueCount(1)
+            .assertValue { it is DataResult && it.data == bitmap }
     }
 
     @Test
@@ -90,8 +92,8 @@ class AccountViewModelTest {
         then(qrCodeGeneratorMock).should().generateQrCode("DATA")
         then(qrCodeGeneratorMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
-                .assertValueCount(1)
-                .assertValue { it is ErrorResult && it.error == exception }
+            .assertValueCount(1)
+            .assertValue { it is ErrorResult && it.error == exception }
     }
 
     @Test
@@ -104,8 +106,8 @@ class AccountViewModelTest {
         then(accountRepositoryMock).should().loadActiveAccount()
         then(accountRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
-                .assertValueCount(1)
-                .assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
+            .assertValueCount(1)
+            .assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
         then(contextMock).should().getString(R.string.no_account_available)
     }
 
@@ -121,8 +123,8 @@ class AccountViewModelTest {
         then(accountRepositoryMock).shouldHaveNoMoreInteractions()
         then(contextMock).shouldHaveZeroInteractions()
         observer.assertNoErrors().assertComplete()
-                .assertValueCount(1)
-                .assertValue(ErrorResult(exception))
+            .assertValueCount(1)
+            .assertValue(ErrorResult(exception))
     }
 
     @Test
@@ -136,8 +138,8 @@ class AccountViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
         then(accountRepositoryMock).should().loadActiveAccount()
         observer.assertNoErrors().assertComplete()
-                .assertValueCount(1)
-                .assertValue(DataResult(account))
+            .assertValueCount(1)
+            .assertValue(DataResult(account))
     }
 
     @Test
@@ -156,8 +158,8 @@ class AccountViewModelTest {
         then(accountRepositoryMock).shouldHaveNoMoreInteractions()
         then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
-                .assertValueCount(1)
-                .assertValue(ErrorResult(exception))
+            .assertValueCount(1)
+            .assertValue(ErrorResult(exception))
     }
 
     @Test
@@ -176,8 +178,8 @@ class AccountViewModelTest {
         then(accountRepositoryMock).shouldHaveNoMoreInteractions()
         then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
-                .assertValueCount(1)
-                .assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
+            .assertValueCount(1)
+            .assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
     }
 
     @Test
@@ -196,8 +198,8 @@ class AccountViewModelTest {
         then(accountRepositoryMock).shouldHaveNoMoreInteractions()
         then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
-                .assertValueCount(1)
-                .assertValue(DataResult(balance))
+            .assertValueCount(1)
+            .assertValue(DataResult(balance))
     }
 
     @Test

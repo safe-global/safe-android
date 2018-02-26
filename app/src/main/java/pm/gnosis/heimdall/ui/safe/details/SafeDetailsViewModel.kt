@@ -15,14 +15,14 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class SafeDetailsViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val safeRepository: GnosisSafeRepository,
-        private val qrCodeGenerator: QrCodeGenerator
+    @ApplicationContext private val context: Context,
+    private val safeRepository: GnosisSafeRepository,
+    private val qrCodeGenerator: QrCodeGenerator
 ) : SafeDetailsContract() {
     private lateinit var address: BigInteger
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
-            .build()
+        .build()
 
     override fun setup(address: BigInteger, name: String?) {
         if (!address.isValidEthereumAddress()) throw InvalidAddressException(address)
@@ -32,7 +32,7 @@ class SafeDetailsViewModel @Inject constructor(
     override fun observeSafe() = safeRepository.observeSafe(address)
 
     override fun loadQrCode(contents: String): Single<Result<Bitmap>> =
-            qrCodeGenerator.generateQrCode(contents)
-                    .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
-                    .mapToResult()
+        qrCodeGenerator.generateQrCode(contents)
+            .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
+            .mapToResult()
 }

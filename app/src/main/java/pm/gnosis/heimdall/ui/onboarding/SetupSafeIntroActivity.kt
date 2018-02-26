@@ -30,24 +30,24 @@ class SetupSafeIntroActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += layout_finish_setup_safe.clicks()
-                .subscribeBy(onNext = {
-                    startActivity(SafesOverviewActivity.createIntent(this), clearStack = true)
-                    startActivity(AddSafeActivity.createIntent(this))
-                    finish()
-                })
+            .subscribeBy(onNext = {
+                startActivity(SafesOverviewActivity.createIntent(this), clearStack = true)
+                startActivity(AddSafeActivity.createIntent(this))
+                finish()
+            })
 
         disposables += layout_finish_setup_skip.clicks()
-                .subscribeBy(onNext = {
-                    startActivity(SafesOverviewActivity.createIntent(this), clearStack = true)
-                    finish()
-                })
+            .subscribeBy(onNext = {
+                startActivity(SafesOverviewActivity.createIntent(this), clearStack = true)
+                finish()
+            })
     }
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 
     companion object {

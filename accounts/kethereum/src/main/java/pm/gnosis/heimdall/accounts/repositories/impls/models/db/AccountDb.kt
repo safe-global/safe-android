@@ -10,12 +10,12 @@ import java.math.BigInteger
 @Entity(tableName = AccountDb.TABLE_NAME)
 @TypeConverters(BigIntegerConverter::class)
 data class AccountDb(
-        @PrimaryKey
-        @ColumnInfo(name = PRIVATE_KEY_COL)
-        var privateKey: EncryptedByteArray,
+    @PrimaryKey
+    @ColumnInfo(name = PRIVATE_KEY_COL)
+    var privateKey: EncryptedByteArray,
 
-        @ColumnInfo(name = ADDRESS_COL)
-        var address: BigInteger
+    @ColumnInfo(name = ADDRESS_COL)
+    var address: BigInteger
 ) {
     companion object {
         const val TABLE_NAME = "account"

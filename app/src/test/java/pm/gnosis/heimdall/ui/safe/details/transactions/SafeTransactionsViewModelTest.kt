@@ -109,9 +109,9 @@ class SafeTransactionsViewModelTest {
         val subscriber = TestSubscriber<Result<Adapter.Data<String>>>()
         viewModel.observeTransactions().subscribe(subscriber)
         subscriber.assertValueCount(2)
-                .assertValueAt(0, DataResult(Adapter.Data()))
-                .assertValueAt(1, ErrorResult(illegalStateException))
-                .assertNoErrors()
+            .assertValueAt(0, DataResult(Adapter.Data()))
+            .assertValueAt(1, ErrorResult(illegalStateException))
+            .assertNoErrors()
 
         then(safeRepository).should().observeTransactionDescriptions(testAddress)
         then(safeRepository).shouldHaveNoMoreInteractions()
@@ -132,7 +132,7 @@ class SafeTransactionsViewModelTest {
         val observer = TestObserver<Intent>()
         // Should never return an error even if transaction is invalid
         viewModel.transactionSelected("")
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertNoErrors().assertComplete().assertValueCount(1)
     }
@@ -141,7 +141,7 @@ class SafeTransactionsViewModelTest {
     fun loadTransactionDetailsNoSafe() {
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
         viewModel.loadTransactionDetails("TEST ID")
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertFailure(IllegalStateException::class.java)
 
@@ -155,13 +155,13 @@ class SafeTransactionsViewModelTest {
 
         val error = IllegalAccessException()
         given(detailsRepository.loadTransactionDetails(anyString()))
-                .willReturn(Single.error(error))
+            .willReturn(Single.error(error))
 
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
 
         viewModel.setup(testAddress)
         viewModel.loadTransactionDetails(testId)
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertFailure(IllegalAccessException::class.java)
 
@@ -176,13 +176,13 @@ class SafeTransactionsViewModelTest {
 
         val details = TransactionDetails(testId, TransactionType.GENERIC, null, Transaction(BigInteger.TEN), TEST_SAFE, TEST_TIME)
         given(detailsRepository.loadTransactionDetails(anyString()))
-                .willReturn(Single.just(details))
+            .willReturn(Single.just(details))
 
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
 
         viewModel.setup(testAddress)
         viewModel.loadTransactionDetails(testId)
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertResult(details to null)
 
@@ -197,13 +197,13 @@ class SafeTransactionsViewModelTest {
 
         val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, null, Transaction(BigInteger.TEN), TEST_SAFE, TEST_TIME)
         given(detailsRepository.loadTransactionDetails(anyString()))
-                .willReturn(Single.just(details))
+            .willReturn(Single.just(details))
 
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
 
         viewModel.setup(testAddress)
         viewModel.loadTransactionDetails(testId)
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertResult(details to null)
 
@@ -220,14 +220,14 @@ class SafeTransactionsViewModelTest {
 
         val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress), TEST_SAFE, TEST_TIME)
         given(detailsRepository.loadTransactionDetails(anyString()))
-                .willReturn(Single.just(details))
+            .willReturn(Single.just(details))
         given(tokenRepository.observeToken(MockUtils.any())).willReturn(Flowable.empty())
 
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
 
         viewModel.setup(testAddress)
         viewModel.loadTransactionDetails(testId)
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertResult(details to null)
 
@@ -245,14 +245,14 @@ class SafeTransactionsViewModelTest {
 
         val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress), TEST_SAFE, TEST_TIME)
         given(detailsRepository.loadTransactionDetails(anyString()))
-                .willReturn(Single.just(details))
+            .willReturn(Single.just(details))
         given(tokenRepository.observeToken(MockUtils.any())).willReturn(Flowable.just(ERC20Token(tokenAddress, decimals = 0, symbol = "GNO")))
 
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
 
         viewModel.setup(testAddress)
         viewModel.loadTransactionDetails(testId)
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertResult(details to SafeTransactionsContract.TransferInfo("42", "GNO"))
 
@@ -267,15 +267,16 @@ class SafeTransactionsViewModelTest {
         val testId = "some_transaction_id"
 
         val amount = BigInteger.valueOf(42) * BigInteger.TEN.pow(18)
-        val details = TransactionDetails(testId, TransactionType.ETHER_TRANSFER, null, Transaction(BigInteger.ONE, value = Wei(amount)), TEST_SAFE, TEST_TIME)
+        val details =
+            TransactionDetails(testId, TransactionType.ETHER_TRANSFER, null, Transaction(BigInteger.ONE, value = Wei(amount)), TEST_SAFE, TEST_TIME)
         given(detailsRepository.loadTransactionDetails(anyString()))
-                .willReturn(Single.just(details))
+            .willReturn(Single.just(details))
 
         val observer = TestObserver<Pair<TransactionDetails, SafeTransactionsContract.TransferInfo?>>()
 
         viewModel.setup(testAddress)
         viewModel.loadTransactionDetails(testId)
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertResult(details to SafeTransactionsContract.TransferInfo("42", R.string.currency_eth.toString()))
 
@@ -291,7 +292,7 @@ class SafeTransactionsViewModelTest {
 
         val observer = TestObserver<PublishStatus>()
         viewModel.observeTransactionStatus(testId)
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertResult(PublishStatus.SUCCESS)
         then(safeTransactionRepository).should().observePublishStatus(testId)
@@ -306,9 +307,9 @@ class SafeTransactionsViewModelTest {
 
         val observer = TestObserver<PublishStatus>()
         viewModel.observeTransactionStatus(testId)
-                .subscribe(observer)
+            .subscribe(observer)
 
-        observer.assertFailure(Predicate{ it is IllegalStateException })
+        observer.assertFailure(Predicate { it is IllegalStateException })
         then(safeTransactionRepository).should().observePublishStatus(testId)
         then(safeTransactionRepository).shouldHaveNoMoreInteractions()
         then(detailsRepository).shouldHaveNoMoreInteractions()

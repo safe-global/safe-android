@@ -21,7 +21,8 @@ class SplashActivity : BaseActivity() {
 
     override fun screenId() = ScreenId.SPLASH
 
-    @Inject lateinit var viewModel: SplashViewModel
+    @Inject
+    lateinit var viewModel: SplashViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
@@ -32,9 +33,9 @@ class SplashActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += viewModel.initialSetup()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = ::handleAction, onError = ::onError)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onSuccess = ::handleAction, onError = ::onError)
     }
 
     private fun handleAction(action: ViewAction) {
@@ -64,8 +65,8 @@ class SplashActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 }

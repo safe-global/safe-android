@@ -47,23 +47,24 @@ class AddressBookAddEntryActivity : BaseActivity() {
         super.onStart()
 
         disposables += layout_add_address_book_entry_scan.clicks()
-                .subscribeBy(onNext = { scanQrCode() })
+            .subscribeBy(onNext = { scanQrCode() })
 
         disposables += layout_add_address_book_entry_address.textChanges()
-                .subscribeBy(onNext = { layout_add_address_book_entry_address_container.error = null })
+            .subscribeBy(onNext = { layout_add_address_book_entry_address_container.error = null })
 
         disposables += layout_add_address_book_entry_name.textChanges()
-                .subscribeBy(onNext = { layout_add_address_book_entry_name_container.error = null })
+            .subscribeBy(onNext = { layout_add_address_book_entry_name_container.error = null })
 
         disposables += layout_add_address_book_entry_save.clicks()
-                .flatMap {
-                    viewModel.addAddressBookEntry(
-                            layout_add_address_book_entry_address.text.toString(),
-                            layout_add_address_book_entry_name.text.toString(),
-                            layout_add_address_book_entry_description.text.toString())
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onAddressBookEntryAdded, onError = ::onAddressBookEntryAddError)
+            .flatMap {
+                viewModel.addAddressBookEntry(
+                    layout_add_address_book_entry_address.text.toString(),
+                    layout_add_address_book_entry_name.text.toString(),
+                    layout_add_address_book_entry_description.text.toString()
+                )
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onAddressBookEntryAdded, onError = ::onAddressBookEntryAddError)
     }
 
     private fun onAddressBookEntryAdded(entry: AddressBookEntry) {
@@ -75,8 +76,10 @@ class AddressBookAddEntryActivity : BaseActivity() {
         Timber.e(throwable)
         when (throwable) {
             is InvalidAddressException -> layout_add_address_book_entry_address_container.error = getString(R.string.invalid_ethereum_address)
-            is AddressBookContract.NameIsBlankException -> layout_add_address_book_entry_name_container.error = getString(R.string.name_cannot_be_blank)
-            is AddressBookContract.AddressAlreadyAddedException -> layout_add_address_book_entry_address_container.error = getString(R.string.address_already_in_address_book)
+            is AddressBookContract.NameIsBlankException -> layout_add_address_book_entry_name_container.error =
+                    getString(R.string.name_cannot_be_blank)
+            is AddressBookContract.AddressAlreadyAddedException -> layout_add_address_book_entry_address_container.error =
+                    getString(R.string.address_already_in_address_book)
             else -> snackbar(layout_add_address_book_entry_coordinator, getString(R.string.unknown_error))
         }
     }
@@ -84,21 +87,21 @@ class AddressBookAddEntryActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         handleQrCodeActivityResult(requestCode, resultCode, data,
-                {
-                    parseEthereumAddress(it)?.let {
-                        layout_add_address_book_entry_address.setText(it.asEthereumAddressString())
-                    } ?: run {
-                        snackbar(layout_add_address_book_entry_coordinator, R.string.invalid_ethereum_address)
-                    }
-                })
+            {
+                parseEthereumAddress(it)?.let {
+                    layout_add_address_book_entry_address.setText(it.asEthereumAddressString())
+                } ?: run {
+                    snackbar(layout_add_address_book_entry_coordinator, R.string.invalid_ethereum_address)
+                }
+            })
     }
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {

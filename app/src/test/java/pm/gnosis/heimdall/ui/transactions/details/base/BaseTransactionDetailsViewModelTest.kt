@@ -46,15 +46,16 @@ class BaseTransactionDetailsViewModelTest {
 
         safeProcessor.offer(Safe(TEST_SAFE, "Some Updated Safe"))
         testObserver.assertValuesOnly(
-                Safe(TEST_SAFE, "Some Safe"),
-                Safe(TEST_SAFE, "Some Updated Safe") // New value
+            Safe(TEST_SAFE, "Some Safe"),
+            Safe(TEST_SAFE, "Some Updated Safe") // New value
         )
 
         val error = IllegalStateException()
         safeProcessor.onError(error)
-        testObserver.assertFailure(Predicate { it == error },
-                Safe(TEST_SAFE, "Some Safe"),
-                Safe(TEST_SAFE, "Some Updated Safe")
+        testObserver.assertFailure(
+            Predicate { it == error },
+            Safe(TEST_SAFE, "Some Safe"),
+            Safe(TEST_SAFE, "Some Updated Safe")
         )
 
     }

@@ -45,7 +45,7 @@ class AuthenticateViewModelTest {
         val observer = createObserver()
 
         viewModel.checkResult(TEST_STRING)
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertComplete().assertNoErrors().assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
         then(contextMock).should().getString(R.string.invalid_erc67)
@@ -57,7 +57,7 @@ class AuthenticateViewModelTest {
         val observer = createObserver()
 
         viewModel.checkResult(data)
-                .subscribe(observer)
+            .subscribe(observer)
 
         observer.assertComplete().assertNoErrors().assertValue { it is DataResult }
     }

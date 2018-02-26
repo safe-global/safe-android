@@ -42,10 +42,10 @@ class AuthenticateActivity : BaseActivity() {
         }
 
         disposables += layout_authenticate_review_button.clicks()
-                .switchMap {
-                    viewModel.checkResult(layout_authenticate_transaction_input.text.toString())
-                }
-                .subscribeForResult(::startActivity, ::handleError)
+            .switchMap {
+                viewModel.checkResult(layout_authenticate_transaction_input.text.toString())
+            }
+            .subscribeForResult(::startActivity, ::handleError)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -62,9 +62,9 @@ class AuthenticateActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 
     companion object {

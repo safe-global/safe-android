@@ -50,8 +50,8 @@ class TokenManagementActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += viewModel.observeVerifiedTokens()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onNext = ::onTokensList, onError = ::onTokensListError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = ::onTokensList, onError = ::onTokensListError)
     }
 
     private fun onTokensList(tokens: Adapter.Data<ERC20Token>) {
@@ -65,10 +65,10 @@ class TokenManagementActivity : BaseActivity() {
 
     fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build()
-                .inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
+            .inject(this)
     }
 
     companion object {

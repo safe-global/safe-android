@@ -16,9 +16,7 @@ import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.heimdall.utils.GnosisSafeUtils
-import pm.gnosis.heimdall.utils.parseEthereumAddress
 import pm.gnosis.models.Wei
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
@@ -29,11 +27,11 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class AddSafeViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
-        private val accountsRepository: AccountsRepository,
-        private val addressStore: AddressStore,
-        private val repository: GnosisSafeRepository,
-        private val tickerRepository: TickerRepository
+    @ApplicationContext private val context: Context,
+    private val accountsRepository: AccountsRepository,
+    private val addressStore: AddressStore,
+    private val repository: GnosisSafeRepository,
+    private val tickerRepository: TickerRepository
 ) : AddSafeContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
@@ -55,11 +53,11 @@ class AddSafeViewModel @Inject constructor(
                     ?: throw SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))
             parsedAddress to name
         }.flatMap { (address, name) ->
-                    repository.add(address, name)
-                            .andThen(Observable.just(Unit))
-                            .onErrorResumeNext(Function { errorHandler.observable(it) })
-                }
-                .mapToResult()
+                repository.add(address, name)
+                    .andThen(Observable.just(Unit))
+                    .onErrorResumeNext(Function { errorHandler.observable(it) })
+            }
+            .mapToResult()
     }
 
     override fun deployNewSafe(name: String, overrideGasPrice: Wei?): Observable<Result<Unit>> {
@@ -67,70 +65,70 @@ class AddSafeViewModel @Inject constructor(
             checkName(name)
             name
         }.flatMap {
-                    addressStore.load().flatMapCompletable {
-                        // We add 1 owner because the current device will automatically be added as an owner
-                        repository.deploy(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1), overrideGasPrice)
-                    }
-                            .andThen(Observable.just(Unit))
-                            .onErrorResumeNext(Function { errorHandler.observable(it) })
+                addressStore.load().flatMapCompletable {
+                    // We add 1 owner because the current device will automatically be added as an owner
+                    repository.deploy(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1), overrideGasPrice)
                 }
-                .mapToResult()
+                    .andThen(Observable.just(Unit))
+                    .onErrorResumeNext(Function { errorHandler.observable(it) })
+            }
+            .mapToResult()
     }
 
     override fun observeEstimate(): Observable<Result<GasEstimate>> {
         return addressStore.observe().flatMapSingle {
             // We add 1 owner because the current device will automatically be added as an owner
             repository.estimateDeployCosts(it, GnosisSafeUtils.calculateThreshold(it.size + 1))
-                    .onErrorResumeNext({ errorHandler.single(it) })
+                .onErrorResumeNext({ errorHandler.single(it) })
         }.mapToResult()
     }
 
     override fun observeAdditionalOwners(): Observable<List<BigInteger>> {
         return addressStore.observe()
-                .subscribeOn(Schedulers.io())
-                .map { it.sorted() }
+            .subscribeOn(Schedulers.io())
+            .map { it.sorted() }
     }
 
     override fun loadFiatConversion(wei: Wei) =
-            (cachedFiatPrice?.let { Single.just(it) }
-                    ?: (tickerRepository.loadCurrency().doOnSuccess { cachedFiatPrice = it }))
-                    .map { it.convert(wei) to it }
-                    .mapToResult()
+        (cachedFiatPrice?.let { Single.just(it) }
+                ?: (tickerRepository.loadCurrency().doOnSuccess { cachedFiatPrice = it }))
+            .map { it.convert(wei) to it }
+            .mapToResult()
 
     override fun setupDeploy(): Single<BigInteger> =
-            accountsRepository.loadActiveAccount()
-                    .map { it.address }
-                    .doOnSuccess { deviceInfo = it }
+        accountsRepository.loadActiveAccount()
+            .map { it.address }
+            .doOnSuccess { deviceInfo = it }
 
     override fun removeAdditionalOwner(address: BigInteger): Observable<Result<Unit>> =
-            Observable.fromCallable {
-                addressStore.remove(address)
-            }
-                    .subscribeOn(Schedulers.io())
-                    .mapToResult()
+        Observable.fromCallable {
+            addressStore.remove(address)
+        }
+            .subscribeOn(Schedulers.io())
+            .mapToResult()
 
     override fun addAdditionalOwner(input: String): Observable<Result<Unit>> =
-            Observable.fromCallable {
-                val address = input.hexAsEthereumAddressOrNull()
-                SimpleLocalizedException.assert(address != null, context, R.string.invalid_ethereum_address)
-                SimpleLocalizedException.assert(deviceInfo?.let { it != address }
-                        ?: false, context, R.string.error_owner_already_added)
-                SimpleLocalizedException.assert(!addressStore.contains(address!!), context, R.string.error_owner_already_added)
-                addressStore.add(address)
-            }
-                    .subscribeOn(Schedulers.io())
-                    .mapToResult()
+        Observable.fromCallable {
+            val address = input.hexAsEthereumAddressOrNull()
+            SimpleLocalizedException.assert(address != null, context, R.string.invalid_ethereum_address)
+            SimpleLocalizedException.assert(deviceInfo?.let { it != address }
+                    ?: false, context, R.string.error_owner_already_added)
+            SimpleLocalizedException.assert(!addressStore.contains(address!!), context, R.string.error_owner_already_added)
+            addressStore.add(address)
+        }
+            .subscribeOn(Schedulers.io())
+            .mapToResult()
 
 
     override fun loadSafeInfo(address: String): Observable<Result<SafeInfo>> =
-            Single.fromCallable {
-                address.hexAsEthereumAddressOrNull() ?: throw InvalidAddressException()
-            }.flatMapObservable {
-                        repository.loadInfo(it)
-                    }.mapToResult()
+        Single.fromCallable {
+            address.hexAsEthereumAddressOrNull() ?: throw InvalidAddressException()
+        }.flatMapObservable {
+                repository.loadInfo(it)
+            }.mapToResult()
 
     override fun loadActiveAccount(): Observable<Account> = accountsRepository.loadActiveAccount().toObservable()
-            .onErrorResumeNext { t: Throwable -> Timber.d(t); Observable.empty<Account>() }
+        .onErrorResumeNext { t: Throwable -> Timber.d(t); Observable.empty<Account>() }
 
     private fun checkName(name: String) {
         if (name.isBlank()) throw SimpleLocalizedException(context.getString(R.string.error_blank_name))

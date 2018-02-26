@@ -8,7 +8,7 @@ import pm.gnosis.heimdall.common.di.ViewContext
 
 
 abstract class LifecycleAdapter<T, VH : LifecycleAdapter.LifecycleViewHolder<T>>(
-        @ViewContext context: Context
+    @ViewContext context: Context
 ) : Adapter<T, VH>() {
     private val lifecycle = (context as LifecycleOwner).lifecycle
 

@@ -7,21 +7,21 @@ import java.math.BigInteger
 
 @Entity(tableName = ERC20TokenDb.TABLE_NAME)
 data class ERC20TokenDb(
-        @PrimaryKey
-        @ColumnInfo(name = COL_ADDRESS)
-        var address: BigInteger,
+    @PrimaryKey
+    @ColumnInfo(name = COL_ADDRESS)
+    var address: BigInteger,
 
-        @ColumnInfo(name = COL_NAME)
-        var name: String?,
+    @ColumnInfo(name = COL_NAME)
+    var name: String?,
 
-        @ColumnInfo(name = COL_SYMBOL)
-        var symbol: String?,
+    @ColumnInfo(name = COL_SYMBOL)
+    var symbol: String?,
 
-        @ColumnInfo(name = COL_DECIMALS)
-        var decimals: Int,
+    @ColumnInfo(name = COL_DECIMALS)
+    var decimals: Int,
 
-        @ColumnInfo(name = COL_VERIFIED)
-        var verified: Boolean
+    @ColumnInfo(name = COL_VERIFIED)
+    var verified: Boolean
 ) {
     companion object {
         const val TABLE_NAME = "erc20_tokens"

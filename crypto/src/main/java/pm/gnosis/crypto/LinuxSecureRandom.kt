@@ -50,9 +50,11 @@ class LinuxSecureRandom : SecureRandomSpi() {
                 // Now override the default SecureRandom implementation with this one.
                 val position = Security.insertProviderAt(LinuxSecureRandomProvider(), 1)
 
-                System.out.println(if (position != -1)
-                    "Secure randomness will be read from $file only." else
-                    "Randomness is already secure.")
+                System.out.println(
+                    if (position != -1)
+                        "Secure randomness will be read from $file only." else
+                        "Randomness is already secure."
+                )
             } catch (e: FileNotFoundException) {
                 // Should never happen.
                 System.err.println("/dev/urandom does not appear to exist or is not openable")

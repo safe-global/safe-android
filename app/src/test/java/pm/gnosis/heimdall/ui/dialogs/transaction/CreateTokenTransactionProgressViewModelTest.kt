@@ -39,8 +39,8 @@ class CreateTokenTransactionProgressViewModelTest {
         val testObserver = TestObserver<Transaction>()
         viewModel.loadCreateTokenTransaction(null).subscribe(testObserver)
         testObserver.assertNoValues()
-                .assertError(SimpleLocalizedException(R.string.error_invalid_token_address.toString()))
-                .assertTerminated()
+            .assertError(SimpleLocalizedException(R.string.error_invalid_token_address.toString()))
+            .assertTerminated()
     }
 
     @Test
@@ -48,8 +48,8 @@ class CreateTokenTransactionProgressViewModelTest {
         val testObserver = TestObserver<Transaction>()
         viewModel.loadCreateTokenTransaction(BigInteger.valueOf(2).pow(160)).subscribe(testObserver)
         testObserver.assertNoValues()
-                .assertError(SimpleLocalizedException(R.string.error_invalid_token_address.toString()))
-                .assertTerminated()
+            .assertError(SimpleLocalizedException(R.string.error_invalid_token_address.toString()))
+            .assertTerminated()
     }
 
     @Test
@@ -61,8 +61,8 @@ class CreateTokenTransactionProgressViewModelTest {
         val expectedData = StandardToken.Transfer.encode(Solidity.Address(BigInteger.ZERO), Solidity.UInt256(BigInteger.ZERO))
         val expectedTx = Transaction(testAddress, data = expectedData)
         testObserver.assertNoErrors()
-                .assertValue(expectedTx)
-                .assertTerminated()
+            .assertValue(expectedTx)
+            .assertTerminated()
     }
 
 }

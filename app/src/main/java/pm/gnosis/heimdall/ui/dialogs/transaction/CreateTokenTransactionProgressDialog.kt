@@ -27,7 +27,7 @@ class CreateTokenTransactionProgressDialog : BaseCreateSafeTransactionProgressDi
     }
 
     override fun createTransaction() =
-            viewModel.loadCreateTokenTransaction(tokenAddress)
+        viewModel.loadCreateTokenTransaction(tokenAddress)
 
     override fun showTransaction(safe: BigInteger?, transaction: Transaction) {
         startActivity(CreateTransactionActivity.createIntent(context!!, safe, TransactionType.TOKEN_TRANSFER, transaction))
@@ -35,20 +35,20 @@ class CreateTokenTransactionProgressDialog : BaseCreateSafeTransactionProgressDi
 
     fun inject() {
         DaggerViewComponent.builder()
-                .viewModule(ViewModule(context!!))
-                .applicationComponent(HeimdallApplication[context!!].component)
-                .build()
-                .inject(this)
+            .viewModule(ViewModule(context!!))
+            .applicationComponent(HeimdallApplication[context!!].component)
+            .build()
+            .inject(this)
     }
 
     companion object {
         private const val TOKEN_ADDRESS_EXTRA = "extra.string.token_address"
 
         fun create(safeAddress: BigInteger, tokenAddress: BigInteger) =
-                CreateTokenTransactionProgressDialog().apply {
-                    arguments = BaseCreateSafeTransactionProgressDialog.createBundle(safeAddress).apply {
-                        putString(TOKEN_ADDRESS_EXTRA, tokenAddress.asEthereumAddressString())
-                    }
+            CreateTokenTransactionProgressDialog().apply {
+                arguments = BaseCreateSafeTransactionProgressDialog.createBundle(safeAddress).apply {
+                    putString(TOKEN_ADDRESS_EXTRA, tokenAddress.asEthereumAddressString())
                 }
+            }
     }
 }

@@ -51,7 +51,7 @@ class SimpleSignatureStoreTest {
 
         val mappedObserver = TestObserver<Map<BigInteger, Signature>>()
         val info = TransactionRepository.ExecuteInformation(
-                TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, info).subscribe(mappedObserver)
@@ -59,8 +59,9 @@ class SimpleSignatureStoreTest {
 
         // Values updated still no signatures
         signaturesObserver.assertValuesOnly(
-                emptyMap(), // Previous value
-                emptyMap())
+            emptyMap(), // Previous value
+            emptyMap()
+        )
 
         // It should not be possible to add a signature if he is not an owner
         assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_not_owner)), {
@@ -75,11 +76,13 @@ class SimpleSignatureStoreTest {
         store.add(TEST_OWNERS[0] to TEST_SIGNATURE)
         // Signature added, changes should be propagated
         mappedObserver.assertValuesOnly(
-                emptyMap(), // Previous value
-                mapOf(TEST_OWNERS[0] to TEST_SIGNATURE))
+            emptyMap(), // Previous value
+            mapOf(TEST_OWNERS[0] to TEST_SIGNATURE)
+        )
         signaturesObserver.assertValuesOnly(
-                emptyMap(), emptyMap(), // Previous values
-                mapOf(TEST_OWNERS[0] to TEST_SIGNATURE))
+            emptyMap(), emptyMap(), // Previous values
+            mapOf(TEST_OWNERS[0] to TEST_SIGNATURE)
+        )
 
         // It should not be possible to add the same signature again
         assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_already_exists)), {
@@ -89,17 +92,17 @@ class SimpleSignatureStoreTest {
         store.add(TEST_OWNERS[1] to TEST_SIGNATURE)
         // Signature added, changes should be propagated
         mappedObserver.assertValuesOnly(
-                // Previous value
-                emptyMap(),
-                mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
-                // New value
-                TEST_SIGNERS.associate { it to TEST_SIGNATURE })
+            // Previous value
+            emptyMap(),
+            mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
+            // New value
+            TEST_SIGNERS.associate { it to TEST_SIGNATURE })
         signaturesObserver.assertValuesOnly(
-                // Previous value
-                emptyMap(), emptyMap(),
-                mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
-                // New value
-                TEST_SIGNERS.associate { it to TEST_SIGNATURE })
+            // Previous value
+            emptyMap(), emptyMap(),
+            mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
+            // New value
+            TEST_SIGNERS.associate { it to TEST_SIGNATURE })
 
         /*
          * Checks for load methods
@@ -117,54 +120,58 @@ class SimpleSignatureStoreTest {
          */
         val updateOwnersObserver = TestObserver<Map<BigInteger, Signature>>()
         val updateOwnersInfo = TransactionRepository.ExecuteInformation(
-                TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
-                TEST_OWNERS_2
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
+            TEST_OWNERS_2
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, updateOwnersInfo).subscribe(updateOwnersObserver)
         updateOwnersObserver.dispose()
         // Owners changes, signatures should update (remove old owners signatures)
         mappedObserver.assertValuesOnly(
-                // Previous value
-                emptyMap(),
-                mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
-                TEST_SIGNERS.associate { it to TEST_SIGNATURE },
-                // New value
-                mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE))
+            // Previous value
+            emptyMap(),
+            mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
+            TEST_SIGNERS.associate { it to TEST_SIGNATURE },
+            // New value
+            mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE)
+        )
         signaturesObserver.assertValuesOnly(
-                // Previous value
-                emptyMap(), emptyMap(),
-                mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
-                TEST_SIGNERS.associate { it to TEST_SIGNATURE },
-                // New value
-                mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE))
+            // Previous value
+            emptyMap(), emptyMap(),
+            mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
+            TEST_SIGNERS.associate { it to TEST_SIGNATURE },
+            // New value
+            mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE)
+        )
         updateOwnersObserver.assertValuesOnly(mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE))
 
         val updateHashObserver = TestObserver<Map<BigInteger, Signature>>()
         val updateHashInfo = TransactionRepository.ExecuteInformation(
-                "some_new_hash", TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
-                TEST_OWNERS_2
+            "some_new_hash", TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
+            TEST_OWNERS_2
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, updateHashInfo).subscribe(updateHashObserver)
         updateHashObserver.dispose()
         // Owners changes, signatures should update (remove old owners signatures)
         mappedObserver.assertValuesOnly(
-                // Previous value
-                emptyMap(),
-                mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
-                TEST_SIGNERS.associate { it to TEST_SIGNATURE },
-                mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE),
-                // New value
-                emptyMap())
+            // Previous value
+            emptyMap(),
+            mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
+            TEST_SIGNERS.associate { it to TEST_SIGNATURE },
+            mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE),
+            // New value
+            emptyMap()
+        )
         signaturesObserver.assertValuesOnly(
-                // Previous value
-                emptyMap(), emptyMap(),
-                mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
-                TEST_SIGNERS.associate { it to TEST_SIGNATURE },
-                mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE),
-                // New value
-                emptyMap())
+            // Previous value
+            emptyMap(), emptyMap(),
+            mapOf(TEST_OWNERS[0] to TEST_SIGNATURE),
+            TEST_SIGNERS.associate { it to TEST_SIGNATURE },
+            mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE),
+            // New value
+            emptyMap()
+        )
         updateHashObserver.assertValuesOnly(emptyMap())
         // Was disposed before, should not get any updates
         updateOwnersObserver.assertValuesOnly(mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE))

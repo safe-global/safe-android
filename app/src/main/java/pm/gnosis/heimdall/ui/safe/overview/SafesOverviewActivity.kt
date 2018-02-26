@@ -64,7 +64,8 @@ class SafesOverviewActivity : BaseActivity() {
             startActivity(AuthenticateActivity.createIntent(this))
         }
 
-        layout_low_balance_info.text = getString(R.string.low_balance_warning, SafeOverviewContract.LOW_BALANCE_THRESHOLD.toEther().stringWithNoTrailingZeroes())
+        layout_low_balance_info.text =
+                getString(R.string.low_balance_warning, SafeOverviewContract.LOW_BALANCE_THRESHOLD.toEther().stringWithNoTrailingZeroes())
 
         layout_low_balance_dismiss.setOnClickListener {
             layout_low_balance_root.hide()
@@ -79,24 +80,26 @@ class SafesOverviewActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += viewModel.observeSafes()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::onSafes, onError = ::onSafesError)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onSafes, onError = ::onSafesError)
 
         disposables += adapter.safeSelection
-                .subscribeBy(onNext = ::onSafeSelection, onError = Timber::e)
+            .subscribeBy(onNext = ::onSafeSelection, onError = Timber::e)
 
         disposables += adapter.shareSelection
-                .subscribeBy(onNext = {
-                    ShareSafeAddressDialog.create(it).show(supportFragmentManager, null)
-                }, onError = Timber::e)
+            .subscribeBy(onNext = {
+                ShareSafeAddressDialog.create(it).show(supportFragmentManager, null)
+            }, onError = Timber::e)
 
         disposables += layout_safe_overview_add_safe.clicks()
-                .subscribeBy(onNext = { startActivity(AddSafeActivity.createIntent(this)) },
-                        onError = Timber::e)
+            .subscribeBy(
+                onNext = { startActivity(AddSafeActivity.createIntent(this)) },
+                onError = Timber::e
+            )
 
         disposables += viewModel.shouldShowLowBalanceView()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(onNext = ::shouldShowLowBalanceView, onError = Timber::e)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::shouldShowLowBalanceView, onError = Timber::e)
     }
 
     private fun shouldShowLowBalanceView(show: Boolean) = layout_low_balance_root.run { if (show) show() else hide() }
@@ -116,9 +119,9 @@ class SafesOverviewActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-                .applicationComponent(HeimdallApplication[this].component)
-                .viewModule(ViewModule(this))
-                .build().inject(this)
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 
     companion object {

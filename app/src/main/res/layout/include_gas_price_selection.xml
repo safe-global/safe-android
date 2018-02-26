@@ -17,11 +17,11 @@
         android:orientation="vertical"
         android:paddingBottom="16dp"
         android:paddingTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/include_gas_price_selection_normal_container"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             style="@style/BoldContent"
@@ -69,11 +69,11 @@
         android:orientation="vertical"
         android:paddingBottom="16dp"
         android:paddingTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/include_gas_price_selection_fast_container"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@+id/include_gas_price_selection_slow_container"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             style="@style/BoldContent"
@@ -120,11 +120,11 @@
         android:orientation="vertical"
         android:paddingBottom="16dp"
         android:paddingTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@+id/include_gas_price_selection_normal_container"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             style="@style/BoldContent"

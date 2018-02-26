@@ -81,7 +81,8 @@ class HDNode(val keyPair: KeyPair, val chainCode: ByteString, val depth: Int, va
     }
 
     fun toBase58(): String {
-        return Base58Utils.encodeChecked(Buffer()
+        return Base58Utils.encodeChecked(
+            Buffer()
                 // var network = this.keyPair.network
                 // var version = (!this.isNeutered()) ? network.bip32.private : network.bip32.public
                 // 4 bytes: version bytes
@@ -97,7 +98,8 @@ class HDNode(val keyPair: KeyPair, val chainCode: ByteString, val depth: Int, va
                 // 33 bytes: private key data (0 + 32 key)
                 .writeByte(0)
                 .write(keyPair.privKeyBytes)
-                .readByteString())
+                .readByteString()
+        )
     }
 
     fun publicKey(): ByteString {

@@ -25,19 +25,21 @@ import pm.gnosis.ticker.di.TickerModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [
-    AccountsBindingModule::class,
-    AccountsModule::class,
-    ApplicationModule::class,
-    ApplicationBindingsModule::class,
-    Bip39BindingModule::class,
-    CoreModule::class,
-    InterceptorsModule::class,
-    TickerBindingModule::class,
-    TickerModule::class,
-    SecurityBindingsModule::class,
-    ViewModelFactoryModule::class
-])
+@Component(
+    modules = [
+        AccountsBindingModule::class,
+        AccountsModule::class,
+        ApplicationModule::class,
+        ApplicationBindingsModule::class,
+        Bip39BindingModule::class,
+        CoreModule::class,
+        InterceptorsModule::class,
+        TickerBindingModule::class,
+        TickerModule::class,
+        SecurityBindingsModule::class,
+        ViewModelFactoryModule::class
+    ]
+)
 interface ApplicationComponent {
     fun application(): Application
 
@@ -63,5 +65,6 @@ interface ApplicationComponent {
 
     // Base injects
     fun inject(activity: BaseActivity)
+
     fun inject(service: HeimdallFirebaseService)
 }
