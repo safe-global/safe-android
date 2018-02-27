@@ -22,7 +22,6 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
@@ -30,6 +29,7 @@ import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.selectFromAddressBook
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
+import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.hexAsBigIntegerOrNull
@@ -37,7 +37,6 @@ import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragment() {
 

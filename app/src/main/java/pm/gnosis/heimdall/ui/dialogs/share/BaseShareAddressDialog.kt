@@ -10,8 +10,8 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.dialog_address_share.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.shareExternalText
-import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.svalinn.common.utils.shareExternalText
+import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.hexAsEthereumAddressOrNull

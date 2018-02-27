@@ -8,8 +8,6 @@ import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.LinearLayoutManager
 import dagger.Module
 import dagger.Provides
-import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
@@ -39,6 +37,8 @@ import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsCon
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract
+import pm.gnosis.svalinn.common.di.ForView
+import pm.gnosis.svalinn.common.di.ViewContext
 
 @Module
 class ViewModule(val context: Context) {

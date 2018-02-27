@@ -4,11 +4,11 @@ import android.content.Context
 import io.reactivex.Single
 import okhttp3.HttpUrl
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 

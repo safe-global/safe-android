@@ -3,10 +3,10 @@ package pm.gnosis.heimdall.utils
 import android.support.v7.util.DiffUtil
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
 
 fun <D> Flowable<List<D>>.scanToAdapterData(
     idExtractor: ((D) -> Any) = defaultIdExtractor(),

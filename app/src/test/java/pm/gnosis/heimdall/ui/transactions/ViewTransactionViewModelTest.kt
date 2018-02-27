@@ -16,11 +16,6 @@ import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.accounts.base.models.Signature
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.QrCodeGenerator
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
@@ -32,6 +27,11 @@ import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract.Info
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
+import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockGetString
@@ -833,5 +833,4 @@ class ViewTransactionViewModelTest {
         private val TEST_TRANSACTION_FEES = GasEstimate(BigInteger.valueOf(1337), Wei(BigInteger.valueOf(23)))
         private val TEST_GAS_OVERRIDE = Wei(BigInteger.valueOf(7331))
     }
-
 }

@@ -8,9 +8,6 @@ import io.reactivex.Single
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.accounts.base.models.Signature
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
@@ -20,9 +17,11 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.*
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 class ViewTransactionViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -142,5 +141,4 @@ class ViewTransactionViewModel @Inject constructor(
 
     private fun TransactionRepository.ExecuteInformation.checkMap(signatures: Map<BigInteger, Signature>) =
         Observable.fromCallable { check(signatures) }.onErrorResumeNext(Function { Observable.empty<TransactionRepository.ExecuteInformation>() })
-
 }

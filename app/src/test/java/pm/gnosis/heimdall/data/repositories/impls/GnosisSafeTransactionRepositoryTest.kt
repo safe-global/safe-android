@@ -10,13 +10,13 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.toHexString
@@ -89,5 +89,4 @@ class GnosisSafeTransactionRepositoryTest {
             "31b20c3b6a3960aaf65808b18ec6d492d2649f0c8dae463bfe001c95263d9447"
         )
     }
-
 }

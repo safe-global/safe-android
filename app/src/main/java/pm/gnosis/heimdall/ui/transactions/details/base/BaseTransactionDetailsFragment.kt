@@ -9,16 +9,15 @@ import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.appendText
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.transactions.BaseTransactionActivity
 import pm.gnosis.models.Transaction
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.appendText
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 abstract class BaseTransactionDetailsFragment : BaseFragment() {
 

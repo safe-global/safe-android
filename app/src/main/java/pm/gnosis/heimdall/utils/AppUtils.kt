@@ -16,10 +16,10 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 
 fun errorSnackbar(view: View, throwable: Throwable, duration: Int = Snackbar.LENGTH_LONG) {

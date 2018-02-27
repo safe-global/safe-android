@@ -12,11 +12,11 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.toast
-import pm.gnosis.heimdall.common.utils.vibrate
-import pm.gnosis.heimdall.security.AuthenticationError
-import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
+import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.svalinn.common.utils.vibrate
+import pm.gnosis.svalinn.security.AuthenticationError
+import pm.gnosis.svalinn.security.EncryptionManager
 import timber.log.Timber
 import javax.inject.Inject
 

@@ -10,10 +10,6 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -21,11 +17,14 @@ import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.GnosisSafeUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 class ChangeSafeSettingsDetailsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,

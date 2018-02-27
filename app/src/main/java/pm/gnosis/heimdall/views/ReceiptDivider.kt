@@ -8,7 +8,6 @@ import android.util.AttributeSet
 import android.view.View
 import pm.gnosis.heimdall.R
 
-
 class ReceiptDivider : View {
 
     private var dividerPaint: Paint? = Paint()

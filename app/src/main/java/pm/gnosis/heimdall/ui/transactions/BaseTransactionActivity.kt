@@ -11,18 +11,17 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.merge_transaction_details_container.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.transaction
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.models.Transaction
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.transaction
 import timber.log.Timber
 import java.math.BigInteger
-
 
 abstract class BaseTransactionActivity : BaseActivity() {
 

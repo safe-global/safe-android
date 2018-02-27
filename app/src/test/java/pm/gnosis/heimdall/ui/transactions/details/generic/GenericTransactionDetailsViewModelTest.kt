@@ -9,9 +9,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract.InputEvent
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.DATA_FIELD
@@ -19,6 +16,9 @@ import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.C
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.VALUE_FIELD
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.mockGetString
 import java.math.BigInteger

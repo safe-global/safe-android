@@ -5,11 +5,11 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.common.utils.Result
 import java.math.BigInteger
 
 abstract class SafeOverviewContract : ViewModel() {

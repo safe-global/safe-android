@@ -8,7 +8,6 @@ import dagger.Provides
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
 import pm.gnosis.heimdall.data.db.ApplicationDb
@@ -16,6 +15,7 @@ import pm.gnosis.heimdall.data.remote.EthGasStationApi
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.remote.PushServiceApi
+import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.ticker.data.remote.TickerAdapter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

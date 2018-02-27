@@ -8,7 +8,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.transactions.details.assets.ReviewAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
@@ -17,11 +16,11 @@ import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeSafeSettingsD
 import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
+import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 abstract class ViewTransactionActivity : BaseTransactionActivity() {
 
@@ -85,7 +84,6 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
     }
 
     companion object {
-
         private const val EXTRA_SAFE = "extra.string.safe"
         private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"
 

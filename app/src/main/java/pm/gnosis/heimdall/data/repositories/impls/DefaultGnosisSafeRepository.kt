@@ -10,8 +10,6 @@ import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
 import pm.gnosis.heimdall.GnosisSafe.Threshold
 import pm.gnosis.heimdall.ProxyFactory
-import pm.gnosis.heimdall.accounts.base.models.Account
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
@@ -32,6 +30,8 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Account
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexStringToByteArray

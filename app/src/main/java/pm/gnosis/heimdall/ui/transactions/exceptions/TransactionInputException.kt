@@ -27,6 +27,5 @@ data class TransactionInputException(private val internalMessage: String, val er
 
         // Safe settings specific fields
         const val TARGET_FIELD = 1 shl 5
-
     }
 }

@@ -1,9 +1,9 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import pm.gnosis.heimdall.app.core.BuildConfig
-import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.heimdall.common.utils.edit
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
+import pm.gnosis.svalinn.common.PreferencesManager
+import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.hexAsEthereumAddress
 import pm.gnosis.utils.isValidEthereumAddress

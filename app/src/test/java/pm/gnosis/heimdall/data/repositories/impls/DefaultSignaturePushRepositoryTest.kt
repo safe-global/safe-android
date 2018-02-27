@@ -19,9 +19,6 @@ import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
-import pm.gnosis.heimdall.accounts.base.models.Signature
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.common.PreferencesManager
 import pm.gnosis.heimdall.data.remote.MessageQueueRepository
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.RequestSignatureData
@@ -30,6 +27,9 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.models.Transaction
+import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences

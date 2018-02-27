@@ -14,7 +14,6 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLHandshakeException
 
-
 data class SimpleLocalizedException(override val message: String) : Exception(message), LocalizedException {
 
     override fun localizedMessage() = message

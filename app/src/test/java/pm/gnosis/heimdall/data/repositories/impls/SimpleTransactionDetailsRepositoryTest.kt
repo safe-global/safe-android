@@ -100,5 +100,4 @@ class SimpleTransactionDetailsRepositoryTest {
             Transaction(BigInteger.ZERO, data = GnosisSafe.Owners.encode(Solidity.UInt256(BigInteger.ZERO))) to TransactionType.GENERIC
         )
     }
-
 }

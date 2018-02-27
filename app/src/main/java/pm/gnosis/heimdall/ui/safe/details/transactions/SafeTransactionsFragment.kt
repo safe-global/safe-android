@@ -12,15 +12,14 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.build
-import pm.gnosis.heimdall.common.utils.subscribeForResult
-import pm.gnosis.heimdall.common.utils.withArgs
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.svalinn.common.utils.build
+import pm.gnosis.svalinn.common.utils.subscribeForResult
+import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.hexAsBigInteger
 import timber.log.Timber
 import javax.inject.Inject
-
 
 class SafeTransactionsFragment : BaseFragment() {
     @Inject

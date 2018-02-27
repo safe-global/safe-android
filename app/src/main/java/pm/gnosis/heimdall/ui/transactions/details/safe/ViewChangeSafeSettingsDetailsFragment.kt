@@ -18,20 +18,19 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
-import pm.gnosis.heimdall.common.utils.visible
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.InflatedViewProvider
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseReviewTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract.Action.*
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDetailsFragment() {
 
@@ -140,5 +139,4 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
                 putString(ARG_SAFE, safeAddress)
             }
     }
-
 }

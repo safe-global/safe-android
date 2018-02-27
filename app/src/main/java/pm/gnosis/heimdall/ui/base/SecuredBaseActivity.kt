@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.ui.base
 import android.view.MotionEvent
 import android.widget.Toast
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.toast
+import pm.gnosis.svalinn.common.utils.toast
 
 abstract class SecuredBaseActivity : BaseActivity() {
 
@@ -34,5 +34,4 @@ abstract class SecuredBaseActivity : BaseActivity() {
     private fun showWarning() {
         toast(R.string.obscured_window_warning, Toast.LENGTH_LONG)
     }
-
 }

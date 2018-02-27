@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.common.di.components
 
 import dagger.Component
-import pm.gnosis.heimdall.common.di.ForView
 import pm.gnosis.heimdall.common.di.modules.ViewBindingsModule
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.helpers.GasPriceHelper
@@ -45,6 +44,7 @@ import pm.gnosis.heimdall.ui.transactions.details.assets.ViewAssetTransferDetail
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.CreateAddOwnerDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ViewChangeSafeSettingsDetailsFragment
+import pm.gnosis.svalinn.common.di.ForView
 
 @ForView
 @Component(

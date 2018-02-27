@@ -14,8 +14,6 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus.*
 import pm.gnosis.heimdall.data.repositories.TransactionType
@@ -27,6 +25,8 @@ import pm.gnosis.heimdall.ui.transactions.details.safe.ReceiptChangeSafeSettings
 import pm.gnosis.heimdall.utils.setupEtherscanTransactionUrl
 import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.Transaction
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import java.math.BigInteger

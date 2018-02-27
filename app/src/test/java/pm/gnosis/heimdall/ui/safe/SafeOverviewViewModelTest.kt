@@ -18,12 +18,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.accounts.base.models.Account
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
@@ -32,10 +26,15 @@ import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Account
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.common.PreferencesManager
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.*
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
-
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeOverviewViewModelTest {

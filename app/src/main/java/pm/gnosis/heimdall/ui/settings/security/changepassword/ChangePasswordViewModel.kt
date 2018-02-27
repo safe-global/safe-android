@@ -4,10 +4,10 @@ import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.mapToResult
-import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.svalinn.security.EncryptionManager
 import javax.inject.Inject
 
 class ChangePasswordViewModel @Inject constructor(

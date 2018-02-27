@@ -7,7 +7,6 @@ import android.view.View
 import com.github.clans.fab.FloatingActionMenu
 import pm.gnosis.utils.sameSign
 
-
 class FloatingActionButtonScrollBehavior(context: Context, attrs: AttributeSet) : LayoutAboveSnackbarBehavior<FloatingActionMenu>(context, attrs) {
     private var acumulator = 0
     private var threshold = 0

@@ -11,9 +11,9 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import pm.gnosis.heimdall.HeimdallApplication
-import pm.gnosis.heimdall.common.utils.visible
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import timber.log.Timber
 import java.math.BigInteger

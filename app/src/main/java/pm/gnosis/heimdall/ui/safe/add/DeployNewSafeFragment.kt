@@ -25,12 +25,12 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
@@ -40,7 +40,6 @@ import timber.log.Timber
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 class DeployNewSafeFragment : BaseFragment() {
 

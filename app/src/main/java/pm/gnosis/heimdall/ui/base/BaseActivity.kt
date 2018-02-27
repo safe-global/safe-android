@@ -10,8 +10,8 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.security.EncryptionManager
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
+import pm.gnosis.svalinn.security.EncryptionManager
 import timber.log.Timber
 import javax.inject.Inject
 

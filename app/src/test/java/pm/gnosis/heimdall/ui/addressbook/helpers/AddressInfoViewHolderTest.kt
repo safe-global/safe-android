@@ -17,9 +17,9 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.visible
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestFlowableFactory

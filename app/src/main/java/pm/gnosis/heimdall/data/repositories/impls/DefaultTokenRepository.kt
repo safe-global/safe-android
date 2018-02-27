@@ -11,10 +11,6 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.ERC20
-import pm.gnosis.heimdall.common.utils.edit
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import pm.gnosis.heimdall.data.remote.BulkRequest
@@ -27,6 +23,10 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TO
 import pm.gnosis.heimdall.data.repositories.models.fromDb
 import pm.gnosis.heimdall.data.repositories.models.toDb
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.PreferencesManager
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.ERC20
+import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.*
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger

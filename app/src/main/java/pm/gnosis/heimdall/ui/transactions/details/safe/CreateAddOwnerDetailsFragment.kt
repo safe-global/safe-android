@@ -16,20 +16,19 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.doOnNextForResult
-import pm.gnosis.heimdall.common.utils.scanQrCode
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.selectFromAddressBook
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.doOnNextForResult
+import pm.gnosis.svalinn.common.utils.scanQrCode
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
     @Inject
@@ -122,5 +121,4 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
                 }
             }
     }
-
 }

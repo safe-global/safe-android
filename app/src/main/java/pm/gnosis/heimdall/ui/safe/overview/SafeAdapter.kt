@@ -14,20 +14,19 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_pending_safe_item.view.*
 import kotlinx.android.synthetic.main.layout_safe_item.view.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.common.di.ViewContext
-import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.heimdall.utils.displayString
+import pm.gnosis.svalinn.common.di.ForView
+import pm.gnosis.svalinn.common.di.ViewContext
+import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asTransactionHash
 import timber.log.Timber
 import javax.inject.Inject
-
 
 @ForView
 class SafeAdapter @Inject constructor(

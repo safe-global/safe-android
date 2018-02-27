@@ -1,9 +1,9 @@
 package pm.gnosis.heimdall.ui.settings.security
 
 import io.reactivex.Single
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
-import pm.gnosis.heimdall.security.EncryptionManager
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.svalinn.security.EncryptionManager
 import javax.inject.Inject
 
 class SecuritySettingsViewModel @Inject constructor(

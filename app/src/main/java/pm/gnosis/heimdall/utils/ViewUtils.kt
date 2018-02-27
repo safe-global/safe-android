@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.phrase.Phrase
-import pm.gnosis.heimdall.common.utils.getColorCompat
+import pm.gnosis.svalinn.common.utils.getColorCompat
 
 fun View.disableAccessibility() {
     ViewCompat.setImportantForAccessibility(this, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS)

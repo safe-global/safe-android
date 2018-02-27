@@ -3,10 +3,10 @@ package pm.gnosis.heimdall.data.repositories
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
 
 

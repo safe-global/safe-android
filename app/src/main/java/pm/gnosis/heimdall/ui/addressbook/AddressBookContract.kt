@@ -5,9 +5,9 @@ import android.graphics.Bitmap
 import android.support.annotation.ColorInt
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.svalinn.common.utils.Result
 import java.math.BigInteger
 
 abstract class AddressBookContract : ViewModel() {

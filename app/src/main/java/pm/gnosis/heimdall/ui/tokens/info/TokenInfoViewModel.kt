@@ -1,10 +1,10 @@
 package pm.gnosis.heimdall.ui.tokens.info
 
 import io.reactivex.Observable
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import java.math.BigInteger

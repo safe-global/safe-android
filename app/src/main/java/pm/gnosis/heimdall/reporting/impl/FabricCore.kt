@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
-import pm.gnosis.heimdall.common.PreferencesManager
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.edit
+import pm.gnosis.svalinn.common.PreferencesManager
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.edit
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton

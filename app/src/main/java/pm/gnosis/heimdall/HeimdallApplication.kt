@@ -7,7 +7,7 @@ import org.spongycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerApplicationComponent
-import pm.gnosis.heimdall.common.di.modules.CoreModule
+import pm.gnosis.svalinn.common.di.modules.CoreModule
 import timber.log.Timber
 import java.security.Security
 

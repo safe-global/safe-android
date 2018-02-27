@@ -5,15 +5,15 @@ import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.functions.Function
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.accounts.base.models.Account
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.QrCodeGenerator
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Account
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import javax.inject.Inject
 

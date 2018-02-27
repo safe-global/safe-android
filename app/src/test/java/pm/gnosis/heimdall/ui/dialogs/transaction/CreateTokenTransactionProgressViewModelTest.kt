@@ -64,5 +64,4 @@ class CreateTokenTransactionProgressViewModelTest {
             .assertValue(expectedTx)
             .assertTerminated()
     }
-
 }

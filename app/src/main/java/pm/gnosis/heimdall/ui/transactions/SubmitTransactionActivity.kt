@@ -21,7 +21,6 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.reporting.Event
@@ -38,6 +37,7 @@ import pm.gnosis.heimdall.utils.setFormattedText
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject

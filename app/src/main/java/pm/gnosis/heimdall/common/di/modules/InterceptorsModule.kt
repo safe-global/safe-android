@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.data.repositories.changeUrl
 import javax.inject.Named
 import javax.inject.Singleton
 
-
 @Module
 class InterceptorsModule {
 

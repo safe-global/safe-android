@@ -5,12 +5,11 @@ import android.content.Intent
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.svalinn.common.utils.Result
 import java.math.BigInteger
-
 
 abstract class SafeTransactionsContract : ViewModel() {
     abstract fun setup(address: BigInteger)
@@ -24,5 +23,4 @@ abstract class SafeTransactionsContract : ViewModel() {
     abstract fun transactionSelected(id: String): Single<Intent>
 
     data class TransferInfo(val amount: String, val symbol: String?)
-
 }
