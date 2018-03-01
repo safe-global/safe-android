@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import java.util.*
 
-
 abstract class Adapter<T, VH : Adapter.ViewHolder<T>> : RecyclerView.Adapter<VH>() {
     private var currentDataId: String? = null
 

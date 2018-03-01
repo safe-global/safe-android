@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.settings.security.revealmnemonic
 
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import javax.inject.Inject
 
 class RevealMnemonicViewModel @Inject constructor(

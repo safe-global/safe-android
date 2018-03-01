@@ -3,11 +3,11 @@ package pm.gnosis.heimdall.ui.addressbook
 import android.database.sqlite.SQLiteConstraintException
 import android.support.annotation.ColorInt
 import io.reactivex.Observable
-import pm.gnosis.heimdall.common.utils.QrCodeGenerator
-import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
+import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.*
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger

@@ -11,7 +11,6 @@ import android.util.AttributeSet
 import android.view.Gravity
 import pm.gnosis.heimdall.R
 
-
 class DividerTextView : AppCompatTextView {
 
     private var textBoundsRect: Rect? = Rect()
@@ -78,5 +77,4 @@ class DividerTextView : AppCompatTextView {
             canvas.drawLine(0f, centerY, canvas.width.toFloat() - offset, centerY, dividerPaint)
         }
     }
-
 }

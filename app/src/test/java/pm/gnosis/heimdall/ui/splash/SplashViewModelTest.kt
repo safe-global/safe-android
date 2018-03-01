@@ -12,10 +12,10 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.accounts.base.models.Account
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.security.EncryptionManager
+import pm.gnosis.svalinn.accounts.base.models.Account
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import java.math.BigInteger
 

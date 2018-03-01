@@ -20,15 +20,16 @@ dependencies {
     // one bundled in the android.jar
     testImplementation "junit:junit:$versions.junit"
 
-    implementation project(":accounts:base")
-    implementation project(":heimdall-common")
-    api project(":models")
-    implementation project(":utils")
+    // Gnosis Svalinn
+    implementation "com.github.gnosis.svalinn-kotlin:accounts-base:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:android-common:$versions.svalinn"
+    api "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
 
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$versions.kotlin"
 
     implementation "com.squareup.moshi:moshi:$versions.moshi"
 
-    testImplementation project(':utils-testing')
+    testImplementation "com.github.gnosis.svalinn-kotlin:utils-testing:$versions.svalinn"
 }

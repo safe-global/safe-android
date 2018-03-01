@@ -99,16 +99,16 @@ dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':app-core')
-    implementation project(':accounts:base')
-    implementation project(':accounts:kethereum')
-    implementation project(':blockies')
-    implementation project(':heimdall-common')
-    implementation project(':crypto')
-    implementation project(':mnemonic')
-    implementation project(':mnemonic-android')
-    implementation project(':ticker')
-    implementation project(':security')
-    implementation project(':utils')
+
+    // Gnosis Svalinn
+    implementation "com.github.gnosis.svalinn-kotlin:accounts-kethereum:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:blockies:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:android-common:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:crypto:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:mnemonic-android:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:ticker:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
 
     // Fabric
     implementation("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics@aar") {
@@ -176,7 +176,7 @@ dependencies {
 
     implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
 
-    testImplementation project(':utils-testing')
+    testImplementation "com.github.gnosis.svalinn-kotlin:utils-testing:$versions.svalinn"
     testImplementation "org.mockito:mockito-core:$versions.mockito"
     testImplementation "org.mockito:mockito-inline:$versions.mockito"
     androidTestImplementation("com.android.support.test.espresso:espresso-core:$versions.espresso", {

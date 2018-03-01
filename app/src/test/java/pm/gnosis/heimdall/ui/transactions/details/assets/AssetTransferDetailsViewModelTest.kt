@@ -16,9 +16,6 @@ import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TokenTransferData
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
@@ -34,6 +31,9 @@ import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.C
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockGetString

@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable
 import android.support.v7.widget.AppCompatEditText
 import android.util.AttributeSet
 
-
 class CurrencyEditText : AppCompatEditText {
 
     private var currencyDrawable: CurrencyDrawable? = null
@@ -70,6 +69,5 @@ class CurrencyEditText : AppCompatEditText {
         override fun getIntrinsicWidth(): Int {
             return symbol?.let { textPaint.measureText(it).toInt() } ?: 0
         }
-
     }
 }

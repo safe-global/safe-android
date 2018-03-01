@@ -5,15 +5,14 @@ import android.graphics.Bitmap
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.accounts.base.models.Signature
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.svalinn.common.utils.Result
 import java.math.BigInteger
-
 
 abstract class ViewTransactionContract : ViewModel() {
     abstract fun checkTransactionType(transaction: Transaction): Single<TransactionType>

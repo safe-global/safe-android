@@ -9,7 +9,6 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import java.math.BigInteger
 
-
 class SimpleAddressShareDialog : BaseShareAddressDialog() {
 
     override fun screenId() = ScreenId.DIALOG_SHARE_ADDRESS

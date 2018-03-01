@@ -16,11 +16,11 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.*
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.models.Transaction
+import pm.gnosis.svalinn.common.utils.*
 import java.math.BigInteger
 
 class SignTransactionActivity : ViewTransactionActivity() {

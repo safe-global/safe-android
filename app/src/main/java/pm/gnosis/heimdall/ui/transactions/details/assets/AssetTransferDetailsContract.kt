@@ -5,12 +5,11 @@ import com.gojuno.koptional.Optional
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.models.Transaction
+import pm.gnosis.svalinn.common.utils.Result
 import java.math.BigInteger
-
 
 abstract class AssetTransferDetailsContract : ViewModel() {
     abstract fun loadFormData(transaction: Transaction?, clearDefaults: Boolean): Single<FormData>

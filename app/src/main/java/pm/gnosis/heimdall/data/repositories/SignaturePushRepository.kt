@@ -2,8 +2,8 @@ package pm.gnosis.heimdall.data.repositories
 
 import io.reactivex.Completable
 import io.reactivex.Observable
-import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.models.Transaction
+import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
 
 interface SignaturePushRepository {

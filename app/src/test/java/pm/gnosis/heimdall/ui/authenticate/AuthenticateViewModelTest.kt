@@ -14,12 +14,12 @@ import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import java.math.BigInteger
 

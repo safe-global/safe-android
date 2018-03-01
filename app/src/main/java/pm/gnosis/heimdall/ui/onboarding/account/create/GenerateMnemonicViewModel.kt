@@ -2,11 +2,11 @@ package pm.gnosis.heimdall.ui.onboarding.account.create
 
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.heimdall.accounts.R
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
+import pm.gnosis.heimdall.R
 import pm.gnosis.mnemonic.Bip39
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.mapToResult
 import javax.inject.Inject
 
 class GenerateMnemonicViewModel @Inject constructor(

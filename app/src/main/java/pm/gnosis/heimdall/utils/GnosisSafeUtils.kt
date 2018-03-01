@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.utils
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
-
 object GnosisSafeUtils {
     fun calculateThreshold(owners: Int): Int =
         Math.max(1, owners - 1)

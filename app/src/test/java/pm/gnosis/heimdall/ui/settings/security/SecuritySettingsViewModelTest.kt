@@ -11,10 +11,10 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.security.EncryptionManager
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.TestCompletable
 

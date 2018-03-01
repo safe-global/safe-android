@@ -12,12 +12,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_account.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.accounts.base.models.Account
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.doOnNextForResult
-import pm.gnosis.heimdall.common.utils.flatMapResult
-import pm.gnosis.heimdall.common.utils.subscribeForResult
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
@@ -25,6 +21,10 @@ import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.format
 import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Account
+import pm.gnosis.svalinn.common.utils.doOnNextForResult
+import pm.gnosis.svalinn.common.utils.flatMapResult
+import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.isValidEthereumAddress

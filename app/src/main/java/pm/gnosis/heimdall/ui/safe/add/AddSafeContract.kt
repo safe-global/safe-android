@@ -3,15 +3,14 @@ package pm.gnosis.heimdall.ui.safe.add
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.accounts.base.models.Account
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Account
+import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.ticker.data.repositories.models.Currency
 import java.math.BigDecimal
 import java.math.BigInteger
-
 
 abstract class AddSafeContract : ViewModel() {
     abstract fun addExistingSafe(name: String, address: String): Observable<Result<Unit>>

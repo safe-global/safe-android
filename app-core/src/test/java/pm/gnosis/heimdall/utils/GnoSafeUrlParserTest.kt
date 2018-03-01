@@ -3,9 +3,9 @@ package pm.gnosis.heimdall.utils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
-import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
 
 class GnoSafeUrlParserTest {

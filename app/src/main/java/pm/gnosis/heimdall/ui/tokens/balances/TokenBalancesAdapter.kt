@@ -7,14 +7,13 @@ import android.view.ViewGroup
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_tokens_item_balance.view.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.svalinn.common.di.ForView
+import pm.gnosis.svalinn.common.di.ViewContext
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
-
 
 @ForView
 class TokenBalancesAdapter @Inject constructor(

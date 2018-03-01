@@ -6,11 +6,6 @@ import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TokenTransferData
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
@@ -22,12 +17,16 @@ import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import pm.gnosis.utils.nullOnThrow
 import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 class AssetTransferDetailsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -148,5 +147,4 @@ class AssetTransferDetailsViewModel @Inject constructor(
             }
         }
     }
-
 }

@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.transactions.details.safe
 import pm.gnosis.heimdall.R
 import pm.gnosis.models.Transaction
 
-
 class ReceiptChangeSafeSettingsDetailsFragment : ViewChangeSafeSettingsDetailsFragment() {
 
     override fun layout(): Int = R.layout.layout_receipt_change_safe
@@ -20,5 +19,4 @@ class ReceiptChangeSafeSettingsDetailsFragment : ViewChangeSafeSettingsDetailsFr
                 arguments = createBundle(transaction, safeAddress)
             }
     }
-
 }

@@ -2,18 +2,17 @@ package pm.gnosis.heimdall.ui.transactions.details.generic
 
 import android.content.Context
 import io.reactivex.ObservableTransformer
-import pm.gnosis.heimdall.common.utils.DataResult
-import pm.gnosis.heimdall.common.utils.ErrorResult
-import pm.gnosis.heimdall.common.utils.Result
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.utils.decimalAsBigIntegerOrNull
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import pm.gnosis.utils.hexStringToByteArrayOrNull
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
-
 
 class GenericTransactionDetailsViewModel @Inject constructor() : GenericTransactionDetailsContract() {
     override fun inputTransformer(context: Context, originalTransaction: Transaction?) =

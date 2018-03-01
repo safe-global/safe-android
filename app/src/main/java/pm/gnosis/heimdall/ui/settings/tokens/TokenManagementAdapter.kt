@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.layout_tokens_item.view.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.ForView
-import pm.gnosis.heimdall.common.di.ViewContext
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoActivity
+import pm.gnosis.svalinn.common.di.ForView
+import pm.gnosis.svalinn.common.di.ViewContext
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 

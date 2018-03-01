@@ -3,12 +3,12 @@ package pm.gnosis.heimdall.ui.safe.details
 import android.content.Context
 import android.graphics.Bitmap
 import io.reactivex.Single
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.QrCodeGenerator
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.isValidEthereumAddress
 import java.math.BigInteger

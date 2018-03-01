@@ -14,8 +14,6 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.common.utils.subscribeForResult
-import pm.gnosis.heimdall.common.utils.visible
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.reporting.ButtonId
@@ -29,6 +27,8 @@ import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.settings.SettingsActivity
+import pm.gnosis.svalinn.common.utils.subscribeForResult
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import javax.inject.Inject

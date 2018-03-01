@@ -5,8 +5,6 @@ import io.reactivex.Observable
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import java.math.BigInteger
 
-
 abstract class BaseTransactionDetailsContract : ViewModel() {
-
     abstract fun observeSafe(safeAddress: BigInteger): Observable<Safe>
 }

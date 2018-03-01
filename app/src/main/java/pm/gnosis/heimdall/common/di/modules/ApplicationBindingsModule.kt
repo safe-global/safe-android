@@ -2,8 +2,6 @@ package pm.gnosis.heimdall.common.di.modules
 
 import dagger.Binds
 import dagger.Module
-import pm.gnosis.heimdall.common.utils.QrCodeGenerator
-import pm.gnosis.heimdall.common.utils.ZxingQrCodeGenerator
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.MessageQueueRepository
 import pm.gnosis.heimdall.data.remote.impls.FirebaseMessageQueueRepository
@@ -17,6 +15,8 @@ import pm.gnosis.heimdall.reporting.impl.FabricCrashTracker
 import pm.gnosis.heimdall.reporting.impl.FabricEventTracker
 import pm.gnosis.mnemonic.android.DefaultWordListProvider
 import pm.gnosis.mnemonic.wordlists.WordListProvider
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
+import pm.gnosis.svalinn.common.utils.ZxingQrCodeGenerator
 import javax.inject.Singleton
 
 @Module

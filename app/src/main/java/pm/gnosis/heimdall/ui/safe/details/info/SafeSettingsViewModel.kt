@@ -5,11 +5,11 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.Function
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.trimWhitespace
 import java.math.BigInteger
 import javax.inject.Inject

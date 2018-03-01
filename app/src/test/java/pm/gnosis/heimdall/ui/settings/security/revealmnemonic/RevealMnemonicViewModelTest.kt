@@ -10,7 +10,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 
 @RunWith(MockitoJUnitRunner::class)

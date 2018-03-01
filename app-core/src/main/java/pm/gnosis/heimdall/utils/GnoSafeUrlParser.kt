@@ -1,14 +1,13 @@
 package pm.gnosis.heimdall.utils
 
-import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexAsEthereumAddress
 import pm.gnosis.utils.nullOnThrow
 import java.math.BigInteger
-
 
 object GnoSafeUrlParser {
     private const val GNOSIS_SAFE_SCHEMA = "gnosafe://"

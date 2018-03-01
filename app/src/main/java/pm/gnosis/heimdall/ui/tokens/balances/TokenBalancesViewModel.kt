@@ -5,14 +5,14 @@ import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.PublishSubject
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.scanToAdapterDataResult
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 import javax.inject.Inject

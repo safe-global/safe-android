@@ -11,10 +11,10 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.accounts.base.models.Signature
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Transaction
+import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.getTestString
 import pm.gnosis.tests.utils.mockGetStringWithArgs

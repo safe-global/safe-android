@@ -4,8 +4,7 @@ import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.content.Context
 import android.view.View
-import pm.gnosis.heimdall.common.di.ViewContext
-
+import pm.gnosis.svalinn.common.di.ViewContext
 
 abstract class LifecycleAdapter<T, VH : LifecycleAdapter.LifecycleViewHolder<T>>(
     @ViewContext context: Context
@@ -24,7 +23,6 @@ abstract class LifecycleAdapter<T, VH : LifecycleAdapter.LifecycleViewHolder<T>>
         (holder as? LifecycleObserver)?.let { lifecycle.removeObserver(it) }
         super.onViewRecycled(holder)
     }
-
 
     abstract class LifecycleViewHolder<in T>(itemView: View) : LifecycleObserver, Adapter.ViewHolder<T>(itemView)
 }

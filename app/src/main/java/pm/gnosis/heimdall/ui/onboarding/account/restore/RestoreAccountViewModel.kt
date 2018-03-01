@@ -6,13 +6,13 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
-import pm.gnosis.heimdall.common.di.ApplicationContext
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.common.utils.mapToResult
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.mnemonic.*
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.mapToResult
 import javax.inject.Inject
 
 class RestoreAccountViewModel @Inject constructor(

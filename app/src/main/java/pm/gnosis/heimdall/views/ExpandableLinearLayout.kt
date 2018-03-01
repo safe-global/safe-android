@@ -35,7 +35,6 @@ class ExpandableLinearLayout(context: Context, attributeSet: AttributeSet) : Lin
         View.MeasureSpec.makeMeasureSpec((parent as View).height, View.MeasureSpec.AT_MOST)
     )
 
-
     private fun doAction(action: () -> ValueAnimator) {
         currentValueAnimator?.cancel()
         currentValueAnimator = action().apply {

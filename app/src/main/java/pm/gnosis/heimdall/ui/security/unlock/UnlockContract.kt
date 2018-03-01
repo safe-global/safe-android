@@ -2,8 +2,8 @@ package pm.gnosis.heimdall.ui.security.unlock
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
-import pm.gnosis.heimdall.common.utils.Result
-import pm.gnosis.heimdall.security.FingerprintUnlockResult
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.security.FingerprintUnlockResult
 
 abstract class UnlockContract : ViewModel() {
     abstract fun checkState(forceConfirmCredentials: Boolean): Observable<Result<State>>

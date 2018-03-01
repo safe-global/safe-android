@@ -5,14 +5,13 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.common.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
+import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.utils.isValidEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
-
 
 class CreateTokenTransactionProgressViewModel @Inject constructor(
     @ApplicationContext private val context: Context

@@ -6,11 +6,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.accounts.base.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.removeHexPrefix
 import timber.log.Timber

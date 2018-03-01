@@ -9,7 +9,6 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.layout_simple_spinner_item.view.*
 import pm.gnosis.heimdall.R
 
-
 abstract class SimpleSpinnerAdapter<T>(context: Context) : ArrayAdapter<T>(context, R.layout.layout_simple_spinner_item, ArrayList()) {
 
     abstract fun title(item: T): String?

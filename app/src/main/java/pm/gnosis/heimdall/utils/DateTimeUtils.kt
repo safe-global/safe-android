@@ -4,9 +4,7 @@ import android.content.Context
 import android.text.format.DateUtils
 import pm.gnosis.heimdall.R
 
-
 object DateTimeUtils {
-
     const val SECOND_IN_MS: Long = 1000
     const val MINUTE_IN_MS = 60 * SECOND_IN_MS
     const val HOUR_IN_MS = 60 * MINUTE_IN_MS
@@ -69,5 +67,4 @@ object DateTimeUtils {
     }
 }
 
-fun Context.formatAsLongDate(referenceTime: Long): String =
-    DateTimeUtils.getLongTimeString(this, referenceTime)
+fun Context.formatAsLongDate(referenceTime: Long): String = DateTimeUtils.getLongTimeString(this, referenceTime)

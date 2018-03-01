@@ -8,13 +8,12 @@ import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.utils.toast
 import pm.gnosis.heimdall.utils.handleAddressBookResult
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.heimdall.utils.parseEthereumAddress
+import pm.gnosis.svalinn.common.utils.toast
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
-
 
 abstract class BaseEditableTransactionDetailsFragment : BaseTransactionDetailsFragment() {
 
