@@ -49,46 +49,51 @@ class DeployNewSafeFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: AddSafeContract
 
-    private var displayFeesTransformer = ObservableTransformer<Pair<Result<GasEstimate>, Result<Wei>>, Result<Pair<BigDecimal, Currency>>> {
-        it
-            .map { (estimate, overrideGasPrice) ->
-                // If we have an estimate calculate the price
-                estimate.map {
-                    val override = (overrideGasPrice as? DataResult)?.data
-                    Wei((override ?: it.gasPrice).value * it.gasCosts)
+    private var displayFeesTransformer =
+        ObservableTransformer<Pair<Result<GasEstimate>, Result<Wei>>, Result<Pair<BigDecimal, Currency>>> {
+            it
+                .map { (estimate, overrideGasPrice) ->
+                    // If we have an estimate calculate the price
+                    estimate.map {
+                        val override = (overrideGasPrice as? DataResult)?.data
+                        Wei((override ?: it.gasPrice).value * it.gasCosts)
+                    }
                 }
-            }
-            // Update price
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNextForResult(::updateEstimate)
-            // Request fiat value for price
-            .flatMapResult({ viewModel.loadFiatConversion(it) })
-            // Update fiat value
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNextForResult(::onFiat, ::onFiatError)
-    }
-
-    private var deployButtonTransformer = ObservableTransformer<Pair<Result<GasEstimate>, Result<Wei>>, Result<Unit>> {
-        it.switchMap { (_, overrideGasPrice) ->
-            layout_deploy_new_safe_deploy_button.clicks()
+                // Update price
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap {
-                    viewModel.deployNewSafe(layout_deploy_new_safe_name_input.text.toString(), (overrideGasPrice as? DataResult)?.data)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnSubscribe { toggleDeploying(true) }
-                        .doAfterTerminate { toggleDeploying(false) }
-                }
-                .doOnNextForResult(::safeDeployed, ::errorDeploying)
+                .doOnNextForResult(::updateEstimate)
+                // Request fiat value for price
+                .flatMapResult({ viewModel.loadFiatConversion(it) })
+                // Update fiat value
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNextForResult(::onFiat, ::onFiatError)
         }
-    }
+
+    private var deployButtonTransformer =
+        ObservableTransformer<Pair<Result<GasEstimate>, Result<Wei>>, Result<Unit>> {
+            it.switchMap { (_, overrideGasPrice) ->
+                layout_deploy_new_safe_deploy_button.clicks()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .flatMap {
+                        viewModel.deployNewSafe(
+                            layout_deploy_new_safe_name_input.text.toString(),
+                            (overrideGasPrice as? DataResult)?.data
+                        )
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnSubscribe { toggleDeploying(true) }
+                            .doAfterTerminate { toggleDeploying(false) }
+                    }
+                    .doOnNextForResult(::safeDeployed, ::errorDeploying)
+            }
+        }
 
     override fun onStart() {
         super.onStart()
         disposables += viewModel.setupDeploy()
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess {
+            .doOnSuccess { account ->
                 layout_deploy_new_safe_device_info.apply {
-                    layout_address_item_icon.setAddress(it)
+                    layout_address_item_icon.setAddress(account)
                     layout_address_item_name.visible(true)
                     layout_address_item_name.text = getString(R.string.this_device)
                     layout_address_item_value.visible(false)
@@ -102,13 +107,40 @@ class DeployNewSafeFragment : BaseFragment() {
         disposables += viewModel.observeAdditionalOwners()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(::updateOwners, Timber::e)
+
+        disposables += layout_deploy_new_safe_deploy_external.clicks()
+            .flatMapSingle { viewModel.loadDeployData(layout_deploy_new_safe_name_input.text.toString()) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = {
+                startActivityWithTransaction(it, onActivityNotFound = {
+                    activity?.toast(R.string.no_external_wallets)
+                    Timber.w("No activity resolved for intent")
+                })
+            }, onError = Timber::e)
+
+        layout_deploy_new_safe_buy_credits_button.visible(false)
+        layout_deploy_new_safe_deploy_button.visible(false)
+        disposables += viewModel.observeHasCredits()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = { hasCredits ->
+                layout_deploy_new_safe_buy_credits_button.visible(!hasCredits)
+                layout_deploy_new_safe_deploy_button.visible(hasCredits)
+            }, onError = Timber::e)
     }
 
     private fun handleUserInput() =
         Observable.merge(
+            setupBuyCredits(),
             setupDeploySafe(),
             setupAddAddress()
         )
+
+    private fun setupBuyCredits() =
+        layout_deploy_new_safe_buy_credits_button.clicks()
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMapSingle {
+                viewModel.buyTransactionCredits(activity!!)
+            }
 
     private fun setupDeploySafe() =
         Observable.combineLatest(
@@ -123,12 +155,15 @@ class DeployNewSafeFragment : BaseFragment() {
         )
             .observeOn(AndroidSchedulers.mainThread())
             .publish {
+                /* TODO: ignore fees
                 Observable.merge(
                     // Display fees
                     it.compose(displayFeesTransformer),
                     // Setup deploy button
-                    it.compose(deployButtonTransformer)
+                        it.compose(deployButtonTransformer)
                 )
+                */
+                it.compose(deployButtonTransformer)
             }
 
     private fun toggleDeploying(inProgress: Boolean) {
@@ -149,7 +184,9 @@ class DeployNewSafeFragment : BaseFragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_address_input, null)
         AlertDialog.Builder(context)
             .setView(dialogView)
-            .setPositiveButton(R.string.add, { _, _ -> addOwner(dialogView.dialog_address_input_address.text.toString()) })
+            .setPositiveButton(
+                R.string.add,
+                { _, _ -> addOwner(dialogView.dialog_address_input_address.text.toString()) })
             .setNeutralButton(R.string.scan, { _, _ -> scanQrCode() })
             .setOnDismissListener { activity?.hideSoftKeyboard() }
             .show()
@@ -162,6 +199,13 @@ class DeployNewSafeFragment : BaseFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        handleTransactionHashResult(requestCode, resultCode, data,
+            { transactionHash ->
+                disposables += viewModel.saveTransactionHash(transactionHash, layout_deploy_new_safe_name_input.text.toString())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onComplete = { safeDeployed(Unit) }, onError = Timber::e)
+            })
+
         handleQrCodeActivityResult(requestCode, resultCode, data,
             { parseEthereumAddress(it)?.let { addOwner(it.asEthereumAddressString()) } })
     }
@@ -171,7 +215,15 @@ class DeployNewSafeFragment : BaseFragment() {
     }
 
     private fun errorDeploying(throwable: Throwable) {
-        view?.let { errorSnackbar(it, throwable) }
+        view?.let {
+            if (throwable is IllegalStateException) {
+                layout_deploy_new_safe_buy_credits_button.visible(true)
+                layout_deploy_new_safe_deploy_button.visible(false)
+                snackbar(it, R.string.error_not_enough_credits)
+            } else {
+                errorSnackbar(it, throwable)
+            }
+        }
     }
 
     private fun updateEstimate(estimate: Wei) {
@@ -198,13 +250,23 @@ class DeployNewSafeFragment : BaseFragment() {
         layout_deploy_new_safe_additional_owners_container.removeAllViews()
         additionalOwners.forEach { address ->
             if (address.isValidEthereumAddress()) {
-                val view = layoutInflater.inflate(R.layout.layout_additional_owner_item, layout_deploy_new_safe_additional_owners_container, false)
-                address.asEthereumAddressStringOrNull()?.let { view.layout_address_item_value.text = it }
+                val view = layoutInflater.inflate(
+                    R.layout.layout_additional_owner_item,
+                    layout_deploy_new_safe_additional_owners_container,
+                    false
+                )
+                address.asEthereumAddressStringOrNull()
+                    ?.let { view.layout_address_item_value.text = it }
                 view.layout_address_item_icon.setAddress(address)
                 disposables += view.layout_additional_owner_delete_button.clicks()
                     .flatMap { viewModel.removeAdditionalOwner(address) }
                     .subscribeForResult(
-                        { snackbar(layout_deploy_new_safe_additional_owners_container, getString(R.string.removed_x, address)) },
+                        {
+                            snackbar(
+                                layout_deploy_new_safe_additional_owners_container,
+                                getString(R.string.removed_x, address)
+                            )
+                        },
                         { errorSnackbar(layout_deploy_new_safe_additional_owners_container, it) }
                     )
                 layout_deploy_new_safe_additional_owners_container.addView(view)
@@ -242,13 +304,23 @@ class DeployNewSafeFragment : BaseFragment() {
         layout_security_bars_second.setColorFilterCompat(if (additionalOwners >= 1) colorResource else R.color.security_bar_default)
         layout_security_bars_third.setColorFilterCompat(if (additionalOwners >= 2) colorResource else R.color.security_bar_default)
         layout_deploy_new_safe_security_level_text.text = SpannableStringBuilder("")
-            .appendText(getString(R.string.security_level), ForegroundColorSpan(context!!.getColorCompat(R.color.gnosis_dark_blue)))
+            .appendText(
+                getString(R.string.security_level),
+                ForegroundColorSpan(context!!.getColorCompat(R.color.gnosis_dark_blue))
+            )
             .append(": ")
-            .appendText(getString(securityLevelTextResource), ForegroundColorSpan(context!!.getColorCompat(colorResource)))
+            .appendText(
+                getString(securityLevelTextResource),
+                ForegroundColorSpan(context!!.getColorCompat(colorResource))
+            )
         layout_deploy_new_safe_security_info.text = getString(securityInfoTextResource)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ) =
         inflater.inflate(R.layout.layout_deploy_new_safe, container, false)!!
 
     override fun inject(component: ApplicationComponent) {

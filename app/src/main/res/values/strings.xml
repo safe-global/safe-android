@@ -331,4 +331,8 @@
     <string name="scan">Scan</string>
     <string name="account_balance">Account Balance</string>
     <string name="this_device_address">This device address</string>
+    <string name="no_external_wallets">No compatible wallets found</string>
+    <string name="deploy_with_external_wallet">Deploy with external wallet</string>
+    <string name="buy_credits">Buy credits</string>
+    <string name="error_not_enough_credits">Please buy more credits to execute the transaction</string>
 </resources>

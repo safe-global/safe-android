@@ -16,10 +16,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
-import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
-import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -62,6 +59,9 @@ class ViewTransactionViewModelTest {
     @Mock
     lateinit var transactionDetailsRepositoryMock: TransactionDetailsRepository
 
+    @Mock
+    lateinit var txExecutorRepositoryMock: TxExecutorRepository
+
     private lateinit var viewModel: ViewTransactionViewModel
 
     @Before
@@ -73,7 +73,8 @@ class ViewTransactionViewModelTest {
             signaturePushRepositoryMock,
             signatureStoreMock,
             transactionRepositoryMock,
-            transactionDetailsRepositoryMock
+            transactionDetailsRepositoryMock,
+            txExecutorRepositoryMock
         )
     }
 

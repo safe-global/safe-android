@@ -8,6 +8,7 @@ import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import java.math.BigInteger
 
@@ -27,4 +28,6 @@ interface GnosisSafeRepository {
 
     fun loadInfo(address: BigInteger): Observable<SafeInfo>
     fun observeTransactionDescriptions(address: BigInteger): Flowable<List<String>>
+    fun loadSafeDeployTransaction(name: String?, devices: Set<BigInteger>, requiredConfirmations: Int): Single<Transaction>
+    fun savePendingSafe(transactionHash: BigInteger, name: String): Completable
 }

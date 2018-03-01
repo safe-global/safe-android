@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions
 
+import android.app.Activity
 import android.arch.lifecycle.ViewModel
 import android.graphics.Bitmap
 import io.reactivex.Completable
@@ -24,9 +25,13 @@ abstract class ViewTransactionContract : ViewModel() {
         sendViaPush: Boolean = false
     ): Single<Result<Pair<String, Bitmap?>>>
 
+    abstract fun loadExecutableTransaction(safeAddress: BigInteger, transaction: Transaction): Single<Transaction>
+    abstract fun addLocalTransaction(safeAddress: BigInteger, transaction: Transaction, txChainHash: String): Single<String>
     abstract fun observeSignaturePushes(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Unit>>
     abstract fun sendSignaturePush(info: Info): Single<Result<Unit>>
     abstract fun addSignature(encodedSignatureUrl: String): Completable
+    abstract fun observeHasCredits(): Observable<Boolean>
+    abstract fun buyCredit(activity: Activity): Single<Boolean>
 
     data class Info(
         val selectedSafe: BigInteger,

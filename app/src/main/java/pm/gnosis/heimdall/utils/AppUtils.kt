@@ -20,8 +20,10 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
+import timber.log.Timber
 
 fun errorSnackbar(view: View, throwable: Throwable, duration: Int = Snackbar.LENGTH_LONG) {
     val message = (throwable as? LocalizedException)?.localizedMessage()
@@ -51,11 +53,15 @@ fun handleQrCodeActivityResult(
 }
 
 fun Activity.selectFromAddressBook() = startActivityForResult(AddressBookActivity.createIntent(this), AddressBookActivity.REQUEST_CODE)
+
 fun Fragment.selectFromAddressBook() = startActivityForResult(AddressBookActivity.createIntent(context!!), AddressBookActivity.REQUEST_CODE)
 
 fun handleAddressBookResult(
-    requestCode: Int, resultCode: Int, data: Intent?,
-    onResult: (AddressBookEntry) -> Unit, onCancelled: (() -> Unit)? = null
+    requestCode: Int,
+    resultCode: Int,
+    data: Intent?,
+    onResult: (AddressBookEntry) -> Unit,
+    onCancelled: (() -> Unit)? = null
 ): Boolean {
     if (requestCode == AddressBookActivity.REQUEST_CODE) {
         if (resultCode == Activity.RESULT_OK) {
@@ -106,3 +112,44 @@ fun Activity.setupToolbar(
     toolbar.setNavigationIcon(icon)
     toolbar.setNavigationOnClickListener(clickListener)
 }
+
+fun Activity.startActivityWithTransaction(transaction: Transaction, onActivityNotFound: () -> Unit = {}) {
+    val intent = Intent(Intent.ACTION_VIEW, transaction.erc67Uri())
+    val resolvedActivity = intent.resolveActivity(packageManager)
+    if (resolvedActivity != null) {
+        Timber.d(resolvedActivity.className)
+        startActivityForResult(intent, EXTERNAL_WALLET_REQUEST)
+    } else {
+        onActivityNotFound()
+    }
+}
+
+fun Fragment.startActivityWithTransaction(transaction: Transaction, onActivityNotFound: () -> Unit = {}) {
+    val intent = Intent(Intent.ACTION_VIEW, transaction.erc67Uri())
+    val activity = activity ?: return
+    val resolvedActivity = intent.resolveActivity(activity.packageManager)
+    if (resolvedActivity != null) {
+        Timber.d(resolvedActivity.className)
+        startActivityForResult(intent, EXTERNAL_WALLET_REQUEST)
+    } else {
+        onActivityNotFound()
+    }
+}
+
+fun handleTransactionHashResult(
+    requestCode: Int, resultCode: Int, data: Intent?,
+    onTransactionHash: (String) -> Unit, onCancelledResult: (() -> Unit)? = null
+): Boolean {
+    if (requestCode == EXTERNAL_WALLET_REQUEST) {
+        if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(TRANSACTION_EXTRA)) {
+            onTransactionHash(data.getStringExtra(TRANSACTION_EXTRA))
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            onCancelledResult?.invoke()
+        }
+        return true
+    }
+    return false
+}
+
+const val EXTERNAL_WALLET_REQUEST = 0x1010
+private const val TRANSACTION_EXTRA = "extra.string.txhash"

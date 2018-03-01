@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.include_gas_price_selection.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_submit_transaction.*
 import kotlinx.android.synthetic.main.layout_transaction_confirmation_item.view.*
+import kotlinx.android.synthetic.main.merge_transaction_details_container.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -30,10 +31,7 @@ import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
-import pm.gnosis.heimdall.utils.displayString
-import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
-import pm.gnosis.heimdall.utils.setFormattedText
+import pm.gnosis.heimdall.utils.*
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -85,7 +83,12 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 // Update displayed information
                 .doOnNext({ (info: Result<ViewTransactionContract.Info>, prices: Result<Wei>) -> handleInfoWithPrices(info, prices) })
                 // Pass on data for submit
-                .compose(submitTransformer)
+                .publish {
+                    Observable.merge(
+                        it.compose(submitTransformer),
+                        it.compose(submitToExternalWalletTransformer)
+                    )
+                }
         }
 
     private val submitTransformer: ObservableTransformer<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>, *> =
@@ -103,6 +106,31 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                         cachedTransactionData = null
                     }
                 }
+        }
+
+    private val submitToExternalWalletTransformer: ObservableTransformer<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>, *> =
+        ObservableTransformer { up: Observable<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>> ->
+            up.switchMap { infoWithGasPrice -> layout_submit_transaction_external.clicks().map { infoWithGasPrice } }
+                .doOnNext { (info, gasPrice) ->
+                    (info as? DataResult)?.let {
+                        cachedTransactionData =
+                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction, (gasPrice as? DataResult)?.data)
+                    } ?: run {
+                        cachedTransactionData = null
+                    }
+                }
+                .flatMapSingle {
+                    (it.first as? DataResult)?.let {
+                        viewModel.loadExecutableTransaction(it.data.selectedSafe, it.data.status.transaction)
+                    } ?: throw IllegalStateException()
+                }
+                .doOnNext {
+                    startActivityWithTransaction(it, onActivityNotFound = {
+                        snackbar(layout_submit_transaction_coordinator, R.string.no_external_wallets)
+                        Timber.w("External wallet not found")
+                    })
+                }
+                .mapToResult()
         }
 
     private val requestSignaturesQR: ObservableTransformer<Result<ViewTransactionContract.Info>, Any> =
@@ -170,11 +198,37 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         credentialsConfirmed = requestCode == REQUEST_CODE_CONFIRM_CREDENTIALS && resultCode == Activity.RESULT_OK
+        handleTransactionHashResult(requestCode, resultCode, data, {
+            cachedTransactionData?.let { cachedTransactionData ->
+                disposables += viewModel.addLocalTransaction(cachedTransactionData.safeAddress, cachedTransactionData.transaction, it)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe {
+                        layout_submit_transaction_submit_button.isEnabled = false
+                        layout_submit_transaction_external.isEnabled = false
+                    }
+                    .doFinally {
+                        layout_submit_transaction_submit_button.isEnabled = true
+                        layout_submit_transaction_external.isEnabled = true
+                    }
+                    .subscribeBy(onSuccess = { startSafeTransactionsActivity(cachedTransactionData.safeAddress) },
+                        onError = { Timber.e(it); startSafeTransactionsActivity(cachedTransactionData.safeAddress) })
+            }
+        })
         handleQrCodeActivityResult(requestCode, resultCode, data, {
             pendingSignature = it
         }, {
             pendingSignature = null
         })
+    }
+
+    private fun startSafeTransactionsActivity(safeAddress: BigInteger) {
+        startActivity(
+            SafeDetailsActivity.createIntent(
+                this,
+                Safe(safeAddress),
+                R.string.tab_title_transactions
+            ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
     }
 
     override fun onStart() {
@@ -192,7 +246,15 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                                 R.string.tab_title_transactions
                             ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         )
-                    }, { showErrorSnackbar(it) })
+                    }, {
+                        if (it is IllegalStateException) {
+                            layout_submit_transaction_buy_credits_button.visible(true)
+                            layout_submit_transaction_submit_button.visible(false)
+                            snackbar(merge_transaction_details_container, R.string.error_not_enough_credits)
+                        } else {
+                            showErrorSnackbar(it)
+                        }
+                    })
             } else {
                 snackbar(layout_submit_transaction_submit_button, R.string.please_confirm_credentials)
             }
@@ -207,6 +269,21 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 })
         }
         pendingSignature = null
+
+        layout_submit_transaction_buy_credits_button.visible(false)
+        layout_submit_transaction_submit_button.visible(false)
+        disposables += viewModel.observeHasCredits()
+            .subscribeBy(onNext = {
+                layout_submit_transaction_buy_credits_button.visible(!it)
+                layout_submit_transaction_submit_button.visible(it)
+            }, onError = Timber::e)
+
+        disposables += layout_submit_transaction_buy_credits_button.clicks()
+            .observeOn(AndroidSchedulers.mainThread())
+            .flatMapSingle {
+                viewModel.buyCredit(this).mapToResult()
+            }
+            .subscribeBy(onError = Timber::e)
     }
 
     override fun fragmentRegistered() {

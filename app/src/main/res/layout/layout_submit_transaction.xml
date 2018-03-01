@@ -184,15 +184,19 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/divider_width"
-                android:background="@color/divider" />
+                android:background="@color/divider"
+                android:visibility="gone" />
 
-            <include layout="@layout/include_gas_price_selection" />
+            <include
+                layout="@layout/include_gas_price_selection"
+                android:visibility="gone" />
 
             <View
                 android:id="@+id/layout_submit_transaction_transaction_fee_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/divider_width"
-                android:background="@color/divider" />
+                android:background="@color/divider"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/layout_submit_transaction_transaction_fee_label"
@@ -202,7 +206,8 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingTop="16dp"
-                android:text="@string/estimated_transaction_fee" />
+                android:text="@string/estimated_transaction_fee"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/layout_submit_transaction_transaction_fee"
@@ -212,7 +217,20 @@
                 android:paddingBottom="16dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:text="@string/loading" />
+                android:text="@string/loading"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/layout_submit_transaction_buy_credits_button"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:layout_marginTop="16dp"
+                android:minHeight="48dp"
+                android:visibility="gone"
+                android:text="@string/buy_credits" />
 
             <TextView
                 android:id="@+id/layout_submit_transaction_submit_button"
@@ -224,6 +242,18 @@
                 android:layout_marginTop="16dp"
                 android:minHeight="48dp"
                 android:text="@string/submit_transaction" />
+
+            <TextView
+                android:id="@+id/layout_submit_transaction_external"
+                style="@style/TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:text="@string/deploy_with_external_wallet" />
         </LinearLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

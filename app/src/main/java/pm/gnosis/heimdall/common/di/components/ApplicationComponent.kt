@@ -55,6 +55,7 @@ interface ApplicationComponent {
 
     fun accountsRepository(): AccountsRepository
     fun addressBookRepository(): AddressBookRepository
+    fun billingRepository(): BillingRepository
     fun safeRepository(): GnosisSafeRepository
     fun signaturePushRepositoryRepository(): SignaturePushRepository
     fun tickerRepository(): TickerRepository

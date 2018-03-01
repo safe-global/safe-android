@@ -17,6 +17,7 @@ import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.helpers.AddressStore
@@ -59,6 +60,9 @@ class AddSafeViewModelTest {
     @Mock
     private lateinit var tickerRepositoryMock: TickerRepository
 
+    @Mock
+    private lateinit var txExecutorRepositoryMock: TxExecutorRepository
+
     private lateinit var viewModel: AddSafeViewModel
 
     @Before
@@ -66,7 +70,8 @@ class AddSafeViewModelTest {
         context.mockGetString()
         viewModel = AddSafeViewModel(
             context, accountsRepository, addressStore,
-            safeRepositoryMock, tickerRepositoryMock
+            safeRepositoryMock, tickerRepositoryMock,
+            txExecutorRepositoryMock
         )
     }
 

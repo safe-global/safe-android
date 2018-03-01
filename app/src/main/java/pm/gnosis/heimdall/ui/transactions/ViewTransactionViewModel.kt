@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import io.reactivex.Completable
@@ -8,10 +9,7 @@ import io.reactivex.Single
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
-import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
-import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
@@ -20,6 +18,8 @@ import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.utils.HttpCodes
+import retrofit2.HttpException
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -29,11 +29,18 @@ class ViewTransactionViewModel @Inject constructor(
     private val signaturePushRepository: SignaturePushRepository,
     private val signatureStore: SignatureStore,
     private val transactionRepository: TransactionRepository,
-    private val transactionDetailsRepository: TransactionDetailsRepository
+    private val transactionDetailsRepository: TransactionDetailsRepository,
+    private val txExecutorRepository: TxExecutorRepository
 ) : ViewTransactionContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
         .build()
+
+    override fun observeHasCredits() =
+        txExecutorRepository.observePlan()
+
+    override fun buyCredit(activity: Activity) =
+        txExecutorRepository.buyPlan(activity)
 
     override fun checkTransactionType(transaction: Transaction): Single<TransactionType> {
         return transactionDetailsRepository.loadTransactionType(transaction)
@@ -42,6 +49,9 @@ class ViewTransactionViewModel @Inject constructor(
     private fun checkSignature(safe: BigInteger, transaction: Transaction, signature: Signature) =
         transactionRepository.checkSignature(safe, transaction, signature)
             .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_signature))) }
+
+    override fun addLocalTransaction(safeAddress: BigInteger, transaction: Transaction, txChainHash: String): Single<String> =
+        transactionRepository.addLocalTransaction(safeAddress, transaction, txChainHash)
 
     override fun observeSignaturePushes(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Unit>> =
         signaturePushRepository.observe(safeAddress)
@@ -91,6 +101,9 @@ class ViewTransactionViewModel @Inject constructor(
                     .map { info to it }
             }
             .flatMap { (info, signatures) ->
+                Observable.just<Result<Info>>(DataResult(Info(safeAddress, info, signatures)))
+                /*
+                TODO:
                 Observable.concatDelayError(listOf(
                     Observable.just(DataResult(Info(safeAddress, info, signatures))),
                     info.checkMap(signatures)
@@ -100,6 +113,7 @@ class ViewTransactionViewModel @Inject constructor(
                         .mapToResult()
                 )
                 )
+                */
             }
             .onErrorReturn { ErrorResult(it) }
     }
@@ -113,9 +127,23 @@ class ViewTransactionViewModel @Inject constructor(
                     .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, info.isOwner, overrideGasPrice) }
             }
             .andThen(Single.just(safeAddress))
-            .onErrorResumeNext({ errorHandler.single(it) })
+            .onErrorResumeNext({
+                if (it is HttpException && it.code() == HttpCodes.UNAUTHORIZED)
+                    Single.error(IllegalStateException())
+                else
+                    errorHandler.single(it)
+            })
             .mapToResult()
     }
+
+    override fun loadExecutableTransaction(safeAddress: BigInteger, transaction: Transaction): Single<Transaction> =
+        transactionRepository.loadExecuteInformation(safeAddress, transaction)
+            .flatMap { info ->
+                // Observe local signature store
+                signatureStore.load()
+                    .map { info.check(it); it }
+                    .flatMap { transactionRepository.loadExecutableTransaction(safeAddress, info.transaction, it, info.isOwner) }
+            }
 
     override fun signTransaction(safeAddress: BigInteger, transaction: Transaction, sendViaPush: Boolean): Single<Result<Pair<String, Bitmap?>>> {
         return transactionRepository.sign(safeAddress, transaction)

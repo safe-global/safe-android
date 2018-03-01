@@ -15,9 +15,7 @@ class FabricCrashTracker @Inject constructor(
 
     override fun init() {
         Timber.plant(Tree())
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
+        Timber.plant(Timber.DebugTree())
     }
 
     inner class Tree : Timber.Tree() {

@@ -1,10 +1,13 @@
 package pm.gnosis.heimdall.ui.safe.add
 
+import android.app.Activity
 import android.arch.lifecycle.ViewModel
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.common.utils.Result
@@ -17,6 +20,8 @@ abstract class AddSafeContract : ViewModel() {
 
     abstract fun deployNewSafe(name: String, overrideGasPrice: Wei?): Observable<Result<Unit>>
 
+    abstract fun saveTransactionHash(transactionHash: String, name: String): Completable
+
     abstract fun observeEstimate(): Observable<Result<GasEstimate>>
 
     abstract fun loadFiatConversion(wei: Wei): Single<Result<Pair<BigDecimal, Currency>>>
@@ -27,9 +32,15 @@ abstract class AddSafeContract : ViewModel() {
 
     abstract fun setupDeploy(): Single<BigInteger>
 
+    abstract fun observeHasCredits(): Observable<Boolean>
+
     abstract fun observeAdditionalOwners(): Observable<List<BigInteger>>
 
     abstract fun loadSafeInfo(address: String): Observable<Result<SafeInfo>>
 
     abstract fun loadActiveAccount(): Observable<Account>
+
+    abstract fun loadDeployData(name: String): Single<Result<Transaction>>
+
+    abstract fun buyTransactionCredits(activity: Activity): Single<Boolean>
 }
