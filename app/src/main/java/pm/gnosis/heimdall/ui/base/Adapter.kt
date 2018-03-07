@@ -13,18 +13,18 @@ abstract class Adapter<T, VH : Adapter.ViewHolder<T>> : RecyclerView.Adapter<VH>
 
     override fun getItemCount() = items.size
 
-    abstract override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): VH
+    abstract override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH
 
-    override fun onBindViewHolder(holder: VH?, position: Int, payloads: List<Any>?) {
-        holder?.bind(items[position], payloads)
+    override fun onBindViewHolder(holder: VH, position: Int, payloads: List<Any>) {
+        holder.bind(items[position], payloads)
     }
 
-    override fun onBindViewHolder(holder: VH?, position: Int) {
-        onBindViewHolder(holder, position, null)
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        onBindViewHolder(holder, position, emptyList())
     }
 
-    override fun onViewRecycled(holder: VH?) {
-        holder?.unbind()
+    override fun onViewRecycled(holder: VH) {
+        holder.unbind()
     }
 
     fun updateData(data: Data<T>) {
@@ -51,7 +51,7 @@ abstract class Adapter<T, VH : Adapter.ViewHolder<T>> : RecyclerView.Adapter<VH>
     }
 
     abstract class ViewHolder<in T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        abstract fun bind(data: T, payloads: List<Any>?)
+        abstract fun bind(data: T, payloads: List<Any>)
 
         open fun unbind() {}
     }

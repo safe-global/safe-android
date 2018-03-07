@@ -17,6 +17,12 @@ android {
         versionName getKey("APP_VERSION_NAME", "1.0")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x5a27c4325b2f35163fa28d9195e7038fb53e67ac"))
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0x057ad4d88c1aabecf899f33386c8abebabe00648"))
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io"))
+        buildConfigField javaTypes.STRING, "IPFS_GATEWAY_URL", asString(getKey("IPFS_GATEWAY_URL", "https://ipfs.infura.io"))
+        buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
+
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
@@ -98,7 +104,6 @@ dependencies {
     testImplementation "junit:junit:$versions.junit"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':app-core')
 
     // Gnosis Svalinn
     implementation "com.github.gnosis.svalinn-kotlin:accounts-kethereum:$versions.svalinn"
@@ -110,6 +115,9 @@ dependencies {
     implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
 
+    // Gnosis Bivrost
+    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
+
     // Fabric
     implementation("com.crashlytics.sdk.android:crashlytics:$versions.crashlytics@aar") {
         transitive = true
@@ -118,24 +126,24 @@ dependencies {
     // Kethereum RLP
     implementation "com.github.walleth.kethereum:rlp:$versions.kethereum"
 
-    //Android
+    // Android
     implementation "com.android.support:appcompat-v7:$versions.android_support"
     implementation "com.android.support:cardview-v7:$versions.android_support"
     implementation "com.android.support:design:$versions.android_support"
     implementation "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
 
-    //Rx
+    // Rx
     implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
     implementation "io.reactivex.rxjava2:rxkotlin:$versions.rxkotlin"
     implementation "com.gojuno.koptional:koptional:$versions.koptional"
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
 
-    //Android Architecture Components
-    implementation "android.arch.lifecycle:extensions:$versions.architecture_components"
+    // Android Architecture Components
     kapt "android.arch.lifecycle:compiler:$versions.architecture_components"
     implementation "android.arch.persistence.room:runtime:$versions.architecture_components"
     kapt "android.arch.persistence.room:compiler:$versions.architecture_components"
     implementation "android.arch.persistence.room:rxjava2:$versions.architecture_components"
+    implementation "android.arch.lifecycle:extensions:$versions.android_lifecycle"
     implementation "com.android.support:multidex:$versions.multidex"
 
     // Firebase
@@ -145,15 +153,22 @@ dependencies {
     // String formatting
     implementation "com.squareup.phrase:phrase:$versions.phrase"
 
-    //Dagger
+    // Dagger
     implementation "com.google.dagger:dagger:$versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$versions.dagger"
 
-    //Retrofit
+    // Moshi
+    implementation "com.squareup.moshi:moshi:$versions.moshi"
+
+    // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
     implementation "com.squareup.retrofit2:converter-moshi:$versions.retrofit"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+
+    // Logging
     implementation "com.jakewharton.timber:timber:$versions.timber"
+
+    // RxBinding
     implementation("com.jakewharton.rxbinding2:rxbinding-kotlin:$versions.rxbinding") {
         exclude group: "io.reactivex.rxjava2", module: "rxandroid"
     }
@@ -174,8 +189,7 @@ dependencies {
         exclude group: 'junit', module: 'junit'
     })
 
-    implementation "com.github.gnosis.bivrost-kotlin:bivrost-solidity-types:$versions.bivrost"
-
+    // Testing
     testImplementation "com.github.gnosis.svalinn-kotlin:utils-testing:$versions.svalinn"
     testImplementation "org.mockito:mockito-core:$versions.mockito"
     testImplementation "org.mockito:mockito-inline:$versions.mockito"

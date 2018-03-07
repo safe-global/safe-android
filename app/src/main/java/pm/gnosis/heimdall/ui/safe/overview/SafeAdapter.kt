@@ -42,13 +42,13 @@ class SafeAdapter @Inject constructor(
     val safeSelection = PublishSubject.create<Safe>()!!
     val shareSelection = PublishSubject.create<String>()!!
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): SafeAdapter.CastingViewHolder<out AbstractSafe> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SafeAdapter.CastingViewHolder<out AbstractSafe> {
         return when (viewType) {
             TYPE_SAFE -> {
-                ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.layout_safe_item, parent, false))
+                ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_safe_item, parent, false))
             }
             TYPE_PENDING_SAFE -> {
-                PendingViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.layout_pending_safe_item, parent, false))
+                PendingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_pending_safe_item, parent, false))
             }
             else -> throw IllegalArgumentException()
         }
@@ -61,14 +61,14 @@ class SafeAdapter @Inject constructor(
         }
     }
 
-    inner abstract class CastingViewHolder<T : AbstractSafe>(val type: Class<T>, itemView: View) : LifecycleViewHolder<AbstractSafe>(itemView) {
-        override final fun bind(data: AbstractSafe, payloads: List<Any>?) {
+    abstract inner class CastingViewHolder<T : AbstractSafe>(val type: Class<T>, itemView: View) : LifecycleViewHolder<AbstractSafe>(itemView) {
+        final override fun bind(data: AbstractSafe, payloads: List<Any>) {
             if (type.isInstance(data)) {
                 castedBind(type.cast(data), payloads)
             }
         }
 
-        abstract fun castedBind(data: T, payloads: List<Any>?)
+        abstract fun castedBind(data: T, payloads: List<Any>)
     }
 
     inner class ViewHolder(itemView: View) : CastingViewHolder<Safe>(Safe::class.java, itemView), View.OnClickListener {
@@ -86,7 +86,7 @@ class SafeAdapter @Inject constructor(
             }
         }
 
-        override fun castedBind(data: Safe, payloads: List<Any>?) {
+        override fun castedBind(data: Safe, payloads: List<Any>) {
             currentEntry = data
             itemView.layout_safe_item_address.text = data.address.asEthereumAddressString()
             itemView.layout_safe_item_name.text = data.name
@@ -131,7 +131,7 @@ class SafeAdapter @Inject constructor(
 
         private var currentEntry: PendingSafe? = null
 
-        override fun castedBind(data: PendingSafe, payloads: List<Any>?) {
+        override fun castedBind(data: PendingSafe, payloads: List<Any>) {
             currentEntry = data
             itemView.layout_pending_safe_item_name.text = data.name
         }

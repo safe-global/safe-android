@@ -22,7 +22,7 @@ class TokenBalancesAdapter @Inject constructor(
 
     val tokenSelectedSubject = PublishSubject.create<ERC20TokenWithBalance>()!!
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.layout_tokens_item_balance, parent, false)
         return ViewHolder(view)
     }
@@ -32,7 +32,7 @@ class TokenBalancesAdapter @Inject constructor(
             itemView.setOnClickListener(this)
         }
 
-        override fun bind(data: ERC20TokenWithBalance, payloads: List<Any>?) {
+        override fun bind(data: ERC20TokenWithBalance, payloads: List<Any>) {
             itemView.layout_tokens_item_balance_name.text =
                     if (data.token.name.isNullOrEmpty()) data.token.address.asEthereumAddressString() else data.token.name
             if (data.token == ETHER_TOKEN) {

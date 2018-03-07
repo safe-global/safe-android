@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.data.remote
 
 import io.reactivex.Observable
-import pm.gnosis.heimdall.app.core.BuildConfig
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
 import retrofit2.http.GET
 import retrofit2.http.Path

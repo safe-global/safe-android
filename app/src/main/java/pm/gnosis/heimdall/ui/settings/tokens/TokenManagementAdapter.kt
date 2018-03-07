@@ -18,8 +18,8 @@ import javax.inject.Inject
 class TokenManagementAdapter @Inject constructor(
     @ViewContext private val context: Context
 ) : Adapter<ERC20Token, TokenManagementAdapter.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder =
-        ViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.layout_tokens_item, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_tokens_item, parent, false))
 
 
     inner class ViewHolder(itemView: View) : Adapter.ViewHolder<ERC20Token>(itemView) {
@@ -30,7 +30,7 @@ class TokenManagementAdapter @Inject constructor(
             }
         }
 
-        override fun bind(data: ERC20Token, payloads: List<Any>?) {
+        override fun bind(data: ERC20Token, payloads: List<Any>) {
             itemView.layout_tokens_item_name.text = data.name ?: data.address.asEthereumAddressString()
             itemView.layout_tokens_item_symbol.text = if (data.symbol.isNullOrEmpty()) data.address.toString(16).substring(0, 3) else data.symbol
         }

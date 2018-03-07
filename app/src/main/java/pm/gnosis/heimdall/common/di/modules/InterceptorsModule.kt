@@ -5,7 +5,7 @@ import dagger.Provides
 import dagger.multibindings.IntKey
 import dagger.multibindings.IntoMap
 import okhttp3.Interceptor
-import pm.gnosis.heimdall.app.core.BuildConfig
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
