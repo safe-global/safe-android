@@ -1,14 +1,15 @@
 ext {
     versions = [
             // Plug-Ins
-            android_tools          : '3.1.0-beta1',
+            android_tools          : '3.1.0-rc01',
             fabric                 : '1.+',
             google_services        : '3.1.0',
             kotlin                 : '1.2.21',
             jacoco                 : '0.7.9',
 
             // Runtime dependencies
-            android_support        : '27.0.2',
+            android_support        : '27.1.0',
+            android_lifecycle      : '1.1.0',
             architecture_components: '1.0.0',
             bivrost                : 'v0.6.1',
             constraint_layout      : '1.0.2',
@@ -21,7 +22,7 @@ ext {
             koptional              : '1.2.0',
             material_progressbar   : '1.4.2',
             moshi                  : '1.4.0', //https://github.com/square/moshi/issues/315
-            multidex               : '1.0.2',
+            multidex               : '1.0.3',
             okhttp                 : '3.9.0',
             okio                   : '1.13.0',
             phrase                 : '1.1.0',

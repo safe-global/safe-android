@@ -32,8 +32,8 @@ class SafeTransactionsAdapter @Inject constructor(
 ) : LifecycleAdapter<String, SafeTransactionsAdapter.ViewHolder>(context) {
     val transactionSelectionSubject: PublishSubject<String> = PublishSubject.create()
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.layout_safe_transactions_item, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_safe_transactions_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -44,7 +44,7 @@ class SafeTransactionsAdapter @Inject constructor(
         private var currentData: String? = null
         private var cachedDetails: TransactionDetails? = null
 
-        override fun bind(data: String, payloads: List<Any>?) {
+        override fun bind(data: String, payloads: List<Any>) {
             currentData = data
             itemView.layout_safe_transactions_item_timestamp.text = itemView.context.getString(R.string.loading)
             itemView.layout_safe_transactions_item_value.visibility = View.GONE

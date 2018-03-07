@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
-import pm.gnosis.heimdall.app.core.BuildConfig
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
