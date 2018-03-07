@@ -4,8 +4,8 @@ import android.arch.persistence.room.EmptyResultSetException
 import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.functions.Function
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class AccountViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val accountsRepository: AccountsRepository,
-    private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
+    private val ethereumRepository: EthereumRepository,
     private val qrCodeGenerator: QrCodeGenerator,
     private val tickerRepository: TickerRepository
 ) : AccountContract() {
@@ -40,7 +40,7 @@ class AccountViewModel @Inject constructor(
     override fun getAccountBalance(): Observable<Result<Wei>> =
         accountsRepository.loadActiveAccount()
             .flatMapObservable {
-                ethereumJsonRpcRepository.getBalance(it.address)
+                ethereumRepository.getBalance(it.address)
                     .onErrorResumeNext(Function { errorHandler.observable<Wei>(it) })
                     .mapToResult()
             }

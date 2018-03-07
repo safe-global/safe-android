@@ -18,7 +18,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
@@ -49,7 +49,7 @@ class SafeOverviewViewModelTest {
     private lateinit var accountsRepositoryMock: AccountsRepository
 
     @Mock
-    private lateinit var ethereumJsonRepositoryMock: EthereumJsonRpcRepository
+    private lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
     private lateinit var repositoryMock: GnosisSafeRepository
@@ -62,7 +62,7 @@ class SafeOverviewViewModelTest {
     fun setup() {
         given(contextMock.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())).willReturn(testPreferences)
         viewModel = SafeOverviewViewModel(
-            accountsRepositoryMock, ethereumJsonRepositoryMock,
+            accountsRepositoryMock, ethereumRepositoryMock,
             PreferencesManager(contextMock), repositoryMock
         )
     }
@@ -233,7 +233,7 @@ class SafeOverviewViewModelTest {
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
 
         // First emission
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
 
         viewModel.shouldShowLowBalanceView().subscribe(testObserver)
 
@@ -243,7 +243,7 @@ class SafeOverviewViewModelTest {
             .assertNotComplete()
 
         // Second emission
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
 
         viewModel.shouldShowLowBalanceView().subscribe(testObserver)
 
@@ -256,7 +256,7 @@ class SafeOverviewViewModelTest {
 
         // Third emission
         val exception = Exception()
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error(exception))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error(exception))
 
         viewModel.shouldShowLowBalanceView().subscribe(testObserver)
 
@@ -268,8 +268,8 @@ class SafeOverviewViewModelTest {
 
         then(accountsRepositoryMock).should(times(3)).loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-        then(ethereumJsonRepositoryMock).should(times(3)).getBalance(account.address)
-        then(ethereumJsonRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumRepositoryMock).should(times(3)).getBalance(account.address)
+        then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -280,7 +280,7 @@ class SafeOverviewViewModelTest {
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
 
         // First emission (balance)
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
 
         viewModel.shouldShowLowBalanceView().subscribe(testObserver)
 
@@ -289,7 +289,7 @@ class SafeOverviewViewModelTest {
             .assertNotComplete()
 
         // Second emission (balance)
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
 
         viewModel.shouldShowLowBalanceView().subscribe(testObserver)
 
@@ -300,7 +300,7 @@ class SafeOverviewViewModelTest {
 
         // Third emission (error)
         val exception = Exception()
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error(exception))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error(exception))
 
         viewModel.shouldShowLowBalanceView().subscribe(testObserver)
         it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
@@ -311,8 +311,8 @@ class SafeOverviewViewModelTest {
 
         then(accountsRepositoryMock).should(times(3)).loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-        then(ethereumJsonRepositoryMock).should(times(3)).getBalance(account.address)
-        then(ethereumJsonRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumRepositoryMock).should(times(3)).getBalance(account.address)
+        then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -322,7 +322,7 @@ class SafeOverviewViewModelTest {
         val balance = Wei(LOW_BALANCE_THRESHOLD.value - BigInteger.ONE)
 
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
 
         viewModel.dismissHasLowBalance()
         assertTrue(testPreferences.getBoolean(DISMISS_LOW_BALANCE, false))
@@ -335,7 +335,7 @@ class SafeOverviewViewModelTest {
 
         // Second emission (error)
         // even if we have an error it should not show
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
 
         viewModel.shouldShowLowBalanceView().subscribe(testObserver)
 
@@ -346,8 +346,8 @@ class SafeOverviewViewModelTest {
 
         then(accountsRepositoryMock).should(times(2)).loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-        then(ethereumJsonRepositoryMock).should(times(2)).getBalance(account.address)
-        then(ethereumJsonRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumRepositoryMock).should(times(2)).getBalance(account.address)
+        then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -356,20 +356,20 @@ class SafeOverviewViewModelTest {
         val account = Account(BigInteger.ZERO)
         val balance = Wei(LOW_BALANCE_THRESHOLD.value)
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
 
         viewModel.dismissHasLowBalance()
         assertTrue(testPreferences.getBoolean(DISMISS_LOW_BALANCE, false))
         viewModel.shouldShowLowBalanceView().subscribe(testObserver)
 
         // First emission (low balance)
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
         testObserver
             .assertValueAt(0, DataResult(false))
             .assertNotComplete()
 
         // Second emission (higher balance)
-        given(ethereumJsonRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
         it.advanceTimeBy(BALANCE_CHECK_TIME_INTERVAL_SECONDS, TimeUnit.SECONDS)
         testObserver
             .assertValueAt(1, DataResult(false))
@@ -378,8 +378,8 @@ class SafeOverviewViewModelTest {
 
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-        then(ethereumJsonRepositoryMock).should(times(2)).getBalance(account.address)
-        then(ethereumJsonRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumRepositoryMock).should(times(2)).getBalance(account.address)
+        then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test

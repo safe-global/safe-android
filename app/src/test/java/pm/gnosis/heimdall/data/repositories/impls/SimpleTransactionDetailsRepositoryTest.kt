@@ -10,11 +10,11 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.model.Solidity
@@ -30,7 +30,7 @@ class SimpleTransactionDetailsRepositoryTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var ethereumJsonRpcRepositoryMock: EthereumJsonRpcRepository
+    lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
     lateinit var descriptionsDaoMock: DescriptionsDao
@@ -54,7 +54,7 @@ class SimpleTransactionDetailsRepositoryTest {
         repository.loadTransactionType(transaction).subscribe(testObserver)
         testObserver.assertNoErrors().assertValue(expectedType).assertComplete()
 
-        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
         then(descriptionsDaoMock).shouldHaveNoMoreInteractions()
         then(ipfsApiMock).shouldHaveNoMoreInteractions()
     }

@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.ui.safe.overview
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 class SafeOverviewViewModel @Inject constructor(
     private val accountsRepository: AccountsRepository,
-    private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
+    private val ethereumRepository: EthereumRepository,
     private val preferencesManager: PreferencesManager,
     private val safeRepository: GnosisSafeRepository
 ) : SafeOverviewContract() {
@@ -48,7 +48,7 @@ class SafeOverviewViewModel @Inject constructor(
         .toObservable()
 
     private fun hasLowBalance(): Single<Boolean> = accountsRepository.loadActiveAccount()
-        .flatMap { ethereumJsonRpcRepository.getBalance(it.address).firstOrError() }
+        .flatMap { ethereumRepository.getBalance(it.address).firstOrError() }
         .map { it < LOW_BALANCE_THRESHOLD }
         // As soon as we get a higher balance response we reset the flag
         .doOnSuccess { hasLowBalance -> if (!hasLowBalance) setDismissLowBalance(false) }

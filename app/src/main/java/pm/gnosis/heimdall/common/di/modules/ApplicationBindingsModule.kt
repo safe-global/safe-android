@@ -2,10 +2,8 @@ package pm.gnosis.heimdall.common.di.modules
 
 import dagger.Binds
 import dagger.Module
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.remote.MessageQueueRepository
 import pm.gnosis.heimdall.data.remote.impls.FirebaseMessageQueueRepository
-import pm.gnosis.heimdall.data.remote.impls.SimpleEthereumJsonRpcRepository
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.*
 import pm.gnosis.heimdall.helpers.*
@@ -53,10 +51,6 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsAddressBookRepository(repository: DefaultAddressBookRepository): AddressBookRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindsEthereumJsonRepository(repository: SimpleEthereumJsonRpcRepository): EthereumJsonRpcRepository
 
     @Binds
     abstract fun bindsWordlistProvider(wordListProvider: DefaultWordListProvider): WordListProvider

@@ -6,21 +6,21 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.ethereum.EthBalance
+import pm.gnosis.ethereum.EthCall
+import pm.gnosis.ethereum.EthRequest
+import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.models.TransactionParameters
+import pm.gnosis.ethereum.models.TransactionReceipt
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.GnosisSafe.GetOwners
 import pm.gnosis.heimdall.GnosisSafe.Threshold
+import pm.gnosis.heimdall.GnosisSafe.IsOwner
 import pm.gnosis.heimdall.ProxyFactory
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
-import pm.gnosis.heimdall.data.remote.BulkRequest
-import pm.gnosis.heimdall.data.remote.BulkRequest.SubRequest
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
-import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
-import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
-import pm.gnosis.heimdall.data.remote.models.TransactionParameters
-import pm.gnosis.heimdall.data.remote.models.TransactionReceipt
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
@@ -45,7 +45,7 @@ import javax.inject.Singleton
 class DefaultGnosisSafeRepository @Inject constructor(
     gnosisAuthenticatorDb: ApplicationDb,
     private val accountsRepository: AccountsRepository,
-    private val ethereumJsonRpcRepository: EthereumJsonRpcRepository,
+    private val ethereumRepository: EthereumRepository,
     private val settingsRepository: SettingsRepository
 ) : GnosisSafeRepository {
 
@@ -74,12 +74,16 @@ class DefaultGnosisSafeRepository @Inject constructor(
             safeDao.insertSafe(GnosisSafeDb(address, name))
         }.subscribeOn(Schedulers.io())!!
 
-    private fun loadSafeDeployParams(devices: Set<BigInteger>, requiredConfirmations: Int): Single<SafeDeployParams> {
+    private fun loadSafeDeployParams(
+        devices: Set<BigInteger>,
+        requiredConfirmations: Int
+    ): Single<SafeDeployParams> {
         return accountsRepository.loadActiveAccount()
             .flatMapObservable { account ->
                 val factoryAddress = settingsRepository.getProxyFactoryAddress()
                 val masterCopyAddress = settingsRepository.getSafeMasterCopyAddress()
-                val owners = SolidityBase.Vector((devices + account.address).map { Solidity.Address(it) })
+                val owners =
+                    SolidityBase.Vector((devices + account.address).map { Solidity.Address(it) })
                 val confirmations = Math.max(1, Math.min(requiredConfirmations, devices.size))
                 val setupData = GnosisSafe.Setup.encode(
                     // Safe owner info
@@ -87,29 +91,55 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     // Extension info -> not set for now
                     Solidity.Address(BigInteger.ZERO), Solidity.Bytes(ByteArray(0))
                 )
-                val data = ProxyFactory.CreateProxy.encode(Solidity.Address(masterCopyAddress), Solidity.Bytes(setupData.hexStringToByteArray()))
-                ethereumJsonRpcRepository.getTransactionParameters(account.address, factoryAddress, data = data).map {
+                val data = ProxyFactory.CreateProxy.encode(
+                    Solidity.Address(masterCopyAddress),
+                    Solidity.Bytes(setupData.hexStringToByteArray())
+                )
+                ethereumRepository.getTransactionParameters(
+                    account.address,
+                    factoryAddress,
+                    data = data
+                ).map {
                     SafeDeployParams(account, factoryAddress, data, it)
                 }
             }
             .singleOrError()
     }
 
-    override fun estimateDeployCosts(devices: Set<BigInteger>, requiredConfirmations: Int): Single<GasEstimate> {
+    override fun estimateDeployCosts(
+        devices: Set<BigInteger>,
+        requiredConfirmations: Int
+    ): Single<GasEstimate> {
         return loadSafeDeployParams(devices, requiredConfirmations)
-            .map { GasEstimate(it.transactionParameters.gas, Wei(it.transactionParameters.gasPrice)) }
+            .map {
+                GasEstimate(
+                    it.transactionParameters.gas,
+                    Wei(it.transactionParameters.gasPrice)
+                )
+            }
     }
 
-    override fun deploy(name: String?, devices: Set<BigInteger>, requiredConfirmations: Int, overrideGasPrice: Wei?): Completable {
+    override fun deploy(
+        name: String?,
+        devices: Set<BigInteger>,
+        requiredConfirmations: Int,
+        overrideGasPrice: Wei?
+    ): Completable {
         return loadSafeDeployParams(devices, requiredConfirmations)
             .flatMap {
                 val params = it.transactionParameters
                 val gasPrice = overrideGasPrice?.value ?: params.gasPrice
                 val transaction =
-                    Transaction(address = it.factoryAddress, data = it.data, nonce = params.nonce, gas = params.gas, gasPrice = gasPrice)
+                    Transaction(
+                        address = it.factoryAddress,
+                        data = it.data,
+                        nonce = params.nonce,
+                        gas = params.gas,
+                        gasPrice = gasPrice
+                    )
                 accountsRepository.signTransaction(transaction)
             }
-            .flatMapObservable { ethereumJsonRpcRepository.sendRawTransaction(it) }
+            .flatMapObservable { ethereumRepository.sendRawTransaction(it) }
             .flatMapCompletable {
                 Completable.fromAction {
                     safeDao.insertPendingSafe(PendingGnosisSafeDb(it.hexAsBigInteger(), name))
@@ -118,7 +148,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
     }
 
     override fun observeDeployStatus(hash: String): Observable<String> {
-        return ethereumJsonRpcRepository.getTransactionReceipt(hash)
+        return ethereumRepository.getTransactionReceipt(hash)
             .flatMap {
                 if (it.status != null) {
                     it.logs.forEach {
@@ -173,32 +203,38 @@ class DefaultGnosisSafeRepository @Inject constructor(
         return accountsRepository.loadActiveAccount()
             .map {
                 SafeInfoRequest(
-                    SubRequest(JsonRpcRequest(
-                        id = 0,
-                        method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
-                        params = arrayListOf(address.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)
+                    EthBalance(address, 0),
+                    EthCall(
+                        transaction = Transaction(address = address, data = Threshold.encode()),
+                        id = 1
                     ),
-                        { Wei(it.checkedResult().hexAsBigInteger()) }),
-                    SubRequest(TransactionCallParams(to = addressString, data = Threshold.encode()).callRequest(1),
-                        { Threshold.decode(it.checkedResult()) }),
-                    SubRequest(TransactionCallParams(to = addressString, data = GetOwners.encode()).callRequest(2),
-                        { GetOwners.decode(it.checkedResult()) }),
-                    SubRequest(TransactionCallParams(
-                        to = addressString,
-                        data = GnosisSafe.IsOwner.encode(Solidity.Address(it.address))
-                    ).callRequest(3),
-                        { GnosisSafe.IsOwner.decode(it.checkedResult()) })
+                    EthCall(
+                        transaction = Transaction(address = address, data = GetOwners.encode()),
+                        id = 2
+                    ),
+                    EthCall(
+                        transaction = Transaction(
+                            address = address,
+                            data = GnosisSafe.IsOwner.encode(Solidity.Address(it.address))
+                        ), id = 3
+                    )
                 )
             }
-            .flatMapObservable { ethereumJsonRpcRepository.bulk(it) }
+            .flatMapObservable { bulk ->
+                ethereumRepository.bulk(bulk.requests).map { bulk }
+            }
             .map {
-                SafeInfo(
-                    addressString,
-                    it.balance.value!!,
-                    it.requiredConfirmations.value!!.param0.value.toLong(),
-                    it.owners.value!!.param0.items.map { it.value },
-                    it.isOwner.value!!.param0.value
-                )
+                val balance = it.balance.result() ?: throw IllegalArgumentException()
+                val threshold =
+                    Threshold.decode(it.threshold.result() ?: throw IllegalArgumentException())
+                        .param0.value.toLong()
+                val owners =
+                    GetOwners.decode(it.owners.result() ?: throw IllegalArgumentException())
+                        .param0.items.map { it.value }
+                val isOwner =
+                    IsOwner.decode(it.isOwner.result() ?: throw IllegalArgumentException())
+                        .param0.value
+                SafeInfo(addressString, balance, threshold, owners, isOwner)
             }
     }
 
@@ -207,11 +243,13 @@ class DefaultGnosisSafeRepository @Inject constructor(
     }
 
     private class SafeInfoRequest(
-        val balance: SubRequest<Wei>,
-        val requiredConfirmations: SubRequest<Threshold.Return>,
-        val owners: SubRequest<GetOwners.Return>,
-        val isOwner: SubRequest<GnosisSafe.IsOwner.Return>
-    ) : BulkRequest(balance, requiredConfirmations, owners, isOwner)
+        val balance: EthRequest<Wei>,
+        val threshold: EthRequest<String>,
+        val owners: EthRequest<String>,
+        val isOwner: EthRequest<String>
+    ) {
+        val requests = listOf(balance, threshold, owners, isOwner)
+    }
 
     private data class SafeDeployParams(
         val account: Account,
