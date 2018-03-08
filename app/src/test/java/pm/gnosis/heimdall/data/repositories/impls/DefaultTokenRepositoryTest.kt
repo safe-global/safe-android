@@ -12,6 +12,7 @@ import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.subscribers.TestSubscriber
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,16 +24,16 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.reset
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
-import pm.gnosis.heimdall.data.remote.*
-import pm.gnosis.heimdall.data.remote.models.JsonRpcRequest
-import pm.gnosis.heimdall.data.remote.models.TransactionCallParams
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ERC20
@@ -41,7 +42,6 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
-import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.toHexString
@@ -67,7 +67,7 @@ class DefaultTokenRepositoryTest {
     lateinit var erc20DaoMock: ERC20TokenDao
 
     @Mock
-    lateinit var jsonRpcMock: EthereumJsonRpcRepository
+    lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
     lateinit var resourcesMock: Resources
@@ -79,12 +79,22 @@ class DefaultTokenRepositoryTest {
         given(application.getSharedPreferences(anyString(), anyInt())).willReturn(preferences)
         given(dbMock.erc20TokenDao()).willReturn(erc20DaoMock)
         preferencesManager = PreferencesManager(application)
-        repository = DefaultTokenRepository(dbMock, jsonRpcMock, preferencesManager, Moshi.Builder().add(HexNumberAdapter()).build(), application)
+        repository = DefaultTokenRepository(
+            dbMock,
+            ethereumRepositoryMock,
+            preferencesManager,
+            Moshi.Builder().add(HexNumberAdapter()).build(),
+            application
+        )
     }
 
     @Test
     fun setupAddTokens() {
-        given(resourcesMock.openRawResource(R.raw.verified_tokens)).willReturn(javaClass.getResourceAsStream("/verified_tokens.json"))
+        given(resourcesMock.openRawResource(R.raw.verified_tokens)).willReturn(
+            javaClass.getResourceAsStream(
+                "/verified_tokens.json"
+            )
+        )
         given(application.resources).willReturn(resourcesMock)
         val testObserver = TestObserver<Unit>()
         // Should be initial start
@@ -95,15 +105,27 @@ class DefaultTokenRepositoryTest {
         then(erc20DaoMock).should().insertERC20Tokens(
             listOf(
                 ERC20TokenDb(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                    "World Energy",
+                    "WE",
+                    4,
+                    true
                 ),
                 ERC20TokenDb(
-                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(), "Love", "<3", 6, true
+                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                    "Love",
+                    "<3",
+                    6,
+                    true
                 )
             )
         )
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
-        assertEquals("Token setup should be marked as done", true, preferences.getBoolean(PREFS_TOKEN_SETUP, false))
+        assertEquals(
+            "Token setup should be marked as done",
+            true,
+            preferences.getBoolean(PREFS_TOKEN_SETUP, false)
+        )
     }
 
     @Test
@@ -114,12 +136,20 @@ class DefaultTokenRepositoryTest {
         repository.setup().subscribe(testObserver)
         testObserver.assertResult()
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
-        assertEquals("Token setup should be marked as done", true, preferences.getBoolean(PREFS_TOKEN_SETUP, false))
+        assertEquals(
+            "Token setup should be marked as done",
+            true,
+            preferences.getBoolean(PREFS_TOKEN_SETUP, false)
+        )
     }
 
     @Test
     fun setupErrorAddingTokens() {
-        given(resourcesMock.openRawResource(R.raw.verified_tokens)).willReturn(javaClass.getResourceAsStream("/invalid_verified_tokens.json"))
+        given(resourcesMock.openRawResource(R.raw.verified_tokens)).willReturn(
+            javaClass.getResourceAsStream(
+                "/invalid_verified_tokens.json"
+            )
+        )
         given(application.resources).willReturn(resourcesMock)
         val testObserver = TestObserver<Unit>()
         // Should be initial start
@@ -127,7 +157,11 @@ class DefaultTokenRepositoryTest {
         repository.setup().subscribe(testObserver)
         //testObserver.assertError(KotlinNullPointerException::class.java)
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
-        assertEquals("Token setup should not be marked as done", false, preferences.getBoolean(PREFS_TOKEN_SETUP, false))
+        assertEquals(
+            "Token setup should not be marked as done",
+            false,
+            preferences.getBoolean(PREFS_TOKEN_SETUP, false)
+        )
     }
 
     @Test
@@ -143,20 +177,36 @@ class DefaultTokenRepositoryTest {
         testProcessor.offer(
             listOf(
                 ERC20TokenDb(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                    "World Energy",
+                    "WE",
+                    4,
+                    true
                 ),
                 ERC20TokenDb(
-                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(), "Love", "<3", 6, true
+                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                    "Love",
+                    "<3",
+                    6,
+                    true
                 )
             )
         )
 
         val initialTokenList = listOf(
             ERC20Token(
-                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                "World Energy",
+                "WE",
+                4,
+                true
             ),
             ERC20Token(
-                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(), "Love", "<3", 6, true
+                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                "Love",
+                "<3",
+                6,
+                true
             )
         )
         testSubscriber.assertValuesOnly(initialTokenList)
@@ -164,10 +214,18 @@ class DefaultTokenRepositoryTest {
         testProcessor.offer(
             listOf(
                 ERC20TokenDb(
-                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(), "Love", "<3", 6, true
+                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                    "Love",
+                    "<3",
+                    6,
+                    true
                 ),
                 ERC20TokenDb(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                    "World Energy",
+                    "WE",
+                    4,
+                    true
                 )
             )
         )
@@ -176,10 +234,18 @@ class DefaultTokenRepositoryTest {
             initialTokenList,
             listOf(
                 ERC20Token(
-                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(), "Love", "<3", 6, true
+                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                    "Love",
+                    "<3",
+                    6,
+                    true
                 ),
                 ERC20Token(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                    "World Energy",
+                    "WE",
+                    4,
+                    true
                 )
             )
         )
@@ -200,27 +266,43 @@ class DefaultTokenRepositoryTest {
 
         testProcessor.offer(
             ERC20TokenDb(
-                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                "World Energy",
+                "WE",
+                4,
+                true
             )
         )
 
         val initialToken =
             ERC20Token(
-                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                "World Energy",
+                "WE",
+                4,
+                true
             )
 
         testSubscriber.assertValuesOnly(initialToken)
 
         testProcessor.offer(
             ERC20TokenDb(
-                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(), "Love", "<3", 6, true
+                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                "Love",
+                "<3",
+                6,
+                true
             )
         )
 
         testSubscriber.assertValuesOnly(
             initialToken,
             ERC20Token(
-                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(), "Love", "<3", 6, true
+                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                "Love",
+                "<3",
+                6,
+                true
             )
         )
 
@@ -234,10 +316,18 @@ class DefaultTokenRepositoryTest {
             Single.just(
                 listOf(
                     ERC20TokenDb(
-                        "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+                        "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                        "World Energy",
+                        "WE",
+                        4,
+                        true
                     ),
                     ERC20TokenDb(
-                        "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(), "Love", "<3", 6, true
+                        "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                        "Love",
+                        "<3",
+                        6,
+                        true
                     )
                 )
             )
@@ -248,10 +338,18 @@ class DefaultTokenRepositoryTest {
 
         val initialTokenList = listOf(
             ERC20Token(
-                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                "World Energy",
+                "WE",
+                4,
+                true
             ),
             ERC20Token(
-                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(), "Love", "<3", 6, true
+                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                "Love",
+                "<3",
+                6,
+                true
             )
         )
         testObserver.assertResult(initialTokenList)
@@ -265,7 +363,11 @@ class DefaultTokenRepositoryTest {
         given(erc20DaoMock.loadToken(MockUtils.any())).willReturn(
             Single.just(
                 ERC20TokenDb(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                    "World Energy",
+                    "WE",
+                    4,
+                    true
                 )
             )
         )
@@ -274,7 +376,11 @@ class DefaultTokenRepositoryTest {
         repository.loadToken(BigInteger.TEN).subscribe(testObserver)
 
         val initialToken = ERC20Token(
-            "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(), "World Energy", "WE", 4, true
+            "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+            "World Energy",
+            "WE",
+            4,
+            true
         )
         testObserver.assertResult(initialToken)
 
@@ -282,38 +388,47 @@ class DefaultTokenRepositoryTest {
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
     }
 
-    private fun Result<String>.toRpcResult(id: Int) =
-        when (this) {
-            is DataResult -> JsonRpcResult(id, "", null, this.data)
-            is ErrorResult -> JsonRpcResult(id, "", JsonRpcError(7, this.error.message ?: ""), "0x0")
-        }
-
     private fun testLoadTokenInfo(
         expectedResult: Result<ERC20Token>,
-        nameResult: Result<String>,
-        symbolResult: Result<String>,
-        decimalResult: Result<String>
+        nameResult: EthRequest.Response<String>,
+        symbolResult: EthRequest.Response<String>,
+        decimalResult: EthRequest.Response<String>
     ) {
-        given(jsonRpcMock.bulk<BulkRequest>(MockUtils.any())).will {
-            val request = it.arguments.first() as BulkRequest
-            assertEquals(
-                request.body(), listOf(
-                    TransactionCallParams(to = BigInteger.TEN.asEthereumAddressString(), data = "0x${ERC20.NAME_METHOD_ID}").callRequest(0),
-                    TransactionCallParams(to = BigInteger.TEN.asEthereumAddressString(), data = "0x${ERC20.SYMBOL_METHOD_ID}").callRequest(1),
-                    TransactionCallParams(to = BigInteger.TEN.asEthereumAddressString(), data = "0x${ERC20.DECIMALS_METHOD_ID}").callRequest(2)
+        given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
+            val bulk = it.arguments.first() as BulkRequest
+            val requests = bulk.requests
+            assertEqualRequests(
+                requests,
+                listOf(
+                    EthCall(
+                        transaction = Transaction(
+                            BigInteger.TEN,
+                            data = "0x${ERC20.NAME_METHOD_ID}"
+                        ), id = 0
+                    ),
+
+                    EthCall(
+                        transaction = Transaction(
+                            BigInteger.TEN,
+                            data = "0x${ERC20.SYMBOL_METHOD_ID}"
+                        ), id = 1
+                    ),
+
+                    EthCall(
+                        transaction = Transaction(
+                            BigInteger.TEN,
+                            data = "0x${ERC20.DECIMALS_METHOD_ID}"
+                        ), id = 2
+                    )
                 )
             )
             try {
-                request.parse(
-                    listOf(
-                        nameResult.toRpcResult(0),
-                        symbolResult.toRpcResult(1),
-                        decimalResult.toRpcResult(2)
-                    )
-                )
-                Observable.just(request)
+                (requests[0] as EthCall).response = nameResult
+                (requests[1] as EthCall).response = symbolResult
+                (requests[2] as EthCall).response = decimalResult
+                Observable.just(bulk)
             } catch (t: Throwable) {
-                Observable.error<BulkRequest>(t)
+                Observable.error<List<EthRequest<*>>>(t)
             }
         }
 
@@ -324,60 +439,70 @@ class DefaultTokenRepositoryTest {
         }, { error ->
             testObserver.assertFailure(Predicate { error.javaClass.isInstance(it) && it.message == error.message })
         })
-        reset(jsonRpcMock)
+        reset(ethereumRepositoryMock)
     }
 
     @Test
     fun loadTokenInfo() {
         testLoadTokenInfo(
             DataResult(ERC20Token(BigInteger.TEN, "Hello Token", "HT", 10)), // Expected result
-            DataResult("Hello Token".toByteArray().toHexString()),
-            DataResult("HT".toByteArray().toHexString()),
-            DataResult(BigInteger.TEN.toString(16))
+            EthRequest.Response.Success("Hello Token".toByteArray().toHexString()),
+            EthRequest.Response.Success("HT".toByteArray().toHexString()),
+            EthRequest.Response.Success(BigInteger.TEN.toHexString())
         )
         testLoadTokenInfo(
-            DataResult(ERC20Token(BigInteger.TEN, "Hello Token", "HT", 0)), // Expected result
-            DataResult("Hello Token".toByteArray().toHexString()),
-            DataResult("HT".toByteArray().toHexString()),
-            DataResult("NotANumber")
+            ErrorResult(IllegalArgumentException()), // Expected result
+            EthRequest.Response.Success("Hello Token".toByteArray().toHexString()),
+            EthRequest.Response.Success("HT".toByteArray().toHexString()),
+            EthRequest.Response.Success("NotANumber")
         )
         testLoadTokenInfo(
-            ErrorResult(ErrorResultException("revert")), // Expected result
-            ErrorResult(Exception("revert")),
-            DataResult("HT".toByteArray().toHexString()),
-            DataResult(BigInteger.TEN.toString(16))
+            ErrorResult(IllegalArgumentException()), // Expected result
+            EthRequest.Response.Failure("revert"),
+            EthRequest.Response.Success("HT".toByteArray().toHexString()),
+            EthRequest.Response.Success(BigInteger.TEN.toString(16))
         )
         testLoadTokenInfo(
-            ErrorResult(ErrorResultException("revert")), // Expected result
-            DataResult("Hello Token".toByteArray().toHexString()),
-            ErrorResult(Exception("revert")),
-            DataResult(BigInteger.TEN.toString(16))
+            ErrorResult(IllegalArgumentException()), // Expected result
+            EthRequest.Response.Success("Hello Token".toByteArray().toHexString()),
+            EthRequest.Response.Failure("revert"),
+            EthRequest.Response.Success(BigInteger.TEN.toString(16))
         )
         testLoadTokenInfo(
-            ErrorResult(ErrorResultException("revert")), // Expected result
-            DataResult("Hello Token".toByteArray().toHexString()),
-            DataResult("HT".toByteArray().toHexString()),
-            ErrorResult(Exception("revert"))
+            ErrorResult(IllegalArgumentException()), // Expected result
+            EthRequest.Response.Success("Hello Token".toByteArray().toHexString()),
+            EthRequest.Response.Success("HT".toByteArray().toHexString()),
+            EthRequest.Response.Failure("revert")
         )
     }
 
     private fun testLoadTokenBalance(
         input: List<ERC20Token>,
-        requests: List<JsonRpcRequest>,
-        results: List<DataResult<String>>,
+        expectedRequests: List<EthRequest<*>>,
+        expectedResults: List<EthRequest.Response<*>>,
         outputs: List<Pair<ERC20Token, BigInteger?>>
     ) {
-        given(jsonRpcMock.bulk<BulkRequest>(MockUtils.any())).will {
-            val request = it.arguments.first() as BulkRequest
-            assertEquals(request.body(), requests)
-            request.parse(results.mapIndexed { index, dataResult -> dataResult.toRpcResult(index) })
-            Observable.just(request)
+        given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
+            val bulk = it.arguments.first() as BulkRequest
+            val requests = bulk.requests
+            assertEqualRequests(expectedRequests, requests)
+            requests.forEachIndexed { index, request ->
+                when (request) {
+                    is EthBalance -> request.response =
+                            expectedResults[index] as EthRequest.Response<Wei>
+                    is EthCall -> request.response =
+                            expectedResults[index] as EthRequest.Response<String>
+                    else ->
+                        throw UnsupportedOperationException()
+                }
+            }
+            Observable.just(bulk)
         }
 
         val testObserver = TestObserver<List<Pair<ERC20Token, BigInteger?>>>()
         repository.loadTokenBalances(BigInteger.TEN, input).subscribe(testObserver)
         testObserver.assertResult(outputs)
-        reset(jsonRpcMock)
+        reset(ethereumRepositoryMock)
     }
 
     @Test
@@ -391,45 +516,53 @@ class DefaultTokenRepositoryTest {
         testLoadTokenBalance(
             listOf(ERC20Token.ETHER_TOKEN, TEST_TOKEN),
             listOf(
-                JsonRpcRequest(
-                    id = 0,
-                    method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
-                    params = arrayListOf(BigInteger.TEN.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)
-                ),
-                TransactionCallParams(
-                    to = BigInteger.ONE.asEthereumAddressString(),
-                    data = StandardToken.BalanceOf.encode(Solidity.Address(BigInteger.TEN))
-                ).callRequest(1)
+                EthBalance(BigInteger.TEN, id = 0),
+                EthCall(
+                    transaction = Transaction(
+                        BigInteger.ONE,
+                        data = StandardToken.BalanceOf.encode(Solidity.Address(BigInteger.TEN))
+                    ), id = 1
+                )
             ),
             listOf(
-                DataResult("0x0f"), DataResult("0x000000000000000000000000000000000000000000000000000000000000000a")
+                EthRequest.Response.Success(Wei(BigInteger.valueOf(15))),
+                EthRequest.Response.Success("0x000000000000000000000000000000000000000000000000000000000000000a")
             ),
-            listOf(ERC20Token.ETHER_TOKEN to BigInteger.valueOf(15), TEST_TOKEN to BigInteger.valueOf(10))
+            listOf(
+                ERC20Token.ETHER_TOKEN to BigInteger.valueOf(15),
+                TEST_TOKEN to BigInteger.valueOf(10)
+            )
         )
         testLoadTokenBalance(
             listOf(TEST_TOKEN, ERC20Token.ETHER_TOKEN),
             listOf(
-                TransactionCallParams(
-                    to = BigInteger.ONE.asEthereumAddressString(),
-                    data = StandardToken.BalanceOf.encode(Solidity.Address(BigInteger.TEN))
-                ).callRequest(0),
-                JsonRpcRequest(
-                    id = 1,
-                    method = EthereumJsonRpcRepository.FUNCTION_GET_BALANCE,
-                    params = arrayListOf(BigInteger.TEN.asEthereumAddressString(), EthereumJsonRpcRepository.DEFAULT_BLOCK_LATEST)
-                )
+                EthCall(
+                    transaction = Transaction(
+                        BigInteger.ONE,
+                        data = StandardToken.BalanceOf.encode(Solidity.Address(BigInteger.TEN))
+                    ), id = 0
+                ),
+                EthBalance(BigInteger.TEN, id = 1)
             ),
             listOf(
-                DataResult("invalid balance"), DataResult("0x0f")
+                EthRequest.Response.Success("invalid balance"),
+                EthRequest.Response.Success(Wei(BigInteger.valueOf(15)))
             ),
             listOf(TEST_TOKEN to null, ERC20Token.ETHER_TOKEN to BigInteger.valueOf(15))
         )
 
         val invalidTargetObserver = TestObserver<List<Pair<ERC20Token, BigInteger?>>>()
-        repository.loadTokenBalances(BigInteger("10000000000000000000000000000000000000000", 16), emptyList()).subscribe(invalidTargetObserver)
+        repository.loadTokenBalances(
+            BigInteger("10000000000000000000000000000000000000000", 16),
+            emptyList()
+        ).subscribe(invalidTargetObserver)
         invalidTargetObserver.assertFailure(Predicate { it is InvalidAddressException })
 
-        given(jsonRpcMock.bulk<BulkRequest>(MockUtils.any())).willReturn(Observable.error(UnknownHostException()))
+        given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).willReturn(
+            Observable.error(
+                UnknownHostException()
+            )
+        )
         val networkErrorObserver = TestObserver<List<Pair<ERC20Token, BigInteger?>>>()
         repository.loadTokenBalances(BigInteger.TEN, emptyList()).subscribe(networkErrorObserver)
         networkErrorObserver.assertFailure(Predicate { it is UnknownHostException })
@@ -440,7 +573,8 @@ class DefaultTokenRepositoryTest {
         val testObserver = TestObserver<Unit>()
         repository.addToken(TEST_TOKEN).subscribe(testObserver)
         testObserver.assertResult()
-        then(erc20DaoMock).should().insertERC20Token(ERC20TokenDb(BigInteger.ONE, "Hello Token", "HT", 10, false))
+        then(erc20DaoMock).should()
+            .insertERC20Token(ERC20TokenDb(BigInteger.ONE, "Hello Token", "HT", 10, false))
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
     }
 
@@ -462,6 +596,34 @@ class DefaultTokenRepositoryTest {
         @FromJson
         fun fromJson(hexNumber: String): BigInteger {
             return hexNumber.hexAsBigInteger()
+        }
+    }
+
+    private fun assertEqualRequests(expected: List<EthRequest<*>>, actual: List<EthRequest<*>>) {
+        assertEquals("Different request count", expected.size, actual.size)
+        expected.forEachIndexed { index, request ->
+            actual[index].let {
+                assertTrue("Different request #$index", request.check(it))
+            }
+        }
+    }
+
+    private fun EthRequest<*>.check(other: EthRequest<*>): Boolean {
+        if (this == other) return true
+        if (id != other.id) return false
+        if (response != other.response) return false
+        when (this) {
+            is EthBalance -> {
+                if (other !is EthBalance) return false
+                return this.address == other.address
+            }
+            is EthCall -> {
+                if (other !is EthCall) return false
+                if (this.transaction != other.transaction) return false
+                return this.from == other.from
+            }
+            else ->
+                throw UnsupportedOperationException()
         }
     }
 

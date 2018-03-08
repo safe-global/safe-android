@@ -15,8 +15,8 @@ import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
@@ -47,7 +47,7 @@ class AccountViewModelTest {
     private lateinit var accountRepositoryMock: AccountsRepository
 
     @Mock
-    private lateinit var ethereumJsonRpcRepositoryMock: EthereumJsonRpcRepository
+    private lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
     private lateinit var qrCodeGeneratorMock: QrCodeGenerator
@@ -60,7 +60,7 @@ class AccountViewModelTest {
     @Before
     fun setup() {
         viewModel = AccountViewModel(
-            contextMock, accountRepositoryMock, ethereumJsonRpcRepositoryMock,
+            contextMock, accountRepositoryMock, ethereumRepositoryMock,
             qrCodeGeneratorMock, tickerRepositoryMock
         )
         given(contextMock.getString(Mockito.anyInt())).willReturn(TEST_STRING)
@@ -148,15 +148,15 @@ class AccountViewModelTest {
         val account = Account(BigInteger.ZERO)
         val exception = IllegalStateException()
         given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
-        given(ethereumJsonRpcRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error<Wei>(exception))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error<Wei>(exception))
 
         viewModel.getAccountBalance().subscribe(observer)
 
         then(contextMock).shouldHaveZeroInteractions()
         then(accountRepositoryMock).should().loadActiveAccount()
-        then(ethereumJsonRpcRepositoryMock).should().getBalance(account.address)
+        then(ethereumRepositoryMock).should().getBalance(account.address)
         then(accountRepositoryMock).shouldHaveNoMoreInteractions()
-        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
             .assertValueCount(1)
             .assertValue(ErrorResult(exception))
@@ -168,15 +168,15 @@ class AccountViewModelTest {
         val account = Account(BigInteger.ZERO)
         val response = Response.error<Any>(401, mock(ResponseBody::class.java))
         given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
-        given(ethereumJsonRpcRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error<Wei>(HttpException(response)))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error<Wei>(HttpException(response)))
 
         viewModel.getAccountBalance().subscribe(observer)
 
         then(contextMock).should().getString(R.string.error_not_authorized_for_action)
         then(accountRepositoryMock).should().loadActiveAccount()
-        then(ethereumJsonRpcRepositoryMock).should().getBalance(account.address)
+        then(ethereumRepositoryMock).should().getBalance(account.address)
         then(accountRepositoryMock).shouldHaveNoMoreInteractions()
-        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
             .assertValueCount(1)
             .assertValue(ErrorResult(SimpleLocalizedException(TEST_STRING)))
@@ -188,15 +188,15 @@ class AccountViewModelTest {
         val account = Account(BigInteger.ZERO)
         val balance = Wei(BigInteger.valueOf(1000))
         given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
-        given(ethereumJsonRpcRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
+        given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))
 
         viewModel.getAccountBalance().subscribe(observer)
 
         then(contextMock).shouldHaveZeroInteractions()
         then(accountRepositoryMock).should().loadActiveAccount()
-        then(ethereumJsonRpcRepositoryMock).should().getBalance(account.address)
+        then(ethereumRepositoryMock).should().getBalance(account.address)
         then(accountRepositoryMock).shouldHaveNoMoreInteractions()
-        then(ethereumJsonRpcRepositoryMock).shouldHaveNoMoreInteractions()
+        then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertComplete()
             .assertValueCount(1)
             .assertValue(DataResult(balance))

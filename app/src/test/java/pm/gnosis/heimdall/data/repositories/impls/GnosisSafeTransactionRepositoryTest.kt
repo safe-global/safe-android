@@ -9,10 +9,10 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -32,7 +32,7 @@ class GnosisSafeTransactionRepositoryTest {
     lateinit var accountRepositoryMock: AccountsRepository
 
     @Mock
-    lateinit var ethereumJsonRpcRepositoryMock: EthereumJsonRpcRepository
+    lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
     lateinit var descriptionsDaoMock: DescriptionsDao
@@ -45,7 +45,7 @@ class GnosisSafeTransactionRepositoryTest {
     @Before
     fun setUp() {
         given(appDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
-        repository = GnosisSafeTransactionRepository(appDbMock, accountRepositoryMock, ethereumJsonRpcRepositoryMock)
+        repository = GnosisSafeTransactionRepository(appDbMock, accountRepositoryMock, ethereumRepositoryMock)
     }
 
     private fun verifyHash(safe: BigInteger, transaction: Transaction, expected: String) {

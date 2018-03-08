@@ -8,11 +8,15 @@ import dagger.Provides
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.rpc.EthereumRpcApi
+import pm.gnosis.ethereum.rpc.RpcEthereumRepository
+import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcApi
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.EthGasStationApi
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.svalinn.common.di.ApplicationContext
@@ -29,6 +33,11 @@ class ApplicationModule {
     companion object {
         const val INFURA_REST_CLIENT = "infuraRestClient"
     }
+
+    @Provides
+    @Singleton
+    fun providesEthereumRepository(ethereumRpcApi: EthereumRpcApi): EthereumRepository =
+        RpcEthereumRepository(ethereumRpcApi)
 
     @Provides
     @Singleton
@@ -55,14 +64,14 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient)
-            : EthereumJsonRpcApi {
+            : EthereumRpcApi {
         val retrofit = Retrofit.Builder()
             .client(client)
-            .baseUrl(EthereumJsonRpcApi.BASE_URL)
+            .baseUrl(BuildConfig.BLOCKCHAIN_NET_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
-        return retrofit.create(EthereumJsonRpcApi::class.java)
+        return retrofit.create(RetrofitEthereumRpcApi::class.java)
     }
 
     @Provides

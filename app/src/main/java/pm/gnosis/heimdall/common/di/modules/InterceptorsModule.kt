@@ -6,7 +6,6 @@ import dagger.multibindings.IntKey
 import dagger.multibindings.IntoMap
 import okhttp3.Interceptor
 import pm.gnosis.heimdall.BuildConfig
-import pm.gnosis.heimdall.data.remote.EthereumJsonRpcApi
 import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.data.repositories.changeUrl
@@ -55,7 +54,7 @@ class InterceptorsModule {
             var request = it.request()
             val url = request.url()
             request = when {
-                url.toString().startsWith(EthereumJsonRpcApi.BASE_URL) ->
+                url.toString().startsWith(BuildConfig.BLOCKCHAIN_NET_URL) ->
                     request.changeUrl(settingsRepository.getEthereumRPCUrl())
                 url.toString().startsWith(IpfsApi.BASE_URL) ->
                     request.changeUrl(settingsRepository.getIpfsUrl())
