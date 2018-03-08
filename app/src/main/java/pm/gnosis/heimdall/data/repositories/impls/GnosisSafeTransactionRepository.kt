@@ -5,6 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
+import pm.gnosis.ethereum.BulkRequest
 import pm.gnosis.ethereum.EthCall
 import pm.gnosis.ethereum.EthRequest
 import pm.gnosis.ethereum.EthereumRepository
@@ -87,9 +88,9 @@ class GnosisSafeTransactionRepository @Inject constructor(
                         ), id = 2
                     )
                 )
-                ethereumRepository.bulk(request.requests)
+                ethereumRepository.request(request)
                     .singleOrError()
-                    .map { account to request }
+                    .map { account to it }
             }
             .flatMap { (account, info) ->
                 val nonce =
@@ -295,9 +296,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
         val threshold: EthRequest<String>,
         val nonce: EthRequest<String>,
         val owners: EthRequest<String>
-    ) {
-        val requests = listOf(threshold, nonce, owners)
-    }
+    ): BulkRequest(threshold, nonce, owners)
 
     companion object {
         private const val ERC191_BYTE = "19"

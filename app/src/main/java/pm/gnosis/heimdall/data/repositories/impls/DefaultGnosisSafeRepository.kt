@@ -6,10 +6,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.ethereum.EthBalance
-import pm.gnosis.ethereum.EthCall
-import pm.gnosis.ethereum.EthRequest
-import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.*
 import pm.gnosis.ethereum.models.TransactionParameters
 import pm.gnosis.ethereum.models.TransactionReceipt
 import pm.gnosis.heimdall.GnosisSafe
@@ -221,7 +218,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 )
             }
             .flatMapObservable { bulk ->
-                ethereumRepository.bulk(bulk.requests).map { bulk }
+                ethereumRepository.request(bulk)
             }
             .map {
                 val balance = it.balance.result() ?: throw IllegalArgumentException()
@@ -247,9 +244,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
         val threshold: EthRequest<String>,
         val owners: EthRequest<String>,
         val isOwner: EthRequest<String>
-    ) {
-        val requests = listOf(balance, threshold, owners, isOwner)
-    }
+    ): BulkRequest(balance, threshold, owners, isOwner)
 
     private data class SafeDeployParams(
         val account: Account,

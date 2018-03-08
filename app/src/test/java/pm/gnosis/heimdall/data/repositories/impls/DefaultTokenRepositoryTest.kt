@@ -24,10 +24,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.reset
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.ethereum.EthBalance
-import pm.gnosis.ethereum.EthCall
-import pm.gnosis.ethereum.EthRequest
-import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.db.ApplicationDb
@@ -397,8 +394,9 @@ class DefaultTokenRepositoryTest {
         symbolResult: EthRequest.Response<String>,
         decimalResult: EthRequest.Response<String>
     ) {
-        given(ethereumRepositoryMock.bulk<EthRequest<*>>(MockUtils.any())).will {
-            val requests = it.arguments.first() as List<EthRequest<*>>
+        given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
+            val bulk = it.arguments.first() as BulkRequest
+            val requests = bulk.requests
             assertEqualRequests(
                 requests,
                 listOf(
@@ -428,7 +426,7 @@ class DefaultTokenRepositoryTest {
                 (requests[0] as EthCall).response = nameResult
                 (requests[1] as EthCall).response = symbolResult
                 (requests[2] as EthCall).response = decimalResult
-                Observable.just(requests)
+                Observable.just(bulk)
             } catch (t: Throwable) {
                 Observable.error<List<EthRequest<*>>>(t)
             }
@@ -484,8 +482,9 @@ class DefaultTokenRepositoryTest {
         expectedResults: List<EthRequest.Response<*>>,
         outputs: List<Pair<ERC20Token, BigInteger?>>
     ) {
-        given(ethereumRepositoryMock.bulk<EthRequest<*>>(MockUtils.any())).will {
-            val requests = it.arguments.first() as List<EthRequest<*>>
+        given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
+            val bulk = it.arguments.first() as BulkRequest
+            val requests = bulk.requests
             assertEqualRequests(expectedRequests, requests)
             requests.forEachIndexed { index, request ->
                 when (request) {
@@ -497,7 +496,7 @@ class DefaultTokenRepositoryTest {
                         throw UnsupportedOperationException()
                 }
             }
-            Observable.just(requests)
+            Observable.just(bulk)
         }
 
         val testObserver = TestObserver<List<Pair<ERC20Token, BigInteger?>>>()
@@ -559,7 +558,7 @@ class DefaultTokenRepositoryTest {
         ).subscribe(invalidTargetObserver)
         invalidTargetObserver.assertFailure(Predicate { it is InvalidAddressException })
 
-        given(ethereumRepositoryMock.bulk<EthRequest<*>>(MockUtils.any())).willReturn(
+        given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).willReturn(
             Observable.error(
                 UnknownHostException()
             )

@@ -9,10 +9,7 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.ethereum.EthBalance
-import pm.gnosis.ethereum.EthCall
-import pm.gnosis.ethereum.EthRequest
-import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.db.ApplicationDb
@@ -88,16 +85,16 @@ class DefaultTokenRepository @Inject constructor(
                 ), id = 2
             )
         )
-        return ethereumRepository.bulk(bulk.requests)
+        return ethereumRepository.request(bulk)
             .map {
                 val name =
-                    bulk.name.result()?.hexStringToByteArrayOrNull()?.utf8String()?.trim()
+                    it.name.result()?.hexStringToByteArrayOrNull()?.utf8String()?.trim()
                             ?: throw IllegalArgumentException()
                 val symbol =
-                    bulk.symbol.result()?.hexStringToByteArrayOrNull()?.utf8String()?.trim()
+                    it.symbol.result()?.hexStringToByteArrayOrNull()?.utf8String()?.trim()
                             ?: throw IllegalArgumentException()
                 val decimals =
-                    bulk.decimals.result()?.hexAsBigIntegerOrNull()?.toInt()
+                    it.decimals.result()?.hexAsBigIntegerOrNull()?.toInt()
                             ?: throw IllegalArgumentException()
                 ERC20Token(contractAddress, name, symbol, decimals)
             }
@@ -113,32 +110,25 @@ class DefaultTokenRepository @Inject constructor(
         val requests =
             erC20Tokens.mapIndexed { index, token ->
                 if (token == ETHER_TOKEN) {
-                    EthBalance(ofAddress, id = index)
+                    MappedRequest(EthBalance(ofAddress, id = index), {
+                        token to it?.value
+                    })
                 } else {
-                    EthCall(
+                    MappedRequest(EthCall(
                         transaction = Transaction(
                             token.address,
                             data = StandardToken.BalanceOf.encode(Solidity.Address(ofAddress))
                         ),
                         id = index
-                    )
+                    ), {
+                        token to nullOnThrow {
+                            StandardToken.BalanceOf.decode(it!!).param0.value
+                        }
+                    })
                 }
             }.toList()
 
-        return ethereumRepository.bulk(requests).map {
-            it.mapIndexed { index, subRequest ->
-                val value = when (subRequest) {
-                    is EthBalance ->
-                        subRequest.result()?.value
-                    is EthCall ->
-                        subRequest.result()?.let {
-                            nullOnThrow { StandardToken.BalanceOf.decode(it).param0.value }
-                        }
-                    else -> null
-                }
-                erC20Tokens[index] to value
-            }.toList()
-        }
+        return ethereumRepository.request(MappingBulkRequest(requests)).map { it.mapped() }
     }
 
     override fun addToken(erC20Token: ERC20Token): Completable = Completable.fromCallable {
@@ -187,7 +177,5 @@ class DefaultTokenRepository @Inject constructor(
         val name: EthRequest<String>,
         val symbol: EthRequest<String>,
         val decimals: EthRequest<String>
-    ) {
-        val requests = listOf(name, symbol, decimals)
-    }
+    ) : BulkRequest(name, symbol, decimals)
 }
