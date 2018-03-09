@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.erc67.ERC67Parser
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
-import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.Result
@@ -32,7 +32,7 @@ class AuthenticateViewModel @Inject constructor(
                 else -> null
             }
         }
-        val parsedData = ERC67Parser.parse(qrCodeData) ?: throw SimpleLocalizedException(context.getString(R.string.invalid_erc67))
-        return SelectSafeActivity.createIntent(context, parsedData.transaction)
+        val parsedTransaction = ERC67Parser.parse(qrCodeData) ?: throw SimpleLocalizedException(context.getString(R.string.invalid_erc67))
+        return SelectSafeActivity.createIntent(context, parsedTransaction)
     }
 }

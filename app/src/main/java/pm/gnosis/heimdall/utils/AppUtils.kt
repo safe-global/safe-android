@@ -15,6 +15,7 @@ import android.text.style.URLSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import pm.gnosis.erc67.ERC67Parser
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
@@ -68,7 +69,7 @@ fun handleAddressBookResult(
 }
 
 fun parseEthereumAddress(address: String) =
-    address.hexAsEthereumAddressOrNull() ?: ERC67Parser.parse(address)?.transaction?.address
+    address.hexAsEthereumAddressOrNull() ?: ERC67Parser.parse(address)?.address
 
 fun TextView.setupEtherscanTransactionUrl(transactionHash: String, @StringRes stringId: Int) {
     setupEtherscanTransactionUrl(transactionHash, context.getString(stringId))

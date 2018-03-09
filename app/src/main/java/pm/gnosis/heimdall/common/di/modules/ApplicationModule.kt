@@ -9,9 +9,10 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import pm.gnosis.ethereum.EthereumRepository
-import pm.gnosis.ethereum.rpc.EthereumRpcApi
+import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.RpcEthereumRepository
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcApi
+import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcConnector
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
@@ -36,8 +37,13 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun providesEthereumRepository(ethereumRpcApi: EthereumRpcApi): EthereumRepository =
-        RpcEthereumRepository(ethereumRpcApi)
+    fun providesEthereumRepository(ethereumRpcConnector: EthereumRpcConnector): EthereumRepository =
+        RpcEthereumRepository(ethereumRpcConnector)
+
+    @Provides
+    @Singleton
+    fun providesEthereumRpcConnector(retrofitEthereumRpcApi: RetrofitEthereumRpcApi): EthereumRpcConnector =
+        RetrofitEthereumRpcConnector(retrofitEthereumRpcApi)
 
     @Provides
     @Singleton
@@ -64,7 +70,7 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient)
-            : EthereumRpcApi {
+            : RetrofitEthereumRpcApi {
         val retrofit = Retrofit.Builder()
             .client(client)
             .baseUrl(BuildConfig.BLOCKCHAIN_NET_URL)

@@ -12,10 +12,10 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.erc67.ERC67Parser
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.heimdall.utils.ERC67Parser
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
@@ -64,7 +64,7 @@ class AuthenticateViewModelTest {
 
     private fun createTransactionString(address: String = "0000000000000000000000000000000", data: String? = null): String {
         val builder = StringBuilder()
-        builder.append(ERC67Parser.SCHEMA).append("0x" + address)
+        builder.append(ERC67Parser.SCHEMA).append("0x$address")
         data?.let { builder.append(ERC67Parser.SEPARATOR + ERC67Parser.DATA_KEY + data) }
         return builder.toString()
     }

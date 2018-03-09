@@ -32,7 +32,7 @@ ext {
             rxjava                 : '2.1.6',
             rxkotlin               : '2.1.0',
             spongycastle           : '1.58.0.0',
-            svalinn                : 'v0.2.1',
+            svalinn                : 'v0.2.3',
             timber                 : '4.6.0',
             zxing                  : '3.3.1',
 
