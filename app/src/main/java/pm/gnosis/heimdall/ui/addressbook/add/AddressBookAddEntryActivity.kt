@@ -16,11 +16,11 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.heimdall.utils.parseEthereumAddress
 import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.AddressBookEntry
-import pm.gnosis.svalinn.common.utils.scanQrCode
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.toast
@@ -47,7 +47,7 @@ class AddressBookAddEntryActivity : BaseActivity() {
         super.onStart()
 
         disposables += layout_add_address_book_entry_scan.clicks()
-            .subscribeBy(onNext = { scanQrCode() })
+            .subscribeBy(onNext = { QRCodeScanActivity.startForResult(this) })
 
         disposables += layout_add_address_book_entry_address.textChanges()
             .subscribeBy(onNext = { layout_add_address_book_entry_address_container.error = null })

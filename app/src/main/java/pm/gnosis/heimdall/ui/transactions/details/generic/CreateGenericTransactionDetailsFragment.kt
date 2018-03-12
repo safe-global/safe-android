@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.selectFromAddressBook
@@ -89,7 +90,7 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         ).subscribe(inputSubject::onNext, Timber::e)
 
         layout_transaction_details_generic_scan_to_button.setOnClickListener {
-            scanQrCode()
+            QRCodeScanActivity.startForResult(this)
         }
 
         layout_transaction_details_generic_address_book_button.setOnClickListener {

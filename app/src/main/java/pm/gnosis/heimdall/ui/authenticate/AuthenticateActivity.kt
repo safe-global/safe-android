@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.heimdall.utils.setupToolbar
@@ -38,7 +39,7 @@ class AuthenticateActivity : BaseActivity() {
         super.onStart()
 
         layout_authenticate_transaction_input_button.setOnClickListener {
-            scanQrCode()
+            QRCodeScanActivity.startForResult(this)
         }
 
         disposables += layout_authenticate_review_button.clicks()
