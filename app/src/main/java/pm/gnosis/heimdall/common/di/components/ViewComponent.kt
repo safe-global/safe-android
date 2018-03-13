@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicActivity
 import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.safe.add.AddExistingSafeFragment
 import pm.gnosis.heimdall.ui.safe.add.DeployNewSafeFragment
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
@@ -75,6 +76,7 @@ interface ViewComponent {
     fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: NetworkSettingsActivity)
     fun inject(activity: PasswordSetupActivity)
+    fun inject(activity: QRCodeScanActivity)
     fun inject(activity: ReceiptTransactionActivity)
     fun inject(activity: RestoreAccountActivity)
     fun inject(activity: RevealMnemonicActivity)

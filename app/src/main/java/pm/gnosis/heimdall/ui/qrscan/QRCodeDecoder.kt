@@ -2,17 +2,15 @@ package pm.gnosis.heimdall.ui.qrscan
 
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.PlanarYUVLuminanceSource
-import com.google.zxing.ReaderException
 import com.google.zxing.common.HybridBinarizer
 import com.google.zxing.qrcode.QRCodeReader
+import javax.inject.Inject
 
 /*
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
  */
-class Scanner(private val videographer: Videographer) {
-    fun scan() = videographer.capture(::decode)
-
-    private fun decode(data: ByteArray, width: Int, height: Int) {
+class QRCodeDecoder @Inject constructor() {
+    fun decode(data: ByteArray, width: Int, height: Int): String {
         val centerX = width / 2
         val centerY = height / 2
 
@@ -28,11 +26,6 @@ class Scanner(private val videographer: Videographer) {
         val image = BinaryBitmap(HybridBinarizer(source))
         val reader = QRCodeReader()
 
-        try {
-            val result = reader.decode(image)
-            videographer.onSuccessfulScan(result.text)
-        } catch (re: ReaderException) {
-            scan()
-        }
+        return reader.decode(image).text
     }
 }

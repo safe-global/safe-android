@@ -7,13 +7,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import kotlinx.android.synthetic.main.layout_scan.*
+import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.CAMERA_REQUEST_CODE
 import pm.gnosis.heimdall.utils.handlePermissionsResultRequest
 import pm.gnosis.heimdall.utils.isPermissionGranted
 import pm.gnosis.heimdall.utils.requestPermissions
+import javax.inject.Inject
 
 /*
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
@@ -21,10 +25,13 @@ import pm.gnosis.heimdall.utils.requestPermissions
 class QRCodeScanActivity : BaseActivity() {
     override fun screenId() = ScreenId.QR_SCAN
 
-    private val videographer = Videographer(this).also { it.onSuccessfulScan = this::finishWithResult }
+    @Inject
+    lateinit var videographer: Videographer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        inject()
+        videographer.onSuccessfulScan = ::finishWithResult
         setContentView(R.layout.layout_scan)
 
         intent?.extras?.getString(DESCRIPTION_EXTRA)?.let {
@@ -50,10 +57,18 @@ class QRCodeScanActivity : BaseActivity() {
         handlePermissionsResultRequest(requestCode, CAMERA_REQUEST_CODE, grantResults, onPermissionDenied = { finish() })
     }
 
+    // We can use Rx to listen for successful events and finish instead of passing a callback
     private fun finishWithResult(value: String) {
         val result = Intent().apply { putExtra(RESULT_EXTRA, value) }
         setResult(Activity.RESULT_OK, result)
         finish()
+    }
+
+    private fun inject() {
+        DaggerViewComponent.builder()
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build().inject(this)
     }
 
     companion object {

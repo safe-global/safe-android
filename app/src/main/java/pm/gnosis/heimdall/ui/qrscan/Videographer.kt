@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.qrscan
 
-import android.app.Activity
+import android.content.Context
 import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
@@ -9,17 +9,22 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.view.Surface
 import android.view.TextureView
+import android.view.WindowManager
+import pm.gnosis.svalinn.common.di.ViewContext
+import pm.gnosis.utils.nullOnThrow
 import timber.log.Timber
+import javax.inject.Inject
 
 /*
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
  */
 @Suppress("DEPRECATION")
-class Videographer(val activity: Activity) {
-    private val scanner = Scanner(this)
+@ViewContext
+class Videographer @Inject constructor(@ViewContext context: Context, private val qrCodeDecoder: QRCodeDecoder) {
+    private val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
+    // TODO inject this
     private lateinit var camera: Camera
-
     private lateinit var thread: HandlerThread
     private lateinit var handler: Handler
 
@@ -43,7 +48,7 @@ class Videographer(val activity: Activity) {
         }
     }
 
-    lateinit var onSuccessfulScan: (result: String) -> Unit
+    var onSuccessfulScan: (result: String) -> Unit = {}
 
     var isOpen = false
 
@@ -83,9 +88,9 @@ class Videographer(val activity: Activity) {
         closeCamera()
     }
 
-    fun capture(callback: (ByteArray, Int, Int) -> Unit) {
+    private fun capture() {
         camera.setOneShotPreviewCallback { data, _ ->
-            callback(data, previewWidth, previewHeight)
+            nullOnThrow { qrCodeDecoder.decode(data, previewWidth, previewHeight) }?.let(onSuccessfulScan) ?: capture()
         }
     }
 
@@ -114,7 +119,7 @@ class Videographer(val activity: Activity) {
 
                 isOpen = true
 
-                scanner.scan()
+                capture()
             } catch (e: RuntimeException) {
                 // https://github.com/walleth/walleth/issues/139
                 Timber.e(e)
@@ -165,7 +170,7 @@ class Videographer(val activity: Activity) {
         val info = Camera.CameraInfo()
         Camera.getCameraInfo(defaultCameraId, info)
 
-        val rotation = activity.windowManager.defaultDisplay.rotation
+        val rotation = windowManager.defaultDisplay.rotation
 
         var degrees = when (rotation) {
             Surface.ROTATION_0 -> 0
