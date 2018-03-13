@@ -10,9 +10,7 @@ import pm.gnosis.ethereum.*
 import pm.gnosis.ethereum.models.TransactionParameters
 import pm.gnosis.ethereum.models.TransactionReceipt
 import pm.gnosis.heimdall.GnosisSafe
-import pm.gnosis.heimdall.GnosisSafe.GetOwners
-import pm.gnosis.heimdall.GnosisSafe.Threshold
-import pm.gnosis.heimdall.GnosisSafe.IsOwner
+import pm.gnosis.heimdall.GnosisSafe.*
 import pm.gnosis.heimdall.ProxyFactory
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
@@ -20,6 +18,7 @@ import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
+import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
 import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
@@ -43,7 +42,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
     gnosisAuthenticatorDb: ApplicationDb,
     private val accountsRepository: AccountsRepository,
     private val ethereumRepository: EthereumRepository,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val txExecutorRepository: TxExecutorRepository
 ) : GnosisSafeRepository {
 
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
@@ -71,12 +71,12 @@ class DefaultGnosisSafeRepository @Inject constructor(
             safeDao.insertSafe(GnosisSafeDb(address, name))
         }.subscribeOn(Schedulers.io())!!
 
-    private fun loadSafeDeployParams(
+    private fun loadSafeDeployTransactionWithSender(
         devices: Set<BigInteger>,
         requiredConfirmations: Int
-    ): Single<SafeDeployParams> {
+    ): Single<Pair<Account, Transaction>> {
         return accountsRepository.loadActiveAccount()
-            .flatMapObservable { account ->
+            .map { account ->
                 val factoryAddress = settingsRepository.getProxyFactoryAddress()
                 val masterCopyAddress = settingsRepository.getSafeMasterCopyAddress()
                 val owners =
@@ -92,12 +92,24 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     Solidity.Address(masterCopyAddress),
                     Solidity.Bytes(setupData.hexStringToByteArray())
                 )
+                account to Transaction(factoryAddress, data = data)
+            }
+    }
+
+    private fun loadSafeDeployParams(
+        devices: Set<BigInteger>,
+        requiredConfirmations: Int
+    ): Single<SafeDeployParams> {
+        return loadSafeDeployTransactionWithSender(devices, requiredConfirmations)
+            .flatMapObservable { (account, tx) ->
+                val data =
+                    tx.data ?: return@flatMapObservable Observable.error<SafeDeployParams>(IllegalArgumentException("Invalid safe deployment data!"))
                 ethereumRepository.getTransactionParameters(
                     account.address,
-                    factoryAddress,
+                    tx.address,
                     data = data
                 ).map {
-                    SafeDeployParams(account, factoryAddress, data, it)
+                    SafeDeployParams(account, tx.address, data, it)
                 }
             }
             .singleOrError()
@@ -116,33 +128,23 @@ class DefaultGnosisSafeRepository @Inject constructor(
             }
     }
 
-    override fun deploy(
-        name: String?,
-        devices: Set<BigInteger>,
-        requiredConfirmations: Int,
-        overrideGasPrice: Wei?
-    ): Completable {
-        return loadSafeDeployParams(devices, requiredConfirmations)
-            .flatMap {
-                val params = it.transactionParameters
-                val gasPrice = overrideGasPrice?.value ?: params.gasPrice
-                val transaction =
-                    Transaction(
-                        address = it.factoryAddress,
-                        data = it.data,
-                        nonce = params.nonce,
-                        gas = params.gas,
-                        gasPrice = gasPrice
-                    )
-                accountsRepository.signTransaction(transaction)
-            }
-            .flatMapObservable { ethereumRepository.sendRawTransaction(it) }
+    override fun loadSafeDeployTransaction(name: String?, devices: Set<BigInteger>, requiredConfirmations: Int): Single<Transaction> =
+        loadSafeDeployTransactionWithSender(devices, requiredConfirmations).map { it.second }
+
+    override fun deploy(name: String?, devices: Set<BigInteger>, requiredConfirmations: Int, overrideGasPrice: Wei?): Completable {
+        return loadSafeDeployTransactionWithSender(devices, requiredConfirmations)
+            .map { (_, tx) -> tx }
+            .flatMapObservable(txExecutorRepository::execute)
             .flatMapCompletable {
                 Completable.fromAction {
                     safeDao.insertPendingSafe(PendingGnosisSafeDb(it.hexAsBigInteger(), name))
                 }
             }
     }
+
+    override fun savePendingSafe(transactionHash: BigInteger, name: String): Completable = Completable.fromAction {
+        safeDao.insertPendingSafe(PendingGnosisSafeDb(transactionHash, name))
+    }.subscribeOn(Schedulers.io())
 
     override fun observeDeployStatus(hash: String): Observable<String> {
         return ethereumRepository.getTransactionReceipt(hash)
@@ -244,7 +246,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
         val threshold: EthRequest<String>,
         val owners: EthRequest<String>,
         val isOwner: EthRequest<String>
-    ): BulkRequest(balance, threshold, owners, isOwner)
+    ) : BulkRequest(balance, threshold, owners, isOwner)
 
     private data class SafeDeployParams(
         val account: Account,

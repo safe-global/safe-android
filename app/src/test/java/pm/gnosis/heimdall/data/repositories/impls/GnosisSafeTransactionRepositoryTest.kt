@@ -13,6 +13,7 @@ import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
+import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -38,6 +39,9 @@ class GnosisSafeTransactionRepositoryTest {
     lateinit var descriptionsDaoMock: DescriptionsDao
 
     @Mock
+    lateinit var txExecutorRepository: TxExecutorRepository
+
+    @Mock
     lateinit var appDbMock: ApplicationDb
 
     private lateinit var repository: GnosisSafeTransactionRepository
@@ -45,7 +49,7 @@ class GnosisSafeTransactionRepositoryTest {
     @Before
     fun setUp() {
         given(appDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
-        repository = GnosisSafeTransactionRepository(appDbMock, accountRepositoryMock, ethereumRepositoryMock)
+        repository = GnosisSafeTransactionRepository(appDbMock, accountRepositoryMock, ethereumRepositoryMock, txExecutorRepository)
     }
 
     private fun verifyHash(safe: BigInteger, transaction: Transaction, expected: String) {

@@ -13,8 +13,8 @@ repositories {
 android {
     defaultConfig {
         applicationId "pm.gnosis.heimdall"
-        versionCode getInt("APP_VERSION_CODE", 1)
-        versionName getKey("APP_VERSION_NAME", "1.0")
+        versionCode getInt("APP_VERSION_CODE", 702)
+        versionName getKey("APP_VERSION_NAME", "0.4.1-alpha")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x5a27c4325b2f35163fa28d9195e7038fb53e67ac"))
@@ -46,7 +46,7 @@ android {
             storeFile file("../debug.keystore")
         }
         release {
-            storeFile file("../gnosis-upload.jks")
+            storeFile file(getKey("SIGNING_KEYFILE_PATH", "../gnosis-upload.jks"))
             storePassword getKey("SIGNING_STORE_PASSWORD")
             keyAlias "gnosis"
             keyPassword getKey("SIGNING_KEY_PASSWORD")
@@ -63,7 +63,7 @@ android {
         dev {
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
-            minifyEnabled true
+            minifyEnabled false
             signingConfig signingConfigs.release
         }
 
@@ -135,6 +135,7 @@ dependencies {
     implementation "com.android.support:cardview-v7:$versions.android_support"
     implementation "com.android.support:design:$versions.android_support"
     implementation "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
+    implementation "com.android.billingclient:billing:$versions.billing"
 
     // Rx
     implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"

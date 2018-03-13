@@ -8,7 +8,6 @@ import pm.gnosis.heimdall.common.di.modules.ApplicationBindingsModule
 import pm.gnosis.heimdall.common.di.modules.ApplicationModule
 import pm.gnosis.heimdall.common.di.modules.InterceptorsModule
 import pm.gnosis.heimdall.common.di.modules.ViewModelFactoryModule
-import pm.gnosis.heimdall.data.remote.EthGasStationApi
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
@@ -55,6 +54,7 @@ interface ApplicationComponent {
 
     fun accountsRepository(): AccountsRepository
     fun addressBookRepository(): AddressBookRepository
+    fun billingRepository(): BillingRepository
     fun safeRepository(): GnosisSafeRepository
     fun signaturePushRepositoryRepository(): SignaturePushRepository
     fun tickerRepository(): TickerRepository
@@ -64,7 +64,6 @@ interface ApplicationComponent {
     fun viewModelFactory(): ViewModelProvider.Factory
 
     fun encryptionManager(): EncryptionManager
-    fun gasStationApi(): EthGasStationApi
     fun qrCodeGenerator(): QrCodeGenerator
 
     // Base injects

@@ -53,7 +53,8 @@ abstract class ApplicationBindingsModule {
     abstract fun bindsAddressBookRepository(repository: DefaultAddressBookRepository): AddressBookRepository
 
     @Binds
-    abstract fun bindsWordlistProvider(wordListProvider: DefaultWordListProvider): WordListProvider
+    @Singleton
+    abstract fun bindsBillingRepository(repository: PlayBillingRepository): BillingRepository
 
     @Binds
     @Singleton
@@ -86,4 +87,12 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsTransactionDetailRepository(repository: SimpleTransactionDetailsRepository): TransactionDetailsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsTxExecutorRepository(repository: DefaultTxExecutorRepository): TxExecutorRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsWordlistProvider(wordListProvider: DefaultWordListProvider): WordListProvider
 }

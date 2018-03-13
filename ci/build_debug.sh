@@ -2,4 +2,4 @@
 # fail if any commands fails
 set -e
 
-./gradlew clean assembleDebug createDebugTestCoverage  --stacktrace
+./gradlew clean assembleDebug createDebugTestCoverage --stacktrace

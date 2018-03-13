@@ -79,7 +79,26 @@ open class SetStore<T>(private val set: MutableSet<T> = HashSet()) : ValueStore<
         publish()
     }
 
+    fun addAll(entries: Collection<T>) {
+        transaction {
+            set.addAll(entries)
+        }
+        publish()
+    }
+
+    fun replaceAll(entries: Collection<T>) {
+        transaction {
+            set.clear()
+            set.addAll(entries)
+        }
+        publish()
+    }
+
+    fun size() = set.size
+
     fun clear() {
-        set.clear()
+        transaction {
+            set.clear()
+        }
     }
 }

@@ -51,4 +51,11 @@ interface TransactionRepository {
 
     fun observePublishStatus(id: String): Observable<PublishStatus>
     fun loadChainHash(id: String): Single<String>
+    fun addLocalTransaction(safeAddress: BigInteger, transaction: Transaction, txChainHash: String): Single<String>
+    fun loadExecutableTransaction(
+        safeAddress: BigInteger,
+        innerTransaction: Transaction,
+        signatures: Map<BigInteger, Signature>,
+        senderIsOwner: Boolean
+    ): Single<Transaction>
 }

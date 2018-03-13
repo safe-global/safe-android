@@ -23,6 +23,7 @@ class HeimdallApplication : MultiDexApplication() {
         component.crashTracker().init()
         RxJavaPlugins.setErrorHandler(Timber::e)
         component.signaturePushRepositoryRepository().init()
+        component.billingRepository().init()
 
         try {
             LinuxSecureRandom()

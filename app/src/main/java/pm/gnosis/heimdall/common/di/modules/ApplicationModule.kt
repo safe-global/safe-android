@@ -17,9 +17,7 @@ import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
 import pm.gnosis.heimdall.data.db.ApplicationDb
-import pm.gnosis.heimdall.data.remote.EthGasStationApi
-import pm.gnosis.heimdall.data.remote.IpfsApi
-import pm.gnosis.heimdall.data.remote.PushServiceApi
+import pm.gnosis.heimdall.data.remote.*
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.ticker.data.remote.TickerAdapter
 import retrofit2.Retrofit
@@ -82,18 +80,6 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun providesEthGasStationApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): EthGasStationApi {
-        val retrofit = Retrofit.Builder()
-            .client(client)
-            .baseUrl(EthGasStationApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-            .build()
-        return retrofit.create(EthGasStationApi::class.java)
-    }
-
-    @Provides
-    @Singleton
     fun providesPushServiceApi(moshi: Moshi, client: OkHttpClient): PushServiceApi {
         val retrofit = Retrofit.Builder()
             // Increase timeout since our server goes to sleeps
@@ -103,6 +89,19 @@ class ApplicationModule {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
         return retrofit.create(PushServiceApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesTxExecutorApi(moshi: Moshi, client: OkHttpClient): TxExecutorApi {
+        val retrofit = Retrofit.Builder()
+            // Increase timeout since our server goes to sleeps
+            .client(client.newBuilder().readTimeout(30, TimeUnit.SECONDS).build())
+            .baseUrl(TxExecutorApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
+        return retrofit.create(TxExecutorApi::class.java)
     }
 
     @Provides

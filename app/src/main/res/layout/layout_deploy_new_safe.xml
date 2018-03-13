@@ -130,39 +130,6 @@
             android:layout_marginTop="16dp"
             android:background="@color/divider" />
 
-        <include layout="@layout/include_gas_price_selection" />
-
-        <TextView
-            style="@style/Label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp"
-            android:text="@string/estimated_transaction_fee" />
-
-        <TextView
-            android:id="@+id/layout_deploy_new_safe_transaction_fee"
-            style="@style/BoldContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="@string/loading" />
-
-        <TextView
-            android:id="@+id/layout_deploy_new_safe_transaction_fee_fiat"
-            style="@style/BoldContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:visibility="invisible"
-            tools:text="42$"
-            tools:visibility="visible" />
-
         <TextView
             android:id="@+id/layout_deploy_new_safe_deploy_button"
             style="@style/PrimaryButton.Wide"
@@ -171,5 +138,26 @@
             android:layout_gravity="center"
             android:layout_margin="16dp"
             android:text="@string/deploy_new_safe" />
+
+        <TextView
+            android:id="@+id/layout_deploy_new_safe_buy_credits_button"
+            style="@style/PrimaryButton.Wide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:text="@string/buy_credits" />
+
+        <TextView
+            android:id="@+id/layout_deploy_new_safe_deploy_external"
+            style="@style/TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:gravity="center"
+            android:text="@string/deploy_with_external_wallet" />
     </LinearLayout>
 </ScrollView>

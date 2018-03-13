@@ -24,7 +24,7 @@ open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, vie
 
     private val addressBookRepository: AddressBookRepository
     private val disposables = CompositeDisposable()
-    val view = viewProvider.get()
+    val view: View = viewProvider.get()
 
     var currentAddress: BigInteger? = null
         private set

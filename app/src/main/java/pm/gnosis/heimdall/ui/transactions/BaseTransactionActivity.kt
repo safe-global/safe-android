@@ -64,9 +64,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
     abstract fun fragmentRegistered()
 
     fun registerFragmentObservables(fragment: BaseTransactionDetailsFragment) {
-        if (currentFragment != fragment) {
-            return
-        }
+        if (currentFragment != fragment) return
         disposables += Observable.combineLatest(
             fragment.observeSafe(),
             fragment.observeTransaction(),
