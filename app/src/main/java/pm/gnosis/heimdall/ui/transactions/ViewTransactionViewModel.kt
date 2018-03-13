@@ -98,22 +98,7 @@ class ViewTransactionViewModel @Inject constructor(
                 // Observe local signature store
                 signatureStore.flatMapInfo(safeAddress, info)
                     .onErrorReturnItem(emptyMap())
-                    .map { info to it }
-            }
-            .flatMap { (info, signatures) ->
-                Observable.just<Result<Info>>(DataResult(Info(safeAddress, info, signatures)))
-                /*
-                TODO:
-                Observable.concatDelayError(listOf(
-                    Observable.just(DataResult(Info(safeAddress, info, signatures))),
-                    info.checkMap(signatures)
-                        .flatMapSingle { transactionRepository.estimateFees(safeAddress, info.transaction, signatures, info.isOwner) }
-                        .map { Info(safeAddress, info, signatures, it) }
-                        .onErrorResumeNext(Function { errorHandler.observable(it) })
-                        .mapToResult()
-                )
-                )
-                */
+                    .map<Result<Info>> { DataResult(Info(safeAddress, info, it)) }
             }
             .onErrorReturn { ErrorResult(it) }
     }

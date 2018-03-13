@@ -16,6 +16,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import pm.gnosis.erc67.ERC67Parser
+import pm.gnosis.erc67.erc67Uri
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException

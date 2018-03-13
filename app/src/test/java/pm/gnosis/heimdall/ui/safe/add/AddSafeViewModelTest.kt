@@ -190,55 +190,21 @@ class AddSafeViewModelTest {
     fun observeEstimate() {
         val addressPublisher = PublishSubject.create<Set<BigInteger>>()
         given(addressStore.observe()).willReturn(addressPublisher)
-        val estimate = GasEstimate(BigInteger.valueOf(123), Wei(BigInteger.TEN))
-        given(safeRepositoryMock.estimateDeployCosts(any(), anyInt())).willReturn(Single.just(estimate))
 
-        val testObserver = TestObserver.create<Result<GasEstimate>>()
-        viewModel.observeEstimate().subscribe(testObserver)
-        testObserver.assertEmpty()
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
 
         addressPublisher.onNext(emptySet())
 
-        testObserver.assertValuesOnly(DataResult(estimate))
-        then(safeRepositoryMock).should().estimateDeployCosts(emptySet(), 1)
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
 
         addressPublisher.onNext(setOf(BigInteger.ONE, BigInteger.TEN))
 
-        testObserver.assertValuesOnly(
-            DataResult(estimate),
-            DataResult(estimate) // New Value
-        )
-        then(safeRepositoryMock).should().estimateDeployCosts(setOf(BigInteger.ONE, BigInteger.TEN), 2)
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
 
         val error = IllegalStateException()
         addressPublisher.onError(error)
 
-        testObserver.assertResult(
-            DataResult(estimate),
-            DataResult(estimate),
-            ErrorResult(error) // New Value
-        )
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun observeEstimateError() {
-        given(addressStore.observe()).willReturn(Observable.just(emptySet()))
-        val error = UnknownHostException()
-        given(safeRepositoryMock.estimateDeployCosts(any(), anyInt())).willReturn(Single.error(error))
-
-        val testObserver = TestObserver.create<Result<GasEstimate>>()
-        viewModel.observeEstimate().subscribe(testObserver)
-
-        testObserver.assertResult(ErrorResult(SimpleLocalizedException(R.string.error_check_internet_connection.toString())))
-
-        then(safeRepositoryMock).should().estimateDeployCosts(emptySet(), 1)
-        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
-        then(addressStore).should().observe()
-        then(addressStore).shouldHaveNoMoreInteractions()
     }
 
     @Test

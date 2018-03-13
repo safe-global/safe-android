@@ -22,8 +22,6 @@ abstract class AddSafeContract : ViewModel() {
 
     abstract fun saveTransactionHash(transactionHash: String, name: String): Completable
 
-    abstract fun observeEstimate(): Observable<Result<GasEstimate>>
-
     abstract fun loadFiatConversion(wei: Wei): Single<Result<Pair<BigDecimal, Currency>>>
 
     abstract fun addAdditionalOwner(input: String): Observable<Result<Unit>>

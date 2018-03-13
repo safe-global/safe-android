@@ -6,17 +6,13 @@ import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
-import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.dialog_address_input.view.*
-import kotlinx.android.synthetic.main.include_gas_price_selection.*
 import kotlinx.android.synthetic.main.layout_additional_owner_item.view.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_deploy_new_safe.*
@@ -25,67 +21,20 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
-import pm.gnosis.heimdall.data.repositories.models.GasEstimate
-import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.*
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.*
-import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.isValidEthereumAddress
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
-import java.math.BigDecimal
 import java.math.BigInteger
 import javax.inject.Inject
 
 class DeployNewSafeFragment : BaseFragment() {
 
     @Inject
-    lateinit var gasPriceHelper: GasPriceHelper
-
-    @Inject
     lateinit var viewModel: AddSafeContract
-
-    private var displayFeesTransformer =
-        ObservableTransformer<Pair<Result<GasEstimate>, Result<Wei>>, Result<Pair<BigDecimal, Currency>>> {
-            it
-                .map { (estimate, overrideGasPrice) ->
-                    // If we have an estimate calculate the price
-                    estimate.map {
-                        val override = (overrideGasPrice as? DataResult)?.data
-                        Wei((override ?: it.gasPrice).value * it.gasCosts)
-                    }
-                }
-                // Update price
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNextForResult(::updateEstimate)
-                // Request fiat value for price
-                .flatMapResult({ viewModel.loadFiatConversion(it) })
-                // Update fiat value
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNextForResult(::onFiat, ::onFiatError)
-        }
-
-    private var deployButtonTransformer =
-        ObservableTransformer<Pair<Result<GasEstimate>, Result<Wei>>, Result<Unit>> {
-            it.switchMap { (_, overrideGasPrice) ->
-                layout_deploy_new_safe_deploy_button.clicks()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .flatMap {
-                        viewModel.deployNewSafe(
-                            layout_deploy_new_safe_name_input.text.toString(),
-                            (overrideGasPrice as? DataResult)?.data
-                        )
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnSubscribe { toggleDeploying(true) }
-                            .doAfterTerminate { toggleDeploying(false) }
-                    }
-                    .doOnNextForResult(::safeDeployed, ::errorDeploying)
-            }
-        }
 
     override fun onStart() {
         super.onStart()
@@ -143,28 +92,17 @@ class DeployNewSafeFragment : BaseFragment() {
             }
 
     private fun setupDeploySafe() =
-        Observable.combineLatest(
-            // Estimates to deploy safe
-            viewModel.observeEstimate(),
-            // Price data
-            gasPriceHelper.let {
-                it.setup(include_gas_price_selection_root_container)
-                it.observe()
-            }.startWith(ErrorResult(Exception())),
-            BiFunction { estimate: Result<GasEstimate>, prices: Result<Wei> -> estimate to prices }
-        )
+        layout_deploy_new_safe_deploy_button.clicks()
             .observeOn(AndroidSchedulers.mainThread())
-            .publish {
-                /* TODO: ignore fees
-                Observable.merge(
-                    // Display fees
-                    it.compose(displayFeesTransformer),
-                    // Setup deploy button
-                        it.compose(deployButtonTransformer)
+            .flatMap {
+                viewModel.deployNewSafe(
+                    layout_deploy_new_safe_name_input.text.toString(), null
                 )
-                */
-                it.compose(deployButtonTransformer)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { toggleDeploying(true) }
+                    .doAfterTerminate { toggleDeploying(false) }
             }
+            .doOnNextForResult(::safeDeployed, ::errorDeploying)
 
     private fun toggleDeploying(inProgress: Boolean) {
         layout_deploy_new_safe_deploy_button.isEnabled = !inProgress
@@ -224,26 +162,6 @@ class DeployNewSafeFragment : BaseFragment() {
                 errorSnackbar(it, throwable)
             }
         }
-    }
-
-    private fun updateEstimate(estimate: Wei) {
-        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.INVISIBLE
-        layout_deploy_new_safe_transaction_fee.text = estimate.displayString(context!!)
-    }
-
-    private fun onFiat(fiat: Pair<BigDecimal, Currency>) {
-        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.VISIBLE
-        layout_deploy_new_safe_transaction_fee_fiat.text =
-                getString(
-                    R.string.fiat_approximation,
-                    fiat.first.stringWithNoTrailingZeroes(),
-                    fiat.second.getFiatSymbol()
-                )
-    }
-
-    private fun onFiatError(throwable: Throwable) {
-        Timber.e(throwable)
-        layout_deploy_new_safe_transaction_fee_fiat.visibility = View.GONE
     }
 
     private fun updateOwners(additionalOwners: List<BigInteger>) {

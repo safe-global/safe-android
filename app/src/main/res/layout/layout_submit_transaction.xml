@@ -181,45 +181,6 @@
                 android:visibility="gone"
                 tools:visibility="visible" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_width"
-                android:background="@color/divider"
-                android:visibility="gone" />
-
-            <include
-                layout="@layout/include_gas_price_selection"
-                android:visibility="gone" />
-
-            <View
-                android:id="@+id/layout_submit_transaction_transaction_fee_divider"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_width"
-                android:background="@color/divider"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/layout_submit_transaction_transaction_fee_label"
-                style="@style/Content"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"
-                android:text="@string/estimated_transaction_fee"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/layout_submit_transaction_transaction_fee"
-                style="@style/BoldContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:text="@string/loading"
-                android:visibility="gone" />
-
             <TextView
                 android:id="@+id/layout_submit_transaction_buy_credits_button"
                 style="@style/PrimaryButton"

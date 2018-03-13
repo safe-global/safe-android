@@ -23,7 +23,6 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.helpers.GasPriceHelper
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
@@ -51,9 +50,6 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         )
     }
 
-    @Inject
-    lateinit var gasPriceHelper: GasPriceHelper
-
     private var cachedTransactionData: CachedTransactionData? = null
     private var credentialsConfirmed: Boolean = false
     private var pendingSignature: String? = null
@@ -69,19 +65,10 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
 
     private val displayTransactionInformation: ObservableTransformer<Result<ViewTransactionContract.Info>, Any> =
         ObservableTransformer {
-            Observable.combineLatest(
-                // Transaction Data
-                it,
-                // Price data
-                gasPriceHelper.let {
-                    it.setup(include_gas_price_selection_root_container)
-                    it.observe()
-                }.startWith(ErrorResult(Exception())),
-                BiFunction { info: Result<ViewTransactionContract.Info>, prices: Result<Wei> -> info to prices }
-            )
+            it
                 .observeOn(AndroidSchedulers.mainThread())
                 // Update displayed information
-                .doOnNext({ (info: Result<ViewTransactionContract.Info>, prices: Result<Wei>) -> handleInfoWithPrices(info, prices) })
+                .doOnNextForResult(::updateInfo, ::handleInputError)
                 // Pass on data for submit
                 .publish {
                     Observable.merge(
@@ -91,16 +78,16 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 }
         }
 
-    private val submitTransformer: ObservableTransformer<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>, *> =
-        ObservableTransformer { up: Observable<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>> ->
+    private val submitTransformer: ObservableTransformer<Result<ViewTransactionContract.Info>, *> =
+        ObservableTransformer { up: Observable<Result<ViewTransactionContract.Info>> ->
             // We combine the data with the submit button events
             up.switchMap { infoWithGasPrice ->
                 layout_submit_transaction_submit_button.clicks().map { infoWithGasPrice }
             }
-                .doOnNext { (info, gasPrice) ->
+                .doOnNext { info ->
                     (info as? DataResult)?.let {
                         cachedTransactionData =
-                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction, (gasPrice as? DataResult)?.data)
+                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction, null)
                         startActivityForResult(UnlockActivity.createConfirmIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
                     } ?: run {
                         cachedTransactionData = null
@@ -108,19 +95,19 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 }
         }
 
-    private val submitToExternalWalletTransformer: ObservableTransformer<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>, *> =
-        ObservableTransformer { up: Observable<Pair<Result<ViewTransactionContract.Info>, Result<Wei>>> ->
+    private val submitToExternalWalletTransformer: ObservableTransformer<Result<ViewTransactionContract.Info>, *> =
+        ObservableTransformer { up: Observable<Result<ViewTransactionContract.Info>> ->
             up.switchMap { infoWithGasPrice -> layout_submit_transaction_external.clicks().map { infoWithGasPrice } }
-                .doOnNext { (info, gasPrice) ->
+                .doOnNext { info ->
                     (info as? DataResult)?.let {
                         cachedTransactionData =
-                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction, (gasPrice as? DataResult)?.data)
+                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction, null)
                     } ?: run {
                         cachedTransactionData = null
                     }
                 }
                 .flatMapSingle {
-                    (it.first as? DataResult)?.let {
+                    (it as? DataResult)?.let {
                         viewModel.loadExecutableTransaction(it.data.selectedSafe, it.data.status.transaction)
                     } ?: throw IllegalStateException()
                 }
@@ -309,12 +296,9 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             .doAfterTerminate { submittingTransaction(false) }
             .toObservable()
 
-    private fun handleInfoWithPrices(info: Result<ViewTransactionContract.Info>, prices: Result<Wei>) {
+    private fun handleInfoWithPrices(info: Result<ViewTransactionContract.Info>) {
         info.handle({
-            val estimate = it.estimate?.let {
-                Wei(((prices as? DataResult)?.data ?: it.gasPrice).value * it.gasCosts)
-            }
-            updateInfo(it, estimate)
+            updateInfo(it)
         }, ::handleInputError)
     }
 
@@ -324,7 +308,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         transactionInputEnabled(!loading)
     }
 
-    private fun updateInfo(info: ViewTransactionContract.Info, estimatedFees: Wei?) {
+    private fun updateInfo(info: ViewTransactionContract.Info) {
         val availableConfirmations = (if (info.status.isOwner) 1 else 0) + info.signatures.size
         val requiredConfirmationsAvailable = availableConfirmations >= info.status.requiredConfirmation
         info.status.let {
@@ -364,12 +348,6 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         (childIndex until layout_submit_transaction_confirmations_addresses.childCount).forEach {
             layout_submit_transaction_confirmations_addresses.removeViewAt(it)
         }
-
-        if (estimatedFees != null) {
-            layout_submit_transaction_transaction_fee.text = estimatedFees.displayString(this)
-        } else {
-            setUnknownEstimate()
-        }
     }
 
     private fun addSignerView(index: Int, address: BigInteger, pending: Boolean, name: String? = null) {
@@ -395,12 +373,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         layout_submit_transaction_send_signature_push_button.visible(canSign)
     }
 
-    private fun setUnknownEstimate() {
-        layout_submit_transaction_transaction_fee.text = "-"
-    }
-
     private fun setUnknownTransactionInfo() {
-        setUnknownEstimate()
         layout_submit_transaction_confirmations_hint_text.setFormattedText(R.string.confirm_transaction_hint, "required_confirmations" to "-")
         layout_submit_transaction_confirmations.text = getString(R.string.x_of_x_confirmations, "-", "-")
         setViewStates(false, false)

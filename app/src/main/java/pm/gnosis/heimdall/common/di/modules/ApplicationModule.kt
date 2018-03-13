@@ -80,23 +80,6 @@ class ApplicationModule {
 
     @Provides
     @Singleton
-    fun providesEthereumJsonRpcConnector(retrofitApi: RetrofitEthereumRpcApi): EthereumRpcConnector =
-        RetrofitEthereumRpcConnector(retrofitApi)
-
-    @Provides
-    @Singleton
-    fun providesEthGasStationApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): EthGasStationApi {
-        val retrofit = Retrofit.Builder()
-            .client(client)
-            .baseUrl(EthGasStationApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-            .build()
-        return retrofit.create(EthGasStationApi::class.java)
-    }
-
-    @Provides
-    @Singleton
     fun providesPushServiceApi(moshi: Moshi, client: OkHttpClient): PushServiceApi {
         val retrofit = Retrofit.Builder()
             // Increase timeout since our server goes to sleeps

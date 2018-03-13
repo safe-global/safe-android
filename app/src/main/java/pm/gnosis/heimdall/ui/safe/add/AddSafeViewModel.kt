@@ -91,14 +91,6 @@ class AddSafeViewModel @Inject constructor(
     override fun saveTransactionHash(transactionHash: String, name: String): Completable =
         repository.savePendingSafe(transactionHash.hexAsBigInteger(), name)
 
-    override fun observeEstimate(): Observable<Result<GasEstimate>> {
-        return addressStore.observe().flatMapSingle {
-            // We add 1 owner because the current device will automatically be added as an owner
-            repository.estimateDeployCosts(it, GnosisSafeUtils.calculateThreshold(it.size + 1))
-                .onErrorResumeNext({ errorHandler.single(it) })
-        }.mapToResult()
-    }
-
     override fun buyTransactionCredits(activity: Activity): Single<Boolean> =
         txExecutorRepository.buyPlan(activity)
 
