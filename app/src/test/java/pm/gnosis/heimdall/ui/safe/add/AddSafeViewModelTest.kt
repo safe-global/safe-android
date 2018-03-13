@@ -189,7 +189,6 @@ class AddSafeViewModelTest {
     @Test
     fun observeEstimate() {
         val addressPublisher = PublishSubject.create<Set<BigInteger>>()
-        given(addressStore.observe()).willReturn(addressPublisher)
 
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
 
