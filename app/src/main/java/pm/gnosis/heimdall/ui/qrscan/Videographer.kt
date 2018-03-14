@@ -10,6 +10,7 @@ import android.os.HandlerThread
 import android.view.Surface
 import android.view.TextureView
 import android.view.WindowManager
+import pm.gnosis.svalinn.common.di.ForView
 import pm.gnosis.svalinn.common.di.ViewContext
 import pm.gnosis.utils.nullOnThrow
 import timber.log.Timber
@@ -19,7 +20,7 @@ import javax.inject.Inject
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
  */
 @Suppress("DEPRECATION")
-@ViewContext
+@ForView
 class Videographer @Inject constructor(@ViewContext context: Context, private val qrCodeDecoder: QRCodeDecoder) {
     private val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
@@ -48,7 +49,7 @@ class Videographer @Inject constructor(@ViewContext context: Context, private va
         }
     }
 
-    var onSuccessfulScan: (result: String) -> Unit = {}
+    var onSuccessfulScan: ((result: String) -> Unit)? = null
 
     var isOpen = false
 
@@ -90,7 +91,7 @@ class Videographer @Inject constructor(@ViewContext context: Context, private va
 
     private fun capture() {
         camera.setOneShotPreviewCallback { data, _ ->
-            nullOnThrow { qrCodeDecoder.decode(data, previewWidth, previewHeight) }?.let(onSuccessfulScan) ?: capture()
+            onSuccessfulScan?.let { callback -> nullOnThrow { callback(qrCodeDecoder.decode(data, previewWidth, previewHeight)) } } ?: capture()
         }
     }
 
