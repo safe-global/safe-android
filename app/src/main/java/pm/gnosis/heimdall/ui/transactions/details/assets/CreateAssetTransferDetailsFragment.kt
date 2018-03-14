@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.selectFromAddressBook
@@ -120,7 +121,7 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
         ).subscribe(inputSubject::onNext, Timber::e)
 
         layout_transaction_details_asset_transfer_scan_to_button.setOnClickListener {
-            scanQrCode()
+            QRCodeScanActivity.startForResult(this)
         }
 
         layout_transaction_details_asset_transfer_address_book_button.setOnClickListener {

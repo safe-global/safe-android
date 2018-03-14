@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
@@ -73,7 +74,7 @@ class RequestSignatureDialog : BaseShareQrCodeDialog() {
         disposables += dialog_request_signature_scan.clicks()
             .subscribe {
                 // We use the parent activity, so that it handles the result
-                activity?.scanQrCode()
+                activity?.let { QRCodeScanActivity.startForResult(it) }
                 dismiss()
             }
     }

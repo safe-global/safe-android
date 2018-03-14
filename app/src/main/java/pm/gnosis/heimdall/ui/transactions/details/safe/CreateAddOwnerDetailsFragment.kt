@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.selectFromAddressBook
@@ -23,7 +24,6 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.doOnNextForResult
-import pm.gnosis.svalinn.common.utils.scanQrCode
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import timber.log.Timber
@@ -62,13 +62,13 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
     }
 
     override fun observeTransaction(): Observable<Result<Transaction>> =
-            // Setup initial form data
+    // Setup initial form data
         subViewModel.loadFormData(transaction)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { (address) ->
                 layout_create_add_safe_owner_address_input.setDefault(address)
                 layout_create_add_safe_owner_scan_address_button.setOnClickListener {
-                    scanQrCode()
+                    QRCodeScanActivity.startForResult(this)
                 }
                 layout_create_add_safe_owner_scan_address_button.setOnClickListener {
                     selectFromAddressBook()

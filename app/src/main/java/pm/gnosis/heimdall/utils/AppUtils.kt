@@ -20,21 +20,23 @@ import pm.gnosis.erc67.erc67Uri
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Transaction
-import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.svalinn.common.utils.appendText
+import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import timber.log.Timber
 
 fun errorSnackbar(view: View, throwable: Throwable, duration: Int = Snackbar.LENGTH_LONG) {
-    val message = (throwable as? LocalizedException)?.localizedMessage()
-            ?: view.context.getString(R.string.error_try_again)
+    val message = (throwable as? LocalizedException)?.localizedMessage() ?: view.context.getString(R.string.error_try_again)
     snackbar(view, message, duration)
 }
 
 fun Context.errorToast(throwable: Throwable, duration: Int = Toast.LENGTH_LONG) {
-    val message = (throwable as? LocalizedException)?.localizedMessage()
-            ?: getString(R.string.error_try_again)
+    val message = (throwable as? LocalizedException)?.localizedMessage() ?: getString(R.string.error_try_again)
     toast(message, duration)
 }
 
@@ -42,9 +44,9 @@ fun handleQrCodeActivityResult(
     requestCode: Int, resultCode: Int, data: Intent?,
     onQrCodeResult: (String) -> Unit, onCancelledResult: (() -> Unit)? = null
 ): Boolean {
-    if (requestCode == ZxingIntentIntegrator.REQUEST_CODE) {
-        if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA)) {
-            onQrCodeResult(data.getStringExtra(ZxingIntentIntegrator.SCAN_RESULT_EXTRA))
+    if (requestCode == QRCodeScanActivity.REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(QRCodeScanActivity.RESULT_EXTRA)) {
+            onQrCodeResult(data.getStringExtra(QRCodeScanActivity.RESULT_EXTRA))
         } else if (resultCode == Activity.RESULT_CANCELED) {
             onCancelledResult?.invoke()
         }

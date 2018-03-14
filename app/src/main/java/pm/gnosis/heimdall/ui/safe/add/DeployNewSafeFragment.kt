@@ -22,6 +22,7 @@ import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddressString
@@ -122,10 +123,8 @@ class DeployNewSafeFragment : BaseFragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_address_input, null)
         AlertDialog.Builder(context)
             .setView(dialogView)
-            .setPositiveButton(
-                R.string.add,
-                { _, _ -> addOwner(dialogView.dialog_address_input_address.text.toString()) })
-            .setNeutralButton(R.string.scan, { _, _ -> scanQrCode() })
+            .setPositiveButton(R.string.add, { _, _ -> addOwner(dialogView.dialog_address_input_address.text.toString()) })
+            .setNeutralButton(R.string.scan, { _, _ -> QRCodeScanActivity.startForResult(this) })
             .setOnDismissListener { activity?.hideSoftKeyboard() }
             .show()
     }

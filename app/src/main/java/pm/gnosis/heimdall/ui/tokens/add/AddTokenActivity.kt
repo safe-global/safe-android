@@ -18,11 +18,15 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.heimdall.utils.parseEthereumAddress
 import pm.gnosis.heimdall.utils.setupToolbar
-import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.svalinn.common.utils.hideSoftKeyboard
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.subscribeForResult
+import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.isValidEthereumAddress
@@ -43,7 +47,7 @@ class AddTokenActivity : BaseActivity() {
         setupToolbar(layout_add_token_toolbar)
         layout_add_token_toolbar.title = getString(R.string.add_token)
 
-        layout_add_token_scan_qr_code.setOnClickListener { scanQrCode() }
+        layout_add_token_scan_qr_code.setOnClickListener { QRCodeScanActivity.startForResult(this) }
     }
 
     override fun onStart() {
