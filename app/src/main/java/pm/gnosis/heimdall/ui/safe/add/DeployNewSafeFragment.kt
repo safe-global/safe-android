@@ -96,9 +96,7 @@ class DeployNewSafeFragment : BaseFragment() {
         layout_deploy_new_safe_deploy_button.clicks()
             .observeOn(AndroidSchedulers.mainThread())
             .flatMap {
-                viewModel.deployNewSafe(
-                    layout_deploy_new_safe_name_input.text.toString(), null
-                )
+                viewModel.deployNewSafe(layout_deploy_new_safe_name_input.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { toggleDeploying(true) }
                     .doAfterTerminate { toggleDeploying(false) }

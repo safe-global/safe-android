@@ -10,7 +10,6 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
-import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -37,7 +36,7 @@ class AddSafeViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val accountsRepository: AccountsRepository,
     private val addressStore: AddressStore,
-    private val repository: GnosisSafeRepository,
+    private val gnosisSafeRepository: GnosisSafeRepository,
     private val tickerRepository: TickerRepository,
     private val txExecutorRepository: TxExecutorRepository
 ) : AddSafeContract() {
@@ -61,35 +60,35 @@ class AddSafeViewModel @Inject constructor(
                     ?: throw SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))
             parsedAddress to name
         }.flatMap { (address, name) ->
-                repository.add(address, name)
-                    .andThen(Observable.just(Unit))
-                    .onErrorResumeNext(Function { errorHandler.observable(it) })
-            }
+            gnosisSafeRepository.addSafe(address, name)
+                .andThen(Observable.just(Unit))
+                .onErrorResumeNext(Function { errorHandler.observable(it) })
+        }
             .mapToResult()
     }
 
-    override fun deployNewSafe(name: String, overrideGasPrice: Wei?): Observable<Result<Unit>> {
-        return Observable.fromCallable {
+    override fun deployNewSafe(name: String): Observable<Result<Unit>> =
+        Observable.fromCallable {
             checkName(name)
             name
         }.flatMap {
-                addressStore.load().flatMapCompletable {
-                    // We add 1 owner because the current device will automatically be added as an owner
-                    repository.deploy(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1), overrideGasPrice)
-                }
-                    .andThen(Observable.just(Unit))
-                    .onErrorResumeNext(Function {
-                        if (it is HttpException && it.code() == HttpCodes.UNAUTHORIZED)
-                            Observable.error(IllegalStateException())
-                        else
-                            errorHandler.observable(it)
-                    })
+            addressStore.load().flatMapCompletable {
+                // We add 1 owner because the current device will automatically be added as an owner
+                gnosisSafeRepository.deploy(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1))
             }
+                .andThen(Observable.just(Unit))
+                .onErrorResumeNext(Function {
+                    if (it is HttpException && it.code() == HttpCodes.UNAUTHORIZED)
+                        Observable.error(IllegalStateException())
+                    else
+                        errorHandler.observable(it)
+                })
+        }
             .mapToResult()
-    }
+
 
     override fun saveTransactionHash(transactionHash: String, name: String): Completable =
-        repository.savePendingSafe(transactionHash.hexAsBigInteger(), name)
+        gnosisSafeRepository.savePendingSafe(transactionHash.hexAsBigInteger(), name)
 
     override fun buyTransactionCredits(activity: Activity): Single<Boolean> =
         txExecutorRepository.buyPlan(activity)
@@ -101,8 +100,7 @@ class AddSafeViewModel @Inject constructor(
     }
 
     override fun loadFiatConversion(wei: Wei) =
-        (cachedFiatPrice?.let { Single.just(it) }
-                ?: (tickerRepository.loadCurrency().doOnSuccess { cachedFiatPrice = it }))
+        (cachedFiatPrice?.let { Single.just(it) } ?: (tickerRepository.loadCurrency().doOnSuccess { cachedFiatPrice = it }))
             .map { it.convert(wei) to it }
             .mapToResult()
 
@@ -111,13 +109,10 @@ class AddSafeViewModel @Inject constructor(
             .map { it.address }
             .doOnSuccess { deviceInfo = it }
 
-    override fun observeHasCredits(): Observable<Boolean> =
-        txExecutorRepository.observePlan()
+    override fun observeHasCredits(): Observable<Boolean> = txExecutorRepository.observePlan()
 
     override fun removeAdditionalOwner(address: BigInteger): Observable<Result<Unit>> =
-        Observable.fromCallable {
-            addressStore.remove(address)
-        }
+        Observable.fromCallable { addressStore.remove(address) }
             .subscribeOn(Schedulers.io())
             .mapToResult()
 
@@ -135,11 +130,9 @@ class AddSafeViewModel @Inject constructor(
 
 
     override fun loadSafeInfo(address: String): Observable<Result<SafeInfo>> =
-        Single.fromCallable {
-            address.hexAsEthereumAddressOrNull() ?: throw InvalidAddressException()
-        }.flatMapObservable {
-                repository.loadInfo(it)
-            }.mapToResult()
+        Single.fromCallable { address.hexAsEthereumAddressOrNull() ?: throw InvalidAddressException() }
+            .flatMapObservable { gnosisSafeRepository.loadInfo(it) }
+            .mapToResult()
 
     override fun loadActiveAccount(): Observable<Account> = accountsRepository.loadActiveAccount().toObservable()
         .onErrorResumeNext { t: Throwable -> Timber.d(t); Observable.empty<Account>() }
@@ -153,7 +146,7 @@ class AddSafeViewModel @Inject constructor(
             .flatMap {
                 addressStore.load().flatMap {
                     // We add 1 owner because the current device will automatically be added as an owner
-                    repository.loadSafeDeployTransaction(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1))
+                    gnosisSafeRepository.loadSafeDeployTransaction(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1))
                 }
             }
             .mapToResult()

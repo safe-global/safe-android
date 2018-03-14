@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -18,7 +17,7 @@ import java.math.BigInteger
 abstract class AddSafeContract : ViewModel() {
     abstract fun addExistingSafe(name: String, address: String): Observable<Result<Unit>>
 
-    abstract fun deployNewSafe(name: String, overrideGasPrice: Wei?): Observable<Result<Unit>>
+    abstract fun deployNewSafe(name: String): Observable<Result<Unit>>
 
     abstract fun saveTransactionHash(transactionHash: String, name: String): Completable
 

@@ -19,17 +19,14 @@ class SafeSettingsViewModel @Inject constructor(
     private val safeRepository: GnosisSafeRepository
 ) : SafeSettingsContract() {
 
-    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
-        .build()
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
 
     private var cachedInfo: SafeInfo? = null
 
     private var address: BigInteger? = null
 
     override fun setup(address: BigInteger) {
-        if (this.address == address) {
-            return
-        }
+        if (this.address == address) return
         this.address = address
         cachedInfo = null
     }
@@ -52,12 +49,11 @@ class SafeSettingsViewModel @Inject constructor(
         Single.fromCallable {
             if (name.isBlank()) throw SimpleLocalizedException(context.getString(R.string.error_blank_name))
             name.trimWhitespace()
-        }.flatMap {
-                safeRepository.updateName(address!!, it).andThen(Single.just(it))
-            }.mapToResult()
+        }.flatMap { safeRepository.updateName(address!!, it).andThen(Single.just(it)) }
+            .mapToResult()
 
     override fun deleteSafe() =
-        safeRepository.remove(address!!)
+        safeRepository.removeSafe(address!!)
             .andThen(Single.just(Unit))
             .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
             .mapToResult()

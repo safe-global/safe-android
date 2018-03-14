@@ -166,13 +166,13 @@ class SafeSettingsViewModelTest {
     fun deleteSafe() {
         val testCompletable = TestCompletable()
         val testObserver = TestObserver<Result<Unit>>()
-        given(repositoryMock.remove(MockUtils.any())).willReturn(testCompletable)
+        given(repositoryMock.removeSafe(MockUtils.any())).willReturn(testCompletable)
         viewModel.setup(BigInteger.ZERO)
 
         viewModel.deleteSafe().subscribe(testObserver)
 
         assertEquals(1, testCompletable.callCount)
-        BDDMockito.then(repositoryMock).should().remove(BigInteger.ZERO)
+        BDDMockito.then(repositoryMock).should().removeSafe(BigInteger.ZERO)
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(Unit)).assertNoErrors()
     }
@@ -181,12 +181,12 @@ class SafeSettingsViewModelTest {
     fun deleteSafeError() {
         val testObserver = TestObserver<Result<Unit>>()
         val exception = Exception()
-        given(repositoryMock.remove(MockUtils.any())).willReturn(Completable.error(exception))
+        given(repositoryMock.removeSafe(MockUtils.any())).willReturn(Completable.error(exception))
         viewModel.setup(BigInteger.ZERO)
 
         viewModel.deleteSafe().subscribe(testObserver)
 
-        BDDMockito.then(repositoryMock).should().remove(BigInteger.ZERO)
+        BDDMockito.then(repositoryMock).should().removeSafe(BigInteger.ZERO)
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(ErrorResult(exception)).assertNoErrors()
     }

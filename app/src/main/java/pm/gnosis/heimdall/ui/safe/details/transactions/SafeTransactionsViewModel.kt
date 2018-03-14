@@ -68,8 +68,7 @@ class SafeTransactionsViewModel @Inject constructor(
     override fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus> =
         safeTransactionsRepository.observePublishStatus(id)
 
-    override fun transactionSelected(id: String): Single<Intent> =
-        Single.just(ReceiptTransactionActivity.createIntent(context, id))
+    override fun transactionSelected(id: String): Single<Intent> = Single.just(ReceiptTransactionActivity.createIntent(context, id))
 
     private fun loadTokenValue(token: BigInteger, value: BigInteger) =
         tokenRepository.observeToken(token)

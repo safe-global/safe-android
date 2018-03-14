@@ -18,7 +18,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
-import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -37,7 +36,6 @@ import pm.gnosis.utils.hexAsEthereumAddress
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.net.UnknownHostException
 
 @RunWith(MockitoJUnitRunner::class)
 class AddSafeViewModelTest {
@@ -78,12 +76,12 @@ class AddSafeViewModelTest {
     @Test
     fun addExistingSafe() {
         val testObserver = TestObserver.create<Result<Unit>>()
-        given(safeRepositoryMock.add(any(), anyString())).willReturn(Completable.complete())
+        given(safeRepositoryMock.addSafe(any(), anyString())).willReturn(Completable.complete())
 
         viewModel.addExistingSafe("test", "0x0").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue(DataResult(Unit))
-        then(safeRepositoryMock).should().add(BigInteger.ZERO, "test")
+        then(safeRepositoryMock).should().addSafe(BigInteger.ZERO, "test")
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -113,20 +111,20 @@ class AddSafeViewModelTest {
     fun addExistingRepoError() {
         val testObserver = TestObserver.create<Result<Unit>>()
         val error = IllegalStateException()
-        given(safeRepositoryMock.add(any(), anyString())).willReturn(Completable.error(error))
+        given(safeRepositoryMock.addSafe(any(), anyString())).willReturn(Completable.error(error))
 
         viewModel.addExistingSafe("test", "0x0").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error == error
         }
-        then(safeRepositoryMock).should().add(BigInteger.ZERO, "test")
+        then(safeRepositoryMock).should().addSafe(BigInteger.ZERO, "test")
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
-    private fun subscribeDeploySafe(name: String, price: Wei?) =
+    private fun subscribeDeploySafe(name: String) =
         TestObserver.create<Result<Unit>>().apply {
-            viewModel.deployNewSafe(name, price).subscribe(this)
+            viewModel.deployNewSafe(name).subscribe(this)
         }
 
     private fun testDeploySafe(
@@ -142,25 +140,26 @@ class AddSafeViewModelTest {
         if (hasRepoInteractions) {
             // Avoid unnecessary mocks
             val repoResult = repoException?.let { Completable.error(it) } ?: Completable.complete()
-            given(safeRepositoryMock.deploy(any(), any(), anyInt(), any())).willReturn(repoResult)
+            given(safeRepositoryMock.deploy(any(), any(), anyInt())).willReturn(repoResult)
         }
 
         val result = expectedError?.let { ErrorResult<Unit>(it) } ?: DataResult(Unit)
-        subscribeDeploySafe(name, null).assertNoErrors().assertValue(result)
+        subscribeDeploySafe(name).assertNoErrors().assertValue(result)
+
         if (hasStoreInteractions) {
             then(addressStore).should().load()
         }
         if (hasRepoInteractions) {
-            then(safeRepositoryMock).should().deploy(name, additionalOwners, Math.max(1, additionalOwners.size), null)
+            then(safeRepositoryMock).should().deploy(name, additionalOwners, Math.max(1, additionalOwners.size))
         }
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
 
-        subscribeDeploySafe(name, Wei(BigInteger.TEN)).assertNoErrors().assertValue(result)
+        subscribeDeploySafe(name).assertNoErrors().assertValue(result)
         if (hasStoreInteractions) {
             then(addressStore).should(times(2)).load()
         }
         if (hasRepoInteractions) {
-            then(safeRepositoryMock).should().deploy(name, additionalOwners, Math.max(1, additionalOwners.size), Wei(BigInteger.TEN))
+            then(safeRepositoryMock).should(times(2)).deploy(name, additionalOwners, Math.max(1, additionalOwners.size))
         }
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         then(addressStore).shouldHaveNoMoreInteractions()

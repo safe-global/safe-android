@@ -17,13 +17,11 @@ import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
-import pm.gnosis.heimdall.data.repositories.models.GasEstimate
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract.Info
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.models.Transaction
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
@@ -316,9 +314,9 @@ class ViewTransactionViewModelTest {
         then(signatureStoreMock).shouldHaveNoMoreInteractions()
     }
 
-    private fun testSubmitTransactionWithGas(
+    private fun testSubmitTransaction(
         info: TransactionRepository.ExecuteInformation, submitError: Throwable?,
-        expectingSubmit: Boolean, gasOverride: Wei?,
+        expectingSubmit: Boolean,
         signatures: Map<BigInteger, Signature>?,
         expectedResult: Result<BigInteger>
     ) {
@@ -330,36 +328,26 @@ class ViewTransactionViewModelTest {
 
         if (expectingSubmit) {
             val submitReturn = submitError?.let { Completable.error(it) } ?: Completable.complete()
-            given(transactionRepositoryMock.submit(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(), MockUtils.any())).willReturn(
+            given(transactionRepositoryMock.submit(MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean())).willReturn(
                 submitReturn
             )
         }
 
         val testObserverDefaultGas = TestObserver<Result<BigInteger>>()
-        viewModel.submitTransaction(TEST_SAFE, TEST_TRANSACTION, gasOverride).subscribe(testObserverDefaultGas)
+        viewModel.submitTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserverDefaultGas)
 
         testObserverDefaultGas.assertResult(expectedResult)
 
         then(transactionRepositoryMock).should().loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)
         if (expectingSubmit) {
-            then(transactionRepositoryMock).should().submit(TEST_SAFE, TEST_TRANSACTION, signatures!!, info.isOwner, gasOverride)
+            then(transactionRepositoryMock).should().submit(TEST_SAFE, TEST_TRANSACTION, signatures!!, info.isOwner)
         }
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         BDDMockito.reset(transactionRepositoryMock)
     }
 
-    private fun testSubmitTransaction(
-        info: TransactionRepository.ExecuteInformation, submitError: Throwable?,
-        expectingSubmit: Boolean, signatures: Map<BigInteger, Signature>?,
-        expectedResult: Result<BigInteger>
-    ) {
-        testSubmitTransactionWithGas(info, submitError, expectingSubmit, null, signatures, expectedResult)
-        testSubmitTransactionWithGas(info, submitError, expectingSubmit, TEST_GAS_OVERRIDE, signatures, expectedResult)
-    }
-
     @Test
     fun submitTransaction() {
-
         // Test execute
         val execute = TransactionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION,
@@ -415,7 +403,7 @@ class ViewTransactionViewModelTest {
         given(transactionRepositoryMock.loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.error(error))
 
         val testObserver = TestObserver<Result<BigInteger>>()
-        viewModel.submitTransaction(TEST_SAFE, TEST_TRANSACTION, null).subscribe(testObserver)
+        viewModel.submitTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
 
         testObserver.assertNoErrors()
             .assertValue(ErrorResult(error))
@@ -779,6 +767,5 @@ class ViewTransactionViewModelTest {
         private val TEST_NOT_OWNER = BigInteger.valueOf(12345)
         private val TEST_OWNER = BigInteger.valueOf(5674)
         private val TEST_OWNERS = listOf(TEST_OWNER, BigInteger.valueOf(13))
-        private val TEST_GAS_OVERRIDE = Wei(BigInteger.valueOf(7331))
     }
 }

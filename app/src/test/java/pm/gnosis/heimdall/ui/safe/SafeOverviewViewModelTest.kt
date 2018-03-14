@@ -139,11 +139,11 @@ class SafeOverviewViewModelTest {
     fun removeSafeSuccess() {
         val observer = TestObserver.create<Unit>()
         val completable = TestCompletable()
-        given(repositoryMock.remove(MockUtils.any())).willReturn(completable)
+        given(repositoryMock.removeSafe(MockUtils.any())).willReturn(completable)
 
         viewModel.removeSafe(BigInteger.ZERO).subscribe(observer)
 
-        then(repositoryMock).should().remove(BigInteger.ZERO)
+        then(repositoryMock).should().removeSafe(BigInteger.ZERO)
         then(repositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, completable.callCount)
         observer.assertTerminated().assertNoErrors().assertNoValues()
@@ -153,11 +153,11 @@ class SafeOverviewViewModelTest {
     fun removeSafeError() {
         val observer = TestObserver.create<Unit>()
         val error = IllegalStateException()
-        given(repositoryMock.remove(MockUtils.any())).willReturn(Completable.error(error))
+        given(repositoryMock.removeSafe(MockUtils.any())).willReturn(Completable.error(error))
 
         viewModel.removeSafe(BigInteger.ZERO).subscribe(observer)
 
-        then(repositoryMock).should().remove(BigInteger.ZERO)
+        then(repositoryMock).should().removeSafe(BigInteger.ZERO)
         then(repositoryMock).shouldHaveNoMoreInteractions()
         observer.assertTerminated().assertNoValues()
             .assertError(error)
@@ -204,7 +204,7 @@ class SafeOverviewViewModelTest {
         val testObserver = TestObserver.create<String>()
         given(repositoryMock.observeDeployStatus(anyString())).willReturn(Observable.just(result))
 
-        viewModel.observeDeployedStatus("test").subscribe(testObserver)
+        viewModel.observeDeployStatus("test").subscribe(testObserver)
 
         then(repositoryMock).should().observeDeployStatus("test")
         then(repositoryMock).shouldHaveNoMoreInteractions()
@@ -217,7 +217,7 @@ class SafeOverviewViewModelTest {
         val testObserver = TestObserver.create<String>()
         given(repositoryMock.observeDeployStatus(anyString())).willReturn(Observable.error(exception))
 
-        viewModel.observeDeployedStatus("test").subscribe(testObserver)
+        viewModel.observeDeployStatus("test").subscribe(testObserver)
 
         then(repositoryMock).should().observeDeployStatus("test")
         then(repositoryMock).shouldHaveNoMoreInteractions()

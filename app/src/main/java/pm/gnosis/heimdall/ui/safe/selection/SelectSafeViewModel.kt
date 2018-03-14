@@ -24,15 +24,12 @@ class SelectSafeViewModel @Inject constructor(
     private val detailRepository: TransactionDetailsRepository
 ) : SelectSafeContract() {
 
-    override fun loadSafes(): Single<List<Safe>> =
-        safeRepository.observeDeployedSafes()
-            .firstOrError()
+    override fun loadSafes(): Single<List<Safe>> = safeRepository.observeDeployedSafes().firstOrError()
 
     override fun reviewTransaction(safe: BigInteger?, transaction: Transaction): Single<Result<Intent>> =
         detailRepository.loadTransactionType(transaction)
             .map {
-                safe
-                        ?: throw SimpleLocalizedException(context.getString(R.string.no_safe_selected_error))
+                safe ?: throw SimpleLocalizedException(context.getString(R.string.no_safe_selected_error))
                 when (it) {
                     TransactionType.REMOVE_SAFE_OWNER ->
                         SubmitTransactionActivity.createIntent(context, safe, transaction)

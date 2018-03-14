@@ -63,18 +63,16 @@ class DefaultSignaturePushRepository @Inject constructor(
             }
     }
 
-    override fun send(safe: BigInteger, transaction: Transaction, signature: Signature): Completable {
-        return transactionRepository.calculateHash(safe, transaction).flatMapCompletable {
+    override fun send(safe: BigInteger, transaction: Transaction, signature: Signature): Completable =
+        transactionRepository.calculateHash(safe, transaction).flatMapCompletable {
             pushServiceApi.sendSignature(cleanAddress(safe), SendSignatureData(GnoSafeUrlParser.signResponse(signature), it.toHexString()))
         }
-    }
+
 
     private val observedSafes = HashMap<BigInteger, ReceiveSignatureObservable>()
 
     override fun receivedSignature(topic: String?, signature: Signature) {
-        if (topic?.startsWith(FCM_TOPICS_PREFIX + RESPOND_SIGNATURE_TOPIC_PREFIX) != true) {
-            return
-        }
+        if (topic?.startsWith(FCM_TOPICS_PREFIX + RESPOND_SIGNATURE_TOPIC_PREFIX) != true) return
         topic.removePrefix(FCM_TOPICS_PREFIX + RESPOND_SIGNATURE_TOPIC_PREFIX).hexAsBigIntegerOrNull()?.let {
             observedSafes[it]
         }?.publish(signature)

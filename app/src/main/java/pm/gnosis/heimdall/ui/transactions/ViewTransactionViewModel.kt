@@ -14,7 +14,6 @@ import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.models.Transaction
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.*
@@ -33,18 +32,14 @@ class ViewTransactionViewModel @Inject constructor(
     private val txExecutorRepository: TxExecutorRepository
 ) : ViewTransactionContract() {
 
-    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
-        .build()
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
 
-    override fun observeHasCredits() =
-        txExecutorRepository.observePlan()
+    override fun observeHasCredits() = txExecutorRepository.observePlan()
 
-    override fun buyCredit(activity: Activity) =
-        txExecutorRepository.buyPlan(activity)
+    override fun buyCredit(activity: Activity) = txExecutorRepository.buyPlan(activity)
 
-    override fun checkTransactionType(transaction: Transaction): Single<TransactionType> {
-        return transactionDetailsRepository.loadTransactionType(transaction)
-    }
+    override fun checkTransactionType(transaction: Transaction): Single<TransactionType> =
+        transactionDetailsRepository.loadTransactionType(transaction)
 
     private fun checkSignature(safe: BigInteger, transaction: Transaction, signature: Signature) =
         transactionRepository.checkSignature(safe, transaction, signature)
@@ -80,8 +75,8 @@ class ViewTransactionViewModel @Inject constructor(
             }
             .mapToResult()
 
-    override fun addSignature(encodedSignatureUrl: String): Completable {
-        return signatureStore.loadSingingInfo()
+    override fun addSignature(encodedSignatureUrl: String): Completable =
+        signatureStore.loadSingingInfo()
             .flatMap { (safe, transaction) ->
                 (GnoSafeUrlParser.parse(encodedSignatureUrl) as? GnoSafeUrlParser.Parsed.SignResponse)?.let {
                     checkSignature(safe, transaction, it.signature)
@@ -90,10 +85,9 @@ class ViewTransactionViewModel @Inject constructor(
             }
             .map(signatureStore::add)
             .toCompletable()
-    }
 
-    override fun loadExecuteInfo(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Info>> {
-        return transactionRepository.loadExecuteInformation(safeAddress, transaction)
+    override fun loadExecuteInfo(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Info>> =
+        transactionRepository.loadExecuteInformation(safeAddress, transaction)
             .flatMapObservable { info ->
                 // Observe local signature store
                 signatureStore.flatMapInfo(safeAddress, info)
@@ -101,15 +95,15 @@ class ViewTransactionViewModel @Inject constructor(
                     .map<Result<Info>> { DataResult(Info(safeAddress, info, it)) }
             }
             .onErrorReturn { ErrorResult(it) }
-    }
 
-    override fun submitTransaction(safeAddress: BigInteger, transaction: Transaction, overrideGasPrice: Wei?): Single<Result<BigInteger>> {
-        return transactionRepository.loadExecuteInformation(safeAddress, transaction)
+
+    override fun submitTransaction(safeAddress: BigInteger, transaction: Transaction): Single<Result<BigInteger>> =
+        transactionRepository.loadExecuteInformation(safeAddress, transaction)
             .flatMapCompletable { info ->
                 // Observe local signature store
                 signatureStore.load()
                     .map { info.check(it); it }
-                    .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, info.isOwner, overrideGasPrice) }
+                    .flatMapCompletable { transactionRepository.submit(safeAddress, info.transaction, it, info.isOwner) }
             }
             .andThen(Single.just(safeAddress))
             .onErrorResumeNext({
@@ -119,7 +113,6 @@ class ViewTransactionViewModel @Inject constructor(
                     errorHandler.single(it)
             })
             .mapToResult()
-    }
 
     override fun loadExecutableTransaction(safeAddress: BigInteger, transaction: Transaction): Single<Transaction> =
         transactionRepository.loadExecuteInformation(safeAddress, transaction)
@@ -130,8 +123,8 @@ class ViewTransactionViewModel @Inject constructor(
                     .flatMap { transactionRepository.loadExecutableTransaction(safeAddress, info.transaction, it, info.isOwner) }
             }
 
-    override fun signTransaction(safeAddress: BigInteger, transaction: Transaction, sendViaPush: Boolean): Single<Result<Pair<String, Bitmap?>>> {
-        return transactionRepository.sign(safeAddress, transaction)
+    override fun signTransaction(safeAddress: BigInteger, transaction: Transaction, sendViaPush: Boolean): Single<Result<Pair<String, Bitmap?>>> =
+        transactionRepository.sign(safeAddress, transaction)
             .flatMap { signature ->
                 if (sendViaPush)
                     signaturePushRepository.send(safeAddress, transaction, signature)
@@ -143,7 +136,6 @@ class ViewTransactionViewModel @Inject constructor(
             }
             .onErrorResumeNext({ errorHandler.single(it) })
             .mapToResult()
-    }
 
     private fun TransactionRepository.ExecuteInformation.check(signatures: Map<BigInteger, Signature>): TransactionRepository.ExecuteInformation =
         when {
