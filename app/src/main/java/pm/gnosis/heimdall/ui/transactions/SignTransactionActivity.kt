@@ -34,9 +34,7 @@ class SignTransactionActivity : ViewTransactionActivity() {
     private val signTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, *> =
         ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
             // We combine the data with the submit button events
-            up.switchMap { infoWithGasPrice ->
-                layout_sign_transaction_sign_button.clicks().map { infoWithGasPrice }
-            }
+            up.switchMap { safeWithTransaction -> layout_sign_transaction_sign_button.clicks().map { safeWithTransaction } }
                 .doOnNext { (safe, transaction) ->
                     if (safe != null && transaction is DataResult) {
                         cachedTransactionData = CachedTransactionData(safe, transaction.data)

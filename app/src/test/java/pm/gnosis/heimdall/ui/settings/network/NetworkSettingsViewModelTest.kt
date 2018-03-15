@@ -42,30 +42,6 @@ class NetworkSettingsViewModelTest {
     }
 
     @Test
-    fun loadIpfsUrlNoOverride() {
-        given(repository.getIpfsUrl()).willReturn(null)
-
-        val testObserver = TestObserver<String>()
-        viewModel.loadIpfsUrl().subscribe(testObserver)
-
-        testObserver.assertNoErrors().assertValue("").assertComplete()
-        then(repository).should().getIpfsUrl()
-        then(repository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun loadIpfsUrlOverride() {
-        given(repository.getIpfsUrl()).willReturn(SettingsRepository.UrlOverride(true, "test.example", 1337))
-
-        val testObserver = TestObserver<String>()
-        viewModel.loadIpfsUrl().subscribe(testObserver)
-
-        testObserver.assertNoErrors().assertValue("https://test.example:1337").assertComplete()
-        then(repository).should().getIpfsUrl()
-        then(repository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
     fun updateRpcUrlNoOverride() {
         given(repository.getEthereumRPCUrl()).willReturn(null)
 
@@ -87,46 +63,6 @@ class NetworkSettingsViewModelTest {
         testObserver.assertNoErrors().assertValue("https://test.example:1337").assertComplete()
         then(repository).should().getEthereumRPCUrl()
         then(repository).shouldHaveNoMoreInteractions()
-    }
-
-    private fun testUpdateIpfsUrlValid(input: String, isHttps: Boolean, host: String?, port: Int?) {
-        val testObserver = TestObserver<Result<String>>()
-        viewModel.updateIpfsUrl(input).subscribe(testObserver)
-
-        then(repository).should().setIpfsUrl(isHttps, host, port)
-        testObserver.assertNoErrors().assertValue {
-            it is DataResult && it.data == input
-        }.assertComplete()
-        then(repository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun updateIpfsUrlValid() {
-        // Https URL with port
-        testUpdateIpfsUrlValid("https://test.example:1337", true, "test.example", 1337)
-        // Http URL with port
-        testUpdateIpfsUrlValid("http://test.example:1337", false, "test.example", 1337)
-        // Https URL without port
-        testUpdateIpfsUrlValid("https://test.example", true, "test.example", null)
-        // Clear URL
-        testUpdateIpfsUrlValid("", true, null, null)
-    }
-
-    private fun testUpdateIpfsUrlError(input: String, msgId: Int) {
-        val testObserver = TestObserver<Result<String>>()
-        viewModel.updateIpfsUrl(input).subscribe(testObserver)
-
-        testObserver.assertNoErrors().assertValue {
-            it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == msgId.toString()
-        }.assertTerminated()
-        then(repository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun updateIpfsUrlFails() {
-        testUpdateIpfsUrlError("ftp://test.example:1337/", R.string.error_invalid_url_scheme)
-        testUpdateIpfsUrlError("http://hdsgfd 1337 a", R.string.error_invalid_url)
-        testUpdateIpfsUrlError("https://test.example:1337/a", R.string.error_invalid_url_path)
     }
 
     private fun testUpdateRpcUrlValid(input: String, isHttps: Boolean, host: String?, port: Int?) {

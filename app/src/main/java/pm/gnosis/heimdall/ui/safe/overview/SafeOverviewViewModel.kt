@@ -30,16 +30,14 @@ class SafeOverviewViewModel @Inject constructor(
         .scanToAdapterData()
         .mapToResult()
 
-    override fun removeSafe(address: BigInteger) = safeRepository.remove(address)
+    override fun removeSafe(address: BigInteger) = safeRepository.removeSafe(address)
 
     override fun loadSafeInfo(address: BigInteger): Single<SafeInfo> =
         safeRepository.loadInfo(address).firstOrError()
             .doOnSuccess { infoCache.put(address, it) }
-            .onErrorResumeNext {
-                infoCache[address]?.let { Single.just(it) } ?: Single.error(it)
-            }
+            .onErrorResumeNext { infoCache[address]?.let { Single.just(it) } ?: Single.error(it) }
 
-    override fun observeDeployedStatus(hash: String) = safeRepository.observeDeployStatus(hash)
+    override fun observeDeployStatus(hash: String) = safeRepository.observeDeployStatus(hash)
 
     override fun shouldShowLowBalanceView(): Observable<Result<Boolean>> = hasLowBalance()
         .map { it && !preferencesManager.prefs.getBoolean(PreferencesManager.DISMISS_LOW_BALANCE, false) }

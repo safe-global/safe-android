@@ -141,7 +141,7 @@ class SafeAdapter @Inject constructor(
             // Make sure no disposable are left over
             disposables.clear()
             val pendingSafe = currentEntry ?: return
-            disposables += viewModel.observeDeployedStatus(pendingSafe.hash.asTransactionHash())
+            disposables += viewModel.observeDeployStatus(pendingSafe.hash.asTransactionHash())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onError = {
                     context.toast(R.string.error_deploying_safe)

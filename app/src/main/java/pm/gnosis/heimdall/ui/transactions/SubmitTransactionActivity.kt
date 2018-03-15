@@ -10,10 +10,8 @@ import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.include_gas_price_selection.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_submit_transaction.*
 import kotlinx.android.synthetic.main.layout_transaction_confirmation_item.view.*
@@ -33,11 +31,9 @@ import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Transaction
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
 import java.math.BigInteger
-import javax.inject.Inject
 import javax.inject.Provider
 
 class SubmitTransactionActivity : ViewTransactionActivity() {
@@ -81,13 +77,13 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
     private val submitTransformer: ObservableTransformer<Result<ViewTransactionContract.Info>, *> =
         ObservableTransformer { up: Observable<Result<ViewTransactionContract.Info>> ->
             // We combine the data with the submit button events
-            up.switchMap { infoWithGasPrice ->
-                layout_submit_transaction_submit_button.clicks().map { infoWithGasPrice }
+            up.switchMap { safeTransactionInfo ->
+                layout_submit_transaction_submit_button.clicks().map { safeTransactionInfo }
             }
                 .doOnNext { info ->
                     (info as? DataResult)?.let {
                         cachedTransactionData =
-                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction, null)
+                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction)
                         startActivityForResult(UnlockActivity.createConfirmIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
                     } ?: run {
                         cachedTransactionData = null
@@ -97,11 +93,11 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
 
     private val submitToExternalWalletTransformer: ObservableTransformer<Result<ViewTransactionContract.Info>, *> =
         ObservableTransformer { up: Observable<Result<ViewTransactionContract.Info>> ->
-            up.switchMap { infoWithGasPrice -> layout_submit_transaction_external.clicks().map { infoWithGasPrice } }
+            up.switchMap { safeTransactionInfo -> layout_submit_transaction_external.clicks().map { safeTransactionInfo } }
                 .doOnNext { info ->
                     (info as? DataResult)?.let {
                         cachedTransactionData =
-                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction, null)
+                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction)
                     } ?: run {
                         cachedTransactionData = null
                     }
@@ -223,7 +219,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         setUnknownTransactionInfo()
         cachedTransactionData?.let {
             if (credentialsConfirmed) {
-                disposables += submitTransaction(it.safeAddress, it.transaction, it.overrideGasPrice)
+                disposables += submitTransaction(it.safeAddress, it.transaction)
                     .subscribeForResult({
                         eventTracker.submit(Event.SubmittedTransaction())
                         startActivity(
@@ -289,18 +285,12 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 layout_submit_transaction_send_signature_push_progress.visible(false)
             }
 
-    private fun submitTransaction(safe: BigInteger, transaction: Transaction, gasOverride: Wei?) =
-        viewModel.submitTransaction(safe, transaction, gasOverride)
+    private fun submitTransaction(safe: BigInteger, transaction: Transaction) =
+        viewModel.submitTransaction(safe, transaction)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { submittingTransaction(true) }
             .doAfterTerminate { submittingTransaction(false) }
             .toObservable()
-
-    private fun handleInfoWithPrices(info: Result<ViewTransactionContract.Info>) {
-        info.handle({
-            updateInfo(it)
-        }, ::handleInputError)
-    }
 
     private fun submittingTransaction(loading: Boolean) {
         layout_submit_transaction_progress_bar.visible(loading)
@@ -416,7 +406,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         }
     }
 
-    private data class CachedTransactionData(val safeAddress: BigInteger, val transaction: Transaction, val overrideGasPrice: Wei?)
+    private data class CachedTransactionData(val safeAddress: BigInteger, val transaction: Transaction)
 
     companion object {
         private const val REQUEST_CODE_CONFIRM_CREDENTIALS = 2342

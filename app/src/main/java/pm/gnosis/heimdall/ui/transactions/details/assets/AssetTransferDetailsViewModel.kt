@@ -46,12 +46,8 @@ class AssetTransferDetailsViewModel @Inject constructor(
                             // If the token count is 0x0 we set it to null to force user input
                             val tokens = if (clearDefaults && data.tokens == BigInteger.ZERO) null else data.tokens
                             tokenRepository.loadToken(transaction.address)
-                                .map {
-                                    FormData(recipient, tokens, it)
-                                }
-                                .onErrorReturn {
-                                    FormData(recipient, tokens)
-                                }
+                                .map { FormData(recipient, tokens, it) }
+                                .onErrorReturn { FormData(recipient, tokens) }
                         }
                         else -> {
                             // If recipient is 0x0 we set the value to null to force user input

@@ -52,8 +52,7 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
 
     private fun loadTransactionType(intent: Intent?): Boolean {
         intent ?: return false
-        val transaction = intent.getParcelableExtra<TransactionParcelable>(EXTRA_TRANSACTION)?.transaction
-                ?: return false
+        val transaction = intent.getParcelableExtra<TransactionParcelable>(EXTRA_TRANSACTION)?.transaction ?: return false
         val safe = intent.getStringExtra(EXTRA_SAFE)
         lifetimeDisposables += viewModel.checkTransactionType(transaction)
             .observeOn(AndroidSchedulers.mainThread())

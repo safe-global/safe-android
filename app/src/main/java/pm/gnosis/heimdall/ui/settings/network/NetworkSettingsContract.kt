@@ -5,9 +5,6 @@ import io.reactivex.Single
 import pm.gnosis.svalinn.common.utils.Result
 
 abstract class NetworkSettingsContract : ViewModel() {
-    abstract fun loadIpfsUrl(): Single<String>
-    abstract fun updateIpfsUrl(url: String): Single<Result<String>>
-
     abstract fun loadRpcUrl(): Single<String>
     abstract fun updateRpcUrl(url: String): Single<Result<String>>
 

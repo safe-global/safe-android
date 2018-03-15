@@ -39,7 +39,6 @@ class NetworkSettingsActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += viewModel.loadIpfsUrl().subscribe(::setupIpfsInput, ::handleSetupError)
         disposables += viewModel.loadRpcUrl().subscribe(::setupRpcInput, ::handleSetupError)
         disposables += viewModel.loadProxyFactoryAddress().subscribe(::setupSafeFactoryInput, ::handleSetupError)
     }
@@ -63,18 +62,6 @@ class NetworkSettingsActivity : BaseActivity() {
             .debounce(TIMEOUT, TIMEOUT_UNIT)
             .flatMapSingle {
                 viewModel.updateRpcUrl(it.toString())
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeForResult(::handleSuccess, ::handleError)
-    }
-
-    private fun setupIpfsInput(url: String) {
-        layout_network_settings_ipfs_input.setText(url)
-        disposables += layout_network_settings_ipfs_input.textChanges()
-            .skipInitialValue()
-            .debounce(TIMEOUT, TIMEOUT_UNIT)
-            .flatMapSingle {
-                viewModel.updateIpfsUrl(it.toString())
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(::handleSuccess, ::handleError)
