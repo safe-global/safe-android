@@ -16,23 +16,6 @@ class NetworkSettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository
 ) : NetworkSettingsContract() {
-    override fun loadIpfsUrl(): Single<String> {
-        return Single.fromCallable {
-            settingsRepository.getIpfsUrl()?.toString() ?: ""
-        }
-    }
-
-    override fun updateIpfsUrl(url: String): Single<Result<String>> {
-        return Single.fromCallable {
-            if (url.isBlank()) {
-                settingsRepository.setIpfsUrl(true, null, null)
-            } else {
-                parseUrl(url).let { settingsRepository.setIpfsUrl(it.isHttps, it.host, it.port) }
-            }
-            url
-        }.mapToResult()
-    }
-
     override fun loadRpcUrl(): Single<String> {
         return Single.fromCallable {
             settingsRepository.getEthereumRPCUrl()?.toString() ?: ""

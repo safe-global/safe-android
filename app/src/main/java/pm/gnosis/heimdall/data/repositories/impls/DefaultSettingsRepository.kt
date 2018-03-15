@@ -20,9 +20,6 @@ class DefaultSettingsRepository @Inject constructor(
         private const val PREF_KEY_RPC_IS_HTTPS = "default_settings_repository_key.boolean.rpc_is_https"
         private const val PREF_KEY_RPC_HOST = "default_settings_repository_key.string.rpc_host"
         private const val PREF_KEY_RPC_PORT = "default_settings_repository_key.int.rpc_port"
-        private const val PREF_KEY_IPFS_IS_HTTPS = "default_settings_repository_key.boolean.ipfs_is_https"
-        private const val PREF_KEY_IPFS_HOST = "default_settings_repository_key.string.ipfs_host"
-        private const val PREF_KEY_IPFS_PORT = "default_settings_repository_key.int.ipfs_port"
         private const val PREF_KEY_PROXY_FACTORY_ADDRESS = "default_settings_repository_key.string.proxy_factory_address"
         private const val PREF_KEY_SAFE_MASTER_COPY_ADDRESS = "default_settings_repository_key.string.safe_master_copy_address"
     }
@@ -38,17 +35,6 @@ class DefaultSettingsRepository @Inject constructor(
 
     override fun getEthereumRPCUrl(): SettingsRepository.UrlOverride? {
         return overrideUrlFromPreferences(PREF_KEY_RPC_IS_HTTPS, PREF_KEY_RPC_HOST, PREF_KEY_RPC_PORT)
-    }
-
-    override fun setIpfsUrl(isHttps: Boolean, host: String?, port: Int?) {
-        overrideUrlToPreferences(
-            PREF_KEY_IPFS_IS_HTTPS, PREF_KEY_IPFS_HOST, PREF_KEY_IPFS_PORT,
-            isHttps, host, port
-        )
-    }
-
-    override fun getIpfsUrl(): SettingsRepository.UrlOverride? {
-        return overrideUrlFromPreferences(PREF_KEY_IPFS_IS_HTTPS, PREF_KEY_IPFS_HOST, PREF_KEY_IPFS_PORT)
     }
 
     override fun needsAuth(): Boolean {

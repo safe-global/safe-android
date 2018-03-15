@@ -38,19 +38,6 @@
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/settings_ipfs_url_hint">
-
-                    <EditText
-                        android:id="@+id/layout_network_settings_ipfs_input"
-                        style="@style/Input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textNoSuggestions|textVisiblePassword" />
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:hint="@string/settings_rpc_url_hint">
 
@@ -78,9 +65,7 @@
                         tools:text="BLA" />
                 </android.support.design.widget.TextInputLayout>
 
-
             </LinearLayout>
         </ScrollView>
-
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

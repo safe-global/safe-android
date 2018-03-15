@@ -15,7 +15,6 @@ import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
-import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -38,9 +37,6 @@ class SimpleTransactionDetailsRepositoryTest {
     @Mock
     lateinit var appDbMock: ApplicationDb
 
-    @Mock
-    lateinit var ipfsApiMock: IpfsApi
-
     private lateinit var repository: SimpleTransactionDetailsRepository
 
     @Before
@@ -56,7 +52,6 @@ class SimpleTransactionDetailsRepositoryTest {
 
         then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
         then(descriptionsDaoMock).shouldHaveNoMoreInteractions()
-        then(ipfsApiMock).shouldHaveNoMoreInteractions()
     }
 
     @Test

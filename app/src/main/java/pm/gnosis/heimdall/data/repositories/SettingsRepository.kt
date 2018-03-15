@@ -10,9 +10,6 @@ interface SettingsRepository {
     fun setEthereumRPCUrl(isHttps: Boolean, host: String?, port: Int?)
     fun getEthereumRPCUrl(): UrlOverride?
 
-    fun setIpfsUrl(isHttps: Boolean, host: String?, port: Int?)
-    fun getIpfsUrl(): UrlOverride?
-
     fun getProxyFactoryAddress(): BigInteger
     @Throws(InvalidAddressException::class)
     fun setProxyFactoryAddress(address: String?)

@@ -17,7 +17,8 @@ import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
 import pm.gnosis.heimdall.data.db.ApplicationDb
-import pm.gnosis.heimdall.data.remote.*
+import pm.gnosis.heimdall.data.remote.PushServiceApi
+import pm.gnosis.heimdall.data.remote.TxExecutorApi
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.ticker.data.remote.TickerAdapter
 import retrofit2.Retrofit
@@ -51,18 +52,6 @@ class ApplicationModule {
             .add(HexNumberAdapter())
             .add(TickerAdapter())
             .build()
-    }
-
-    @Provides
-    @Singleton
-    fun providesIpfsApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): IpfsApi {
-        val retrofit = Retrofit.Builder()
-            .client(client)
-            .baseUrl(IpfsApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-            .build()
-        return retrofit.create(IpfsApi::class.java)
     }
 
     @Provides

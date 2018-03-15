@@ -20,7 +20,6 @@ android {
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x5a27c4325b2f35163fa28d9195e7038fb53e67ac"))
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0x057ad4d88c1aabecf899f33386c8abebabe00648"))
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io"))
-        buildConfigField javaTypes.STRING, "IPFS_GATEWAY_URL", asString(getKey("IPFS_GATEWAY_URL", "https://ipfs.infura.io"))
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
 
         vectorDrawables.useSupportLibrary = true

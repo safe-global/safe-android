@@ -6,7 +6,6 @@ import dagger.multibindings.IntKey
 import dagger.multibindings.IntoMap
 import okhttp3.Interceptor
 import pm.gnosis.heimdall.BuildConfig
-import pm.gnosis.heimdall.data.remote.IpfsApi
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.data.repositories.changeUrl
 import javax.inject.Named
@@ -56,8 +55,6 @@ class InterceptorsModule {
             request = when {
                 url.toString().startsWith(BuildConfig.BLOCKCHAIN_NET_URL) ->
                     request.changeUrl(settingsRepository.getEthereumRPCUrl())
-                url.toString().startsWith(IpfsApi.BASE_URL) ->
-                    request.changeUrl(settingsRepository.getIpfsUrl())
                 else -> request
             }
             it.proceed(request)
