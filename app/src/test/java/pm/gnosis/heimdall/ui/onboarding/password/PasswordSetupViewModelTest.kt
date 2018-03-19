@@ -35,20 +35,18 @@ class PasswordSetupViewModelTest {
 
     @Before
     fun setUp() {
-        contextMock.mockGetString()
-        contextMock.mockGetStringWithArgs()
         viewModel = PasswordSetupViewModel(contextMock, encryptionManagerMock)
     }
 
     @Test
     fun setupPasswordTooShort() {
         val observer = createObserver()
+        val password = "11111"
 
-        viewModel.setPassword("11111", "11111").subscribe(observer)
+        viewModel.setPassword(password, password).subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
-        then(contextMock).should().getString(R.string.password_too_short, emptyArray<Any>())
-        observer.assertResult(ErrorResult(SimpleLocalizedException(contextMock.getTestString(R.string.password_too_short))))
+        observer.assertResult(ErrorResult(PasswordInvalidException(PasswordNotLongEnough(password.length, MIN_CHARS))))
     }
 
     @Test
@@ -58,12 +56,12 @@ class PasswordSetupViewModelTest {
         viewModel.setPassword("111111", "123456").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
-        then(contextMock).should().getString(R.string.passwords_do_not_match, emptyArray<Any>())
-        observer.assertResult(ErrorResult(SimpleLocalizedException(contextMock.getTestString(R.string.passwords_do_not_match))))
+        observer.assertValue { it is ErrorResult && it.error is PasswordInvalidException && (it.error as PasswordInvalidException).reason is PasswordsNotEqual }
     }
 
     @Test
     fun setupPasswordException() {
+        contextMock.mockGetString()
         val observer = createObserver()
         val exception = Exception()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
@@ -78,6 +76,7 @@ class PasswordSetupViewModelTest {
 
     @Test
     fun setupPasswordNoSuccess() {
+        contextMock.mockGetString()
         val observer = createObserver()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(false))
 
@@ -102,4 +101,8 @@ class PasswordSetupViewModelTest {
     }
 
     private fun createObserver() = TestObserver.create<Result<Unit>>()
+
+    companion object {
+        private const val MIN_CHARS = 5
+    }
 }

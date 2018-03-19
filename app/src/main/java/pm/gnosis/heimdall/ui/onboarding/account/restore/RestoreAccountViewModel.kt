@@ -1,13 +1,10 @@
 package pm.gnosis.heimdall.ui.onboarding.account.restore
 
 import android.content.Context
-import android.content.Intent
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.mnemonic.*
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.di.ApplicationContext
@@ -27,16 +24,14 @@ class RestoreAccountViewModel @Inject constructor(
         .add({ it is MnemonicNotInWordlist }, R.string.invalid_mnemonic_supported_languages)
         .build()
 
-    override fun saveAccountWithMnemonic(mnemonic: String): Observable<Result<Intent>> =
+    override fun saveAccountWithMnemonic(mnemonic: String): Single<Result<Unit>> =
         Single.fromCallable { bip39.validateMnemonic(mnemonic) }
             .subscribeOn(Schedulers.computation())
             .flatMap {
                 accountsRepository.saveAccountFromMnemonicSeed(bip39.mnemonicToSeed(mnemonic))
                     .andThen(accountsRepository.saveMnemonic(mnemonic))
-                    .toSingle({ SetupSafeIntroActivity.createIntent(context) })
-                    .subscribeOn(Schedulers.io())
+                    .andThen(Single.just(Unit))
             }
-            .onErrorResumeNext({ errorHandler.single<Intent>(it) })
-            .toObservable()
+            .onErrorResumeNext({ errorHandler.single<Unit>(it) })
             .mapToResult()
 }

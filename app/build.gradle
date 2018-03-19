@@ -154,6 +154,7 @@ dependencies {
     // Firebase
     implementation "com.google.firebase:firebase-core:$versions.firebase"
     implementation "com.google.firebase:firebase-messaging:$versions.firebase"
+    implementation "com.google.android.gms:play-services-auth:$versions.firebase"
 
     // String formatting
     implementation "com.squareup.phrase:phrase:$versions.phrase"

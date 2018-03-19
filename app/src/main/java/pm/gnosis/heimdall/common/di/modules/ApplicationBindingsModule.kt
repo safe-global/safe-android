@@ -58,6 +58,10 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindsGoogleSmartLockRepository(repository: DefaultGoogleSmartLockRepository): GoogleSmartLockRepository
+
+    @Binds
+    @Singleton
     abstract fun bindsMessageQueueRepository(repository: FirebaseMessageQueueRepository): MessageQueueRepository
 
     @Binds

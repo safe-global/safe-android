@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.onboarding.password
 
 import android.content.Context
-import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -14,17 +13,23 @@ class PasswordSetupViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val encryptionManager: EncryptionManager
 ) : PasswordSetupContract() {
+    override fun isPasswordValid(password: String): PasswordValidation {
+        return if (password.length > MIN_CHARS) PasswordValid(password) else PasswordNotLongEnough(password.length, MIN_CHARS)
+    }
+
     override fun setPassword(password: String, repeat: String) =
-        Observable
-            .fromCallable {
-                SimpleLocalizedException.assert(password.length > 5, context, R.string.password_too_short)
-                SimpleLocalizedException.assert(password == repeat, context, R.string.passwords_do_not_match)
-                password
-            }
-            .flatMapSingle {
-                encryptionManager.setupPassword(it.toByteArray())
-                    .map { if (it) Unit else throw Exception() }
-                    .onErrorResumeNext { _: Throwable -> Single.error(SimpleLocalizedException(context.getString(R.string.password_error_saving))) }
-            }
-            .mapToResult()
+        Single.fromCallable {
+            if (password != repeat) throw PasswordInvalidException(PasswordsNotEqual())
+            // This should never happen since it was validated in the previous screen
+            isPasswordValid(password).let { validation -> if (validation !is PasswordValid) throw PasswordInvalidException(validation) }
+            password
+        }.flatMap {
+            encryptionManager.setupPassword(it.toByteArray())
+                .map { if (it) Unit else throw Exception() }
+                .onErrorResumeNext { _: Throwable -> Single.error(SimpleLocalizedException(context.getString(R.string.password_error_saving))) }
+        }.mapToResult()
+
+    companion object {
+        private const val MIN_CHARS = 5
+    }
 }

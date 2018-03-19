@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.onboarding.account.restore
 
 import android.content.Context
-import android.content.Intent
 import io.reactivex.internal.operators.completable.CompletableError
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
@@ -51,7 +50,7 @@ class RestoreAccountViewModelTest {
 
     @Test
     fun saveAccountWithValidMnemonic() {
-        val testObserver = TestObserver.create<Result<Intent>>()
+        val testObserver = TestObserver.create<Result<Unit>>()
         val saveAccountFromMnemonicCompletable = TestCompletable()
         val saveMnemonicCompletable = TestCompletable()
         given(bip39Mock.validateMnemonic(anyString())).willReturn(testMnemonic)
@@ -76,7 +75,7 @@ class RestoreAccountViewModelTest {
 
     @Test
     fun saveAccountWithInvalidMnemonic() {
-        val testObserver = TestObserver.create<Result<Intent>>()
+        val testObserver = TestObserver.create<Result<Unit>>()
         given(bip39Mock.validateMnemonic(anyString())).willThrow(MnemonicNotInWordlist(testMnemonic))
 
         viewModel.saveAccountWithMnemonic(testMnemonic).subscribe(testObserver)
@@ -91,7 +90,7 @@ class RestoreAccountViewModelTest {
 
     @Test
     fun saveAccountWithMnemonicErrorOnSaveAccount() {
-        val testObserver = TestObserver.create<Result<Intent>>()
+        val testObserver = TestObserver.create<Result<Unit>>()
         val saveMnemonicCompletable = TestCompletable()
         val exception = Exception()
         given(bip39Mock.validateMnemonic(anyString())).willReturn(testMnemonic)
@@ -115,7 +114,7 @@ class RestoreAccountViewModelTest {
 
     @Test
     fun saveAccountWithMnemonicErrorOnSaveMnemonic() {
-        val testObserver = TestObserver.create<Result<Intent>>()
+        val testObserver = TestObserver.create<Result<Unit>>()
         val saveAccountFromMnemonicCompletable = TestCompletable()
         val exception = Exception()
         given(bip39Mock.validateMnemonic(anyString())).willReturn(testMnemonic)

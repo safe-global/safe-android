@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/onboarding_background">
+    android:layout_height="match_parent">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -14,35 +13,27 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:src="@drawable/ic_onboarding_intro" />
+            android:layout_marginTop="152dp"
+            android:src="@drawable/ic_logo_splash" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif-medium"
             android:gravity="center"
-            android:text="@string/onboarding_intro_title"
-            android:textColor="@color/gnosis_dark_blue"
-            android:textSize="24sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center"
-            android:lineSpacingExtra="9sp"
-            android:text="@string/onboarding_intro_description"
-            android:textColor="@color/onboarding_description"
+            android:text="Store your assets securely with 2FA"
+            android:textColor="@color/white"
             android:textSize="15sp" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/layout_onboarding_intro_get_started"
-            style="@style/PrimaryButton"
-            android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/onboarding_intro_start"
-            android:textSize="18sp" />
+            style="@style/OnBoardingTheme.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="96dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="Get Started" />
     </LinearLayout>
 </ScrollView>

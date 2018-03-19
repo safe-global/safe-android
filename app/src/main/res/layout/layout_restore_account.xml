@@ -9,12 +9,12 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/layout_restore_account_toolbar">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -24,77 +24,49 @@
                 android:padding="16dp">
 
                 <TextView
+                    style="@style/OnBoardingTheme.Text.Large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:text="@string/restore_account_title"
-                    android:textColor="@color/gnosis_dark_blue"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
-                    android:gravity="center"
-                    android:text="@string/restore_account_description"
-                    android:textColor="@color/onboarding_description" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/layout_restore_account_mnemonic"
-                        style="@style/Input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:background="@drawable/border_radius_edit_text"
-                        android:gravity="top"
-                        android:hint="@string/mnemonic"
-                        android:inputType="textMultiLine"
-                        android:minLines="4"
-                        android:paddingBottom="20dp"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingTop="16dp"
-                        android:textColor="@color/gnosis_blue"
-                        android:textSize="16sp"
-                        tools:text="This is a mnemonic phrase" />
-
-                    <TextView
-                        android:id="@+id/layout_restore_account_word_counter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        android:padding="4dp"
-                        tools:text="5/12 words" />
-
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/layout_restore_account_restore"
-                    style="@style/PrimaryButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="46dp"
                     android:layout_marginTop="24dp"
-                    android:text="@string/restore_account"
-                    android:textSize="17sp" />
+                    android:gravity="center"
+                    android:text="Restore with Recovery Phrase" />
+
+                <EditText
+                    android:id="@+id/layout_restore_account_mnemonic"
+                    style="@style/Input"
+                    android:layout_width="match_parent"
+                    android:layout_height="136dp"
+                    android:layout_marginTop="48dp"
+                    android:background="@drawable/border_radius_edit_text"
+                    android:gravity="top"
+                    android:hint="Enter your recovery phrase"
+                    android:inputType="textMultiLine"
+                    android:padding="16dp"
+                    android:textColor="@color/gnosis_blue"
+                    android:textSize="16sp"
+                    tools:text="This is a mnemonic phrase" />
             </LinearLayout>
         </ScrollView>
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/layout_restore_account_toolbar"
-            style="@style/Toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_height"
-            app:title="Restore Account" />
+        <ImageView
+            android:id="@+id/layout_restore_account_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/selectable_circle_background"
+            android:padding="16dp"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_arrow_back_24dp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_shadow_size"
-            android:layout_below="@+id/layout_restore_account_toolbar"
-            android:background="@drawable/toolbar_dropshadow" />
+        <TextView
+            android:id="@+id/layout_restore_account_restore"
+            style="@style/OnBoardingTheme.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="12dp"
+            android:text="Restore" />
+
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

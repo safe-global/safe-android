@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pm.gnosis.heimdall">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="pm.gnosis.heimdall.ui.splash.SplashActivity"
+            android:name=".ui.splash.SplashActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
@@ -26,6 +25,35 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.onboarding.account.AccountSetupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/OnBoardingTheme" />
+        <activity
+            android:name=".ui.onboarding.password.PasswordSetupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/OnBoardingTheme" />
+        <activity
+            android:name=".ui.onboarding.password.PasswordConfirmActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/OnBoardingTheme" />
+        <activity
+            android:name=".ui.onboarding.account.create.GenerateMnemonicActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/OnBoardingTheme" />
+        <activity
+            android:name=".ui.onboarding.SetupSafeIntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/OnBoardingTheme" />
+        <activity
+            android:name=".ui.onboarding.account.restore.RestoreAccountActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/OnBoardingTheme" />
+        <activity
+            android:name=".ui.onboarding.OnboardingIntro"
+            android:screenOrientation="portrait"
+            android:theme="@style/OnBoardingTheme" />
 
         <activity
             android:name=".ui.safe.overview.SafesOverviewActivity"
@@ -71,24 +99,6 @@
             android:name=".ui.security.unlock.UnlockActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.onboarding.account.AccountSetupActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.password.PasswordSetupActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.account.create.GenerateMnemonicActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.SetupSafeIntroActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.account.restore.RestoreAccountActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.OnboardingIntro"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.settings.security.SecuritySettingsActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -119,6 +129,7 @@
 
         <activity android:name=".ui.qrscan.QRCodeScanActivity" />
         <activity android:name=".ui.safe.main.SafeMainActivity" />
+
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

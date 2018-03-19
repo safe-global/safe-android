@@ -14,7 +14,6 @@ import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import timber.log.Timber
 
 class OnboardingIntro : BaseActivity() {
-
     override fun screenId() = ScreenId.ONBOARDING_INTRO
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -21,7 +21,7 @@ class CurrencyEditText : AppCompatEditText {
         setCompoundDrawablesWithIntrinsicBounds(null, null, currencyDrawable, null)
     }
 
-    override fun setTypeface(typeface: Typeface) {
+    override fun setTypeface(typeface: Typeface?) {
         super.setTypeface(typeface)
         currencyDrawable?.textPaint?.typeface = typeface
         postInvalidate()

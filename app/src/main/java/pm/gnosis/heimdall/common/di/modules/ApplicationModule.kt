@@ -2,6 +2,9 @@ package pm.gnosis.heimdall.common.di.modules
 
 import android.arch.persistence.room.Room
 import android.content.Context
+import com.google.android.gms.auth.api.credentials.Credentials
+import com.google.android.gms.auth.api.credentials.CredentialsClient
+import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -32,6 +35,13 @@ import javax.inject.Singleton
 class ApplicationModule {
     companion object {
         const val INFURA_REST_CLIENT = "infuraRestClient"
+    }
+
+    @Provides
+    @Singleton
+    fun providesSmartLockCredentialsClient(@ApplicationContext context: Context): CredentialsClient {
+        val options = CredentialsOptions.Builder().forceEnableSaveDialog().build()
+        return Credentials.getClient(context, options)
     }
 
     @Provides
