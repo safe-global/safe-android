@@ -334,4 +334,7 @@
     <string name="deploy_with_external_wallet">Deploy with external wallet</string>
     <string name="buy_credits">Buy credits</string>
     <string name="error_not_enough_credits">Please buy more credits to execute the transaction</string>
+    <string name="payment">Payment</string>
+    <string name="credits_balance">Balance: %s</string>
+    <string name="voucher_already_redeemed">This voucher was already redeemed</string>
 </resources>

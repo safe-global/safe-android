@@ -25,6 +25,6 @@ interface GnosisSafeRepository {
 
     fun loadInfo(address: BigInteger): Observable<SafeInfo>
     fun observeTransactionDescriptions(address: BigInteger): Flowable<List<String>>
-    fun loadSafeDeployTransaction(name: String, devices: Set<BigInteger>, requiredConfirmations: Int): Single<Transaction>
+    fun loadSafeDeployTransaction(devices: Set<BigInteger>, requiredConfirmations: Int): Single<Transaction>
     fun savePendingSafe(transactionHash: BigInteger, name: String): Completable
 }

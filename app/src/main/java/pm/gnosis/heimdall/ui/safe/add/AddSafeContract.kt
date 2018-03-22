@@ -1,10 +1,10 @@
 package pm.gnosis.heimdall.ui.safe.add
 
-import android.app.Activity
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -29,7 +29,7 @@ abstract class AddSafeContract : ViewModel() {
 
     abstract fun setupDeploy(): Single<BigInteger>
 
-    abstract fun observeHasCredits(): Observable<Boolean>
+    abstract fun estimateDeploy(): Single<Result<FeeEstimate>>
 
     abstract fun observeAdditionalOwners(): Observable<List<BigInteger>>
 
@@ -38,6 +38,4 @@ abstract class AddSafeContract : ViewModel() {
     abstract fun loadActiveAccount(): Observable<Account>
 
     abstract fun loadDeployData(name: String): Single<Result<Transaction>>
-
-    abstract fun buyTransactionCredits(activity: Activity): Single<Boolean>
 }

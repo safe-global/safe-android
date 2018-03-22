@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.safe.add
 
-import android.app.Activity
 import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -10,6 +9,7 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
+import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -90,9 +90,6 @@ class AddSafeViewModel @Inject constructor(
     override fun saveTransactionHash(transactionHash: String, name: String): Completable =
         gnosisSafeRepository.savePendingSafe(transactionHash.hexAsBigInteger(), name)
 
-    override fun buyTransactionCredits(activity: Activity): Single<Boolean> =
-        txExecutorRepository.buyPlan(activity)
-
     override fun observeAdditionalOwners(): Observable<List<BigInteger>> {
         return addressStore.observe()
             .subscribeOn(Schedulers.io())
@@ -109,7 +106,14 @@ class AddSafeViewModel @Inject constructor(
             .map { it.address }
             .doOnSuccess { deviceInfo = it }
 
-    override fun observeHasCredits(): Observable<Boolean> = txExecutorRepository.observePlan()
+    override fun estimateDeploy(): Single<Result<FeeEstimate>> =
+        loadSafeDeployTransaction()
+            .flatMapObservable {
+                txExecutorRepository.estimate(it)
+            }
+            .map { FeeEstimate(it.first, it.second) }
+            .firstOrError()
+            .mapToResult()
 
     override fun removeAdditionalOwner(address: BigInteger): Observable<Result<Unit>> =
         Observable.fromCallable { addressStore.remove(address) }
@@ -130,9 +134,11 @@ class AddSafeViewModel @Inject constructor(
 
 
     override fun loadSafeInfo(address: String): Observable<Result<SafeInfo>> =
-        Single.fromCallable { address.hexAsEthereumAddressOrNull() ?: throw InvalidAddressException() }
-            .flatMapObservable { gnosisSafeRepository.loadInfo(it) }
-            .mapToResult()
+        Single.fromCallable {
+            address.hexAsEthereumAddressOrNull() ?: throw InvalidAddressException()
+        }.flatMapObservable {
+            gnosisSafeRepository.loadInfo(it)
+        }.mapToResult()
 
     override fun loadActiveAccount(): Observable<Account> = accountsRepository.loadActiveAccount().toObservable()
         .onErrorResumeNext { t: Throwable -> Timber.d(t); Observable.empty<Account>() }
@@ -143,11 +149,12 @@ class AddSafeViewModel @Inject constructor(
 
     override fun loadDeployData(name: String): Single<Result<Transaction>> =
         Single.fromCallable { checkName(name);name }
-            .flatMap {
-                addressStore.load().flatMap {
-                    // We add 1 owner because the current device will automatically be added as an owner
-                    gnosisSafeRepository.loadSafeDeployTransaction(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1))
-                }
-            }
+            .flatMap { loadSafeDeployTransaction() }
             .mapToResult()
+
+    private fun loadSafeDeployTransaction() =
+        addressStore.load().flatMap {
+            // We add 1 owner because the current device will automatically be added as an owner
+            gnosisSafeRepository.loadSafeDeployTransaction(it, GnosisSafeUtils.calculateThreshold(it.size + 1))
+        }
 }

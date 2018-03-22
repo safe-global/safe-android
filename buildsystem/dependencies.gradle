@@ -1,7 +1,7 @@
 ext {
     versions = [
             // Plug-Ins
-            android_tools          : '3.1.0-rc01',
+            android_tools          : '3.1.0-rc03',
             fabric                 : '1.+',
             google_services        : '3.1.0',
             kotlin                 : '1.2.21',
@@ -13,7 +13,7 @@ ext {
             architecture_components: '1.0.0',
             billing                : '1.0',
             bivrost                : 'v0.6.1',
-            constraint_layout      : '1.0.2',
+            constraint_layout      : '1.1.0-beta5',
             crashlytics            : '2.8.0',
             dagger                 : '2.12',
             firebase               : '11.8.0',
@@ -33,7 +33,7 @@ ext {
             rxjava                 : '2.1.6',
             rxkotlin               : '2.1.0',
             spongycastle           : '1.58.0.0',
-            svalinn                : 'v0.2.4',
+            svalinn                : 'v0.2.5',
             timber                 : '4.6.0',
             zxing                  : '3.3.1',
 

@@ -66,5 +66,6 @@ interface SignatureStore {
     fun flatMapInfo(safeAddress: BigInteger, info: TransactionRepository.ExecuteInformation): Observable<Map<BigInteger, Signature>>
     fun loadSingingInfo(): Single<Pair<BigInteger, Transaction>>
     fun load(): Single<Map<BigInteger, Signature>>
+    fun observe(): Observable<Map<BigInteger, Signature>>
     fun add(signature: Pair<BigInteger, Signature>)
 }

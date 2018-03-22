@@ -20,11 +20,13 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.InflatingViewProvider
+import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
@@ -68,17 +70,39 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 // Pass on data for submit
                 .publish {
                     Observable.merge(
+                        it.compose(estimateTransformer),
                         it.compose(submitTransformer),
                         it.compose(submitToExternalWalletTransformer)
                     )
                 }
         }
 
+    private val estimateTransformer: ObservableTransformer<Result<ViewTransactionContract.Info>, *> =
+        ObservableTransformer { up: Observable<Result<ViewTransactionContract.Info>> ->
+            // We combine the data with the submit button events
+            up
+                .doOnNext {
+                    layout_submit_transaction_submit_button.isEnabled = false
+                }
+                .switchMapSingle { info ->
+                    info.mapSingle({
+                        viewModel.estimateTransaction(it)
+                    })
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNextForResult({
+                    displayFees(it)
+                }, {
+                    Timber.e(it)
+                    errorSnackbar(layout_submit_transaction_submit_button, it)
+                })
+        }
+
     private val submitTransformer: ObservableTransformer<Result<ViewTransactionContract.Info>, *> =
         ObservableTransformer { up: Observable<Result<ViewTransactionContract.Info>> ->
             // We combine the data with the submit button events
-            up.switchMap { safeTransactionInfo ->
-                layout_submit_transaction_submit_button.clicks().map { safeTransactionInfo }
+            up.switchMap { info ->
+                layout_submit_transaction_submit_button.clicks().map { info }
             }
                 .doOnNext { info ->
                     (info as? DataResult)?.let {
@@ -161,7 +185,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             it.compose(transactionInfoTransformer).publish {
                 // Split execution information stream into two sub-streams
                 Observable.merge(
-                    // Combine execution information and price data to update the displayed information
+                    // Display the transaction information
                     it.compose(displayTransactionInformation),
                     // Use execution information to allow adding signatures
                     it.compose(requestSignaturesQR),
@@ -231,8 +255,6 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                         )
                     }, {
                         if (it is IllegalStateException) {
-                            layout_submit_transaction_buy_credits_button.visible(true)
-                            layout_submit_transaction_submit_button.visible(false)
                             snackbar(merge_transaction_details_container, R.string.error_not_enough_credits)
                         } else {
                             showErrorSnackbar(it)
@@ -253,20 +275,9 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         }
         pendingSignature = null
 
-        layout_submit_transaction_buy_credits_button.visible(false)
-        layout_submit_transaction_submit_button.visible(false)
-        disposables += viewModel.observeHasCredits()
-            .subscribeBy(onNext = {
-                layout_submit_transaction_buy_credits_button.visible(!it)
-                layout_submit_transaction_submit_button.visible(it)
-            }, onError = Timber::e)
-
         disposables += layout_submit_transaction_buy_credits_button.clicks()
             .observeOn(AndroidSchedulers.mainThread())
-            .flatMapSingle {
-                viewModel.buyCredit(this).mapToResult()
-            }
-            .subscribeBy(onError = Timber::e)
+            .subscribeBy(onNext = { startActivity(BuyCreditsActivity.createIntent(this)) }, onError = Timber::e)
     }
 
     override fun fragmentRegistered() {
@@ -296,6 +307,14 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         layout_submit_transaction_progress_bar.visible(loading)
         layout_submit_transaction_submit_button.isEnabled = !loading
         transactionInputEnabled(!loading)
+    }
+
+    private fun displayFees(fees: FeeEstimate) {
+        layout_submit_transaction_current_balance_value.text = fees.balance.toString()
+        layout_submit_transaction_costs_value.text = "- ${fees.costs}"
+        val newBalance = fees.balance - fees.costs
+        layout_submit_transaction_new_balance_value.text = newBalance.toString()
+        layout_submit_transaction_submit_button.isEnabled = newBalance >= 0
     }
 
     private fun updateInfo(info: ViewTransactionContract.Info) {
@@ -356,11 +375,9 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
 
     private fun setViewStates(canSubmit: Boolean, canSign: Boolean = !canSubmit) {
         // If we can submit show information for submitting
-        layout_submit_transaction_submit_button.isEnabled = canSubmit
-        layout_submit_transaction_all_confirmed_hint.visible(canSubmit)
+        layout_submit_transaction_submit_group.visible(canSubmit)
         // If we can sign show information for signing
-        layout_submit_transaction_scan_signature_qr_button.visible(canSign)
-        layout_submit_transaction_send_signature_push_button.visible(canSign)
+        layout_submit_transaction_confirmations_group.visible(canSign)
     }
 
     private fun setUnknownTransactionInfo() {

@@ -23,6 +23,7 @@ import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
@@ -53,6 +54,7 @@ class SafesOverviewActivity : BaseActivity() {
             when (it.itemId) {
                 R.id.safes_overview_menu_settings -> startActivity(SettingsActivity.createIntent(this))
                 R.id.safes_overview_menu_add_safe -> startActivity(AddSafeActivity.createIntent(this))
+                R.id.safes_overview_menu_buy_credits -> startActivity(BuyCreditsActivity.createIntent(this))
             }
             true
         }

@@ -9,4 +9,8 @@
         android:id="@+id/safes_overview_menu_settings"
         android:title="@string/settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/safes_overview_menu_buy_credits"
+        android:title="@string/buy_credits"
+        app:showAsAction="never" />
 </menu>

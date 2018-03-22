@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
+import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
@@ -115,6 +116,17 @@ class GnosisSafeTransactionRepository @Inject constructor(
         calculateHash(safeAddress, transaction).flatMap {
             accountsRepository.recover(it, signature).map { it to signature }
         }
+
+    override fun estimateFees(
+        safeAddress: BigInteger,
+        transaction: Transaction,
+        signatures: Map<BigInteger, Signature>,
+        senderIsOwner: Boolean
+    ): Single<FeeEstimate> =
+        loadExecutableTransaction(safeAddress, transaction, signatures, senderIsOwner)
+            .flatMapObservable { txExecutorRepository.estimate(it) }
+            .map { FeeEstimate(it.first, it.second) }
+            .firstOrError()
 
     override fun submit(
         safeAddress: BigInteger,
