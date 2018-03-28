@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:gravity="center"
+              android:padding="16dp">
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:padding="8dp" />
+
+    <TextView
+            style="@style/BoldContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/deploying_new_safe"
+            android:textColor="@color/gnosis_blue"
+            android:textSize="15sp" />
+
+    <TextView
+            android:id="@+id/layout_pending_safe_item_name"
+            style="@style/BoldContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:textSize="24sp"
+            tools:text="My Safe" />
+
+    <TextView
+            style="@style/Content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/deploying_safe_warning" />
+</LinearLayout>

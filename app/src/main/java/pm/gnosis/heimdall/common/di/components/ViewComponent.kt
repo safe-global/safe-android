@@ -20,9 +20,11 @@ import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.safe.add.AddExistingSafeFragment
 import pm.gnosis.heimdall.ui.safe.add.DeployNewSafeFragment
-import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
+import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
+import pm.gnosis.heimdall.ui.safe.main.PendingSafeFragment
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
@@ -59,6 +61,8 @@ interface ViewComponent {
     fun inject(fragment: CreateAddOwnerDetailsFragment)
     fun inject(fragment: CreateGenericTransactionDetailsFragment)
     fun inject(fragment: DeployNewSafeFragment)
+    fun inject(fragment: PendingSafeFragment)
+    fun inject(fragment: SafeDetailsFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)
     fun inject(fragment: ViewAssetTransferDetailsFragment)
@@ -82,7 +86,7 @@ interface ViewComponent {
     fun inject(activity: ReceiptTransactionActivity)
     fun inject(activity: RestoreAccountActivity)
     fun inject(activity: RevealMnemonicActivity)
-    fun inject(activity: SafeDetailsActivity)
+    fun inject(activity: SafeMainActivity)
     fun inject(activity: SafeSettingsActivity)
     fun inject(activity: SafesOverviewActivity)
     fun inject(activity: SecuritySettingsActivity)

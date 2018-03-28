@@ -18,6 +18,9 @@ interface GnosisSafeDao {
     @Query("SELECT * FROM ${GnosisSafeDb.TABLE_NAME} WHERE ${GnosisSafeDb.COL_ADDRESS} = :address")
     fun observeSafe(address: BigInteger): Flowable<GnosisSafeDb>
 
+    @Query("SELECT * FROM ${GnosisSafeDb.TABLE_NAME} WHERE ${GnosisSafeDb.COL_ADDRESS} = :address")
+    fun loadSafe(address: BigInteger): Single<GnosisSafeDb>
+
     @Query("DELETE FROM ${GnosisSafeDb.TABLE_NAME} WHERE ${GnosisSafeDb.COL_ADDRESS} = :address")
     fun removeSafe(address: BigInteger)
 

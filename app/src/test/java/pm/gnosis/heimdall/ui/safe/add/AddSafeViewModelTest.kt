@@ -31,6 +31,7 @@ import pm.gnosis.tests.utils.*
 import pm.gnosis.tests.utils.MockUtils.any
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
+import pm.gnosis.utils.asTransactionHash
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.hexAsEthereumAddress
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
@@ -75,19 +76,19 @@ class AddSafeViewModelTest {
 
     @Test
     fun addExistingSafe() {
-        val testObserver = TestObserver.create<Result<Unit>>()
+        val testObserver = TestObserver.create<Result<BigInteger>>()
         given(safeRepositoryMock.addSafe(any(), anyString())).willReturn(Completable.complete())
 
         viewModel.addExistingSafe("test", "0x0").subscribe(testObserver)
 
-        testObserver.assertNoErrors().assertValue(DataResult(Unit))
+        testObserver.assertNoErrors().assertValue(DataResult(BigInteger.ZERO))
         then(safeRepositoryMock).should().addSafe(BigInteger.ZERO, "test")
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun addExistingSafeEmptyName() {
-        val testObserver = TestObserver.create<Result<Unit>>()
+        val testObserver = TestObserver.create<Result<BigInteger>>()
         viewModel.addExistingSafe("", "0x0").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
@@ -98,7 +99,7 @@ class AddSafeViewModelTest {
 
     @Test
     fun addExistingInvalidAddress() {
-        val testObserver = TestObserver.create<Result<Unit>>()
+        val testObserver = TestObserver.create<Result<BigInteger>>()
         viewModel.addExistingSafe("test", "test").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
@@ -109,7 +110,7 @@ class AddSafeViewModelTest {
 
     @Test
     fun addExistingRepoError() {
-        val testObserver = TestObserver.create<Result<Unit>>()
+        val testObserver = TestObserver.create<Result<BigInteger>>()
         val error = IllegalStateException()
         given(safeRepositoryMock.addSafe(any(), anyString())).willReturn(Completable.error(error))
 
@@ -123,7 +124,7 @@ class AddSafeViewModelTest {
     }
 
     private fun subscribeDeploySafe(name: String) =
-        TestObserver.create<Result<Unit>>().apply {
+        TestObserver.create<Result<String>>().apply {
             viewModel.deployNewSafe(name).subscribe(this)
         }
 
@@ -139,11 +140,11 @@ class AddSafeViewModelTest {
         }
         if (hasRepoInteractions) {
             // Avoid unnecessary mocks
-            val repoResult = repoException?.let { Completable.error(it) } ?: Completable.complete()
+            val repoResult = repoException?.let { Single.error<String>(it) } ?: Single.just(BigInteger.TEN.asTransactionHash())
             given(safeRepositoryMock.deploy(any(), any(), anyInt())).willReturn(repoResult)
         }
 
-        val result = expectedError?.let { ErrorResult<Unit>(it) } ?: DataResult(Unit)
+        val result = expectedError?.let { ErrorResult<String>(it) } ?: DataResult(BigInteger.TEN.asTransactionHash())
         subscribeDeploySafe(name).assertNoErrors().assertValue(result)
 
         if (hasStoreInteractions) {

@@ -15,9 +15,9 @@ import java.math.BigDecimal
 import java.math.BigInteger
 
 abstract class AddSafeContract : ViewModel() {
-    abstract fun addExistingSafe(name: String, address: String): Observable<Result<Unit>>
+    abstract fun addExistingSafe(name: String, address: String): Single<Result<BigInteger>>
 
-    abstract fun deployNewSafe(name: String): Observable<Result<Unit>>
+    abstract fun deployNewSafe(name: String): Single<Result<String>>
 
     abstract fun saveTransactionHash(transactionHash: String, name: String): Completable
 

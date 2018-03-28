@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.svalinn.common.utils.startActivity
 
@@ -31,14 +32,14 @@ class SetupSafeIntroActivity : BaseActivity() {
         super.onStart()
         disposables += layout_finish_setup_safe.clicks()
             .subscribeBy(onNext = {
-                startActivity(SafesOverviewActivity.createIntent(this), clearStack = true)
+                startActivity(SafeMainActivity.createIntent(this), clearStack = true)
                 startActivity(AddSafeActivity.createIntent(this))
                 finish()
             })
 
         disposables += layout_finish_setup_skip.clicks()
             .subscribeBy(onNext = {
-                startActivity(SafesOverviewActivity.createIntent(this), clearStack = true)
+                startActivity(SafeMainActivity.createIntent(this), clearStack = true)
                 finish()
             })
     }

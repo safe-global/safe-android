@@ -37,6 +37,7 @@ enum class ScreenId {
     RECEIPT_TRANSACTION,
     RESTORE_ACCOUNT,
     REVEAL_MNEMONIC,
+    SAFE_MAIN,
     SAFE_DETAILS,
     SAFE_OVERVIEW,
     SAFE_SETTINGS,
@@ -53,7 +54,7 @@ enum class ScreenId {
 
     DIALOG_REQUEST_SIGNATURE,
     DIALOG_SHARE_SAFE,
-    DIALOG_SHARE_ADDRESS
+    DIALOG_SHARE_ADDRESS,
 }
 
 enum class ButtonId {

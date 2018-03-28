@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.setupToolbar
@@ -117,7 +118,7 @@ class SafeSettingsActivity : BaseActivity() {
 
     private fun onSafeRemoved() {
         toast(getString(R.string.safe_remove_success, safeNameOrPlaceHolder(R.string.safe)))
-        startActivity(SafesOverviewActivity.createIntent(this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+        startActivity(SafeMainActivity.createIntent(this))
     }
 
     private fun onSafeRemoveError(throwable: Throwable) {

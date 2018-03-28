@@ -28,7 +28,7 @@ import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
-import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
+import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.models.AddressBookEntry
@@ -229,13 +229,15 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
     }
 
     private fun startSafeTransactionsActivity(safeAddress: BigInteger) {
+        /*
         startActivity(
-            SafeDetailsActivity.createIntent(
+            SafeDetailsFragment.createIntent(
                 this,
                 Safe(safeAddress),
                 R.string.tab_title_transactions
             ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
+        */
     }
 
     override fun onStart() {
@@ -246,13 +248,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 disposables += submitTransaction(it.safeAddress, it.transaction)
                     .subscribeForResult({
                         eventTracker.submit(Event.SubmittedTransaction())
-                        startActivity(
-                            SafeDetailsActivity.createIntent(
-                                this,
-                                Safe(it),
-                                R.string.tab_title_transactions
-                            ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        )
+                        startSafeTransactionsActivity(it)
                     }, {
                         if (it is IllegalStateException) {
                             snackbar(merge_transaction_details_container, R.string.error_not_enough_credits)

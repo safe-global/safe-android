@@ -20,7 +20,6 @@ import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.svalinn.common.utils.build
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.withArgs
@@ -100,6 +99,6 @@ class TokenBalancesFragment : BaseFragment() {
         private const val ARGUMENT_ADDRESS = "argument.string.address"
 
         fun createInstance(address: String) =
-            TokenBalancesFragment().withArgs(Bundle().build { putString(ARGUMENT_ADDRESS, address) })
+            TokenBalancesFragment().withArgs(Bundle().apply { putString(ARGUMENT_ADDRESS, address) })
     }
 }

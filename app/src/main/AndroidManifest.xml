@@ -31,7 +31,7 @@
                 android:launchMode="singleTop"
                 android:screenOrientation="portrait"/>
         <activity
-                android:name=".ui.safe.details.SafeDetailsActivity"
+                android:name=".ui.safe.details.SafeDetailsFragment"
                 android:screenOrientation="portrait"/>
         <activity
                 android:name=".ui.tokens.add.AddTokenActivity"
@@ -119,6 +119,7 @@
                   android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.qrscan.QRCodeScanActivity"/>
+        <activity android:name=".ui.safe.main.SafeMainActivity"/>
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

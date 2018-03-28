@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.data.db.models.fromDb
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
+import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.model.Solidity
@@ -64,6 +65,16 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .map { it.fromDb() }
 
+    override fun loadSafe(address: BigInteger): Single<Safe> =
+        safeDao.loadSafe(address)
+            .subscribeOn(Schedulers.io())
+            .map { it.fromDb() }
+
+    override fun loadPendingSafe(transactionHash: BigInteger): Single<PendingSafe> =
+        safeDao.loadPendingSafe(transactionHash)
+            .subscribeOn(Schedulers.io())
+            .map { it.fromDb() }
+
     override fun addSafe(address: BigInteger, name: String) =
         Completable.fromCallable {
             safeDao.insertSafe(GnosisSafeDb(address, name))
@@ -93,15 +104,17 @@ class DefaultGnosisSafeRepository @Inject constructor(
     override fun loadSafeDeployTransaction(devices: Set<BigInteger>, requiredConfirmations: Int): Single<Transaction> =
         loadSafeDeployTransactionWithSender(devices, requiredConfirmations).map { it.second }
 
-    override fun deploy(name: String, devices: Set<BigInteger>, requiredConfirmations: Int): Completable {
+    override fun deploy(name: String, devices: Set<BigInteger>, requiredConfirmations: Int): Single<String> {
         return loadSafeDeployTransactionWithSender(devices, requiredConfirmations)
             .map { (_, tx) -> tx }
             .flatMapObservable(txExecutorRepository::execute)
-            .flatMapCompletable {
-                Completable.fromAction {
+            .flatMapSingle {
+                Single.fromCallable {
                     safeDao.insertPendingSafe(PendingGnosisSafeDb(it.hexAsBigInteger(), name))
+                    it
                 }
             }
+            .firstOrError()
     }
 
     override fun savePendingSafe(transactionHash: BigInteger, name: String): Completable = Completable.fromAction {

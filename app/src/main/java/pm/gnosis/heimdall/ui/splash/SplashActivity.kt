@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.OnboardingIntro
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.svalinn.common.utils.startActivity
 import timber.log.Timber
@@ -47,7 +48,7 @@ class SplashActivity : BaseActivity() {
     }
 
     private fun startMain() {
-        startActivity(SafesOverviewActivity.createIntent(this), clearStack = true)
+        startActivity(SafeMainActivity.createIntent(this), clearStack = true)
     }
 
     private fun startAccountSetup() {

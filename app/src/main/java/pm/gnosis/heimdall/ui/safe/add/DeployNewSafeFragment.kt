@@ -24,10 +24,12 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asEthereumAddressStringOrNull
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
 import java.math.BigInteger
@@ -100,7 +102,7 @@ class DeployNewSafeFragment : BaseFragment() {
     private fun setupDeploySafe() =
         layout_deploy_new_safe_deploy_button.clicks()
             .observeOn(AndroidSchedulers.mainThread())
-            .flatMap {
+            .flatMapSingle {
                 viewModel.deployNewSafe(layout_deploy_new_safe_name_input.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { toggleDeploying(true) }
@@ -143,15 +145,15 @@ class DeployNewSafeFragment : BaseFragment() {
             { transactionHash ->
                 disposables += viewModel.saveTransactionHash(transactionHash, layout_deploy_new_safe_name_input.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onComplete = { safeDeployed(Unit) }, onError = Timber::e)
+                    .subscribeBy(onComplete = { safeDeployed(transactionHash) }, onError = Timber::e)
             })
 
         handleQrCodeActivityResult(requestCode, resultCode, data,
             { parseEthereumAddress(it)?.let { addOwner(it.asEthereumAddressString()) } })
     }
 
-    private fun safeDeployed(ignored: Unit) {
-        activity?.finish()
+    private fun safeDeployed(txHash: String) {
+        startActivity(SafeMainActivity.createIntent(context!!, txHash.hexAsBigInteger()))
     }
 
     private fun errorDeploying(throwable: Throwable) {
