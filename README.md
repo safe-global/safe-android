@@ -1,4 +1,4 @@
-# Heimdall Android
+# Heimdall Android [![Build Status](https://travis-ci.org/gnosis/heimdall-android.svg?branch=master)](https://travis-ci.org/gnosis/heimdall-android)
 
 **WARNING: Under development. Don't use the application with real funds! Application right now targets the Rinkeby test network. Switching to mainnet (or any other ethereum network) can be done by the user but it's its responsibility in doing so.**
 
