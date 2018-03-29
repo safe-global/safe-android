@@ -8,8 +8,14 @@ import pm.gnosis.heimdall.data.repositories.models.UserPurchase
 
 
 interface BillingRepository {
-    fun checkSubscription(id: String): Single<Optional<UserPurchase>>
+    fun checkPurchase(id: String, type: PurchaseType): Single<Optional<UserPurchase>>
     fun init()
-    fun launchSubscribeFlow(activity: Activity, productId: String): Single<Boolean>
-    fun observePurchases(): Observable<Set<String>>
+    fun launchPurchaseFlow(activity: Activity, productId: String, type: PurchaseType): Single<Boolean>
+    fun observePurchases(): Observable<out Collection<UserPurchase>>
+    fun consume(token: String): Single<Boolean>
+
+    enum class PurchaseType {
+        SUBSCRIPTION,
+        PRODUCT
+    }
 }

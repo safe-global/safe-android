@@ -11,6 +11,7 @@ import dagger.Provides
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
+import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountContract
@@ -78,6 +79,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesBaseTransactionDetailsContract(provider: ViewModelProvider) = provider[BaseTransactionDetailsContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesBuyCreditsContract(provider: ViewModelProvider) = provider[BuyCreditsContract::class.java]
 
     @Provides
     @ForView

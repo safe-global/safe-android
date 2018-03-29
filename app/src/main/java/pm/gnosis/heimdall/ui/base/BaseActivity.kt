@@ -7,6 +7,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.HeimdallApplication
+import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.common.di.components.ViewComponent
+import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -66,4 +69,10 @@ abstract class BaseActivity : AppCompatActivity() {
         Timber.d(throwable)
         // Show blocker screen. No auth -> no app usage
     }
+
+    protected fun viewComponent(): ViewComponent =
+        DaggerViewComponent.builder()
+            .applicationComponent(HeimdallApplication[this].component)
+            .viewModule(ViewModule(this))
+            .build()
 }

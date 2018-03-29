@@ -13,6 +13,8 @@ import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookViewModel
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
+import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
+import pm.gnosis.heimdall.ui.credits.BuyCreditsViewModel
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressViewModel
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
@@ -103,6 +105,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(BaseTransactionDetailsContract::class)
     abstract fun bindsBaseTransactionDetailsContract(viewModel: BaseTransactionDetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BuyCreditsContract::class)
+    abstract fun bindsBuyCreditsContract(viewModel: BuyCreditsViewModel): ViewModel
 
     @Binds
     @IntoMap

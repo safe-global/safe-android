@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.data.repositories
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
@@ -13,6 +14,22 @@ interface TransactionRepository {
     fun loadExecuteInformation(safeAddress: BigInteger, transaction: Transaction): Single<ExecuteInformation>
     fun sign(safeAddress: BigInteger, transaction: Transaction): Single<Signature>
     fun checkSignature(safeAddress: BigInteger, transaction: Transaction, signature: Signature): Single<Pair<BigInteger, Signature>>
+    fun estimateFees(
+        safeAddress: BigInteger,
+        transaction: Transaction,
+        signatures: Map<BigInteger, Signature>,
+        senderIsOwner: Boolean
+    ): Single<FeeEstimate>
+
+    fun observePublishStatus(id: String): Observable<PublishStatus>
+    fun loadChainHash(id: String): Single<String>
+    fun addLocalTransaction(safeAddress: BigInteger, transaction: Transaction, txChainHash: String): Single<String>
+    fun loadExecutableTransaction(
+        safeAddress: BigInteger,
+        innerTransaction: Transaction,
+        signatures: Map<BigInteger, Signature>,
+        senderIsOwner: Boolean
+    ): Single<Transaction>
 
     fun submit(
         safeAddress: BigInteger,
@@ -39,14 +56,4 @@ interface TransactionRepository {
         FAILED,
         SUCCESS
     }
-
-    fun observePublishStatus(id: String): Observable<PublishStatus>
-    fun loadChainHash(id: String): Single<String>
-    fun addLocalTransaction(safeAddress: BigInteger, transaction: Transaction, txChainHash: String): Single<String>
-    fun loadExecutableTransaction(
-        safeAddress: BigInteger,
-        innerTransaction: Transaction,
-        signatures: Map<BigInteger, Signature>,
-        senderIsOwner: Boolean
-    ): Single<Transaction>
 }

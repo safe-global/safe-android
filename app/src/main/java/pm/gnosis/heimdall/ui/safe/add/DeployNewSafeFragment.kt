@@ -23,6 +23,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
+import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddressString
@@ -56,7 +57,19 @@ class DeployNewSafeFragment : BaseFragment() {
 
         disposables += viewModel.observeAdditionalOwners()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(::updateOwners, Timber::e)
+            .doOnNext(::updateOwners)
+            .switchMapSingle {
+                viewModel.estimateDeploy()
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult({
+                val needsCredits = it.costs > it.balance
+                layout_deploy_new_safe_buy_credits_button.visible(needsCredits)
+                layout_deploy_new_safe_deploy_button.visible(!needsCredits)
+            }, {
+                Timber.e(it)
+                errorSnackbar(layout_deploy_new_safe_name_input, it)
+            })
 
         disposables += layout_deploy_new_safe_deploy_external.clicks()
             .flatMapSingle { viewModel.loadDeployData(layout_deploy_new_safe_name_input.text.toString()) }
@@ -70,12 +83,6 @@ class DeployNewSafeFragment : BaseFragment() {
 
         layout_deploy_new_safe_buy_credits_button.visible(false)
         layout_deploy_new_safe_deploy_button.visible(false)
-        disposables += viewModel.observeHasCredits()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onNext = { hasCredits ->
-                layout_deploy_new_safe_buy_credits_button.visible(!hasCredits)
-                layout_deploy_new_safe_deploy_button.visible(hasCredits)
-            }, onError = Timber::e)
     }
 
     private fun handleUserInput() =
@@ -88,9 +95,7 @@ class DeployNewSafeFragment : BaseFragment() {
     private fun setupBuyCredits() =
         layout_deploy_new_safe_buy_credits_button.clicks()
             .observeOn(AndroidSchedulers.mainThread())
-            .flatMapSingle {
-                viewModel.buyTransactionCredits(activity!!)
-            }
+            .doOnNext { startActivity(BuyCreditsActivity.createIntent(context!!)) }
 
     private fun setupDeploySafe() =
         layout_deploy_new_safe_deploy_button.clicks()

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/onboarding_background">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="42dp"
+                android:src="@drawable/ic_fingerprint_lock"/>
+
+        <TextView
+                android:id="@+id/layout_buy_credits_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:text="@string/loading"
+                android:textColor="@color/gnosis_dark_blue"
+                android:textSize="24sp"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:lineSpacingExtra="9sp"
+                android:text="Buy credits on the Gnosis Transaction Execution Service to easily execute transaction."
+                android:textColor="@color/onboarding_description"
+                android:textSize="15sp"/>
+
+        <TextView
+                android:id="@+id/layout_buy_credits_buy_button"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_marginTop="24dp"
+                android:text="Buy Credits"
+                android:textSize="18sp"/>
+
+        <TextView
+                android:id="@+id/layout_buy_credits_redeem_button"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_marginTop="24dp"
+                android:text="Redeem Voucher"
+                android:visibility="gone"
+                android:textSize="18sp"/>
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                android:id="@+id/layout_buy_credits_redeem_progress"
+                android:layout_width="40dp"
+                android:visibility="gone"
+                android:layout_marginTop="24dp"
+                android:layout_height="40dp"/>
+    </LinearLayout>
+</ScrollView>

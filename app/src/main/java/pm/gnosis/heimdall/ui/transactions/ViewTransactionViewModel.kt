@@ -10,6 +10,7 @@ import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
@@ -19,6 +20,7 @@ import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.HttpCodes
 import retrofit2.HttpException
+import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -28,15 +30,10 @@ class ViewTransactionViewModel @Inject constructor(
     private val signaturePushRepository: SignaturePushRepository,
     private val signatureStore: SignatureStore,
     private val transactionRepository: TransactionRepository,
-    private val transactionDetailsRepository: TransactionDetailsRepository,
-    private val txExecutorRepository: TxExecutorRepository
+    private val transactionDetailsRepository: TransactionDetailsRepository
 ) : ViewTransactionContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
-
-    override fun observeHasCredits() = txExecutorRepository.observePlan()
-
-    override fun buyCredit(activity: Activity) = txExecutorRepository.buyPlan(activity)
 
     override fun checkTransactionType(transaction: Transaction): Single<TransactionType> =
         transactionDetailsRepository.loadTransactionType(transaction)
@@ -114,6 +111,9 @@ class ViewTransactionViewModel @Inject constructor(
             })
             .mapToResult()
 
+    override fun estimateTransaction(info: Info): Single<Result<FeeEstimate>> =
+        transactionRepository.estimateFees(info.selectedSafe, info.status.transaction, info.signatures, info.status.isOwner).mapToResult()
+
     override fun loadExecutableTransaction(safeAddress: BigInteger, transaction: Transaction): Single<Transaction> =
         transactionRepository.loadExecuteInformation(safeAddress, transaction)
             .flatMap { info ->
@@ -143,7 +143,4 @@ class ViewTransactionViewModel @Inject constructor(
                 throw SimpleLocalizedException(context.getString(R.string.error_not_enough_confirmations))
             else -> this
         }
-
-    private fun TransactionRepository.ExecuteInformation.checkMap(signatures: Map<BigInteger, Signature>) =
-        Observable.fromCallable { check(signatures) }.onErrorResumeNext(Function { Observable.empty<TransactionRepository.ExecuteInformation>() })
 }

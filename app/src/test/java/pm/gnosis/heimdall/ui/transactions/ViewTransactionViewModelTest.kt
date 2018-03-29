@@ -57,9 +57,6 @@ class ViewTransactionViewModelTest {
     @Mock
     lateinit var transactionDetailsRepositoryMock: TransactionDetailsRepository
 
-    @Mock
-    lateinit var txExecutorRepositoryMock: TxExecutorRepository
-
     private lateinit var viewModel: ViewTransactionViewModel
 
     @Before
@@ -71,8 +68,7 @@ class ViewTransactionViewModelTest {
             signaturePushRepositoryMock,
             signatureStoreMock,
             transactionRepositoryMock,
-            transactionDetailsRepositoryMock,
-            txExecutorRepositoryMock
+            transactionDetailsRepositoryMock
         )
     }
 

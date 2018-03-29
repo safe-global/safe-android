@@ -90,7 +90,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 account to Transaction(factoryAddress, data = data)
             }
 
-    override fun loadSafeDeployTransaction(name: String, devices: Set<BigInteger>, requiredConfirmations: Int): Single<Transaction> =
+    override fun loadSafeDeployTransaction(devices: Set<BigInteger>, requiredConfirmations: Int): Single<Transaction> =
         loadSafeDeployTransactionWithSender(devices, requiredConfirmations).map { it.second }
 
     override fun deploy(name: String, devices: Set<BigInteger>, requiredConfirmations: Int): Completable {

@@ -62,6 +62,7 @@ android {
         dev {
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
+            debuggable true
             minifyEnabled false
             signingConfig signingConfigs.release
         }
