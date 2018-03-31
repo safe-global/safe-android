@@ -27,9 +27,7 @@
         <item name="android:windowBackground">@color/gnosis_blue</item>
     </style>
 
-    <style name="OnBoardingTheme" parent="OnBoardingThemeBase">
-        <item name="android:windowBackground">@color/gnosis_blue</item>
-    </style>
+    <style name="OnBoardingTheme" parent="OnBoardingThemeBase" />
 
     <style name="OnBoardingTheme.Text.Large" parent="android:TextAppearance">
         <item name="android:textColor">@color/white</item>

@@ -78,9 +78,9 @@ class AccountSetupActivity : BaseActivity() {
 
     private fun showNoAccountSupportDialog() {
         AlertDialog.Builder(this)
-            .setPositiveButton("Ok", { _, _ -> })
-            .setTitle("SmartLock not enabled")
-            .setMessage(Html.fromHtml("Your Google account doesn't have SmartLock enabled or it is disabled for this app. Please enable it to continue with Google. <a href=\"https://support.google.com/accounts/answer/6197437\">More information here.</a>"))
+            .setPositiveButton(R.string.ok, { _, _ -> })
+            .setTitle(R.string.smartlock_not_enabled_title)
+            .setMessage(Html.fromHtml(getString(R.string.smartlock_not_enabled_description)))
             .show()
             .apply { findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance() }
     }

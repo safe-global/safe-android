@@ -29,7 +29,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:gravity="center"
-                    android:text="Restore with Recovery Phrase" />
+                    android:text="@string/restore_with_recovery_phrase" />
 
                 <EditText
                     android:id="@+id/layout_restore_account_mnemonic"
@@ -39,7 +39,7 @@
                     android:layout_marginTop="48dp"
                     android:background="@drawable/border_radius_edit_text"
                     android:gravity="top"
-                    android:hint="Enter your recovery phrase"
+                    android:hint="@string/enter_your_recovery_phrase"
                     android:inputType="textMultiLine"
                     android:padding="16dp"
                     android:textColor="@color/gnosis_blue"
@@ -66,7 +66,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="12dp"
-            android:text="Restore" />
+            android:text="@string/restore" />
 
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

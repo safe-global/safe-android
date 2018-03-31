@@ -26,7 +26,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:gravity="center"
-                    android:text="Recovery Phrase" />
+                    android:text="@string/recovery_phrase" />
 
                 <TextView
                     style="@style/OnBoardingTheme.Text.Medium"
@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
                     android:gravity="center"
-                    android:text="The recovery phrase allows access to the safes you create within the app in case you want to restore your access in another device.\n\nBeware! Anyone with access to it might get access to your funds!\n\nFor a simple backup mechanism please continue with Google. If you already used this application with Google before, your account will be restored." />
+                    android:text="@string/account_setup_warning" />
 
                 <TextView
                     android:id="@+id/layout_account_setup_google"
@@ -46,7 +46,7 @@
                     android:drawableStart="@drawable/ic_google_color"
                     android:paddingEnd="24dp"
                     android:paddingStart="16dp"
-                    android:text="Continue with Google" />
+                    android:text="@string/continue_with_google" />
 
                 <ProgressBar
                     android:id="@+id/layout_account_setup_progress_bar"
@@ -68,6 +68,6 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="12dp"
             android:gravity="center"
-            android:text="Advanced" />
+            android:text="@string/advanced" />
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

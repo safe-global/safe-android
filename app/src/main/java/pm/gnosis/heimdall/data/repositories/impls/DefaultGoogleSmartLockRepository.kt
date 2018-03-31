@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.app.Activity
-import android.content.Context
 import android.content.IntentSender
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialRequest
@@ -12,7 +11,6 @@ import io.reactivex.*
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.data.repositories.GoogleSmartLockRepository
 import pm.gnosis.heimdall.data.repositories.GoogleSmartLockRepository.Companion.GNOSIS_SAFE_CREDENTIAL_ID
-import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,7 +18,6 @@ import javax.inject.Singleton
 
 @Singleton
 class DefaultGoogleSmartLockRepository @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val credentialsClient: CredentialsClient
 ) : GoogleSmartLockRepository {
     override fun storeCredentials(mnemonicSeed: ByteArray): Completable =
@@ -42,7 +39,7 @@ class DefaultGoogleSmartLockRepository @Inject constructor(
                             exception is ApiException && exception.statusCode == 16 -> e.onError(NoAccountsAvailableWithSmartLockException())
                             else -> e.onError(exception)
                         }
-                    }
+                    } ?: e.onError(UnkownGoogleSmartLockException())
                 }
             }
         }
@@ -72,7 +69,7 @@ class DefaultGoogleSmartLockRepository @Inject constructor(
                             exception is ApiException && exception.statusCode == 16 -> e.onError(NoAccountsAvailableWithSmartLockException())
                             else -> e.onError(exception)
                         }
-                    }
+                    } ?: e.onError(UnkownGoogleSmartLockException())
                 }
             }
         }
@@ -83,6 +80,7 @@ class DefaultGoogleSmartLockRepository @Inject constructor(
 
 class NoAccountsAvailableWithSmartLockException : Exception()
 class NoCredentialsStoredException : Exception()
+class UnkownGoogleSmartLockException : Exception("Task is not successful and error is null")
 
 enum class CredentialDialogAction(val requestCode: Int) {
     STORE(10),

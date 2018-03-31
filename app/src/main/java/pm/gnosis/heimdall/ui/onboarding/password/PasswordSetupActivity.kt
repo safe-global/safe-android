@@ -61,7 +61,7 @@ class PasswordSetupActivity : SecuredBaseActivity() {
     private fun onPasswordValidation(passwordValidation: PasswordValidation) {
         when (passwordValidation) {
             is PasswordValid -> startActivity(PasswordConfirmActivity.createIntent(this, passwordValidation.password))
-            is PasswordNotLongEnough -> layout_password_setup_input_layout.error = "Password needs to be at least 6 characters long"
+            is PasswordNotLongEnough -> layout_password_setup_input_layout.error = getString(R.string.password_too_short)
         }
     }
 

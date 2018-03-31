@@ -51,7 +51,7 @@ class PasswordConfirmActivity : SecuredBaseActivity() {
             .subscribeForResult(onNext = ::onPasswordSetup, onError = ::onPasswordSetupError)
 
         disposables += layout_password_confirm_back.clicks()
-            .subscribeBy(onNext = { finish() }, onError = Timber::e)
+            .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
 
         disposables += layout_password_confirm_password.textChanges()
             .subscribeBy(onNext = { layout_password_confirm_input_layout.error = null }, onError = Timber::e)
@@ -65,8 +65,8 @@ class PasswordConfirmActivity : SecuredBaseActivity() {
         Timber.e(throwable)
         (throwable as? PasswordInvalidException)?.let { passwordInvalidException ->
             when (passwordInvalidException.reason) {
-                is PasswordNotLongEnough -> layout_password_confirm_input_layout.error = "Password needs to be at least 6 characters long"
-                is PasswordsNotEqual -> layout_password_confirm_input_layout.error = "Passwords do not match"
+                is PasswordNotLongEnough -> layout_password_confirm_input_layout.error = getString(R.string.password_too_short)
+                is PasswordsNotEqual -> layout_password_confirm_input_layout.error = getString(R.string.passwords_do_not_match)
             }
         }
     }

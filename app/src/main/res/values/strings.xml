@@ -338,4 +338,25 @@
     <string name="payment">Payment</string>
     <string name="credits_balance">Balance: %s</string>
     <string name="voucher_already_redeemed">This voucher was already redeemed</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="account_setup_warning">The recovery phrase allows access to the safes you create within the app in case you want to restore your access in another device. \n\n Beware! Anyone with access to it might get access to your funds! \n\n For a simple backup mechanism please continue with Google. If you already used this application with Google before, your account will be restored.</string>
+    <string name="recovery_phrase">Recovery Phrase</string>
+    <string name="advanced">Advanced</string>
+    <string name="ok">Ok</string>
+    <string name="smartlock_not_enabled_title">SmartLock not enabled</string>
+    <string name="smartlock_not_enabled_description"><![CDATA[Your Google account doesn\'t have SmartLock enabled or it is disabled for this app. Please enable it to continue with Google. <a href="https://support.google.com/accounts/answer/6197437">More information here</a>]]></string>
+    <string name="get_started">Get Started</string>
+    <string name="onboarding_intro">Store your assets securely with 2FA</string>
+    <string name="setup_password">Setup Password</string>
+    <string name="setup_password_info">This password will prevent unauthorized access to this application</string>
+    <string name="password">Password</string>
+    <string name="next">Next</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="confirm_password_info">Confirm the password you have entered in the previous screen</string>
+    <string name="mnemonic_generation_warning">The Recovery Phrase is a sensitive piece of information. You should only reveal it in a secure place.</string>
+    <string name="reveal">Reveal</string>
+    <string name="i_have_saved_it">I HAVE SAVED IT</string>
+    <string name="restore">Restore</string>
+    <string name="restore_with_recovery_phrase">Restore with Recovery Phrase</string>
+    <string name="enter_your_recovery_phrase">Enter your recovery phrase</string>
 </resources>

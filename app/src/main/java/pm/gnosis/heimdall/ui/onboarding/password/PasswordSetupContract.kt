@@ -9,7 +9,7 @@ abstract class PasswordSetupContract : ViewModel() {
     abstract fun setPassword(password: String, repeat: String): Single<Result<Unit>>
 }
 
-data class PasswordInvalidException(val reason: PasswordValidation) : Exception()
+data class PasswordInvalidException(val reason: PasswordValidation) : IllegalArgumentException()
 sealed class PasswordValidation
 class PasswordValid(val password: String) : PasswordValidation()
 data class PasswordNotLongEnough(val numberOfCharacters: Int, val required: Int) : PasswordValidation()

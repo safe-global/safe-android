@@ -14,7 +14,7 @@ class PasswordSetupViewModel @Inject constructor(
     private val encryptionManager: EncryptionManager
 ) : PasswordSetupContract() {
     override fun isPasswordValid(password: String): PasswordValidation {
-        return if (password.length > MIN_CHARS) PasswordValid(password) else PasswordNotLongEnough(password.length, MIN_CHARS)
+        return if (password.length >= MIN_CHARS) PasswordValid(password) else PasswordNotLongEnough(password.length, MIN_CHARS)
     }
 
     override fun setPassword(password: String, repeat: String) =
@@ -30,6 +30,6 @@ class PasswordSetupViewModel @Inject constructor(
         }.mapToResult()
 
     companion object {
-        private const val MIN_CHARS = 5
+        private const val MIN_CHARS = 6
     }
 }

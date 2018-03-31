@@ -22,7 +22,7 @@
             android:layout_marginTop="24dp"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
-            android:text="Store your assets securely with 2FA"
+            android:text="@string/onboarding_intro"
             android:textColor="@color/white"
             android:textSize="15sp" />
 
@@ -34,6 +34,6 @@
             android:layout_marginTop="96dp"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
-            android:text="Get Started" />
+            android:text="@string/get_started" />
     </LinearLayout>
 </ScrollView>

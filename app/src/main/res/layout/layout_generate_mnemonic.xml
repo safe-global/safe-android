@@ -25,7 +25,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="Recovery Phrase" />
+                    android:text="@string/recovery_phrase" />
 
                 <TextView
                     style="@style/OnBoardingTheme.Text.Medium"
@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
                     android:gravity="center"
-                    android:text="The Recovery Phrase is a sensitive piece of information. You should only reveal it when you know that there are no other" />
+                    android:text="@string/mnemonic_generation_warning" />
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/layout_generate_mnemonic_reveal"
@@ -43,7 +43,7 @@
                     android:layout_marginTop="32dp"
                     android:paddingEnd="50dp"
                     android:paddingStart="50dp"
-                    android:text="REVEAL" />
+                    android:text="@string/reveal" />
 
                 <LinearLayout
                     android:id="@+id/layout_generate_mnemonic_reveal_container"
@@ -76,7 +76,7 @@
                         android:layout_marginTop="40dp"
                         android:paddingEnd="50dp"
                         android:paddingStart="50dp"
-                        android:text="I HAVE SAVED IT" />
+                        android:text="@string/i_have_saved_it" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -90,7 +90,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="12dp"
-            android:text="Restore" />
+            android:text="@string/restore" />
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

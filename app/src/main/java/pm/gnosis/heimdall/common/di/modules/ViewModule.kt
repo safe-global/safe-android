@@ -124,7 +124,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesRecoveryContract(provider: ViewModelProvider) = provider[AccountSetupContract::class.java]
+    fun providesAccountSetupContract(provider: ViewModelProvider) = provider[AccountSetupContract::class.java]
 
     @Provides
     @ForView

@@ -158,7 +158,7 @@ abstract class ViewModelFactoryModule {
     @Binds
     @IntoMap
     @ViewModelKey(AccountSetupContract::class)
-    abstract fun bindsRecoveryContract(viewModel: AccountSetupViewModel): ViewModel
+    abstract fun bindsAccountSetupContractContract(viewModel: AccountSetupViewModel): ViewModel
 
     @Binds
     @IntoMap
