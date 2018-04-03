@@ -28,7 +28,7 @@ class PasswordConfirmActivity : SecuredBaseActivity() {
     @Inject
     lateinit var viewModel: PasswordSetupContract
 
-    private lateinit var password: String
+    private lateinit var passwordHash: ByteArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
@@ -37,7 +37,7 @@ class PasswordConfirmActivity : SecuredBaseActivity() {
         setContentView(R.layout.layout_password_confirm)
         layout_password_confirm_password.disableAccessibility()
 
-        intent.getStringExtra(EXTRA_PASSWORD)?.let { password = it } ?: run {
+        intent.getByteArrayExtra(EXTRA_PASSWORD_HASH)?.let { passwordHash = it } ?: run {
             Timber.e("PasswordConfirmActivity: Password is null")
             finish()
         }
@@ -46,7 +46,7 @@ class PasswordConfirmActivity : SecuredBaseActivity() {
     override fun onStart() {
         super.onStart()
         disposables += layout_password_confirm_next.clicks()
-            .flatMapSingle { viewModel.setPassword(password, layout_password_confirm_password.text.toString()) }
+            .flatMapSingle { viewModel.setPassword(passwordHash, layout_password_confirm_password.text.toString()) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onPasswordSetup, onError = ::onPasswordSetupError)
 
@@ -86,10 +86,10 @@ class PasswordConfirmActivity : SecuredBaseActivity() {
     }
 
     companion object {
-        private const val EXTRA_PASSWORD = "extra.string.password"
+        private const val EXTRA_PASSWORD_HASH = "extra.string.passwordHash"
 
-        fun createIntent(context: Context, password: String) = Intent(context, PasswordConfirmActivity::class.java).apply {
-            putExtra(EXTRA_PASSWORD, password)
+        fun createIntent(context: Context, passwordHash: ByteArray) = Intent(context, PasswordConfirmActivity::class.java).apply {
+            putExtra(EXTRA_PASSWORD_HASH, passwordHash)
         }
     }
 }

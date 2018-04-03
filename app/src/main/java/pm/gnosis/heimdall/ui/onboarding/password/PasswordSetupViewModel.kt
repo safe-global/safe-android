@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.onboarding.password
 
 import android.content.Context
 import io.reactivex.Single
+import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.svalinn.common.di.ApplicationContext
@@ -17,14 +18,14 @@ class PasswordSetupViewModel @Inject constructor(
         return if (password.length >= MIN_CHARS) PasswordValid(password) else PasswordNotLongEnough(password.length, MIN_CHARS)
     }
 
-    override fun setPassword(password: String, repeat: String) =
+    override fun setPassword(passwordHash: ByteArray, repeat: String) =
         Single.fromCallable {
-            if (password != repeat) throw PasswordInvalidException(PasswordsNotEqual())
+            if (!Sha3Utils.keccak(repeat.toByteArray()).contentEquals(passwordHash)) throw PasswordInvalidException(PasswordsNotEqual())
             // This should never happen since it was validated in the previous screen
-            isPasswordValid(password).let { validation -> if (validation !is PasswordValid) throw PasswordInvalidException(validation) }
-            password
+            isPasswordValid(repeat).let { validation -> if (validation !is PasswordValid) throw PasswordInvalidException(validation) }
+            repeat.toByteArray()
         }.flatMap {
-            encryptionManager.setupPassword(it.toByteArray())
+            encryptionManager.setupPassword(it)
                 .map { if (it) Unit else throw Exception() }
                 .onErrorResumeNext { _: Throwable -> Single.error(SimpleLocalizedException(context.getString(R.string.password_error_saving))) }
         }.mapToResult()

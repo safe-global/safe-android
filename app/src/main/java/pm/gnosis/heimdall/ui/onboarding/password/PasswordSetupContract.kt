@@ -6,7 +6,7 @@ import pm.gnosis.svalinn.common.utils.Result
 
 abstract class PasswordSetupContract : ViewModel() {
     abstract fun isPasswordValid(password: String): PasswordValidation
-    abstract fun setPassword(password: String, repeat: String): Single<Result<Unit>>
+    abstract fun setPassword(passwordHash: ByteArray, repeat: String): Single<Result<Unit>>
 }
 
 data class PasswordInvalidException(val reason: PasswordValidation) : IllegalArgumentException()
