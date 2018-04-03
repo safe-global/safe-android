@@ -14,9 +14,9 @@ class PasswordSetupViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val encryptionManager: EncryptionManager
 ) : PasswordSetupContract() {
-    override fun isPasswordValid(password: String): PasswordValidation {
-        return if (password.length >= MIN_CHARS) PasswordValid(password) else PasswordNotLongEnough(password.length, MIN_CHARS)
-    }
+    override fun isPasswordValid(password: String): PasswordValidation =
+        if (password.length >= MIN_CHARS) PasswordValid(Sha3Utils.keccak(password.toByteArray()))
+        else PasswordNotLongEnough(password.length, MIN_CHARS)
 
     override fun setPassword(passwordHash: ByteArray, repeat: String) =
         Single.fromCallable {

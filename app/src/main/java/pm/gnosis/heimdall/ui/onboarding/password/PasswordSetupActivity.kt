@@ -9,8 +9,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_password_setup.*
-import pm.gnosis.crypto.utils.HashUtils
-import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -62,7 +60,7 @@ class PasswordSetupActivity : SecuredBaseActivity() {
 
     private fun onPasswordValidation(passwordValidation: PasswordValidation) {
         when (passwordValidation) {
-            is PasswordValid -> startActivity(PasswordConfirmActivity.createIntent(this, Sha3Utils.keccak(passwordValidation.password.toByteArray())))
+            is PasswordValid -> startActivity(PasswordConfirmActivity.createIntent(this, passwordValidation.passwordHash))
             is PasswordNotLongEnough -> layout_password_setup_input_layout.error = getString(R.string.password_too_short)
         }
     }

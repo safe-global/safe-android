@@ -86,7 +86,7 @@ class PasswordConfirmActivity : SecuredBaseActivity() {
     }
 
     companion object {
-        private const val EXTRA_PASSWORD_HASH = "extra.string.passwordHash"
+        private const val EXTRA_PASSWORD_HASH = "extra.bytearray.passwordHash"
 
         fun createIntent(context: Context, passwordHash: ByteArray) = Intent(context, PasswordConfirmActivity::class.java).apply {
             putExtra(EXTRA_PASSWORD_HASH, passwordHash)

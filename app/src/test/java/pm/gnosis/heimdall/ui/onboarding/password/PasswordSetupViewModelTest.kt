@@ -11,6 +11,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -44,8 +45,9 @@ class PasswordSetupViewModelTest {
     fun setupPasswordTooShort() {
         val observer = createObserver()
         val password = "11111"
+        val passwordHash = Sha3Utils.keccak(password.toByteArray())
 
-        viewModel.setPassword(password, password).subscribe(observer)
+        viewModel.setPassword(passwordHash, password).subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         observer.assertResult(ErrorResult(PasswordInvalidException(PasswordNotLongEnough(password.length, MIN_CHARS))))
@@ -55,7 +57,7 @@ class PasswordSetupViewModelTest {
     fun setupPasswordNotSame() {
         val observer = createObserver()
 
-        viewModel.setPassword("111111", "123456").subscribe(observer)
+        viewModel.setPassword(Sha3Utils.keccak("111111".toByteArray()), "123456").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         observer.assertValue { it is ErrorResult && it.error is PasswordInvalidException && (it.error as PasswordInvalidException).reason is PasswordsNotEqual }
@@ -68,7 +70,7 @@ class PasswordSetupViewModelTest {
         val exception = Exception()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
 
-        viewModel.setPassword("111111", "111111").subscribe(observer)
+        viewModel.setPassword(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
 
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -82,7 +84,7 @@ class PasswordSetupViewModelTest {
         val observer = createObserver()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(false))
 
-        viewModel.setPassword("111111", "111111").subscribe(observer)
+        viewModel.setPassword(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
 
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -95,7 +97,7 @@ class PasswordSetupViewModelTest {
         val observer = createObserver()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
 
-        viewModel.setPassword("111111", "111111").subscribe(observer)
+        viewModel.setPassword(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
 
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()

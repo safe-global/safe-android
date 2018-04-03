@@ -11,6 +11,6 @@ abstract class PasswordSetupContract : ViewModel() {
 
 data class PasswordInvalidException(val reason: PasswordValidation) : IllegalArgumentException()
 sealed class PasswordValidation
-class PasswordValid(val password: String) : PasswordValidation()
+class PasswordValid(val passwordHash: ByteArray) : PasswordValidation()
 data class PasswordNotLongEnough(val numberOfCharacters: Int, val required: Int) : PasswordValidation()
 class PasswordsNotEqual : PasswordValidation()
