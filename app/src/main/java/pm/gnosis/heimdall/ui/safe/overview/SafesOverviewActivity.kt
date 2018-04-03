@@ -26,7 +26,7 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
-import pm.gnosis.heimdall.ui.safe.details.SafeDetailsActivity
+import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.settings.SettingsActivity
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.visible
@@ -115,8 +115,8 @@ class SafesOverviewActivity : BaseActivity() {
         Timber.e(throwable)
     }
 
-    private fun onSafeSelection(safe: Safe) {
-        startActivity(SafeDetailsActivity.createIntent(this, safe))
+    private fun onSafeSelection(safe: AbstractSafe) {
+        //startActivity(SafeDetailsFragment.createIntent(this, safe))
     }
 
     private fun inject() {

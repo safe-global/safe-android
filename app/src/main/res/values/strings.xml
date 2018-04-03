@@ -235,7 +235,7 @@
     <string name="mnemonic_required_words">%1d/%2d words</string>
     <string name="review_transaction">Review transaction</string>
     <string name="safe_overview_empty_title">You have no safes yet.</string>
-    <string name="safe_overview_emtpy_description">Add a new or existing safe and it will show up right here.</string>
+    <string name="safe_overview_empty_description">Add a new or existing safe and it will show up right here.</string>
     <string name="safe_overview_empty_action">Add a Safe</string>
     <string name="owner">owner</string>
     <string name="owner_label">Owner</string>
@@ -313,6 +313,7 @@
     <string name="contract_address">Contract Address</string>
     <string name="symbol">Symbol</string>
     <string name="transaction">Transaction</string>
+    <string name="no_safe_selected">No Safe selected</string>
     <string name="no_safe_selected_error">Please select a Safe to proceed!</string>
     <string name="channel_signing_request_name">Signing Requests</string>
     <string name="channel_signing_request_description">Requests to sign transactions.</string>

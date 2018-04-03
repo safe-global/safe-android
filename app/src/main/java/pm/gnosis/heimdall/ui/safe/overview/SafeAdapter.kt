@@ -39,7 +39,7 @@ class SafeAdapter @Inject constructor(
         private const val TYPE_SAFE = 1
     }
 
-    val safeSelection = PublishSubject.create<Safe>()!!
+    val safeSelection = PublishSubject.create<AbstractSafe>()!!
     val shareSelection = PublishSubject.create<String>()!!
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SafeAdapter.CastingViewHolder<out AbstractSafe> {
@@ -125,11 +125,15 @@ class SafeAdapter @Inject constructor(
         }
     }
 
-    inner class PendingViewHolder(itemView: View) : CastingViewHolder<PendingSafe>(PendingSafe::class.java, itemView) {
+    inner class PendingViewHolder(itemView: View) : CastingViewHolder<PendingSafe>(PendingSafe::class.java, itemView), View.OnClickListener {
 
         private val disposables = CompositeDisposable()
 
         private var currentEntry: PendingSafe? = null
+
+        init {
+            itemView.setOnClickListener(this)
+        }
 
         override fun castedBind(data: PendingSafe, payloads: List<Any>) {
             currentEntry = data
@@ -158,6 +162,10 @@ class SafeAdapter @Inject constructor(
             stop()
             currentEntry = null
             super.unbind()
+        }
+
+        override fun onClick(v: View?) {
+            currentEntry?.let { safeSelection.onNext(it) }
         }
     }
 }

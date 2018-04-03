@@ -4,7 +4,6 @@ import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
@@ -53,36 +52,35 @@ class AddSafeViewModel @Inject constructor(
             field = value
         }
 
-    override fun addExistingSafe(name: String, address: String): Observable<Result<Unit>> {
-        return Observable.fromCallable {
+    override fun addExistingSafe(name: String, address: String): Single<Result<BigInteger>> {
+        return Single.fromCallable {
             checkName(name)
             val parsedAddress = address.hexAsEthereumAddressOrNull()
                     ?: throw SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))
             parsedAddress to name
         }.flatMap { (address, name) ->
             gnosisSafeRepository.addSafe(address, name)
-                .andThen(Observable.just(Unit))
-                .onErrorResumeNext(Function { errorHandler.observable(it) })
+                .andThen(Single.just(address))
+                .onErrorResumeNext { errorHandler.single(it) }
         }
             .mapToResult()
     }
 
-    override fun deployNewSafe(name: String): Observable<Result<Unit>> =
-        Observable.fromCallable {
+    override fun deployNewSafe(name: String): Single<Result<String>> =
+        Single.fromCallable {
             checkName(name)
             name
         }.flatMap {
-            addressStore.load().flatMapCompletable {
+            addressStore.load().flatMap {
                 // We add 1 owner because the current device will automatically be added as an owner
                 gnosisSafeRepository.deploy(name, it, GnosisSafeUtils.calculateThreshold(it.size + 1))
             }
-                .andThen(Observable.just(Unit))
-                .onErrorResumeNext(Function {
+                .onErrorResumeNext {
                     if (it is HttpException && it.code() == HttpCodes.UNAUTHORIZED)
-                        Observable.error(IllegalStateException())
+                        Single.error(IllegalStateException())
                     else
-                        errorHandler.observable(it)
-                })
+                        errorHandler.single(it)
+                }
         }
             .mapToResult()
 

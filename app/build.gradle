@@ -186,6 +186,11 @@ dependencies {
     implementation("com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:$versions.rxbinding") {
         exclude group: "io.reactivex.rxjava2", module: "rxandroid"
     }
+    implementation("com.jakewharton.rxbinding2:rxbinding-design-kotlin:$versions.rxbinding") {
+        exclude group: "io.reactivex.rxjava2", module: "rxandroid"
+    }
+
+    // More
     implementation "com.github.clans:fab:$versions.floating_action_button"
     implementation("me.zhanghai.android.materialprogressbar:library:$versions.material_progressbar") {
         exclude group: 'com.android.support', module: 'appcompat-v7'

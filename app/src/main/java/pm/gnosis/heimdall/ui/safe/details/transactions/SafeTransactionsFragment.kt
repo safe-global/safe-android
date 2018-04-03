@@ -14,7 +14,6 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.svalinn.common.utils.build
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.hexAsBigInteger
@@ -87,7 +86,7 @@ class SafeTransactionsFragment : BaseFragment() {
 
         fun createInstance(address: String) =
             SafeTransactionsFragment().withArgs(
-                Bundle().build { putString(ARGUMENT_SAFE_ADDRESS, address) }
+                Bundle().apply { putString(ARGUMENT_SAFE_ADDRESS, address) }
             )
     }
 }

@@ -18,12 +18,15 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.utils.asEthereumAddressStringOrNull
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
+import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -36,7 +39,8 @@ class AddExistingSafeFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        disposables += layout_add_existing_safe_add_button.clicks().flatMap {
+        disposables += layout_add_existing_safe_add_button.clicks()
+            .flatMapSingle {
             viewModel.addExistingSafe(layout_add_existing_safe_name_input.text.toString(), layout_add_existing_safe_address_input.text.toString())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { toggleAdding(true) }
@@ -99,8 +103,8 @@ class AddExistingSafeFragment : BaseFragment() {
         layout_add_existing_safe_progress.visibility = if (inProgress) View.VISIBLE else View.GONE
     }
 
-    private fun safeAdded(ignored: Unit) {
-        activity?.finish()
+    private fun safeAdded(address: BigInteger) {
+        startActivity(SafeMainActivity.createIntent(context!!, address))
     }
 
     private fun errorDeploying(throwable: Throwable) {

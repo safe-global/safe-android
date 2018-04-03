@@ -4,7 +4,6 @@ import android.app.Activity
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.svalinn.common.utils.Result
 
 
 abstract class BuyCreditsContract : ViewModel() {

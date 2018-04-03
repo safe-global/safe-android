@@ -56,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="@string/safe_overview_emtpy_description" />
+                    android:text="@string/safe_overview_empty_description" />
 
                 <TextView
                     android:id="@+id/layout_safe_overview_add_safe"
