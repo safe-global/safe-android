@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.data.repositories.impls
+package pm.gnosis.heimdall.helpers
 
 import android.app.Activity
 import android.content.IntentSender
@@ -9,21 +9,19 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import io.reactivex.*
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.heimdall.data.repositories.GoogleSmartLockRepository
-import pm.gnosis.heimdall.data.repositories.GoogleSmartLockRepository.Companion.GNOSIS_SAFE_CREDENTIAL_ID
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DefaultGoogleSmartLockRepository @Inject constructor(
+class GoogleSmartLockHelper @Inject constructor(
     private val credentialsClient: CredentialsClient
-) : GoogleSmartLockRepository {
-    override fun storeCredentials(mnemonicSeed: ByteArray): Completable =
+) {
+    fun storeCredentials(mnemonicSeed: ByteArray): Completable =
         StoreCredentialsCompletable(mnemonicSeed.toHexString()).create().subscribeOn(Schedulers.io())
 
-    override fun retrieveCredentials(): Single<Credential> = ReadCredentialsSingle().create().subscribeOn(Schedulers.io())
+    fun retrieveCredentials(): Single<Credential> = ReadCredentialsSingle().create().subscribeOn(Schedulers.io())
 
     private inner class StoreCredentialsCompletable(private val mnemonic: String) : CompletableOnSubscribe {
         override fun subscribe(e: CompletableEmitter) {
@@ -34,7 +32,10 @@ class DefaultGoogleSmartLockRepository @Inject constructor(
                     task.exception?.let { exception ->
                         when {
                             exception is ResolvableApiException -> e.onError(
-                                ActivityShouldRequestCredentialDialogException(exception, CredentialDialogAction.STORE)
+                                ActivityShouldRequestCredentialDialogException(
+                                    exception,
+                                    CredentialDialogAction.STORE
+                                )
                             )
                             exception is ApiException && exception.statusCode == 16 -> e.onError(NoAccountsAvailableWithSmartLockException())
                             else -> e.onError(exception)
@@ -65,7 +66,12 @@ class DefaultGoogleSmartLockRepository @Inject constructor(
                                 // This is most likely the case where the user has multiple saved
                                 // credentials and needs to pick one. This requires showing UI to
                                 // resolve the read request.
-                                e.onError(ActivityShouldRequestCredentialDialogException(exception, CredentialDialogAction.READ))
+                                e.onError(
+                                    ActivityShouldRequestCredentialDialogException(
+                                        exception,
+                                        CredentialDialogAction.READ
+                                    )
+                                )
                             exception is ApiException && exception.statusCode == 16 -> e.onError(NoAccountsAvailableWithSmartLockException())
                             else -> e.onError(exception)
                         }
@@ -75,6 +81,10 @@ class DefaultGoogleSmartLockRepository @Inject constructor(
         }
 
         fun create(): Single<Credential> = Single.create(this)
+    }
+
+    companion object {
+        const val GNOSIS_SAFE_CREDENTIAL_ID = "Gnosis Safe Account"
     }
 }
 

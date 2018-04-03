@@ -4,8 +4,8 @@ import com.google.android.gms.auth.api.credentials.Credential
 import io.reactivex.Completable
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.GoogleSmartLockRepository
-import pm.gnosis.heimdall.data.repositories.impls.NoCredentialsStoredException
+import pm.gnosis.heimdall.helpers.GoogleSmartLockHelper
+import pm.gnosis.heimdall.helpers.NoCredentialsStoredException
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.mapToResult
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class AccountSetupViewModel @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val bip39: Bip39,
-    private val googleSmartLockRepository: GoogleSmartLockRepository
+    private val googleSmartLockRepository: GoogleSmartLockHelper
 ) : AccountSetupContract() {
     override fun continueWithGoogle() =
         googleSmartLockRepository.retrieveCredentials()
@@ -38,7 +38,7 @@ class AccountSetupViewModel @Inject constructor(
 
     override fun setAccountFromCredential(credential: Credential): Completable =
         Single.fromCallable {
-            if (credential.id != GoogleSmartLockRepository.GNOSIS_SAFE_CREDENTIAL_ID) throw IllegalArgumentException("Credentials with invalid id. ID is ${credential.id}")
+            if (credential.id != GoogleSmartLockHelper.GNOSIS_SAFE_CREDENTIAL_ID) throw IllegalArgumentException("Credentials with invalid id. ID is ${credential.id}")
             credential.password!!.hexStringToByteArray()
         }
             .flatMapCompletable { accountsRepository.saveAccountFromMnemonicSeed(it) }
