@@ -1,28 +1,23 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.app.Activity
-import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.ObservableSource
 import io.reactivex.Single
-import io.reactivex.functions.Function
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.data.remote.TxExecutorApi
 import pm.gnosis.heimdall.data.remote.models.TxExecutionData
 import pm.gnosis.heimdall.data.remote.models.TxExecutionVoucherData
 import pm.gnosis.heimdall.data.repositories.BillingRepository
-import pm.gnosis.heimdall.data.repositories.BillingRepository.PurchaseType.*
+import pm.gnosis.heimdall.data.repositories.BillingRepository.PurchaseType.PRODUCT
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
-import pm.gnosis.heimdall.data.repositories.models.UserPurchase
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
-import pm.gnosis.svalinn.common.utils.*
-import pm.gnosis.utils.HttpCodes
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexStringToByteArray
 import retrofit2.HttpException
-import timber.log.Timber
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -51,8 +46,7 @@ class DefaultTxExecutorRepository @Inject constructor(
             .map {
                 it.find { it.productId == EXECUTOR_SERVICE_CREDITS_ID }?.token?.let {
                     DataResult(it)
-                } ?:
-                ErrorResult<String>(NoSuchElementException())
+                } ?: ErrorResult<String>(NoSuchElementException())
             }
 
     override fun redeemVoucher(voucher: String): Single<Long> =
@@ -103,7 +97,6 @@ class DefaultTxExecutorRepository @Inject constructor(
             }
 
     companion object {
-        private const val EXECUTOR_SERVICE_SUBSCRIPTION_ID = "pm.gnosis.heimdall.dev.transaction_execution_rinkeby_1"
         private const val EXECUTOR_SERVICE_CREDITS_ID = "pm.gnosis.heimdall.dev.100_transaction_executions_rinkeby_1"
     }
 }
