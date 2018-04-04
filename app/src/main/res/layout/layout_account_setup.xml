@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_account_setup_coordinator"
     android:layout_width="match_parent"
@@ -48,12 +49,13 @@
                     android:paddingStart="16dp"
                     android:text="@string/continue_with_google" />
 
-                <ProgressBar
+                <me.zhanghai.android.materialprogressbar.MaterialProgressBar
                     android:id="@+id/layout_account_setup_progress_bar"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginTop="16dp"
                     android:visibility="gone"
+                    app:mpb_indeterminateTint="@color/white"
                     tools:visibility="visible" />
 
             </LinearLayout>

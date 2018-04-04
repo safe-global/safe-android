@@ -24,7 +24,6 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicActivity
-import pm.gnosis.heimdall.utils.tintCompat
 import pm.gnosis.svalinn.common.utils.startActivity
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.visible
@@ -41,7 +40,6 @@ class AccountSetupActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_account_setup)
-        layout_account_setup_progress_bar.tintCompat(R.color.white)
     }
 
     override fun onStart() {
