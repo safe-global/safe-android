@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -15,13 +14,12 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
+import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.svalinn.common.utils.startActivity
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.utils.trimWhitespace
-import pm.gnosis.utils.words
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,7 +34,6 @@ class RestoreAccountActivity : SecuredBaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_restore_account)
-        setupToolbar(layout_restore_account_toolbar)
 
         layout_restore_account_mnemonic.disableAccessibility()
     }
@@ -51,38 +48,23 @@ class RestoreAccountActivity : SecuredBaseActivity() {
     override fun onStart() {
         super.onStart()
         onSavingAccount(false)
-        disposables += mnemonicValidatorDisposable()
-        disposables += mnemonicChangesDisposable()
-    }
-
-    private fun mnemonicValidatorDisposable() =
-        layout_restore_account_restore.clicks()
+        disposables += layout_restore_account_restore.clicks()
             .map { layout_restore_account_mnemonic.text.toString().trimWhitespace() }
-            .flatMap {
+            .flatMapSingle {
                 viewModel.saveAccountWithMnemonic(it)
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { onSavingAccount(isSaving = true) }
                     .doAfterTerminate { onSavingAccount(isSaving = false) }
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeForResult(::onAccountSaved, ::onAccountSaveError)
+            .subscribeForResult(onNext = { onAccountSaved() }, onError = ::onAccountSaveError)
 
-    private fun mnemonicChangesDisposable() =
-        layout_restore_account_mnemonic.textChanges()
-            .map { it.toString() }
-            .subscribeBy(
-                onNext = {
-                    updateWordCounter(it)
-                },
-                onError = Timber::e
-            )
-
-    private fun updateWordCounter(mnemonic: String) {
-        layout_restore_account_word_counter.text = getString(R.string.mnemonic_required_words, mnemonic.words().count(), 12)
+        disposables += layout_restore_account_back.clicks()
+            .subscribeBy(onNext = { finish() }, onError = Timber::e)
     }
 
-    private fun onAccountSaved(intent: Intent) {
-        startActivity(intent, clearStack = false)
+    private fun onAccountSaved() {
+        startActivity(SetupSafeIntroActivity.createIntent(this), clearStack = false)
     }
 
     private fun onAccountSaveError(throwable: Throwable) {

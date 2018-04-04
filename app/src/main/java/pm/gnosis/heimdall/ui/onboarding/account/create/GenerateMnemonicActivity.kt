@@ -19,12 +19,11 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
+import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
-import pm.gnosis.heimdall.utils.setupToolbar
-import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.startActivity
 import pm.gnosis.svalinn.common.utils.subscribeForResult
+import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -42,26 +41,26 @@ class GenerateMnemonicActivity : SecuredBaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_generate_mnemonic)
-        setupToolbar(layout_generate_mnemonic_toolbar)
 
         layout_generate_mnemonic_mnemonic.disableAccessibility()
-
-        layout_generate_mnemonic_mnemonic.setOnLongClickListener {
-            copyToClipboard("mnemonic", layout_generate_mnemonic_mnemonic.text.toString(), {
-                snackbar(layout_generate_mnemonic_coordinator, getString(R.string.mnemonic_copied))
-            })
-            true
-        }
-        mnemonicGeneratorDisposable = generateMnemonicDisposable()
-        layout_generate_mnemonic_regenerate_button.callOnClick()
     }
 
     override fun onStart() {
         super.onStart()
-        disposables += saveAccountConfirmationDisposable()
+        disposables += layout_generate_mnemonic_save.clicks()
+            .subscribeBy(onNext = { showConfirmationDialog(layout_generate_mnemonic_mnemonic.text.toString()) }, onError = Timber::e)
+
+        disposables += layout_generate_mnemonic_reveal.clicks()
+            .flatMapSingle { viewModel.generateMnemonic() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onMnemonic, onError = ::onMnemonicError)
+
         disposables += confirmDialogClick
             .flatMapSingle { viewModel.saveAccountWithMnemonic(it) }
             .subscribeForResult(onNext = { onAccountSaved() }, onError = ::onAccountSaveError)
+
+        disposables += layout_generate_mnemonic_restore.clicks()
+            .subscribeBy(onNext = { startActivity(RestoreAccountActivity.createIntent(this)) }, onError = Timber::e)
     }
 
     private fun onAccountSaved() {
@@ -72,13 +71,9 @@ class GenerateMnemonicActivity : SecuredBaseActivity() {
         Timber.e(throwable)
     }
 
-    private fun generateMnemonicDisposable() =
-        layout_generate_mnemonic_regenerate_button.clicks()
-            .flatMapSingle { viewModel.generateMnemonic() }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeForResult(onNext = ::onMnemonic, onError = ::onMnemonicError)
-
     private fun onMnemonic(mnemonic: String) {
+        layout_generate_mnemonic_reveal.visible(false)
+        layout_generate_mnemonic_reveal_container.visible(true)
         layout_generate_mnemonic_mnemonic.text = mnemonic
     }
 
@@ -86,19 +81,9 @@ class GenerateMnemonicActivity : SecuredBaseActivity() {
         Timber.e(throwable)
     }
 
-    private fun saveAccountConfirmationDisposable() =
-        layout_generate_mnemonic_save.clicks()
-            .subscribeBy(
-                onNext = { showConfirmationDialog(layout_generate_mnemonic_mnemonic.text.toString()) },
-                onError = Timber::e
-            )
-
-
     private fun showConfirmationDialog(mnemonic: String) {
         AlertDialog.Builder(this)
-            .setPositiveButton(getString(R.string.yes), { _, _ ->
-                confirmDialogClick.onNext(layout_generate_mnemonic_mnemonic.text.toString())
-            })
+            .setPositiveButton(getString(R.string.yes), { _, _ -> confirmDialogClick.onNext(layout_generate_mnemonic_mnemonic.text.toString()) })
             .setNegativeButton(getString(R.string.no), { _, _ -> })
             .setTitle(getString(R.string.dialog_title_save_mnemonic))
             .setMessage(Html.fromHtml(resources.getString(R.string.generate_mnemonic_activity_dialog, mnemonic)))

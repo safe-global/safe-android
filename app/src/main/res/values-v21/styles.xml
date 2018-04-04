@@ -4,4 +4,9 @@
     <style name="SpacedCapsText" parent="CapsText">
         <item name="android:letterSpacing">0.25</item>
     </style>
+
+    <style name="OnBoardingTheme" parent="OnBoardingThemeBase">
+        <item name="android:statusBarColor">@color/gnosis_blue</item>
+        <item name="android:navigationBarColor">@color/gnosis_blue</item>
+    </style>
 </resources>

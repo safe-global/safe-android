@@ -23,6 +23,8 @@ import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountContract
 import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountViewModel
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupViewModel
+import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
+import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupViewModel
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeViewModel
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
@@ -152,6 +154,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ReceiptTransactionContract::class)
     abstract fun bindsReceiptTransactionContract(viewModel: ReceiptTransactionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AccountSetupContract::class)
+    abstract fun bindsAccountSetupContractContract(viewModel: AccountSetupViewModel): ViewModel
 
     @Binds
     @IntoMap

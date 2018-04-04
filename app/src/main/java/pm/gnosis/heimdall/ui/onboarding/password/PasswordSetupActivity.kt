@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding2.widget.textChanges
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_password_setup.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -11,11 +15,7 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
-import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.svalinn.common.utils.startActivity
-import pm.gnosis.svalinn.common.utils.subscribeForResult
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -33,7 +33,6 @@ class PasswordSetupActivity : SecuredBaseActivity() {
         setContentView(R.layout.layout_password_setup)
 
         layout_password_setup_password.disableAccessibility()
-        layout_password_setup_confirmation.disableAccessibility()
     }
 
     override fun onWindowObscured() {
@@ -41,29 +40,29 @@ class PasswordSetupActivity : SecuredBaseActivity() {
         // Window is obscured, clear input and disable to prevent potential leak
         layout_password_setup_password.text = null
         layout_password_setup_password.isEnabled = false
-        layout_password_setup_confirmation.text = null
-        layout_password_setup_confirmation.isEnabled = false
     }
 
     override fun onStart() {
         super.onStart()
-        layout_password_setup_next.clicks()
-            .flatMap {
-                viewModel.setPassword(
-                    layout_password_setup_password.text.toString(),
-                    layout_password_setup_confirmation.text.toString()
-                )
-            }
-            .subscribeForResult(onNext = { onPasswordSet() }, onError = ::onPasswordSetError)
+        disposables += layout_password_setup_next.clicks()
+            .map { viewModel.isPasswordValid(layout_password_setup_password.text.toString()) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = ::onPasswordValidation, onError = Timber::e)
+
+        disposables += layout_password_setup_back.clicks()
+            .subscribeBy(onNext = { finish() }, onError = Timber::e)
+
+        disposables += layout_password_setup_password.textChanges()
+            .subscribeBy(onNext = {
+                layout_password_setup_input_layout.error = null
+            }, onError = Timber::e)
     }
 
-    private fun onPasswordSet() {
-        startActivity(AccountSetupActivity.createIntent(this), clearStack = true)
-    }
-
-    private fun onPasswordSetError(throwable: Throwable) {
-        Timber.e(throwable)
-        errorSnackbar(layout_password_setup_coordinator, throwable)
+    private fun onPasswordValidation(passwordValidation: PasswordValidation) {
+        when (passwordValidation) {
+            is PasswordValid -> startActivity(PasswordConfirmActivity.createIntent(this, passwordValidation.passwordHash))
+            is PasswordNotLongEnough -> layout_password_setup_input_layout.error = getString(R.string.password_too_short)
+        }
     }
 
     private fun inject() {
