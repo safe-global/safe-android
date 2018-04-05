@@ -59,10 +59,6 @@ class SafeDetailsFragment : BaseFragment() {
         safeName = arguments?.getString(EXTRA_SAFE_NAME)
         viewModel.setup(safeAddress.hexAsEthereumAddress(), safeName)
 
-        layout_safe_details_fab.setOnClickListener {
-            eventTracker.submit(Event.ButtonClick(ButtonId.SAFE_DETAILS_CREATE_TRANSACTION))
-            startActivity(AuthenticateActivity.createIntent(context!!))
-        }
         layout_safe_details_viewpager.adapter = pagerAdapter()
         layout_safe_details_tabbar.setupWithViewPager(layout_safe_details_viewpager)
         layout_safe_details_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
