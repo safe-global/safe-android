@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.layout_additional_owner_item.view.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_deploy_new_safe.*
 import kotlinx.android.synthetic.main.layout_security_bars.*
-import kotlinx.android.synthetic.main.layout_submit_transaction.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -87,9 +86,12 @@ class DeployNewSafeFragment : BaseFragment() {
                     activity?.toast(R.string.no_external_wallets)
                     Timber.w("No activity resolved for intent")
                 })
-            }, onError = Timber::e)
+            }, onError = {
+                Timber.e(it)
+                errorSnackbar(layout_deploy_new_safe_name_input, it)
+            })
     }
-    
+
     private fun displayFees(fees: FeeEstimate) {
         layout_deploy_new_safe_current_balance_value.text = fees.balance.toString()
         layout_deploy_new_safe_costs_value.text = "- ${fees.costs}"
@@ -124,6 +126,8 @@ class DeployNewSafeFragment : BaseFragment() {
     private fun toggleDeploying(inProgress: Boolean) {
         layout_deploy_new_safe_deploy_button.isEnabled = !inProgress
         layout_deploy_new_safe_name_input.isEnabled = !inProgress
+        layout_deploy_new_safe_deploy_external.isEnabled = !inProgress
+        layout_deploy_new_safe_add_owner_button.isEnabled = !inProgress
         layout_deploy_new_safe_progress.visible(inProgress)
     }
 
@@ -156,6 +160,8 @@ class DeployNewSafeFragment : BaseFragment() {
             { transactionHash ->
                 disposables += viewModel.saveTransactionHash(transactionHash, layout_deploy_new_safe_name_input.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { toggleDeploying(true) }
+                    .doAfterTerminate { toggleDeploying(false) }
                     .subscribeBy(onComplete = { safeDeployed(transactionHash) }, onError = Timber::e)
             })
 

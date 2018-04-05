@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.onboarding.password
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.EditorInfo
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -33,6 +34,14 @@ class PasswordSetupActivity : SecuredBaseActivity() {
         setContentView(R.layout.layout_password_setup)
 
         layout_password_setup_password.disableAccessibility()
+        layout_password_setup_password.requestFocus()
+        layout_password_setup_password.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_DONE, EditorInfo.IME_NULL ->
+                    layout_password_setup_next.performClick()
+            }
+            true
+        }
     }
 
     override fun onWindowObscured() {
