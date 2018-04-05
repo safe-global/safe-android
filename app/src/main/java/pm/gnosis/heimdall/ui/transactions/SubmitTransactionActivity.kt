@@ -83,6 +83,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             up
                 .doOnNext {
                     layout_submit_transaction_submit_button.isEnabled = false
+                    layout_submit_transaction_balance_progress.visible(true)
                 }
                 .switchMapSingle { info ->
                     info.mapSingle({
@@ -90,9 +91,10 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                     })
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNextForResult({
-                    displayFees(it)
-                }, {
+                .doOnNext {
+                    layout_submit_transaction_balance_progress.visible(false)
+                }
+                .doOnNextForResult(::displayFees, {
                     Timber.e(it)
                     errorSnackbar(layout_submit_transaction_submit_button, it)
                 })

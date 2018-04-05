@@ -13,8 +13,8 @@ repositories {
 android {
     defaultConfig {
         applicationId "pm.gnosis.heimdall"
-        versionCode getInt("APP_VERSION_CODE", 702)
-        versionName getKey("APP_VERSION_NAME", "0.4.1-alpha")
+        versionCode getInt("APP_VERSION_CODE", 703)
+        versionName getKey("APP_VERSION_NAME", "0.4.2-alpha")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x5a27c4325b2f35163fa28d9195e7038fb53e67ac"))

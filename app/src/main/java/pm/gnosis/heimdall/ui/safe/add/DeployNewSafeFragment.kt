@@ -17,13 +17,15 @@ import kotlinx.android.synthetic.main.layout_additional_owner_item.view.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_deploy_new_safe.*
 import kotlinx.android.synthetic.main.layout_security_bars.*
+import kotlinx.android.synthetic.main.layout_submit_transaction.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
+import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.svalinn.common.utils.*
@@ -57,18 +59,22 @@ class DeployNewSafeFragment : BaseFragment() {
             }
             .subscribeBy(onError = Timber::e)
 
+        layout_deploy_new_safe_deploy_button.isEnabled = false
         disposables += viewModel.observeAdditionalOwners()
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext {
+                layout_deploy_new_safe_deploy_button.isEnabled = false
+                layout_deploy_new_safe_balance_progress.visible(true)
+            }
             .doOnNext(::updateOwners)
             .switchMapSingle {
                 viewModel.estimateDeploy()
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeForResult({
-                val needsCredits = it.costs > it.balance
-                layout_deploy_new_safe_buy_credits_button.visible(needsCredits)
-                layout_deploy_new_safe_deploy_button.visible(!needsCredits)
-            }, {
+            .doOnNext {
+                layout_deploy_new_safe_balance_progress.visible(false)
+            }
+            .subscribeForResult(::displayFees, {
                 Timber.e(it)
                 errorSnackbar(layout_deploy_new_safe_name_input, it)
             })
@@ -82,9 +88,14 @@ class DeployNewSafeFragment : BaseFragment() {
                     Timber.w("No activity resolved for intent")
                 })
             }, onError = Timber::e)
-
-        layout_deploy_new_safe_buy_credits_button.visible(false)
-        layout_deploy_new_safe_deploy_button.visible(false)
+    }
+    
+    private fun displayFees(fees: FeeEstimate) {
+        layout_deploy_new_safe_current_balance_value.text = fees.balance.toString()
+        layout_deploy_new_safe_costs_value.text = "- ${fees.costs}"
+        val newBalance = fees.balance - fees.costs
+        layout_deploy_new_safe_new_balance_value.text = newBalance.toString()
+        layout_deploy_new_safe_deploy_button.isEnabled = newBalance >= 0
     }
 
     private fun handleUserInput() =
