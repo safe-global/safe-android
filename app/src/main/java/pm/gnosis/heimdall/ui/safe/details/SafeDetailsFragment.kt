@@ -1,7 +1,5 @@
 package pm.gnosis.heimdall.ui.safe.details
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v4.view.ViewPager
@@ -17,12 +15,13 @@ import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.reporting.*
+import pm.gnosis.heimdall.reporting.ButtonId
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.TabId
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
-import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
-import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.svalinn.common.utils.withArgs
@@ -43,6 +42,13 @@ class SafeDetailsFragment : BaseFragment() {
 
     private lateinit var safeAddress: String
     private var safeName: String? = null
+    private var tabToSelect: Int = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        tabToSelect = arguments?.getInt(EXTRA_SELECTED_TAB, tabToSelect) ?: tabToSelect
+        arguments?.remove(EXTRA_SELECTED_TAB)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_safe_details, container, false)
@@ -65,7 +71,18 @@ class SafeDetailsFragment : BaseFragment() {
                 positionToTabID(position)?.let { eventTracker.submit(Event.TabSelect(it)) }
             }
         })
-        layout_safe_details_viewpager.currentItem = items.indexOf(arguments?.getInt(EXTRA_SELECTED_TAB, 0) ?: 0)
+        setSelectedTab()
+    }
+
+    private fun setSelectedTab() {
+        layout_safe_details_viewpager.currentItem = items.indexOf(tabToSelect)
+        tabToSelect = 0
+    }
+
+    fun selectTab(@StringRes tabId: Int) {
+        tabToSelect = tabId
+        view ?: return
+        setSelectedTab()
     }
 
     override fun onStart() {
