@@ -6,10 +6,10 @@ import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialRequest
 import com.google.android.gms.auth.api.credentials.CredentialsClient
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.ResolvableApiException
 import io.reactivex.*
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,8 +18,8 @@ import javax.inject.Singleton
 class GoogleSmartLockHelper @Inject constructor(
     private val credentialsClient: CredentialsClient
 ) {
-    fun storeCredentials(mnemonicSeed: ByteArray): Completable =
-        StoreCredentialsCompletable(mnemonicSeed.toHexString()).create().subscribeOn(Schedulers.io())
+    fun storeCredentials(mnemonic: String): Completable =
+        StoreCredentialsCompletable(mnemonic).create().subscribeOn(Schedulers.io())
 
     fun retrieveCredentials(): Single<Credential> = ReadCredentialsSingle().create().subscribeOn(Schedulers.io())
 
@@ -37,7 +37,9 @@ class GoogleSmartLockHelper @Inject constructor(
                                     CredentialDialogAction.STORE
                                 )
                             )
-                            exception is ApiException && exception.statusCode == 16 -> e.onError(NoAccountsAvailableWithSmartLockException())
+                            exception is ApiException && exception.statusCode == CommonStatusCodes.CANCELED -> e.onError(
+                                NoAccountsAvailableWithSmartLockException()
+                            )
                             else -> e.onError(exception)
                         }
                     } ?: e.onError(UnkownGoogleSmartLockException())
@@ -59,7 +61,7 @@ class GoogleSmartLockHelper @Inject constructor(
                 else {
                     task.exception?.let { exception ->
                         when {
-                            exception is ResolvableApiException && exception.statusCode == 4 ->
+                            exception is ResolvableApiException && exception.statusCode == CommonStatusCodes.SIGN_IN_REQUIRED ->
                                 // Could not find accounts with ethereum credentials
                                 e.onError(NoCredentialsStoredException())
                             exception is ResolvableApiException ->
@@ -72,7 +74,9 @@ class GoogleSmartLockHelper @Inject constructor(
                                         CredentialDialogAction.READ
                                     )
                                 )
-                            exception is ApiException && exception.statusCode == 16 -> e.onError(NoAccountsAvailableWithSmartLockException())
+                            exception is ApiException && exception.statusCode == CommonStatusCodes.CANCELED -> e.onError(
+                                NoAccountsAvailableWithSmartLockException()
+                            )
                             else -> e.onError(exception)
                         }
                     } ?: e.onError(UnkownGoogleSmartLockException())

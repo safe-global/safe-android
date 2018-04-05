@@ -15,6 +15,8 @@ import android.text.style.URLSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import io.reactivex.Single
+import io.reactivex.disposables.Disposable
 import pm.gnosis.erc67.ERC67Parser
 import pm.gnosis.erc67.erc67Uri
 import pm.gnosis.heimdall.R
@@ -23,10 +25,7 @@ import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Transaction
-import pm.gnosis.svalinn.common.utils.appendText
-import pm.gnosis.svalinn.common.utils.openUrl
-import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import timber.log.Timber
 
