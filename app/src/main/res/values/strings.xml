@@ -359,4 +359,5 @@
     <string name="restore">Restore</string>
     <string name="restore_with_recovery_phrase">Restore with Recovery Phrase</string>
     <string name="enter_your_recovery_phrase">Enter your recovery phrase</string>
+    <string name="show_transaction_credits">Show transaction credits</string>
 </resources>

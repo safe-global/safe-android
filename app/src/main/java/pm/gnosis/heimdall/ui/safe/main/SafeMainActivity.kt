@@ -22,6 +22,7 @@ import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
@@ -122,6 +123,11 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         layout_safe_main_add_safe.setOnClickListener {
             startActivity(AddSafeActivity.createIntent(this))
+            closeDrawer()
+        }
+
+        layout_safe_main_credits.setOnClickListener {
+            startActivity(BuyCreditsActivity.createIntent(this))
             closeDrawer()
         }
 
