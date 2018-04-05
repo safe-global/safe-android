@@ -9,4 +9,5 @@ import pm.gnosis.svalinn.common.utils.Result
 abstract class AccountSetupContract : ViewModel() {
     abstract fun continueWithGoogle(): Single<Result<Unit>>
     abstract fun setAccountFromCredential(credential: Credential): Completable
+    abstract fun continueStoreFlow(): Completable
 }

@@ -88,9 +88,11 @@ class AccountSetupActivity : BaseActivity() {
         if (requestCode == CredentialDialogAction.READ.requestCode && resultCode == RESULT_OK) {
             data?.getParcelableExtra<Credential>(Credential.EXTRA_KEY)?.let { onCredentials(it) }
         } else if (requestCode == CredentialDialogAction.STORE.requestCode && resultCode == RESULT_OK) {
-            disposables += viewModel.continueWithGoogle()
+            disposables += viewModel.continueStoreFlow()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = { onAccountCreated() }, onError = ::onContinueWithGoogleError)
+                .doOnSubscribe { isLoading(true) }
+                .doAfterTerminate { isLoading(false) }
+                .subscribeBy(onComplete = ::onAccountCreated, onError = ::onContinueWithGoogleError)
         }
     }
 
@@ -98,7 +100,9 @@ class AccountSetupActivity : BaseActivity() {
         // Sign the user in with information from the Credential
         disposables += viewModel.setAccountFromCredential(credential)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onComplete = { onAccountCreated() }, onError = Timber::e)
+            .doOnSubscribe { isLoading(true) }
+            .doAfterTerminate { isLoading(false) }
+            .subscribeBy(onComplete = ::onAccountCreated, onError = Timber::e)
     }
 
     private fun inject() {
