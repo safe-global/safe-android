@@ -29,6 +29,7 @@ import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.models.AddressBookEntry
@@ -83,6 +84,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             up
                 .doOnNext {
                     layout_submit_transaction_submit_button.isEnabled = false
+                    layout_submit_transaction_balance_progress.visible(true)
                 }
                 .switchMapSingle { info ->
                     info.mapSingle({
@@ -90,9 +92,10 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                     })
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNextForResult({
-                    displayFees(it)
-                }, {
+                .doOnNext {
+                    layout_submit_transaction_balance_progress.visible(false)
+                }
+                .doOnNextForResult(::displayFees, {
                     Timber.e(it)
                     errorSnackbar(layout_submit_transaction_submit_button, it)
                 })
@@ -106,8 +109,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             }
                 .doOnNext { info ->
                     (info as? DataResult)?.let {
-                        cachedTransactionData =
-                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction)
+                        cachedTransactionData = CachedTransactionData(it.data.selectedSafe, it.data.status.transaction)
                         startActivityForResult(UnlockActivity.createConfirmIntent(this), REQUEST_CODE_CONFIRM_CREDENTIALS)
                     } ?: run {
                         cachedTransactionData = null
@@ -120,8 +122,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             up.switchMap { safeTransactionInfo -> layout_submit_transaction_external.clicks().map { safeTransactionInfo } }
                 .doOnNext { info ->
                     (info as? DataResult)?.let {
-                        cachedTransactionData =
-                                CachedTransactionData(it.data.selectedSafe, it.data.status.transaction)
+                        cachedTransactionData = CachedTransactionData(it.data.selectedSafe, it.data.status.transaction)
                     } ?: run {
                         cachedTransactionData = null
                     }
@@ -218,7 +219,10 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                         layout_submit_transaction_external.isEnabled = true
                     }
                     .subscribeBy(onSuccess = { startSafeTransactionsActivity(cachedTransactionData.safeAddress) },
-                        onError = { Timber.e(it); startSafeTransactionsActivity(cachedTransactionData.safeAddress) })
+                        onError = {
+                            Timber.e(it);
+                            startSafeTransactionsActivity(cachedTransactionData.safeAddress)
+                        })
             }
         })
         handleQrCodeActivityResult(requestCode, resultCode, data, {
@@ -229,15 +233,13 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
     }
 
     private fun startSafeTransactionsActivity(safeAddress: BigInteger) {
-        /*
         startActivity(
-            SafeDetailsFragment.createIntent(
+            SafeMainActivity.createIntent(
                 this,
-                Safe(safeAddress),
+                safeAddress,
                 R.string.tab_title_transactions
-            ).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
         )
-        */
     }
 
     override fun onStart() {

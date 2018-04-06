@@ -77,6 +77,40 @@
 
                 <LinearLayout
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_navigation_header_background"
+                    android:id="@+id/layout_safe_main_credits"
+                    android:background="@drawable/selectable_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/navigation_item_padding">
+
+                    <ImageView
+                        android:layout_width="@dimen/navigation_item_icon"
+                        android:layout_height="@dimen/navigation_item_icon"
+                        android:padding="@dimen/navigation_item_icon_padding"
+                        android:background="@drawable/circle_settings"
+                        android:scaleType="center"
+                        android:tint="@color/gnosis_dark_blue"
+                        app:srcCompat="@drawable/ic_credits_white_24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="@string/show_transaction_credits"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/layout_safe_main_divider_credits"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_credits"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/divider_width"
+                    android:background="@color/divider" />
+
+                <LinearLayout
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_divider_credits"
                     android:id="@+id/layout_safe_main_account"
                     android:background="@drawable/selectable_background"
                     android:layout_width="match_parent"

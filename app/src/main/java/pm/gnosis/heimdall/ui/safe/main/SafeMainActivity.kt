@@ -22,6 +22,7 @@ import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
@@ -125,16 +126,23 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             closeDrawer()
         }
 
+        layout_safe_main_credits.setOnClickListener {
+            startActivity(BuyCreditsActivity.createIntent(this))
+            closeDrawer()
+        }
+
         disposables += viewModel.observeSafes()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onSafes, onError = ::onSafesError)
 
         disposables += adapter.safeSelection
             .flatMapSingle {
-                viewModel.selectSafe(when(it) {
-                    is Safe -> it.address
-                    is PendingSafe -> it.hash
-                }).mapToResult()
+                viewModel.selectSafe(
+                    when (it) {
+                        is Safe -> it.address
+                        is PendingSafe -> it.hash
+                    }
+                ).mapToResult()
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::showSafe, onError = Timber::e)
@@ -182,16 +190,28 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     private fun showSafe(safe: AbstractSafe) {
         closeDrawer()
         if (selectedSafe == safe) {
+            selectTab()
             return
         }
         selectedSafe = safe
         supportFragmentManager.transaction {
             when (safe) {
-                is Safe -> replace(R.id.layout_safe_main_content_frame, SafeDetailsFragment.createInstance(safe))
+                is Safe -> {
+                    val selectedTab = intent.extras.getInt(EXTRA_SELECTED_TAB, 0)
+                    intent.extras.remove(EXTRA_SELECTED_TAB)
+                    replace(R.id.layout_safe_main_content_frame, SafeDetailsFragment.createInstance(safe, selectedTab))
+                }
                 is PendingSafe -> replace(R.id.layout_safe_main_content_frame, PendingSafeFragment.createInstance(safe))
             }
         }
         updateToolbar()
+    }
+
+    private fun selectTab() {
+        val selectedTab = intent.extras.getInt(EXTRA_SELECTED_TAB, 0)
+        intent.extras.remove(EXTRA_SELECTED_TAB)
+        if (selectedTab == 0) return
+        (supportFragmentManager.findFragmentById(R.id.layout_safe_main_content_frame) as? SafeDetailsFragment)?.selectTab(selectedTab)
     }
 
     private fun updateToolbar() {
@@ -233,10 +253,12 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     companion object {
         private const val EXTRA_SELECTED_SAFE = "extra.string.selected_safe"
+        private const val EXTRA_SELECTED_TAB = "extra.integer.selected_tab"
 
-        fun createIntent(context: Context, selectedSafe: BigInteger? = null) =
+        fun createIntent(context: Context, selectedSafe: BigInteger? = null, selectedTab: Int = 0) =
             Intent(context, SafeMainActivity::class.java).apply {
                 putExtra(EXTRA_SELECTED_SAFE, selectedSafe?.toHexString())
+                putExtra(EXTRA_SELECTED_TAB, selectedTab)
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }
     }

@@ -1,369 +1,378 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 xmlns:tools="http://schemas.android.com/tools"
-                                                 android:id="@+id/layout_submit_transaction_coordinator"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent">
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_submit_transaction_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
-            android:id="@+id/layout_submit_transaction_appbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:id="@+id/layout_submit_transaction_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
-                android:id="@+id/layout_submit_transaction_toolbar"
-                style="@style/LightToolbar"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/toolbar_height"
-                app:navigationIcon="@drawable/ic_close_24dp"
-                app:theme="@style/LightToolbarTheme"
-                app:title="@string/submit_transaction"/>
+            android:id="@+id/layout_submit_transaction_toolbar"
+            style="@style/LightToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            app:navigationIcon="@drawable/ic_close_24dp"
+            app:theme="@style/LightToolbarTheme"
+            app:title="@string/submit_transaction" />
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-                android:id="@+id/layout_submit_transaction_progress_bar"
-                style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:background="@color/white"
-                android:indeterminate="true"
-                android:visibility="visible"
-                app:mpb_progressStyle="horizontal"
-                app:mpb_useIntrinsicPadding="false"
-                tools:visibility="gone"/>
+            android:id="@+id/layout_submit_transaction_progress_bar"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@color/white"
+            android:indeterminate="true"
+            android:visibility="visible"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_useIntrinsicPadding="false"
+            tools:visibility="gone" />
 
         <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_width"
-                android:background="@color/divider"/>
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_width"
+            android:background="@color/divider" />
     </android.support.design.widget.AppBarLayout>
 
     <ScrollView
-            android:id="@+id/scrollView2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_anchorGravity="left|top"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_anchorGravity="left|top"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <include
-                    layout="@layout/merge_transaction_details_container"/>
+            <include layout="@layout/merge_transaction_details_container" />
 
             <View
-                    android:id="@+id/layout_submit_transaction_divider_1"
-                    app:layout_constraintTop_toBottomOf="@+id/merge_transaction_details_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/divider_width"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/divider"/>
+                android:id="@+id/layout_submit_transaction_divider_1"
+                app:layout_constraintTop_toBottomOf="@+id/merge_transaction_details_container"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:layout_marginTop="16dp"
+                android:background="@color/divider" />
 
             <android.support.constraint.ConstraintLayout
-                    android:id="@+id/layout_submit_transaction_header_confirmations"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_divider_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                android:id="@+id/layout_submit_transaction_header_confirmations"
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_divider_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
-                        android:id="@+id/layout_submit_transaction_confirmations"
-                        style="@style/Content"
-                        android:layout_width="wrap_content"
-                        android:layout_height="20dp"
-                        android:layout_gravity="end|center_vertical"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/confirmation_count_background"
-                        android:drawableEnd="@drawable/confirmation_count_icon_background"
-                        android:drawablePadding="8dp"
-                        android:gravity="center_vertical"
-                        android:paddingEnd="24dp"
-                        android:paddingStart="12dp"
-                        android:text="-/-"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="50/50"/>
+                    android:id="@+id/layout_submit_transaction_confirmations"
+                    style="@style/Content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/confirmation_count_background"
+                    android:drawableEnd="@drawable/confirmation_count_icon_background"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:paddingEnd="24dp"
+                    android:paddingStart="12dp"
+                    android:text="-/-"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="50/50" />
 
                 <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="end|center_vertical"
-                        android:layout_marginTop="6dp"
-                        android:background="@drawable/confirmation_count_icon_background"
-                        android:padding="4dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_authenticate_small_dark"
-                        android:tint="@color/white"
-                        app:layout_constraintEnd_toEndOf="@id/layout_submit_transaction_confirmations"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/confirmation_count_icon_background"
+                    android:padding="4dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_authenticate_small_dark"
+                    android:tint="@color/white"
+                    app:layout_constraintEnd_toEndOf="@id/layout_submit_transaction_confirmations"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                        style="@style/Content"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:gravity="start"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:text="@string/required_confirmations"
-                        android:textSize="12sp"
-                        app:layout_constraintBaseline_toBaselineOf="@+id/layout_submit_transaction_confirmations"
-                        app:layout_constraintEnd_toStartOf="@+id/layout_submit_transaction_confirmations"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-            </android.support.constraint.ConstraintLayout>
-
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_header_confirmations"
-                    android:id="@+id/layout_submit_transaction_confirmations_hint_text"
-                    style="@style/Content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="@string/confirm_transaction_hint"/>
-
-            <LinearLayout
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_confirmations_hint_text"
-                    android:id="@+id/layout_submit_transaction_confirmations_addresses"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"/>
-
-            <LinearLayout
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_confirmations_addresses"
-                    android:id="@+id/layout_submit_transaction_send_signature_push_button"
-                    style="@style/PrimaryButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="16dp"
-                    tools:visibility="visible">
-
-                <TextView
-                        style="@style/PrimaryButtonText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/push_signature_request"/>
-
-                <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-                        android:id="@+id/layout_submit_transaction_send_signature_push_progress"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
-                        android:visibility="gone"
-                        app:mpb_indeterminateTint="@color/white"/>
-            </LinearLayout>
-
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_send_signature_push_button"
-                    android:id="@+id/layout_submit_transaction_scan_signature_qr_button"
-                    style="@style/SecondaryTextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:text="@string/scan_signature_qr"
-                    tools:visibility="visible"/>
-
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_divider_1"
-                    android:id="@+id/layout_submit_transaction_header_payment"
                     style="@style/Content"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    android:layout_marginTop="8dp"
                     android:gravity="start"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:text="@string/payment"
-                    android:textSize="12sp"/>
-
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_header_payment"
-                    android:id="@+id/layout_submit_transaction_current_balance_label"
-                    style="@style/Content"
+                    android:text="@string/required_confirmations"
+                    android:textSize="12sp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/layout_submit_transaction_confirmations"
+                    app:layout_constraintEnd_toStartOf="@+id/layout_submit_transaction_confirmations"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/layout_submit_transaction_current_balance_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    android:layout_marginStart="16dp"
-                    android:text="Current balance"/>
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_header_payment"
-                    android:id="@+id/layout_submit_transaction_current_balance_value"
-                    style="@style/Content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_submit_transaction_current_balance_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:layout_gravity="center"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="-"/>
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_header_confirmations"
+                android:id="@+id/layout_submit_transaction_confirmations_hint_text"
+                style="@style/Content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="@string/confirm_transaction_hint" />
 
-            <android.support.constraint.Barrier
-                    android:id="@+id/layout_submit_transaction_balance_info"
-                    app:constraint_referenced_ids="layout_submit_transaction_current_balance_label,layout_submit_transaction_current_balance_value"
-                    app:barrierDirection="bottom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+            <LinearLayout
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_confirmations_hint_text"
+                android:id="@+id/layout_submit_transaction_confirmations_addresses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
 
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_balance_info"
-                    android:id="@+id/layout_submit_transaction_costs_label"
-                    style="@style/Content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/layout_submit_transaction_costs_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    android:layout_marginStart="16dp"
-                    android:text="Costs"/>
+            <LinearLayout
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_confirmations_addresses"
+                android:id="@+id/layout_submit_transaction_send_signature_push_button"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                tools:visibility="visible">
 
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_balance_info"
-                    android:id="@+id/layout_submit_transaction_costs_value"
-                    style="@style/Content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_submit_transaction_costs_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:layout_gravity="center"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="-"/>
-
-            <android.support.constraint.Barrier
-                    android:id="@+id/layout_submit_transaction_costs_info"
-                    app:constraint_referenced_ids="layout_submit_transaction_costs_label,layout_submit_transaction_costs_value"
-                    app:barrierDirection="bottom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            <View
-                    android:id="@+id/layout_submit_transaction_costs_divider"
-                    app:layout_constraintTop_toBottomOf="@id/layout_submit_transaction_costs_info"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_width="100dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/default_text"/>
-
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_costs_divider"
-                    android:id="@+id/layout_submit_transaction_new_balance_label"
-                    style="@style/Content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/layout_submit_transaction_new_balance_value"
+                <TextView
+                    style="@style/PrimaryButtonText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    android:layout_marginStart="16dp"
-                    android:text="New Balance"/>
+                    android:text="@string/push_signature_request" />
 
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_costs_divider"
-                    android:id="@+id/layout_submit_transaction_new_balance_value"
-                    style="@style/Content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_submit_transaction_new_balance_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:layout_gravity="center"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:text="-"/>
-
-            <android.support.constraint.Barrier
-                    android:id="@+id/layout_submit_transaction_new_balance_info"
-                    app:constraint_referenced_ids="layout_submit_transaction_new_balance_label,layout_submit_transaction_new_balance_value"
-                    app:barrierDirection="bottom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_new_balance_info"
-                    android:id="@+id/layout_submit_transaction_buy_credits_button"
-                    style="@style/TextButton"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/buy_credits"/>
-
-            <View
-                    android:id="@+id/layout_submit_transaction_divider_2"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_buy_credits_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/divider_width"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/divider"/>
-
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_divider_2"
-                    android:id="@+id/layout_submit_transaction_submit_button"
-                    style="@style/PrimaryButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="16dp"
-                    android:layout_marginTop="16dp"
-                    android:minHeight="48dp"
-                    android:text="@string/submit_transaction"/>
-
-            <TextView
-                    app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_submit_button"
-                    android:id="@+id/layout_submit_transaction_external"
-                    style="@style/TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginStart="16dp"
-                    android:gravity="center"
-                    android:text="@string/deploy_with_external_wallet"/>
-
-            <android.support.constraint.Group
-                    android:id="@+id/layout_submit_transaction_confirmations_group"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                    android:id="@+id/layout_submit_transaction_send_signature_push_progress"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
                     android:visibility="gone"
-                    app:constraint_referenced_ids="layout_submit_transaction_send_signature_push_button,layout_submit_transaction_header_confirmations,layout_submit_transaction_confirmations_addresses,layout_submit_transaction_scan_signature_qr_button,layout_submit_transaction_confirmations_hint_text"/>
+                    app:mpb_indeterminateTint="@color/white" />
+            </LinearLayout>
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_send_signature_push_button"
+                android:id="@+id/layout_submit_transaction_scan_signature_qr_button"
+                style="@style/SecondaryTextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/scan_signature_qr"
+                tools:visibility="visible" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_divider_1"
+                android:id="@+id/layout_submit_transaction_header_payment"
+                style="@style/Content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:layout_marginTop="8dp"
+                android:gravity="start"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/payment"
+                android:textSize="12sp" />
+
+            <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                android:id="@+id/layout_submit_transaction_balance_progress"
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_divider_1"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_margin="8dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_header_payment"
+                android:id="@+id/layout_submit_transaction_current_balance_label"
+                style="@style/Content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/layout_submit_transaction_current_balance_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                android:layout_marginStart="16dp"
+                android:text="Current balance" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_header_payment"
+                android:id="@+id/layout_submit_transaction_current_balance_value"
+                style="@style/Content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_submit_transaction_current_balance_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_gravity="center"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="-" />
+
+            <android.support.constraint.Barrier
+                android:id="@+id/layout_submit_transaction_balance_info"
+                app:constraint_referenced_ids="layout_submit_transaction_current_balance_label,layout_submit_transaction_current_balance_value"
+                app:barrierDirection="bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_balance_info"
+                android:id="@+id/layout_submit_transaction_costs_label"
+                style="@style/Content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/layout_submit_transaction_costs_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                android:layout_marginStart="16dp"
+                android:text="Costs" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_balance_info"
+                android:id="@+id/layout_submit_transaction_costs_value"
+                style="@style/Content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_submit_transaction_costs_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_gravity="center"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="-" />
+
+            <android.support.constraint.Barrier
+                android:id="@+id/layout_submit_transaction_costs_info"
+                app:constraint_referenced_ids="layout_submit_transaction_costs_label,layout_submit_transaction_costs_value"
+                app:barrierDirection="bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:id="@+id/layout_submit_transaction_costs_divider"
+                app:layout_constraintTop_toBottomOf="@id/layout_submit_transaction_costs_info"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="100dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/default_text" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_costs_divider"
+                android:id="@+id/layout_submit_transaction_new_balance_label"
+                style="@style/Content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/layout_submit_transaction_new_balance_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                android:layout_marginStart="16dp"
+                android:text="New Balance" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_costs_divider"
+                android:id="@+id/layout_submit_transaction_new_balance_value"
+                style="@style/Content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_submit_transaction_new_balance_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_gravity="center"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="-" />
+
+            <android.support.constraint.Barrier
+                android:id="@+id/layout_submit_transaction_new_balance_info"
+                app:constraint_referenced_ids="layout_submit_transaction_new_balance_label,layout_submit_transaction_new_balance_value"
+                app:barrierDirection="bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_new_balance_info"
+                android:id="@+id/layout_submit_transaction_buy_credits_button"
+                style="@style/TextButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:text="@string/buy_credits" />
+
+            <View
+                android:id="@+id/layout_submit_transaction_divider_2"
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_buy_credits_button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:layout_marginTop="8dp"
+                android:background="@color/divider" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_divider_2"
+                android:id="@+id/layout_submit_transaction_submit_button"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:layout_marginTop="16dp"
+                android:minHeight="48dp"
+                android:text="@string/submit_transaction" />
+
+            <TextView
+                app:layout_constraintTop_toBottomOf="@+id/layout_submit_transaction_submit_button"
+                android:id="@+id/layout_submit_transaction_external"
+                style="@style/TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:text="@string/deploy_with_external_wallet" />
+
             <android.support.constraint.Group
-                    android:id="@+id/layout_submit_transaction_submit_group"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    app:constraint_referenced_ids="layout_submit_transaction_buy_credits_button,layout_submit_transaction_submit_button,layout_submit_transaction_external,layout_submit_transaction_current_balance_label,layout_submit_transaction_current_balance_value,layout_submit_transaction_header_payment,layout_submit_transaction_costs_value,layout_submit_transaction_costs_label,layout_submit_transaction_new_balance_value,layout_submit_transaction_new_balance_label,layout_submit_transaction_divider_2,layout_submit_transaction_costs_divider"/>
+                android:id="@+id/layout_submit_transaction_confirmations_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="layout_submit_transaction_send_signature_push_button,layout_submit_transaction_header_confirmations,layout_submit_transaction_confirmations_addresses,layout_submit_transaction_scan_signature_qr_button,layout_submit_transaction_confirmations_hint_text" />
+
+            <android.support.constraint.Group
+                android:id="@+id/layout_submit_transaction_submit_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                app:constraint_referenced_ids="layout_submit_transaction_buy_credits_button,layout_submit_transaction_submit_button,layout_submit_transaction_external,layout_submit_transaction_current_balance_label,layout_submit_transaction_current_balance_value,layout_submit_transaction_header_payment,layout_submit_transaction_costs_value,layout_submit_transaction_costs_label,layout_submit_transaction_new_balance_value,layout_submit_transaction_new_balance_label,layout_submit_transaction_divider_2,layout_submit_transaction_costs_divider" />
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>
