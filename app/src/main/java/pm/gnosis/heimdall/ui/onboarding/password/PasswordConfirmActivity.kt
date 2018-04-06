@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.onboarding.password
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.EditorInfo
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -35,11 +36,20 @@ class PasswordConfirmActivity : SecuredBaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_password_confirm)
-        layout_password_confirm_password.disableAccessibility()
 
         intent.getByteArrayExtra(EXTRA_PASSWORD_HASH)?.let { passwordHash = it } ?: run {
             Timber.e("PasswordConfirmActivity: Password is null")
             finish()
+        }
+
+        layout_password_confirm_password.disableAccessibility()
+        layout_password_confirm_password.requestFocus()
+        layout_password_confirm_password.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_DONE, EditorInfo.IME_NULL ->
+                    layout_password_confirm_next.performClick()
+            }
+            true
         }
     }
 
