@@ -57,4 +57,7 @@ After getting access to the file, move it to the `app` module.
 ### Contribute
 You can contribute to this repo by creating a Pull Request or an issue. Please follow the default template set for the Pull Requests.
 
-Make sure that you apply the [Kotlin coding conventions](https://kotlinlang.org/docs/reference/coding-conventions.html).
+#### Code Style
+Make sure that you apply the [Kotlin coding conventions](https://kotlinlang.org/docs/reference/coding-conventions.html) and use the [style schema](heimdall-style.xml) in this repo with Android Studio.
+
+Also always add newlines at the end of files. This can be enforced by Android Studio. For this enable `Editor -> General -> Ensure line feed … (Under the “Others” section)`.
