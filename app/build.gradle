@@ -59,11 +59,19 @@ android {
             minifyEnabled false
         }
 
+        internal {
+            // We use the dev suffix to enable payment
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-internal"
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+
         dev {
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
-            debuggable true
-            minifyEnabled false
+            minifyEnabled true
             signingConfig signingConfigs.release
         }
 
