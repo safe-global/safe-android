@@ -15,18 +15,17 @@ import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.reporting.ButtonId
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.TabId
-import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.withArgs
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -40,7 +39,7 @@ class SafeDetailsFragment : BaseFragment() {
 
     private val items = listOf(R.string.tab_title_assets, R.string.tab_title_transactions)
 
-    private lateinit var safeAddress: String
+    private lateinit var safeAddress: Solidity.Address
     private var safeName: String? = null
     private var tabToSelect: Int = 0
 
@@ -55,9 +54,9 @@ class SafeDetailsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        safeAddress = arguments?.getString(EXTRA_SAFE_ADDRESS)!!
+        safeAddress = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
         safeName = arguments?.getString(EXTRA_SAFE_NAME)
-        viewModel.setup(safeAddress.hexAsEthereumAddress(), safeName)
+        viewModel.setup(safeAddress, safeName)
 
         layout_safe_details_viewpager.adapter = pagerAdapter()
         layout_safe_details_tabbar.setupWithViewPager(layout_safe_details_viewpager)
@@ -105,10 +104,10 @@ class SafeDetailsFragment : BaseFragment() {
     private fun pagerAdapter() = FactoryPagerAdapter(childFragmentManager, FactoryPagerAdapter.Factory(items.size, {
         when (positionToId(it)) {
             R.string.tab_title_assets -> {
-                TokenBalancesFragment.createInstance(safeAddress.asEthereumAddressString())
+                TokenBalancesFragment.createInstance(safeAddress)
             }
             R.string.tab_title_transactions -> {
-                SafeTransactionsFragment.createInstance(safeAddress.asEthereumAddressString())
+                SafeTransactionsFragment.createInstance(safeAddress)
             }
             else -> throw IllegalStateException("Unhandled tab position")
         }

@@ -2,21 +2,18 @@ package pm.gnosis.heimdall.data.repositories
 
 import okhttp3.HttpUrl
 import okhttp3.Request
-import pm.gnosis.utils.exceptions.InvalidAddressException
-import java.math.BigInteger
+import pm.gnosis.model.Solidity
 
 
 interface SettingsRepository {
     fun setEthereumRPCUrl(isHttps: Boolean, host: String?, port: Int?)
     fun getEthereumRPCUrl(): UrlOverride?
 
-    fun getProxyFactoryAddress(): BigInteger
-    @Throws(InvalidAddressException::class)
-    fun setProxyFactoryAddress(address: String?)
+    fun getProxyFactoryAddress(): Solidity.Address
+    fun setProxyFactoryAddress(address: Solidity.Address?)
 
-    fun getSafeMasterCopyAddress(): BigInteger
-    @Throws(InvalidAddressException::class)
-    fun setSafeMasterCopyAddress(address: String?)
+    fun getSafeMasterCopyAddress(): Solidity.Address
+    fun setSafeMasterCopyAddress(address: Solidity.Address?)
 
     fun needsAuth(): Boolean
 

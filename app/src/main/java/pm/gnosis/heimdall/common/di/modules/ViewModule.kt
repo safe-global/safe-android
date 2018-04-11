@@ -13,10 +13,10 @@ import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
+import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract

@@ -5,13 +5,11 @@ import android.graphics.Bitmap
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.utils.exceptions.InvalidAddressException
-import pm.gnosis.utils.isValidEthereumAddress
-import java.math.BigInteger
 import javax.inject.Inject
 
 class SafeDetailsViewModel @Inject constructor(
@@ -19,13 +17,11 @@ class SafeDetailsViewModel @Inject constructor(
     private val safeRepository: GnosisSafeRepository,
     private val qrCodeGenerator: QrCodeGenerator
 ) : SafeDetailsContract() {
-    private lateinit var address: BigInteger
+    private lateinit var address: Solidity.Address
 
-    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
-        .build()
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
 
-    override fun setup(address: BigInteger, name: String?) {
-        if (!address.isValidEthereumAddress()) throw InvalidAddressException(address)
+    override fun setup(address: Solidity.Address, name: String?) {
         this.address = address
     }
 

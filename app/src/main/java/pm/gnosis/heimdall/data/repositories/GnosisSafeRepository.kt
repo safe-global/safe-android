@@ -8,26 +8,27 @@ import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
 
 interface GnosisSafeRepository {
     fun observeSafes(): Flowable<List<AbstractSafe>>
-    fun observeSafe(address: BigInteger): Flowable<Safe>
+    fun observeSafe(address: Solidity.Address): Flowable<Safe>
     fun observeDeployedSafes(): Flowable<List<Safe>>
 
-    fun addSafe(address: BigInteger, name: String): Completable
-    fun removeSafe(address: BigInteger): Completable
-    fun updateName(address: BigInteger, newName: String): Completable
+    fun addSafe(address: Solidity.Address, name: String): Completable
+    fun removeSafe(address: Solidity.Address): Completable
+    fun updateName(address: Solidity.Address, newName: String): Completable
 
-    fun deploy(name: String, devices: Set<BigInteger>, requiredConfirmations: Int): Single<String>
+    fun deploy(name: String, devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<String>
     fun observeDeployStatus(hash: String): Observable<String>
 
-    fun loadInfo(address: BigInteger): Observable<SafeInfo>
-    fun observeTransactionDescriptions(address: BigInteger): Flowable<List<String>>
-    fun loadSafeDeployTransaction(devices: Set<BigInteger>, requiredConfirmations: Int): Single<Transaction>
+    fun loadInfo(address: Solidity.Address): Observable<SafeInfo>
+    fun observeTransactionDescriptions(address: Solidity.Address): Flowable<List<String>>
+    fun loadSafeDeployTransaction(devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<Transaction>
     fun savePendingSafe(transactionHash: BigInteger, name: String): Completable
     fun loadPendingSafe(transactionHash: BigInteger): Single<PendingSafe>
-    fun loadSafe(address: BigInteger): Single<Safe>
+    fun loadSafe(address: Solidity.Address): Single<Safe>
 }

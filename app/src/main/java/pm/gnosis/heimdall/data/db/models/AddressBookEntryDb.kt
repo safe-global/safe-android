@@ -3,14 +3,14 @@ package pm.gnosis.heimdall.data.db.models
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
-import java.math.BigInteger
 
 @Entity(tableName = AddressBookEntryDb.TABLE_NAME)
 data class AddressBookEntryDb(
     @PrimaryKey
     @ColumnInfo(name = COL_ADDRESS)
-    val address: BigInteger,
+    val address: Solidity.Address,
 
     @ColumnInfo(name = COL_NAME)
     val name: String,

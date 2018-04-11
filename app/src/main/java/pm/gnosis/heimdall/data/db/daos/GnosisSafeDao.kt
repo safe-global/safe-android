@@ -5,6 +5,7 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
+import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 @Dao
@@ -16,13 +17,13 @@ interface GnosisSafeDao {
     fun observeSafes(): Flowable<List<GnosisSafeDb>>
 
     @Query("SELECT * FROM ${GnosisSafeDb.TABLE_NAME} WHERE ${GnosisSafeDb.COL_ADDRESS} = :address")
-    fun observeSafe(address: BigInteger): Flowable<GnosisSafeDb>
+    fun observeSafe(address: Solidity.Address): Flowable<GnosisSafeDb>
 
     @Query("SELECT * FROM ${GnosisSafeDb.TABLE_NAME} WHERE ${GnosisSafeDb.COL_ADDRESS} = :address")
-    fun loadSafe(address: BigInteger): Single<GnosisSafeDb>
+    fun loadSafe(address: Solidity.Address): Single<GnosisSafeDb>
 
     @Query("DELETE FROM ${GnosisSafeDb.TABLE_NAME} WHERE ${GnosisSafeDb.COL_ADDRESS} = :address")
-    fun removeSafe(address: BigInteger)
+    fun removeSafe(address: Solidity.Address)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPendingSafe(safe: PendingGnosisSafeDb)

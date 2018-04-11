@@ -25,8 +25,8 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -112,7 +112,7 @@ class AddressBookActivity : BaseActivity() {
 
         fun parseResult(intent: Intent?): AddressBookEntry? {
             intent ?: return null
-            val address = intent.getStringExtra(RESULT_ENTRY_ADDRESS).hexAsEthereumAddressOrNull() ?: return null
+            val address = intent.getStringExtra(RESULT_ENTRY_ADDRESS).asEthereumAddress() ?: return null
             val name = intent.getStringExtra(RESULT_ENTRY_NAME) ?: return null
             val description = intent.getStringExtra(RESULT_ENTRY_DESCRIPTION) ?: return null
             return AddressBookEntry(address, name, description)

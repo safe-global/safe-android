@@ -15,7 +15,6 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
-import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.svalinn.common.utils.startActivity
 
 class SetupSafeIntroActivity : BaseActivity() {

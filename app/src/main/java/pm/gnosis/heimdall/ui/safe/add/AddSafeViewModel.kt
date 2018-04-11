@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.GnosisSafeUtils
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
@@ -23,12 +24,11 @@ import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.HttpCodes
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import retrofit2.HttpException
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 class AddSafeViewModel @Inject constructor(
@@ -44,7 +44,7 @@ class AddSafeViewModel @Inject constructor(
 
     private var cachedFiatPrice: Currency? = null
 
-    private var deviceInfo: BigInteger? = null
+    private var deviceInfo: Solidity.Address? = null
         set(value) {
             if (field != value) {
                 addressStore.clear()
@@ -52,11 +52,10 @@ class AddSafeViewModel @Inject constructor(
             field = value
         }
 
-    override fun addExistingSafe(name: String, address: String): Single<Result<BigInteger>> {
+    override fun addExistingSafe(name: String, address: String): Single<Result<Solidity.Address>> {
         return Single.fromCallable {
             checkName(name)
-            val parsedAddress = address.hexAsEthereumAddressOrNull()
-                    ?: throw SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))
+            val parsedAddress = address.asEthereumAddress() ?: throw SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))
             parsedAddress to name
         }.flatMap { (address, name) ->
             gnosisSafeRepository.addSafe(address, name)
@@ -88,10 +87,10 @@ class AddSafeViewModel @Inject constructor(
     override fun saveTransactionHash(transactionHash: String, name: String): Completable =
         gnosisSafeRepository.savePendingSafe(transactionHash.hexAsBigInteger(), name)
 
-    override fun observeAdditionalOwners(): Observable<List<BigInteger>> {
+    override fun observeAdditionalOwners(): Observable<List<Solidity.Address>> {
         return addressStore.observe()
             .subscribeOn(Schedulers.io())
-            .map { it.sorted() }
+            .map { it.sortedBy { it.value } }
     }
 
     override fun loadFiatConversion(wei: Wei) =
@@ -99,7 +98,7 @@ class AddSafeViewModel @Inject constructor(
             .map { it.convert(wei) to it }
             .mapToResult()
 
-    override fun setupDeploy(): Single<BigInteger> =
+    override fun setupDeploy(): Single<Solidity.Address> =
         accountsRepository.loadActiveAccount()
             .map { it.address }
             .doOnSuccess { deviceInfo = it }
@@ -113,17 +112,16 @@ class AddSafeViewModel @Inject constructor(
             .firstOrError()
             .mapToResult()
 
-    override fun removeAdditionalOwner(address: BigInteger): Observable<Result<Unit>> =
+    override fun removeAdditionalOwner(address: Solidity.Address): Observable<Result<Unit>> =
         Observable.fromCallable { addressStore.remove(address) }
             .subscribeOn(Schedulers.io())
             .mapToResult()
 
     override fun addAdditionalOwner(input: String): Observable<Result<Unit>> =
         Observable.fromCallable {
-            val address = input.hexAsEthereumAddressOrNull()
+            val address = input.asEthereumAddress()
             SimpleLocalizedException.assert(address != null, context, R.string.invalid_ethereum_address)
-            SimpleLocalizedException.assert(deviceInfo?.let { it != address }
-                    ?: false, context, R.string.error_owner_already_added)
+            SimpleLocalizedException.assert(deviceInfo?.let { it != address } ?: false, context, R.string.error_owner_already_added)
             SimpleLocalizedException.assert(!addressStore.contains(address!!), context, R.string.error_owner_already_added)
             addressStore.add(address)
         }
@@ -132,11 +130,9 @@ class AddSafeViewModel @Inject constructor(
 
 
     override fun loadSafeInfo(address: String): Observable<Result<SafeInfo>> =
-        Single.fromCallable {
-            address.hexAsEthereumAddressOrNull() ?: throw InvalidAddressException()
-        }.flatMapObservable {
-            gnosisSafeRepository.loadInfo(it)
-        }.mapToResult()
+        Single.fromCallable { address.asEthereumAddress() ?: throw InvalidAddressException() }
+            .flatMapObservable { gnosisSafeRepository.loadInfo(it) }
+            .mapToResult()
 
     override fun loadActiveAccount(): Observable<Account> = accountsRepository.loadActiveAccount().toObservable()
         .onErrorResumeNext { t: Throwable -> Timber.d(t); Observable.empty<Account>() }

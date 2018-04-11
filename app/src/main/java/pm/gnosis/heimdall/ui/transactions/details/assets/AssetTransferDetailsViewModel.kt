@@ -22,7 +22,7 @@ import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.nullOnThrow
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -42,7 +42,7 @@ class AssetTransferDetailsViewModel @Inject constructor(
                     when (data) {
                         is TokenTransferData -> {
                             // If recipient is 0x0 we set the value to null to force user input
-                            val recipient = if (clearDefaults && data.recipient == BigInteger.ZERO) null else data.recipient
+                            val recipient = if (clearDefaults && data.recipient == Solidity.Address(BigInteger.ZERO)) null else data.recipient
                             // If the token count is 0x0 we set it to null to force user input
                             val tokens = if (clearDefaults && data.tokens == BigInteger.ZERO) null else data.tokens
                             tokenRepository.loadToken(transaction.address)
@@ -51,7 +51,8 @@ class AssetTransferDetailsViewModel @Inject constructor(
                         }
                         else -> {
                             // If recipient is 0x0 we set the value to null to force user input
-                            val recipient = if (clearDefaults && transaction.address == BigInteger.ZERO) null else transaction.address
+                            val recipient =
+                                if (clearDefaults && transaction.address == Solidity.Address(BigInteger.ZERO)) null else transaction.address
                             Single.just(FormData(recipient, transaction.value?.value, ETHER_TOKEN))
                         }
                     }
@@ -59,7 +60,7 @@ class AssetTransferDetailsViewModel @Inject constructor(
                 .onErrorReturnItem(FormData())
         } ?: Single.just(FormData())
 
-    override fun loadTokenInfo(safeAddress: BigInteger, token: ERC20Token): Observable<Result<ERC20TokenWithBalance>> =
+    override fun loadTokenInfo(safeAddress: Solidity.Address, token: ERC20Token): Observable<Result<ERC20TokenWithBalance>> =
         tokenRepository.loadTokenBalances(safeAddress, listOf(token))
             .map {
                 val info = it.first()
@@ -71,7 +72,7 @@ class AssetTransferDetailsViewModel @Inject constructor(
         ObservableTransformer {
             it.scan { old, new -> old.diff(new) }
                 .map {
-                    val to = it.to.first.hexAsEthereumAddressOrNull()
+                    val to = it.to.first.asEthereumAddress()
                     val amount = nullOnThrow { BigDecimal(it.amount.first) }
                     val token = it.token.first
                     var errorFields = 0
@@ -99,7 +100,7 @@ class AssetTransferDetailsViewModel @Inject constructor(
                                 Transaction(to!!, value = value, nonce = nonce)
                             }
                             else -> {
-                                val transferTo = Solidity.Address(to!!)
+                                val transferTo = to!!
                                 val transferAmount = Solidity.UInt256(tokenAmount)
                                 val data = StandardToken.Transfer.encode(transferTo, transferAmount)
                                 Transaction(token.address, data = data, nonce = nonce)

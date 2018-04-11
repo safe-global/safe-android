@@ -33,8 +33,6 @@ import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.asTransactionHash
 import pm.gnosis.utils.exceptions.InvalidAddressException
-import pm.gnosis.utils.hexAsEthereumAddress
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import java.math.BigDecimal
 import java.math.BigInteger
 

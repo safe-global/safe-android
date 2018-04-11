@@ -12,11 +12,11 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddressStringOrNull
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Provider
 
 open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, viewProvider: Provider<View>) : View.OnAttachStateChangeListener,
@@ -26,7 +26,7 @@ open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, vie
     private val disposables = CompositeDisposable()
     val view: View = viewProvider.get()
 
-    var currentAddress: BigInteger? = null
+    var currentAddress: Solidity.Address? = null
         private set
 
     init {
@@ -45,11 +45,11 @@ open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, vie
         stop()
     }
 
-    fun bind(address: BigInteger) {
+    fun bind(address: Solidity.Address) {
         currentAddress = address
         view.apply {
             layout_address_item_icon.setAddress(address)
-            layout_address_item_value.text = address.asEthereumAddressStringOrNull()
+            layout_address_item_value.text = address.asEthereumAddressString()
             layout_address_item_value.visible(true)
             layout_address_item_name.visible(false)
         }

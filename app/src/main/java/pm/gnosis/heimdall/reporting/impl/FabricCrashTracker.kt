@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.reporting.impl
 
 import com.crashlytics.android.Crashlytics
-import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.reporting.CrashTracker
 import timber.log.Timber
 import javax.inject.Inject

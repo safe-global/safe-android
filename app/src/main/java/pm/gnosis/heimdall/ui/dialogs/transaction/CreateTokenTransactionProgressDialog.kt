@@ -6,10 +6,10 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
-import java.math.BigInteger
 import javax.inject.Inject
 
 
@@ -18,18 +18,17 @@ class CreateTokenTransactionProgressDialog : BaseCreateSafeTransactionProgressDi
     @Inject
     lateinit var viewModel: CreateTokenTransactionProgressContract
 
-    private var tokenAddress: BigInteger? = null
+    private lateinit var tokenAddress: Solidity.Address
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        tokenAddress = arguments?.getString(TOKEN_ADDRESS_EXTRA)?.hexAsEthereumAddressOrNull()
+        tokenAddress = arguments?.getString(TOKEN_ADDRESS_EXTRA)?.asEthereumAddress() ?: run { dismiss(); return }
         inject()
     }
 
-    override fun createTransaction() =
-        viewModel.loadCreateTokenTransaction(tokenAddress)
+    override fun createTransaction() = viewModel.loadCreateTokenTransaction(tokenAddress)
 
-    override fun showTransaction(safe: BigInteger?, transaction: Transaction) {
+    override fun showTransaction(safe: Solidity.Address?, transaction: Transaction) {
         startActivity(CreateTransactionActivity.createIntent(context!!, safe, TransactionType.TOKEN_TRANSFER, transaction))
     }
 
@@ -44,7 +43,7 @@ class CreateTokenTransactionProgressDialog : BaseCreateSafeTransactionProgressDi
     companion object {
         private const val TOKEN_ADDRESS_EXTRA = "extra.string.token_address"
 
-        fun create(safeAddress: BigInteger, tokenAddress: BigInteger) =
+        fun create(safeAddress: Solidity.Address, tokenAddress: Solidity.Address) =
             CreateTokenTransactionProgressDialog().apply {
                 arguments = BaseCreateSafeTransactionProgressDialog.createBundle(safeAddress).apply {
                     putString(TOKEN_ADDRESS_EXTRA, tokenAddress.asEthereumAddressString())

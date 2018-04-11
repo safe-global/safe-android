@@ -25,8 +25,10 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.ERC20
 import pm.gnosis.svalinn.common.utils.edit
-import pm.gnosis.utils.*
-import pm.gnosis.utils.exceptions.InvalidAddressException
+import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.hexStringToByteArrayOrNull
+import pm.gnosis.utils.nullOnThrow
+import pm.gnosis.utils.utf8String
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -46,7 +48,7 @@ class DefaultTokenRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .map { it.map { it.fromDb() } }
 
-    override fun observeToken(address: BigInteger): Flowable<ERC20Token> =
+    override fun observeToken(address: Solidity.Address): Flowable<ERC20Token> =
         erc20TokenDao.observeToken(address)
             .map { it.fromDb() }
             .subscribeOn(Schedulers.io())
@@ -56,15 +58,12 @@ class DefaultTokenRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .map { it.map { it.fromDb() } }
 
-    override fun loadToken(address: BigInteger): Single<ERC20Token> =
+    override fun loadToken(address: Solidity.Address): Single<ERC20Token> =
         erc20TokenDao.loadToken(address)
             .map { it.fromDb() }
             .subscribeOn(Schedulers.io())
 
-    override fun loadTokenInfo(contractAddress: BigInteger): Observable<ERC20Token> {
-        if (!contractAddress.isValidEthereumAddress()) return Observable.error(
-            InvalidAddressException(contractAddress)
-        )
+    override fun loadTokenInfo(contractAddress: Solidity.Address): Observable<ERC20Token> {
         val bulk = TokenInfoRequest(
             EthCall(
                 transaction = Transaction(
@@ -101,12 +100,9 @@ class DefaultTokenRepository @Inject constructor(
     }
 
     override fun loadTokenBalances(
-        ofAddress: BigInteger,
+        ofAddress: Solidity.Address,
         erC20Tokens: List<ERC20Token>
     ): Observable<List<Pair<ERC20Token, BigInteger?>>> {
-        if (!ofAddress.isValidEthereumAddress()) return Observable.error(
-            InvalidAddressException(ofAddress)
-        )
         val requests =
             erC20Tokens.mapIndexed { index, token ->
                 if (token == ETHER_TOKEN) {
@@ -117,7 +113,7 @@ class DefaultTokenRepository @Inject constructor(
                     MappedRequest(EthCall(
                         transaction = Transaction(
                             token.address,
-                            data = StandardToken.BalanceOf.encode(Solidity.Address(ofAddress))
+                            data = StandardToken.BalanceOf.encode(ofAddress)
                         ),
                         id = index
                     ), {
@@ -135,7 +131,7 @@ class DefaultTokenRepository @Inject constructor(
         erc20TokenDao.insertERC20Token(erC20Token.toDb())
     }.subscribeOn(Schedulers.io())
 
-    override fun removeToken(address: BigInteger): Completable = Completable.fromCallable {
+    override fun removeToken(address: Solidity.Address): Completable = Completable.fromCallable {
         erc20TokenDao.deleteToken(address)
     }.subscribeOn(Schedulers.io())
 
@@ -143,11 +139,9 @@ class DefaultTokenRepository @Inject constructor(
         val finishedTokensSetup =
             preferencesManager.prefs.getBoolean(PreferencesManager.FINISHED_TOKENS_SETUP, false)
         if (!finishedTokensSetup) {
-            val verifiedTokensType =
-                Types.newParameterizedType(List::class.java, VerifiedTokenJson::class.java)
+            val verifiedTokensType = Types.newParameterizedType(List::class.java, VerifiedTokenJson::class.java)
             val adapter = moshi.adapter<List<VerifiedTokenJson>>(verifiedTokensType)
-            val json = context.resources.openRawResource(R.raw.verified_tokens).bufferedReader()
-                .use { it.readText() }
+            val json = context.resources.openRawResource(R.raw.verified_tokens).bufferedReader().use { it.readText() }
             val verifiedTokens = adapter.fromJson(json)
 
             verifiedTokens.map {
@@ -167,7 +161,7 @@ class DefaultTokenRepository @Inject constructor(
     }
 
     private data class VerifiedTokenJson(
-        @Json(name = "address") val address: BigInteger,
+        @Json(name = "address") val address: Solidity.Address,
         @Json(name = "name") val name: String,
         @Json(name = "symbol") val symbol: String,
         @Json(name = "decimals") val decimals: Int

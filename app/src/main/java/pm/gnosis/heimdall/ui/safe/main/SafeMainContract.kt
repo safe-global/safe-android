@@ -11,5 +11,5 @@ import java.math.BigInteger
 abstract class SafeMainContract : ViewModel() {
     abstract fun loadSelectedSafe(): Single<out AbstractSafe>
     abstract fun observeSafes(): Flowable<Result<Adapter.Data<AbstractSafe>>>
-    abstract fun selectSafe(address: BigInteger): Single<out AbstractSafe>
+    abstract fun selectSafe(addressOrHash: BigInteger): Single<out AbstractSafe>
 }

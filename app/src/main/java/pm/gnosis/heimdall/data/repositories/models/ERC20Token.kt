@@ -1,13 +1,14 @@
 package pm.gnosis.heimdall.data.repositories.models
 
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
+import pm.gnosis.model.Solidity
 import pm.gnosis.utils.stringWithNoTrailingZeroes
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
 
 data class ERC20Token(
-    val address: BigInteger,
+    val address: Solidity.Address,
     val name: String? = null,
     val symbol: String? = null,
     val decimals: Int,
@@ -17,7 +18,7 @@ data class ERC20Token(
         BigDecimal(unscaledAmount).setScale(decimals).div(BigDecimal.TEN.pow(decimals))
 
     companion object {
-        val ETHER_TOKEN = ERC20Token(BigInteger.ZERO, decimals = 18, symbol = "ETH", name = "Ether")
+        val ETHER_TOKEN = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 18, symbol = "ETH", name = "Ether")
     }
 
 }

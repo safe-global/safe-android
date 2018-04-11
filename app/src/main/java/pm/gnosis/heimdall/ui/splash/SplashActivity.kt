@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.OnboardingIntro
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
-import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.svalinn.common.utils.startActivity
 import timber.log.Timber
 import javax.inject.Inject

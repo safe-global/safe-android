@@ -11,8 +11,8 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.utils.handleAddressBookResult
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.heimdall.utils.parseEthereumAddress
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.toast
-import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
 abstract class BaseEditableTransactionDetailsFragment : BaseTransactionDetailsFragment() {
@@ -45,7 +45,7 @@ abstract class BaseEditableTransactionDetailsFragment : BaseTransactionDetailsFr
         handleAddressBookResult(requestCode, resultCode, data, { onAddressProvided(it.address) })
     }
 
-    protected open fun onAddressProvided(address: BigInteger) {}
+    protected open fun onAddressProvided(address: Solidity.Address) {}
 
     protected open fun onInvalidAddressScanned(input: String) {
         context!!.toast(R.string.invalid_ethereum_address)

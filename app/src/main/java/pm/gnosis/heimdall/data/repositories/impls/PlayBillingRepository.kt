@@ -12,7 +12,8 @@ import io.reactivex.SingleOnSubscribe
 import io.reactivex.rxkotlin.subscribeBy
 import pm.gnosis.heimdall.data.repositories.BillingRepository
 import pm.gnosis.heimdall.data.repositories.BillingRepository.PurchaseType
-import pm.gnosis.heimdall.data.repositories.BillingRepository.PurchaseType.*
+import pm.gnosis.heimdall.data.repositories.BillingRepository.PurchaseType.PRODUCT
+import pm.gnosis.heimdall.data.repositories.BillingRepository.PurchaseType.SUBSCRIPTION
 import pm.gnosis.heimdall.data.repositories.models.UserPurchase
 import pm.gnosis.heimdall.helpers.SetStore
 import pm.gnosis.svalinn.common.di.ApplicationContext

@@ -9,12 +9,12 @@ import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.utils.scanToAdapterData
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.svalinn.common.utils.mapToResult
-import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -24,17 +24,17 @@ class SafeOverviewViewModel @Inject constructor(
     private val preferencesManager: PreferencesManager,
     private val safeRepository: GnosisSafeRepository
 ) : SafeOverviewContract() {
-    private val infoCache = mutableMapOf<BigInteger, SafeInfo>()
+    private val infoCache = mutableMapOf<Solidity.Address, SafeInfo>()
 
     override fun observeSafes(): Flowable<Result<Adapter.Data<AbstractSafe>>> = safeRepository.observeSafes()
         .scanToAdapterData()
         .mapToResult()
 
-    override fun removeSafe(address: BigInteger) = safeRepository.removeSafe(address)
+    override fun removeSafe(address: Solidity.Address) = safeRepository.removeSafe(address)
 
-    override fun loadSafeInfo(address: BigInteger): Single<SafeInfo> =
+    override fun loadSafeInfo(address: Solidity.Address): Single<SafeInfo> =
         safeRepository.loadInfo(address).firstOrError()
-            .doOnSuccess { infoCache.put(address, it) }
+            .doOnSuccess { infoCache[address] = it }
             .onErrorResumeNext { infoCache[address]?.let { Single.just(it) } ?: Single.error(it) }
 
     override fun observeDeployStatus(hash: String) = safeRepository.observeDeployStatus(hash)

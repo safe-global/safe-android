@@ -5,7 +5,7 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
-import java.math.BigInteger
+import pm.gnosis.model.Solidity
 
 @Dao
 interface DescriptionsDao {
@@ -16,7 +16,7 @@ interface DescriptionsDao {
     fun loadDescription(id: String): Single<TransactionDescriptionDb>
 
     @Query("SELECT ${TransactionDescriptionDb.COL_ID} FROM ${TransactionDescriptionDb.TABLE_NAME} WHERE ${TransactionDescriptionDb.COL_SAFE_ADDRESS} = :safe ORDER BY ${TransactionDescriptionDb.COL_SUBMITTED_AT} DESC")
-    fun observeDescriptions(safe: BigInteger): Flowable<List<String>>
+    fun observeDescriptions(safe: Solidity.Address): Flowable<List<String>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(status: TransactionPublishStatusDb)

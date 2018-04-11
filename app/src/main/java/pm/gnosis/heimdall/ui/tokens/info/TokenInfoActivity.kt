@@ -17,12 +17,12 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.setupEtherscanAddressUrl
 import pm.gnosis.heimdall.utils.setupToolbar
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.toast
-import pm.gnosis.utils.asEthereumAddressStringOrNull
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 class TokenInfoActivity : BaseActivity() {
@@ -74,12 +74,8 @@ class TokenInfoActivity : BaseActivity() {
         layout_token_info_symbol.text = token.symbol ?: "-"
         layout_token_info_decimals.text = token.decimals.toString()
 
-        val tokenAddressString = token.address.asEthereumAddressStringOrNull()
-        if (tokenAddressString != null) {
-            layout_token_info_address.setupEtherscanAddressUrl(tokenAddressString, R.string.view_contract_on)
-        } else {
-            layout_token_info_address.text = "-"
-        }
+        val tokenAddressString = token.address.asEthereumAddressString()
+        layout_token_info_address.setupEtherscanAddressUrl(tokenAddressString, R.string.view_contract_on)
 
         val menuItem = layout_token_info_toolbar.menu.findItem(R.id.token_info_menu_delete)
         menuItem.isVisible = !token.verified
@@ -120,8 +116,8 @@ class TokenInfoActivity : BaseActivity() {
     companion object {
         private const val ADDRESS_EXTRA = "extra.string.address"
 
-        fun createIntent(context: Context, tokenAddress: BigInteger) =
+        fun createIntent(context: Context, tokenAddress: Solidity.Address) =
             Intent(context, TokenInfoActivity::class.java)
-                .apply { putExtra(ADDRESS_EXTRA, tokenAddress.asEthereumAddressStringOrNull()) }
+                .apply { putExtra(ADDRESS_EXTRA, tokenAddress.asEthereumAddressString()) }
     }
 }

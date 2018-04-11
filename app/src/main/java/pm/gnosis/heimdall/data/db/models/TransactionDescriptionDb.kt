@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import java.math.BigInteger
 
@@ -15,10 +16,10 @@ data class TransactionDescriptionDb(
     var id: String,
 
     @ColumnInfo(name = COL_SAFE_ADDRESS)
-    var safeAddress: BigInteger,
+    var safeAddress: Solidity.Address,
 
     @ColumnInfo(name = COL_TO)
-    var to: BigInteger,
+    var to: Solidity.Address,
 
     @ColumnInfo(name = COL_VALUE)
     var value: BigInteger,

@@ -3,13 +3,13 @@ package pm.gnosis.heimdall.data.db.models
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import java.math.BigInteger
+import pm.gnosis.model.Solidity
 
 @Entity(tableName = ERC20TokenDb.TABLE_NAME)
 data class ERC20TokenDb(
     @PrimaryKey
     @ColumnInfo(name = COL_ADDRESS)
-    var address: BigInteger,
+    var address: Solidity.Address,
 
     @ColumnInfo(name = COL_NAME)
     var name: String?,

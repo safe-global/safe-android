@@ -20,7 +20,6 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
-import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)

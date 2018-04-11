@@ -20,12 +20,12 @@ import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.withArgs
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 class TokenBalancesFragment : BaseFragment() {
@@ -34,7 +34,7 @@ class TokenBalancesFragment : BaseFragment() {
     @Inject
     lateinit var adapter: TokenBalancesAdapter
 
-    private var safeAddress: BigInteger? = null
+    private lateinit var safeAddress: Solidity.Address
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_token_balances, container, false)
@@ -42,15 +42,8 @@ class TokenBalancesFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        safeAddress = arguments?.getString(ARGUMENT_ADDRESS)?.hexAsEthereumAddressOrNull()
-        safeAddress.let {
-            if (it != null) {
-                viewModel.setup(it)
-            } else {
-                snackbar(layout_tokens_coordinator_layout, R.string.invalid_ethereum_address)
-                activity?.finish()
-            }
-        }
+        safeAddress = arguments?.getString(ARGUMENT_ADDRESS)?.asEthereumAddress()!!
+        viewModel.setup(safeAddress)
 
         val layoutManager = LinearLayoutManager(context)
         layout_tokens_list.layoutManager = layoutManager
@@ -98,7 +91,7 @@ class TokenBalancesFragment : BaseFragment() {
     companion object {
         private const val ARGUMENT_ADDRESS = "argument.string.address"
 
-        fun createInstance(address: String) =
-            TokenBalancesFragment().withArgs(Bundle().apply { putString(ARGUMENT_ADDRESS, address) })
+        fun createInstance(address: Solidity.Address) =
+            TokenBalancesFragment().withArgs(Bundle().apply { putString(ARGUMENT_ADDRESS, address.asEthereumAddressString()) })
     }
 }

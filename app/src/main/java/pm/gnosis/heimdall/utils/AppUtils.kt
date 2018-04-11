@@ -15,8 +15,6 @@ import android.text.style.URLSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import io.reactivex.Single
-import io.reactivex.disposables.Disposable
 import pm.gnosis.erc67.ERC67Parser
 import pm.gnosis.erc67.erc67Uri
 import pm.gnosis.heimdall.R
@@ -25,8 +23,11 @@ import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Transaction
-import pm.gnosis.svalinn.common.utils.*
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
+import pm.gnosis.svalinn.common.utils.appendText
+import pm.gnosis.svalinn.common.utils.openUrl
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 
 fun errorSnackbar(view: View, throwable: Throwable, duration: Int = Snackbar.LENGTH_LONG) {
@@ -76,8 +77,7 @@ fun handleAddressBookResult(
     return false
 }
 
-fun parseEthereumAddress(address: String) =
-    address.hexAsEthereumAddressOrNull() ?: ERC67Parser.parse(address)?.address
+fun parseEthereumAddress(address: String) = address.asEthereumAddress() ?: ERC67Parser.parse(address)?.address
 
 fun TextView.setupEtherscanTransactionUrl(transactionHash: String, @StringRes stringId: Int) {
     setupEtherscanTransactionUrl(transactionHash, context.getString(stringId))

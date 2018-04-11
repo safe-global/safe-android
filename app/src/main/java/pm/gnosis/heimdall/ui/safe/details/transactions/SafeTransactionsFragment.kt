@@ -14,9 +14,11 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.withArgs
-import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,7 +30,7 @@ class SafeTransactionsFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val address = arguments!!.getString(ARGUMENT_SAFE_ADDRESS).hexAsBigInteger()
+        val address = arguments!!.getString(ARGUMENT_SAFE_ADDRESS).asEthereumAddress()!!
         viewModel.setup(address)
     }
 
@@ -84,9 +86,9 @@ class SafeTransactionsFragment : BaseFragment() {
     companion object {
         private const val ARGUMENT_SAFE_ADDRESS = "argument.string.safe_address"
 
-        fun createInstance(address: String) =
+        fun createInstance(address: Solidity.Address) =
             SafeTransactionsFragment().withArgs(
-                Bundle().apply { putString(ARGUMENT_SAFE_ADDRESS, address) }
+                Bundle().apply { putString(ARGUMENT_SAFE_ADDRESS, address.asEthereumAddressString()) }
             )
     }
 }

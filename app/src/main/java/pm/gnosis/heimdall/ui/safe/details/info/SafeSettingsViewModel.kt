@@ -8,10 +8,10 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.trimWhitespace
-import java.math.BigInteger
 import javax.inject.Inject
 
 class SafeSettingsViewModel @Inject constructor(
@@ -23,15 +23,15 @@ class SafeSettingsViewModel @Inject constructor(
 
     private var cachedInfo: SafeInfo? = null
 
-    private var address: BigInteger? = null
+    private var address: Solidity.Address? = null
 
-    override fun setup(address: BigInteger) {
+    override fun setup(address: Solidity.Address) {
         if (this.address == address) return
         this.address = address
         cachedInfo = null
     }
 
-    override fun getSafeAddress(): BigInteger = address!!
+    override fun getSafeAddress(): Solidity.Address = address!!
 
     override fun loadSafeInfo(ignoreCache: Boolean) =
         (fromCache(ignoreCache) ?: safeRepository.loadInfo(address!!)

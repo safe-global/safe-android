@@ -7,8 +7,8 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.AddressBookEntryDb
 import pm.gnosis.heimdall.data.db.models.fromDB
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
-import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,7 +19,7 @@ class DefaultAddressBookRepository @Inject constructor(
 
     private val addressBookDao = appDb.addressBookDao()
 
-    override fun addAddressBookEntry(address: BigInteger, name: String, description: String): Completable =
+    override fun addAddressBookEntry(address: Solidity.Address, name: String, description: String): Completable =
         Completable.fromCallable {
             addressBookDao.insertAddressBookEntry(AddressBookEntryDb(address, name, description))
         }.subscribeOn(Schedulers.io())
@@ -29,12 +29,12 @@ class DefaultAddressBookRepository @Inject constructor(
             .map { it.map { it.fromDB() } }
             .subscribeOn(Schedulers.io())
 
-    override fun observeAddressBookEntry(address: BigInteger): Flowable<AddressBookEntry> =
+    override fun observeAddressBookEntry(address: Solidity.Address): Flowable<AddressBookEntry> =
         addressBookDao.observeAddressBookEntry(address)
             .map { it.fromDB() }
             .subscribeOn(Schedulers.io())
 
-    override fun deleteAddressBookEntry(address: BigInteger): Completable =
+    override fun deleteAddressBookEntry(address: Solidity.Address): Completable =
         Completable.fromCallable {
             addressBookDao.deleteAddressBookEntry(address)
         }.subscribeOn(Schedulers.io())

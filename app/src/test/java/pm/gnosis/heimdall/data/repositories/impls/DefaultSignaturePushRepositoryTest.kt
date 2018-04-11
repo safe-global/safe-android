@@ -33,9 +33,6 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
-import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexStringToByteArray
-import pm.gnosis.utils.removeHexPrefix
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 

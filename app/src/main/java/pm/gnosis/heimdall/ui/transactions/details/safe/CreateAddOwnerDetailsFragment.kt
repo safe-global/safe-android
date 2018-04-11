@@ -20,14 +20,14 @@ import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.selectFromAddressBook
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.doOnNextForResult
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigIntegerOrNull
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
@@ -35,11 +35,11 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
     lateinit var subViewModel: ChangeSafeSettingsDetailsContract
 
     private var transaction: Transaction? = null
-    private var safe: BigInteger? = null
+    private var safe: Solidity.Address? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        safe = arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull()
+        safe = arguments?.getString(ARG_SAFE)?.asEthereumAddress()
         transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
     }
 
@@ -88,12 +88,11 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
                 }
             })
 
-    override fun onAddressProvided(address: BigInteger) {
+    override fun onAddressProvided(address: Solidity.Address) {
         layout_create_add_safe_owner_address_input.setText(address.asEthereumAddressString())
     }
 
-    override fun observeSafe(): Observable<Optional<BigInteger>> =
-        Observable.just(safe.toOptional())
+    override fun observeSafe(): Observable<Optional<Solidity.Address>> = Observable.just(safe.toOptional())
 
     override fun inputEnabled(enabled: Boolean) {
         layout_create_add_safe_owner_address_input.isEnabled = enabled

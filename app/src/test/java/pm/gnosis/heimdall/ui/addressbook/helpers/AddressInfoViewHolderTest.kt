@@ -24,7 +24,6 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestFlowableFactory
 import pm.gnosis.tests.utils.mockFindViewById
-import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Provider
 

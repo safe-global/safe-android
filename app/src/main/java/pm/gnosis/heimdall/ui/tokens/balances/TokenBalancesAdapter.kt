@@ -41,7 +41,8 @@ class TokenBalancesAdapter @Inject constructor(
                 itemView.layout_tokens_item_balance_symbol_image.setImageResource(R.drawable.ic_ether_symbol)
             } else {
                 itemView.layout_tokens_item_balance_symbol.text =
-                        if (data.token.symbol.isNullOrEmpty()) data.token.address.toString(16).substring(0, 3) else data.token.symbol
+                        if (data.token.symbol.isNullOrEmpty()) data.token.address.asEthereumAddressString().substring(0, 3)
+                        else data.token.symbol
                 itemView.layout_tokens_item_balance_symbol_image.visibility = View.GONE
             }
             itemView.layout_tokens_item_balance_balance.text = data.displayString()

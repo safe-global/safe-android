@@ -13,13 +13,13 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.*
-import java.math.BigInteger
 import java.util.concurrent.CopyOnWriteArraySet
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -55,7 +55,7 @@ class DefaultSignaturePushRepository @Inject constructor(
         }
     }
 
-    override fun request(safe: BigInteger, data: String): Completable {
+    override fun request(safe: Solidity.Address, data: String): Completable {
         val safeAddress = cleanAddress(safe)
         return accountsRepository.sign(Sha3Utils.keccak(safeAddress.hexStringToByteArray()))
             .flatMapCompletable {
@@ -63,29 +63,28 @@ class DefaultSignaturePushRepository @Inject constructor(
             }
     }
 
-    override fun send(safe: BigInteger, transaction: Transaction, signature: Signature): Completable =
+    override fun send(safe: Solidity.Address, transaction: Transaction, signature: Signature): Completable =
         transactionRepository.calculateHash(safe, transaction).flatMapCompletable {
             pushServiceApi.sendSignature(cleanAddress(safe), SendSignatureData(GnoSafeUrlParser.signResponse(signature), it.toHexString()))
         }
 
-
-    private val observedSafes = HashMap<BigInteger, ReceiveSignatureObservable>()
+    private val observedSafes = HashMap<Solidity.Address, ReceiveSignatureObservable>()
 
     override fun receivedSignature(topic: String?, signature: Signature) {
         if (topic?.startsWith(FCM_TOPICS_PREFIX + RESPOND_SIGNATURE_TOPIC_PREFIX) != true) return
-        topic.removePrefix(FCM_TOPICS_PREFIX + RESPOND_SIGNATURE_TOPIC_PREFIX).hexAsBigIntegerOrNull()?.let {
+        topic.removePrefix(FCM_TOPICS_PREFIX + RESPOND_SIGNATURE_TOPIC_PREFIX).asEthereumAddress()?.let {
             observedSafes[it]
         }?.publish(signature)
     }
 
-    override fun observe(safe: BigInteger): Observable<Signature> =
+    override fun observe(safe: Solidity.Address): Observable<Signature> =
         observedSafes.getOrPut(safe, {
             ReceiveSignatureObservable(messageQueueRepository, preferencesManager, {
                 observedSafes.remove(safe)
             }, cleanAddress(safe))
         }).observe()
 
-    private fun cleanAddress(address: BigInteger) =
+    private fun cleanAddress(address: Solidity.Address) =
         address.asEthereumAddressString().toLowerCase().removeHexPrefix()
 
     private class ReceiveSignatureObservable(

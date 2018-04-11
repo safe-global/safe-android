@@ -20,17 +20,15 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.shareExternalText
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.asEthereumAddressStringOrNull
-import pm.gnosis.utils.hexAsEthereumAddress
-import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 class AddressBookEntryDetailsActivity : BaseActivity() {
@@ -40,7 +38,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
     @Inject
     lateinit var viewModel: AddressBookContract
 
-    lateinit var address: BigInteger
+    lateinit var address: Solidity.Address
 
     private val generateQrCodeSubject = PublishSubject.create<Unit>()
     private val deleteEntryClickSubject = PublishSubject.create<Unit>()
@@ -50,12 +48,12 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
         inject()
 
         intent.extras.getString(EXTRA_ADDRESS_ENTRY).let {
-            if (it == null || !it.isValidEthereumAddress()) {
+            it.asEthereumAddress()?.let {
+                address = it
+            } ?: run {
                 toast(R.string.invalid_ethereum_address)
                 finish()
                 return
-            } else {
-                address = it.hexAsEthereumAddress()
             }
         }
 
@@ -65,8 +63,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
         layout_address_book_entry_details_toolbar.setNavigationOnClickListener { onBackPressed() }
         layout_address_book_entry_details_toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.address_book_entry_details_menu_share ->
-                    address.asEthereumAddressStringOrNull()?.let { shareExternalText(it, R.string.share_address) }
+                R.id.address_book_entry_details_menu_share -> shareExternalText(address.asEthereumAddressString(), R.string.share_address)
                 R.id.address_book_entry_details_menu_delete -> showDeleteDialog()
             }
             true
@@ -96,15 +93,9 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
     }
 
     private fun onAddressBookEntry(entry: AddressBookEntry) {
-        val address = entry.address.asEthereumAddressStringOrNull()
-        if (address == null) {
-            toast(R.string.invalid_ethereum_address)
-            finish()
-            return
-        }
         generateQrCodeSubject.onNext(Unit)
         layout_address_book_entry_details_name.text = entry.name
-        layout_address_book_entry_details_address.text = address
+        layout_address_book_entry_details_address.text = entry.address.asEthereumAddressString()
         layout_address_book_entry_details_description_container.visibility =
                 if (entry.description.isBlank()) View.GONE else View.VISIBLE
         layout_address_book_entry_details_description.text = entry.description
@@ -123,8 +114,8 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
             action = R.string.retry to { _: View -> generateQrCodeSubject.onNext(Unit) })
     }
 
-    private fun onAddressBookEntryDeleted(address: BigInteger) {
-        toast(getString(R.string.toast_delete_address_book_entry, address.asEthereumAddressStringOrNull()))
+    private fun onAddressBookEntryDeleted(address: Solidity.Address) {
+        toast(getString(R.string.toast_delete_address_book_entry, address.asEthereumAddressString()))
         finish()
     }
 
@@ -152,7 +143,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
     companion object {
         private const val EXTRA_ADDRESS_ENTRY = "extra.string.address_entry"
 
-        fun createIntent(context: Context, address: BigInteger) =
+        fun createIntent(context: Context, address: Solidity.Address) =
             Intent(context, AddressBookEntryDetailsActivity::class.java)
                 .apply { putExtra(EXTRA_ADDRESS_ENTRY, address.asEthereumAddressString()) }
     }

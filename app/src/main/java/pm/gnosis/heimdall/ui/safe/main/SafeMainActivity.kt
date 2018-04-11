@@ -35,7 +35,10 @@ import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.transaction
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.*
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -60,10 +63,10 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         this.intent = intent
-        val selectedSafe = intent?.getStringExtra(EXTRA_SELECTED_SAFE)?.hexAsEthereumAddressOrNull()
+        val selectedSafe = intent?.getStringExtra(EXTRA_SELECTED_SAFE)?.asEthereumAddress()
         if (selectedSafe != null && screenActive) {
             intent.removeExtra(EXTRA_SELECTED_SAFE)
-            disposables += viewModel.selectSafe(selectedSafe)
+            disposables += viewModel.selectSafe(selectedSafe.value)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = ::showSafe, onError = Timber::e)
         }
@@ -139,7 +142,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             .flatMapSingle {
                 viewModel.selectSafe(
                     when (it) {
-                        is Safe -> it.address
+                        is Safe -> it.address.value
                         is PendingSafe -> it.hash
                     }
                 ).mapToResult()
@@ -223,7 +226,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 layout_safe_main_selected_safe_icon.setAddress(safe.address)
                 layout_safe_main_selected_safe_name.text = safe.name
                 layout_safe_main_toolbar.title = safe.name
-                layout_safe_main_toolbar.subtitle = safe.address.asEthereumAddressStringOrNull()
+                layout_safe_main_toolbar.subtitle = safe.address.asEthereumAddressString()
 
                 layout_safe_main_toolbar.inflateMenu(R.menu.safe_details_menu)
                 disposables += layout_safe_main_toolbar.itemClicks()
@@ -255,9 +258,9 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         private const val EXTRA_SELECTED_SAFE = "extra.string.selected_safe"
         private const val EXTRA_SELECTED_TAB = "extra.integer.selected_tab"
 
-        fun createIntent(context: Context, selectedSafe: BigInteger? = null, selectedTab: Int = 0) =
+        fun createIntent(context: Context, selectedSafeAddressOrHash: BigInteger? = null, selectedTab: Int = 0) =
             Intent(context, SafeMainActivity::class.java).apply {
-                putExtra(EXTRA_SELECTED_SAFE, selectedSafe?.toHexString())
+                putExtra(EXTRA_SELECTED_SAFE, selectedSafeAddressOrHash?.toHexString())
                 putExtra(EXTRA_SELECTED_TAB, selectedTab)
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }

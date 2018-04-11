@@ -12,11 +12,11 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.transactions.BaseTransactionActivity
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.appendText
-import pm.gnosis.utils.asEthereumAddressStringOrNull
-import java.math.BigInteger
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 abstract class BaseTransactionDetailsFragment : BaseFragment() {
@@ -25,16 +25,15 @@ abstract class BaseTransactionDetailsFragment : BaseFragment() {
     lateinit var baseViewModel: BaseTransactionDetailsContract
 
     abstract fun observeTransaction(): Observable<Result<Transaction>>
-    abstract fun observeSafe(): Observable<Optional<BigInteger>>
+    abstract fun observeSafe(): Observable<Optional<Solidity.Address>>
     abstract fun inputEnabled(enabled: Boolean)
 
-    protected fun updateSafeInfoTransformer(addressView: TextView) = ObservableTransformer<BigInteger, Safe> {
+    protected fun updateSafeInfoTransformer(addressView: TextView) = ObservableTransformer<Solidity.Address, Safe> {
         it.switchMap { baseViewModel.observeSafe(it) }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                val safeAddress = it.address.asEthereumAddressStringOrNull()
-                val shortenedSafeAddress =
-                    safeAddress?.let { " [${safeAddress.substring(0, 6)}...${safeAddress.substring(safeAddress.length - 4)}]" } ?: ""
+                val safeAddress = it.address.asEthereumAddressString()
+                val shortenedSafeAddress = " [${safeAddress.substring(0, 6)}...${safeAddress.substring(safeAddress.length - 4)}]"
                 val safeDetails = SpannableStringBuilder(it.name ?: "")
                     .appendText(shortenedSafeAddress, ForegroundColorSpan(ContextCompat.getColor(context!!, R.color.light_text)))
                 addressView.text = safeDetails

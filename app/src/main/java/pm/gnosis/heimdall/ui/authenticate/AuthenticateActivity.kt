@@ -16,7 +16,6 @@ import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.heimdall.utils.setupToolbar
-import pm.gnosis.svalinn.common.utils.scanQrCode
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import timber.log.Timber
 import javax.inject.Inject

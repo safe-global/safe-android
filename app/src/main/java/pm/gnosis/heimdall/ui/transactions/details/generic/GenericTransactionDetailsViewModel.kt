@@ -8,8 +8,8 @@ import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.decimalAsBigIntegerOrNull
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import pm.gnosis.utils.hexStringToByteArrayOrNull
 import pm.gnosis.utils.toHexString
 import javax.inject.Inject
@@ -19,7 +19,7 @@ class GenericTransactionDetailsViewModel @Inject constructor() : GenericTransact
         ObservableTransformer<InputEvent, Result<Transaction>> {
             it.scan { old, new -> old.diff(new) }
                 .map {
-                    val to = it.to.first.hexAsEthereumAddressOrNull()
+                    val to = it.to.first.asEthereumAddress()
                     val data = it.data.first.hexStringToByteArrayOrNull()
                     val value = it.value.first.decimalAsBigIntegerOrNull()
                     var errorFields = 0

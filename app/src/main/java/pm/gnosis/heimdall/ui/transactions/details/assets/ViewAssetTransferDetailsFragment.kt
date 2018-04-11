@@ -19,13 +19,13 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.InflatedViewProvider
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseReviewTransactionDetailsFragment
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.Result
-import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFragment() {
@@ -33,14 +33,14 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
     lateinit var subViewModel: AssetTransferDetailsContract
 
     var transaction: Transaction? = null
-    var safe: BigInteger? = null
+    var safe: Solidity.Address? = null
 
     @LayoutRes
     abstract fun layout(): Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        safe = arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull()
+        safe = arguments?.getString(ARG_SAFE)?.asEthereumAddress()
         transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
     }
 
@@ -79,7 +79,7 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
             .compose(subViewModel.transactionTransformer())
     }
 
-    override fun observeSafe(): Observable<Optional<BigInteger>> =
+    override fun observeSafe(): Observable<Optional<Solidity.Address>> =
         Observable.just(safe.toOptional())
 
     override fun inject(component: ApplicationComponent) {

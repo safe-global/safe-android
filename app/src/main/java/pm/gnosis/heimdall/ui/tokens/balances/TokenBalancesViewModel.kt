@@ -11,6 +11,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TO
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.scanToAdapterDataResult
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.exceptions.InvalidAddressException
@@ -25,11 +26,11 @@ class TokenBalancesViewModel @Inject constructor(
         .add({ it is InvalidAddressException }, R.string.invalid_ethereum_address)
         .build()
 
-    private lateinit var address: BigInteger
+    private lateinit var address: Solidity.Address
     private val loadingSubject = PublishSubject.create<Boolean>()
     private var tokensLoading = false
 
-    override fun setup(address: BigInteger) {
+    override fun setup(address: Solidity.Address) {
         this.address = address
     }
 
@@ -43,7 +44,7 @@ class TokenBalancesViewModel @Inject constructor(
             }
             .scanToAdapterDataResult({ it.token.address to it.balance })
 
-    private fun loadTokenBalances(ofAddress: BigInteger, tokens: List<ERC20Token>, initialLoad: Boolean) =
+    private fun loadTokenBalances(ofAddress: Solidity.Address, tokens: List<ERC20Token>, initialLoad: Boolean) =
         tokenRepository.loadTokenBalances(ofAddress, tokens)
             .map {
                 it.mapNotNull { (token, balance) ->

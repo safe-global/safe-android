@@ -18,6 +18,7 @@ import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcApi
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcConnector
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
+import pm.gnosis.heimdall.data.adapters.SolidityAddressAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
@@ -61,6 +62,7 @@ class ApplicationModule {
             .add(WeiAdapter())
             .add(HexNumberAdapter())
             .add(TickerAdapter())
+            .add(SolidityAddressAdapter())
             .build()
     }
 
