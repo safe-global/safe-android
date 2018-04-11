@@ -6,8 +6,10 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
+import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
@@ -26,13 +28,14 @@ class SelectSafeViewModel @Inject constructor(
 
     override fun loadSafes(): Single<List<Safe>> = safeRepository.observeDeployedSafes().firstOrError()
 
-    override fun reviewTransaction(safe: Solidity.Address?, transaction: Transaction): Single<Result<Intent>> =
-        detailRepository.loadTransactionType(transaction)
+    override fun reviewTransaction(safe: Solidity.Address?, transaction: SafeTransaction): Single<Result<Intent>> =
+        detailRepository.loadTransactionType(transaction.wrapped)
             .map {
                 safe ?: throw SimpleLocalizedException(context.getString(R.string.no_safe_selected_error))
                 when (it) {
-                    TransactionType.REMOVE_SAFE_OWNER ->
+                    TransactionType.REMOVE_SAFE_OWNER -> {
                         SubmitTransactionActivity.createIntent(context, safe, transaction)
+                    }
                     else ->
                         CreateTransactionActivity.createIntent(context, safe, it, transaction)
                 }

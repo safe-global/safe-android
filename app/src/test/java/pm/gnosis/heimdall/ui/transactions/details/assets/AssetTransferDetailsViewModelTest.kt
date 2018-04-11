@@ -19,9 +19,11 @@ import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TokenTransferData
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
+import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract.FormData
 import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract.InputEvent
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
@@ -213,8 +215,8 @@ class AssetTransferDetailsViewModelTest {
     }
 
     private fun testInputTransformer(
-        inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<Transaction>>,
-        input: InputEvent, expectedOutput: Result<Transaction>, testNo: Int
+        inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<SafeTransaction>>,
+        input: InputEvent, expectedOutput: Result<SafeTransaction>, testNo: Int
     ) {
         inputStream.onNext(input)
         outputStream.assertNoErrors().assertValueCount(testNo)
@@ -225,8 +227,9 @@ class AssetTransferDetailsViewModelTest {
     fun inputTransformerWithOriginalTransaction() {
 
         val testPublisher = PublishSubject.create<InputEvent>()
-        val testObserver = TestObserver<Result<Transaction>>()
-        val originalTransaction = Transaction(Solidity.Address(BigInteger.TEN), nonce = BigInteger.valueOf(1337))
+        val testObserver = TestObserver<Result<SafeTransaction>>()
+        val originalTransaction =
+            SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN), nonce = BigInteger.valueOf(1337)), TransactionRepository.Operation.CALL)
 
         testPublisher.compose(viewModel.inputTransformer(originalTransaction))
             .subscribe(testObserver)
@@ -245,7 +248,7 @@ class AssetTransferDetailsViewModelTest {
                 Transaction(
                     Solidity.Address(BigInteger.TEN), value = null,
                     data = expectedData, nonce = BigInteger.valueOf(1337)
-                )
+                ).callOperation()
             ),
             testNo++
         )
@@ -259,7 +262,7 @@ class AssetTransferDetailsViewModelTest {
                     value = Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals))),
                     data = null,
                     nonce = BigInteger.valueOf(1337)
-                )
+                ).callOperation()
             ),
             testNo++
         )
@@ -314,7 +317,7 @@ class AssetTransferDetailsViewModelTest {
     fun inputTransformerNoOriginalTransaction() {
 
         val testPublisher = PublishSubject.create<InputEvent>()
-        val testObserver = TestObserver<Result<Transaction>>()
+        val testObserver = TestObserver<Result<SafeTransaction>>()
 
         testPublisher.compose(viewModel.inputTransformer(null))
             .subscribe(testObserver)
@@ -330,10 +333,10 @@ class AssetTransferDetailsViewModelTest {
         testObserver.assertNoErrors().assertValueCount(testNo)
             .assertValueAt(testNo - 1, {
                 it is DataResult
-                        && it.data.address == Solidity.Address(BigInteger.TEN)
-                        && it.data.value == null
-                        && it.data.data == expectedData
-                        && it.data.nonce == null
+                        && it.data.wrapped.address == Solidity.Address(BigInteger.TEN)
+                        && it.data.wrapped.value == null
+                        && it.data.wrapped.data == expectedData
+                        && it.data.wrapped.nonce == null
             })
         testNo++
         // Valid input with change (ether)
@@ -341,10 +344,10 @@ class AssetTransferDetailsViewModelTest {
         testObserver.assertNoErrors().assertValueCount(testNo)
             .assertValueAt(testNo - 1, {
                 it is DataResult
-                        && it.data.address == Solidity.Address(BigInteger.ZERO)
-                        && it.data.value == Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals)))
-                        && it.data.data == null
-                        && it.data.nonce == null
+                        && it.data.wrapped.address == Solidity.Address(BigInteger.ZERO)
+                        && it.data.wrapped.value == Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals)))
+                        && it.data.wrapped.data == null
+                        && it.data.wrapped.nonce == null
             })
         testNo++
         // Invalid input with change
@@ -395,8 +398,8 @@ class AssetTransferDetailsViewModelTest {
     }
 
     private fun testTransactionTransformer(
-        inputStream: PublishSubject<Optional<Transaction>>, outputStream: TestObserver<Result<Transaction>>,
-        input: Transaction?, expectedOutput: Result<Transaction>, testNo: Int
+        inputStream: PublishSubject<Optional<SafeTransaction>>, outputStream: TestObserver<Result<SafeTransaction>>,
+        input: SafeTransaction?, expectedOutput: Result<SafeTransaction>, testNo: Int
     ) {
         inputStream.onNext(input.toOptional())
         outputStream.assertNoErrors().assertValueCount(testNo)
@@ -406,8 +409,8 @@ class AssetTransferDetailsViewModelTest {
     @Test
     fun transactionTransformer() {
 
-        val testPublisher = PublishSubject.create<Optional<Transaction>>()
-        val testObserver = TestObserver<Result<Transaction>>()
+        val testPublisher = PublishSubject.create<Optional<SafeTransaction>>()
+        val testObserver = TestObserver<Result<SafeTransaction>>()
 
         testPublisher.compose(viewModel.transactionTransformer())
             .subscribe(testObserver)
@@ -415,7 +418,7 @@ class AssetTransferDetailsViewModelTest {
 
         var testNo = 1
 
-        // No transaction passed
+        // No wrapped passed
         testPublisher.onNext(None)
         testObserver.assertNoErrors().assertValueCount(testNo)
             .assertValueAt(testNo - 1, { it is ErrorResult && it.error is IllegalStateException })
@@ -429,7 +432,7 @@ class AssetTransferDetailsViewModelTest {
             .willReturn(Single.just(None))
         testTransactionTransformer(
             testPublisher, testObserver,
-            transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
+            transaction.callOperation(), ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
         )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
@@ -440,7 +443,7 @@ class AssetTransferDetailsViewModelTest {
             .willReturn(Single.just(None))
         testTransactionTransformer(
             testPublisher, testObserver,
-            transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
+            transaction.callOperation(), ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
         )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
@@ -451,7 +454,7 @@ class AssetTransferDetailsViewModelTest {
             .willReturn(Single.just(None))
         testTransactionTransformer(
             testPublisher, testObserver,
-            transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
+            transaction.callOperation(), ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
         )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
@@ -462,7 +465,7 @@ class AssetTransferDetailsViewModelTest {
             .willReturn(Single.just(None))
         testTransactionTransformer(
             testPublisher, testObserver,
-            transaction, DataResult(transaction), testNo++
+            transaction.callOperation(), DataResult(transaction.callOperation()), testNo++
         )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
@@ -473,7 +476,7 @@ class AssetTransferDetailsViewModelTest {
             .willReturn(Single.just(None))
         testTransactionTransformer(
             testPublisher, testObserver,
-            transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
+            transaction.callOperation(), ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
         )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
@@ -484,7 +487,7 @@ class AssetTransferDetailsViewModelTest {
             .willReturn(Single.just(TokenTransferData(Solidity.Address(BigInteger.valueOf(42)), BigInteger.ZERO).toOptional()))
         testTransactionTransformer(
             testPublisher, testObserver,
-            transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
+            transaction.callOperation(), ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
         )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
@@ -495,7 +498,7 @@ class AssetTransferDetailsViewModelTest {
             .willReturn(Single.just(TokenTransferData(Solidity.Address(BigInteger.valueOf(42)), BigInteger.TEN).toOptional()))
         testTransactionTransformer(
             testPublisher, testObserver,
-            transaction, DataResult(transaction), testNo++
+            transaction.callOperation(), DataResult(transaction.callOperation()), testNo++
         )
         then(detailsRepository).should().loadTransactionData(transaction)
         reset(detailsRepository)
@@ -535,4 +538,6 @@ class AssetTransferDetailsViewModelTest {
         then(tokenRepository).should().loadTokenBalances(Solidity.Address(BigInteger.TEN), listOf(testToken))
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
+
+    private fun Transaction.callOperation() = SafeTransaction(this, TransactionRepository.Operation.CALL)
 }

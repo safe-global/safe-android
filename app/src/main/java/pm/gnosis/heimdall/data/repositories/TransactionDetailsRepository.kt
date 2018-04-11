@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.data.repositories
 import com.gojuno.koptional.Optional
 import io.reactivex.Single
 import pm.gnosis.model.Solidity
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
@@ -14,7 +15,7 @@ interface TransactionDetailsRepository {
 
 data class TransactionDetails(
     val transactionId: String, val type: TransactionType, val data: TransactionTypeData?,
-    val transaction: Transaction, val safe: Solidity.Address, val timestamp: Long, val subject: String? = null
+    val transaction: SafeTransaction, val safe: Solidity.Address, val timestamp: Long, val subject: String? = null
 )
 
 sealed class TransactionTypeData
@@ -22,6 +23,7 @@ data class TokenTransferData(val recipient: Solidity.Address, val tokens: BigInt
 data class RemoveSafeOwnerData(val ownerIndex: BigInteger, val owner: Solidity.Address, val newThreshold: Int) : TransactionTypeData()
 data class AddSafeOwnerData(val newOwner: Solidity.Address, val newThreshold: Int) : TransactionTypeData()
 data class ReplaceSafeOwnerData(val oldOwnerIndex: BigInteger, val owner: Solidity.Address, val newOwner: Solidity.Address) : TransactionTypeData()
+data class AddRecoveryExtensionData(val recoveryOwners: List<BigInteger>) : TransactionTypeData()
 
 enum class TransactionType {
     GENERIC,
@@ -30,4 +32,5 @@ enum class TransactionType {
     ADD_SAFE_OWNER,
     REMOVE_SAFE_OWNER,
     REPLACE_SAFE_OWNER,
+    ADD_RECOVERY_EXTENSION,
 }

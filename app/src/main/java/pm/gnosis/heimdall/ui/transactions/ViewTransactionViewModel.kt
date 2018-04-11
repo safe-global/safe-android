@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
@@ -38,14 +39,14 @@ class ViewTransactionViewModel @Inject constructor(
     override fun checkTransactionType(transaction: Transaction): Single<TransactionType> =
         transactionDetailsRepository.loadTransactionType(transaction)
 
-    private fun checkSignature(safe: Solidity.Address, transaction: Transaction, signature: Signature) =
+    private fun checkSignature(safe: Solidity.Address, transaction: SafeTransaction, signature: Signature) =
         transactionRepository.checkSignature(safe, transaction, signature)
             .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_signature))) }
 
-    override fun addLocalTransaction(safeAddress: Solidity.Address, transaction: Transaction, txChainHash: String): Single<String> =
+    override fun addLocalTransaction(safeAddress: Solidity.Address, transaction: SafeTransaction, txChainHash: String): Single<String> =
         transactionRepository.addLocalTransaction(safeAddress, transaction, txChainHash)
 
-    override fun observeSignaturePushes(safeAddress: Solidity.Address, transaction: Transaction): Observable<Result<Unit>> =
+    override fun observeSignaturePushes(safeAddress: Solidity.Address, transaction: SafeTransaction): Observable<Result<Unit>> =
         signaturePushRepository.observe(safeAddress)
             .flatMapSingle {
                 checkSignature(safeAddress, transaction, it)
@@ -55,7 +56,7 @@ class ViewTransactionViewModel @Inject constructor(
 
     override fun sendSignaturePush(info: Info): Single<Result<Unit>> =
         Single.fromCallable {
-            val transaction = info.status.transaction
+            val transaction = info.status.transaction.wrapped
             val transactionHash = info.status.transactionHash
             GnoSafeUrlParser.signRequest(
                 transactionHash,
@@ -63,7 +64,8 @@ class ViewTransactionViewModel @Inject constructor(
                 transaction.address,
                 transaction.value,
                 transaction.data,
-                transaction.nonce!!
+                transaction.nonce!!,
+                info.status.transaction.operation.ordinal
             )
         }
             .subscribeOn(Schedulers.computation())
@@ -83,7 +85,7 @@ class ViewTransactionViewModel @Inject constructor(
             .map(signatureStore::add)
             .toCompletable()
 
-    override fun loadExecuteInfo(safeAddress: Solidity.Address, transaction: Transaction): Observable<Result<Info>> =
+    override fun loadExecuteInfo(safeAddress: Solidity.Address, transaction: SafeTransaction): Observable<Result<Info>> =
         transactionRepository.loadExecuteInformation(safeAddress, transaction)
             .flatMapObservable { info ->
                 // Observe local signature store
@@ -94,7 +96,7 @@ class ViewTransactionViewModel @Inject constructor(
             .onErrorReturn { ErrorResult(it) }
 
 
-    override fun submitTransaction(safeAddress: Solidity.Address, transaction: Transaction): Single<Result<Solidity.Address>> =
+    override fun submitTransaction(safeAddress: Solidity.Address, transaction: SafeTransaction): Single<Result<Solidity.Address>> =
         transactionRepository.loadExecuteInformation(safeAddress, transaction)
             .flatMapCompletable { info ->
                 // Observe local signature store
@@ -114,7 +116,7 @@ class ViewTransactionViewModel @Inject constructor(
     override fun estimateTransaction(info: Info): Single<Result<FeeEstimate>> =
         transactionRepository.estimateFees(info.selectedSafe, info.status.transaction, info.signatures, info.status.isOwner).mapToResult()
 
-    override fun loadExecutableTransaction(safeAddress: Solidity.Address, transaction: Transaction): Single<Transaction> =
+    override fun loadExecutableTransaction(safeAddress: Solidity.Address, transaction: SafeTransaction): Single<Transaction> =
         transactionRepository.loadExecuteInformation(safeAddress, transaction)
             .flatMap { info ->
                 // Observe local signature store
@@ -125,7 +127,7 @@ class ViewTransactionViewModel @Inject constructor(
 
     override fun signTransaction(
         safeAddress: Solidity.Address,
-        transaction: Transaction,
+        transaction: SafeTransaction,
         sendViaPush: Boolean
     ): Single<Result<Pair<String, Bitmap?>>> =
         transactionRepository.sign(safeAddress, transaction)

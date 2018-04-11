@@ -52,6 +52,15 @@ class DefaultSettingsRepository @Inject constructor(
         preferences.edit { putString(PREF_KEY_SAFE_MASTER_COPY_ADDRESS, address?.asEthereumAddressString()) }
     }
 
+    override fun getRecoveryExtensionMasterCopyAddress(): Solidity.Address =
+        BuildConfig.RECOVERY_EXTENSION_MASTER_COPY_ADDRESS.asEthereumAddress()!!
+
+    override fun getDailyLimitExtensionMasterCopyAddress(): Solidity.Address =
+        BuildConfig.DAILY_LIMIT_EXTENSION_MASTER_COPY_ADDRESS.asEthereumAddress()!!
+
+    override fun getCreateAndAddExtensionContractAddress(): Solidity.Address =
+        BuildConfig.CREATE_AND_ADD_EXTENSION_LIB_ADDRESS.asEthereumAddress()!!
+
     private fun overrideUrlToPreferences(
         isHttpsKey: String, hostKey: String, portKey: String,
         isHttps: Boolean, host: String?, port: Int?

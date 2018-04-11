@@ -14,15 +14,18 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_additional_owner_item.view.*
 import kotlinx.android.synthetic.main.layout_safe_settings.*
+import kotlinx.android.synthetic.main.layout_simple_spinner_item.view.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.InflatingViewProvider
+import pm.gnosis.heimdall.ui.dialogs.transaction.CreateAddExtensionTransactionProgressDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
@@ -33,6 +36,7 @@ import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -163,6 +167,22 @@ class SafeSettingsActivity : BaseActivity() {
                 .addOwner(viewModel.getSafeAddress(), info.owners.size)
                 .show(supportFragmentManager, null)
         }
+
+        layout_safe_settings_extensions_container.removeAllViews()
+        disposables += viewModel.loadExtensionsInfo(info.extensions)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onSuccess = {
+                layout_safe_settings_add_recovery_option_button.visible(!it.first)
+                it.second.forEach(::addExtension)
+            }, onError = {
+                errorSnackbar(layout_safe_settings_add_recovery_option_button, it)
+            })
+        layout_safe_settings_add_recovery_option_button.visible(false)
+        layout_safe_settings_add_recovery_option_button.setOnClickListener {
+            CreateAddExtensionTransactionProgressDialog
+                .addRecoveryExtension(viewModel.getSafeAddress())
+                .show(supportFragmentManager, null)
+        }
     }
 
     private fun addOwner(address: Solidity.Address, index: Int, count: Int, showDelete: Boolean) {
@@ -176,6 +196,21 @@ class SafeSettingsActivity : BaseActivity() {
             }
             layout_safe_settings_owners_container.addView(view)
         }
+    }
+
+    private fun addExtension(extension: Pair<GnosisSafeExtensionRepository.Extension, Solidity.Address>) {
+        val extensionView = layoutInflater.inflate(R.layout.layout_simple_spinner_item, layout_safe_settings_extensions_container, false)
+        when (extension.first) {
+            GnosisSafeExtensionRepository.Extension.SOCIAL_RECOVERY -> {
+                extensionView.layout_simple_spinner_item_name.setText(R.string.social_recovery_extension)
+            }
+            GnosisSafeExtensionRepository.Extension.UNKNOWN -> {
+                extensionView.layout_simple_spinner_item_name.setText(R.string.unknown_extension)
+
+            }
+        }
+        extensionView.layout_simple_spinner_item_address.text = extension.second.asEthereumAddressString()
+        layout_safe_settings_extensions_container.addView(extensionView)
     }
 
     companion object {

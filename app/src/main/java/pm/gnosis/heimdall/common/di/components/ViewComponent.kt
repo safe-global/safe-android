@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
+import pm.gnosis.heimdall.ui.dialogs.transaction.CreateAddExtensionTransactionProgressDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
@@ -45,6 +46,8 @@ import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.assets.ViewAssetTransferDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.CreateAddRecoveryExtensionFragment
+import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.ViewAddRecoveryExtensionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.CreateAddOwnerDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ViewChangeSafeSettingsDetailsFragment
@@ -61,12 +64,14 @@ interface ViewComponent {
     fun inject(fragment: AddExistingSafeFragment)
     fun inject(fragment: CreateAssetTransferDetailsFragment)
     fun inject(fragment: CreateAddOwnerDetailsFragment)
+    fun inject(fragment: CreateAddRecoveryExtensionFragment)
     fun inject(fragment: CreateGenericTransactionDetailsFragment)
     fun inject(fragment: DeployNewSafeFragment)
     fun inject(fragment: PendingSafeFragment)
     fun inject(fragment: SafeDetailsFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)
+    fun inject(fragment: ViewAddRecoveryExtensionDetailsFragment)
     fun inject(fragment: ViewAssetTransferDetailsFragment)
     fun inject(fragment: ViewChangeSafeSettingsDetailsFragment)
 
@@ -105,6 +110,7 @@ interface ViewComponent {
 
     // Dialogs
 
+    fun inject(dialog: CreateAddExtensionTransactionProgressDialog)
     fun inject(dialog: CreateTokenTransactionProgressDialog)
     fun inject(dialog: FingerprintDialog)
     fun inject(dialog: RequestSignatureDialog)

@@ -6,13 +6,11 @@ import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import pm.gnosis.heimdall.StandardToken
-import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TokenTransferData
-import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
-import pm.gnosis.heimdall.data.repositories.TransactionTypeData
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -68,7 +66,7 @@ class AssetTransferDetailsViewModel @Inject constructor(
             }
             .mapToResult()
 
-    override fun inputTransformer(originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>> =
+    override fun inputTransformer(originalTransaction: SafeTransaction?): ObservableTransformer<InputEvent, Result<SafeTransaction>> =
         ObservableTransformer {
             it.scan { old, new -> old.diff(new) }
                 .map {
@@ -90,9 +88,9 @@ class AssetTransferDetailsViewModel @Inject constructor(
                         showToast = showToast or it.token.second
                     }
                     if (errorFields > 0) {
-                        ErrorResult<Transaction>(TransactionInputException(context, errorFields, showToast))
+                        ErrorResult<SafeTransaction>(TransactionInputException(context, errorFields, showToast))
                     } else {
-                        val nonce = originalTransaction?.nonce
+                        val nonce = originalTransaction?.wrapped?.nonce
                         val tokenAmount = amount!!.multiply(BigDecimal(10).pow(token!!.decimals)).toBigInteger()
                         val transaction = when (token) {
                             ETHER_TOKEN -> {
@@ -106,17 +104,17 @@ class AssetTransferDetailsViewModel @Inject constructor(
                                 Transaction(token.address, data = data, nonce = nonce)
                             }
                         }
-                        DataResult(transaction)
+                        DataResult(SafeTransaction(transaction, TransactionRepository.Operation.CALL))
                     }
                 }
         }
 
-    override fun transactionTransformer(): ObservableTransformer<Optional<Transaction>, Result<Transaction>> =
+    override fun transactionTransformer(): ObservableTransformer<Optional<SafeTransaction>, Result<SafeTransaction>> =
         ObservableTransformer {
             it.flatMapSingle {
                 val transaction = it.toNullable()
                 transaction?.let {
-                    detailsRepository.loadTransactionData(transaction)
+                    detailsRepository.loadTransactionData(transaction.wrapped)
                         .map { transaction to it.toNullable() }
                         .map(::checkDetails)
                         .mapToResult()
@@ -124,7 +122,7 @@ class AssetTransferDetailsViewModel @Inject constructor(
             }
         }
 
-    private fun checkDetails(data: Pair<Transaction, TransactionTypeData?>): Transaction {
+    private fun checkDetails(data: Pair<SafeTransaction, TransactionTypeData?>): SafeTransaction {
         val (transaction, typeData) = data
         return when (typeData) {
             is TokenTransferData -> {
@@ -134,10 +132,10 @@ class AssetTransferDetailsViewModel @Inject constructor(
                 transaction
             }
             else -> {
-                if (!transaction.data.isNullOrBlank()) {
+                if (!transaction.wrapped.data.isNullOrBlank()) {
                     throw TransactionInputException(context, TransactionInputException.AMOUNT_FIELD, true)
                 }
-                if (transaction.value == null || transaction.value?.value == BigInteger.ZERO) {
+                if (transaction.wrapped.value == null || transaction.wrapped.value?.value == BigInteger.ZERO) {
                     throw TransactionInputException(context, TransactionInputException.AMOUNT_FIELD, true)
                 }
                 transaction

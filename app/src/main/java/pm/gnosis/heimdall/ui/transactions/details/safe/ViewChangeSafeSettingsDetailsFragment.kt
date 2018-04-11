@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.InflatedViewProvider
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseReviewTransactionDetailsFragment
@@ -40,7 +41,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
     @Inject
     lateinit var subViewModel: ChangeSafeSettingsDetailsContract
 
-    private var transaction: Transaction? = null
+    private var transaction: SafeTransaction? = null
     private var safe: Solidity.Address? = null
 
     @LayoutRes
@@ -58,7 +59,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         safe = arguments?.getString(ARG_SAFE)?.asEthereumAddress()
-        transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
+        transaction = arguments?.getParcelable(ARG_TRANSACTION)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -67,7 +68,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
     override fun onStart() {
         super.onStart()
 
-        disposables += subViewModel.loadAction(safe, transaction)
+        disposables += subViewModel.loadAction(safe, transaction?.wrapped)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(::setupForm, Timber::e)
 
@@ -112,7 +113,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
         }
     }
 
-    override fun observeTransaction(): Observable<Result<Transaction>> {
+    override fun observeTransaction(): Observable<Result<SafeTransaction>> {
         return Observable.just(transaction.toOptional())
             .flatMap { it.toNullable()?.let { Observable.just(it) ?: Observable.empty() } }
             .mapToResult()
@@ -129,12 +130,12 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
 
     companion object {
 
-        private const val ARG_TRANSACTION = "argument.parcelable.transaction"
+        private const val ARG_TRANSACTION = "argument.parcelable.wrapped"
         private const val ARG_SAFE = "argument.string.safe"
 
-        fun createBundle(transaction: Transaction?, safeAddress: String?) =
+        fun createBundle(transaction: SafeTransaction?, safeAddress: String?) =
             Bundle().apply {
-                putParcelable(ARG_TRANSACTION, transaction?.parcelable())
+                putParcelable(ARG_TRANSACTION, transaction)
                 putString(ARG_SAFE, safeAddress)
             }
     }

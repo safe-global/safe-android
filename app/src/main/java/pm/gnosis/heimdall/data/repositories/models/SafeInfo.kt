@@ -8,5 +8,6 @@ data class SafeInfo(
     val balance: Wei,
     val requiredConfirmations: Long,
     val owners: List<Solidity.Address>,
-    val isOwner: Boolean
+    val isOwner: Boolean,
+    val extensions: List<Solidity.Address>
 )

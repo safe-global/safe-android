@@ -51,13 +51,13 @@ class SafeTransactionsViewModel @Inject constructor(
                     when (details.type) {
                         TransactionType.ETHER_TRANSFER -> {
                             // We always want to display the complete amount (all 18 decimals)
-                            val value = (details.transaction.value ?: Wei.ZERO).toEther().stringWithNoTrailingZeroes()
+                            val value = (details.transaction.wrapped.value ?: Wei.ZERO).toEther().stringWithNoTrailingZeroes()
                             val symbol = context.getString(R.string.currency_eth)
                             Single.just(details to TransferInfo(value, symbol))
                         }
                         TransactionType.TOKEN_TRANSFER -> {
                             (details.data as? TokenTransferData)?.let {
-                                loadTokenValue(details.transaction.address, it.tokens)
+                                loadTokenValue(details.transaction.wrapped.address, it.tokens)
                                     .map { details to it.toNullable() }
                             }
                         }

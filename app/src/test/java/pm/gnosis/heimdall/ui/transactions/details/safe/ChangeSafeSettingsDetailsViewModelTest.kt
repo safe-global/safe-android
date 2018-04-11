@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsViewModel.Companion.EMPTY_FORM_DATA
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
@@ -133,7 +134,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
     fun inputTransformerWithSafeInfo() {
         contextMock.mockGetString()
 
-        val info = SafeInfo(TEST_SAFE.asEthereumAddressString(), Wei.ZERO, 1, listOf(TEST_OWNER), false)
+        val info = SafeInfo(TEST_SAFE.asEthereumAddressString(), Wei.ZERO, 1, listOf(TEST_OWNER), false, emptyList())
         given(safeRepoMock.loadInfo(MockUtils.any())).willReturn(Observable.just(info))
         val data = GnosisSafe.AddOwner.encode(Solidity.Address(BigInteger.valueOf(2)), Solidity.UInt8(BigInteger.valueOf(1)))
         testInputTransformer(
@@ -142,7 +143,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
             ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
             ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
             ErrorResult(TransactionInputException(R.string.error_owner_already_added.toString(), TransactionInputException.TARGET_FIELD, true)),
-            DataResult(Transaction(TEST_SAFE, data = data))
+            DataResult(SafeTransaction(Transaction(TEST_SAFE, data = data), TransactionRepository.Operation.CALL))
         )
 
         // We have no preset, so repo should not be called
@@ -220,8 +221,8 @@ class ChangeSafeSettingsDetailsViewModelTest {
             ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, false)),
             ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
             ErrorResult(TransactionInputException(R.string.invalid_ethereum_address.toString(), TransactionInputException.TARGET_FIELD, true)),
-            DataResult(Transaction(TEST_SAFE, data = data1)),
-            DataResult(Transaction(TEST_SAFE, data = data2))
+            DataResult(SafeTransaction(Transaction(TEST_SAFE, data = data1), TransactionRepository.Operation.CALL)),
+            DataResult(SafeTransaction(Transaction(TEST_SAFE, data = data2), TransactionRepository.Operation.CALL))
         )
 
         // We have no preset, so repo should not be called
@@ -234,10 +235,10 @@ class ChangeSafeSettingsDetailsViewModelTest {
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
     }
 
-    private fun testInputTransformer(safe: Solidity.Address?, vararg outputs: Result<Transaction>) {
+    private fun testInputTransformer(safe: Solidity.Address?, vararg outputs: Result<SafeTransaction>) {
 
         val inputs = PublishSubject.create<CharSequence>()
-        val testObserver = TestObserver<Result<Transaction>>()
+        val testObserver = TestObserver<Result<SafeTransaction>>()
 
         inputs.compose(viewModel.inputTransformer(safe)).subscribe(testObserver)
 

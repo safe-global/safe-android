@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
+import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -35,6 +36,9 @@ class SimpleTransactionDetailsRepositoryTest {
     lateinit var descriptionsDaoMock: DescriptionsDao
 
     @Mock
+    lateinit var settingsRepositoryMock: SettingsRepository
+
+    @Mock
     lateinit var appDbMock: ApplicationDb
 
     private lateinit var repository: SimpleTransactionDetailsRepository
@@ -42,7 +46,7 @@ class SimpleTransactionDetailsRepositoryTest {
     @Before
     fun setUp() {
         given(appDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
-        repository = SimpleTransactionDetailsRepository(appDbMock)
+        repository = SimpleTransactionDetailsRepository(appDbMock, settingsRepositoryMock)
     }
 
     private fun testLoadTransactionType(transaction: Transaction, expectedType: TransactionType) {
@@ -61,7 +65,7 @@ class SimpleTransactionDetailsRepositoryTest {
             testLoadTransactionType(transaction, expectedType)
             transactionTypes.remove(expectedType)
         }
-        assertEquals("We should test all possible transaction types", emptyList<TransactionType>(), transactionTypes)
+        assertEquals("We should test all possible wrapped types", emptyList<TransactionType>(), transactionTypes)
     }
 
     companion object {

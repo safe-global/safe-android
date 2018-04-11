@@ -2,6 +2,8 @@ package pm.gnosis.heimdall.ui.transactions.details.generic
 
 import android.content.Context
 import io.reactivex.ObservableTransformer
+import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -15,8 +17,8 @@ import pm.gnosis.utils.toHexString
 import javax.inject.Inject
 
 class GenericTransactionDetailsViewModel @Inject constructor() : GenericTransactionDetailsContract() {
-    override fun inputTransformer(context: Context, originalTransaction: Transaction?) =
-        ObservableTransformer<InputEvent, Result<Transaction>> {
+    override fun inputTransformer(context: Context, originalTransaction: SafeTransaction?) =
+        ObservableTransformer<InputEvent, Result<SafeTransaction>> {
             it.scan { old, new -> old.diff(new) }
                 .map {
                     val to = it.to.first.asEthereumAddress()
@@ -37,10 +39,15 @@ class GenericTransactionDetailsViewModel @Inject constructor() : GenericTransact
                         showToast = showToast or it.value.second
                     }
                     if (errorFields > 0) {
-                        ErrorResult<Transaction>(TransactionInputException(context, errorFields, showToast))
+                        ErrorResult<SafeTransaction>(TransactionInputException(context, errorFields, showToast))
                     } else {
-                        val nonce = originalTransaction?.nonce
-                        DataResult(Transaction(to!!, value = Wei(value!!), data = data?.toHexString(), nonce = nonce))
+                        val nonce = originalTransaction?.wrapped?.nonce
+                        DataResult(
+                            SafeTransaction(
+                                Transaction(to!!, value = Wei(value!!), data = data?.toHexString(), nonce = nonce),
+                                originalTransaction?.operation ?: TransactionRepository.Operation.CALL
+                            )
+                        )
                     }
                 }
         }

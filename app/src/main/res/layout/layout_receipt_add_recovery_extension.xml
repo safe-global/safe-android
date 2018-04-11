@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp">
+
+    <TextView
+        style="@style/CapsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/receipt_add_extension_message" />
+
+    <TextView
+        android:id="@+id/layout_view_add_recovery_extension_action"
+        style="@style/CurrencyInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:text="@string/transaction_title_social_recovery_extension" />
+
+    <TextView
+        style="@style/TxLabel.Review"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/to_safe" />
+
+    <TextView
+        android:id="@+id/layout_view_add_recovery_extension_address"
+        style="@style/BoldContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:maxLines="2"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        tools:text="My Safe [0x9bea...eda2]" />
+
+    <include
+        android:id="@+id/layout_view_add_recovery_extension_recovery_owner_1_container"
+        layout="@layout/include_address_item_with_label_above_and_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+
+    <include
+        android:id="@+id/layout_view_add_recovery_extension_recovery_owner_2_container"
+        layout="@layout/include_address_item_with_label_above_and_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+
+
+</LinearLayout>

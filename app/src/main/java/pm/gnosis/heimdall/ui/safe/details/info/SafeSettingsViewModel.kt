@@ -5,6 +5,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.Function
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository.Extension
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -16,6 +18,7 @@ import javax.inject.Inject
 
 class SafeSettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val extensionRepository: GnosisSafeExtensionRepository,
     private val safeRepository: GnosisSafeRepository
 ) : SafeSettingsContract() {
 
@@ -57,6 +60,10 @@ class SafeSettingsViewModel @Inject constructor(
             .andThen(Single.just(Unit))
             .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
             .mapToResult()
+
+    override fun loadExtensionsInfo(extensions: List<Solidity.Address>): Single<Pair<Boolean, List<Pair<Extension, Solidity.Address>>>> =
+        extensionRepository.loadExtensionsInfo(extensions)
+            .map { it.any { it.first != Extension.SOCIAL_RECOVERY } to it }
 
     private fun fromCache(ignoreCache: Boolean): Observable<SafeInfo>? {
         if (!ignoreCache) {

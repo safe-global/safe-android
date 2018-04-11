@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -47,7 +48,7 @@ class ReceiptTransactionViewModelTest {
             TEST_ID,
             TransactionType.ETHER_TRANSFER,
             null,
-            Transaction(Solidity.Address(BigInteger.TEN)),
+            SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionRepository.Operation.CALL),
             Solidity.Address(BigInteger.ONE),
             13
         )

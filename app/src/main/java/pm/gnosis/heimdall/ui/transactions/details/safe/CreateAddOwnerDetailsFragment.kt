@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
@@ -61,7 +62,7 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
             }, onError = Timber::e)
     }
 
-    override fun observeTransaction(): Observable<Result<Transaction>> =
+    override fun observeTransaction(): Observable<Result<SafeTransaction>> =
     // Setup initial form data
         subViewModel.loadFormData(transaction)
             .observeOn(AndroidSchedulers.mainThread())
@@ -109,7 +110,7 @@ class CreateAddOwnerDetailsFragment : BaseEditableTransactionDetailsFragment() {
 
     companion object {
 
-        private const val ARG_TRANSACTION = "argument.parcelable.transaction"
+        private const val ARG_TRANSACTION = "argument.parcelable.wrapped"
         private const val ARG_SAFE = "argument.string.safe"
 
         fun createInstance(transaction: Transaction?, safeAddress: String?) =

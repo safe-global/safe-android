@@ -70,6 +70,10 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindsSafeExtensionRepository(repository: DefaultGnosisSafeExtensionRepository): GnosisSafeExtensionRepository
+
+    @Binds
+    @Singleton
     abstract fun bindsSettingsRepository(repository: DefaultSettingsRepository): SettingsRepository
 
     @Binds

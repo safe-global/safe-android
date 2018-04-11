@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -175,7 +176,14 @@ class SafeTransactionsViewModelTest {
     fun loadTransactionDetailsNoTransfer() {
         val testId = "some_transaction_id"
 
-        val details = TransactionDetails(testId, TransactionType.GENERIC, null, Transaction(Solidity.Address(BigInteger.TEN)), TEST_SAFE, TEST_TIME)
+        val details = TransactionDetails(
+            testId,
+            TransactionType.GENERIC,
+            null,
+            SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionRepository.Operation.CALL),
+            TEST_SAFE,
+            TEST_TIME
+        )
         given(detailsRepository.loadTransactionDetails(anyString()))
             .willReturn(Single.just(details))
 
@@ -197,7 +205,14 @@ class SafeTransactionsViewModelTest {
         val testId = "some_transaction_id"
 
         val details =
-            TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, null, Transaction(Solidity.Address(BigInteger.TEN)), TEST_SAFE, TEST_TIME)
+            TransactionDetails(
+                testId,
+                TransactionType.TOKEN_TRANSFER,
+                null,
+                SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionRepository.Operation.CALL),
+                TEST_SAFE,
+                TEST_TIME
+            )
         given(detailsRepository.loadTransactionDetails(anyString()))
             .willReturn(Single.just(details))
 
@@ -220,7 +235,14 @@ class SafeTransactionsViewModelTest {
         val tokenAddress = Solidity.Address(BigInteger.TEN)
         val tokenTransferData = TokenTransferData(Solidity.Address(BigInteger.ONE), BigInteger.valueOf(42))
 
-        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress), TEST_SAFE, TEST_TIME)
+        val details = TransactionDetails(
+            testId,
+            TransactionType.TOKEN_TRANSFER,
+            tokenTransferData,
+            SafeTransaction(Transaction(tokenAddress), TransactionRepository.Operation.CALL),
+            TEST_SAFE,
+            TEST_TIME
+        )
         given(detailsRepository.loadTransactionDetails(anyString()))
             .willReturn(Single.just(details))
         given(tokenRepository.observeToken(MockUtils.any())).willReturn(Flowable.empty())
@@ -245,7 +267,14 @@ class SafeTransactionsViewModelTest {
         val tokenAddress = Solidity.Address(BigInteger.TEN)
         val tokenTransferData = TokenTransferData(Solidity.Address(BigInteger.ONE), BigInteger.valueOf(42))
 
-        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress), TEST_SAFE, TEST_TIME)
+        val details = TransactionDetails(
+            testId,
+            TransactionType.TOKEN_TRANSFER,
+            tokenTransferData,
+            SafeTransaction(Transaction(tokenAddress), TransactionRepository.Operation.CALL),
+            TEST_SAFE,
+            TEST_TIME
+        )
         given(detailsRepository.loadTransactionDetails(anyString()))
             .willReturn(Single.just(details))
         given(tokenRepository.observeToken(MockUtils.any())).willReturn(Flowable.just(ERC20Token(tokenAddress, decimals = 0, symbol = "GNO")))
@@ -274,7 +303,7 @@ class SafeTransactionsViewModelTest {
                 testId,
                 TransactionType.ETHER_TRANSFER,
                 null,
-                Transaction(Solidity.Address(BigInteger.ONE), value = Wei(amount)),
+                SafeTransaction(Transaction(Solidity.Address(BigInteger.ONE), value = Wei(amount)), TransactionRepository.Operation.CALL),
                 TEST_SAFE,
                 TEST_TIME
             )

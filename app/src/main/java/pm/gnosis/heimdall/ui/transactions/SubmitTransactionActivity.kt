@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
@@ -32,7 +33,6 @@ import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
-import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
 import javax.inject.Provider
@@ -51,8 +51,8 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
     private var credentialsConfirmed: Boolean = false
     private var pendingSignature: String? = null
 
-    private val transactionInfoTransformer: ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, Result<ViewTransactionContract.Info>> =
-        ObservableTransformer { up: Observable<Pair<Solidity.Address?, Result<Transaction>>> ->
+    private val transactionInfoTransformer: ObservableTransformer<Pair<Solidity.Address?, Result<SafeTransaction>>, Result<ViewTransactionContract.Info>> =
+        ObservableTransformer { up: Observable<Pair<Solidity.Address?, Result<SafeTransaction>>> ->
             up
                 .doOnNext { setUnknownTransactionInfo() }
                 .checkedFlatMap { safeAddress, transaction ->
@@ -178,13 +178,13 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             }
         }
 
-    override fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, Any> =
+    override fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<SafeTransaction>>, Any> =
         ObservableTransformer {
-            // Load execution information (hash, transaction with correct nonce, owner info)
+            // Load execution information (hash, wrapped with correct nonce, owner info)
             it.compose(transactionInfoTransformer).publish {
                 // Split execution information stream into two sub-streams
                 Observable.merge(
-                    // Display the transaction information
+                    // Display the wrapped information
                     it.compose(displayTransactionInformation),
                     // Use execution information to allow adding signatures
                     it.compose(requestSignaturesQR),
@@ -206,7 +206,11 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         credentialsConfirmed = requestCode == REQUEST_CODE_CONFIRM_CREDENTIALS && resultCode == Activity.RESULT_OK
         handleTransactionHashResult(requestCode, resultCode, data, {
             cachedTransactionData?.let { cachedTransactionData ->
-                disposables += viewModel.addLocalTransaction(cachedTransactionData.safeAddress, cachedTransactionData.transaction, it)
+                disposables += viewModel.addLocalTransaction(
+                    cachedTransactionData.safeAddress,
+                    cachedTransactionData.transaction,
+                    it
+                )
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe {
                         layout_submit_transaction_submit_button.isEnabled = false
@@ -218,7 +222,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                     }
                     .subscribeBy(onSuccess = { startSafeTransactionsActivity(cachedTransactionData.safeAddress) },
                         onError = {
-                            Timber.e(it);
+                            Timber.e(it)
                             startSafeTransactionsActivity(cachedTransactionData.safeAddress)
                         })
             }
@@ -292,7 +296,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 layout_submit_transaction_send_signature_push_progress.visible(false)
             }
 
-    private fun submitTransaction(safe: Solidity.Address, transaction: Transaction) =
+    private fun submitTransaction(safe: Solidity.Address, transaction: SafeTransaction) =
         viewModel.submitTransaction(safe, transaction)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { submittingTransaction(true) }
@@ -419,12 +423,12 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         }
     }
 
-    private data class CachedTransactionData(val safeAddress: Solidity.Address, val transaction: Transaction)
+    private data class CachedTransactionData(val safeAddress: Solidity.Address, val transaction: SafeTransaction)
 
     companion object {
         private const val REQUEST_CODE_CONFIRM_CREDENTIALS = 2342
 
-        fun createIntent(context: Context, safeAddress: Solidity.Address?, transaction: Transaction) =
+        fun createIntent(context: Context, safeAddress: Solidity.Address?, transaction: SafeTransaction) =
             Intent(context, SubmitTransactionActivity::class.java).apply {
                 putExtras(createBundle(safeAddress, transaction))
             }

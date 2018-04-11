@@ -17,15 +17,16 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus.*
 import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.transactions.details.assets.ReceiptAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.ReceiptAddRecoveryExtensionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ReceiptChangeSafeSettingsDetailsFragment
 import pm.gnosis.heimdall.utils.setupEtherscanTransactionUrl
 import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
@@ -73,7 +74,7 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
         )
     }
 
-    override fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, Any> =
+    override fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<SafeTransaction>>, Any> =
         ObservableTransformer { it.map { Any() } }
 
     override fun fragmentRegistered() {
@@ -104,12 +105,14 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
         return true
     }
 
-    private fun createDetailsFragment(safeAddress: String, type: TransactionType, transaction: Transaction): BaseTransactionDetailsFragment =
+    private fun createDetailsFragment(safeAddress: String, type: TransactionType, transaction: SafeTransaction): BaseTransactionDetailsFragment =
         when (type) {
             TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
                 ReceiptAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
             TransactionType.REPLACE_SAFE_OWNER, TransactionType.ADD_SAFE_OWNER, TransactionType.REMOVE_SAFE_OWNER ->
                 ReceiptChangeSafeSettingsDetailsFragment.createInstance(transaction, safeAddress)
+            TransactionType.ADD_RECOVERY_EXTENSION ->
+                ReceiptAddRecoveryExtensionDetailsFragment.createInstance(transaction, safeAddress)
             else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, false)
         }
 

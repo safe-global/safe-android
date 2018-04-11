@@ -5,9 +5,9 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
@@ -28,7 +28,7 @@ class CreateTokenTransactionProgressDialog : BaseCreateSafeTransactionProgressDi
 
     override fun createTransaction() = viewModel.loadCreateTokenTransaction(tokenAddress)
 
-    override fun showTransaction(safe: Solidity.Address?, transaction: Transaction) {
+    override fun showTransaction(safe: Solidity.Address?, transaction: SafeTransaction) {
         startActivity(CreateTransactionActivity.createIntent(context!!, safe, TransactionType.TOKEN_TRANSFER, transaction))
     }
 

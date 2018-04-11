@@ -10,6 +10,7 @@ import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.transactions.BaseTransactionActivity
 import pm.gnosis.model.Solidity
@@ -24,7 +25,7 @@ abstract class BaseTransactionDetailsFragment : BaseFragment() {
     @Inject
     lateinit var baseViewModel: BaseTransactionDetailsContract
 
-    abstract fun observeTransaction(): Observable<Result<Transaction>>
+    abstract fun observeTransaction(): Observable<Result<SafeTransaction>>
     abstract fun observeSafe(): Observable<Optional<Solidity.Address>>
     abstract fun inputEnabled(enabled: Boolean)
 

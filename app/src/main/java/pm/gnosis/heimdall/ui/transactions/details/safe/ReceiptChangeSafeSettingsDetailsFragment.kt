@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.transactions.details.safe
 
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.models.Transaction
 
 class ReceiptChangeSafeSettingsDetailsFragment : ViewChangeSafeSettingsDetailsFragment() {
@@ -14,7 +15,7 @@ class ReceiptChangeSafeSettingsDetailsFragment : ViewChangeSafeSettingsDetailsFr
     override fun replacedOwnerMessage(): Int = R.string.transaction_description_replaced_safe_owner
 
     companion object {
-        fun createInstance(transaction: Transaction?, safeAddress: String?) =
+        fun createInstance(transaction: SafeTransaction?, safeAddress: String?) =
             ReceiptChangeSafeSettingsDetailsFragment().apply {
                 arguments = createBundle(transaction, safeAddress)
             }

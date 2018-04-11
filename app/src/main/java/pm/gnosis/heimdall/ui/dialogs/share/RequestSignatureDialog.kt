@@ -13,12 +13,11 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
-import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -26,12 +25,12 @@ import pm.gnosis.utils.asEthereumAddressString
 class RequestSignatureDialog : BaseShareQrCodeDialog() {
 
     private lateinit var transactionHash: String
-    private lateinit var transaction: Transaction
+    private lateinit var transaction: SafeTransaction
     private lateinit var safe: Solidity.Address
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val transactionHash = arguments?.getString(TRANSACTION_HASH_EXTRA)
-        val transaction = arguments?.getParcelable<TransactionParcelable>(TRANSACTION_EXTRA)?.transaction
+        val transaction = arguments?.getParcelable<SafeTransaction>(TRANSACTION_EXTRA)
         val safe = arguments?.getString(SAFE_EXTRA)?.asEthereumAddress()
         if (transactionHash == null || transaction == null || safe == null) {
             dismiss()
@@ -48,8 +47,10 @@ class RequestSignatureDialog : BaseShareQrCodeDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(R.layout.dialog_request_signature, container, false)
 
-    override fun data(): String =
-        GnoSafeUrlParser.signRequest(transactionHash, safe, transaction.address, transaction.value, transaction.data, transaction.nonce!!)
+    override fun data(): String {
+        val tx = transaction.wrapped
+        return GnoSafeUrlParser.signRequest(transactionHash, safe, tx.address, tx.value, tx.data, tx.nonce!!, transaction.operation.ordinal)
+    }
 
     override fun shareTitle(): String = getString(R.string.transaction_hash)
 
@@ -84,13 +85,13 @@ class RequestSignatureDialog : BaseShareQrCodeDialog() {
 
     companion object {
         private const val TRANSACTION_HASH_EXTRA = "extra.string.transaction_hash"
-        private const val TRANSACTION_EXTRA = "extra.parcelable.transaction"
+        private const val TRANSACTION_EXTRA = "extra.parcelable.wrapped"
         private const val SAFE_EXTRA = "extra.string.safe"
 
-        fun create(transactionHash: String, transaction: Transaction, safe: Solidity.Address): RequestSignatureDialog {
+        fun create(transactionHash: String, transaction: SafeTransaction, safe: Solidity.Address): RequestSignatureDialog {
             val bundle = Bundle()
             bundle.putString(TRANSACTION_HASH_EXTRA, transactionHash)
-            bundle.putParcelable(TRANSACTION_EXTRA, transaction.parcelable())
+            bundle.putParcelable(TRANSACTION_EXTRA, transaction)
             bundle.putString(SAFE_EXTRA, safe.asEthereumAddressString())
             return RequestSignatureDialog().apply { arguments = bundle }
         }
