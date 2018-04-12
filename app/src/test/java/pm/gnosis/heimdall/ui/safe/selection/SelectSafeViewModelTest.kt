@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
@@ -63,7 +64,7 @@ class SelectSafeViewModelTest {
         viewModel.loadSafes().subscribe(testObserver)
         testObserver.assertEmpty()
 
-        val safes = listOf(Safe(BigInteger.TEN))
+        val safes = listOf(Safe(Solidity.Address(BigInteger.TEN)))
         testProcessor.offer(safes)
         testObserver.assertResult(safes)
 
@@ -157,7 +158,7 @@ class SelectSafeViewModelTest {
     }
 
     companion object {
-        private val TEST_SAFE = BigInteger.ONE
-        private val TEST_TRANSACTION = Transaction(BigInteger.TEN)
+        private val TEST_SAFE = Solidity.Address(BigInteger.ONE)
+        private val TEST_TRANSACTION = Transaction(Solidity.Address(BigInteger.TEN))
     }
 }

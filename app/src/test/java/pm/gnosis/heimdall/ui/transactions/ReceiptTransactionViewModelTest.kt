@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import java.math.BigInteger
@@ -27,10 +28,11 @@ class ReceiptTransactionViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
+    private
     lateinit var transactionRepository: TransactionRepository
 
     @Mock
-    lateinit var transactionDetailsRepository: TransactionDetailsRepository
+    private lateinit var transactionDetailsRepository: TransactionDetailsRepository
 
     private lateinit var viewModel: ReceiptTransactionViewModel
 
@@ -41,7 +43,14 @@ class ReceiptTransactionViewModelTest {
 
     @Test
     fun loadTransactionDetails() {
-        val details = TransactionDetails(TEST_ID, TransactionType.ETHER_TRANSFER, null, Transaction(BigInteger.TEN), BigInteger.ONE, 13)
+        val details = TransactionDetails(
+            TEST_ID,
+            TransactionType.ETHER_TRANSFER,
+            null,
+            Transaction(Solidity.Address(BigInteger.TEN)),
+            Solidity.Address(BigInteger.ONE),
+            13
+        )
         given(transactionDetailsRepository.loadTransactionDetails(TEST_ID))
             .willReturn(Single.just(details))
 

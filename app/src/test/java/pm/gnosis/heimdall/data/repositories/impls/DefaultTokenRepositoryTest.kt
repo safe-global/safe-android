@@ -27,6 +27,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.StandardToken
+import pm.gnosis.heimdall.data.adapters.SolidityAddressAdapter
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
@@ -42,7 +43,7 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
-import pm.gnosis.utils.exceptions.InvalidAddressException
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
@@ -83,7 +84,7 @@ class DefaultTokenRepositoryTest {
             dbMock,
             ethereumRepositoryMock,
             preferencesManager,
-            Moshi.Builder().add(HexNumberAdapter()).build(),
+            Moshi.Builder().add(HexNumberAdapter()).add(SolidityAddressAdapter()).build(),
             application
         )
     }
@@ -105,14 +106,14 @@ class DefaultTokenRepositoryTest {
         then(erc20DaoMock).should().insertERC20Tokens(
             listOf(
                 ERC20TokenDb(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                    "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                     "World Energy",
                     "WE",
                     4,
                     true
                 ),
                 ERC20TokenDb(
-                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                     "Love",
                     "<3",
                     6,
@@ -177,14 +178,14 @@ class DefaultTokenRepositoryTest {
         testProcessor.offer(
             listOf(
                 ERC20TokenDb(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                    "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                     "World Energy",
                     "WE",
                     4,
                     true
                 ),
                 ERC20TokenDb(
-                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                     "Love",
                     "<3",
                     6,
@@ -195,14 +196,14 @@ class DefaultTokenRepositoryTest {
 
         val initialTokenList = listOf(
             ERC20Token(
-                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                 "World Energy",
                 "WE",
                 4,
                 true
             ),
             ERC20Token(
-                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                 "Love",
                 "<3",
                 6,
@@ -214,14 +215,14 @@ class DefaultTokenRepositoryTest {
         testProcessor.offer(
             listOf(
                 ERC20TokenDb(
-                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                     "Love",
                     "<3",
                     6,
                     true
                 ),
                 ERC20TokenDb(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                    "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                     "World Energy",
                     "WE",
                     4,
@@ -234,14 +235,14 @@ class DefaultTokenRepositoryTest {
             initialTokenList,
             listOf(
                 ERC20Token(
-                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                     "Love",
                     "<3",
                     6,
                     true
                 ),
                 ERC20Token(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                    "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                     "World Energy",
                     "WE",
                     4,
@@ -260,13 +261,13 @@ class DefaultTokenRepositoryTest {
         given(erc20DaoMock.observeToken(MockUtils.any())).willReturn(testProcessor)
 
         val testSubscriber = TestSubscriber<ERC20Token>()
-        repository.observeToken(BigInteger.TEN).subscribe(testSubscriber)
+        repository.observeToken(Solidity.Address(BigInteger.TEN)).subscribe(testSubscriber)
 
         testSubscriber.assertEmpty()
 
         testProcessor.offer(
             ERC20TokenDb(
-                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                 "World Energy",
                 "WE",
                 4,
@@ -276,7 +277,7 @@ class DefaultTokenRepositoryTest {
 
         val initialToken =
             ERC20Token(
-                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                 "World Energy",
                 "WE",
                 4,
@@ -287,7 +288,7 @@ class DefaultTokenRepositoryTest {
 
         testProcessor.offer(
             ERC20TokenDb(
-                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                 "Love",
                 "<3",
                 6,
@@ -298,7 +299,7 @@ class DefaultTokenRepositoryTest {
         testSubscriber.assertValuesOnly(
             initialToken,
             ERC20Token(
-                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                 "Love",
                 "<3",
                 6,
@@ -306,7 +307,7 @@ class DefaultTokenRepositoryTest {
             )
         )
 
-        then(erc20DaoMock).should().observeToken(BigInteger.TEN)
+        then(erc20DaoMock).should().observeToken(Solidity.Address(BigInteger.TEN))
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
     }
 
@@ -316,14 +317,14 @@ class DefaultTokenRepositoryTest {
             Single.just(
                 listOf(
                     ERC20TokenDb(
-                        "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                        "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                         "World Energy",
                         "WE",
                         4,
                         true
                     ),
                     ERC20TokenDb(
-                        "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                        "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                         "Love",
                         "<3",
                         6,
@@ -338,14 +339,14 @@ class DefaultTokenRepositoryTest {
 
         val initialTokenList = listOf(
             ERC20Token(
-                "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                 "World Energy",
                 "WE",
                 4,
                 true
             ),
             ERC20Token(
-                "0x9d3de1be7309764824211f9e4219e01a5f223d99".hexAsBigInteger(),
+                "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                 "Love",
                 "<3",
                 6,
@@ -363,7 +364,7 @@ class DefaultTokenRepositoryTest {
         given(erc20DaoMock.loadToken(MockUtils.any())).willReturn(
             Single.just(
                 ERC20TokenDb(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+                    "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                     "World Energy",
                     "WE",
                     4,
@@ -373,10 +374,10 @@ class DefaultTokenRepositoryTest {
         )
 
         val testObserver = TestObserver<ERC20Token>()
-        repository.loadToken(BigInteger.TEN).subscribe(testObserver)
+        repository.loadToken(Solidity.Address(BigInteger.TEN)).subscribe(testObserver)
 
         val initialToken = ERC20Token(
-            "0x826921230178969e9142acdfb9bd2f57330ede18".hexAsBigInteger(),
+            "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
             "World Energy",
             "WE",
             4,
@@ -384,7 +385,7 @@ class DefaultTokenRepositoryTest {
         )
         testObserver.assertResult(initialToken)
 
-        then(erc20DaoMock).should().loadToken(BigInteger.TEN)
+        then(erc20DaoMock).should().loadToken(Solidity.Address(BigInteger.TEN))
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
     }
 
@@ -402,21 +403,21 @@ class DefaultTokenRepositoryTest {
                 listOf(
                     EthCall(
                         transaction = Transaction(
-                            BigInteger.TEN,
+                            Solidity.Address(BigInteger.TEN),
                             data = "0x${ERC20.NAME_METHOD_ID}"
                         ), id = 0
                     ),
 
                     EthCall(
                         transaction = Transaction(
-                            BigInteger.TEN,
+                            Solidity.Address(BigInteger.TEN),
                             data = "0x${ERC20.SYMBOL_METHOD_ID}"
                         ), id = 1
                     ),
 
                     EthCall(
                         transaction = Transaction(
-                            BigInteger.TEN,
+                            Solidity.Address(BigInteger.TEN),
                             data = "0x${ERC20.DECIMALS_METHOD_ID}"
                         ), id = 2
                     )
@@ -433,7 +434,7 @@ class DefaultTokenRepositoryTest {
         }
 
         val testObserver = TestObserver<ERC20Token>()
-        repository.loadTokenInfo(BigInteger.TEN).subscribe(testObserver)
+        repository.loadTokenInfo(Solidity.Address(BigInteger.TEN)).subscribe(testObserver)
         expectedResult.handle({
             testObserver.assertResult(it)
         }, { error ->
@@ -445,7 +446,7 @@ class DefaultTokenRepositoryTest {
     @Test
     fun loadTokenInfo() {
         testLoadTokenInfo(
-            DataResult(ERC20Token(BigInteger.TEN, "Hello Token", "HT", 10)), // Expected result
+            DataResult(ERC20Token(Solidity.Address(BigInteger.TEN), "Hello Token", "HT", 10)), // Expected result
             EthRequest.Response.Success("Hello Token".toByteArray().toHexString()),
             EthRequest.Response.Success("HT".toByteArray().toHexString()),
             EthRequest.Response.Success(BigInteger.TEN.toHexString())
@@ -500,7 +501,7 @@ class DefaultTokenRepositoryTest {
         }
 
         val testObserver = TestObserver<List<Pair<ERC20Token, BigInteger?>>>()
-        repository.loadTokenBalances(BigInteger.TEN, input).subscribe(testObserver)
+        repository.loadTokenBalances(Solidity.Address(BigInteger.TEN), input).subscribe(testObserver)
         testObserver.assertResult(outputs)
         reset(ethereumRepositoryMock)
     }
@@ -516,10 +517,10 @@ class DefaultTokenRepositoryTest {
         testLoadTokenBalance(
             listOf(ERC20Token.ETHER_TOKEN, TEST_TOKEN),
             listOf(
-                EthBalance(BigInteger.TEN, id = 0),
+                EthBalance(Solidity.Address(BigInteger.TEN), id = 0),
                 EthCall(
                     transaction = Transaction(
-                        BigInteger.ONE,
+                        Solidity.Address(BigInteger.ONE),
                         data = StandardToken.BalanceOf.encode(Solidity.Address(BigInteger.TEN))
                     ), id = 1
                 )
@@ -538,11 +539,11 @@ class DefaultTokenRepositoryTest {
             listOf(
                 EthCall(
                     transaction = Transaction(
-                        BigInteger.ONE,
+                        Solidity.Address(BigInteger.ONE),
                         data = StandardToken.BalanceOf.encode(Solidity.Address(BigInteger.TEN))
                     ), id = 0
                 ),
-                EthBalance(BigInteger.TEN, id = 1)
+                EthBalance(Solidity.Address(BigInteger.TEN), id = 1)
             ),
             listOf(
                 EthRequest.Response.Success("invalid balance"),
@@ -551,20 +552,13 @@ class DefaultTokenRepositoryTest {
             listOf(TEST_TOKEN to null, ERC20Token.ETHER_TOKEN to BigInteger.valueOf(15))
         )
 
-        val invalidTargetObserver = TestObserver<List<Pair<ERC20Token, BigInteger?>>>()
-        repository.loadTokenBalances(
-            BigInteger("10000000000000000000000000000000000000000", 16),
-            emptyList()
-        ).subscribe(invalidTargetObserver)
-        invalidTargetObserver.assertFailure(Predicate { it is InvalidAddressException })
-
         given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).willReturn(
             Observable.error(
                 UnknownHostException()
             )
         )
         val networkErrorObserver = TestObserver<List<Pair<ERC20Token, BigInteger?>>>()
-        repository.loadTokenBalances(BigInteger.TEN, emptyList()).subscribe(networkErrorObserver)
+        repository.loadTokenBalances(Solidity.Address(BigInteger.TEN), emptyList()).subscribe(networkErrorObserver)
         networkErrorObserver.assertFailure(Predicate { it is UnknownHostException })
     }
 
@@ -574,16 +568,16 @@ class DefaultTokenRepositoryTest {
         repository.addToken(TEST_TOKEN).subscribe(testObserver)
         testObserver.assertResult()
         then(erc20DaoMock).should()
-            .insertERC20Token(ERC20TokenDb(BigInteger.ONE, "Hello Token", "HT", 10, false))
+            .insertERC20Token(ERC20TokenDb(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10, false))
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun removeToken() {
         val testObserver = TestObserver<Unit>()
-        repository.removeToken(BigInteger.ONE).subscribe(testObserver)
+        repository.removeToken(Solidity.Address(BigInteger.ONE)).subscribe(testObserver)
         testObserver.assertResult()
-        then(erc20DaoMock).should().deleteToken(BigInteger.ONE)
+        then(erc20DaoMock).should().deleteToken(Solidity.Address(BigInteger.ONE))
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
     }
 
@@ -628,7 +622,7 @@ class DefaultTokenRepositoryTest {
     }
 
     companion object {
-        val PREFS_TOKEN_SETUP = "prefs.boolean.finished_tokens_setup"
-        val TEST_TOKEN = ERC20Token(BigInteger.ONE, "Hello Token", "HT", 10)
+        const val PREFS_TOKEN_SETUP = "prefs.boolean.finished_tokens_setup"
+        val TEST_TOKEN = ERC20Token(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10)
     }
 }

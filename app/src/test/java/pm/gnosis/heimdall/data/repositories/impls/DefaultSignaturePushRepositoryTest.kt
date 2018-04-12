@@ -26,6 +26,7 @@ import pm.gnosis.heimdall.data.remote.models.SendSignatureData
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
@@ -33,6 +34,9 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexStringToByteArray
+import pm.gnosis.utils.removeHexPrefix
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 
@@ -79,7 +83,7 @@ class DefaultSignaturePushRepositoryTest {
         )
     }
 
-    private fun cleanAddress(address: BigInteger) =
+    private fun cleanAddress(address: Solidity.Address) =
         address.asEthereumAddressString().toLowerCase().removeHexPrefix()
 
     @Test
@@ -268,7 +272,10 @@ class DefaultSignaturePushRepositoryTest {
         repository.receivedSignature(null, TEST_SIGNATURE)
         repository.receivedSignature("", TEST_SIGNATURE)
         repository.receivedSignature("some_invalid_topic", TEST_SIGNATURE)
-        repository.receivedSignature(FCM_TOPICS_PREFIX + RESPOND_SIGNATURE_TOPIC_PREFIX + cleanAddress(BigInteger.TEN), TEST_SIGNATURE)
+        repository.receivedSignature(
+            FCM_TOPICS_PREFIX + RESPOND_SIGNATURE_TOPIC_PREFIX + cleanAddress(Solidity.Address(BigInteger.TEN)),
+            TEST_SIGNATURE
+        )
         safe1Observer.assertEmpty()
         safe2aObserver.assertEmpty()
         safe2bObserver.assertEmpty()
@@ -299,11 +306,11 @@ class DefaultSignaturePushRepositoryTest {
     }
 
     companion object {
-        private val TEST_SAFE_1 = BigInteger.valueOf(65489720)
-        private val TEST_SAFE_2 = BigInteger.valueOf(2589631)
+        private val TEST_SAFE_1 = Solidity.Address(BigInteger.valueOf(65489720))
+        private val TEST_SAFE_2 = Solidity.Address(BigInteger.valueOf(2589631))
         private val TEST_SIGNATURE = Signature(BigInteger.valueOf(987), BigInteger.valueOf(678), 27)
         private val TEST_SIGNATURE_2 = Signature(BigInteger.valueOf(6789), BigInteger.valueOf(1234), 28)
-        private val TEST_TRANSACTION = Transaction(BigInteger.ZERO, nonce = BigInteger.TEN)
+        private val TEST_TRANSACTION = Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN)
         private const val PREFS_OBSERVED_SAFES = "default_signature_push_repo.string_set.observed_safes"
         private const val REQUEST_SIGNATURE_TOPIC_PREFIX = "request_signature."
         private const val RESPOND_SIGNATURE_TOPIC_PREFIX = "respond_signature."

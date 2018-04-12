@@ -23,6 +23,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
@@ -54,7 +55,7 @@ class SafeSettingsViewModelTest {
     }
 
     private fun callSetupAndCheck(
-        address: BigInteger, info: SafeInfo,
+        address: Solidity.Address, info: SafeInfo,
         repositoryInvocations: Int = 1, totalInvocations: Int = repositoryInvocations,
         ignoreCached: Boolean = false
     ) {
@@ -71,11 +72,11 @@ class SafeSettingsViewModelTest {
 
     @Test
     fun setupViewModelClearCache() {
-        val address1 = BigInteger.ZERO
+        val address1 = Solidity.Address(BigInteger.ZERO)
         val info1 = SafeInfo("Test1", Wei(BigInteger.ONE), 0, emptyList(), false)
         given(repositoryMock.loadInfo(address1)).willReturn(Observable.just(info1))
 
-        val address2 = BigInteger.ONE
+        val address2 = Solidity.Address(BigInteger.ONE)
         val info2 = SafeInfo("Test2", Wei(BigInteger.ONE), 0, emptyList(), false)
         given(repositoryMock.loadInfo(address2)).willReturn(Observable.just(info2))
 
@@ -86,7 +87,7 @@ class SafeSettingsViewModelTest {
 
     @Test
     fun setupViewModelKeepCache() {
-        val address = BigInteger.ZERO
+        val address = Solidity.Address(BigInteger.ZERO)
         val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList(), false)
         given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(info))
 
@@ -97,7 +98,7 @@ class SafeSettingsViewModelTest {
 
     @Test
     fun loadSafeInfoIgnoreCache() {
-        val address = BigInteger.ZERO
+        val address = Solidity.Address(BigInteger.ZERO)
         val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList(), false)
         given(repositoryMock.loadInfo(address)).willReturn(Observable.just(info))
 
@@ -108,7 +109,7 @@ class SafeSettingsViewModelTest {
 
     @Test
     fun loadSafeInfoError() {
-        viewModel.setup(BigInteger.ZERO)
+        viewModel.setup(Solidity.Address(BigInteger.ZERO))
 
         val exception = IllegalStateException("test")
         given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.error(exception))
@@ -125,12 +126,12 @@ class SafeSettingsViewModelTest {
         val testCompletable = TestCompletable()
         val testObserver = TestObserver<Result<String>>()
         given(repositoryMock.updateName(MockUtils.any(), ArgumentMatchers.anyString())).willReturn(testCompletable)
-        viewModel.setup(BigInteger.ZERO)
+        viewModel.setup(Solidity.Address(BigInteger.ZERO))
 
         viewModel.updateSafeName(newName).subscribe(testObserver)
 
         assertEquals(1, testCompletable.callCount)
-        BDDMockito.then(repositoryMock).should().updateName(BigInteger.ZERO, cleanName)
+        BDDMockito.then(repositoryMock).should().updateName(Solidity.Address(BigInteger.ZERO), cleanName)
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(cleanName)).assertNoErrors()
     }
@@ -139,7 +140,7 @@ class SafeSettingsViewModelTest {
     fun changeSafeNameBlankNAme() {
         val newName = ""
         val testObserver = TestObserver<Result<String>>()
-        viewModel.setup(BigInteger.ZERO)
+        viewModel.setup(Solidity.Address(BigInteger.ZERO))
 
         viewModel.updateSafeName(newName).subscribe(testObserver)
 
@@ -153,11 +154,11 @@ class SafeSettingsViewModelTest {
         val exception = Exception()
         val testObserver = TestObserver<Result<String>>()
         given(repositoryMock.updateName(MockUtils.any(), ArgumentMatchers.anyString())).willReturn(Completable.error(exception))
-        viewModel.setup(BigInteger.ZERO)
+        viewModel.setup(Solidity.Address(BigInteger.ZERO))
 
         viewModel.updateSafeName(newName).subscribe(testObserver)
 
-        BDDMockito.then(repositoryMock).should().updateName(BigInteger.ZERO, newName)
+        BDDMockito.then(repositoryMock).should().updateName(Solidity.Address(BigInteger.ZERO), newName)
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(ErrorResult(exception)).assertNoErrors()
     }
@@ -167,12 +168,12 @@ class SafeSettingsViewModelTest {
         val testCompletable = TestCompletable()
         val testObserver = TestObserver<Result<Unit>>()
         given(repositoryMock.removeSafe(MockUtils.any())).willReturn(testCompletable)
-        viewModel.setup(BigInteger.ZERO)
+        viewModel.setup(Solidity.Address(BigInteger.ZERO))
 
         viewModel.deleteSafe().subscribe(testObserver)
 
         assertEquals(1, testCompletable.callCount)
-        BDDMockito.then(repositoryMock).should().removeSafe(BigInteger.ZERO)
+        BDDMockito.then(repositoryMock).should().removeSafe(Solidity.Address(BigInteger.ZERO))
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(Unit)).assertNoErrors()
     }
@@ -182,11 +183,11 @@ class SafeSettingsViewModelTest {
         val testObserver = TestObserver<Result<Unit>>()
         val exception = Exception()
         given(repositoryMock.removeSafe(MockUtils.any())).willReturn(Completable.error(exception))
-        viewModel.setup(BigInteger.ZERO)
+        viewModel.setup(Solidity.Address(BigInteger.ZERO))
 
         viewModel.deleteSafe().subscribe(testObserver)
 
-        BDDMockito.then(repositoryMock).should().removeSafe(BigInteger.ZERO)
+        BDDMockito.then(repositoryMock).should().removeSafe(Solidity.Address(BigInteger.ZERO))
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(ErrorResult(exception)).assertNoErrors()
     }
@@ -195,15 +196,15 @@ class SafeSettingsViewModelTest {
     fun loadSafeName() {
         val testProcessor = PublishProcessor.create<Safe>()
         val testObserver = TestObserver<String>()
-        given(repositoryMock.observeSafe(BigInteger.ZERO)).willReturn(testProcessor)
-        viewModel.setup(BigInteger.ZERO)
+        given(repositoryMock.observeSafe(Solidity.Address(BigInteger.ZERO))).willReturn(testProcessor)
+        viewModel.setup(Solidity.Address(BigInteger.ZERO))
 
         viewModel.loadSafeName().subscribe(testObserver)
 
-        testProcessor.offer(Safe(BigInteger.ZERO, "Test Name"))
-        testProcessor.offer(Safe(BigInteger.ZERO, "Test Name 2"))
+        testProcessor.offer(Safe(Solidity.Address(BigInteger.ZERO), "Test Name"))
+        testProcessor.offer(Safe(Solidity.Address(BigInteger.ZERO), "Test Name 2"))
 
-        BDDMockito.then(repositoryMock).should().observeSafe(BigInteger.ZERO)
+        BDDMockito.then(repositoryMock).should().observeSafe(Solidity.Address(BigInteger.ZERO))
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertResult("Test Name")
     }
@@ -211,19 +212,19 @@ class SafeSettingsViewModelTest {
     @Test
     fun loadSafeNameError() {
         val testObserver = TestObserver<String>()
-        given(repositoryMock.observeSafe(BigInteger.ZERO)).willReturn(Flowable.error(IllegalStateException()))
-        viewModel.setup(BigInteger.ZERO)
+        given(repositoryMock.observeSafe(Solidity.Address(BigInteger.ZERO))).willReturn(Flowable.error(IllegalStateException()))
+        viewModel.setup(Solidity.Address(BigInteger.ZERO))
 
         viewModel.loadSafeName().subscribe(testObserver)
 
-        BDDMockito.then(repositoryMock).should().observeSafe(BigInteger.ZERO)
+        BDDMockito.then(repositoryMock).should().observeSafe(Solidity.Address(BigInteger.ZERO))
         BDDMockito.then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValue("")
     }
 
     @Test
     fun getSafeAddress() {
-        viewModel.setup(BigInteger.ZERO)
-        assertEquals(BigInteger.ZERO, viewModel.getSafeAddress())
+        viewModel.setup(Solidity.Address(BigInteger.ZERO))
+        assertEquals(Solidity.Address(BigInteger.ZERO), viewModel.getSafeAddress())
     }
 }

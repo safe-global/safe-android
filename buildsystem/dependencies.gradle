@@ -12,7 +12,7 @@ ext {
             android_lifecycle      : '1.1.0',
             architecture_components: '1.0.0',
             billing                : '1.0',
-            bivrost                : '28e1b96598527bfc4438ce75995d505abf9e765d',
+            bivrost                : 'master-SNAPSHOT',
             constraint_layout      : '1.1.0-beta6',
             crashlytics            : '2.8.0',
             dagger                 : '2.12',
@@ -33,7 +33,7 @@ ext {
             rxjava                 : '2.1.6',
             rxkotlin               : '2.1.0',
             spongycastle           : '1.58.0.0',
-            svalinn                : '7c04f5828149016e391caca7fbded1ea4b035d2d',
+            svalinn                : 'feature~WA-217-SNAPSHOT',
             timber                 : '4.6.0',
             zxing                  : '3.3.1',
 

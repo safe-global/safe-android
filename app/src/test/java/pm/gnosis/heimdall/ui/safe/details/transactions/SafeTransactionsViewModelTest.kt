@@ -22,6 +22,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -56,7 +57,7 @@ class SafeTransactionsViewModelTest {
 
     private lateinit var viewModel: SafeTransactionsViewModel
 
-    private var testAddress = BigInteger.ZERO
+    private var testAddress = Solidity.Address(BigInteger.ZERO)
 
     @Before
     fun setup() {
@@ -174,7 +175,7 @@ class SafeTransactionsViewModelTest {
     fun loadTransactionDetailsNoTransfer() {
         val testId = "some_transaction_id"
 
-        val details = TransactionDetails(testId, TransactionType.GENERIC, null, Transaction(BigInteger.TEN), TEST_SAFE, TEST_TIME)
+        val details = TransactionDetails(testId, TransactionType.GENERIC, null, Transaction(Solidity.Address(BigInteger.TEN)), TEST_SAFE, TEST_TIME)
         given(detailsRepository.loadTransactionDetails(anyString()))
             .willReturn(Single.just(details))
 
@@ -195,7 +196,8 @@ class SafeTransactionsViewModelTest {
     fun loadTransactionDetailsNoTokenTransferData() {
         val testId = "some_transaction_id"
 
-        val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, null, Transaction(BigInteger.TEN), TEST_SAFE, TEST_TIME)
+        val details =
+            TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, null, Transaction(Solidity.Address(BigInteger.TEN)), TEST_SAFE, TEST_TIME)
         given(detailsRepository.loadTransactionDetails(anyString()))
             .willReturn(Single.just(details))
 
@@ -215,8 +217,8 @@ class SafeTransactionsViewModelTest {
     @Test
     fun loadTransactionDetailsTokenTransferUnknownToken() {
         val testId = "some_transaction_id"
-        val tokenAddress = BigInteger.TEN
-        val tokenTransferData = TokenTransferData(BigInteger.ONE, BigInteger.valueOf(42))
+        val tokenAddress = Solidity.Address(BigInteger.TEN)
+        val tokenTransferData = TokenTransferData(Solidity.Address(BigInteger.ONE), BigInteger.valueOf(42))
 
         val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress), TEST_SAFE, TEST_TIME)
         given(detailsRepository.loadTransactionDetails(anyString()))
@@ -240,8 +242,8 @@ class SafeTransactionsViewModelTest {
     @Test
     fun loadTransactionDetailsTokenTransfer() {
         val testId = "some_transaction_id"
-        val tokenAddress = BigInteger.TEN
-        val tokenTransferData = TokenTransferData(BigInteger.ONE, BigInteger.valueOf(42))
+        val tokenAddress = Solidity.Address(BigInteger.TEN)
+        val tokenTransferData = TokenTransferData(Solidity.Address(BigInteger.ONE), BigInteger.valueOf(42))
 
         val details = TransactionDetails(testId, TransactionType.TOKEN_TRANSFER, tokenTransferData, Transaction(tokenAddress), TEST_SAFE, TEST_TIME)
         given(detailsRepository.loadTransactionDetails(anyString()))
@@ -268,7 +270,14 @@ class SafeTransactionsViewModelTest {
 
         val amount = BigInteger.valueOf(42) * BigInteger.TEN.pow(18)
         val details =
-            TransactionDetails(testId, TransactionType.ETHER_TRANSFER, null, Transaction(BigInteger.ONE, value = Wei(amount)), TEST_SAFE, TEST_TIME)
+            TransactionDetails(
+                testId,
+                TransactionType.ETHER_TRANSFER,
+                null,
+                Transaction(Solidity.Address(BigInteger.ONE), value = Wei(amount)),
+                TEST_SAFE,
+                TEST_TIME
+            )
         given(detailsRepository.loadTransactionDetails(anyString()))
             .willReturn(Single.just(details))
 
@@ -325,6 +334,6 @@ class SafeTransactionsViewModelTest {
 
     companion object {
         const val TEST_TIME = 123456987L
-        val TEST_SAFE: BigInteger = BigInteger.TEN
+        val TEST_SAFE = Solidity.Address(BigInteger.TEN)
     }
 }

@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.DATA_FIELD
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.TO_FIELD
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.VALUE_FIELD
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -51,7 +52,7 @@ class GenericTransactionDetailsViewModelTest {
         val testPublisher = PublishSubject.create<InputEvent>()
         val testObserver = TestObserver<Result<Transaction>>()
         val mockContext = mock(Context::class.java).mockGetString()
-        val originalTransaction = Transaction(BigInteger.TEN, nonce = BigInteger.valueOf(1337))
+        val originalTransaction = Transaction(Solidity.Address(BigInteger.TEN), nonce = BigInteger.valueOf(1337))
 
         testPublisher.compose(viewModel.inputTransformer(mockContext, originalTransaction))
             .subscribe(testObserver)
@@ -64,7 +65,7 @@ class GenericTransactionDetailsViewModelTest {
             InputEvent("0x0" to true, "123" to false, "" to false),
             DataResult(
                 Transaction(
-                    BigInteger.ZERO, value = Wei(BigInteger.valueOf(123)),
+                    Solidity.Address(BigInteger.ZERO), value = Wei(BigInteger.valueOf(123)),
                     data = null, nonce = BigInteger.valueOf(1337)
                 )
             ),
@@ -144,7 +145,7 @@ class GenericTransactionDetailsViewModelTest {
         testObserver.assertNoErrors().assertValueCount(testNo)
             .assertValueAt(testNo - 1, {
                 it is DataResult
-                        && it.data.address == BigInteger.ZERO
+                        && it.data.address == Solidity.Address(BigInteger.ZERO)
                         && it.data.value == Wei(BigInteger.valueOf(123))
                         && it.data.data == null
                         && it.data.nonce == null

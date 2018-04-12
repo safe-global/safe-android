@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract.Info
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -84,7 +85,7 @@ class ViewTransactionViewModelTest {
         given(transactionRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
 
-        val signaturesSubject = PublishSubject.create<Map<BigInteger, Signature>>()
+        val signaturesSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
         given(signatureStoreMock.flatMapInfo(TEST_SAFE, info)).willReturn(signaturesSubject)
 
         val testObserver = TestObserver<Result<Info>>()
@@ -97,7 +98,7 @@ class ViewTransactionViewModelTest {
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
 
         // We emit an empty signature map
-        val noSignatures = emptyMap<BigInteger, Signature>()
+        val noSignatures = emptyMap<Solidity.Address, Signature>()
         signaturesSubject.onNext(noSignatures)
         testObserver.assertValuesOnly(
             DataResult(Info(TEST_SAFE, info, noSignatures))
@@ -153,7 +154,7 @@ class ViewTransactionViewModelTest {
         given(transactionRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
 
-        val signaturesSubject = PublishSubject.create<Map<BigInteger, Signature>>()
+        val signaturesSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
         given(signatureStoreMock.flatMapInfo(TEST_SAFE, info)).willReturn(signaturesSubject)
 
         val testObserver = TestObserver<Result<Info>>()
@@ -166,7 +167,7 @@ class ViewTransactionViewModelTest {
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
 
         // We emit an empty signature map, current device is owner and can confirm without signatures
-        val noSignatures = emptyMap<BigInteger, Signature>()
+        val noSignatures = emptyMap<Solidity.Address, Signature>()
         signaturesSubject.onNext(noSignatures)
         testObserver.assertValuesOnly(
             DataResult(Info(TEST_SAFE, info, noSignatures))
@@ -222,7 +223,7 @@ class ViewTransactionViewModelTest {
         given(transactionRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
 
-        val signaturesSubject = PublishSubject.create<Map<BigInteger, Signature>>()
+        val signaturesSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
         given(signatureStoreMock.flatMapInfo(TEST_SAFE, info)).willReturn(signaturesSubject)
 
         val testObserver = TestObserver<Result<Info>>()
@@ -235,7 +236,7 @@ class ViewTransactionViewModelTest {
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
 
         // We emit an empty signature map
-        val noSignatures = emptyMap<BigInteger, Signature>()
+        val noSignatures = emptyMap<Solidity.Address, Signature>()
         signaturesSubject.onNext(noSignatures)
         testObserver.assertValuesOnly(
             DataResult(Info(TEST_SAFE, info, noSignatures))
@@ -316,8 +317,8 @@ class ViewTransactionViewModelTest {
     private fun testSubmitTransaction(
         info: TransactionRepository.ExecuteInformation, submitError: Throwable?,
         expectingSubmit: Boolean,
-        signatures: Map<BigInteger, Signature>?,
-        expectedResult: Result<BigInteger>
+        signatures: Map<Solidity.Address, Signature>?,
+        expectedResult: Result<Solidity.Address>
     ) {
 
         given(transactionRepositoryMock.loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.just(info))
@@ -332,7 +333,7 @@ class ViewTransactionViewModelTest {
             )
         }
 
-        val testObserverDefaultGas = TestObserver<Result<BigInteger>>()
+        val testObserverDefaultGas = TestObserver<Result<Solidity.Address>>()
         viewModel.submitTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserverDefaultGas)
 
         testObserverDefaultGas.assertResult(expectedResult)
@@ -401,7 +402,7 @@ class ViewTransactionViewModelTest {
         val error = IllegalStateException()
         given(transactionRepositoryMock.loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)).willReturn(Single.error(error))
 
-        val testObserver = TestObserver<Result<BigInteger>>()
+        val testObserver = TestObserver<Result<Solidity.Address>>()
         viewModel.submitTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
 
         testObserver.assertNoErrors()
@@ -419,7 +420,7 @@ class ViewTransactionViewModelTest {
             .willReturn(Single.just(TransactionType.GENERIC))
 
         val testObserver = TestObserver<TransactionType>()
-        val transaction = Transaction(BigInteger.ZERO)
+        val transaction = Transaction(Solidity.Address(BigInteger.ZERO))
         viewModel.checkTransactionType(transaction).subscribe(testObserver)
         testObserver.assertNoErrors().assertValue(TransactionType.GENERIC).assertComplete()
         then(transactionDetailsRepositoryMock).should().loadTransactionType(transaction)
@@ -433,7 +434,7 @@ class ViewTransactionViewModelTest {
             .willReturn(Single.error(error))
 
         val testObserver = TestObserver<TransactionType>()
-        val transaction = Transaction(BigInteger.ZERO)
+        val transaction = Transaction(Solidity.Address(BigInteger.ZERO))
         viewModel.checkTransactionType(transaction).subscribe(testObserver)
         testObserver.assertError(error).assertNoValues().assertTerminated()
         then(transactionDetailsRepositoryMock).should().loadTransactionType(transaction)
@@ -761,10 +762,10 @@ class ViewTransactionViewModelTest {
         private const val TEST_TRANSACTION_HASH = "SomeHash"
         private val TEST_BITMAP = mock(Bitmap::class.java)
         private val TEST_SIGNATURE = Signature(BigInteger.valueOf(987), BigInteger.valueOf(678), 27)
-        private val TEST_SAFE = BigInteger.ZERO
-        private val TEST_TRANSACTION = Transaction(BigInteger.ZERO, nonce = BigInteger.TEN)
-        private val TEST_NOT_OWNER = BigInteger.valueOf(12345)
-        private val TEST_OWNER = BigInteger.valueOf(5674)
-        private val TEST_OWNERS = listOf(TEST_OWNER, BigInteger.valueOf(13))
+        private val TEST_SAFE = Solidity.Address(BigInteger.ZERO)
+        private val TEST_TRANSACTION = Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN)
+        private val TEST_NOT_OWNER = Solidity.Address(BigInteger.valueOf(12345))
+        private val TEST_OWNER = Solidity.Address(BigInteger.valueOf(5674))
+        private val TEST_OWNERS = listOf(TEST_OWNER, Solidity.Address(BigInteger.valueOf(13)))
     }
 }

@@ -25,6 +25,7 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
@@ -83,7 +84,7 @@ class SafeOverviewViewModelTest {
             .assertValue { it is DataResult && it.data.parentId == null && it.data.diff == null && it.data.entries.isEmpty() }
         val initialDataId = (subscriber.values().first() as DataResult).data.id
 
-        val results = listOf(Safe(BigInteger.ZERO), Safe(BigInteger.ONE))
+        val results = listOf(Safe(Solidity.Address(BigInteger.ZERO)), Safe(Solidity.Address(BigInteger.ONE)))
         processor.offer(results)
         // Check that the results are emitted
         subscriber.assertNoErrors()
@@ -98,7 +99,8 @@ class SafeOverviewViewModelTest {
             .assertInsertsCount(2).assertInserts(0, 2)
             .reset()
 
-        val moreResults = listOf(Safe(BigInteger.ONE), Safe(BigInteger.ZERO), Safe(BigInteger.valueOf(3)))
+        val moreResults =
+            listOf(Safe(Solidity.Address(BigInteger.ONE)), Safe(Solidity.Address(BigInteger.ZERO)), Safe(Solidity.Address(BigInteger.valueOf(3))))
         processor.offer(moreResults)
         // Check that the diff are calculated correctly
         subscriber.assertNoErrors()
@@ -141,9 +143,9 @@ class SafeOverviewViewModelTest {
         val completable = TestCompletable()
         given(repositoryMock.removeSafe(MockUtils.any())).willReturn(completable)
 
-        viewModel.removeSafe(BigInteger.ZERO).subscribe(observer)
+        viewModel.removeSafe(Solidity.Address(BigInteger.ZERO)).subscribe(observer)
 
-        then(repositoryMock).should().removeSafe(BigInteger.ZERO)
+        then(repositoryMock).should().removeSafe(Solidity.Address(BigInteger.ZERO))
         then(repositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, completable.callCount)
         observer.assertTerminated().assertNoErrors().assertNoValues()
@@ -155,9 +157,9 @@ class SafeOverviewViewModelTest {
         val error = IllegalStateException()
         given(repositoryMock.removeSafe(MockUtils.any())).willReturn(Completable.error(error))
 
-        viewModel.removeSafe(BigInteger.ZERO).subscribe(observer)
+        viewModel.removeSafe(Solidity.Address(BigInteger.ZERO)).subscribe(observer)
 
-        then(repositoryMock).should().removeSafe(BigInteger.ZERO)
+        then(repositoryMock).should().removeSafe(Solidity.Address(BigInteger.ZERO))
         then(repositoryMock).shouldHaveNoMoreInteractions()
         observer.assertTerminated().assertNoValues()
             .assertError(error)
@@ -170,18 +172,18 @@ class SafeOverviewViewModelTest {
         val safeInfo = SafeInfo("0x0", Wei(BigInteger.ZERO), 0, emptyList(), false)
         given(repositoryMock.loadInfo(MockUtils.any())).willReturn(subject)
 
-        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver)
+        viewModel.loadSafeInfo(Solidity.Address(BigInteger.ZERO)).subscribe(testObserver)
         subject.onNext(safeInfo)
 
         testObserver.assertValue(safeInfo)
 
         // Error loading the same safe (eg.: no internet) -> should load from cache
         val testObserver2 = TestObserver.create<SafeInfo>()
-        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver2)
+        viewModel.loadSafeInfo(Solidity.Address(BigInteger.ZERO)).subscribe(testObserver2)
         subject.onError(Exception())
 
         testObserver2.assertResult(safeInfo)
-        then(repositoryMock).should(times(2)).loadInfo(BigInteger.ZERO)
+        then(repositoryMock).should(times(2)).loadInfo(Solidity.Address(BigInteger.ZERO))
         then(repositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -191,9 +193,9 @@ class SafeOverviewViewModelTest {
         val exception = Exception()
         given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.error(exception))
 
-        viewModel.loadSafeInfo(BigInteger.ZERO).subscribe(testObserver)
+        viewModel.loadSafeInfo(Solidity.Address(BigInteger.ZERO)).subscribe(testObserver)
 
-        then(repositoryMock).should().loadInfo(BigInteger.ZERO)
+        then(repositoryMock).should().loadInfo(Solidity.Address(BigInteger.ZERO))
         then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception)
     }
@@ -227,7 +229,7 @@ class SafeOverviewViewModelTest {
     @Test
     fun shouldShowLowBalanceViewOnHighBalance() = onTestableComputationScheduler {
         val testObserver = TestObserver<Result<Boolean>>()
-        val account = Account(BigInteger.ZERO)
+        val account = Account(Solidity.Address(BigInteger.ZERO))
         val balance = LOW_BALANCE_THRESHOLD
 
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
@@ -275,7 +277,7 @@ class SafeOverviewViewModelTest {
     @Test
     fun shouldShowLowBalanceViewOnLowBalance() = onTestableComputationScheduler {
         val testObserver = TestObserver<Result<Boolean>>()
-        val account = Account(BigInteger.ZERO)
+        val account = Account(Solidity.Address(BigInteger.ZERO))
         val balance = Wei(LOW_BALANCE_THRESHOLD.value - BigInteger.ONE)
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
 
@@ -318,7 +320,7 @@ class SafeOverviewViewModelTest {
     @Test
     fun onceDismissedDoNotShowOnLowBalance() = onTestableComputationScheduler {
         val testObserver = TestObserver<Result<Boolean>>()
-        val account = Account(BigInteger.ZERO)
+        val account = Account(Solidity.Address(BigInteger.ZERO))
         val balance = Wei(LOW_BALANCE_THRESHOLD.value - BigInteger.ONE)
 
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
@@ -353,7 +355,7 @@ class SafeOverviewViewModelTest {
     @Test
     fun lowBalanceToHighBalanceShouldTurnDismissOff() = onTestableComputationScheduler {
         val testObserver = TestObserver<Result<Boolean>>()
-        val account = Account(BigInteger.ZERO)
+        val account = Account(Solidity.Address(BigInteger.ZERO))
         val balance = Wei(LOW_BALANCE_THRESHOLD.value)
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
         given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))

@@ -74,7 +74,7 @@ class AssetTransferDetailsViewModelTest {
 
     @Test
     fun loadFormDataLoadingDetailsError() {
-        val transaction = Transaction(BigInteger.ZERO)
+        val transaction = Transaction(Solidity.Address(BigInteger.ZERO))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.error(IllegalStateException()))
 
@@ -89,14 +89,14 @@ class AssetTransferDetailsViewModelTest {
 
     @Test
     fun loadFormDataLoadingEtherTransfer() {
-        val transaction = Transaction(BigInteger.ZERO, value = Wei(BigInteger.TEN))
+        val transaction = Transaction(Solidity.Address(BigInteger.ZERO), value = Wei(BigInteger.TEN))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(None))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(BigInteger.ZERO, BigInteger.TEN, ETHER_TOKEN))
+        testObserver.assertResult(FormData(Solidity.Address(BigInteger.ZERO), BigInteger.TEN, ETHER_TOKEN))
         then(detailsRepository).should().loadTransactionData(transaction)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -104,14 +104,14 @@ class AssetTransferDetailsViewModelTest {
 
     @Test
     fun loadFormDataLoadingGeneric() {
-        val transaction = Transaction(BigInteger.ZERO)
+        val transaction = Transaction(Solidity.Address(BigInteger.ZERO))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(None))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(BigInteger.ZERO, null, ETHER_TOKEN))
+        testObserver.assertResult(FormData(Solidity.Address(BigInteger.ZERO), null, ETHER_TOKEN))
         then(detailsRepository).should().loadTransactionData(transaction)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -119,14 +119,14 @@ class AssetTransferDetailsViewModelTest {
 
     @Test
     fun loadFormDataLoadingTokenTransferNoData() {
-        val transaction = Transaction(BigInteger.ZERO)
+        val transaction = Transaction(Solidity.Address(BigInteger.ZERO))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(None))
 
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(BigInteger.ZERO, null, ETHER_TOKEN))
+        testObserver.assertResult(FormData(Solidity.Address(BigInteger.ZERO), null, ETHER_TOKEN))
         then(detailsRepository).should().loadTransactionData(transaction)
         then(detailsRepository).shouldHaveNoMoreInteractions()
         then(tokenRepository).shouldHaveNoMoreInteractions()
@@ -134,9 +134,9 @@ class AssetTransferDetailsViewModelTest {
 
     @Test
     fun loadFormDataLoadingTokenTransferKnownToken() {
-        val token = ERC20Token(BigInteger.ZERO, decimals = 42)
+        val token = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 42)
         val transaction = Transaction(token.address)
-        val transferData = TokenTransferData(BigInteger.ONE, BigInteger.TEN)
+        val transferData = TokenTransferData(Solidity.Address(BigInteger.ONE), BigInteger.TEN)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
@@ -145,7 +145,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(BigInteger.ONE, BigInteger.TEN, token))
+        testObserver.assertResult(FormData(Solidity.Address(BigInteger.ONE), BigInteger.TEN, token))
         then(detailsRepository).should().loadTransactionData(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()
@@ -154,9 +154,9 @@ class AssetTransferDetailsViewModelTest {
 
     @Test
     fun loadFormDataLoadingTokenTransferUnknownToken() {
-        val token = ERC20Token(BigInteger.ZERO, decimals = 42)
+        val token = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 42)
         val transaction = Transaction(token.address)
-        val transferData = TokenTransferData(BigInteger.ONE, BigInteger.TEN)
+        val transferData = TokenTransferData(Solidity.Address(BigInteger.ONE), BigInteger.TEN)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
@@ -165,7 +165,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(BigInteger.ONE, BigInteger.TEN, null))
+        testObserver.assertResult(FormData(Solidity.Address(BigInteger.ONE), BigInteger.TEN, null))
         then(detailsRepository).should().loadTransactionData(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()
@@ -174,9 +174,9 @@ class AssetTransferDetailsViewModelTest {
 
     @Test
     fun loadFormDataLoadingTokenTransferKeepDefaults() {
-        val token = ERC20Token(BigInteger.ZERO, decimals = 42)
+        val token = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 42)
         val transaction = Transaction(token.address)
-        val transferData = TokenTransferData(BigInteger.ZERO, BigInteger.ZERO)
+        val transferData = TokenTransferData(Solidity.Address(BigInteger.ZERO), BigInteger.ZERO)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
@@ -185,7 +185,7 @@ class AssetTransferDetailsViewModelTest {
         val testObserver = TestObserver<FormData>()
         viewModel.loadFormData(transaction, false).subscribe(testObserver)
 
-        testObserver.assertResult(FormData(BigInteger.ZERO, BigInteger.ZERO, null))
+        testObserver.assertResult(FormData(Solidity.Address(BigInteger.ZERO), BigInteger.ZERO, null))
         then(detailsRepository).should().loadTransactionData(transaction)
         then(tokenRepository).should().loadToken(token.address)
         then(detailsRepository).shouldHaveNoMoreInteractions()
@@ -194,9 +194,9 @@ class AssetTransferDetailsViewModelTest {
 
     @Test
     fun loadFormDataLoadingTokenTransferClearDefaults() {
-        val token = ERC20Token(BigInteger.ZERO, decimals = 42)
+        val token = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 42)
         val transaction = Transaction(token.address)
-        val transferData = TokenTransferData(BigInteger.ZERO, BigInteger.ZERO)
+        val transferData = TokenTransferData(Solidity.Address(BigInteger.ZERO), BigInteger.ZERO)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(transferData.toOptional()))
         given(tokenRepository.loadToken(token.address))
@@ -226,7 +226,7 @@ class AssetTransferDetailsViewModelTest {
 
         val testPublisher = PublishSubject.create<InputEvent>()
         val testObserver = TestObserver<Result<Transaction>>()
-        val originalTransaction = Transaction(BigInteger.TEN, nonce = BigInteger.valueOf(1337))
+        val originalTransaction = Transaction(Solidity.Address(BigInteger.TEN), nonce = BigInteger.valueOf(1337))
 
         testPublisher.compose(viewModel.inputTransformer(originalTransaction))
             .subscribe(testObserver)
@@ -234,7 +234,7 @@ class AssetTransferDetailsViewModelTest {
 
         var testNo = 1
         // Valid input with change (token)
-        val tentenToken = ERC20Token(BigInteger.TEN, decimals = 10)
+        val tentenToken = ERC20Token(Solidity.Address(BigInteger.TEN), decimals = 10)
         val transferTo = Solidity.Address(BigInteger.ZERO)
         val transferAmount = Solidity.UInt256(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(tentenToken.decimals)))
         val expectedData = StandardToken.Transfer.encode(transferTo, transferAmount)
@@ -243,7 +243,7 @@ class AssetTransferDetailsViewModelTest {
             InputEvent("0x0" to true, "123" to false, tentenToken to false),
             DataResult(
                 Transaction(
-                    BigInteger.TEN, value = null,
+                    Solidity.Address(BigInteger.TEN), value = null,
                     data = expectedData, nonce = BigInteger.valueOf(1337)
                 )
             ),
@@ -255,8 +255,10 @@ class AssetTransferDetailsViewModelTest {
             InputEvent("0x0" to true, "123" to false, ERC20Token.ETHER_TOKEN to false),
             DataResult(
                 Transaction(
-                    BigInteger.ZERO, value = Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals))),
-                    data = null, nonce = BigInteger.valueOf(1337)
+                    Solidity.Address(BigInteger.ZERO),
+                    value = Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals))),
+                    data = null,
+                    nonce = BigInteger.valueOf(1337)
                 )
             ),
             testNo++
@@ -320,7 +322,7 @@ class AssetTransferDetailsViewModelTest {
 
         var testNo = 1
         // Valid input with change (token)
-        val tentenToken = ERC20Token(BigInteger.TEN, decimals = 10)
+        val tentenToken = ERC20Token(Solidity.Address(BigInteger.TEN), decimals = 10)
         val transferTo = Solidity.Address(BigInteger.ZERO)
         val transferAmount = Solidity.UInt256(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(tentenToken.decimals)))
         val expectedData = StandardToken.Transfer.encode(transferTo, transferAmount)
@@ -328,7 +330,7 @@ class AssetTransferDetailsViewModelTest {
         testObserver.assertNoErrors().assertValueCount(testNo)
             .assertValueAt(testNo - 1, {
                 it is DataResult
-                        && it.data.address == BigInteger.TEN
+                        && it.data.address == Solidity.Address(BigInteger.TEN)
                         && it.data.value == null
                         && it.data.data == expectedData
                         && it.data.nonce == null
@@ -339,7 +341,7 @@ class AssetTransferDetailsViewModelTest {
         testObserver.assertNoErrors().assertValueCount(testNo)
             .assertValueAt(testNo - 1, {
                 it is DataResult
-                        && it.data.address == BigInteger.ZERO
+                        && it.data.address == Solidity.Address(BigInteger.ZERO)
                         && it.data.value == Wei(BigInteger.valueOf(123).multiply(BigInteger.TEN.pow(ERC20Token.ETHER_TOKEN.decimals)))
                         && it.data.data == null
                         && it.data.nonce == null
@@ -422,7 +424,7 @@ class AssetTransferDetailsViewModelTest {
         reset(detailsRepository)
 
         // No asset transaction passed
-        var transaction = Transaction(BigInteger.valueOf(42))
+        var transaction = Transaction(Solidity.Address(BigInteger.valueOf(42)))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(None))
         testTransactionTransformer(
@@ -433,7 +435,7 @@ class AssetTransferDetailsViewModelTest {
         reset(detailsRepository)
 
         // Ether transaction action passed with no value
-        transaction = Transaction(BigInteger.valueOf(42))
+        transaction = Transaction(Solidity.Address(BigInteger.valueOf(42)))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(None))
         testTransactionTransformer(
@@ -444,7 +446,7 @@ class AssetTransferDetailsViewModelTest {
         reset(detailsRepository)
 
         // Ether transaction action passed with zero value
-        transaction = Transaction(BigInteger.valueOf(42), value = Wei.ZERO)
+        transaction = Transaction(Solidity.Address(BigInteger.valueOf(42)), value = Wei.ZERO)
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(None))
         testTransactionTransformer(
@@ -455,7 +457,7 @@ class AssetTransferDetailsViewModelTest {
         reset(detailsRepository)
 
         // Ether transaction action passed
-        transaction = Transaction(BigInteger.valueOf(42), value = Wei(BigInteger.TEN))
+        transaction = Transaction(Solidity.Address(BigInteger.valueOf(42)), value = Wei(BigInteger.TEN))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(None))
         testTransactionTransformer(
@@ -466,7 +468,7 @@ class AssetTransferDetailsViewModelTest {
         reset(detailsRepository)
 
         // Token transaction action passed no data
-        transaction = Transaction(BigInteger.valueOf(23))
+        transaction = Transaction(Solidity.Address(BigInteger.valueOf(23)))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
             .willReturn(Single.just(None))
         testTransactionTransformer(
@@ -477,9 +479,9 @@ class AssetTransferDetailsViewModelTest {
         reset(detailsRepository)
 
         // Token transaction action passed zero tokens
-        transaction = Transaction(BigInteger.valueOf(23))
+        transaction = Transaction(Solidity.Address(BigInteger.valueOf(23)))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-            .willReturn(Single.just(TokenTransferData(BigInteger.valueOf(42), BigInteger.ZERO).toOptional()))
+            .willReturn(Single.just(TokenTransferData(Solidity.Address(BigInteger.valueOf(42)), BigInteger.ZERO).toOptional()))
         testTransactionTransformer(
             testPublisher, testObserver,
             transaction, ErrorResult(TransactionInputException(mockContext, AMOUNT_FIELD, true)), testNo++
@@ -488,9 +490,9 @@ class AssetTransferDetailsViewModelTest {
         reset(detailsRepository)
 
         // Ether transaction action passed
-        transaction = Transaction(BigInteger.valueOf(42))
+        transaction = Transaction(Solidity.Address(BigInteger.valueOf(42)))
         given(detailsRepository.loadTransactionData(MockUtils.any()))
-            .willReturn(Single.just(TokenTransferData(BigInteger.valueOf(42), BigInteger.TEN).toOptional()))
+            .willReturn(Single.just(TokenTransferData(Solidity.Address(BigInteger.valueOf(42)), BigInteger.TEN).toOptional()))
         testTransactionTransformer(
             testPublisher, testObserver,
             transaction, DataResult(transaction), testNo++
@@ -501,7 +503,7 @@ class AssetTransferDetailsViewModelTest {
 
     @Test
     fun testLoadTokenInfo() {
-        val testToken = ERC20Token(BigInteger.ONE, name = "Test Token", symbol = "TT", decimals = 18)
+        val testToken = ERC20Token(Solidity.Address(BigInteger.ONE), name = "Test Token", symbol = "TT", decimals = 18)
         val testObserver = TestObserver<Result<ERC20TokenWithBalance>>()
         given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(
             Observable.just(
@@ -513,24 +515,24 @@ class AssetTransferDetailsViewModelTest {
             )
         )
 
-        viewModel.loadTokenInfo(BigInteger.TEN, testToken).subscribe(testObserver)
+        viewModel.loadTokenInfo(Solidity.Address(BigInteger.TEN), testToken).subscribe(testObserver)
 
         testObserver.assertResult(DataResult(ERC20TokenWithBalance(testToken, BigInteger.valueOf(13))))
-        then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(testToken))
+        then(tokenRepository).should().loadTokenBalances(Solidity.Address(BigInteger.TEN), listOf(testToken))
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun testLoadTokenInfoError() {
-        val testToken = ERC20Token(BigInteger.ONE, name = "Test Token", symbol = "TT", decimals = 18)
+        val testToken = ERC20Token(Solidity.Address(BigInteger.ONE), name = "Test Token", symbol = "TT", decimals = 18)
         val testObserver = TestObserver<Result<ERC20TokenWithBalance>>()
         val error = IllegalStateException()
         given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(Observable.error(error))
 
-        viewModel.loadTokenInfo(BigInteger.TEN, testToken).subscribe(testObserver)
+        viewModel.loadTokenInfo(Solidity.Address(BigInteger.TEN), testToken).subscribe(testObserver)
 
         testObserver.assertResult(ErrorResult(error))
-        then(tokenRepository).should().loadTokenBalances(BigInteger.TEN, listOf(testToken))
+        then(tokenRepository).should().loadTokenBalances(Solidity.Address(BigInteger.TEN), listOf(testToken))
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 }

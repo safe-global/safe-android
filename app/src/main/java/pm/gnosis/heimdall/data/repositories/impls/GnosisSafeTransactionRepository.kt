@@ -112,7 +112,11 @@ class GnosisSafeTransactionRepository @Inject constructor(
             accountsRepository.sign(it)
         }
 
-    override fun checkSignature(safeAddress: Solidity.Address, transaction: Transaction, signature: Signature): Single<Pair<Solidity.Address, Signature>> =
+    override fun checkSignature(
+        safeAddress: Solidity.Address,
+        transaction: Transaction,
+        signature: Signature
+    ): Single<Pair<Solidity.Address, Signature>> =
         calculateHash(safeAddress, transaction).flatMap {
             accountsRepository.recover(it, signature).map { it to signature }
         }

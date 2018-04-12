@@ -19,6 +19,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
@@ -54,7 +55,7 @@ class GnosisSafeTransactionRepositoryTest {
 
     private fun verifyHash(safe: BigInteger, transaction: Transaction, expected: String) {
         val observer = TestObserver<ByteArray>()
-        repository.calculateHash(safe, transaction).subscribe(observer)
+        repository.calculateHash(Solidity.Address(safe), transaction).subscribe(observer)
         observer.assertNoErrors().assertValueCount(1)
         assertEquals(expected, observer.values()[0].toHexString())
     }
@@ -64,7 +65,7 @@ class GnosisSafeTransactionRepositoryTest {
         // Empty transaction
         verifyHash(
             "0xbbf289d846208c16edc8474705c748aff07732db".hexAsBigInteger(),
-            Transaction(BigInteger.ZERO, nonce = BigInteger.ZERO),
+            Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.ZERO),
             "590bde81024e8282c3fb14e96309bd8e909637f271587eb201da7d18cf71d8f0"
         )
 
@@ -72,7 +73,7 @@ class GnosisSafeTransactionRepositoryTest {
         verifyHash(
             "0xbbf289d846208c16edc8474705c748aff07732db".hexAsBigInteger(),
             Transaction(
-                "0xa5056c8efadb5d6a1a6eb0176615692b6e648313".hexAsBigInteger(),
+                "0xa5056c8efadb5d6a1a6eb0176615692b6e648313".asEthereumAddress()!!,
                 value = Wei(BigInteger("9223372036854775809")),
                 nonce = BigInteger("1337")
             ),
@@ -84,7 +85,7 @@ class GnosisSafeTransactionRepositoryTest {
         val value = Solidity.UInt256(BigInteger("9223372036854775808"))
         val data = StandardToken.Transfer.encode(target, value)
         val transaction = Transaction(
-            "0x9bebe3b9e7a461e35775ec935336891edf856da2".hexAsBigInteger(),
+            "0x9bebe3b9e7a461e35775ec935336891edf856da2".asEthereumAddress()!!,
             data = data,
             nonce = BigInteger("7331")
         )

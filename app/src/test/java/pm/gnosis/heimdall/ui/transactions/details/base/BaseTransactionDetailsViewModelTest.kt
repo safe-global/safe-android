@@ -12,6 +12,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.model.Solidity
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import java.math.BigInteger
@@ -61,6 +62,6 @@ class BaseTransactionDetailsViewModelTest {
     }
 
     companion object {
-        private val TEST_SAFE = BigInteger.TEN
+        private val TEST_SAFE = Solidity.Address(BigInteger.TEN)
     }
 }

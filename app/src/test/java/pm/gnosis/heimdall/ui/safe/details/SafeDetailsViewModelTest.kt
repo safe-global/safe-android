@@ -17,14 +17,13 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.utils.exceptions.InvalidAddressException
-import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -44,8 +43,7 @@ class SafeDetailsViewModelTest {
 
     private lateinit var viewModel: SafeDetailsViewModel
 
-    private var testAddress = BigInteger.ZERO
-    private var invalidAddress = "1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF".hexAsBigInteger()
+    private var testAddress = Solidity.Address(BigInteger.ZERO)
     private var testName = "testName"
 
     @Before
@@ -85,11 +83,6 @@ class SafeDetailsViewModelTest {
         viewModel.observeSafe().subscribe(testSubscriber)
 
         testSubscriber.assertError(exception)
-    }
-
-    @Test(expected = InvalidAddressException::class)
-    fun testSetupWithInvalidAddress() {
-        viewModel.setup(invalidAddress, testName)
     }
 
     @Test

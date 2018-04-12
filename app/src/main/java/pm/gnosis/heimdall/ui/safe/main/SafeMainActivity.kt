@@ -233,7 +233,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     .subscribeBy(onNext = {
                         when (it.itemId) {
                             R.id.safe_details_menu_share ->
-                                ShareSafeAddressDialog.create(safe.address.asEthereumAddressString()).show(supportFragmentManager, null)
+                                ShareSafeAddressDialog.create(safe.address).show(supportFragmentManager, null)
                             R.id.safe_details_menu_settings ->
                                 startActivity(SafeSettingsActivity.createIntent(this, safe.address.asEthereumAddressString()))
                         }

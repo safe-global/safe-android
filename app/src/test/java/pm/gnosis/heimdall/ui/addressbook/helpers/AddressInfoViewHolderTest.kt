@@ -18,12 +18,14 @@ import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestFlowableFactory
 import pm.gnosis.tests.utils.mockFindViewById
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Provider
 
@@ -93,12 +95,12 @@ class AddressInfoViewHolderTest {
 
         then(viewMock).should().addOnAttachStateChangeListener(viewHolder)
         then(viewMock).should().tag = viewHolder
-        viewHolder.bind(BigInteger.TEN)
+        viewHolder.bind(Solidity.Address(BigInteger.TEN))
 
-        assertEquals("Correct address should be set", BigInteger.TEN, viewHolder.currentAddress)
+        assertEquals("Correct address should be set", Solidity.Address(BigInteger.TEN), viewHolder.currentAddress)
 
-        then(iconViewMock).should().setAddress(BigInteger.TEN)
-        then(valueViewMock).should().text = BigInteger.TEN.asEthereumAddressString()
+        then(iconViewMock).should().setAddress(Solidity.Address(BigInteger.TEN))
+        then(valueViewMock).should().text = Solidity.Address(BigInteger.TEN).asEthereumAddressString()
         then(valueViewMock).should().visible(true)
         then(nameViewMock).should().visible(false)
         then(addressBookRepositoryMock).shouldHaveZeroInteractions()
@@ -113,11 +115,11 @@ class AddressInfoViewHolderTest {
         // Simulate lifecycle start
         viewHolder.start()
 
-        then(addressBookRepositoryMock).should().observeAddressBookEntry(BigInteger.TEN)
+        then(addressBookRepositoryMock).should().observeAddressBookEntry(Solidity.Address(BigInteger.TEN))
         then(addressBookRepositoryMock).shouldHaveZeroInteractions()
         flowableFactory.assertCount(1).assertAllSubscribed()
 
-        flowableFactory.offer(AddressBookEntry(BigInteger.TEN, "Test Name", ""))
+        flowableFactory.offer(AddressBookEntry(Solidity.Address(BigInteger.TEN), "Test Name", ""))
 
         then(nameViewMock).should().visible(true)
         then(nameViewMock).should().text = "Test Name"
@@ -148,19 +150,19 @@ class AddressInfoViewHolderTest {
 
         given(viewMock.isAttachedToWindow).willReturn(true)
 
-        viewHolder.bind(BigInteger.TEN)
+        viewHolder.bind(Solidity.Address(BigInteger.TEN))
 
-        assertEquals("Correct address should be set", BigInteger.TEN, viewHolder.currentAddress)
+        assertEquals("Correct address should be set", Solidity.Address(BigInteger.TEN), viewHolder.currentAddress)
 
-        then(iconViewMock).should().setAddress(BigInteger.TEN)
-        then(valueViewMock).should().text = BigInteger.TEN.asEthereumAddressString()
+        then(iconViewMock).should().setAddress(Solidity.Address(BigInteger.TEN))
+        then(valueViewMock).should().text = Solidity.Address(BigInteger.TEN).asEthereumAddressString()
         then(valueViewMock).should().visible(true)
         then(nameViewMock).should().visible(false)
         then(lifecycleMock).should().addObserver(viewHolder)
         then(lifecycleMock).shouldHaveNoMoreInteractions()
 
         viewHolder.start()
-        then(addressBookRepositoryMock).should().observeAddressBookEntry(BigInteger.TEN)
+        then(addressBookRepositoryMock).should().observeAddressBookEntry(Solidity.Address(BigInteger.TEN))
         then(addressBookRepositoryMock).shouldHaveZeroInteractions()
 
         flowableFactory.assertCount(1).assertAllSubscribed()

@@ -42,19 +42,14 @@ class DefaultSettingsRepository @Inject constructor(
         (preferences.getString(PREF_KEY_PROXY_FACTORY_ADDRESS, null) ?: BuildConfig.PROXY_FACTORY_ADDRESS).asEthereumAddress()!!
 
     override fun setProxyFactoryAddress(address: Solidity.Address?) {
-        preferences.edit {
-            putString(PREF_KEY_PROXY_FACTORY_ADDRESS, address?.asEthereumAddressString())
-        }
+        preferences.edit { putString(PREF_KEY_PROXY_FACTORY_ADDRESS, address?.asEthereumAddressString()) }
     }
 
     override fun getSafeMasterCopyAddress() =
         (preferences.getString(PREF_KEY_SAFE_MASTER_COPY_ADDRESS, null) ?: BuildConfig.SAFE_MASTER_COPY_ADDRESS).asEthereumAddress()!!
 
     override fun setSafeMasterCopyAddress(address: Solidity.Address?) {
-        // Check if input address is null or blank reset to null, so that it will return the default
-        preferences.edit {
-            putString(PREF_KEY_SAFE_MASTER_COPY_ADDRESS, address?.asEthereumAddressString())
-        }
+        preferences.edit { putString(PREF_KEY_SAFE_MASTER_COPY_ADDRESS, address?.asEthereumAddressString()) }
     }
 
     private fun overrideUrlToPreferences(

@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.heimdall.utils.displayString
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.di.ForView
 import pm.gnosis.svalinn.common.di.ViewContext
 import pm.gnosis.svalinn.common.utils.toast
@@ -40,7 +41,7 @@ class SafeAdapter @Inject constructor(
     }
 
     val safeSelection = PublishSubject.create<AbstractSafe>()!!
-    val shareSelection = PublishSubject.create<String>()!!
+    val shareSelection = PublishSubject.create<Solidity.Address>()!!
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SafeAdapter.CastingViewHolder<out AbstractSafe> {
         return when (viewType) {
@@ -79,10 +80,7 @@ class SafeAdapter @Inject constructor(
         init {
             itemView.setOnClickListener(this)
             itemView.layout_safe_item_share.setOnClickListener {
-                currentEntry?.let {
-                    val addressString = it.address.asEthereumAddressString()
-                    shareSelection.onNext(addressString)
-                }
+                currentEntry?.let { shareSelection.onNext(it.address) }
             }
         }
 

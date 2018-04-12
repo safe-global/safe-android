@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
@@ -31,6 +32,7 @@ import pm.gnosis.tests.utils.*
 import pm.gnosis.tests.utils.MockUtils.any
 import pm.gnosis.ticker.data.repositories.TickerRepository
 import pm.gnosis.ticker.data.repositories.models.Currency
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asTransactionHash
 import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigDecimal
@@ -74,19 +76,19 @@ class AddSafeViewModelTest {
 
     @Test
     fun addExistingSafe() {
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         given(safeRepositoryMock.addSafe(any(), anyString())).willReturn(Completable.complete())
 
         viewModel.addExistingSafe("test", "0x0").subscribe(testObserver)
 
-        testObserver.assertNoErrors().assertValue(DataResult(BigInteger.ZERO))
-        then(safeRepositoryMock).should().addSafe(BigInteger.ZERO, "test")
+        testObserver.assertNoErrors().assertValue(DataResult(Solidity.Address(BigInteger.ZERO)))
+        then(safeRepositoryMock).should().addSafe(Solidity.Address(BigInteger.ZERO), "test")
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun addExistingSafeEmptyName() {
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         viewModel.addExistingSafe("", "0x0").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
@@ -97,7 +99,7 @@ class AddSafeViewModelTest {
 
     @Test
     fun addExistingInvalidAddress() {
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         viewModel.addExistingSafe("test", "test").subscribe(testObserver)
 
         testObserver.assertNoErrors().assertValue {
@@ -108,7 +110,7 @@ class AddSafeViewModelTest {
 
     @Test
     fun addExistingRepoError() {
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         val error = IllegalStateException()
         given(safeRepositoryMock.addSafe(any(), anyString())).willReturn(Completable.error(error))
 
@@ -117,7 +119,7 @@ class AddSafeViewModelTest {
         testObserver.assertNoErrors().assertValue {
             it is ErrorResult && it.error == error
         }
-        then(safeRepositoryMock).should().addSafe(BigInteger.ZERO, "test")
+        then(safeRepositoryMock).should().addSafe(Solidity.Address(BigInteger.ZERO), "test")
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -127,13 +129,13 @@ class AddSafeViewModelTest {
         }
 
     private fun testDeploySafe(
-        name: String, additionalOwners: Set<BigInteger>, expectedError: Exception? = null,
+        name: String, additionalOwners: Set<Solidity.Address>, expectedError: Exception? = null,
         storeException: Exception? = null, repoException: Exception? = null
     ) {
         val hasStoreInteractions = expectedError == null || repoException != null || storeException != null
         val hasRepoInteractions = expectedError == null || (storeException == null && repoException != null)
         if (hasStoreInteractions) {
-            val storeResult = storeException?.let { Single.error<Set<BigInteger>>(it) } ?: Single.just(additionalOwners)
+            val storeResult = storeException?.let { Single.error<Set<Solidity.Address>>(it) } ?: Single.just(additionalOwners)
             given(addressStore.load()).willReturn(storeResult)
         }
         if (hasRepoInteractions) {
@@ -170,8 +172,8 @@ class AddSafeViewModelTest {
     @Test
     fun deployNewSafe() {
         testDeploySafe("Test", emptySet())
-        testDeploySafe("Test", setOf(BigInteger.ONE))
-        testDeploySafe("Test", setOf(BigInteger.ONE, BigInteger.TEN))
+        testDeploySafe("Test", setOf(Solidity.Address(BigInteger.ONE)))
+        testDeploySafe("Test", setOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN)))
 
         // Invalid input
         testDeploySafe("", emptySet(), SimpleLocalizedException(R.string.error_blank_name.toString()))
@@ -206,36 +208,36 @@ class AddSafeViewModelTest {
 
     @Test
     fun observeAdditionalOwners() {
-        val addressPublisher = PublishSubject.create<Set<BigInteger>>()
+        val addressPublisher = PublishSubject.create<Set<Solidity.Address>>()
         given(addressStore.observe()).willReturn(addressPublisher)
 
-        val testObserver = TestObserver<List<BigInteger>>()
+        val testObserver = TestObserver<List<Solidity.Address>>()
         viewModel.observeAdditionalOwners().subscribe(testObserver)
         testObserver.assertEmpty()
 
-        addressPublisher.onNext(setOf(BigInteger.ONE))
-        testObserver.assertValuesOnly(listOf(BigInteger.ONE))
+        addressPublisher.onNext(setOf(Solidity.Address(BigInteger.ONE)))
+        testObserver.assertValuesOnly(listOf(Solidity.Address(BigInteger.ONE)))
 
-        addressPublisher.onNext(setOf(BigInteger.ONE, BigInteger.TEN))
+        addressPublisher.onNext(setOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN)))
         testObserver.assertValuesOnly(
-            listOf(BigInteger.ONE),
-            listOf(BigInteger.ONE, BigInteger.TEN) // New Value
+            listOf(Solidity.Address(BigInteger.ONE)),
+            listOf(BigInteger.ONE, BigInteger.TEN).map { Solidity.Address(it) } // New Value
         )
 
-        addressPublisher.onNext(setOf(BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO))
+        addressPublisher.onNext(setOf(Solidity.Address(BigInteger.ONE), Solidity.Address(BigInteger.TEN), Solidity.Address(BigInteger.ZERO)))
         testObserver.assertValuesOnly(
-            listOf(BigInteger.ONE),
-            listOf(BigInteger.ONE, BigInteger.TEN),
-            listOf(BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN) // New Value
+            listOf(Solidity.Address(BigInteger.ONE)),
+            listOf(BigInteger.ONE, BigInteger.TEN).map { Solidity.Address(it) },
+            listOf(BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN).map { Solidity.Address(it) }  // New Value
         )
 
         val error = IllegalStateException()
         addressPublisher.onError(error)
         testObserver.assertFailure(
             Predicate { it == error }, // New Error
-            listOf(BigInteger.ONE),
-            listOf(BigInteger.ONE, BigInteger.TEN),
-            listOf(BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN)
+            listOf(Solidity.Address(BigInteger.ONE)),
+            listOf(BigInteger.ONE, BigInteger.TEN).map { Solidity.Address(it) },
+            listOf(BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN).map { Solidity.Address(it) }
         )
 
         then(addressStore).should().observe()
@@ -279,10 +281,10 @@ class AddSafeViewModelTest {
     @Test
     fun removeAdditionalOwner() {
         val testObserver = TestObserver.create<Result<Unit>>()
-        viewModel.removeAdditionalOwner(BigInteger.TEN).subscribe(testObserver)
+        viewModel.removeAdditionalOwner(Solidity.Address(BigInteger.TEN)).subscribe(testObserver)
         testObserver.assertResult(DataResult(Unit))
 
-        then(addressStore).should().remove(BigInteger.TEN)
+        then(addressStore).should().remove(Solidity.Address(BigInteger.TEN))
         then(addressStore).shouldHaveNoMoreInteractions()
     }
 
@@ -295,7 +297,7 @@ class AddSafeViewModelTest {
         viewModel.addAdditionalOwner(input).subscribe(testObserver)
         testObserver.assertResult(output)
 
-        input.hexAsEthereumAddressOrNull()?.let { address ->
+        input.asEthereumAddress()?.let { address ->
             if (output is DataResult) {
                 then(addressStore).should().add(address)
             }
@@ -310,8 +312,8 @@ class AddSafeViewModelTest {
     @Test
     fun addAdditionalOwner() {
         context.mockGetStringWithArgs()
-        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account(BigInteger.ONE)))
-        viewModel.setupDeploy().subscribe(TestObserver<BigInteger>())
+        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account(Solidity.Address(BigInteger.ONE))))
+        viewModel.setupDeploy().subscribe(TestObserver<Solidity.Address>())
         then(addressStore).should().clear()
 
         testAddAdditionalOwner("0x10", DataResult(Unit), false)
@@ -322,27 +324,27 @@ class AddSafeViewModelTest {
 
     @Test
     fun setupDeploy() {
-        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account(BigInteger.ONE)))
+        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account(Solidity.Address(BigInteger.ONE))))
 
-        val testObserver = TestObserver<BigInteger>()
+        val testObserver = TestObserver<Solidity.Address>()
         viewModel.setupDeploy().subscribe(testObserver)
-        testObserver.assertResult(BigInteger.ONE)
+        testObserver.assertResult(Solidity.Address(BigInteger.ONE))
 
         then(addressStore).should().clear()
         then(addressStore).shouldHaveNoMoreInteractions()
 
         // Setting up with the same account should not erase the store
-        val keepObserver = TestObserver<BigInteger>()
+        val keepObserver = TestObserver<Solidity.Address>()
         viewModel.setupDeploy().subscribe(keepObserver)
-        keepObserver.assertResult(BigInteger.ONE)
+        keepObserver.assertResult(Solidity.Address(BigInteger.ONE))
         then(addressStore).shouldHaveNoMoreInteractions()
 
-        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account(BigInteger.TEN)))
+        given(accountsRepository.loadActiveAccount()).willReturn(Single.just(Account(Solidity.Address(BigInteger.TEN))))
 
         // Setting up with a different account should erase the store
-        val clearObserver = TestObserver<BigInteger>()
+        val clearObserver = TestObserver<Solidity.Address>()
         viewModel.setupDeploy().subscribe(clearObserver)
-        clearObserver.assertResult(BigInteger.TEN)
+        clearObserver.assertResult(Solidity.Address(BigInteger.TEN))
         then(addressStore).should(times(2)).clear()
         then(addressStore).shouldHaveNoMoreInteractions()
     }
@@ -355,7 +357,7 @@ class AddSafeViewModelTest {
 
         viewModel.loadSafeInfo("0x0").subscribe(testObserver)
 
-        then(safeRepositoryMock).should().loadInfo("0x0".hexAsEthereumAddress())
+        then(safeRepositoryMock).should().loadInfo("0x0".asEthereumAddress()!!)
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertResult(DataResult(safeInfo))
     }
@@ -379,7 +381,7 @@ class AddSafeViewModelTest {
 
         viewModel.loadSafeInfo("0x0").subscribe(testObserver)
 
-        then(safeRepositoryMock).should().loadInfo("0x0".hexAsEthereumAddress())
+        then(safeRepositoryMock).should().loadInfo("0x0".asEthereumAddress()!!)
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertResult(ErrorResult(exception))
     }
@@ -387,7 +389,7 @@ class AddSafeViewModelTest {
     @Test
     fun loadActiveAccount() {
         val testObserver = TestObserver<Account>()
-        val account = Account(BigInteger.TEN)
+        val account = Account(Solidity.Address(BigInteger.TEN))
         given(accountsRepository.loadActiveAccount()).willReturn(Single.just(account))
 
         viewModel.loadActiveAccount().subscribe(testObserver)

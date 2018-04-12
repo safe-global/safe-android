@@ -8,6 +8,7 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class ShareSafeAddressDialog : BaseShareAddressDialog() {
@@ -33,9 +34,9 @@ class ShareSafeAddressDialog : BaseShareAddressDialog() {
     }
 
     companion object {
-        fun create(address: String): ShareSafeAddressDialog {
+        fun create(address: Solidity.Address): ShareSafeAddressDialog {
             val bundle = Bundle()
-            bundle.putString(BaseShareAddressDialog.ADDRESS_EXTRA, address)
+            bundle.putString(BaseShareAddressDialog.ADDRESS_EXTRA, address.asEthereumAddressString())
             return ShareSafeAddressDialog().apply { arguments = bundle }
         }
     }
