@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
+import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
@@ -42,7 +43,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val ethereumRepository: EthereumRepository,
     private val settingsRepository: SettingsRepository,
-    private val txExecutorRepository: TxExecutorRepository
+    private val txExecutorRepository: TxExecutorRepository,
+    private val pushServiceRepository: PushServiceRepository
 ) : GnosisSafeRepository {
 
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
@@ -148,12 +150,22 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .map {
                 safeDao.removePendingSafe(hash.hexAsBigInteger())
                 safeDao.insertSafe(GnosisSafeDb(it.first, it.second.name))
-                it.first.asEthereumAddressString()
+                it
             }
+            .flatMap { sendSafeCreationPush(it.first).andThen(Observable.just(it.first.asEthereumAddressString())) }
             .doOnError {
                 safeDao.removePendingSafe(hash.hexAsBigInteger())
             }
     }
+
+    private fun sendSafeCreationPush(safeAddress: Solidity.Address) =
+        Single.zip(
+            accountsRepository.loadActiveAccount().map { it.address },
+            loadInfo(safeAddress).firstOrError().map { it.owners },
+            BiFunction<Solidity.Address, List<Solidity.Address>, Set<Solidity.Address>> { deviceAddress, owners -> (owners - deviceAddress).toSet() }
+        )
+            .flatMapCompletable { pushServiceRepository.sendSafeCreationNotification(safeAddress, it) }
+            .onErrorComplete()
 
     private fun decodeCreationEventOrNull(event: TransactionReceipt.Event) =
         nullOnThrow { ProxyFactory.Events.ProxyCreation.decode(event.topics, event.data) }

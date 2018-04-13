@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.common.di
+package pm.gnosis.heimdall.di
 
 import android.arch.lifecycle.ViewModel
 import dagger.MapKey

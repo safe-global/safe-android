@@ -10,8 +10,8 @@ import android.os.HandlerThread
 import android.view.Surface
 import android.view.TextureView
 import android.view.WindowManager
-import pm.gnosis.svalinn.common.di.ForView
-import pm.gnosis.svalinn.common.di.ViewContext
+import pm.gnosis.heimdall.di.ForView
+import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.utils.nullOnThrow
 import timber.log.Timber
 import javax.inject.Inject

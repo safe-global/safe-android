@@ -5,16 +5,15 @@ import android.support.multidex.MultiDexApplication
 import io.reactivex.plugins.RxJavaPlugins
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
-import pm.gnosis.heimdall.common.di.components.ApplicationComponent
-import pm.gnosis.heimdall.common.di.components.DaggerApplicationComponent
-import pm.gnosis.svalinn.common.di.modules.CoreModule
+import pm.gnosis.heimdall.di.components.ApplicationComponent
+import pm.gnosis.heimdall.di.components.DaggerApplicationComponent
+import pm.gnosis.heimdall.di.modules.ApplicationModule
 import timber.log.Timber
 import java.security.Security
 
 class HeimdallApplication : MultiDexApplication() {
     val component: ApplicationComponent = DaggerApplicationComponent.builder()
-        .coreModule(CoreModule(this))
-        .build()
+        .applicationModule(ApplicationModule(this)).build()
 
     override fun onCreate() {
         super.onCreate()
@@ -22,7 +21,7 @@ class HeimdallApplication : MultiDexApplication() {
         // Init crash tracker to track unhandled exceptions
         component.crashTracker().init()
         RxJavaPlugins.setErrorHandler(Timber::e)
-        component.signaturePushRepositoryRepository().init()
+        component.signaturePushRepository().init()
         component.billingRepository().init()
 
         try {

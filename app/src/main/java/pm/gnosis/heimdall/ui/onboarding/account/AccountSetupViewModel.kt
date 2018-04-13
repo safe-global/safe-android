@@ -4,6 +4,7 @@ import com.google.android.gms.auth.api.credentials.Credential
 import io.reactivex.Completable
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.heimdall.helpers.GoogleSmartLockHelper
 import pm.gnosis.heimdall.helpers.NoCredentialsStoredException
 import pm.gnosis.mnemonic.Bip39
@@ -14,7 +15,8 @@ import javax.inject.Inject
 class AccountSetupViewModel @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val bip39: Bip39,
-    private val googleSmartLockRepository: GoogleSmartLockHelper
+    private val googleSmartLockRepository: GoogleSmartLockHelper,
+    private val pushServiceRepository: PushServiceRepository
 ) : AccountSetupContract() {
     private var mnemonic: String? = null
 
@@ -52,6 +54,7 @@ class AccountSetupViewModel @Inject constructor(
 
     private fun setAccountFromMnemonic(mnemonic: String): Completable =
         accountsRepository.saveAccountFromMnemonicSeed(bip39.mnemonicToSeed(mnemonic))
+            .doOnComplete { pushServiceRepository.syncAuthentication() }
             .andThen(accountsRepository.saveMnemonic(mnemonic))
             .doOnComplete { this.mnemonic = null }
 

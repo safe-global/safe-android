@@ -1,9 +1,11 @@
-package pm.gnosis.heimdall.common.di.modules
+package pm.gnosis.heimdall.di.modules
 
 import dagger.Binds
 import dagger.Module
 import pm.gnosis.heimdall.data.remote.MessageQueueRepository
+import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.heimdall.data.remote.impls.FirebaseMessageQueueRepository
+import pm.gnosis.heimdall.data.remote.impls.GnosisSafePushServiceRepository
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.*
 import pm.gnosis.heimdall.helpers.*
@@ -11,10 +13,6 @@ import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.impl.FabricCrashTracker
 import pm.gnosis.heimdall.reporting.impl.FabricEventTracker
-import pm.gnosis.mnemonic.android.DefaultWordListProvider
-import pm.gnosis.mnemonic.wordlists.WordListProvider
-import pm.gnosis.svalinn.common.utils.QrCodeGenerator
-import pm.gnosis.svalinn.common.utils.ZxingQrCodeGenerator
 import javax.inject.Singleton
 
 @Module
@@ -62,7 +60,7 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsQrCodeGenerator(generator: ZxingQrCodeGenerator): QrCodeGenerator
+    abstract fun bindsPushServiceRepository(repository: GnosisSafePushServiceRepository): PushServiceRepository
 
     @Binds
     @Singleton
@@ -95,8 +93,4 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsTxExecutorRepository(repository: DefaultTxExecutorRepository): TxExecutorRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindsWordlistProvider(wordListProvider: DefaultWordListProvider): WordListProvider
 }

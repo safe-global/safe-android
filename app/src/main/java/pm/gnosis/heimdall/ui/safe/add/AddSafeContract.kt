@@ -19,6 +19,8 @@ abstract class AddSafeContract : ViewModel() {
 
     abstract fun deployNewSafe(name: String): Single<Result<String>>
 
+    abstract fun deployNewSafe(name: String, additionalOwners: Set<Solidity.Address>): Single<Result<String>>
+
     abstract fun saveTransactionHash(transactionHash: String, name: String): Completable
 
     abstract fun loadFiatConversion(wei: Wei): Single<Result<Pair<BigDecimal, Currency>>>

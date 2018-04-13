@@ -10,7 +10,6 @@ import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
-import java.math.BigInteger
 
 abstract class SafeTransactionsContract : ViewModel() {
     abstract fun setup(address: Solidity.Address)

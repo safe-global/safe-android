@@ -14,6 +14,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
@@ -34,11 +35,14 @@ class UnlockViewModelTest {
     @Mock
     lateinit var encryptionManagerMock: EncryptionManager
 
+    @Mock
+    private lateinit var pushServiceRepositoryMock: PushServiceRepository
+
     lateinit var viewModel: UnlockViewModel
 
     @Before
     fun setup() {
-        viewModel = UnlockViewModel(contextMock, encryptionManagerMock)
+        viewModel = UnlockViewModel(contextMock, encryptionManagerMock, pushServiceRepositoryMock)
         given(contextMock.getString(anyInt(), any())).willReturn(TEST_STRING)
     }
 

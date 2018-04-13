@@ -19,10 +19,10 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.fromDb
 import pm.gnosis.heimdall.data.repositories.models.toDb
+import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.PreferencesManager
-import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.ERC20
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.hexAsBigIntegerOrNull

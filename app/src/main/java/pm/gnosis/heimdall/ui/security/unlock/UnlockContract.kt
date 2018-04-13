@@ -9,6 +9,7 @@ abstract class UnlockContract : ViewModel() {
     abstract fun checkState(forceConfirmCredentials: Boolean): Observable<Result<State>>
     abstract fun unlock(password: String): Observable<Result<State>>
     abstract fun observeFingerprint(): Observable<Result<FingerprintUnlockResult>>
+    abstract fun syncPushAuthentication()
 
     enum class State {
         UNINITIALIZED,

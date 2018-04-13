@@ -4,10 +4,11 @@ import android.content.Context
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.remote.PushServiceRepository
+import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.mnemonic.*
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
-import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import javax.inject.Inject
@@ -15,7 +16,8 @@ import javax.inject.Inject
 class RestoreAccountViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val accountsRepository: AccountsRepository,
-    private val bip39: Bip39
+    private val bip39: Bip39,
+    private val pushServiceRepository: PushServiceRepository
 ) : RestoreAccountContract() {
 
     private val errorHandler = SimpleLocalizedException.Handler.Builder(context)
@@ -29,6 +31,7 @@ class RestoreAccountViewModel @Inject constructor(
             .subscribeOn(Schedulers.computation())
             .flatMap {
                 accountsRepository.saveAccountFromMnemonicSeed(bip39.mnemonicToSeed(mnemonic))
+                    .doOnComplete { pushServiceRepository.syncAuthentication() }
                     .andThen(accountsRepository.saveMnemonic(mnemonic))
                     .andThen(Single.just(Unit))
             }

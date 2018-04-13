@@ -14,6 +14,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.MnemonicNotInWordlist
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
@@ -39,13 +40,16 @@ class RestoreAccountViewModelTest {
     @Mock
     private lateinit var bip39Mock: Bip39
 
+    @Mock
+    private lateinit var pushServiceRepositoryMock: PushServiceRepository
+
     private lateinit var viewModel: RestoreAccountViewModel
 
     private val testMnemonic = "abstract inspire axis monster urban order rookie over volume poverty horse rack"
 
     @Before
     fun setUp() {
-        viewModel = RestoreAccountViewModel(contextMock, accountsRepositoryMock, bip39Mock)
+        viewModel = RestoreAccountViewModel(contextMock, accountsRepositoryMock, bip39Mock, pushServiceRepositoryMock)
     }
 
     @Test

@@ -10,7 +10,7 @@ import android.graphics.Color
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import pm.gnosis.heimdall.R
-import pm.gnosis.svalinn.common.di.ApplicationContext
+import pm.gnosis.heimdall.di.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 

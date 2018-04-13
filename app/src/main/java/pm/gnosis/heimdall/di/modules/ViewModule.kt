@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.common.di.modules
+package pm.gnosis.heimdall.di.modules
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -8,16 +8,21 @@ import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.LinearLayoutManager
 import dagger.Module
 import dagger.Provides
+import pm.gnosis.heimdall.di.ForView
+import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
+import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
+import pm.gnosis.heimdall.ui.safe.create.PairingContract
+import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
@@ -41,8 +46,6 @@ import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsCon
 import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.AddRecoveryExtensionContract
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract
-import pm.gnosis.svalinn.common.di.ForView
-import pm.gnosis.svalinn.common.di.ViewContext
 
 @Module
 class ViewModule(val context: Context) {
@@ -105,6 +108,10 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
+    fun providesDebugSettingsContract(provider: ViewModelProvider) = provider[DebugSettingsContract::class.java]
+
+    @Provides
+    @ForView
     fun providesGenerateMnemonicContract(provider: ViewModelProvider) = provider[GenerateMnemonicContract::class.java]
 
     @Provides
@@ -114,6 +121,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesNetworkSettingsContract(provider: ViewModelProvider) = provider[NetworkSettingsContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesPairingContract(provider: ViewModelProvider) = provider[PairingContract::class.java]
 
     @Provides
     @ForView
@@ -150,6 +161,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesSafeOverviewContract(provider: ViewModelProvider) = provider[SafeOverviewContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesSafeRecoveryPhraseContract(provider: ViewModelProvider) = provider[SafeRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView

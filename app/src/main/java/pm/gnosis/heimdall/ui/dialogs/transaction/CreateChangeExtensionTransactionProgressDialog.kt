@@ -3,11 +3,11 @@ package pm.gnosis.heimdall.ui.dialogs.transaction
 import android.os.Bundle
 import io.reactivex.Single
 import pm.gnosis.heimdall.HeimdallApplication
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress

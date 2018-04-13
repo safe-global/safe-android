@@ -18,8 +18,8 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_unlock.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
@@ -146,6 +146,7 @@ class UnlockActivity : SecuredBaseActivity() {
         when (state) {
             UnlockContract.State.UNINITIALIZED -> startActivity(createIntentToCloseApp(this))
             UnlockContract.State.UNLOCKED -> animateHandle(handleRotation + 360f, {
+                viewModel.syncPushAuthentication()
                 setResult(Activity.RESULT_OK)
                 finish()
             })
