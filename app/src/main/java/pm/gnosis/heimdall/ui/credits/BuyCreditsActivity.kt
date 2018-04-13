@@ -12,7 +12,8 @@ import pm.gnosis.heimdall.common.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 
 

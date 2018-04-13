@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.utils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
@@ -58,8 +59,8 @@ class GnoSafeUrlParserTest {
 
     companion object {
         private const val TEST_HASH = "Some_Hash"
-        private val TEST_SAFE = BigInteger.valueOf(456789)
-        private val TEST_TO = BigInteger.valueOf(987654)
+        private val TEST_SAFE = Solidity.Address(BigInteger.valueOf(456789))
+        private val TEST_TO = Solidity.Address(BigInteger.valueOf(987654))
         private val TEST_NONCE = BigInteger.ZERO
     }
 }

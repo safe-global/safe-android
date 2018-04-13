@@ -21,8 +21,8 @@ import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -35,7 +35,7 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
     private var cachedAddOwnerInfo: Pair<String, Int>? = null
 
     override fun loadFormData(preset: Transaction?): Single<Pair<String, Int>> =
-            // Check if we have a cached value
+    // Check if we have a cached value
         cachedAddOwnerInfo?.let { Single.just(it) } ?:
         // Else parse preset to extract address
         preset?.let {
@@ -45,7 +45,7 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
                     when (data) {
                         is AddSafeOwnerData -> data.let {
                             val address =
-                                if (it.newOwner == BigInteger.ZERO) ""
+                                if (it.newOwner == Solidity.Address(BigInteger.ZERO)) ""
                                 else it.newOwner.asEthereumAddressString()
                             address to it.newThreshold
                         }
@@ -58,7 +58,7 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
                 .onErrorReturnItem(EMPTY_FORM_DATA)
         } ?: Single.just(EMPTY_FORM_DATA)
 
-    override fun inputTransformer(safeAddress: BigInteger?) = ObservableTransformer<CharSequence, Result<Transaction>> {
+    override fun inputTransformer(safeAddress: Solidity.Address?) = ObservableTransformer<CharSequence, Result<Transaction>> {
         Observable.combineLatest(
             loadSafeInfo(safeAddress),
             it,
@@ -73,19 +73,19 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
             }
     }
 
-    private fun loadSafeInfo(safeAddress: BigInteger?) =
+    private fun loadSafeInfo(safeAddress: Solidity.Address?) =
         safeAddress?.let {
             safeRepository.loadInfo(safeAddress)
                 .map { it.toOptional() }
                 .onErrorReturnItem(None)
         } ?: Observable.just(None)
 
-    private fun buildTransaction(input: String, safe: BigInteger?, safeInfo: SafeInfo?): Transaction {
+    private fun buildTransaction(input: String, safe: Solidity.Address?, safeInfo: SafeInfo?): Transaction {
         if (input.isBlank()) {
             throw TransactionInputException(context.getString(R.string.invalid_ethereum_address), TransactionInputException.TARGET_FIELD, false)
         }
-        val newOwner = input.hexAsEthereumAddressOrNull()
-        if (newOwner == null || newOwner == BigInteger.ZERO) {
+        val newOwner = input.asEthereumAddress()
+        if (newOwner == null || newOwner == Solidity.Address(BigInteger.ZERO)) {
             throw TransactionInputException(context.getString(R.string.invalid_ethereum_address), TransactionInputException.TARGET_FIELD, true)
         }
         // If we have safe info we should check that the owner does not exist yet
@@ -96,13 +96,13 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
         SimpleLocalizedException.assert(safe != null, context, R.string.unknown_error)
         val newThreshold = cachedAddOwnerInfo?.second ?: safeInfo?.owners?.size?.let { GnosisSafeUtils.calculateThreshold(it + 1) }
         SimpleLocalizedException.assert(newThreshold != null, context, R.string.unknown_error)
-        val addOwnerData = GnosisSafe.AddOwner.encode(Solidity.Address(newOwner), Solidity.UInt8(BigInteger.valueOf(newThreshold!!.toLong())))
+        val addOwnerData = GnosisSafe.AddOwner.encode(newOwner, Solidity.UInt8(BigInteger.valueOf(newThreshold!!.toLong())))
         // Update cached values
         cachedAddOwnerInfo = input to newThreshold
         return Transaction(safe!!, data = addOwnerData)
     }
 
-    override fun loadAction(safeAddress: BigInteger?, transaction: Transaction?): Single<Action> =
+    override fun loadAction(safeAddress: Solidity.Address?, transaction: Transaction?): Single<Action> =
         transaction?.let {
             detailsRepository.loadTransactionData(transaction)
                 .flatMap {

@@ -60,12 +60,12 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .map { it.map { it.fromDb() } }
             .subscribeOn(Schedulers.io())!!
 
-    override fun observeSafe(address: BigInteger): Flowable<Safe> =
+    override fun observeSafe(address: Solidity.Address): Flowable<Safe> =
         safeDao.observeSafe(address)
             .subscribeOn(Schedulers.io())
             .map { it.fromDb() }
 
-    override fun loadSafe(address: BigInteger): Single<Safe> =
+    override fun loadSafe(address: Solidity.Address): Single<Safe> =
         safeDao.loadSafe(address)
             .subscribeOn(Schedulers.io())
             .map { it.fromDb() }
@@ -75,18 +75,17 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .map { it.fromDb() }
 
-    override fun addSafe(address: BigInteger, name: String) =
+    override fun addSafe(address: Solidity.Address, name: String) =
         Completable.fromCallable {
             safeDao.insertSafe(GnosisSafeDb(address, name))
         }.subscribeOn(Schedulers.io())!!
 
-    private fun loadSafeDeployTransactionWithSender(devices: Set<BigInteger>, requiredConfirmations: Int): Single<Pair<Account, Transaction>> =
+    private fun loadSafeDeployTransactionWithSender(devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<Pair<Account, Transaction>> =
         accountsRepository.loadActiveAccount()
             .map { account ->
                 val factoryAddress = settingsRepository.getProxyFactoryAddress()
                 val masterCopyAddress = settingsRepository.getSafeMasterCopyAddress()
-                val owners =
-                    SolidityBase.Vector((devices + account.address).map { Solidity.Address(it) })
+                val owners = SolidityBase.Vector(devices.toList() + account.address)
                 val confirmations = Math.max(1, Math.min(requiredConfirmations, devices.size))
                 val setupData = GnosisSafe.Setup.encode(
                     // Safe owner info
@@ -94,17 +93,14 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     // Extension info -> not set for now
                     Solidity.Address(BigInteger.ZERO), Solidity.Bytes(ByteArray(0))
                 )
-                val data = ProxyFactory.CreateProxy.encode(
-                    Solidity.Address(masterCopyAddress),
-                    Solidity.Bytes(setupData.hexStringToByteArray())
-                )
+                val data = ProxyFactory.CreateProxy.encode(masterCopyAddress, Solidity.Bytes(setupData.hexStringToByteArray()))
                 account to Transaction(factoryAddress, data = data)
             }
 
-    override fun loadSafeDeployTransaction(devices: Set<BigInteger>, requiredConfirmations: Int): Single<Transaction> =
+    override fun loadSafeDeployTransaction(devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<Transaction> =
         loadSafeDeployTransactionWithSender(devices, requiredConfirmations).map { it.second }
 
-    override fun deploy(name: String, devices: Set<BigInteger>, requiredConfirmations: Int): Single<String> {
+    override fun deploy(name: String, devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<String> {
         return loadSafeDeployTransactionWithSender(devices, requiredConfirmations)
             .map { (_, tx) -> tx }
             .flatMapObservable(txExecutorRepository::execute)
@@ -127,12 +123,12 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 if (it.status != null) {
                     it.logs.forEach {
                         decodeCreationEventOrNull(it)?.let {
-                            return@flatMap Observable.just(it.proxy.value)
+                            return@flatMap Observable.just(it.proxy)
                         }
                     }
-                    Observable.error<BigInteger>(SafeDeploymentFailedException())
+                    Observable.error<Solidity.Address>(SafeDeploymentFailedException())
                 } else {
-                    Observable.error<BigInteger>(IllegalStateException())
+                    Observable.error<Solidity.Address>(IllegalStateException())
                 }
             }
             .retryWhen {
@@ -162,17 +158,17 @@ class DefaultGnosisSafeRepository @Inject constructor(
     private fun decodeCreationEventOrNull(event: TransactionReceipt.Event) =
         nullOnThrow { ProxyFactory.Events.ProxyCreation.decode(event.topics, event.data) }
 
-    override fun removeSafe(address: BigInteger) =
+    override fun removeSafe(address: Solidity.Address) =
         Completable.fromCallable {
             safeDao.removeSafe(address)
         }.subscribeOn(Schedulers.io())!!
 
-    override fun updateName(address: BigInteger, newName: String) =
+    override fun updateName(address: Solidity.Address, newName: String) =
         Completable.fromCallable {
             safeDao.updateSafe(GnosisSafeDb(address, newName))
         }.subscribeOn(Schedulers.io())!!
 
-    override fun loadInfo(address: BigInteger): Observable<SafeInfo> =
+    override fun loadInfo(address: Solidity.Address): Observable<SafeInfo> =
         accountsRepository.loadActiveAccount()
             .map {
                 SafeInfoRequest(
@@ -188,7 +184,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     EthCall(
                         transaction = Transaction(
                             address = address,
-                            data = GnosisSafe.IsOwner.encode(Solidity.Address(it.address))
+                            data = GnosisSafe.IsOwner.encode(it.address)
                         ), id = 3
                     )
                 )
@@ -196,19 +192,13 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .flatMapObservable { bulk -> ethereumRepository.request(bulk) }
             .map {
                 val balance = it.balance.result() ?: throw IllegalArgumentException()
-                val threshold =
-                    Threshold.decode(it.threshold.result() ?: throw IllegalArgumentException())
-                        .param0.value.toLong()
-                val owners =
-                    GetOwners.decode(it.owners.result() ?: throw IllegalArgumentException())
-                        .param0.items.map { it.value }
-                val isOwner =
-                    IsOwner.decode(it.isOwner.result() ?: throw IllegalArgumentException())
-                        .param0.value
+                val threshold = Threshold.decode(it.threshold.result() ?: throw IllegalArgumentException()).param0.value.toLong()
+                val owners = GetOwners.decode(it.owners.result() ?: throw IllegalArgumentException()).param0.items
+                val isOwner = IsOwner.decode(it.isOwner.result() ?: throw IllegalArgumentException()).param0.value
                 SafeInfo(address.asEthereumAddressString(), balance, threshold, owners, isOwner)
             }
 
-    override fun observeTransactionDescriptions(address: BigInteger): Flowable<List<String>> = descriptionsDao.observeDescriptions(address)
+    override fun observeTransactionDescriptions(address: Solidity.Address): Flowable<List<String>> = descriptionsDao.observeDescriptions(address)
 
     private class SafeInfoRequest(
         val balance: EthRequest<Wei>,

@@ -21,22 +21,20 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
-import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
-import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.utils.*
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Provider
 
 class SubmitTransactionActivity : ViewTransactionActivity() {
@@ -53,8 +51,8 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
     private var credentialsConfirmed: Boolean = false
     private var pendingSignature: String? = null
 
-    private val transactionInfoTransformer: ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Result<ViewTransactionContract.Info>> =
-        ObservableTransformer { up: Observable<Pair<BigInteger?, Result<Transaction>>> ->
+    private val transactionInfoTransformer: ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, Result<ViewTransactionContract.Info>> =
+        ObservableTransformer { up: Observable<Pair<Solidity.Address?, Result<Transaction>>> ->
             up
                 .doOnNext { setUnknownTransactionInfo() }
                 .checkedFlatMap { safeAddress, transaction ->
@@ -180,7 +178,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
             }
         }
 
-    override fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any> =
+    override fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, Any> =
         ObservableTransformer {
             // Load execution information (hash, transaction with correct nonce, owner info)
             it.compose(transactionInfoTransformer).publish {
@@ -232,11 +230,11 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         })
     }
 
-    private fun startSafeTransactionsActivity(safeAddress: BigInteger) {
+    private fun startSafeTransactionsActivity(safeAddress: Solidity.Address) {
         startActivity(
             SafeMainActivity.createIntent(
                 this,
-                safeAddress,
+                safeAddress.value,
                 R.string.tab_title_transactions
             )
         )
@@ -294,7 +292,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
                 layout_submit_transaction_send_signature_push_progress.visible(false)
             }
 
-    private fun submitTransaction(safe: BigInteger, transaction: Transaction) =
+    private fun submitTransaction(safe: Solidity.Address, transaction: Transaction) =
         viewModel.submitTransaction(safe, transaction)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { submittingTransaction(true) }
@@ -357,7 +355,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         }
     }
 
-    private fun addSignerView(index: Int, address: BigInteger, pending: Boolean, name: String? = null) {
+    private fun addSignerView(index: Int, address: Solidity.Address, pending: Boolean, name: String? = null) {
         val child = layout_submit_transaction_confirmations_addresses.getChildAt(index)
         val vh = child?.tag as? SignatureAddressInfoViewHolder
         if (vh?.currentAddress == address) {
@@ -397,7 +395,7 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
 
         private var currentName: String? = null
 
-        fun bind(name: String?, address: BigInteger, pending: Boolean) {
+        fun bind(name: String?, address: Solidity.Address, pending: Boolean) {
             currentName = currentName ?: name
             bind(address)
             view.apply {
@@ -421,12 +419,12 @@ class SubmitTransactionActivity : ViewTransactionActivity() {
         }
     }
 
-    private data class CachedTransactionData(val safeAddress: BigInteger, val transaction: Transaction)
+    private data class CachedTransactionData(val safeAddress: Solidity.Address, val transaction: Transaction)
 
     companion object {
         private const val REQUEST_CODE_CONFIRM_CREDENTIALS = 2342
 
-        fun createIntent(context: Context, safeAddress: BigInteger?, transaction: Transaction) =
+        fun createIntent(context: Context, safeAddress: Solidity.Address?, transaction: Transaction) =
             Intent(context, SubmitTransactionActivity::class.java).apply {
                 putExtras(createBundle(safeAddress, transaction))
             }

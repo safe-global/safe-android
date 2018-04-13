@@ -7,7 +7,8 @@ import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.reporting.ScreenId
-import java.math.BigInteger
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class ShareSafeAddressDialog : BaseShareAddressDialog() {
@@ -17,12 +18,12 @@ class ShareSafeAddressDialog : BaseShareAddressDialog() {
 
     override fun screenId() = ScreenId.DIALOG_SHARE_SAFE
 
-    override fun addressSourceObservable(): Observable<Pair<String?, BigInteger?>> =
+    override fun addressSourceObservable(): Observable<Pair<String?, Solidity.Address?>> =
         address?.let {
             safeRepository.observeSafe(it)
                 .toObservable()
                 .map { it.name to address }
-        } ?: Observable.just<Pair<String?, BigInteger?>>("" to address)
+        } ?: Observable.just<Pair<String?, Solidity.Address?>>("" to address)
 
     override fun inject() {
         DaggerViewComponent.builder()
@@ -33,9 +34,9 @@ class ShareSafeAddressDialog : BaseShareAddressDialog() {
     }
 
     companion object {
-        fun create(address: String): ShareSafeAddressDialog {
+        fun create(address: Solidity.Address): ShareSafeAddressDialog {
             val bundle = Bundle()
-            bundle.putString(BaseShareAddressDialog.ADDRESS_EXTRA, address)
+            bundle.putString(BaseShareAddressDialog.ADDRESS_EXTRA, address.asEthereumAddressString())
             return ShareSafeAddressDialog().apply { arguments = bundle }
         }
     }

@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.layout_no_safes.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
@@ -16,11 +14,9 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asTransactionHash
 import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.hexAsEthereumAddress
 import timber.log.Timber
 import javax.inject.Inject
 

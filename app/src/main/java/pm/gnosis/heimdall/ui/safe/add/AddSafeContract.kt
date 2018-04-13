@@ -6,16 +6,16 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.ticker.data.repositories.models.Currency
 import java.math.BigDecimal
-import java.math.BigInteger
 
 abstract class AddSafeContract : ViewModel() {
-    abstract fun addExistingSafe(name: String, address: String): Single<Result<BigInteger>>
+    abstract fun addExistingSafe(name: String, address: String): Single<Result<Solidity.Address>>
 
     abstract fun deployNewSafe(name: String): Single<Result<String>>
 
@@ -25,13 +25,13 @@ abstract class AddSafeContract : ViewModel() {
 
     abstract fun addAdditionalOwner(input: String): Observable<Result<Unit>>
 
-    abstract fun removeAdditionalOwner(address: BigInteger): Observable<Result<Unit>>
+    abstract fun removeAdditionalOwner(address: Solidity.Address): Observable<Result<Unit>>
 
-    abstract fun setupDeploy(): Single<BigInteger>
+    abstract fun setupDeploy(): Single<Solidity.Address>
 
     abstract fun estimateDeploy(): Single<Result<FeeEstimate>>
 
-    abstract fun observeAdditionalOwners(): Observable<List<BigInteger>>
+    abstract fun observeAdditionalOwners(): Observable<List<Solidity.Address>>
 
     abstract fun loadSafeInfo(address: String): Observable<Result<SafeInfo>>
 

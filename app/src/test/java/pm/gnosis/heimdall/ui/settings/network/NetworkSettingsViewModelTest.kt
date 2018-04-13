@@ -6,19 +6,21 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -28,10 +30,10 @@ class NetworkSettingsViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var context: Context
+    private lateinit var context: Context
 
     @Mock
-    lateinit var repository: SettingsRepository
+    private lateinit var repository: SettingsRepository
 
     lateinit var viewModel: NetworkSettingsViewModel
 
@@ -107,12 +109,12 @@ class NetworkSettingsViewModelTest {
 
     @Test
     fun loadProxyFactoryAddress() {
-        given(repository.getProxyFactoryAddress()).willReturn(BigInteger.TEN)
+        given(repository.getProxyFactoryAddress()).willReturn(Solidity.Address(BigInteger.TEN))
 
         val testObserver = TestObserver<String>()
         viewModel.loadProxyFactoryAddress().subscribe(testObserver)
 
-        testObserver.assertNoErrors().assertValue(BigInteger.TEN.asEthereumAddressString()).assertComplete()
+        testObserver.assertNoErrors().assertValue(Solidity.Address(BigInteger.TEN).asEthereumAddressString()).assertComplete()
         then(repository).should().getProxyFactoryAddress()
         then(repository).shouldHaveNoMoreInteractions()
     }
@@ -123,7 +125,7 @@ class NetworkSettingsViewModelTest {
         val testObserver = TestObserver<Result<String>>()
         viewModel.updateProxyFactoryAddress(testAddress).subscribe(testObserver)
 
-        then(repository).should().setProxyFactoryAddress(testAddress)
+        then(repository).should().setProxyFactoryAddress(testAddress.asEthereumAddress())
         testObserver.assertNoErrors().assertValue {
             it is DataResult && it.data == testAddress
         }.assertComplete()
@@ -131,28 +133,13 @@ class NetworkSettingsViewModelTest {
     }
 
     @Test
-    fun updatProxyFactoryAddressFails() {
-        given(repository.setProxyFactoryAddress(anyString())).willThrow(InvalidAddressException())
-
-        val testAddress = "0x0000000000000000000000000000000000000000"
-        val testObserver = TestObserver<Result<String>>()
-        viewModel.updateProxyFactoryAddress(testAddress).subscribe(testObserver)
-
-        testObserver.assertNoErrors().assertValue {
-            it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == R.string.invalid_ethereum_address.toString()
-        }.assertTerminated()
-        then(repository).should().setProxyFactoryAddress(testAddress)
-        then(repository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
     fun loadSafeMasterCopyAddress() {
-        given(repository.getSafeMasterCopyAddress()).willReturn(BigInteger.ONE)
+        given(repository.getSafeMasterCopyAddress()).willReturn(Solidity.Address(BigInteger.ONE))
 
         val testObserver = TestObserver<String>()
         viewModel.loadSafeMasterCopyAddress().subscribe(testObserver)
 
-        testObserver.assertNoErrors().assertValue(BigInteger.ONE.asEthereumAddressString()).assertComplete()
+        testObserver.assertNoErrors().assertValue(Solidity.Address(BigInteger.ONE).asEthereumAddressString()).assertComplete()
         then(repository).should().getSafeMasterCopyAddress()
         then(repository).shouldHaveNoMoreInteractions()
     }
@@ -163,25 +150,10 @@ class NetworkSettingsViewModelTest {
         val testObserver = TestObserver<Result<String>>()
         viewModel.updateSafeMasterCopyAddress(testAddress).subscribe(testObserver)
 
-        then(repository).should().setSafeMasterCopyAddress(testAddress)
+        then(repository).should().setSafeMasterCopyAddress(testAddress.asEthereumAddress())
         testObserver.assertNoErrors().assertValue {
             it is DataResult && it.data == testAddress
         }.assertComplete()
-        then(repository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun updateMasterCopyAddressFails() {
-        given(repository.setSafeMasterCopyAddress(anyString())).willThrow(InvalidAddressException())
-
-        val testAddress = "0x0000000000000000000000000000000000000000"
-        val testObserver = TestObserver<Result<String>>()
-        viewModel.updateSafeMasterCopyAddress(testAddress).subscribe(testObserver)
-
-        testObserver.assertNoErrors().assertValue {
-            it is ErrorResult && it.error is SimpleLocalizedException && it.error.localizedMessage == R.string.invalid_ethereum_address.toString()
-        }.assertTerminated()
-        then(repository).should().setSafeMasterCopyAddress(testAddress)
         then(repository).shouldHaveNoMoreInteractions()
     }
 }

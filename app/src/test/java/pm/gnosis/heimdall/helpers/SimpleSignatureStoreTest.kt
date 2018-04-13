@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -39,7 +40,7 @@ class SimpleSignatureStoreTest {
 
     @Test
     fun completeFlow() {
-        val signaturesObserver = TestObserver<Map<BigInteger, Signature>>()
+        val signaturesObserver = TestObserver<Map<Solidity.Address, Signature>>()
         store.observe().subscribe(signaturesObserver)
         // No signatures exist we should get an empty map
         signaturesObserver.assertValuesOnly(emptyMap())
@@ -49,7 +50,7 @@ class SimpleSignatureStoreTest {
             store.add(TEST_OWNERS[0] to TEST_SIGNATURE)
         })
 
-        val mappedObserver = TestObserver<Map<BigInteger, Signature>>()
+        val mappedObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val info = TransactionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS
         )
@@ -65,7 +66,7 @@ class SimpleSignatureStoreTest {
 
         // It should not be possible to add a signature if he is not an owner
         assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_not_owner)), {
-            store.add(BigInteger.valueOf(8754) to TEST_SIGNATURE)
+            store.add(Solidity.Address(BigInteger.valueOf(8754)) to TEST_SIGNATURE)
         })
 
         // It should not be possible to add the signature of the sender
@@ -107,18 +108,18 @@ class SimpleSignatureStoreTest {
         /*
          * Checks for load methods
          */
-        val loadSignaturesObserver = TestObserver<Map<BigInteger, Signature>>()
+        val loadSignaturesObserver = TestObserver<Map<Solidity.Address, Signature>>()
         store.load().subscribe(loadSignaturesObserver)
         loadSignaturesObserver.assertResult(TEST_SIGNERS.associate { it to TEST_SIGNATURE })
 
-        val loadSigningInfoObserver = TestObserver<Pair<BigInteger, Transaction>>()
+        val loadSigningInfoObserver = TestObserver<Pair<Solidity.Address, Transaction>>()
         store.loadSingingInfo().subscribe(loadSigningInfoObserver)
         loadSigningInfoObserver.assertResult(TEST_SAFE to TEST_TRANSACTION)
 
         /*
          * Checks for changes in information
          */
-        val updateOwnersObserver = TestObserver<Map<BigInteger, Signature>>()
+        val updateOwnersObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val updateOwnersInfo = TransactionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
             TEST_OWNERS_2
@@ -145,7 +146,7 @@ class SimpleSignatureStoreTest {
         )
         updateOwnersObserver.assertValuesOnly(mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE))
 
-        val updateHashObserver = TestObserver<Map<BigInteger, Signature>>()
+        val updateHashObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val updateHashInfo = TransactionRepository.ExecuteInformation(
             "some_new_hash", TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
             TEST_OWNERS_2
@@ -190,12 +191,12 @@ class SimpleSignatureStoreTest {
     }
 
     companion object {
+        private const val TEST_TRANSACTION_HASH = "SomeHash"
         private val TEST_SIGNATURE = Signature(BigInteger.valueOf(987), BigInteger.valueOf(678), 27)
-        private val TEST_SAFE = BigInteger.ZERO
-        private val TEST_TRANSACTION_HASH = "SomeHash"
-        private val TEST_TRANSACTION = Transaction(BigInteger.ZERO, nonce = BigInteger.TEN)
-        private val TEST_SIGNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13))
-        private val TEST_OWNERS = TEST_SIGNERS + BigInteger.valueOf(5)
-        private val TEST_OWNERS_2 = listOf(BigInteger.valueOf(13), BigInteger.valueOf(23))
+        private val TEST_SAFE = Solidity.Address(BigInteger.ZERO)
+        private val TEST_TRANSACTION = Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN)
+        private val TEST_SIGNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13)).map { Solidity.Address(it) }
+        private val TEST_OWNERS = TEST_SIGNERS + Solidity.Address(BigInteger.valueOf(5))
+        private val TEST_OWNERS_2 = listOf(BigInteger.valueOf(13), BigInteger.valueOf(23)).map { Solidity.Address(it) }
     }
 }

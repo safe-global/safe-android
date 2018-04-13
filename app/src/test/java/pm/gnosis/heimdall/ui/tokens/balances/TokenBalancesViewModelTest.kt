@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -37,7 +38,7 @@ class TokenBalancesViewModelTest {
 
     private lateinit var viewModel: TokenBalancesViewModel
 
-    private val testAddress = BigInteger.ZERO
+    private val testAddress = Solidity.Address(BigInteger.ZERO)
 
     @Before
     fun setUp() {

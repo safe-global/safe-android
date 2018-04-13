@@ -14,12 +14,12 @@ import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFra
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeSafeSettingsDetailsFragment
 import pm.gnosis.heimdall.utils.setupToolbar
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 abstract class ViewTransactionActivity : BaseTransactionActivity() {
@@ -86,7 +86,7 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
         private const val EXTRA_SAFE = "extra.string.safe"
         private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"
 
-        fun createBundle(safeAddress: BigInteger?, transaction: Transaction) =
+        fun createBundle(safeAddress: Solidity.Address?, transaction: Transaction) =
             Bundle().apply {
                 putString(EXTRA_SAFE, safeAddress?.asEthereumAddressString())
                 putParcelable(EXTRA_TRANSACTION, transaction.parcelable())

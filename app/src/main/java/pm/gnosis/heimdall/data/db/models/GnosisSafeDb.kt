@@ -5,13 +5,14 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 @Entity(tableName = GnosisSafeDb.TABLE_NAME)
 data class GnosisSafeDb(
     @PrimaryKey
     @ColumnInfo(name = COL_ADDRESS)
-    var address: BigInteger,
+    var address: Solidity.Address,
 
     @ColumnInfo(name = COL_NAME)
     var name: String?

@@ -2,12 +2,11 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
-import pm.gnosis.utils.exceptions.InvalidAddressException
-import pm.gnosis.utils.hexAsEthereumAddress
-import pm.gnosis.utils.isValidEthereumAddress
-import java.math.BigInteger
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,40 +36,20 @@ class DefaultSettingsRepository @Inject constructor(
         return overrideUrlFromPreferences(PREF_KEY_RPC_IS_HTTPS, PREF_KEY_RPC_HOST, PREF_KEY_RPC_PORT)
     }
 
-    override fun needsAuth(): Boolean {
-        return true
+    override fun needsAuth() = true
+
+    override fun getProxyFactoryAddress() =
+        (preferences.getString(PREF_KEY_PROXY_FACTORY_ADDRESS, null) ?: BuildConfig.PROXY_FACTORY_ADDRESS).asEthereumAddress()!!
+
+    override fun setProxyFactoryAddress(address: Solidity.Address?) {
+        preferences.edit { putString(PREF_KEY_PROXY_FACTORY_ADDRESS, address?.asEthereumAddressString()) }
     }
 
-    override fun getProxyFactoryAddress(): BigInteger {
-        return (preferences.getString(PREF_KEY_PROXY_FACTORY_ADDRESS, null) ?: BuildConfig.PROXY_FACTORY_ADDRESS).hexAsEthereumAddress()
-    }
+    override fun getSafeMasterCopyAddress() =
+        (preferences.getString(PREF_KEY_SAFE_MASTER_COPY_ADDRESS, null) ?: BuildConfig.SAFE_MASTER_COPY_ADDRESS).asEthereumAddress()!!
 
-    @Throws(InvalidAddressException::class)
-    override fun setProxyFactoryAddress(address: String?) {
-        // Check if input address is null or blank reset to null, so that it will return the default
-        val checkAddress = if (address.isNullOrBlank()) null else address
-        if (checkAddress?.isValidEthereumAddress() == false) {
-            throw InvalidAddressException()
-        }
-        preferences.edit {
-            putString(PREF_KEY_PROXY_FACTORY_ADDRESS, checkAddress)
-        }
-    }
-
-    override fun getSafeMasterCopyAddress(): BigInteger {
-        return (preferences.getString(PREF_KEY_SAFE_MASTER_COPY_ADDRESS, null) ?: BuildConfig.SAFE_MASTER_COPY_ADDRESS).hexAsEthereumAddress()
-    }
-
-    @Throws(InvalidAddressException::class)
-    override fun setSafeMasterCopyAddress(address: String?) {
-        // Check if input address is null or blank reset to null, so that it will return the default
-        val checkAddress = if (address.isNullOrBlank()) null else address
-        if (checkAddress?.isValidEthereumAddress() == false) {
-            throw InvalidAddressException()
-        }
-        preferences.edit {
-            putString(PREF_KEY_SAFE_MASTER_COPY_ADDRESS, checkAddress)
-        }
+    override fun setSafeMasterCopyAddress(address: Solidity.Address?) {
+        preferences.edit { putString(PREF_KEY_SAFE_MASTER_COPY_ADDRESS, address?.asEthereumAddressString()) }
     }
 
     private fun overrideUrlToPreferences(

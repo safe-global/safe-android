@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
@@ -53,7 +54,7 @@ class NetworkSettingsViewModel @Inject constructor(
 
     override fun updateProxyFactoryAddress(address: String): Single<Result<String>> {
         return Single.fromCallable {
-            settingsRepository.setProxyFactoryAddress(address)
+            settingsRepository.setProxyFactoryAddress(address.asEthereumAddress()!!)
             address
         }
             .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))) }
@@ -68,7 +69,7 @@ class NetworkSettingsViewModel @Inject constructor(
 
     override fun updateSafeMasterCopyAddress(address: String): Single<Result<String>> {
         return Single.fromCallable {
-            settingsRepository.setSafeMasterCopyAddress(address)
+            settingsRepository.setSafeMasterCopyAddress(address.asEthereumAddress()!!)
             address
         }
             .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.invalid_ethereum_address))) }

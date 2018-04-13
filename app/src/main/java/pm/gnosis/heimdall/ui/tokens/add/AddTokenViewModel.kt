@@ -10,8 +10,8 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.exceptions.InvalidAddressException
-import pm.gnosis.utils.hexAsEthereumAddress
 import javax.inject.Inject
 
 class AddTokenViewModel @Inject constructor(
@@ -37,7 +37,7 @@ class AddTokenViewModel @Inject constructor(
 
     override fun loadTokenInfo(tokenAddress: String): Observable<Result<ERC20Token>> =
         Observable
-            .fromCallable { tokenAddress.hexAsEthereumAddress() }
+            .fromCallable { tokenAddress.asEthereumAddress() ?: throw InvalidAddressException(tokenAddress) }
             .flatMap { tokenRepository.loadTokenInfo(it) }
             .doOnNext { this.erc20Token = it }
             .onErrorResumeNext { throwable: Throwable -> errorHandler.observable(throwable) }

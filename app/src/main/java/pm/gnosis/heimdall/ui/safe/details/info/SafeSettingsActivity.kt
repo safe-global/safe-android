@@ -25,16 +25,15 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
-import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.setupToolbar
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
+import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
-import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -61,7 +60,7 @@ class SafeSettingsActivity : BaseActivity() {
         setContentView(R.layout.layout_safe_settings)
         setupToolbar(layout_safe_settings_toolbar)
 
-        intent.extras.getString(EXTRA_SAFE_ADDRESS).hexAsEthereumAddressOrNull()?.let {
+        intent.extras.getString(EXTRA_SAFE_ADDRESS).asEthereumAddress()?.let {
             viewModel.setup(it)
         } ?: finish()
     }
@@ -166,7 +165,7 @@ class SafeSettingsActivity : BaseActivity() {
         }
     }
 
-    private fun addOwner(address: BigInteger, index: Int, count: Int, showDelete: Boolean) {
+    private fun addOwner(address: Solidity.Address, index: Int, count: Int, showDelete: Boolean) {
         AddressInfoViewHolder(this, viewProvider).apply {
             bind(address)
             view.layout_additional_owner_delete_button.visible(showDelete)

@@ -16,24 +16,23 @@ import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
-import pm.gnosis.svalinn.common.utils.scanQrCode
 import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
-import java.math.BigInteger
 
 class RequestSignatureDialog : BaseShareQrCodeDialog() {
 
     private lateinit var transactionHash: String
     private lateinit var transaction: Transaction
-    private lateinit var safe: BigInteger
+    private lateinit var safe: Solidity.Address
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val transactionHash = arguments?.getString(TRANSACTION_HASH_EXTRA)
         val transaction = arguments?.getParcelable<TransactionParcelable>(TRANSACTION_EXTRA)?.transaction
-        val safe = arguments?.getString(SAFE_EXTRA)?.hexAsEthereumAddressOrNull()
+        val safe = arguments?.getString(SAFE_EXTRA)?.asEthereumAddress()
         if (transactionHash == null || transaction == null || safe == null) {
             dismiss()
         } else {
@@ -88,7 +87,7 @@ class RequestSignatureDialog : BaseShareQrCodeDialog() {
         private const val TRANSACTION_EXTRA = "extra.parcelable.transaction"
         private const val SAFE_EXTRA = "extra.string.safe"
 
-        fun create(transactionHash: String, transaction: Transaction, safe: BigInteger): RequestSignatureDialog {
+        fun create(transactionHash: String, transaction: Transaction, safe: Solidity.Address): RequestSignatureDialog {
             val bundle = Bundle()
             bundle.putString(TRANSACTION_HASH_EXTRA, transactionHash)
             bundle.putParcelable(TRANSACTION_EXTRA, transaction.parcelable())

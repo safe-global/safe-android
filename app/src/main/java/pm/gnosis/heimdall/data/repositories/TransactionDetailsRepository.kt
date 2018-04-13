@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.repositories
 
 import com.gojuno.koptional.Optional
 import io.reactivex.Single
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
@@ -13,14 +14,14 @@ interface TransactionDetailsRepository {
 
 data class TransactionDetails(
     val transactionId: String, val type: TransactionType, val data: TransactionTypeData?,
-    val transaction: Transaction, val safe: BigInteger, val timestamp: Long, val subject: String? = null
+    val transaction: Transaction, val safe: Solidity.Address, val timestamp: Long, val subject: String? = null
 )
 
 sealed class TransactionTypeData
-data class TokenTransferData(val recipient: BigInteger, val tokens: BigInteger) : TransactionTypeData()
-data class RemoveSafeOwnerData(val ownerIndex: BigInteger, val owner: BigInteger, val newThreshold: Int) : TransactionTypeData()
-data class AddSafeOwnerData(val newOwner: BigInteger, val newThreshold: Int) : TransactionTypeData()
-data class ReplaceSafeOwnerData(val oldOwnerIndex: BigInteger, val owner: BigInteger, val newOwner: BigInteger) : TransactionTypeData()
+data class TokenTransferData(val recipient: Solidity.Address, val tokens: BigInteger) : TransactionTypeData()
+data class RemoveSafeOwnerData(val ownerIndex: BigInteger, val owner: Solidity.Address, val newThreshold: Int) : TransactionTypeData()
+data class AddSafeOwnerData(val newOwner: Solidity.Address, val newThreshold: Int) : TransactionTypeData()
+data class ReplaceSafeOwnerData(val oldOwnerIndex: BigInteger, val owner: Solidity.Address, val newOwner: Solidity.Address) : TransactionTypeData()
 
 enum class TransactionType {
     GENERIC,

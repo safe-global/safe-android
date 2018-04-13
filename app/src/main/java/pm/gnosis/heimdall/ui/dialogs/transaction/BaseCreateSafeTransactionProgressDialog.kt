@@ -11,21 +11,21 @@ import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import pm.gnosis.heimdall.utils.errorToast
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
-import java.math.BigInteger
 
 
 abstract class BaseCreateSafeTransactionProgressDialog : BaseDialog() {
 
-    protected var safeAddress: BigInteger? = null
+    protected var safeAddress: Solidity.Address? = null
         private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setStyle(DialogFragment.STYLE_NO_FRAME, 0)
         super.onCreate(savedInstanceState)
-        safeAddress = arguments?.getString(SAFE_ADDRESS_EXTRA)?.hexAsEthereumAddressOrNull()
+        safeAddress = arguments?.getString(SAFE_ADDRESS_EXTRA)?.asEthereumAddress()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
@@ -33,7 +33,7 @@ abstract class BaseCreateSafeTransactionProgressDialog : BaseDialog() {
 
     abstract fun createTransaction(): Single<Transaction>
 
-    abstract fun showTransaction(safe: BigInteger?, transaction: Transaction)
+    abstract fun showTransaction(safe: Solidity.Address?, transaction: Transaction)
 
     override fun onStart() {
         super.onStart()
@@ -52,7 +52,7 @@ abstract class BaseCreateSafeTransactionProgressDialog : BaseDialog() {
     companion object {
         private const val SAFE_ADDRESS_EXTRA = "extra.string.safe_address"
 
-        fun createBundle(safeAddress: BigInteger) = Bundle().apply {
+        fun createBundle(safeAddress: Solidity.Address) = Bundle().apply {
             putString(SAFE_ADDRESS_EXTRA, safeAddress.asEthereumAddressString())
         }
     }

@@ -6,7 +6,7 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import pm.gnosis.heimdall.data.db.models.AddressBookEntryDb
-import java.math.BigInteger
+import pm.gnosis.model.Solidity
 
 @Dao
 interface AddressBookDao {
@@ -17,8 +17,8 @@ interface AddressBookDao {
     fun observeAddressBook(): Flowable<List<AddressBookEntryDb>>
 
     @Query("SELECT * FROM ${AddressBookEntryDb.TABLE_NAME} WHERE ${AddressBookEntryDb.COL_ADDRESS} = :address")
-    fun observeAddressBookEntry(address: BigInteger): Flowable<AddressBookEntryDb>
+    fun observeAddressBookEntry(address: Solidity.Address): Flowable<AddressBookEntryDb>
 
     @Query("DELETE FROM ${AddressBookEntryDb.TABLE_NAME} WHERE ${AddressBookEntryDb.COL_ADDRESS} = :address")
-    fun deleteAddressBookEntry(address: BigInteger)
+    fun deleteAddressBookEntry(address: Solidity.Address)
 }

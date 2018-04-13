@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepositor
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionActivity
 import pm.gnosis.heimdall.utils.scanToAdapterData
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.Result
@@ -29,9 +30,9 @@ class SafeTransactionsViewModel @Inject constructor(
     private val transactionDetailsRepository: TransactionDetailsRepository
 ) : SafeTransactionsContract() {
 
-    private var address: BigInteger? = null
+    private var address: Solidity.Address? = null
 
-    override fun setup(address: BigInteger) {
+    override fun setup(address: Solidity.Address) {
         this.address = address
     }
 
@@ -70,7 +71,7 @@ class SafeTransactionsViewModel @Inject constructor(
 
     override fun transactionSelected(id: String): Single<Intent> = Single.just(ReceiptTransactionActivity.createIntent(context, id))
 
-    private fun loadTokenValue(token: BigInteger, value: BigInteger) =
+    private fun loadTokenValue(token: Solidity.Address, value: BigInteger) =
         tokenRepository.observeToken(token)
             .map { TransferInfo(it.convertAmount(value).setScale(5).stringWithNoTrailingZeroes(), it.symbol).toOptional() }
             .first(None)

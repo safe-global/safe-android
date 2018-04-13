@@ -1,11 +1,12 @@
 package pm.gnosis.heimdall.utils
 
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.hexAsEthereumAddress
 import pm.gnosis.utils.nullOnThrow
 import java.math.BigInteger
 
@@ -19,7 +20,7 @@ object GnoSafeUrlParser {
     private const val KEY_DATA = "data"
     private const val KEY_NONCE = "nonce"
 
-    fun signRequest(hash: String, safe: BigInteger, to: BigInteger, value: Wei?, data: String?, nonce: BigInteger): String =
+    fun signRequest(hash: String, safe: Solidity.Address, to: Solidity.Address, value: Wei?, data: String?, nonce: BigInteger): String =
         "$GNOSIS_SAFE_SCHEMA$SIGN_REQUEST/$hash?" +
                 "$KEY_SAFE=${safe.asEthereumAddressString()}&" +
                 "$KEY_TO=${to.asEthereumAddressString()}&" +
@@ -40,14 +41,14 @@ object GnoSafeUrlParser {
             SIGN_REQUEST -> nullOnThrow {
                 val params = paramsAsMap(parts.getOrNull(1))
                 val transaction = Transaction(
-                    address = params[KEY_TO]!!.hexAsEthereumAddress(),
+                    address = params[KEY_TO]!!.asEthereumAddress()!!,
                     value = params[KEY_VALUE]?.hexAsBigInteger()?.let { Wei(it) },
                     data = params[KEY_DATA],
                     nonce = params[KEY_NONCE]!!.hexAsBigInteger()
                 )
                 Parsed.SignRequest(
                     path[1],
-                    params[KEY_SAFE]!!.hexAsEthereumAddress(),
+                    params[KEY_SAFE]!!.asEthereumAddress()!!,
                     transaction
                 )
 
@@ -68,7 +69,7 @@ object GnoSafeUrlParser {
         } ?: emptyMap()
 
     sealed class Parsed {
-        data class SignRequest(val transactionHash: String, val safe: BigInteger, val transaction: Transaction) : Parsed()
+        data class SignRequest(val transactionHash: String, val safe: Solidity.Address, val transaction: Transaction) : Parsed()
         data class SignResponse(val signature: Signature) : Parsed()
     }
 }

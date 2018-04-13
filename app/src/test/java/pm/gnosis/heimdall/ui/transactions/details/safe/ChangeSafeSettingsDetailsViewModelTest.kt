@@ -86,26 +86,40 @@ class ChangeSafeSettingsDetailsViewModelTest {
         then(detailsRepoMock).should().loadTransactionData(TEST_TX)
 
         // We have an add transaction, so we should get the owner and new threshold
-        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(AddSafeOwnerData(BigInteger.ONE, 1).toOptional()))
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(
+            Single.just(
+                AddSafeOwnerData(
+                    Solidity.Address(BigInteger.ONE),
+                    1
+                ).toOptional()
+            )
+        )
 
         val testObserver = TestObserver<Pair<String, Int>>()
         viewModel.loadFormData(TEST_TX).subscribe(testObserver)
 
-        testObserver.assertResult(BigInteger.ONE.asEthereumAddressString() to 1)
+        testObserver.assertResult(Solidity.Address(BigInteger.ONE).asEthereumAddressString() to 1)
         then(detailsRepoMock).should(times(2)).loadTransactionData(TEST_TX)
 
         // If we had a result it should be cached
         val cachedObserver = TestObserver<Pair<String, Int>>()
         viewModel.loadFormData(TEST_TX).subscribe(cachedObserver)
 
-        cachedObserver.assertResult(BigInteger.ONE.asEthereumAddressString() to 1)
+        cachedObserver.assertResult(Solidity.Address(BigInteger.ONE).asEthereumAddressString() to 1)
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun loadFormDataClearDefaults() {
         // Address 0x0 should be cleared (=> "")
-        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(AddSafeOwnerData(BigInteger.ZERO, 1).toOptional()))
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(
+            Single.just(
+                AddSafeOwnerData(
+                    Solidity.Address(BigInteger.ZERO),
+                    1
+                ).toOptional()
+            )
+        )
 
         val testObserver = TestObserver<Pair<String, Int>>()
         viewModel.loadFormData(TEST_TX).subscribe(testObserver)
@@ -182,7 +196,14 @@ class ChangeSafeSettingsDetailsViewModelTest {
         contextMock.mockGetStringWithArgs()
 
         // We have an add transaction, so we should get the owner and new threshold
-        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(Single.just(AddSafeOwnerData(BigInteger.ZERO, 1).toOptional()))
+        given(detailsRepoMock.loadTransactionData(MockUtils.any())).willReturn(
+            Single.just(
+                AddSafeOwnerData(
+                    Solidity.Address(BigInteger.ZERO),
+                    1
+                ).toOptional()
+            )
+        )
 
         val testObserver = TestObserver<Pair<String, Int>>()
         viewModel.loadFormData(TEST_TX).subscribe(testObserver)
@@ -192,7 +213,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
 
         // Check that the cached data is used
         given(safeRepoMock.loadInfo(MockUtils.any())).willReturn(Observable.error(UnknownHostException()))
-        val data1 = GnosisSafe.AddOwner.encode(Solidity.Address(TEST_OWNER), Solidity.UInt8(BigInteger.valueOf(1)))
+        val data1 = GnosisSafe.AddOwner.encode(TEST_OWNER, Solidity.UInt8(BigInteger.valueOf(1)))
         val data2 = GnosisSafe.AddOwner.encode(Solidity.Address(BigInteger.valueOf(2)), Solidity.UInt8(BigInteger.valueOf(1)))
         testInputTransformer(
             TEST_SAFE,
@@ -213,7 +234,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
         then(detailsRepoMock).shouldHaveNoMoreInteractions()
     }
 
-    private fun testInputTransformer(safe: BigInteger?, vararg outputs: Result<Transaction>) {
+    private fun testInputTransformer(safe: Solidity.Address?, vararg outputs: Result<Transaction>) {
 
         val inputs = PublishSubject.create<CharSequence>()
         val testObserver = TestObserver<Result<Transaction>>()
@@ -287,7 +308,7 @@ class ChangeSafeSettingsDetailsViewModelTest {
     }
 
     private fun testLoadAction(
-        safe: BigInteger?, details: Single<Optional<TransactionTypeData>>,
+        safe: Solidity.Address?, details: Single<Optional<TransactionTypeData>>,
         result: ChangeSafeSettingsDetailsContract.Action
     ) {
         val testObserver = TestObserver<ChangeSafeSettingsDetailsContract.Action>()
@@ -334,9 +355,9 @@ class ChangeSafeSettingsDetailsViewModelTest {
         contextMock.getString(this, params)
 
     companion object {
-        private val TEST_OWNER = BigInteger.valueOf(40320)
-        private val TEST_OWNER_2 = BigInteger.valueOf(42424242)
-        private val TEST_SAFE = BigInteger.valueOf(112358)
-        private val TEST_TX = Transaction(BigInteger.valueOf(314159))
+        private val TEST_OWNER = Solidity.Address(BigInteger.valueOf(40320))
+        private val TEST_OWNER_2 = Solidity.Address(BigInteger.valueOf(42424242))
+        private val TEST_SAFE = Solidity.Address(BigInteger.valueOf(112358))
+        private val TEST_TX = Transaction(Solidity.Address(BigInteger.valueOf(314159)))
     }
 }

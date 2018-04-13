@@ -28,15 +28,14 @@ import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.selectFromAddressBook
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.asEthereumAddressStringOrNull
-import pm.gnosis.utils.hexAsBigIntegerOrNull
 import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragment() {
@@ -44,11 +43,11 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
     @Inject
     lateinit var subViewModel: AssetTransferDetailsContract
 
-    private val safeSubject = BehaviorSubject.createDefault<Optional<BigInteger>>(None)
+    private val safeSubject = BehaviorSubject.createDefault<Optional<Solidity.Address>>(None)
     private val inputSubject = PublishSubject.create<AssetTransferDetailsContract.InputEvent>()
     private var cachedTransaction: Transaction? = null
 
-    private fun updateTokenInfoTransformer(token: ERC20Token) = ObservableTransformer<BigInteger, Result<ERC20TokenWithBalance>> {
+    private fun updateTokenInfoTransformer(token: ERC20Token) = ObservableTransformer<Solidity.Address, Result<ERC20TokenWithBalance>> {
         it.switchMap { subViewModel.loadTokenInfo(it, token) }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNextForResult({
@@ -69,7 +68,7 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cachedTransaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
-        safeSubject.onNext(arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull().toOptional())
+        safeSubject.onNext(arguments?.getString(ARG_SAFE)?.asEthereumAddress().toOptional())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -92,7 +91,7 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
     }
 
     private fun setupForm(info: AssetTransferDetailsContract.FormData) {
-        layout_transaction_details_asset_transfer_to_input.setDefault(info.to?.asEthereumAddressStringOrNull())
+        layout_transaction_details_asset_transfer_to_input.setDefault(info.to?.asEthereumAddressString())
         layout_transaction_details_asset_transfer_amount_input.setDefault(info.tokenAmount?.let {
             info.token?.convertAmount(it)?.stringWithNoTrailingZeroes()
         })
@@ -129,7 +128,7 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
         }
     }
 
-    override fun onAddressProvided(address: BigInteger) {
+    override fun onAddressProvided(address: Solidity.Address) {
         layout_transaction_details_asset_transfer_to_input.setText(address.asEthereumAddressString())
     }
 
@@ -151,7 +150,7 @@ class CreateAssetTransferDetailsFragment : BaseEditableTransactionDetailsFragmen
             })
     }
 
-    override fun observeSafe(): Observable<Optional<BigInteger>> = safeSubject
+    override fun observeSafe(): Observable<Optional<Solidity.Address>> = safeSubject
 
     override fun inputEnabled(enabled: Boolean) {
         layout_transaction_details_asset_transfer_to_input.isEnabled = enabled

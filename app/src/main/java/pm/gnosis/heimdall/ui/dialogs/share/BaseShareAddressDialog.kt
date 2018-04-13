@@ -10,20 +10,19 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.dialog_address_share.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.shareExternalText
 import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.asEthereumAddressStringOrNull
-import pm.gnosis.utils.hexAsEthereumAddressOrNull
 import pm.gnosis.utils.nullOnThrow
-import java.math.BigInteger
 
 abstract class BaseShareAddressDialog : BaseShareQrCodeDialog() {
 
-    protected var address: BigInteger? = null
+    protected var address: Solidity.Address? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        address = arguments?.getString(ADDRESS_EXTRA)?.hexAsEthereumAddressOrNull() ?: run {
+        address = arguments?.getString(ADDRESS_EXTRA)?.asEthereumAddress() ?: run {
             dismiss()
             null
         }
@@ -54,9 +53,9 @@ abstract class BaseShareAddressDialog : BaseShareQrCodeDialog() {
     }
 
     override fun dataSourceObservable(): Observable<Pair<String?, String?>> =
-        addressSourceObservable().map { it.first to it.second?.asEthereumAddressStringOrNull() }
+        addressSourceObservable().map { it.first to it.second?.asEthereumAddressString() }
 
-    abstract fun addressSourceObservable(): Observable<Pair<String?, BigInteger?>>
+    abstract fun addressSourceObservable(): Observable<Pair<String?, Solidity.Address?>>
 
     companion object {
         const val ADDRESS_EXTRA = "extra.string.address"

@@ -4,12 +4,12 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
-import java.math.BigInteger
 
 abstract class SafeSettingsContract : ViewModel() {
-    abstract fun setup(address: BigInteger)
-    abstract fun getSafeAddress(): BigInteger
+    abstract fun setup(address: Solidity.Address)
+    abstract fun getSafeAddress(): Solidity.Address
     abstract fun loadSafeInfo(ignoreCache: Boolean): Observable<Result<SafeInfo>>
     abstract fun loadSafeName(): Single<String>
     abstract fun updateSafeName(name: String): Single<Result<String>>

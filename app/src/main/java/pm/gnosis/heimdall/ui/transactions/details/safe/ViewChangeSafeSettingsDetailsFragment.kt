@@ -22,14 +22,14 @@ import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.InflatedViewProvider
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseReviewTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract.Action.*
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDetailsFragment() {
@@ -41,7 +41,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
     lateinit var subViewModel: ChangeSafeSettingsDetailsContract
 
     private var transaction: Transaction? = null
-    private var safe: BigInteger? = null
+    private var safe: Solidity.Address? = null
 
     @LayoutRes
     abstract fun layout(): Int
@@ -57,7 +57,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        safe = arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull()
+        safe = arguments?.getString(ARG_SAFE)?.asEthereumAddress()
         transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
     }
 
@@ -118,8 +118,7 @@ abstract class ViewChangeSafeSettingsDetailsFragment : BaseReviewTransactionDeta
             .mapToResult()
     }
 
-    override fun observeSafe(): Observable<Optional<BigInteger>> =
-        Observable.just(safe.toOptional())
+    override fun observeSafe(): Observable<Optional<Solidity.Address>> = Observable.just(safe.toOptional())
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()

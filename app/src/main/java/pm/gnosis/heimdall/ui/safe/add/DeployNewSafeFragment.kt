@@ -27,13 +27,11 @@ import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.*
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.asEthereumAddressStringOrNull
 import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.isValidEthereumAddress
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 class DeployNewSafeFragment : BaseFragment() {
@@ -185,37 +183,33 @@ class DeployNewSafeFragment : BaseFragment() {
         }
     }
 
-    private fun updateOwners(additionalOwners: List<BigInteger>) {
+    private fun updateOwners(additionalOwners: List<Solidity.Address>) {
         layout_deploy_new_safe_additional_owners_container.removeAllViews()
         additionalOwners.forEach { address ->
-            if (address.isValidEthereumAddress()) {
-                val view = layoutInflater.inflate(
-                    R.layout.layout_additional_owner_item,
-                    layout_deploy_new_safe_additional_owners_container,
-                    false
+            val view = layoutInflater.inflate(
+                R.layout.layout_additional_owner_item,
+                layout_deploy_new_safe_additional_owners_container,
+                false
+            )
+            view.layout_address_item_value.text = address.asEthereumAddressString()
+            view.layout_address_item_icon.setAddress(address)
+            disposables += view.layout_additional_owner_delete_button.clicks()
+                .flatMap { viewModel.removeAdditionalOwner(address) }
+                .subscribeForResult(
+                    {
+                        snackbar(
+                            layout_deploy_new_safe_additional_owners_container,
+                            getString(R.string.removed_x, address)
+                        )
+                    },
+                    { errorSnackbar(layout_deploy_new_safe_additional_owners_container, it) }
                 )
-                address.asEthereumAddressStringOrNull()
-                    ?.let { view.layout_address_item_value.text = it }
-                view.layout_address_item_icon.setAddress(address)
-                disposables += view.layout_additional_owner_delete_button.clicks()
-                    .flatMap { viewModel.removeAdditionalOwner(address) }
-                    .subscribeForResult(
-                        {
-                            snackbar(
-                                layout_deploy_new_safe_additional_owners_container,
-                                getString(R.string.removed_x, address)
-                            )
-                        },
-                        { errorSnackbar(layout_deploy_new_safe_additional_owners_container, it) }
-                    )
-                layout_deploy_new_safe_additional_owners_container.addView(view)
-            }
+            layout_deploy_new_safe_additional_owners_container.addView(view)
         }
 
         layout_deploy_new_safe_add_owner_button.visible(additionalOwners.size < 2)
         updateSecurityBar(additionalOwners.size)
     }
-
 
     private fun updateSecurityBar(additionalOwners: Int) {
         val securityInfoTextResource: Int

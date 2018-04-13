@@ -8,31 +8,31 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.Result
-import java.math.BigInteger
 
 abstract class ViewTransactionContract : ViewModel() {
     abstract fun checkTransactionType(transaction: Transaction): Single<TransactionType>
-    abstract fun loadExecuteInfo(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Info>>
-    abstract fun submitTransaction(safeAddress: BigInteger, transaction: Transaction): Single<Result<BigInteger>>
+    abstract fun loadExecuteInfo(safeAddress: Solidity.Address, transaction: Transaction): Observable<Result<Info>>
+    abstract fun submitTransaction(safeAddress: Solidity.Address, transaction: Transaction): Single<Result<Solidity.Address>>
     abstract fun estimateTransaction(info: Info): Single<Result<FeeEstimate>>
     abstract fun signTransaction(
-        safeAddress: BigInteger,
+        safeAddress: Solidity.Address,
         transaction: Transaction,
         sendViaPush: Boolean = false
     ): Single<Result<Pair<String, Bitmap?>>>
 
-    abstract fun loadExecutableTransaction(safeAddress: BigInteger, transaction: Transaction): Single<Transaction>
-    abstract fun addLocalTransaction(safeAddress: BigInteger, transaction: Transaction, txChainHash: String): Single<String>
-    abstract fun observeSignaturePushes(safeAddress: BigInteger, transaction: Transaction): Observable<Result<Unit>>
+    abstract fun loadExecutableTransaction(safeAddress: Solidity.Address, transaction: Transaction): Single<Transaction>
+    abstract fun addLocalTransaction(safeAddress: Solidity.Address, transaction: Transaction, txChainHash: String): Single<String>
+    abstract fun observeSignaturePushes(safeAddress: Solidity.Address, transaction: Transaction): Observable<Result<Unit>>
     abstract fun sendSignaturePush(info: Info): Single<Result<Unit>>
     abstract fun addSignature(encodedSignatureUrl: String): Completable
 
     data class Info(
-        val selectedSafe: BigInteger,
+        val selectedSafe: Solidity.Address,
         val status: TransactionRepository.ExecuteInformation,
-        val signatures: Map<BigInteger, Signature>
+        val signatures: Map<Solidity.Address, Signature>
     )
 }

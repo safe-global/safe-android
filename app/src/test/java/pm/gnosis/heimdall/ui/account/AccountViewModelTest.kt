@@ -18,6 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
@@ -130,7 +131,7 @@ class AccountViewModelTest {
     @Test
     fun getAccountAddressSuccess() {
         val observer = createObserver<Account>()
-        val account = Account(BigInteger.ZERO)
+        val account = Account(Solidity.Address(BigInteger.ZERO))
         given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
 
         viewModel.getAccountAddress().subscribe(observer)
@@ -145,7 +146,7 @@ class AccountViewModelTest {
     @Test
     fun getAccountBalanceError() {
         val observer = createObserver<Wei>()
-        val account = Account(BigInteger.ZERO)
+        val account = Account(Solidity.Address(BigInteger.ZERO))
         val exception = IllegalStateException()
         given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
         given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error<Wei>(exception))
@@ -165,7 +166,7 @@ class AccountViewModelTest {
     @Test
     fun getAccountBalanceNetworkError() {
         val observer = createObserver<Wei>()
-        val account = Account(BigInteger.ZERO)
+        val account = Account(Solidity.Address(BigInteger.ZERO))
         val response = Response.error<Any>(401, mock(ResponseBody::class.java))
         given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
         given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.error<Wei>(HttpException(response)))
@@ -185,7 +186,7 @@ class AccountViewModelTest {
     @Test
     fun getAccountBalanceSuccess() {
         val observer = createObserver<Wei>()
-        val account = Account(BigInteger.ZERO)
+        val account = Account(Solidity.Address(BigInteger.ZERO))
         val balance = Wei(BigInteger.valueOf(1000))
         given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
         given(ethereumRepositoryMock.getBalance(MockUtils.any())).willReturn(Observable.just(balance))

@@ -14,6 +14,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -37,7 +38,7 @@ class AddTokenViewModelTest {
 
     private lateinit var viewModel: AddTokenViewModel
 
-    private val testAddress = BigInteger.ZERO
+    private val testAddress = Solidity.Address(BigInteger.ZERO)
     private val testToken = ERC20Token(testAddress, decimals = 18)
 
     @Before

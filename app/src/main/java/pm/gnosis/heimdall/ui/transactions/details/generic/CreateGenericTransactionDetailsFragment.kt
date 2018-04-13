@@ -24,15 +24,15 @@ import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.selectFromAddressBook
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
-import pm.gnosis.svalinn.common.utils.scanQrCode
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asDecimalString
-import pm.gnosis.utils.asEthereumAddressStringOrNull
-import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -42,14 +42,14 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
     @Inject
     lateinit var subViewModel: GenericTransactionDetailsContract
 
-    private val safeSubject = BehaviorSubject.createDefault<Optional<BigInteger>>(None)
+    private val safeSubject = BehaviorSubject.createDefault<Optional<Solidity.Address>>(None)
     private val inputSubject = PublishSubject.create<GenericTransactionDetailsContract.InputEvent>()
     private var editable: Boolean = false
     private var originalTransaction: Transaction? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        safeSubject.onNext(arguments?.getString(ARG_SAFE)?.hexAsBigIntegerOrNull().toOptional())
+        safeSubject.onNext(arguments?.getString(ARG_SAFE)?.asEthereumAddress().toOptional())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -60,7 +60,7 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         editable = arguments?.getBoolean(ARG_EDITABLE, false) ?: false
         val transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
         originalTransaction = transaction
-        layout_transaction_details_generic_to_input.setDefault(transaction?.address?.asEthereumAddressStringOrNull())
+        layout_transaction_details_generic_to_input.setDefault(transaction?.address?.asEthereumAddressString())
         layout_transaction_details_generic_data_input.setDefault(transaction?.data)
         // If it is editable we leave the field empty if no value is present
         val value = (transaction?.value?.value ?: if (editable) null else BigInteger.ZERO)
@@ -133,7 +133,7 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
             }
     }
 
-    override fun observeSafe(): Observable<Optional<BigInteger>> = safeSubject
+    override fun observeSafe(): Observable<Optional<Solidity.Address>> = safeSubject
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder()

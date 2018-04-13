@@ -24,12 +24,12 @@ import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransacti
 import pm.gnosis.heimdall.ui.transactions.details.safe.ReceiptChangeSafeSettingsDetailsFragment
 import pm.gnosis.heimdall.utils.setupEtherscanTransactionUrl
 import pm.gnosis.heimdall.utils.setupToolbar
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 class ReceiptTransactionActivity : BaseTransactionActivity() {
@@ -73,10 +73,8 @@ class ReceiptTransactionActivity : BaseTransactionActivity() {
         )
     }
 
-    override fun transactionDataTransformer(): ObservableTransformer<Pair<BigInteger?, Result<Transaction>>, Any> =
-        ObservableTransformer {
-            it.map { Any() }
-        }
+    override fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, Any> =
+        ObservableTransformer { it.map { Any() } }
 
     override fun fragmentRegistered() {
         layout_receipt_transaction_progress_bar.visibility = View.GONE

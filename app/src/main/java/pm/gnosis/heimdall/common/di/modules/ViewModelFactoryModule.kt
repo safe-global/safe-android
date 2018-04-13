@@ -17,14 +17,14 @@ import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsViewModel
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressViewModel
+import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
+import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupViewModel
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicViewModel
 import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountContract
 import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountViewModel
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupViewModel
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupViewModel
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeViewModel
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract

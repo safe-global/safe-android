@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.data.repositories
 
 import android.app.Activity
-import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.models.Transaction

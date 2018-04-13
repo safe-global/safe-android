@@ -6,19 +6,19 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.di.ApplicationContext
-import java.math.BigInteger
 import javax.inject.Inject
 
 class SimpleSignatureStore @Inject constructor(
     @ApplicationContext private val context: Context
-) : ValueStore<Map<BigInteger, Signature>>(), SignatureStore {
+) : ValueStore<Map<Solidity.Address, Signature>>(), SignatureStore {
 
-    private val signatures = HashMap<BigInteger, Signature>()
+    private val signatures = HashMap<Solidity.Address, Signature>()
 
-    private var safeAddress: BigInteger? = null
+    private var safeAddress: Solidity.Address? = null
     private var info: TransactionRepository.ExecuteInformation? = null
         private set(value) {
             // Transaction changed, clear signatures
@@ -28,9 +28,12 @@ class SimpleSignatureStore @Inject constructor(
             field = value
         }
 
-    override fun dataSet(): Map<BigInteger, Signature> = HashMap(signatures)
+    override fun dataSet(): Map<Solidity.Address, Signature> = HashMap(signatures)
 
-    override fun flatMapInfo(safeAddress: BigInteger, info: TransactionRepository.ExecuteInformation): Observable<Map<BigInteger, Signature>> {
+    override fun flatMapInfo(
+        safeAddress: Solidity.Address,
+        info: TransactionRepository.ExecuteInformation
+    ): Observable<Map<Solidity.Address, Signature>> {
         transaction {
             this.safeAddress = safeAddress
             this.info = info
@@ -44,10 +47,10 @@ class SimpleSignatureStore @Inject constructor(
         return observe()
     }
 
-    override fun loadSingingInfo(): Single<Pair<BigInteger, Transaction>> =
+    override fun loadSingingInfo(): Single<Pair<Solidity.Address, Transaction>> =
         info?.let { Single.just(safeAddress!! to info!!.transaction) } ?: Single.error(IllegalStateException())
 
-    override fun add(signature: Pair<BigInteger, Signature>) {
+    override fun add(signature: Pair<Solidity.Address, Signature>) {
         transaction {
             SimpleLocalizedException.assert(info?.owners?.contains(signature.first) == true, context, R.string.error_signature_not_owner)
             SimpleLocalizedException.assert(info?.sender != signature.first, context, R.string.error_signature_already_exists)
@@ -55,7 +58,7 @@ class SimpleSignatureStore @Inject constructor(
             SimpleLocalizedException.assert(info?.requiredConfirmation?.let { signatures.size < it } == true,
                 context,
                 R.string.error_signature_already_exists)
-            signatures.put(signature.first, signature.second)
+            signatures[signature.first] = signature.second
         }
         // We only emit a copy of the signatures
         publish()
@@ -63,9 +66,9 @@ class SimpleSignatureStore @Inject constructor(
 }
 
 interface SignatureStore {
-    fun flatMapInfo(safeAddress: BigInteger, info: TransactionRepository.ExecuteInformation): Observable<Map<BigInteger, Signature>>
-    fun loadSingingInfo(): Single<Pair<BigInteger, Transaction>>
-    fun load(): Single<Map<BigInteger, Signature>>
-    fun observe(): Observable<Map<BigInteger, Signature>>
-    fun add(signature: Pair<BigInteger, Signature>)
+    fun flatMapInfo(safeAddress: Solidity.Address, info: TransactionRepository.ExecuteInformation): Observable<Map<Solidity.Address, Signature>>
+    fun loadSingingInfo(): Single<Pair<Solidity.Address, Transaction>>
+    fun load(): Single<Map<Solidity.Address, Signature>>
+    fun observe(): Observable<Map<Solidity.Address, Signature>>
+    fun add(signature: Pair<Solidity.Address, Signature>)
 }

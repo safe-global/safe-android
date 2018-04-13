@@ -14,6 +14,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -35,7 +36,7 @@ class TokenInfoViewModelTest {
 
     private lateinit var viewModel: TokenInfoViewModel
 
-    private val testToken = ERC20Token(BigInteger.ZERO, decimals = 18)
+    private val testToken = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 18)
 
     @Before
     fun setup() {
@@ -47,12 +48,12 @@ class TokenInfoViewModelTest {
         given(tokenRepositoryMock.observeToken(MockUtils.any())).willReturn(Flowable.just(testToken))
         given(tokenRepositoryMock.removeToken(MockUtils.any())).willReturn(TestCompletable())
 
-        viewModel.setup(BigInteger.ZERO.asEthereumAddressString())
+        viewModel.setup(Solidity.Address(BigInteger.ZERO).asEthereumAddressString())
         viewModel.observeToken().subscribe(TestObserver())
         viewModel.removeToken().subscribe(TestObserver())
 
-        then(tokenRepositoryMock).should().observeToken(BigInteger.ZERO)
-        then(tokenRepositoryMock).should().removeToken(BigInteger.ZERO)
+        then(tokenRepositoryMock).should().observeToken(Solidity.Address(BigInteger.ZERO))
+        then(tokenRepositoryMock).should().removeToken(Solidity.Address(BigInteger.ZERO))
     }
 
     @Test(expected = InvalidAddressException::class)
@@ -65,10 +66,10 @@ class TokenInfoViewModelTest {
         val testObserver = TestObserver<ERC20Token>()
         given(tokenRepositoryMock.observeToken(MockUtils.any())).willReturn(Flowable.just(testToken))
 
-        viewModel.setup(BigInteger.ZERO.asEthereumAddressString())
+        viewModel.setup(Solidity.Address(BigInteger.ZERO).asEthereumAddressString())
         viewModel.observeToken().subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().observeToken(BigInteger.ZERO)
+        then(tokenRepositoryMock).should().observeToken(Solidity.Address(BigInteger.ZERO))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(testToken).assertNoErrors()
     }
@@ -79,10 +80,10 @@ class TokenInfoViewModelTest {
         val exception = Exception()
         given(tokenRepositoryMock.observeToken(MockUtils.any())).willReturn(Flowable.error(exception))
 
-        viewModel.setup(BigInteger.ZERO.asEthereumAddressString())
+        viewModel.setup(Solidity.Address(BigInteger.ZERO).asEthereumAddressString())
         viewModel.observeToken().subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().observeToken(BigInteger.ZERO)
+        then(tokenRepositoryMock).should().observeToken(Solidity.Address(BigInteger.ZERO))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception)
     }
@@ -93,10 +94,10 @@ class TokenInfoViewModelTest {
         val testObserver = TestObserver<Result<Unit>>()
         given(tokenRepositoryMock.removeToken(MockUtils.any())).willReturn(testCompletable)
 
-        viewModel.setup(BigInteger.ZERO.asEthereumAddressString())
+        viewModel.setup(Solidity.Address(BigInteger.ZERO).asEthereumAddressString())
         viewModel.removeToken().subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().removeToken(BigInteger.ZERO)
+        then(tokenRepositoryMock).should().removeToken(Solidity.Address(BigInteger.ZERO))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, testCompletable.callCount)
         testObserver
@@ -110,10 +111,10 @@ class TokenInfoViewModelTest {
         val exception = Exception()
         given(tokenRepositoryMock.removeToken(MockUtils.any())).willReturn(Completable.error(exception))
 
-        viewModel.setup(BigInteger.ZERO.asEthereumAddressString())
+        viewModel.setup(Solidity.Address(BigInteger.ZERO).asEthereumAddressString())
         viewModel.removeToken().subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().removeToken(BigInteger.ZERO)
+        then(tokenRepositoryMock).should().removeToken(Solidity.Address(BigInteger.ZERO))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver
             .assertValue(ErrorResult(exception))

@@ -13,6 +13,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.TokenRepository
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.security.EncryptionManager
@@ -45,7 +46,7 @@ class SplashViewModelTest {
     fun initialSetupTokenSetupErrorWithAccount() {
         given(tokenRepositoryMock.setup()).willReturn(Completable.error(IllegalStateException()))
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(BigInteger.ONE)))
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(Solidity.Address(BigInteger.ONE))))
         val observer = TestObserver.create<ViewAction>()
 
         viewModel.initialSetup().subscribe(observer)
@@ -121,7 +122,7 @@ class SplashViewModelTest {
     fun initialSetupTokenSetupCompletedWithAccount() {
         given(tokenRepositoryMock.setup()).willReturn(Completable.complete())
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(BigInteger.ONE)))
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(Solidity.Address(BigInteger.ONE))))
         val observer = TestObserver.create<ViewAction>()
 
         viewModel.initialSetup().subscribe(observer)

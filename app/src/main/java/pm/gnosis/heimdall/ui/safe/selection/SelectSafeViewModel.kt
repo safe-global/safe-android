@@ -11,11 +11,11 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
-import java.math.BigInteger
 import javax.inject.Inject
 
 class SelectSafeViewModel @Inject constructor(
@@ -26,7 +26,7 @@ class SelectSafeViewModel @Inject constructor(
 
     override fun loadSafes(): Single<List<Safe>> = safeRepository.observeDeployedSafes().firstOrError()
 
-    override fun reviewTransaction(safe: BigInteger?, transaction: Transaction): Single<Result<Intent>> =
+    override fun reviewTransaction(safe: Solidity.Address?, transaction: Transaction): Single<Result<Intent>> =
         detailRepository.loadTransactionType(transaction)
             .map {
                 safe ?: throw SimpleLocalizedException(context.getString(R.string.no_safe_selected_error))
