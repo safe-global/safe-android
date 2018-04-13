@@ -63,7 +63,7 @@ class SafeSettingsViewModel @Inject constructor(
 
     override fun loadExtensionsInfo(extensions: List<Solidity.Address>): Single<Pair<Boolean, List<Pair<Extension, Solidity.Address>>>> =
         extensionRepository.loadExtensionsInfo(extensions)
-            .map { it.any { it.first != Extension.SOCIAL_RECOVERY } to it }
+            .map { it.any { it.first == Extension.SINGLE_ACCOUNT_RECOVERY } to it }
 
     private fun fromCache(ignoreCache: Boolean): Observable<SafeInfo>? {
         if (!ignoreCache) {

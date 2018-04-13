@@ -190,7 +190,7 @@
     <string name="from_safe">From safe</string>
     <string name="token_transaction_description">Once approved by all required signing devices, this transaction will transfer tokens to the specified recipient address in the <b>To</b> field.</string>
     <string name="add_owner_transaction_description">Once approved by all required signing devices, this transaction will add the address specified in the <b>Add</b> field as an owner to the safe.</string>
-    <string name="add_recovery_extension_transaction_description">Once approved by all required signing devices, this transaction will add a recovery option to the safe. This allows owner of the account specified in <b>Recoverer</b> to replace any other owner for recovery</string>
+    <string name="add_recovery_extension_transaction_description">Once approved by all required signing devices, this transaction will add a recovery option to the safe. With the recovery phrase any owner of the safe can be replaced</string>
     <string name="generic_transaction_description">Once approved by all required signing devices, this transaction will be executed by sending the <b>Data</b> and <b>Value</b> to the address in the <b>To</b> field.</string>
     <string name="error_transaction_params">Please check your transaction parameters and try again!</string>
     <string name="x_of_x_confirmations">%s/%s</string>
@@ -364,10 +364,11 @@
     <string name="enter_your_recovery_phrase">Enter your recovery phrase</string>
     <string name="show_transaction_credits">Show transaction credits</string>
     <string name="transaction_title_social_recovery_extension">a Recovery Option</string>
-    <string name="social_recovery_extension">Recovery Option</string>
+    <string name="single_account_recovery_extension">Recovery Extension</string>
+    <string name="social_recovery_extension">Recovery Extension (Deprecated)</string>
+    <string name="daily_limit_extension">Daily Limit Extension</string>
     <string name="unknown_extension">Unknown Extension</string>
     <string name="to_safe">To Safe</string>
-    <string name="recovery_owner_1">First Recover Account</string>
-    <string name="recovery_owner_2">Second Recover Account</string>
+    <string name="recovery_id">Recovery Id</string>
     <string name="add_recovery_option">Add recovery option</string>
 </resources>

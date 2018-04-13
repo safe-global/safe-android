@@ -13,7 +13,7 @@ ext {
             architecture_components: '1.0.0',
             billing                : '1.0',
             bivrost                : 'v0.6.2',
-            constraint_layout      : '1.1.0-beta6',
+            constraint_layout      : '1.1.0',
             crashlytics            : '2.8.0',
             dagger                 : '2.12',
             firebase               : '12.0.1',

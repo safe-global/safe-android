@@ -10,12 +10,13 @@ import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
 import javax.inject.Inject
 
 
-class CreateAddExtensionTransactionProgressDialog : BaseCreateSafeTransactionProgressDialog() {
+class CreateChangeExtensionTransactionProgressDialog : BaseCreateSafeTransactionProgressDialog() {
 
     @Inject
     lateinit var extensionRepository: GnosisSafeExtensionRepository
@@ -41,7 +42,19 @@ class CreateAddExtensionTransactionProgressDialog : BaseCreateSafeTransactionPro
     }
 
     override fun createTransaction(): Single<SafeTransaction> =
-        extensionRepository.buildAddRecoverExtensionTransaction(emptyList())
+        when (type) {
+            SETTINGS_TYPE_ADD_RECOVERY_EXTENSION -> extensionRepository.buildAddRecoverExtensionTransaction(Solidity.Address(BigInteger.ZERO))
+            SETTINGS_TYPE_REMOVE_EXTENSION -> loadRemoveExtensionTransaction()
+            else -> Single.error(IllegalArgumentException())
+        }
+
+    private fun loadRemoveExtensionTransaction(): Single<SafeTransaction> {
+        val safe = safeAddress ?: return Single.error(IllegalArgumentException())
+        val extension = arguments?.getString(EXTRA_EXTENSION_ADDRESS)?.asEthereumAddress() ?: return Single.error(IllegalArgumentException())
+        val index =
+            arguments?.getInt(EXTRA_EXTENSION_INDEX)?.let { BigInteger.valueOf(it.toLong()) } ?: return Single.error(IllegalArgumentException())
+        return extensionRepository.buildRemoveExtensionTransaction(safe, index, extension)
+    }
 
     override fun showTransaction(safe: Solidity.Address?, transaction: SafeTransaction) {
         startActivity(CreateTransactionActivity.createIntent(context!!, safe, mapType(), transaction))
@@ -49,19 +62,29 @@ class CreateAddExtensionTransactionProgressDialog : BaseCreateSafeTransactionPro
 
     private fun mapType() = when (type) {
         SETTINGS_TYPE_ADD_RECOVERY_EXTENSION -> TransactionType.ADD_RECOVERY_EXTENSION
+        SETTINGS_TYPE_REMOVE_EXTENSION -> TransactionType.REMOVE_EXTENSION
         else -> TransactionType.GENERIC
     }
 
     companion object {
         private const val EXTRA_SETTINGS_TYPE = "extra.int.settings_type"
+        private const val EXTRA_EXTENSION_ADDRESS = "extra.string.extension_address"
+        private const val EXTRA_EXTENSION_INDEX = "extra.string.extension_index"
 
         private const val SETTINGS_TYPE_ADD_RECOVERY_EXTENSION = 1
+        private const val SETTINGS_TYPE_REMOVE_EXTENSION = 42
 
         fun addRecoveryExtension(safeAddress: Solidity.Address) =
             create(safeAddress, SETTINGS_TYPE_ADD_RECOVERY_EXTENSION)
 
+        fun removeExtension(safeAddress: Solidity.Address, extension: Solidity.Address, index: Int) =
+            create(safeAddress, SETTINGS_TYPE_REMOVE_EXTENSION, Bundle().apply {
+                putString(EXTRA_EXTENSION_ADDRESS, extension.asEthereumAddressString())
+                putInt(EXTRA_EXTENSION_INDEX, index)
+            })
+
         private fun create(safeAddress: Solidity.Address, type: Int, params: Bundle? = null) =
-            CreateAddExtensionTransactionProgressDialog().apply {
+            CreateChangeExtensionTransactionProgressDialog().apply {
                 arguments = BaseCreateSafeTransactionProgressDialog.createBundle(safeAddress).apply {
                     putInt(EXTRA_SETTINGS_TYPE, type)
                     params?.let { putAll(it) }

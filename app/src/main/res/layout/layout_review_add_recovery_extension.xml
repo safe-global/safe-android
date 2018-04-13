@@ -49,12 +49,7 @@
 
 
     <include
-        android:id="@+id/layout_view_add_recovery_extension_recovery_owner_1_container"
-        layout="@layout/include_address_item_with_label_start_and_icon" />
-
-
-    <include
-        android:id="@+id/layout_view_add_recovery_extension_recovery_owner_2_container"
+        android:id="@+id/layout_view_add_recovery_extension_recovery_owner_container"
         layout="@layout/include_address_item_with_label_start_and_icon" />
 
 

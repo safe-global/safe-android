@@ -12,8 +12,9 @@ import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateAddExtensionTransactionProgressDialog
+import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeExtensionTransactionProgressDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
+import pm.gnosis.heimdall.ui.extensions.recovery.RecoveryStatusActivity
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicActivity
@@ -93,6 +94,7 @@ interface ViewComponent {
     fun inject(activity: PasswordSetupActivity)
     fun inject(activity: QRCodeScanActivity)
     fun inject(activity: ReceiptTransactionActivity)
+    fun inject(activity: RecoveryStatusActivity)
     fun inject(activity: RestoreAccountActivity)
     fun inject(activity: RevealMnemonicActivity)
     fun inject(activity: SafeMainActivity)
@@ -110,7 +112,7 @@ interface ViewComponent {
 
     // Dialogs
 
-    fun inject(dialog: CreateAddExtensionTransactionProgressDialog)
+    fun inject(dialog: CreateChangeExtensionTransactionProgressDialog)
     fun inject(dialog: CreateTokenTransactionProgressDialog)
     fun inject(dialog: FingerprintDialog)
     fun inject(dialog: RequestSignatureDialog)

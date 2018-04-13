@@ -24,17 +24,14 @@ import pm.gnosis.heimdall.ui.transactions.details.base.BaseReviewTransactionDeta
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.hexAsBigIntegerOrNull
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
 abstract class ViewAddRecoveryExtensionDetailsFragment : BaseReviewTransactionDetailsFragment() {
 
-    private val firstRecoveryAccViewProvider by lazy { InflatedViewProvider(layout_view_add_recovery_extension_recovery_owner_1_container) }
-    private val secondRecoveryAccViewProvider by lazy { InflatedViewProvider(layout_view_add_recovery_extension_recovery_owner_2_container) }
+    private val recoveryAccViewProvider by lazy { InflatedViewProvider(layout_view_add_recovery_extension_recovery_owner_container) }
 
     @Inject
     lateinit var subViewModel: AddRecoveryExtensionContract
@@ -57,7 +54,7 @@ abstract class ViewAddRecoveryExtensionDetailsFragment : BaseReviewTransactionDe
     override fun onStart() {
         super.onStart()
 
-        disposables += subViewModel.loadRecoveryOwners(transaction?.wrapped)
+        disposables += subViewModel.loadRecoveryOwner(transaction?.wrapped)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(::setupForm, Timber::e)
 
@@ -68,15 +65,10 @@ abstract class ViewAddRecoveryExtensionDetailsFragment : BaseReviewTransactionDe
         }
     }
 
-    private fun setupForm(recoverOwners: Pair<Solidity.Address?, Solidity.Address?>) {
-        AddressInfoViewHolder(this, firstRecoveryAccViewProvider).apply {
+    private fun setupForm(recoverOwners: Pair<Solidity.Address, BigInteger>) {
+        AddressInfoViewHolder(this, recoveryAccViewProvider).apply {
             bind(recoverOwners.first)
-            view.layout_address_item_label.setText(R.string.recovery_owner_1)
-        }
-
-        AddressInfoViewHolder(this, secondRecoveryAccViewProvider).apply {
-            bind(recoverOwners.second)
-            view.layout_address_item_label.setText(R.string.recovery_owner_2)
+            view.layout_address_item_label.setText(R.string.recovery_id)
         }
     }
 

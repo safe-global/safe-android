@@ -68,10 +68,10 @@ class SimpleTransactionDetailsRepository @Inject constructor(
         val factoryArgs = ProxyFactory.CreateProxy.decodeArguments(factoryDataString.removeSolidityMethodPrefix(ProxyFactory.CreateProxy.METHOD_ID))
         // Check what the master copy is that has been used with the proxy factory
         if (factoryArgs.mastercopy == settingsRepository.getRecoveryExtensionMasterCopyAddress()) {
-            val extensionSetupDataString = factoryArgs.data.items.toHexString().removeSolidityMethodPrefix(SocialRecoveryExtension.Setup.METHOD_ID)
-            val setupArgs = SocialRecoveryExtension.Setup.decodeArguments(extensionSetupDataString)
+            val extensionSetupDataString = factoryArgs.data.items.toHexString().removeSolidityMethodPrefix(SingleAccountRecoveryExtension.Setup.METHOD_ID)
+            val setupArgs = SingleAccountRecoveryExtension.Setup.decodeArguments(extensionSetupDataString)
             // TODO: currently we assume that you only use one account with this
-            return AddRecoveryExtensionData(setupArgs._friends.items.map { it.value })
+            return AddRecoveryExtensionData(setupArgs._recoverer, setupArgs._timeout.value)
         }
         return null
     }

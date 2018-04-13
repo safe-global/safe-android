@@ -25,7 +25,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.InflatingViewProvider
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateAddExtensionTransactionProgressDialog
+import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeExtensionTransactionProgressDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
@@ -173,13 +173,13 @@ class SafeSettingsActivity : BaseActivity() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = {
                 layout_safe_settings_add_recovery_option_button.visible(!it.first)
-                it.second.forEach(::addExtension)
+                it.second.forEachIndexed(::addExtension)
             }, onError = {
                 errorSnackbar(layout_safe_settings_add_recovery_option_button, it)
             })
         layout_safe_settings_add_recovery_option_button.visible(false)
         layout_safe_settings_add_recovery_option_button.setOnClickListener {
-            CreateAddExtensionTransactionProgressDialog
+            CreateChangeExtensionTransactionProgressDialog
                 .addRecoveryExtension(viewModel.getSafeAddress())
                 .show(supportFragmentManager, null)
         }
@@ -198,18 +198,20 @@ class SafeSettingsActivity : BaseActivity() {
         }
     }
 
-    private fun addExtension(extension: Pair<GnosisSafeExtensionRepository.Extension, Solidity.Address>) {
+    private fun addExtension(index: Int, extension: Pair<GnosisSafeExtensionRepository.Extension, Solidity.Address>) {
         val extensionView = layoutInflater.inflate(R.layout.layout_simple_spinner_item, layout_safe_settings_extensions_container, false)
-        when (extension.first) {
-            GnosisSafeExtensionRepository.Extension.SOCIAL_RECOVERY -> {
-                extensionView.layout_simple_spinner_item_name.setText(R.string.social_recovery_extension)
-            }
-            GnosisSafeExtensionRepository.Extension.UNKNOWN -> {
-                extensionView.layout_simple_spinner_item_name.setText(R.string.unknown_extension)
-
-            }
-        }
+        extensionView.layout_simple_spinner_item_name.setText(when (extension.first) {
+            GnosisSafeExtensionRepository.Extension.SINGLE_ACCOUNT_RECOVERY -> R.string.single_account_recovery_extension
+            GnosisSafeExtensionRepository.Extension.SOCIAL_RECOVERY -> R.string.social_recovery_extension
+            GnosisSafeExtensionRepository.Extension.DAILY_LIMIT -> R.string.daily_limit_extension
+            GnosisSafeExtensionRepository.Extension.UNKNOWN -> R.string.unknown_extension
+        })
         extensionView.layout_simple_spinner_item_address.text = extension.second.asEthereumAddressString()
+        extensionView.setOnClickListener {
+            CreateChangeExtensionTransactionProgressDialog
+                .removeExtension(viewModel.getSafeAddress(), extension.second, index)
+                .show(supportFragmentManager, null)
+        }
         layout_safe_settings_extensions_container.addView(extensionView)
     }
 

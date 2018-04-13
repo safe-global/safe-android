@@ -63,10 +63,10 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         this.intent = intent
-        val selectedSafe = intent?.getStringExtra(EXTRA_SELECTED_SAFE)?.asEthereumAddress()
+        val selectedSafe = intent?.getStringExtra(EXTRA_SELECTED_SAFE)?.hexAsBigIntegerOrNull()
         if (selectedSafe != null && screenActive) {
             intent.removeExtra(EXTRA_SELECTED_SAFE)
-            disposables += viewModel.selectSafe(selectedSafe.value)
+            disposables += viewModel.selectSafe(selectedSafe)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = ::showSafe, onError = Timber::e)
         }

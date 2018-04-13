@@ -43,14 +43,7 @@
         tools:text="My Safe [0x9bea...eda2]" />
 
     <include
-        android:id="@+id/layout_view_add_recovery_extension_recovery_owner_1_container"
-        layout="@layout/include_address_item_with_label_above_and_icon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
-
-    <include
-        android:id="@+id/layout_view_add_recovery_extension_recovery_owner_2_container"
+        android:id="@+id/layout_view_add_recovery_extension_recovery_owner_container"
         layout="@layout/include_address_item_with_label_above_and_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

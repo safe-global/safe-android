@@ -2,11 +2,11 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.ethereum.*
-import pm.gnosis.heimdall.CreateAndAddExtension
-import pm.gnosis.heimdall.DailyLimitExtension
-import pm.gnosis.heimdall.ProxyFactory
-import pm.gnosis.heimdall.SocialRecoveryExtension
+import pm.gnosis.ethereum.EthCall
+import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.MappedRequest
+import pm.gnosis.ethereum.MappingBulkRequest
+import pm.gnosis.heimdall.*
 import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository.Extension
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
@@ -27,13 +27,10 @@ class DefaultGnosisSafeExtensionRepository @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : GnosisSafeExtensionRepository {
 
-    override fun buildAddRecoverExtensionTransaction(recoverOwners: List<Solidity.Address>): Single<SafeTransaction> =
+    override fun buildAddRecoverExtensionTransaction(recoverOwner: Solidity.Address): Single<SafeTransaction> =
         Single.fromCallable {
-            val data = SocialRecoveryExtension.Setup.encode(
-                SolidityBase.Vector(recoverOwners),
-                Solidity.UInt8(BigInteger.valueOf(2))
-            )
-            createExtensionTransaction(Extension.SOCIAL_RECOVERY, data)
+            val data = SingleAccountRecoveryExtension.Setup.encode(recoverOwner, Solidity.UInt64(BigInteger.valueOf(300)))
+            createExtensionTransaction(Extension.SINGLE_ACCOUNT_RECOVERY, data)
         }.subscribeOn(Schedulers.computation())
 
     override fun buildAddDailyLimitExtensionTransaction(limits: List<Pair<Solidity.Address, BigInteger>>): Single<SafeTransaction> =
@@ -73,7 +70,16 @@ class DefaultGnosisSafeExtensionRepository @Inject constructor(
         return SafeTransaction(Transaction(createAndAddExtensionAddress, data = data), TransactionRepository.Operation.DELEGATE_CALL)
     }
 
-    override fun loadExtensionsInfo(extensions: List<Solidity.Address>): Single<List<Pair<Extension, Solidity.Address>>> {
+    override fun buildRemoveExtensionTransaction(safe: Solidity.Address, index: BigInteger, extension: Solidity.Address): Single<SafeTransaction> =
+        Single.fromCallable {
+            val data = GnosisSafe.RemoveExtension.encode(
+                Solidity.UInt256(index),
+                extension
+            )
+            SafeTransaction(Transaction(address = safe, data = data), TransactionRepository.Operation.CALL)
+        }.subscribeOn(Schedulers.computation())
+
+        override fun loadExtensionsInfo(extensions: List<Solidity.Address>): Single<List<Pair<Extension, Solidity.Address>>> {
         val requests = extensions.mapIndexed { index, extension ->
             MappedRequest(
                 EthCall(
@@ -84,7 +90,7 @@ class DefaultGnosisSafeExtensionRepository @Inject constructor(
                     id = index
                 ), {
                     (nullOnThrow {
-                        loadExtensionType(SocialRecoveryExtension.NAME.decode(it!!).param0.value)
+                        loadExtensionType(SingleAccountRecoveryExtension.NAME.decode(it!!).param0.value)
                     } ?: Extension.UNKNOWN) to extension
                 })
         }.toList()
@@ -95,15 +101,15 @@ class DefaultGnosisSafeExtensionRepository @Inject constructor(
     private fun loadExtensionType(name: String): Extension =
         when (name) {
             "Social Recovery Extension" -> Extension.SOCIAL_RECOVERY
-            else -> throw GnosisSafeExtensionRepository.UnknownExtensionException()
+            "Single Account Recovery Extension" -> Extension.SINGLE_ACCOUNT_RECOVERY
+            "Daily Limit Extension" -> Extension.DAILY_LIMIT
+            else -> Extension.UNKNOWN
         }
 
     private fun getExtensionMasterCopyAddress(extension: Extension): Solidity.Address =
         when (extension) {
-            Extension.SOCIAL_RECOVERY -> settingsRepository.getRecoveryExtensionMasterCopyAddress()
+            Extension.SINGLE_ACCOUNT_RECOVERY -> settingsRepository.getRecoveryExtensionMasterCopyAddress()
             Extension.DAILY_LIMIT -> settingsRepository.getDailyLimitExtensionMasterCopyAddress()
-            Extension.UNKNOWN -> throw GnosisSafeExtensionRepository.UnknownExtensionException()
+            Extension.SOCIAL_RECOVERY, Extension.UNKNOWN -> throw GnosisSafeExtensionRepository.UnknownExtensionException()
         }
-
-    private class ExtensionInfoRequest() : BulkRequest()
 }
