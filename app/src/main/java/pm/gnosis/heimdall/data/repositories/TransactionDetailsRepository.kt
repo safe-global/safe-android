@@ -23,6 +23,7 @@ data class TokenTransferData(val recipient: Solidity.Address, val tokens: BigInt
 data class RemoveSafeOwnerData(val ownerIndex: BigInteger, val owner: Solidity.Address, val newThreshold: Int) : TransactionTypeData()
 data class AddSafeOwnerData(val newOwner: Solidity.Address, val newThreshold: Int) : TransactionTypeData()
 data class ReplaceSafeOwnerData(val oldOwnerIndex: BigInteger, val owner: Solidity.Address, val newOwner: Solidity.Address) : TransactionTypeData()
+data class RemoveExtensionData(val extensionIndex: BigInteger, val extension: Solidity.Address) : TransactionTypeData()
 data class AddRecoveryExtensionData(val recoveryOwner: Solidity.Address, val timeout: BigInteger) : TransactionTypeData()
 
 enum class TransactionType {

@@ -2,10 +2,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.ethereum.EthCall
-import pm.gnosis.ethereum.EthereumRepository
-import pm.gnosis.ethereum.MappedRequest
-import pm.gnosis.ethereum.MappingBulkRequest
+import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.*
 import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository.Extension
@@ -106,10 +103,22 @@ class DefaultGnosisSafeExtensionRepository @Inject constructor(
             else -> Extension.UNKNOWN
         }
 
+    override fun loadRecoveryExtensionInfo(extension: Solidity.Address): Single<GnosisSafeExtensionRepository.RecoveryExtensionInfo> =
+        TODO() //ethereumRepository.request()
+
     private fun getExtensionMasterCopyAddress(extension: Extension): Solidity.Address =
         when (extension) {
             Extension.SINGLE_ACCOUNT_RECOVERY -> settingsRepository.getRecoveryExtensionMasterCopyAddress()
             Extension.DAILY_LIMIT -> settingsRepository.getDailyLimitExtensionMasterCopyAddress()
             Extension.SOCIAL_RECOVERY, Extension.UNKNOWN -> throw GnosisSafeExtensionRepository.UnknownExtensionException()
         }
+
+    private class ExtensionInfoRequest(
+        val delay: EthRequest<String>,
+        val recoverer: EthRequest<String>,
+        val triggerTime: EthRequest<String>,
+        val oldOwnerIndex: EthRequest<String>,
+        val oldOwner: EthRequest<String>,
+        val newOwner: EthRequest<String>
+    ) : BulkRequest(delay)
 }

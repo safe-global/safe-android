@@ -19,7 +19,7 @@ object GnoSafeUrlParser {
     private const val KEY_VALUE = "value"
     private const val KEY_DATA = "data"
     private const val KEY_NONCE = "nonce"
-    private const val KEY_OPERATION = "nonce"
+    private const val KEY_OPERATION = "operation"
 
     fun signRequest(
         hash: String,
@@ -35,7 +35,7 @@ object GnoSafeUrlParser {
                 "$KEY_TO=${to.asEthereumAddressString()}&" +
                 (value?.value?.let { "$KEY_VALUE=${it.toString(16)}&" } ?: "") +
                 (data?.let { "$KEY_DATA=$it&" } ?: "") +
-                "$KEY_NONCE=${nonce.toString(16)}" +
+                "$KEY_NONCE=${nonce.toString(16)}&" +
                 "$KEY_OPERATION=$operation"
 
     fun signResponse(signature: Signature): String =

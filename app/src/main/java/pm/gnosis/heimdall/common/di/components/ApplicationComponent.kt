@@ -4,16 +4,12 @@ import android.app.Application
 import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import dagger.Component
-import pm.gnosis.heimdall.common.di.modules.ApplicationBindingsModule
-import pm.gnosis.heimdall.common.di.modules.ApplicationModule
-import pm.gnosis.heimdall.common.di.modules.InterceptorsModule
-import pm.gnosis.heimdall.common.di.modules.ViewModelFactoryModule
+import pm.gnosis.heimdall.common.di.modules.*
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.services.HeimdallFirebaseService
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.mnemonic.di.Bip39BindingModule
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.accounts.di.AccountsBindingModule
 import pm.gnosis.svalinn.accounts.di.AccountsModule

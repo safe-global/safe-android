@@ -49,6 +49,7 @@ class SimpleTransactionDetailsRepository @Inject constructor(
         data?.isSolidityMethod(GnosisSafe.AddOwner.METHOD_ID) == true -> TransactionType.ADD_SAFE_OWNER
         data?.isSolidityMethod(GnosisSafe.RemoveOwner.METHOD_ID) == true -> TransactionType.REMOVE_SAFE_OWNER
         data?.isSolidityMethod(GnosisSafe.ReplaceOwner.METHOD_ID) == true -> TransactionType.REPLACE_SAFE_OWNER
+        data?.isSolidityMethod(GnosisSafe.RemoveExtension.METHOD_ID) == true -> TransactionType.REMOVE_EXTENSION
         data?.isSolidityMethod(CreateAndAddExtension.CreateAndAddExtension.METHOD_ID) == true ->
             // TODO: We parse the while data here ... what would be a nicer way?
             when (nullOnThrow { parseCreateAndAddExtensionData(data) }) {
@@ -68,7 +69,8 @@ class SimpleTransactionDetailsRepository @Inject constructor(
         val factoryArgs = ProxyFactory.CreateProxy.decodeArguments(factoryDataString.removeSolidityMethodPrefix(ProxyFactory.CreateProxy.METHOD_ID))
         // Check what the master copy is that has been used with the proxy factory
         if (factoryArgs.mastercopy == settingsRepository.getRecoveryExtensionMasterCopyAddress()) {
-            val extensionSetupDataString = factoryArgs.data.items.toHexString().removeSolidityMethodPrefix(SingleAccountRecoveryExtension.Setup.METHOD_ID)
+            val extensionSetupDataString =
+                factoryArgs.data.items.toHexString().removeSolidityMethodPrefix(SingleAccountRecoveryExtension.Setup.METHOD_ID)
             val setupArgs = SingleAccountRecoveryExtension.Setup.decodeArguments(extensionSetupDataString)
             // TODO: currently we assume that you only use one account with this
             return AddRecoveryExtensionData(setupArgs._recoverer, setupArgs._timeout.value)
@@ -108,6 +110,10 @@ class SimpleTransactionDetailsRepository @Inject constructor(
             val arguments = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.ReplaceOwner.METHOD_ID)
             GnosisSafe.ReplaceOwner.decodeArguments(arguments)
                 .let { ReplaceSafeOwnerData(it.oldownerindex.value, it.oldowner, it.newowner) }
+        }
+        TransactionType.REMOVE_EXTENSION -> {
+            val arguments = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.RemoveExtension.METHOD_ID)
+            GnosisSafe.RemoveExtension.decodeArguments(arguments).let { RemoveExtensionData(it.extensionindex.value, it.extension) }
         }
         TransactionType.ADD_RECOVERY_EXTENSION -> {
             parseCreateAndAddExtensionData(transaction.data!!)
