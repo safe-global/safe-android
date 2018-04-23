@@ -1,4 +1,4 @@
-# Heimdall Android [![Build Status](https://travis-ci.org/gnosis/heimdall-android.svg?branch=master)](https://travis-ci.org/gnosis/heimdall-android)
+# Gnosis Safe Android App [![Build Status](https://travis-ci.org/gnosis/safe-android.svg?branch=master)](https://travis-ci.org/gnosis/safe-android)
 
 **WARNING: Under development. Don't use the application with real funds! Application right now targets the Rinkeby test network. Switching to mainnet (or any other ethereum network) can be done by the user but it's its responsibility in doing so.**
 
@@ -48,7 +48,7 @@ Replace each field with the respective information (found in Fabric).
 **If you don't want to setup Fabric for this project you can follow the steps present in this [page](https://docs.fabric.io/android/crashlytics/build-tools.html) to disable the integration. We will improve this integration in the future so it can be easily enabled/disabled**
 
 ### Firebase
-Heimdall uses Firebase and your build will fail if you don't have the `google-services.json` file.
+The Gnosis Safe Android App uses Firebase and your build will fail if you don't have the `google-services.json` file.
 
 This file can be found in the Settings page of the Firebase project.
 
