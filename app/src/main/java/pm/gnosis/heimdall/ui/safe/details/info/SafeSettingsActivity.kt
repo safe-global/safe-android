@@ -27,7 +27,6 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.InflatingViewProvider
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeExtensionTransactionProgressDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
-import pm.gnosis.heimdall.ui.extensions.recovery.RecoveryStatusActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.setupToolbar
@@ -208,18 +207,6 @@ class SafeSettingsActivity : BaseActivity() {
             GnosisSafeExtensionRepository.Extension.UNKNOWN -> R.string.unknown_extension
         })
         extensionView.layout_simple_spinner_item_address.text = extension.second.asEthereumAddressString()
-        when (extension.first) {
-            GnosisSafeExtensionRepository.Extension.SINGLE_ACCOUNT_RECOVERY ->
-                extensionView.setOnClickListener {
-                    startActivity(RecoveryStatusActivity.createIntent(this, extension.second))
-                }
-            else ->
-                extensionView.setOnClickListener {
-                    CreateChangeExtensionTransactionProgressDialog
-                        .removeExtension(viewModel.getSafeAddress(), extension.second, index)
-                        .show(supportFragmentManager, null)
-                }
-        }
         layout_safe_settings_extensions_container.addView(extensionView)
 
     }

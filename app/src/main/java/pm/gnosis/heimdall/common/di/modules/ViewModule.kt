@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
-import pm.gnosis.heimdall.ui.extensions.recovery.RecoveryStatusContract
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
 import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountContract
@@ -119,10 +118,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesPasswordSetupContract(provider: ViewModelProvider) = provider[PasswordSetupContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesRecoveryStatusContract(provider: ViewModelProvider) = provider[RecoveryStatusContract::class.java]
 
     @Provides
     @ForView

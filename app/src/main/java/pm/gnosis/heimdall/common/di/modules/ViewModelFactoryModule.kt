@@ -17,8 +17,6 @@ import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsViewModel
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressViewModel
-import pm.gnosis.heimdall.ui.extensions.recovery.RecoveryStatusContract
-import pm.gnosis.heimdall.ui.extensions.recovery.RecoveryStatusViewModel
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupViewModel
 import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
@@ -168,11 +166,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AccountSetupContract::class)
     abstract fun bindsAccountSetupContractContract(viewModel: AccountSetupViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(RecoveryStatusContract::class)
-    abstract fun bindsRecoveryStatusContract(viewModel: RecoveryStatusViewModel): ViewModel
 
     @Binds
     @IntoMap
