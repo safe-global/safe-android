@@ -19,6 +19,9 @@ android {
 
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x5a27c4325b2f35163fa28d9195e7038fb53e67ac"))
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0x057ad4d88c1aabecf899f33386c8abebabe00648"))
+        buildConfigField javaTypes.STRING, "RECOVERY_EXTENSION_MASTER_COPY_ADDRESS", asString(getKey("RECOVERY_EXTENSION_MASTER_COPY_ADDRESS", "0xa46f52cb7fcf82524d411c535ccfa805d668926e"))
+        buildConfigField javaTypes.STRING, "DAILY_LIMIT_EXTENSION_MASTER_COPY_ADDRESS", asString(getKey("DAILY_LIMIT_EXTENSION_MASTER_COPY_ADDRESS", "0xe8a8c05268804fb0e02a1399206637563ab5b404"))
+        buildConfigField javaTypes.STRING, "CREATE_AND_ADD_EXTENSION_LIB_ADDRESS", asString(getKey("CREATE_AND_ADD_EXTENSION_LIB_ADDRESS", "0x9d02b0c39ea5a007d825c5a459691be4b906caa2"))
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io"))
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
 
@@ -141,6 +144,7 @@ dependencies {
     // Android
     implementation "com.android.support:appcompat-v7:$versions.android_support"
     implementation "com.android.support:cardview-v7:$versions.android_support"
+    implementation "com.android.support:recyclerview-v7:$versions.android_support"
     implementation "com.android.support:design:$versions.android_support"
     implementation "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
     implementation "com.android.billingclient:billing:$versions.billing"

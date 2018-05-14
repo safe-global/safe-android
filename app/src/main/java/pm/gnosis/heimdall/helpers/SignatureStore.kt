@@ -5,6 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -47,7 +48,7 @@ class SimpleSignatureStore @Inject constructor(
         return observe()
     }
 
-    override fun loadSingingInfo(): Single<Pair<Solidity.Address, Transaction>> =
+    override fun loadSingingInfo(): Single<Pair<Solidity.Address, SafeTransaction>> =
         info?.let { Single.just(safeAddress!! to info!!.transaction) } ?: Single.error(IllegalStateException())
 
     override fun add(signature: Pair<Solidity.Address, Signature>) {
@@ -67,7 +68,7 @@ class SimpleSignatureStore @Inject constructor(
 
 interface SignatureStore {
     fun flatMapInfo(safeAddress: Solidity.Address, info: TransactionRepository.ExecuteInformation): Observable<Map<Solidity.Address, Signature>>
-    fun loadSingingInfo(): Single<Pair<Solidity.Address, Transaction>>
+    fun loadSingingInfo(): Single<Pair<Solidity.Address, SafeTransaction>>
     fun load(): Single<Map<Solidity.Address, Signature>>
     fun observe(): Observable<Map<Solidity.Address, Signature>>
     fun add(signature: Pair<Solidity.Address, Signature>)

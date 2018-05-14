@@ -9,6 +9,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract.InputEvent
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException.Companion.DATA_FIELD
@@ -39,8 +41,8 @@ class GenericTransactionDetailsViewModelTest {
     }
 
     private fun testTransformer(
-        inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<Transaction>>,
-        input: InputEvent, expectedOutput: Result<Transaction>, testNo: Int
+        inputStream: PublishSubject<InputEvent>, outputStream: TestObserver<Result<SafeTransaction>>,
+        input: InputEvent, expectedOutput: Result<SafeTransaction>, testNo: Int
     ) {
         inputStream.onNext(input)
         outputStream.assertNoErrors().assertValueCount(testNo)
@@ -50,9 +52,10 @@ class GenericTransactionDetailsViewModelTest {
     @Test
     fun inputTransformerWithOriginalTransaction() {
         val testPublisher = PublishSubject.create<InputEvent>()
-        val testObserver = TestObserver<Result<Transaction>>()
+        val testObserver = TestObserver<Result<SafeTransaction>>()
         val mockContext = mock(Context::class.java).mockGetString()
-        val originalTransaction = Transaction(Solidity.Address(BigInteger.TEN), nonce = BigInteger.valueOf(1337))
+        val originalTransaction =
+            SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN), nonce = BigInteger.valueOf(1337)), TransactionRepository.Operation.CALL)
 
         testPublisher.compose(viewModel.inputTransformer(mockContext, originalTransaction))
             .subscribe(testObserver)
@@ -64,10 +67,10 @@ class GenericTransactionDetailsViewModelTest {
             testPublisher, testObserver,
             InputEvent("0x0" to true, "123" to false, "" to false),
             DataResult(
-                Transaction(
+                SafeTransaction(Transaction(
                     Solidity.Address(BigInteger.ZERO), value = Wei(BigInteger.valueOf(123)),
                     data = null, nonce = BigInteger.valueOf(1337)
-                )
+                ), TransactionRepository.Operation.CALL)
             ),
             testNo++
         )
@@ -132,7 +135,7 @@ class GenericTransactionDetailsViewModelTest {
     @Test
     fun inputTransformerWithoutOriginalTransaction() {
         val testPublisher = PublishSubject.create<InputEvent>()
-        val testObserver = TestObserver<Result<Transaction>>()
+        val testObserver = TestObserver<Result<SafeTransaction>>()
         val mockContext = mock(Context::class.java).mockGetString()
 
         testPublisher.compose(viewModel.inputTransformer(mockContext, null))
@@ -145,10 +148,10 @@ class GenericTransactionDetailsViewModelTest {
         testObserver.assertNoErrors().assertValueCount(testNo)
             .assertValueAt(testNo - 1, {
                 it is DataResult
-                        && it.data.address == Solidity.Address(BigInteger.ZERO)
-                        && it.data.value == Wei(BigInteger.valueOf(123))
-                        && it.data.data == null
-                        && it.data.nonce == null
+                        && it.data.wrapped.address == Solidity.Address(BigInteger.ZERO)
+                        && it.data.wrapped.value == Wei(BigInteger.valueOf(123))
+                        && it.data.wrapped.data == null
+                        && it.data.wrapped.nonce == null
             })
         testNo++
         // Invalid input with change

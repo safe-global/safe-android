@@ -4,7 +4,9 @@ import android.os.Bundle
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe
+import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
 import pm.gnosis.heimdall.utils.GnosisSafeUtils
@@ -30,7 +32,7 @@ class CreateChangeSafeSettingsTransactionProgressDialog : BaseCreateSafeTransact
         }
     }
 
-    override fun createTransaction(): Single<Transaction> =
+    override fun createTransaction(): Single<SafeTransaction> =
         Single.fromCallable {
             val data = when (type) {
                 SETTINGS_TYPE_ADD_OWNER -> {
@@ -54,14 +56,15 @@ class CreateChangeSafeSettingsTransactionProgressDialog : BaseCreateSafeTransact
                 }
                 else -> throw UnsupportedOperationException()
             }
-            Transaction(safeAddress!!, data = data)
+            SafeTransaction(Transaction(safeAddress!!, data = data), TransactionRepository.Operation.CALL)
         }.subscribeOn(Schedulers.computation())
 
-    override fun showTransaction(safe: Solidity.Address?, transaction: Transaction) {
+    override fun showTransaction(safe: Solidity.Address?, transaction: SafeTransaction) {
         startActivity(
             when (type) {
-                SETTINGS_TYPE_REMOVE_OWNER ->
+                SETTINGS_TYPE_REMOVE_OWNER -> {
                     SubmitTransactionActivity.createIntent(context!!, safe, transaction)
+                }
                 else ->
                     CreateTransactionActivity.createIntent(context!!, safe, mapType(), transaction)
             }

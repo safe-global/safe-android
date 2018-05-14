@@ -3,11 +3,11 @@ package pm.gnosis.heimdall.ui.transactions.details.generic
 import android.arch.lifecycle.ViewModel
 import android.content.Context
 import io.reactivex.ObservableTransformer
-import pm.gnosis.models.Transaction
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.svalinn.common.utils.Result
 
 abstract class GenericTransactionDetailsContract : ViewModel() {
-    abstract fun inputTransformer(context: Context, originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>>
+    abstract fun inputTransformer(context: Context, originalTransaction: SafeTransaction?): ObservableTransformer<InputEvent, Result<SafeTransaction>>
 
     data class InputEvent(val to: Pair<String, Boolean>, val value: Pair<String, Boolean>, val data: Pair<String, Boolean>) {
         fun diff(other: InputEvent): InputEvent =

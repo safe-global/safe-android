@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.db
 
 import android.arch.persistence.room.TypeConverter
 import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 
 class BigIntegerConverter {
@@ -9,5 +10,5 @@ class BigIntegerConverter {
     fun fromHexString(hexString: String) = hexString.hexAsBigIntegerOrNull()
 
     @TypeConverter
-    fun toHexString(value: BigInteger): String = value.toString(16)
+    fun toHexString(value: BigInteger): String = value.toHexString()
 }

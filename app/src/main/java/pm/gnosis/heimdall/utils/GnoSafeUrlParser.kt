@@ -19,14 +19,24 @@ object GnoSafeUrlParser {
     private const val KEY_VALUE = "value"
     private const val KEY_DATA = "data"
     private const val KEY_NONCE = "nonce"
+    private const val KEY_OPERATION = "operation"
 
-    fun signRequest(hash: String, safe: Solidity.Address, to: Solidity.Address, value: Wei?, data: String?, nonce: BigInteger): String =
+    fun signRequest(
+        hash: String,
+        safe: Solidity.Address,
+        to: Solidity.Address,
+        value: Wei?,
+        data: String?,
+        nonce: BigInteger,
+        operation: Int
+    ): String =
         "$GNOSIS_SAFE_SCHEMA$SIGN_REQUEST/$hash?" +
                 "$KEY_SAFE=${safe.asEthereumAddressString()}&" +
                 "$KEY_TO=${to.asEthereumAddressString()}&" +
                 (value?.value?.let { "$KEY_VALUE=${it.toString(16)}&" } ?: "") +
                 (data?.let { "$KEY_DATA=$it&" } ?: "") +
-                "$KEY_NONCE=${nonce.toString(16)}"
+                "$KEY_NONCE=${nonce.toString(16)}&" +
+                "$KEY_OPERATION=$operation"
 
     fun signResponse(signature: Signature): String =
         "$GNOSIS_SAFE_SCHEMA$SIGN_RESPONSE/$signature"
@@ -46,10 +56,12 @@ object GnoSafeUrlParser {
                     data = params[KEY_DATA],
                     nonce = params[KEY_NONCE]!!.hexAsBigInteger()
                 )
+                val operation = params[KEY_OPERATION]?.toIntOrNull() ?: 0
                 Parsed.SignRequest(
                     path[1],
                     params[KEY_SAFE]!!.asEthereumAddress()!!,
-                    transaction
+                    transaction,
+                    operation
                 )
 
             }
@@ -69,7 +81,7 @@ object GnoSafeUrlParser {
         } ?: emptyMap()
 
     sealed class Parsed {
-        data class SignRequest(val transactionHash: String, val safe: Solidity.Address, val transaction: Transaction) : Parsed()
+        data class SignRequest(val transactionHash: String, val safe: Solidity.Address, val transaction: Transaction, val operation: Int) : Parsed()
         data class SignResponse(val signature: Signature) : Parsed()
     }
 }

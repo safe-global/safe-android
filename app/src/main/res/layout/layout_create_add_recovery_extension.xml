@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/Content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/add_recovery_extension_transaction_description" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/transaction_details_cell_height"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/layout_create_add_recovery_extension_safe_label"
+            style="@style/Content"
+            android:layout_width="@dimen/create_tx_label_width"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:text="@string/safe" />
+
+
+        <TextView
+            android:id="@+id/layout_create_add_recovery_extension_safe_address"
+            style="@style/BoldContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="2"
+            tools:text="My Safe [0x9bea...eda2]" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <include
+        android:id="@+id/layout_create_add_recovery_extension_recovery_owner_container"
+        layout="@layout/include_address_item_with_label_start_and_icon" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider" />
+
+    <TextView
+        style="@style/TxLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/recovery_phrase" />
+
+    <TextView
+        android:id="@+id/layout_create_add_recovery_extension_recovery_mnemonic"
+        style="@style/BoldContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selectable_background"
+        android:gravity="start"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        tools:text="abstract inspire axis monster urban order rookie over volume poverty horse rack" />
+
+</LinearLayout>

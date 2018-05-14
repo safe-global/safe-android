@@ -6,6 +6,8 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.erc67.ERC67Parser
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
@@ -27,12 +29,14 @@ class AuthenticateViewModel @Inject constructor(
     private fun validateQrCode(qrCodeData: String): Intent {
         GnoSafeUrlParser.parse(qrCodeData)?.let {
             when (it) {
-                is GnoSafeUrlParser.Parsed.SignRequest ->
-                    return SignTransactionActivity.createIntent(context, it.safe, it.transaction)
+                is GnoSafeUrlParser.Parsed.SignRequest -> {
+                    val safeTransaction = SafeTransaction(it.transaction, TransactionRepository.Operation.values()[it.operation])
+                    return SignTransactionActivity.createIntent(context, it.safe, safeTransaction)
+                }
                 else -> null
             }
         }
         val parsedTransaction = ERC67Parser.parse(qrCodeData) ?: throw SimpleLocalizedException(context.getString(R.string.invalid_erc67))
-        return SelectSafeActivity.createIntent(context, parsedTransaction)
+        return SelectSafeActivity.createIntent(context, SafeTransaction(parsedTransaction, TransactionRepository.Operation.CALL))
     }
 }

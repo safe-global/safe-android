@@ -18,8 +18,10 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
+import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -119,7 +121,7 @@ class SelectSafeViewModelTest {
 
         testObserver.assertResult(ErrorResult(SimpleLocalizedException(R.string.no_safe_selected_error.toString())))
 
-        then(detailsRepositoryMock).should().loadTransactionType(TEST_TRANSACTION)
+        then(detailsRepositoryMock).should().loadTransactionType(TEST_TRANSACTION.wrapped)
         then(detailsRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -133,7 +135,7 @@ class SelectSafeViewModelTest {
 
         testObserver.assertResult(ErrorResult(error))
 
-        then(detailsRepositoryMock).should().loadTransactionType(TEST_TRANSACTION)
+        then(detailsRepositoryMock).should().loadTransactionType(TEST_TRANSACTION.wrapped)
         then(detailsRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -145,7 +147,7 @@ class SelectSafeViewModelTest {
 
         testObserver.assertValue({ it is DataResult }).assertComplete()
 
-        then(detailsRepositoryMock).should().loadTransactionType(TEST_TRANSACTION)
+        then(detailsRepositoryMock).should().loadTransactionType(TEST_TRANSACTION.wrapped)
         then(detailsRepositoryMock).shouldHaveNoMoreInteractions()
         Mockito.reset(detailsRepositoryMock)
     }
@@ -159,6 +161,6 @@ class SelectSafeViewModelTest {
 
     companion object {
         private val TEST_SAFE = Solidity.Address(BigInteger.ONE)
-        private val TEST_TRANSACTION = Transaction(Solidity.Address(BigInteger.TEN))
+        private val TEST_TRANSACTION = SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionRepository.Operation.CALL)
     }
 }

@@ -352,7 +352,7 @@ class AddSafeViewModelTest {
     @Test
     fun loadSafeInfo() {
         val testObserver = TestObserver<Result<SafeInfo>>()
-        val safeInfo = SafeInfo("0x0", Wei(BigInteger.ONE), 1, emptyList(), false)
+        val safeInfo = SafeInfo("0x0", Wei(BigInteger.ONE), 1, emptyList(), false, emptyList())
         given(safeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(safeInfo))
 
         viewModel.loadSafeInfo("0x0").subscribe(testObserver)

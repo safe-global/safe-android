@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.SimpleSpinnerAdapter
@@ -31,7 +32,7 @@ class SelectSafeActivity : BaseActivity() {
     lateinit var viewModel: SelectSafeContract
 
     private val transaction by lazy {
-        intent?.getParcelableExtra<TransactionParcelable>(EXTRA_TRANSACTION)?.transaction
+        intent?.getParcelableExtra<SafeTransaction>(EXTRA_TRANSACTION)
     }
 
     private val adapter by lazy {
@@ -88,11 +89,11 @@ class SelectSafeActivity : BaseActivity() {
 
     companion object {
 
-        private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"
+        private const val EXTRA_TRANSACTION = "extra.parcelable.wrapped"
 
-        fun createIntent(context: Context, transaction: Transaction) =
+        fun createIntent(context: Context, transaction: SafeTransaction) =
             Intent(context, SelectSafeActivity::class.java).apply {
-                putExtra(EXTRA_TRANSACTION, transaction.parcelable())
+                putExtra(EXTRA_TRANSACTION, transaction)
             }
     }
 }

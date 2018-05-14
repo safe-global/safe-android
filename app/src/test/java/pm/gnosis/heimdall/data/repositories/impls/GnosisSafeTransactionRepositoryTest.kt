@@ -13,7 +13,9 @@ import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
+import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -55,14 +57,14 @@ class GnosisSafeTransactionRepositoryTest {
 
     private fun verifyHash(safe: BigInteger, transaction: Transaction, expected: String) {
         val observer = TestObserver<ByteArray>()
-        repository.calculateHash(Solidity.Address(safe), transaction).subscribe(observer)
+        repository.calculateHash(Solidity.Address(safe), SafeTransaction(transaction, TransactionRepository.Operation.CALL)).subscribe(observer)
         observer.assertNoErrors().assertValueCount(1)
         assertEquals(expected, observer.values()[0].toHexString())
     }
 
     @Test
     fun calculateHash() {
-        // Empty transaction
+        // Empty wrapped
         verifyHash(
             "0xbbf289d846208c16edc8474705c748aff07732db".hexAsBigInteger(),
             Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.ZERO),

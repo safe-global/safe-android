@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
@@ -31,8 +32,8 @@ class SignTransactionActivity : ViewTransactionActivity() {
     private var credentialsConfirmed: Boolean = false
     private var sendViaPush: Boolean = false
 
-    private val signTransformer: ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, *> =
-        ObservableTransformer { up: Observable<Pair<Solidity.Address?, Result<Transaction>>> ->
+    private val signTransformer: ObservableTransformer<Pair<Solidity.Address?, Result<SafeTransaction>>, *> =
+        ObservableTransformer { up: Observable<Pair<Solidity.Address?, Result<SafeTransaction>>> ->
             // We combine the data with the submit button events
             up.switchMap { safeWithTransaction -> layout_sign_transaction_sign_button.clicks().map { safeWithTransaction } }
                 .doOnNext { (safe, transaction) ->
@@ -85,14 +86,14 @@ class SignTransactionActivity : ViewTransactionActivity() {
         layout_sign_transaction_progress_bar.visibility = View.GONE
     }
 
-    override fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, Any> =
+    override fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<SafeTransaction>>, Any> =
         ObservableTransformer {
             it
                 .doOnNext { layout_sign_transaction_sign_button.isEnabled = it.first != null && it.second is DataResult }
                 .compose(signTransformer)
         }
 
-    private fun signTransaction(safe: Solidity.Address, transaction: Transaction) =
+    private fun signTransaction(safe: Solidity.Address, transaction: SafeTransaction) =
         viewModel.signTransaction(safe, transaction, sendViaPush)
             .subscribeOn(AndroidSchedulers.mainThread())
             .observeOn(AndroidSchedulers.mainThread())
@@ -114,13 +115,13 @@ class SignTransactionActivity : ViewTransactionActivity() {
             .inject(this)
     }
 
-    private data class CachedTransactionData(val safeAddress: Solidity.Address, val transaction: Transaction)
+    private data class CachedTransactionData(val safeAddress: Solidity.Address, val transaction: SafeTransaction)
 
     companion object {
         private const val REQUEST_CODE_CONFIRM_CREDENTIALS = 2342
         private const val EXTRA_SEND_VIA_PUSH = "extra.boolean.send_via_push"
 
-        fun createIntent(context: Context, safeAddress: Solidity.Address?, transaction: Transaction, sendViaPush: Boolean = false) =
+        fun createIntent(context: Context, safeAddress: Solidity.Address?, transaction: SafeTransaction, sendViaPush: Boolean = false) =
             Intent(context, SignTransactionActivity::class.java).apply {
                 putExtras(createBundle(safeAddress, transaction))
                 putExtra(EXTRA_SEND_VIA_PUSH, sendViaPush)

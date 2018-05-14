@@ -9,14 +9,15 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.details.assets.ReviewAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.ReviewAddRecoveryExtensionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ReviewChangeSafeSettingsDetailsFragment
 import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
-import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
@@ -52,9 +53,9 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
 
     private fun loadTransactionType(intent: Intent?): Boolean {
         intent ?: return false
-        val transaction = intent.getParcelableExtra<TransactionParcelable>(EXTRA_TRANSACTION)?.transaction ?: return false
+        val transaction = intent.getParcelableExtra<SafeTransaction>(EXTRA_TRANSACTION) ?: return false
         val safe = intent.getStringExtra(EXTRA_SAFE)
-        lifetimeDisposables += viewModel.checkTransactionType(transaction)
+        lifetimeDisposables += viewModel.checkTransactionType(transaction.wrapped)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 displayTransactionDetails(createDetailsFragment(safe, it, transaction))
@@ -62,12 +63,14 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
         return true
     }
 
-    private fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
+    private fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: SafeTransaction?): BaseTransactionDetailsFragment =
         when (type) {
             TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
                 ReviewAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
             TransactionType.REPLACE_SAFE_OWNER, TransactionType.ADD_SAFE_OWNER, TransactionType.REMOVE_SAFE_OWNER ->
                 ReviewChangeSafeSettingsDetailsFragment.createInstance(transaction, safeAddress)
+            TransactionType.ADD_RECOVERY_EXTENSION ->
+                ReviewAddRecoveryExtensionDetailsFragment.createInstance(transaction, safeAddress)
             else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, false)
         }
 
@@ -84,12 +87,12 @@ abstract class ViewTransactionActivity : BaseTransactionActivity() {
 
     companion object {
         private const val EXTRA_SAFE = "extra.string.safe"
-        private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"
+        private const val EXTRA_TRANSACTION = "extra.parcelable.wrapped"
 
-        fun createBundle(safeAddress: Solidity.Address?, transaction: Transaction) =
+        fun createBundle(safeAddress: Solidity.Address?, transaction: SafeTransaction) =
             Bundle().apply {
                 putString(EXTRA_SAFE, safeAddress?.asEthereumAddressString())
-                putParcelable(EXTRA_TRANSACTION, transaction.parcelable())
+                putParcelable(EXTRA_TRANSACTION, transaction)
             }
     }
 }

@@ -169,7 +169,7 @@ class SafeOverviewViewModelTest {
     fun loadSafeInfoOnErrorLoadsFromCache() {
         val testObserver = TestObserver.create<SafeInfo>()
         val subject = PublishSubject.create<SafeInfo>()
-        val safeInfo = SafeInfo("0x0", Wei(BigInteger.ZERO), 0, emptyList(), false)
+        val safeInfo = SafeInfo("0x0", Wei(BigInteger.ZERO), 0, emptyList(), false, emptyList())
         given(repositoryMock.loadInfo(MockUtils.any())).willReturn(subject)
 
         viewModel.loadSafeInfo(Solidity.Address(BigInteger.ZERO)).subscribe(testObserver)

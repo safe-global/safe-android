@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.data.remote.models.SendSignatureData
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -63,7 +64,7 @@ class DefaultSignaturePushRepository @Inject constructor(
             }
     }
 
-    override fun send(safe: Solidity.Address, transaction: Transaction, signature: Signature): Completable =
+    override fun send(safe: Solidity.Address, transaction: SafeTransaction, signature: Signature): Completable =
         transactionRepository.calculateHash(safe, transaction).flatMapCompletable {
             pushServiceApi.sendSignature(cleanAddress(safe), SendSignatureData(GnoSafeUrlParser.signResponse(signature), it.toHexString()))
         }

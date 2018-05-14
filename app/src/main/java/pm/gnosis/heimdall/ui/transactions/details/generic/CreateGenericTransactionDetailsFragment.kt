@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseEditableTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
@@ -45,7 +46,7 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
     private val safeSubject = BehaviorSubject.createDefault<Optional<Solidity.Address>>(None)
     private val inputSubject = PublishSubject.create<GenericTransactionDetailsContract.InputEvent>()
     private var editable: Boolean = false
-    private var originalTransaction: Transaction? = null
+    private var originalTransaction: SafeTransaction? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,12 +59,12 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         editable = arguments?.getBoolean(ARG_EDITABLE, false) ?: false
-        val transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
+        val transaction = arguments?.getParcelable<SafeTransaction>(ARG_TRANSACTION)
         originalTransaction = transaction
-        layout_transaction_details_generic_to_input.setDefault(transaction?.address?.asEthereumAddressString())
-        layout_transaction_details_generic_data_input.setDefault(transaction?.data)
+        layout_transaction_details_generic_to_input.setDefault(transaction?.wrapped?.address?.asEthereumAddressString())
+        layout_transaction_details_generic_data_input.setDefault(transaction?.wrapped?.data)
         // If it is editable we leave the field empty if no value is present
-        val value = (transaction?.value?.value ?: if (editable) null else BigInteger.ZERO)
+        val value = (transaction?.wrapped?.value?.value ?: if (editable) null else BigInteger.ZERO)
         layout_transaction_details_generic_value_input.setDefault(value?.asDecimalString())
         layout_transaction_details_generic_scan_to_button.visible(editable)
         layout_transaction_details_generic_divider_qr_code.visible(editable)
@@ -112,7 +113,7 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
         layout_transaction_details_generic_address_book_button.isEnabled = enabled
     }
 
-    override fun observeTransaction(): Observable<Result<Transaction>> {
+    override fun observeTransaction(): Observable<Result<SafeTransaction>> {
         return inputSubject
             .compose(subViewModel.inputTransformer(context!!, originalTransaction))
             .observeOn(AndroidSchedulers.mainThread())
@@ -144,15 +145,15 @@ class CreateGenericTransactionDetailsFragment : BaseEditableTransactionDetailsFr
 
     companion object {
 
-        private const val ARG_TRANSACTION = "argument.parcelable.transaction"
+        private const val ARG_TRANSACTION = "argument.parcelable.wrapped"
         private const val ARG_SAFE = "argument.string.safe"
         private const val ARG_EDITABLE = "argument.boolean.editable"
 
-        fun createInstance(transaction: Transaction?, safeAddress: String?, editable: Boolean) =
+        fun createInstance(transaction: SafeTransaction?, safeAddress: String?, editable: Boolean) =
             CreateGenericTransactionDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putBoolean(ARG_EDITABLE, editable)
-                    putParcelable(ARG_TRANSACTION, transaction?.parcelable())
+                    putParcelable(ARG_TRANSACTION, transaction)
                     putString(ARG_SAFE, safeAddress)
                 }
             }

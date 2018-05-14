@@ -8,6 +8,7 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.model.Solidity
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.Result
 import java.math.BigInteger
@@ -15,8 +16,8 @@ import java.math.BigInteger
 abstract class AssetTransferDetailsContract : ViewModel() {
     abstract fun loadFormData(transaction: Transaction?, clearDefaults: Boolean): Single<FormData>
     abstract fun loadTokenInfo(safeAddress: Solidity.Address, token: ERC20Token): Observable<Result<ERC20TokenWithBalance>>
-    abstract fun inputTransformer(originalTransaction: Transaction?): ObservableTransformer<InputEvent, Result<Transaction>>
-    abstract fun transactionTransformer(): ObservableTransformer<Optional<Transaction>, Result<Transaction>>
+    abstract fun inputTransformer(originalTransaction: SafeTransaction?): ObservableTransformer<InputEvent, Result<SafeTransaction>>
+    abstract fun transactionTransformer(): ObservableTransformer<Optional<SafeTransaction>, Result<SafeTransaction>>
 
     data class FormData(val to: Solidity.Address? = null, val tokenAmount: BigInteger? = null, val token: ERC20Token? = null)
 

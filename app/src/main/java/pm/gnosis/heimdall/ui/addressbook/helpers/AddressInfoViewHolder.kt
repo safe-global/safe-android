@@ -45,11 +45,12 @@ open class AddressInfoViewHolder(private val lifecycleOwner: LifecycleOwner, vie
         stop()
     }
 
-    fun bind(address: Solidity.Address) {
+    fun bind(address: Solidity.Address?) {
+        disposables.clear()
         currentAddress = address
         view.apply {
-            layout_address_item_icon.setAddress(address)
-            layout_address_item_value.text = address.asEthereumAddressString()
+            address?.apply { layout_address_item_icon.setAddress(address) } ?: run { layout_address_item_icon.visible(false) }
+            layout_address_item_value.text = address?.asEthereumAddressString()
             layout_address_item_value.visible(true)
             layout_address_item_name.visible(false)
         }

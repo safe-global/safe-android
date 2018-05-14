@@ -11,12 +11,12 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.merge_transaction_details_container.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.exceptions.TransactionInputException
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -59,7 +59,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
         currentFragment = fragment
     }
 
-    abstract fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, Any>
+    abstract fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<SafeTransaction>>, Any>
 
     abstract fun fragmentRegistered()
 
@@ -68,7 +68,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
         disposables += Observable.combineLatest(
             fragment.observeSafe(),
             fragment.observeTransaction(),
-            BiFunction { safeAddress: Optional<Solidity.Address>, transaction: Result<Transaction> ->
+            BiFunction { safeAddress: Optional<Solidity.Address>, transaction: Result<SafeTransaction> ->
                 safeAddress.toNullable() to transaction
             })
             .observeOn(AndroidSchedulers.mainThread())
@@ -90,7 +90,7 @@ abstract class BaseTransactionActivity : BaseActivity() {
         }
     }
 
-    protected fun <T> Observable<Pair<Solidity.Address?, Result<Transaction>>>.checkedFlatMap(action: (Solidity.Address, Transaction) -> Observable<Result<T>>): Observable<Result<T>> =
+    protected fun <T> Observable<Pair<Solidity.Address?, Result<SafeTransaction>>>.checkedFlatMap(action: (Solidity.Address, SafeTransaction) -> Observable<Result<T>>): Observable<Result<T>> =
         flatMap {
             it.let { (safeAddress, transaction) ->
                 safeAddress?.let {

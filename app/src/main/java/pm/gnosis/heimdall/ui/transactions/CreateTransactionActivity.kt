@@ -14,15 +14,15 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.CreateAddRecoveryExtensionFragment
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.CreateAddOwnerDetailsFragment
 import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
-import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -31,11 +31,11 @@ import pm.gnosis.utils.asEthereumAddressString
 
 class CreateTransactionActivity : BaseTransactionActivity() {
 
-    private val transactionDataTransformer: ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, Result<Pair<Solidity.Address, Transaction>>> =
-        ObservableTransformer { up: Observable<Pair<Solidity.Address?, Result<Transaction>>> ->
+    private val transactionDataTransformer: ObservableTransformer<Pair<Solidity.Address?, Result<SafeTransaction>>, Result<Pair<Solidity.Address, SafeTransaction>>> =
+        ObservableTransformer { up: Observable<Pair<Solidity.Address?, Result<SafeTransaction>>> ->
             up
                 .checkedFlatMap { safeAddress, transaction ->
-                    Observable.just<Result<Pair<Solidity.Address, Transaction>>>(DataResult(safeAddress to transaction))
+                    Observable.just<Result<Pair<Solidity.Address, SafeTransaction>>>(DataResult(safeAddress to transaction))
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext({ it.handle(::handleTransactionDataUpdate, ::handleTransactionDataError) })
@@ -64,21 +64,23 @@ class CreateTransactionActivity : BaseTransactionActivity() {
         intent ?: return false
         val safe = intent.getStringExtra(EXTRA_SAFE)
         val type = TransactionType.values().getOrNull(intent.getIntExtra(EXTRA_TYPE, -1)) ?: return false
-        val transaction = intent.getParcelableExtra<TransactionParcelable>(EXTRA_TRANSACTION)?.transaction
+        val transaction = intent.getParcelableExtra<SafeTransaction>(EXTRA_TRANSACTION)
         displayTransactionDetails(createDetailsFragment(safe, type, transaction))
         return true
     }
 
-    private fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: Transaction?): BaseTransactionDetailsFragment =
+    private fun createDetailsFragment(safeAddress: String?, type: TransactionType, transaction: SafeTransaction?): BaseTransactionDetailsFragment =
         when (type) {
             TransactionType.TOKEN_TRANSFER, TransactionType.ETHER_TRANSFER ->
                 CreateAssetTransferDetailsFragment.createInstance(transaction, safeAddress)
             TransactionType.ADD_SAFE_OWNER ->
-                CreateAddOwnerDetailsFragment.createInstance(transaction, safeAddress)
+                CreateAddOwnerDetailsFragment.createInstance(transaction?.wrapped, safeAddress)
+            TransactionType.ADD_RECOVERY_EXTENSION ->
+                CreateAddRecoveryExtensionFragment.createInstance(transaction?.wrapped, safeAddress)
             else -> CreateGenericTransactionDetailsFragment.createInstance(transaction, safeAddress, true)
         }
 
-    private fun handleTransactionDataUpdate(data: Pair<Solidity.Address?, Transaction>) {
+    private fun handleTransactionDataUpdate(data: Pair<Solidity.Address?, SafeTransaction>) {
         layout_create_transaction_review_button.isEnabled = true
     }
 
@@ -87,7 +89,7 @@ class CreateTransactionActivity : BaseTransactionActivity() {
         handleInputError(error)
     }
 
-    override fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<Transaction>>, Any> =
+    override fun transactionDataTransformer(): ObservableTransformer<Pair<Solidity.Address?, Result<SafeTransaction>>, Any> =
         ObservableTransformer {
             it.compose(transactionDataTransformer).switchMap { data ->
                 layout_create_transaction_review_button.clicks().map { data }
@@ -113,13 +115,13 @@ class CreateTransactionActivity : BaseTransactionActivity() {
     companion object {
         private const val EXTRA_SAFE = "extra.string.safe"
         private const val EXTRA_TYPE = "extra.int.type"
-        private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"
+        private const val EXTRA_TRANSACTION = "extra.parcelable.wrapped"
 
-        fun createIntent(context: Context, safeAddress: Solidity.Address?, type: TransactionType, transaction: Transaction?) =
+        fun createIntent(context: Context, safeAddress: Solidity.Address?, type: TransactionType, transaction: SafeTransaction?) =
             Intent(context, CreateTransactionActivity::class.java).apply {
                 putExtra(EXTRA_SAFE, safeAddress?.asEthereumAddressString())
                 putExtra(EXTRA_TYPE, type.ordinal)
-                putExtra(EXTRA_TRANSACTION, transaction?.parcelable())
+                putExtra(EXTRA_TRANSACTION, transaction)
             }
     }
 }

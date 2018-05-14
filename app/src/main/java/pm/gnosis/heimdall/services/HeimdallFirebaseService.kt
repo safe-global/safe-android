@@ -7,6 +7,8 @@ import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
+import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
@@ -68,7 +70,8 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
     }
 
     private fun showNotification(signRequest: GnoSafeUrlParser.Parsed.SignRequest) {
-        val intent = SignTransactionActivity.createIntent(this, signRequest.safe, signRequest.transaction, true)
+        val safeTransaction = SafeTransaction(signRequest.transaction, TransactionRepository.Operation.values()[signRequest.operation])
+        val intent = SignTransactionActivity.createIntent(this, signRequest.safe, safeTransaction, true)
         notificationManager.show(
             signRequest.transactionHash.hashCode(),
             getString(R.string.sign_transaction_request_title),

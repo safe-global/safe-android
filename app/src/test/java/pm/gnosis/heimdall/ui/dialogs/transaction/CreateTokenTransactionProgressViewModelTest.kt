@@ -7,6 +7,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.StandardToken
+import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -27,12 +29,12 @@ class CreateTokenTransactionProgressViewModelTest {
 
     @Test
     fun loadCreateTokenTransactionValidToken() {
-        val testObserver = TestObserver<Transaction>()
+        val testObserver = TestObserver<SafeTransaction>()
         val testAddress = Solidity.Address(BigInteger.valueOf(1337))
         viewModel.loadCreateTokenTransaction(testAddress).subscribe(testObserver)
         // BigInteger.Zero is used as a template
         val expectedData = StandardToken.Transfer.encode(Solidity.Address(BigInteger.ZERO), Solidity.UInt256(BigInteger.ZERO))
-        val expectedTx = Transaction(testAddress, data = expectedData)
+        val expectedTx = SafeTransaction(Transaction(testAddress, data = expectedData), TransactionRepository.Operation.CALL)
         testObserver.assertNoErrors()
             .assertValue(expectedTx)
             .assertTerminated()

@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.transactions.details.safe
 
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.models.Transaction
 
 class ReviewChangeSafeSettingsDetailsFragment : ViewChangeSafeSettingsDetailsFragment() {
@@ -14,7 +15,7 @@ class ReviewChangeSafeSettingsDetailsFragment : ViewChangeSafeSettingsDetailsFra
     override fun replacedOwnerMessage(): Int = R.string.transaction_description_replace_safe_owner
 
     companion object {
-        fun createInstance(transaction: Transaction?, safeAddress: String?) =
+        fun createInstance(transaction: SafeTransaction?, safeAddress: String?) =
             ReviewChangeSafeSettingsDetailsFragment().apply {
                 arguments = createBundle(transaction, safeAddress)
             }

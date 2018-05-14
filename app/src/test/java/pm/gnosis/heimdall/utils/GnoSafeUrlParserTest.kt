@@ -12,10 +12,10 @@ import java.math.BigInteger
 class GnoSafeUrlParserTest {
 
     private fun testSignRequest(value: Wei?, data: String?) {
-        val request = GnoSafeUrlParser.signRequest(TEST_HASH, TEST_SAFE, TEST_TO, value, data, TEST_NONCE)
+        val request = GnoSafeUrlParser.signRequest(TEST_HASH, TEST_SAFE, TEST_TO, value, data, TEST_NONCE, 1)
         val parsed = GnoSafeUrlParser.parse(request)
         val expectedTx = Transaction(TEST_TO, value, data = data, nonce = TEST_NONCE)
-        assertEquals(GnoSafeUrlParser.Parsed.SignRequest(TEST_HASH, TEST_SAFE, expectedTx), parsed)
+        assertEquals(GnoSafeUrlParser.Parsed.SignRequest(TEST_HASH, TEST_SAFE, expectedTx, 1), parsed)
     }
 
     @Test

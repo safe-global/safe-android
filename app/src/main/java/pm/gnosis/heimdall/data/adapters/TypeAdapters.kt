@@ -7,6 +7,7 @@ import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 
 class WeiAdapter {
@@ -25,14 +26,10 @@ class WeiAdapter {
 
 class HexNumberAdapter {
     @ToJson
-    fun toJson(hexNumber: BigInteger): String {
-        return StringBuilder("0x").append(hexNumber.toString(16)).toString()
-    }
+    fun toJson(hexNumber: BigInteger): String = hexNumber.toHexString()
 
     @FromJson
-    fun fromJson(hexNumber: String): BigInteger {
-        return hexNumber.hexAsBigInteger()
-    }
+    fun fromJson(hexNumber: String): BigInteger = hexNumber.hexAsBigInteger()
 }
 
 class SolidityAddressAdapter {
@@ -40,5 +37,5 @@ class SolidityAddressAdapter {
     fun toJson(address: Solidity.Address): String = address.asEthereumAddressString()
 
     @FromJson
-    fun fromJson(address: String) = address.asEthereumAddress()
+    fun fromJson(address: String): Solidity.Address = address.asEthereumAddress()!!
 }

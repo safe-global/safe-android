@@ -129,6 +129,7 @@
 
         <activity android:name=".ui.qrscan.QRCodeScanActivity" />
         <activity android:name=".ui.safe.main.SafeMainActivity" />
+        <activity android:name=".ui.extensions.recovery.RecoveryStatusActivity" />
 
 
         <service android:name=".services.HeimdallFirebaseService">

@@ -16,12 +16,11 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.common.di.components.ApplicationComponent
 import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.InflatedViewProvider
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseReviewTransactionDetailsFragment
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
-import pm.gnosis.models.TransactionParcelable
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.stringWithNoTrailingZeroes
@@ -32,7 +31,7 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
     @Inject
     lateinit var subViewModel: AssetTransferDetailsContract
 
-    var transaction: Transaction? = null
+    var transaction: SafeTransaction? = null
     var safe: Solidity.Address? = null
 
     @LayoutRes
@@ -41,7 +40,7 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         safe = arguments?.getString(ARG_SAFE)?.asEthereumAddress()
-        transaction = arguments?.getParcelable<TransactionParcelable>(ARG_TRANSACTION)?.transaction
+        transaction = arguments?.getParcelable(ARG_TRANSACTION)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
@@ -50,7 +49,7 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
     override fun onStart() {
         super.onStart()
 
-        disposables += subViewModel.loadFormData(transaction, false)
+        disposables += subViewModel.loadFormData(transaction?.wrapped, false)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(::setupForm, Timber::e)
 
@@ -73,9 +72,9 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
         layout_view_asset_transfer_amount.setCurrencySymbol(tokenSymbol)
     }
 
-    override fun observeTransaction(): Observable<Result<Transaction>> {
+    override fun observeTransaction(): Observable<Result<SafeTransaction>> {
         return Observable.just(transaction.toOptional())
-            // Check that the transaction we are displaying is legit
+            // Check that the wrapped we are displaying is legit
             .compose(subViewModel.transactionTransformer())
     }
 
@@ -91,12 +90,12 @@ abstract class ViewAssetTransferDetailsFragment : BaseReviewTransactionDetailsFr
 
     companion object {
 
-        private const val ARG_TRANSACTION = "argument.parcelable.transaction"
+        private const val ARG_TRANSACTION = "argument.parcelable.wrapped"
         private const val ARG_SAFE = "argument.string.safe"
 
-        fun createBundle(transaction: Transaction?, safeAddress: String?) =
+        fun createBundle(transaction: SafeTransaction?, safeAddress: String?) =
             Bundle().apply {
-                putParcelable(ARG_TRANSACTION, transaction?.parcelable())
+                putParcelable(ARG_TRANSACTION, transaction)
                 putString(ARG_SAFE, safeAddress)
             }
     }

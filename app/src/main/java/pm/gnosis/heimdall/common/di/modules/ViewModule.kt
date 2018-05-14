@@ -38,6 +38,7 @@ import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionContract
 import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsContract
+import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.AddRecoveryExtensionContract
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract
 import pm.gnosis.svalinn.common.di.ForView
@@ -57,6 +58,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesAccountContract(provider: ViewModelProvider) = provider[AccountContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesAddRecoveryExtensionContract(provider: ViewModelProvider) = provider[AddRecoveryExtensionContract::class.java]
 
     @Provides
     @ForView

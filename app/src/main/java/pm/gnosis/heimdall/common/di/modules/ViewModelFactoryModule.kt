@@ -67,6 +67,8 @@ import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsCon
 import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsViewModel
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsViewModel
+import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.AddRecoveryExtensionContract
+import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.AddRecoveryExtensionViewModel
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
 import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsViewModel
 import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract
@@ -84,6 +86,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AddressBookContract::class)
     abstract fun bindsAddressBookContract(viewModel: AddressBookViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AddRecoveryExtensionContract::class)
+    abstract fun bindsAddRecoveryExtensionContract(viewModel: AddRecoveryExtensionViewModel): ViewModel
 
     @Binds
     @IntoMap

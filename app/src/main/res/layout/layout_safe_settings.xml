@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_safe_settings_coordinator"
     android:layout_width="match_parent"
@@ -86,6 +87,40 @@
                         android:layout_marginTop="32dp"
                         android:gravity="center"
                         android:text="@string/add_safe_owner"
+                        android:visibility="gone" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/divider_width"
+                        android:layout_marginTop="32dp"
+                        android:background="@color/divider" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_safe_settings_extensions_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp">
+
+                        <TextView
+                            style="@style/Content"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:paddingTop="32dp"
+                            android:text="@string/safe_information_loading" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/layout_safe_settings_add_recovery_option_button"
+                        style="@style/TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginTop="32dp"
+                        android:gravity="center"
+                        android:text="@string/add_recovery_option"
                         android:visibility="gone" />
 
                     <View

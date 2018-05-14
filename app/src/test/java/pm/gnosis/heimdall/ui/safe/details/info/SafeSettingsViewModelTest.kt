@@ -19,6 +19,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
@@ -46,12 +47,15 @@ class SafeSettingsViewModelTest {
     @Mock
     lateinit var repositoryMock: GnosisSafeRepository
 
+    @Mock
+    lateinit var extensionRepositoryMock: GnosisSafeExtensionRepository
+
     lateinit var viewModel: SafeSettingsViewModel
 
     @Before
     fun setup() {
         contextMock.mockGetString()
-        viewModel = SafeSettingsViewModel(contextMock, repositoryMock)
+        viewModel = SafeSettingsViewModel(contextMock, extensionRepositoryMock, repositoryMock)
     }
 
     private fun callSetupAndCheck(
@@ -73,11 +77,11 @@ class SafeSettingsViewModelTest {
     @Test
     fun setupViewModelClearCache() {
         val address1 = Solidity.Address(BigInteger.ZERO)
-        val info1 = SafeInfo("Test1", Wei(BigInteger.ONE), 0, emptyList(), false)
+        val info1 = SafeInfo("Test1", Wei(BigInteger.ONE), 0, emptyList(), false, emptyList())
         given(repositoryMock.loadInfo(address1)).willReturn(Observable.just(info1))
 
         val address2 = Solidity.Address(BigInteger.ONE)
-        val info2 = SafeInfo("Test2", Wei(BigInteger.ONE), 0, emptyList(), false)
+        val info2 = SafeInfo("Test2", Wei(BigInteger.ONE), 0, emptyList(), false, emptyList())
         given(repositoryMock.loadInfo(address2)).willReturn(Observable.just(info2))
 
         callSetupAndCheck(address1, info1)
@@ -88,7 +92,7 @@ class SafeSettingsViewModelTest {
     @Test
     fun setupViewModelKeepCache() {
         val address = Solidity.Address(BigInteger.ZERO)
-        val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList(), false)
+        val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList(), false, emptyList())
         given(repositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(info))
 
         callSetupAndCheck(address, info)
@@ -99,7 +103,7 @@ class SafeSettingsViewModelTest {
     @Test
     fun loadSafeInfoIgnoreCache() {
         val address = Solidity.Address(BigInteger.ZERO)
-        val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList(), false)
+        val info = SafeInfo("Test", Wei(BigInteger.ONE), 0, emptyList(), false, emptyList())
         given(repositoryMock.loadInfo(address)).willReturn(Observable.just(info))
 
         callSetupAndCheck(address, info)

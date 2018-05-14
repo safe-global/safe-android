@@ -9,6 +9,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import pm.gnosis.heimdall.utils.errorToast
 import pm.gnosis.model.Solidity
@@ -31,9 +32,9 @@ abstract class BaseCreateSafeTransactionProgressDialog : BaseDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(R.layout.dialog_base_create_safe_transaction_progress, container, false)
 
-    abstract fun createTransaction(): Single<Transaction>
+    abstract fun createTransaction(): Single<SafeTransaction>
 
-    abstract fun showTransaction(safe: Solidity.Address?, transaction: Transaction)
+    abstract fun showTransaction(safe: Solidity.Address?, transaction: SafeTransaction)
 
     override fun onStart() {
         super.onStart()

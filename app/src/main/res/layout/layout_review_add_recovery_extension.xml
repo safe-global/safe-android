@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/CapsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="24dp"
+        android:text="@string/review_add_extension_message" />
+
+    <TextView
+        android:id="@+id/layout_view_add_recovery_extension_action"
+        style="@style/CurrencyInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:text="@string/transaction_title_social_recovery_extension" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/transaction_details_cell_height"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/TxLabel"
+            android:layout_width="@dimen/create_tx_label_width"
+            android:layout_height="wrap_content"
+            android:text="@string/to_safe" />
+
+        <TextView
+            android:id="@+id/layout_view_add_recovery_extension_address"
+            style="@style/TxValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:maxLines="2"
+            tools:text="My Safe [0x9bea...eda2]" />
+    </LinearLayout>
+
+
+    <include
+        android:id="@+id/layout_view_add_recovery_extension_recovery_owner_container"
+        layout="@layout/include_address_item_with_label_start_and_icon" />
+
+
+</LinearLayout>

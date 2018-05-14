@@ -96,7 +96,7 @@ class SafeTransactionsAdapter @Inject constructor(
                 text = details.subject
                 visibility = if (details.subject != null) View.VISIBLE else View.GONE
             }
-            itemView.layout_safe_transactions_item_to.text = details.transaction.address.asEthereumAddressString()
+            itemView.layout_safe_transactions_item_to.text = details.transaction.wrapped.address.asEthereumAddressString()
             if (transferInfo != null) {
                 itemView.layout_safe_transactions_item_value.text =
                         context.getString(R.string.outgoing_transaction_value, transferInfo.amount, transferInfo.symbol)
