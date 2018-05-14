@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.text.Html
-import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -60,8 +59,8 @@ class GenerateMnemonicActivity : SecuredBaseActivity() {
             .flatMapSingle {
                 viewModel.saveAccountWithMnemonic(it)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe { layout_generate_mnemonic_progress_bar.visibility = View.VISIBLE }
-                    .doOnEvent { _, _ -> layout_generate_mnemonic_progress_bar.visibility = View.GONE }
+                    .doOnSubscribe { layout_generate_mnemonic_progress_bar.visible(true) }
+                    .doOnEvent { _, _ -> layout_generate_mnemonic_progress_bar.visible(false) }
             }
             .subscribeForResult(onNext = { onAccountSaved() }, onError = ::onAccountSaveError)
 
