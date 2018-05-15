@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.onboarding.password
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.inputmethod.EditorInfo
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -16,11 +17,14 @@ import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
+import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
+import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
-import pm.gnosis.svalinn.common.utils.startActivity
-import pm.gnosis.svalinn.common.utils.subscribeForResult
+import pm.gnosis.heimdall.utils.setColorFilterCompat
+import pm.gnosis.heimdall.utils.setSelectedCompoundDrawablesWithIntrinsicBounds
+import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class PasswordConfirmActivity : SecuredBaseActivity() {
@@ -47,7 +51,7 @@ class PasswordConfirmActivity : SecuredBaseActivity() {
         layout_password_confirm_password.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE, EditorInfo.IME_NULL ->
-                    layout_password_confirm_next.performClick()
+                    layout_password_confirm_confirm.performClick()
             }
             true
         }
@@ -55,30 +59,64 @@ class PasswordConfirmActivity : SecuredBaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += layout_password_confirm_next.clicks()
-            .flatMapSingle { viewModel.setPassword(passwordHash, layout_password_confirm_password.text.toString()) }
+        disposables += layout_password_confirm_confirm.clicks()
+            .flatMapSingle {
+                viewModel.createAccount(passwordHash, layout_password_confirm_password.text.toString())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { onCreateAccountLoading(true) }
+                    .doFinally { onCreateAccountLoading(false) }
+            }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeForResult(onNext = ::onPasswordSetup, onError = ::onPasswordSetupError)
+            .subscribeForResult(onNext = ::onCreateAccount, onError = ::onPasswordSetupError)
 
         disposables += layout_password_confirm_back.clicks()
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
 
         disposables += layout_password_confirm_password.textChanges()
-            .subscribeBy(onNext = { layout_password_confirm_input_layout.error = null }, onError = Timber::e)
+            .doOnNext { enableConfirm(false) }
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .flatMapSingle { viewModel.isSamePassword(passwordHash, it.toString()) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::onIsSamePassword, onError = Timber::e)
     }
 
-    private fun onPasswordSetup(ignored: Unit) {
-        startActivity(AccountSetupActivity.createIntent(this), clearStack = true)
+    private fun onIsSamePassword(isSamePassword: Boolean) {
+        layout_password_confirm_info.visible(!isSamePassword)
+        layout_password_confirm_password.setSelectedCompoundDrawablesWithIntrinsicBounds(
+            right = ContextCompat.getDrawable(this, if (isSamePassword) R.drawable.ic_green_check else R.drawable.ic_error)
+        )
+        enableConfirm(isSamePassword)
+    }
+
+    private fun onCreateAccount(ignored: Unit) {
+        startActivity(
+            if (viewModel.canSetupFingerprint()) FingerprintSetupActivity.createIntent(this)
+            else SafesOverviewActivity.createIntent(this),
+            clearStack = true
+        )
     }
 
     private fun onPasswordSetupError(throwable: Throwable) {
         Timber.e(throwable)
         (throwable as? PasswordInvalidException)?.let { passwordInvalidException ->
             when (passwordInvalidException.reason) {
-                is PasswordNotLongEnough -> layout_password_confirm_input_layout.error = getString(R.string.password_too_short)
-                is PasswordsNotEqual -> layout_password_confirm_input_layout.error = getString(R.string.passwords_do_not_match)
+                is PasswordNotLongEnough -> snackbar(layout_password_confirm_coordinator, R.string.password_too_short)
+                is PasswordsNotEqual -> snackbar(layout_password_confirm_coordinator, R.string.passwords_do_not_match)
             }
         }
+    }
+
+    private fun onCreateAccountLoading(isLoading: Boolean) {
+        layout_password_confirm_progress.visible(isLoading)
+        enableConfirm(false)
+    }
+
+    private fun enableConfirm(enable: Boolean) {
+        layout_password_confirm_confirm.isEnabled = enable
+        layout_password_confirm_bottom_container.setBackgroundColor(getColorCompat(if (enable) R.color.blue_button_new else R.color.gray_bottom_bar))
+        layout_password_confirm_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.text_light_2_new))
+        layout_password_confirm_back.setColorFilterCompat(if (enable) R.color.white else R.color.disabled)
+        layout_password_confirm_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.disabled)
     }
 
     override fun onWindowObscured() {

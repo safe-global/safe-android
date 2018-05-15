@@ -19,12 +19,8 @@ import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressViewModel
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupViewModel
-import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
-import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicViewModel
-import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountContract
-import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountViewModel
+import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
+import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupViewModel
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupViewModel
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
@@ -150,8 +146,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(GenerateMnemonicContract::class)
-    abstract fun bindsGenerateMnemonicContract(viewModel: GenerateMnemonicViewModel): ViewModel
+    @ViewModelKey(FingerprintSetupContract::class)
+    abstract fun bindsFingerprintSetupContract(viewModel: FingerprintSetupViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -177,16 +173,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ReceiptTransactionContract::class)
     abstract fun bindsReceiptTransactionContract(viewModel: ReceiptTransactionViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(AccountSetupContract::class)
-    abstract fun bindsAccountSetupContractContract(viewModel: AccountSetupViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(RestoreAccountContract::class)
-    abstract fun bindsRestoreAccountContract(viewModel: RestoreAccountViewModel): ViewModel
 
     @Binds
     @IntoMap

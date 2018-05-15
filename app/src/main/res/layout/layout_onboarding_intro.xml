@@ -1,39 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:background="@drawable/onbarding_intro_gradient"
+        android:gravity="center_horizontal">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="152dp"
-            android:src="@drawable/ic_logo_splash" />
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:text="@string/onboarding_intro"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
+            android:background="@drawable/ic_onboarding_intro_background"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/layout_onboarding_intro_get_started"
-            style="@style/OnBoardingTheme.Button"
+        <ImageView
+            android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="96dp"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp"
-            android:text="@string/get_started" />
-    </LinearLayout>
-</ScrollView>
+            android:layout_marginTop="60dp"
+            android:src="@drawable/ic_logo_splash"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:layout_marginEnd="70dp"
+            android:layout_marginStart="70dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:text="@string/onboarding_intro_info"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/layout_onboarding_intro_get_started"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/layout_onboarding_intro_get_started"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="70dp"
+            android:layout_marginEnd="70dp"
+            android:layout_marginStart="70dp"
+            android:background="@drawable/round_button"
+            android:gravity="center"
+            android:paddingBottom="12dp"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
+            android:paddingTop="12dp"
+            android:text="@string/setup_password"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/textView"
+            app:layout_constraintStart_toStartOf="@+id/textView" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <include
+        android:id="@+id/layout_onboarding_intro_bottom_sheet"
+        layout="@layout/bottom_sheet_terms_and_conditions"
+        tools:visibility="gone" />
+
+</android.support.design.widget.CoordinatorLayout>

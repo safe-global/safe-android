@@ -11,7 +11,6 @@ import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.OnboardingIntro
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.svalinn.common.utils.startActivity
 import timber.log.Timber
@@ -41,17 +40,12 @@ class SplashActivity : BaseActivity() {
     private fun handleAction(action: ViewAction) {
         when (action) {
             is StartMain -> startMain()
-            is StartAccountSetup -> startAccountSetup()
             is StartPasswordSetup -> startPasswordSetup()
         }
     }
 
     private fun startMain() {
         startActivity(SafeMainActivity.createIntent(this), clearStack = true)
-    }
-
-    private fun startAccountSetup() {
-        startActivity(AccountSetupActivity.createIntent(this), clearStack = true)
     }
 
     private fun startPasswordSetup() {

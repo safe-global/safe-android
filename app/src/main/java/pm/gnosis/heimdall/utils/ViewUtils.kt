@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.utils
 
+import android.graphics.drawable.Drawable
 import android.support.annotation.ColorRes
 import android.support.v4.view.ViewCompat
 import android.view.View
@@ -21,3 +22,13 @@ fun TextView.setFormattedText(res: Int, vararg params: Pair<String, String>) {
 }
 
 fun ImageView.setColorFilterCompat(@ColorRes color: Int) = setColorFilter(context.getColorCompat(color))
+// TODO: remove method after extracting colors
+fun ImageView.setColorFilterCompat2(color: Int) = setColorFilter(color)
+
+fun TextView.setSelectedCompoundDrawablesWithIntrinsicBounds(
+    left: Drawable? = null,
+    top: Drawable? = null,
+    right: Drawable? = null,
+    bottom: Drawable? = null
+) =
+    setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom)

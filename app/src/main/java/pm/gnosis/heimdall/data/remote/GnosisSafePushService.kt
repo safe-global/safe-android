@@ -9,7 +9,7 @@ import retrofit2.http.POST
 
 interface GnosisSafePushService {
     companion object {
-        const val BASE_URL = "https://safe-push.dev.gnosisdev.com/api/"
+        const val BASE_URL = "https://safe-notification.dev.gnosisdev.com/api/"
     }
 
     @POST("v1/auth/")

@@ -16,9 +16,7 @@ import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
-import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicContract
-import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountContract
+import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.create.PairingContract
@@ -112,7 +110,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesGenerateMnemonicContract(provider: ViewModelProvider) = provider[GenerateMnemonicContract::class.java]
+    fun providesFingerprintSetupContract(provider: ViewModelProvider) = provider[FingerprintSetupContract::class.java]
 
     @Provides
     @ForView
@@ -132,15 +130,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesRestoreAccountContract(provider: ViewModelProvider) = provider[RestoreAccountContract::class.java]
-
-    @Provides
-    @ForView
     fun providesReceiptTransactionContract(provider: ViewModelProvider) = provider[ReceiptTransactionContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesAccountSetupContract(provider: ViewModelProvider) = provider[AccountSetupContract::class.java]
 
     @Provides
     @ForView

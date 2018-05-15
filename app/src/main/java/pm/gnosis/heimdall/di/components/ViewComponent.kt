@@ -17,9 +17,7 @@ import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeExtensionTransactionProgressDialog
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
-import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupActivity
-import pm.gnosis.heimdall.ui.onboarding.account.create.GenerateMnemonicActivity
-import pm.gnosis.heimdall.ui.onboarding.account.restore.RestoreAccountActivity
+import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordConfirmActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
@@ -82,7 +80,6 @@ interface ViewComponent {
     // Activities
 
     fun inject(activity: AccountActivity)
-    fun inject(activity: AccountSetupActivity)
     fun inject(activity: AddressBookActivity)
     fun inject(activity: AddressBookAddEntryActivity)
     fun inject(activity: AddressBookEntryDetailsActivity)
@@ -92,7 +89,7 @@ interface ViewComponent {
     fun inject(activity: ChangePasswordActivity)
     fun inject(activity: CreateSafeActivity)
     fun inject(activity: CreateTransactionActivity)
-    fun inject(activity: GenerateMnemonicActivity)
+    fun inject(activity: FingerprintSetupActivity)
     fun inject(activity: NetworkSettingsActivity)
     fun inject(activity: DebugSettingsActivity)
     fun inject(activity: PairingActivity)
@@ -100,7 +97,6 @@ interface ViewComponent {
     fun inject(activity: PasswordSetupActivity)
     fun inject(activity: QRCodeScanActivity)
     fun inject(activity: ReceiptTransactionActivity)
-    fun inject(activity: RestoreAccountActivity)
     fun inject(activity: RevealMnemonicActivity)
     fun inject(activity: SafeMainActivity)
     fun inject(activity: SafeRecoveryPhraseActivity)

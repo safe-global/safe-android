@@ -371,4 +371,17 @@
     <string name="to_safe">To Safe</string>
     <string name="recovery_id">Recovery Id</string>
     <string name="add_recovery_option">Add recovery option</string>
+    <string name="onboarding_intro_info">Safely store Ether and ERC20 tokens with 2-factor authentication</string>
+    <string name="choose_password">Choose Password</string>
+    <string name="password_doesnt_match">Password doesn\'t match</string>
+    <string name="confirm">Confirm</string>
+    <string name="setup_fingerprint_place">Place your finger on the sensor to confirm your device fingerprint</string>
+    <string name="setup_fingerprint_description">Once enabled you can use your fingerprint to unlock the app and confirm transactions.</string>
+    <string name="skip">Skip</string>
+    <string name="setup_fingerprint">Setup Fingerprint</string>
+    <string name="fingerprint_confirmed">Fingerprint confirmed!</string>
+    <string name="finish">Finish</string>
+    <string name="password_validation_identical_characters">No more than 2 identical characters in a row\n</string>
+    <string name="password_validation_minimum_characters">Use a minimum of 8 characters\n</string>
+    <string name="password_validation_one_number_one_letter">Password with at least 1 number and 1 letter\n</string>
 </resources>

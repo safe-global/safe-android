@@ -34,11 +34,11 @@
         <activity
             android:name=".ui.onboarding.password.PasswordSetupActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
+            android:theme="@style/WhiteTheme" />
         <activity
             android:name=".ui.onboarding.password.PasswordConfirmActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
+            android:theme="@style/WhiteTheme" />
         <activity
             android:name=".ui.onboarding.account.create.GenerateMnemonicActivity"
             android:screenOrientation="portrait"
@@ -54,8 +54,7 @@
         <activity
             android:name=".ui.onboarding.OnboardingIntro"
             android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
-
+            android:theme="@style/IntroTheme" />
         <activity
             android:name=".ui.safe.overview.SafesOverviewActivity"
             android:launchMode="singleTop"
@@ -150,6 +149,10 @@
             android:name=".ui.safe.create.CreateSafeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/OnBoardingTheme" />
+        <activity
+            android:name=".ui.onboarding.fingerprint.FingerprintSetupActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

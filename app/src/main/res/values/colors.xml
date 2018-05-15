@@ -54,4 +54,16 @@
     <color name="security_bar_low">#eab41c</color>
     <color name="security_bar_good">#09a862</color>
     <color name="security_bar_best">#10b3d4</color>
+
+    <!-- New Design colors -->
+    <color name="green_new">#09a862</color>
+    <color name="red_new">#f02525</color>
+    <color name="text_dark_new">#21435a</color>
+    <color name="text_light_new">#65707e</color>
+    <color name="text_light_2_new">#757f8a</color>
+    <color name="gray_new">#f4f4f9</color>
+    <color name="blue_new">#00b8e0</color>
+    <color name="blue_button_new">#28b2fa</color>
+    <color name="gray_bottom_bar">#e4e8f1</color>
+    <color name="disabled">#a2a8ba</color>
 </resources>
