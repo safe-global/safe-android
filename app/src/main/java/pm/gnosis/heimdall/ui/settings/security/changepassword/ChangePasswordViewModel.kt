@@ -4,8 +4,8 @@ import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.security.EncryptionManager
 import javax.inject.Inject

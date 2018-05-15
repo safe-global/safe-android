@@ -14,8 +14,8 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_generate_mnemonic.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
@@ -56,7 +56,12 @@ class GenerateMnemonicActivity : SecuredBaseActivity() {
             .subscribeForResult(onNext = ::onMnemonic, onError = ::onMnemonicError)
 
         disposables += confirmDialogClick
-            .flatMapSingle { viewModel.saveAccountWithMnemonic(it) }
+            .flatMapSingle {
+                viewModel.saveAccountWithMnemonic(it)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { layout_generate_mnemonic_progress_bar.visible(true) }
+                    .doOnEvent { _, _ -> layout_generate_mnemonic_progress_bar.visible(false) }
+            }
             .subscribeForResult(onNext = { onAccountSaved() }, onError = ::onAccountSaveError)
 
         disposables += layout_generate_mnemonic_restore.clicks()

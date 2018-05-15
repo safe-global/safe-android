@@ -1,12 +1,12 @@
-package pm.gnosis.heimdall.common.di.modules
+package pm.gnosis.heimdall.di.modules
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import pm.gnosis.heimdall.common.di.ViewModelFactory
-import pm.gnosis.heimdall.common.di.ViewModelKey
+import pm.gnosis.heimdall.di.ViewModelFactory
+import pm.gnosis.heimdall.di.ViewModelKey
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.account.AccountViewModel
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
@@ -15,6 +15,8 @@ import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
 import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsViewModel
+import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
+import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
 import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressViewModel
 import pm.gnosis.heimdall.ui.onboarding.account.AccountSetupContract
@@ -27,6 +29,10 @@ import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupViewModel
 import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
 import pm.gnosis.heimdall.ui.safe.add.AddSafeViewModel
+import pm.gnosis.heimdall.ui.safe.create.PairingContract
+import pm.gnosis.heimdall.ui.safe.create.PairingViewModel
+import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsViewModel
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract
@@ -139,6 +145,11 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(DebugSettingsContract::class)
+    abstract fun bindsDebugSettingsContract(viewModel: DebugSettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(GenerateMnemonicContract::class)
     abstract fun bindsGenerateMnemonicContract(viewModel: GenerateMnemonicViewModel): ViewModel
 
@@ -151,6 +162,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(NetworkSettingsContract::class)
     abstract fun bindsNetworkSettingsContract(viewModel: NetworkSettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PairingContract::class)
+    abstract fun bindsPairingContract(viewModel: PairingViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -196,6 +212,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SafeOverviewContract::class)
     abstract fun bindsSafeOverviewContract(viewModel: SafeOverviewViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SafeRecoveryPhraseContract::class)
+    abstract fun bindsSafeRecoveryPhraseContract(viewModel: SafeRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap

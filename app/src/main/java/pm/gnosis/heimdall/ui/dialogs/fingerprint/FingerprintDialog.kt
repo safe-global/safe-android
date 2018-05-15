@@ -10,8 +10,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.dialog_fingerprint_scan.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.svalinn.common.utils.vibrate

@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.common.di.modules
+package pm.gnosis.heimdall.di.modules
 
 import dagger.Module
 import dagger.Provides

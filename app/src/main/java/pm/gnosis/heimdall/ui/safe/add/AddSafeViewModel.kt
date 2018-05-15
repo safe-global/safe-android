@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
 import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.AddressStore
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.GnosisSafeUtils
@@ -18,7 +19,6 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
-import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.ticker.data.repositories.TickerRepository
@@ -83,6 +83,18 @@ class AddSafeViewModel @Inject constructor(
         }
             .mapToResult()
 
+    override fun deployNewSafe(name: String, additionalOwners: Set<Solidity.Address>): Single<Result<String>> =
+        Single.fromCallable {
+            checkName(name)
+            name
+        }
+            .flatMap { accountsRepository.loadActiveAccount() }
+            .flatMap { gnosisSafeRepository.deploy(name, additionalOwners + it.address, 2) }
+            .onErrorResumeNext {
+                if (it is HttpException && it.code() == HttpCodes.UNAUTHORIZED) Single.error(IllegalStateException())
+                else errorHandler.single(it)
+            }
+            .mapToResult()
 
     override fun saveTransactionHash(transactionHash: String, name: String): Completable =
         gnosisSafeRepository.savePendingSafe(transactionHash.hexAsBigInteger(), name)

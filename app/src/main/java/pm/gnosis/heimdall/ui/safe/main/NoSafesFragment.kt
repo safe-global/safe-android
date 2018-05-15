@@ -9,7 +9,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_no_safes.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.ApplicationComponent
+import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import timber.log.Timber

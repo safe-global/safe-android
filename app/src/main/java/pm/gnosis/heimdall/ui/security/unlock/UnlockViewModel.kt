@@ -5,8 +5,9 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.remote.PushServiceRepository
+import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.svalinn.common.di.ApplicationContext
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.security.EncryptionManager
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 class UnlockViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val encryptionManager: EncryptionManager
+    private val encryptionManager: EncryptionManager,
+    private val pushServiceRepository: PushServiceRepository
 ) : UnlockContract() {
 
     override fun observeFingerprint(): Observable<Result<FingerprintUnlockResult>> =
@@ -43,4 +45,6 @@ class UnlockViewModel @Inject constructor(
                 SimpleLocalizedException.assert(it, context, R.string.error_wrong_credentials)
                 State.UNLOCKED
             }.toObservable().mapToResult()
+
+    override fun syncPushAuthentication() = pushServiceRepository.syncAuthentication()
 }

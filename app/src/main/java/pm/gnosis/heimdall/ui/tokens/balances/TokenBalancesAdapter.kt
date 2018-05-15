@@ -9,9 +9,9 @@ import kotlinx.android.synthetic.main.layout_tokens_item_balance.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
+import pm.gnosis.heimdall.di.ForView
+import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.svalinn.common.di.ForView
-import pm.gnosis.svalinn.common.di.ViewContext
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 

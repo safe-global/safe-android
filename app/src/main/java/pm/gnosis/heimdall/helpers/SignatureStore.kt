@@ -6,11 +6,10 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.common.di.ApplicationContext
 import javax.inject.Inject
 
 class SimpleSignatureStore @Inject constructor(

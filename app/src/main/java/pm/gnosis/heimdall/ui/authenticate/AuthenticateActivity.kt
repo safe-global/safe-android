@@ -8,8 +8,8 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_authenticate.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity

@@ -9,8 +9,8 @@ import android.support.v4.app.Fragment
 import kotlinx.android.synthetic.main.layout_scan.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.CAMERA_REQUEST_CODE

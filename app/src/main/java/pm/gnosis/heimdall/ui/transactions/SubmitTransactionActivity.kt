@@ -18,8 +18,8 @@ import kotlinx.android.synthetic.main.layout_transaction_confirmation_item.view.
 import kotlinx.android.synthetic.main.merge_transaction_details_container.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.reporting.Event

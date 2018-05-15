@@ -8,6 +8,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 
+//TODO: Remove this when Gnosis Safe Push Service is finished
 interface PushServiceApi {
 
     companion object {

@@ -3,10 +3,10 @@ package pm.gnosis.heimdall.ui.base
 import android.arch.lifecycle.ViewModel
 import android.os.Bundle
 import android.support.annotation.LayoutRes
-import pm.gnosis.heimdall.common.di.components.ViewComponent
+import pm.gnosis.heimdall.di.components.ViewComponent
 import javax.inject.Inject
 
-abstract class ViewModelActivity<VM: ViewModel>: BaseActivity() {
+abstract class ViewModelActivity<VM : ViewModel> : BaseActivity() {
     @Inject
     lateinit var viewModel: VM
 

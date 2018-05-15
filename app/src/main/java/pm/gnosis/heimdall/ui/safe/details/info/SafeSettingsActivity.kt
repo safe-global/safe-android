@@ -17,10 +17,10 @@ import kotlinx.android.synthetic.main.layout_safe_settings.*
 import kotlinx.android.synthetic.main.layout_simple_spinner_item.view.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -200,12 +200,14 @@ class SafeSettingsActivity : BaseActivity() {
 
     private fun addExtension(index: Int, extension: Pair<GnosisSafeExtensionRepository.Extension, Solidity.Address>) {
         val extensionView = layoutInflater.inflate(R.layout.layout_simple_spinner_item, layout_safe_settings_extensions_container, false)
-        extensionView.layout_simple_spinner_item_name.setText(when (extension.first) {
-            GnosisSafeExtensionRepository.Extension.SINGLE_ACCOUNT_RECOVERY -> R.string.single_account_recovery_extension
-            GnosisSafeExtensionRepository.Extension.SOCIAL_RECOVERY -> R.string.social_recovery_extension
-            GnosisSafeExtensionRepository.Extension.DAILY_LIMIT -> R.string.daily_limit_extension
-            GnosisSafeExtensionRepository.Extension.UNKNOWN -> R.string.unknown_extension
-        })
+        extensionView.layout_simple_spinner_item_name.setText(
+            when (extension.first) {
+                GnosisSafeExtensionRepository.Extension.SINGLE_ACCOUNT_RECOVERY -> R.string.single_account_recovery_extension
+                GnosisSafeExtensionRepository.Extension.SOCIAL_RECOVERY -> R.string.social_recovery_extension
+                GnosisSafeExtensionRepository.Extension.DAILY_LIMIT -> R.string.daily_limit_extension
+                GnosisSafeExtensionRepository.Extension.UNKNOWN -> R.string.unknown_extension
+            }
+        )
         extensionView.layout_simple_spinner_item_address.text = extension.second.asEthereumAddressString()
         layout_safe_settings_extensions_container.addView(extensionView)
 

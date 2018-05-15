@@ -11,6 +11,7 @@ import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -32,13 +33,16 @@ class GenerateMnemonicViewModelTest {
     @Mock
     private lateinit var bip39Mock: Bip39
 
+    @Mock
+    private lateinit var pushServiceRepository: PushServiceRepository
+
     private lateinit var viewModel: GenerateMnemonicViewModel
 
     private val testMnemonic = "abstract inspire axis monster urban order rookie over volume poverty horse rack"
 
     @Before
     fun setUp() {
-        viewModel = GenerateMnemonicViewModel(accountsRepositoryMock, bip39Mock)
+        viewModel = GenerateMnemonicViewModel(accountsRepositoryMock, bip39Mock, pushServiceRepository)
     }
 
     @Test

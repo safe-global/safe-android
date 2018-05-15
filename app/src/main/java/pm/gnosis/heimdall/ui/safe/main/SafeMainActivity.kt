@@ -12,8 +12,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_safe_main.*
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.common.di.components.ViewComponent
+import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
@@ -24,6 +25,7 @@ import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
+import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
@@ -81,6 +83,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         layout_safe_main_safes_list.layoutManager = layoutManager
         layout_safe_main_safes_list.adapter = adapter
+
+        layout_safe_main_debug_settings.visible(BuildConfig.DEBUG)
     }
 
     override fun onStart() {
@@ -131,6 +135,11 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         layout_safe_main_credits.setOnClickListener {
             startActivity(BuyCreditsActivity.createIntent(this))
+            closeDrawer()
+        }
+
+        layout_safe_main_debug_settings.setOnClickListener {
+            startActivity(DebugSettingsActivity.createIntent(this))
             closeDrawer()
         }
 

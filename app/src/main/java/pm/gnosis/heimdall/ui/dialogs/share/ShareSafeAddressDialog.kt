@@ -3,8 +3,8 @@ package pm.gnosis.heimdall.ui.dialogs.share
 import android.os.Bundle
 import io.reactivex.Observable
 import pm.gnosis.heimdall.HeimdallApplication
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.model.Solidity

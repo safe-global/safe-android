@@ -2,8 +2,8 @@ package pm.gnosis.heimdall.ui.dialogs.transaction
 
 import android.os.Bundle
 import pm.gnosis.heimdall.HeimdallApplication
-import pm.gnosis.heimdall.common.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity

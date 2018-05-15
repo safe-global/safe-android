@@ -4,7 +4,7 @@ import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.content.Context
 import android.view.View
-import pm.gnosis.svalinn.common.di.ViewContext
+import pm.gnosis.heimdall.di.ViewContext
 
 abstract class LifecycleAdapter<T, VH : LifecycleAdapter.LifecycleViewHolder<T>>(
     @ViewContext context: Context

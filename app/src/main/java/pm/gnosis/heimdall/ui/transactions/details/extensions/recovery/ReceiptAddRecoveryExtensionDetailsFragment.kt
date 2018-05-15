@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.ui.transactions.details.extensions.recovery
 
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
-import pm.gnosis.models.Transaction
 
 class ReceiptAddRecoveryExtensionDetailsFragment : ViewAddRecoveryExtensionDetailsFragment() {
 

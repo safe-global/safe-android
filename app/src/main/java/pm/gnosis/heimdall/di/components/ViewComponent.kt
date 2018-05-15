@@ -1,13 +1,15 @@
-package pm.gnosis.heimdall.common.di.components
+package pm.gnosis.heimdall.di.components
 
 import dagger.Component
-import pm.gnosis.heimdall.common.di.modules.ViewModule
+import pm.gnosis.heimdall.di.ForView
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
+import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
@@ -23,6 +25,9 @@ import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.safe.add.AddExistingSafeFragment
 import pm.gnosis.heimdall.ui.safe.add.DeployNewSafeFragment
+import pm.gnosis.heimdall.ui.safe.create.CreateSafeActivity
+import pm.gnosis.heimdall.ui.safe.create.PairingActivity
+import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
@@ -51,7 +56,6 @@ import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.ViewAddRec
 import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.CreateAddOwnerDetailsFragment
 import pm.gnosis.heimdall.ui.transactions.details.safe.ViewChangeSafeSettingsDetailsFragment
-import pm.gnosis.svalinn.common.di.ForView
 
 @ForView
 @Component(
@@ -86,9 +90,12 @@ interface ViewComponent {
     fun inject(activity: AuthenticateActivity)
     fun inject(activity: BuyCreditsActivity)
     fun inject(activity: ChangePasswordActivity)
+    fun inject(activity: CreateSafeActivity)
     fun inject(activity: CreateTransactionActivity)
     fun inject(activity: GenerateMnemonicActivity)
     fun inject(activity: NetworkSettingsActivity)
+    fun inject(activity: DebugSettingsActivity)
+    fun inject(activity: PairingActivity)
     fun inject(activity: PasswordConfirmActivity)
     fun inject(activity: PasswordSetupActivity)
     fun inject(activity: QRCodeScanActivity)
@@ -96,6 +103,7 @@ interface ViewComponent {
     fun inject(activity: RestoreAccountActivity)
     fun inject(activity: RevealMnemonicActivity)
     fun inject(activity: SafeMainActivity)
+    fun inject(activity: SafeRecoveryPhraseActivity)
     fun inject(activity: SafeSettingsActivity)
     fun inject(activity: SafesOverviewActivity)
     fun inject(activity: SecuritySettingsActivity)

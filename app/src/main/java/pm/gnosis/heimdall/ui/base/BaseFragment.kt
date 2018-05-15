@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import io.reactivex.disposables.CompositeDisposable
 import pm.gnosis.heimdall.HeimdallApplication
-import pm.gnosis.heimdall.common.di.components.ApplicationComponent
+import pm.gnosis.heimdall.di.components.ApplicationComponent
 
 abstract class BaseFragment : Fragment() {
     protected val disposables = CompositeDisposable()
