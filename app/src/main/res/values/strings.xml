@@ -394,4 +394,5 @@
     <string name="confirm_with_extension">Confirm this transaction with the browser extension</string>
     <string name="request_confirmation_wait_x_s">wait 0:%ss before re-sending request</string>
     <string name="request_confirmation">Re-send confirmation request</string>
+    <string name="unknown_token">Unknown Token</string>
 </resources>

@@ -141,10 +141,10 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 ReviewTransactionActivity.createIntent(
                     this,
                     Solidity.Address("0x1f781ccc28a9d49217f709ca7f89a76e46f65ce9".hexAsBigInteger()),
-                    TransactionData.Generic(
-                        Solidity.Address(BigInteger.valueOf(132365887148412254)),
-                        BigInteger.ZERO,
-                        "0x12354356"
+                    TransactionData.AssetTransfer(
+                        Solidity.Address(BigInteger.ZERO),
+                        Wei.ether("0.00001").value,
+                        Solidity.Address(BigInteger.valueOf(132365887148412254))
                     )
                 )
             )

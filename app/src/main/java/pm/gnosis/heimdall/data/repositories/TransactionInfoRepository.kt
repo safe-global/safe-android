@@ -32,7 +32,7 @@ sealed class TransactionData: Parcelable {
 
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
-    data class AssetTransfer(val token: Solidity.Address, val amount: BigInteger): TransactionData()
+    data class AssetTransfer(val token: Solidity.Address, val amount: BigInteger, val receiver: Solidity.Address): TransactionData()
 
     fun addToBundle(bundle: Bundle) =
         bundle.let {

@@ -4,11 +4,13 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
+import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.SignatureStore
+import pm.gnosis.heimdall.ui.transactions.viewholders.AssetTransferViewHolder
 import pm.gnosis.heimdall.ui.transactions.viewholders.GenericTransactionViewHolder
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
@@ -23,9 +25,10 @@ import javax.inject.Inject
 
 class ReviewTransactionViewModel @Inject constructor(
     private val addressHelper: AddressHelper,
+    private val executionRepository: TransactionExecutionRepository,
     private val signaturePushRepository: SignaturePushRepository,
     private val signatureStore: SignatureStore,
-    private val executionRepository: TransactionExecutionRepository
+    private val tokenRepository: TokenRepository
 ) : ReviewTransactionContract() {
 
     private var safe: Solidity.Address? = null
@@ -167,7 +170,8 @@ class ReviewTransactionViewModel @Inject constructor(
                     GenericTransactionViewHolder(safe, transactionData, addressHelper)
                 is TransactionData.RecoverSafe -> TODO()
                 is TransactionData.ReplaceRecoveryPhrase -> TODO()
-                is TransactionData.AssetTransfer -> TODO()
+                is TransactionData.AssetTransfer ->
+                        AssetTransferViewHolder(safe, transactionData, addressHelper, tokenRepository)
             }
         }
 

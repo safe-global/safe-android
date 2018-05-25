@@ -34,7 +34,7 @@ class AddressHelper @Inject constructor(
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
-                    addressView.text = it
+                    addressView.text = "${it.subSequence(0, 6)}...${it.subSequence(it.length - 6, it.length)}"
                 },
             addressBookRepository.loadAddressBookEntry(address).map { it.name }
                 .onErrorResumeNext {
