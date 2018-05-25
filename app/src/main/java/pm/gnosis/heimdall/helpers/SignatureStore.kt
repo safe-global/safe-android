@@ -4,7 +4,7 @@ import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -19,7 +19,7 @@ class SimpleSignatureStore @Inject constructor(
     private val signatures = HashMap<Solidity.Address, Signature>()
 
     private var safeAddress: Solidity.Address? = null
-    private var info: TransactionRepository.ExecuteInformation? = null
+    private var info: TransactionExecutionRepository.ExecuteInformation? = null
         private set(value) {
             // Transaction changed, clear signatures
             if (field?.transactionHash != value?.transactionHash) {
@@ -32,7 +32,7 @@ class SimpleSignatureStore @Inject constructor(
 
     override fun flatMapInfo(
         safeAddress: Solidity.Address,
-        info: TransactionRepository.ExecuteInformation
+        info: TransactionExecutionRepository.ExecuteInformation
     ): Observable<Map<Solidity.Address, Signature>> {
         transaction {
             this.safeAddress = safeAddress
@@ -53,7 +53,6 @@ class SimpleSignatureStore @Inject constructor(
     override fun add(signature: Pair<Solidity.Address, Signature>) {
         transaction {
             SimpleLocalizedException.assert(info?.owners?.contains(signature.first) == true, context, R.string.error_signature_not_owner)
-            SimpleLocalizedException.assert(info?.sender != signature.first, context, R.string.error_signature_already_exists)
             SimpleLocalizedException.assert(!signatures.containsKey(signature.first), context, R.string.error_signature_already_exists)
             SimpleLocalizedException.assert(info?.requiredConfirmation?.let { signatures.size < it } == true,
                 context,
@@ -66,7 +65,7 @@ class SimpleSignatureStore @Inject constructor(
 }
 
 interface SignatureStore {
-    fun flatMapInfo(safeAddress: Solidity.Address, info: TransactionRepository.ExecuteInformation): Observable<Map<Solidity.Address, Signature>>
+    fun flatMapInfo(safeAddress: Solidity.Address, info: TransactionExecutionRepository.ExecuteInformation): Observable<Map<Solidity.Address, Signature>>
     fun loadSingingInfo(): Single<Pair<Solidity.Address, SafeTransaction>>
     fun load(): Single<Map<Solidity.Address, Signature>>
     fun observe(): Observable<Map<Solidity.Address, Signature>>

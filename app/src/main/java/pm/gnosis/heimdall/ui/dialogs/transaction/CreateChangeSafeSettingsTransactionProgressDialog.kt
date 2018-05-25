@@ -4,11 +4,9 @@ import android.os.Bundle
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.GnosisSafe
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
-import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
-import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
 import pm.gnosis.heimdall.utils.GnosisSafeUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -56,19 +54,11 @@ class CreateChangeSafeSettingsTransactionProgressDialog : BaseCreateSafeTransact
                 }
                 else -> throw UnsupportedOperationException()
             }
-            SafeTransaction(Transaction(safeAddress!!, data = data), TransactionRepository.Operation.CALL)
+            SafeTransaction(Transaction(safeAddress!!, data = data), TransactionExecutionRepository.Operation.CALL)
         }.subscribeOn(Schedulers.computation())
 
     override fun showTransaction(safe: Solidity.Address?, transaction: SafeTransaction) {
-        startActivity(
-            when (type) {
-                SETTINGS_TYPE_REMOVE_OWNER -> {
-                    SubmitTransactionActivity.createIntent(context!!, safe, transaction)
-                }
-                else ->
-                    CreateTransactionActivity.createIntent(context!!, safe, mapType(), transaction)
-            }
-        )
+        // TODO: remove whole class
     }
 
     private fun mapType() = when (type) {

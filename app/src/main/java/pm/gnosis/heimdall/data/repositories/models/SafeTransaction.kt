@@ -2,7 +2,7 @@ package pm.gnosis.heimdall.data.repositories.models
 
 import android.os.Parcel
 import android.os.Parcelable
-import pm.gnosis.heimdall.data.repositories.TransactionRepository.Operation
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.TransactionParcelable
 

@@ -51,7 +51,6 @@ class SimpleTransactionDetailsRepository @Inject constructor(
         data?.isSolidityMethod(GnosisSafe.ReplaceOwner.METHOD_ID) == true -> TransactionType.REPLACE_SAFE_OWNER
         data?.isSolidityMethod(GnosisSafe.RemoveExtension.METHOD_ID) == true -> TransactionType.REMOVE_EXTENSION
         data?.isSolidityMethod(CreateAndAddExtension.CreateAndAddExtension.METHOD_ID) == true ->
-            // TODO: We parse the while data here ... what would be a nicer way?
             when (nullOnThrow { parseCreateAndAddExtensionData(data) }) {
                 is AddRecoveryExtensionData -> TransactionType.ADD_RECOVERY_EXTENSION
                 else -> TransactionType.GENERIC
@@ -72,7 +71,6 @@ class SimpleTransactionDetailsRepository @Inject constructor(
             val extensionSetupDataString =
                 factoryArgs.data.items.toHexString().removeSolidityMethodPrefix(SingleAccountRecoveryExtension.Setup.METHOD_ID)
             val setupArgs = SingleAccountRecoveryExtension.Setup.decodeArguments(extensionSetupDataString)
-            // TODO: currently we assume that you only use one account with this
             return AddRecoveryExtensionData(setupArgs._recoverer, setupArgs._timeout.value)
         }
         return null
@@ -122,5 +120,5 @@ class SimpleTransactionDetailsRepository @Inject constructor(
     }
 
     private fun GnosisSafeTransactionDescription.toTransaction(): SafeTransaction =
-        SafeTransaction(Transaction(to, value = value, data = data, nonce = nonce), TransactionRepository.Operation.values()[operation.toInt()])
+        SafeTransaction(Transaction(to, value = value, data = data, nonce = nonce), TransactionExecutionRepository.Operation.values()[operation.toInt()])
 }

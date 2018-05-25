@@ -15,7 +15,7 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_safe_transactions_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionDetails
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
@@ -67,18 +67,18 @@ class SafeTransactionsAdapter @Inject constructor(
                 .subscribe(::updateStatus, Timber::e)
         }
 
-        private fun updateStatus(status: TransactionRepository.PublishStatus) {
+        private fun updateStatus(status: TransactionExecutionRepository.PublishStatus) {
             itemView.layout_safe_transactions_item_status.apply {
                 when (status) {
-                    TransactionRepository.PublishStatus.UNKNOWN, TransactionRepository.PublishStatus.SUCCESS -> {
+                    TransactionExecutionRepository.PublishStatus.UNKNOWN, TransactionExecutionRepository.PublishStatus.SUCCESS -> {
                         visibility = View.GONE
                     }
-                    TransactionRepository.PublishStatus.PENDING -> {
+                    TransactionExecutionRepository.PublishStatus.PENDING -> {
                         setTextColor(ContextCompat.getColor(context, R.color.light_text))
                         text = context.getString(R.string.status_pending)
                         visibility = View.VISIBLE
                     }
-                    TransactionRepository.PublishStatus.FAILED -> {
+                    TransactionExecutionRepository.PublishStatus.FAILED -> {
                         setTextColor(ContextCompat.getColor(context, R.color.error))
                         text = context.getString(R.string.status_failed)
                         visibility = View.VISIBLE

@@ -43,17 +43,7 @@ import pm.gnosis.heimdall.ui.splash.SplashActivity
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoActivity
-import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
-import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionActivity
-import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
-import pm.gnosis.heimdall.ui.transactions.SubmitTransactionActivity
-import pm.gnosis.heimdall.ui.transactions.details.assets.CreateAssetTransferDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.assets.ViewAssetTransferDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.CreateAddRecoveryExtensionFragment
-import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.ViewAddRecoveryExtensionDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.generic.CreateGenericTransactionDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.safe.CreateAddOwnerDetailsFragment
-import pm.gnosis.heimdall.ui.transactions.details.safe.ViewChangeSafeSettingsDetailsFragment
+import pm.gnosis.heimdall.ui.transactions.ReviewTransactionActivity
 
 @ForView
 @Component(
@@ -64,18 +54,11 @@ interface ViewComponent {
     // Fragments
 
     fun inject(fragment: AddExistingSafeFragment)
-    fun inject(fragment: CreateAssetTransferDetailsFragment)
-    fun inject(fragment: CreateAddOwnerDetailsFragment)
-    fun inject(fragment: CreateAddRecoveryExtensionFragment)
-    fun inject(fragment: CreateGenericTransactionDetailsFragment)
     fun inject(fragment: DeployNewSafeFragment)
     fun inject(fragment: PendingSafeFragment)
     fun inject(fragment: SafeDetailsFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)
-    fun inject(fragment: ViewAddRecoveryExtensionDetailsFragment)
-    fun inject(fragment: ViewAssetTransferDetailsFragment)
-    fun inject(fragment: ViewChangeSafeSettingsDetailsFragment)
 
     // Activities
 
@@ -88,7 +71,6 @@ interface ViewComponent {
     fun inject(activity: BuyCreditsActivity)
     fun inject(activity: ChangePasswordActivity)
     fun inject(activity: CreateSafeActivity)
-    fun inject(activity: CreateTransactionActivity)
     fun inject(activity: FingerprintSetupActivity)
     fun inject(activity: NetworkSettingsActivity)
     fun inject(activity: DebugSettingsActivity)
@@ -96,8 +78,8 @@ interface ViewComponent {
     fun inject(activity: PasswordConfirmActivity)
     fun inject(activity: PasswordSetupActivity)
     fun inject(activity: QRCodeScanActivity)
-    fun inject(activity: ReceiptTransactionActivity)
     fun inject(activity: RevealMnemonicActivity)
+    fun inject(activity: ReviewTransactionActivity)
     fun inject(activity: SafeMainActivity)
     fun inject(activity: SafeRecoveryPhraseActivity)
     fun inject(activity: SafeSettingsActivity)
@@ -105,9 +87,7 @@ interface ViewComponent {
     fun inject(activity: SecuritySettingsActivity)
     fun inject(activity: SelectSafeActivity)
     fun inject(activity: SetupSafeIntroActivity)
-    fun inject(activity: SignTransactionActivity)
     fun inject(activity: SplashActivity)
-    fun inject(activity: SubmitTransactionActivity)
     fun inject(activity: TokenManagementActivity)
     fun inject(activity: TokenInfoActivity)
     fun inject(activity: UnlockActivity)

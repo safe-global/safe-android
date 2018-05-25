@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_review_transaction_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/pale_grey_two"
+    tools:context=".ui.transactions.ReviewTransactionActivity">
+
+    <View
+        android:id="@+id/layout_review_transaction_toolbar_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/layout_review_transaction_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/layout_review_transaction_title" />
+
+    <ImageView
+        android:id="@+id/layout_review_transaction_back_button"
+        android:layout_width="@dimen/toolbar_height"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/dark_slate_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <TextView
+        android:id="@+id/layout_review_transaction_title"
+        style="@style/Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingEnd="16dp"
+        android:text="@string/review_transaction"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/layout_review_transaction_back_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <View
+        android:id="@+id/layout_review_transaction_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/layout_review_transaction_title" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/layout_review_transaction_toolbar_shadow">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/layout_review_transaction_data_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <View
+                android:id="@+id/layout_review_transaction_data_container_estimate_background"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@color/pale_grey"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_review_transaction_data_fees_label"
+                app:layout_constraintTop_toTopOf="@+id/layout_review_transaction_data_balance_label" />
+
+            <TextView
+                android:id="@+id/layout_review_transaction_data_balance_label"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:paddingTop="12dp"
+                android:text="@string/safe_balance"
+                app:layout_constraintEnd_toStartOf="@+id/layout_review_transaction_data_balance_value"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_data_container" />
+
+            <TextView
+                android:id="@+id/layout_review_transaction_data_balance_value"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:gravity="end"
+                android:paddingTop="12dp"
+                android:text="-"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_review_transaction_data_balance_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_data_container"
+                tools:text="42.4242 ETH" />
+
+            <TextView
+                android:id="@+id/layout_review_transaction_data_fees_label"
+                style="@style/NormalText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="monospace-medium"
+                android:paddingBottom="12dp"
+                android:text="@string/estimated_transaction_fee"
+                app:layout_constraintEnd_toStartOf="@+id/layout_review_transaction_data_fees_value"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_data_balance_label" />
+
+            <TextView
+                android:id="@+id/layout_review_transaction_data_fees_value"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="monospace-medium"
+                android:gravity="end"
+                android:paddingBottom="12dp"
+                android:text=""
+                android:textColor="@color/tomato"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_review_transaction_data_fees_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_data_balance_label"
+                tools:text="0.0023 ETH" />
+
+            <android.support.constraint.Barrier
+                android:id="@+id/layout_review_transaction_data_estimate_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="layout_review_transaction_data_fees_label" />
+
+            <View
+                android:id="@+id/layout_review_transaction_data_container_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_data_container_estimate_background" />
+
+            <TextView
+                android:id="@+id/layout_review_transaction_confirmation_status"
+                style="@style/SpacedCapsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="16dp"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:paddingTop="24dp"
+                android:text="AWAITING CONFIRMATION"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_data_container_divider" />
+
+            <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                android:id="@+id/layout_review_transaction_confirmation_progress"
+                style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:indeterminate="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_confirmation_status"
+                app:mpb_progressStyle="horizontal"
+                app:mpb_setBothDrawables="true" />
+
+            <TextView
+                android:id="@+id/layout_review_transaction_retry_button"
+                style="@style/PrimaryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace-medium"
+                android:gravity="center"
+                android:paddingBottom="12dp"
+                android:text="@string/retry"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_confirmation_progress" />
+
+
+            <android.support.constraint.Group
+                android:id="@+id/layout_review_transaction_confirmations_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="layout_review_transaction_confirmations_image,layout_review_transaction_confirmations_info,layout_review_transaction_confirmations_timer,layout_review_transaction_request_button" />
+
+            <ImageView
+                android:id="@+id/layout_review_transaction_confirmations_image"
+                android:layout_width="62dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/ic_confirmations_waiting"
+                app:layout_constraintEnd_toStartOf="@+id/layout_review_transaction_confirmations_info"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_confirmation_progress" />
+
+            <TextView
+                android:id="@+id/layout_review_transaction_confirmations_info"
+                style="@style/DarkText"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="monospace-medium"
+                android:text="@string/confirm_with_extension"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_review_transaction_confirmations_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/layout_review_transaction_confirmations_image"
+                app:layout_constraintTop_toTopOf="@+id/layout_review_transaction_confirmations_image" />
+
+
+            <android.support.constraint.Barrier
+                android:id="@+id/layout_review_transaction_confirmations_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="layout_review_transaction_confirmations_info,layout_review_transaction_confirmations_image" />
+
+            <TextView
+                android:id="@+id/layout_review_transaction_confirmations_timer"
+                style="@style/NormalText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="monospace-medium"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_confirmations_barrier"
+                tools:text="@string/request_confirmation_wait_x_s" />
+
+
+            <TextView
+                android:id="@+id/layout_review_transaction_request_button"
+                style="@style/PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="monospace-medium"
+                android:gravity="center"
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:text="@string/request_confirmation"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_confirmations_timer" />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/layout_review_transaction_submit_button"
+        style="@style/PrimaryButton.FullWidth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/submit_transaction"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

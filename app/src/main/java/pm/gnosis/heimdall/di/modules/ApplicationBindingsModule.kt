@@ -84,7 +84,7 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsTransactionRepository(repository: GnosisSafeTransactionRepository): TransactionRepository
+    abstract fun bindsTransactionRepository(repository: GnosisSafeTransactionRepository): TransactionExecutionRepository
 
     @Binds
     @Singleton

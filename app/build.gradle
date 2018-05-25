@@ -104,6 +104,10 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 jacoco {
     toolVersion = versions.jacoco
     version = versions.jacoco

@@ -8,7 +8,6 @@ import pm.gnosis.heimdall.data.repositories.TransactionType
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
-import pm.gnosis.heimdall.ui.transactions.CreateTransactionActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -57,7 +56,7 @@ class CreateChangeExtensionTransactionProgressDialog : BaseCreateSafeTransaction
     }
 
     override fun showTransaction(safe: Solidity.Address?, transaction: SafeTransaction) {
-        startActivity(CreateTransactionActivity.createIntent(context!!, safe, mapType(), transaction))
+        // TODO: remove whole class
     }
 
     private fun mapType() = when (type) {

@@ -18,7 +18,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
-import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
@@ -180,7 +180,7 @@ class SafeTransactionsViewModelTest {
             testId,
             TransactionType.GENERIC,
             null,
-            SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionRepository.Operation.CALL),
+            SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionExecutionRepository.Operation.CALL),
             TEST_SAFE,
             TEST_TIME
         )
@@ -209,7 +209,7 @@ class SafeTransactionsViewModelTest {
                 testId,
                 TransactionType.TOKEN_TRANSFER,
                 null,
-                SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionRepository.Operation.CALL),
+                SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionExecutionRepository.Operation.CALL),
                 TEST_SAFE,
                 TEST_TIME
             )
@@ -239,7 +239,7 @@ class SafeTransactionsViewModelTest {
             testId,
             TransactionType.TOKEN_TRANSFER,
             tokenTransferData,
-            SafeTransaction(Transaction(tokenAddress), TransactionRepository.Operation.CALL),
+            SafeTransaction(Transaction(tokenAddress), TransactionExecutionRepository.Operation.CALL),
             TEST_SAFE,
             TEST_TIME
         )
@@ -271,7 +271,7 @@ class SafeTransactionsViewModelTest {
             testId,
             TransactionType.TOKEN_TRANSFER,
             tokenTransferData,
-            SafeTransaction(Transaction(tokenAddress), TransactionRepository.Operation.CALL),
+            SafeTransaction(Transaction(tokenAddress), TransactionExecutionRepository.Operation.CALL),
             TEST_SAFE,
             TEST_TIME
         )
@@ -303,7 +303,7 @@ class SafeTransactionsViewModelTest {
                 testId,
                 TransactionType.ETHER_TRANSFER,
                 null,
-                SafeTransaction(Transaction(Solidity.Address(BigInteger.ONE), value = Wei(amount)), TransactionRepository.Operation.CALL),
+                SafeTransaction(Transaction(Solidity.Address(BigInteger.ONE), value = Wei(amount)), TransactionExecutionRepository.Operation.CALL),
                 TEST_SAFE,
                 TEST_TIME
             )

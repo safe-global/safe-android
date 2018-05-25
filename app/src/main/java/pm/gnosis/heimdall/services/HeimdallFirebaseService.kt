@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.services
 
+import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.reactivex.disposables.CompositeDisposable
@@ -7,10 +8,9 @@ import io.reactivex.rxkotlin.plusAssign
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
-import pm.gnosis.heimdall.ui.transactions.SignTransactionActivity
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.asEthereumAddressString
@@ -70,8 +70,8 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
     }
 
     private fun showNotification(signRequest: GnoSafeUrlParser.Parsed.SignRequest) {
-        val safeTransaction = SafeTransaction(signRequest.transaction, TransactionRepository.Operation.values()[signRequest.operation])
-        val intent = SignTransactionActivity.createIntent(this, signRequest.safe, safeTransaction, true)
+        val safeTransaction = SafeTransaction(signRequest.transaction, TransactionExecutionRepository.Operation.values()[signRequest.operation])
+        val intent = Intent()
         notificationManager.show(
             signRequest.transactionHash.hashCode(),
             getString(R.string.sign_transaction_request_title),

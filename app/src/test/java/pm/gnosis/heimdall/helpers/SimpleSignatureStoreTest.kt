@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
@@ -52,7 +52,7 @@ class SimpleSignatureStoreTest {
         })
 
         val mappedObserver = TestObserver<Map<Solidity.Address, Signature>>()
-        val info = TransactionRepository.ExecuteInformation(
+        val info = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS
         )
         // Set store info an observe it
@@ -121,7 +121,7 @@ class SimpleSignatureStoreTest {
          * Checks for changes in information
          */
         val updateOwnersObserver = TestObserver<Map<Solidity.Address, Signature>>()
-        val updateOwnersInfo = TransactionRepository.ExecuteInformation(
+        val updateOwnersInfo = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
             TEST_OWNERS_2
         )
@@ -148,7 +148,7 @@ class SimpleSignatureStoreTest {
         updateOwnersObserver.assertValuesOnly(mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE))
 
         val updateHashObserver = TestObserver<Map<Solidity.Address, Signature>>()
-        val updateHashInfo = TransactionRepository.ExecuteInformation(
+        val updateHashInfo = TransactionExecutionRepository.ExecuteInformation(
             "some_new_hash", TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
             TEST_OWNERS_2
         )
@@ -195,7 +195,7 @@ class SimpleSignatureStoreTest {
         private const val TEST_TRANSACTION_HASH = "SomeHash"
         private val TEST_SIGNATURE = Signature(BigInteger.valueOf(987), BigInteger.valueOf(678), 27)
         private val TEST_SAFE = Solidity.Address(BigInteger.ZERO)
-        private val TEST_TRANSACTION = SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionRepository.Operation.CALL)
+        private val TEST_TRANSACTION = SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)
         private val TEST_SIGNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13)).map { Solidity.Address(it) }
         private val TEST_OWNERS = TEST_SIGNERS + Solidity.Address(BigInteger.valueOf(5))
         private val TEST_OWNERS_2 = listOf(BigInteger.valueOf(13), BigInteger.valueOf(23)).map { Solidity.Address(it) }

@@ -37,13 +37,7 @@ import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
-import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionContract
-import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
-import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.AddRecoveryExtensionContract
-import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract
+import pm.gnosis.heimdall.ui.transactions.ReviewTransactionContract
 
 @Module
 class ViewModule(val context: Context) {
@@ -62,10 +56,6 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesAddRecoveryExtensionContract(provider: ViewModelProvider) = provider[AddRecoveryExtensionContract::class.java]
-
-    @Provides
-    @ForView
     fun providesAddSafeContract(provider: ViewModelProvider) = provider[AddSafeContract::class.java]
 
     @Provides
@@ -78,15 +68,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesAssetTransferTransactionDetailsContract(provider: ViewModelProvider) = provider[AssetTransferDetailsContract::class.java]
-
-    @Provides
-    @ForView
     fun providesAuthenticateContract(provider: ViewModelProvider) = provider[AuthenticateContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesBaseTransactionDetailsContract(provider: ViewModelProvider) = provider[BaseTransactionDetailsContract::class.java]
 
     @Provides
     @ForView
@@ -95,10 +77,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesChangePasswordContract(provider: ViewModelProvider) = provider[ChangePasswordContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesChangeSafeSettingsDetailsContract(provider: ViewModelProvider) = provider[ChangeSafeSettingsDetailsContract::class.java]
 
     @Provides
     @ForView
@@ -114,10 +92,6 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesGenericTransactionDetailsContract(provider: ViewModelProvider) = provider[GenericTransactionDetailsContract::class.java]
-
-    @Provides
-    @ForView
     fun providesNetworkSettingsContract(provider: ViewModelProvider) = provider[NetworkSettingsContract::class.java]
 
     @Provides
@@ -130,11 +104,11 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesReceiptTransactionContract(provider: ViewModelProvider) = provider[ReceiptTransactionContract::class.java]
+    fun providesRevealMnemonicContract(provider: ViewModelProvider) = provider[RevealMnemonicContract::class.java]
 
     @Provides
     @ForView
-    fun providesRevealMnemonicContract(provider: ViewModelProvider) = provider[RevealMnemonicContract::class.java]
+    fun providesReviewTransactionContract(provider: ViewModelProvider) = provider[ReviewTransactionContract::class.java]
 
     @Provides
     @ForView
@@ -187,10 +161,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesUnlockContract(provider: ViewModelProvider) = provider[UnlockContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesViewTransactionContract(provider: ViewModelProvider) = provider[ViewTransactionContract::class.java]
 
     @Provides
     @ForView

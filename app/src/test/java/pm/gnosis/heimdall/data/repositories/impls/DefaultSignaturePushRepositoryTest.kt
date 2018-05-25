@@ -24,7 +24,7 @@ import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.RequestSignatureData
 import pm.gnosis.heimdall.data.remote.models.SendSignatureData
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
@@ -313,7 +313,7 @@ class DefaultSignaturePushRepositoryTest {
         private val TEST_SIGNATURE = Signature(BigInteger.valueOf(987), BigInteger.valueOf(678), 27)
         private val TEST_SIGNATURE_2 = Signature(BigInteger.valueOf(6789), BigInteger.valueOf(1234), 28)
         private val TEST_TRANSACTION =
-            SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionRepository.Operation.CALL)
+            SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)
         private const val PREFS_OBSERVED_SAFES = "default_signature_push_repo.string_set.observed_safes"
         private const val REQUEST_SIGNATURE_TOPIC_PREFIX = "request_signature."
         private const val RESPOND_SIGNATURE_TOPIC_PREFIX = "respond_signature."

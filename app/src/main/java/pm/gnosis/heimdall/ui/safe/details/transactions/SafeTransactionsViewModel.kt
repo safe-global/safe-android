@@ -12,7 +12,6 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionActivity
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
@@ -66,10 +65,10 @@ class SafeTransactionsViewModel @Inject constructor(
                 }
         } ?: Single.error(IllegalStateException())
 
-    override fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus> =
+    override fun observeTransactionStatus(id: String): Observable<TransactionExecutionRepository.PublishStatus> =
         safeTransactionsRepository.observePublishStatus(id)
 
-    override fun transactionSelected(id: String): Single<Intent> = Single.just(ReceiptTransactionActivity.createIntent(context, id))
+    override fun transactionSelected(id: String): Single<Intent> = Single.error(NotImplementedError()) // TODO: implement
 
     private fun loadTokenValue(token: Solidity.Address, value: BigInteger) =
         tokenRepository.observeToken(token)
