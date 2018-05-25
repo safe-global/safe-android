@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:background="@color/pale_grey_two"
-    tools:context=".ui.transactions.ReviewTransactionActivity">
+    tools:context=".ui.transactions.review.ReviewTransactionActivity">
 
     <View
         android:id="@+id/layout_review_transaction_toolbar_background"
@@ -45,14 +45,6 @@
         app:layout_constraintStart_toEndOf="@id/layout_review_transaction_back_button"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_arrow_back_24dp" />
-
-    <View
-        android:id="@+id/layout_review_transaction_toolbar_shadow"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_shadow_size"
-        android:background="@drawable/toolbar_dropshadow"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/layout_review_transaction_title" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -275,6 +267,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/layout_review_transaction_confirmations_timer" />
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
+
+    <View
+        android:id="@+id/layout_review_transaction_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/layout_review_transaction_title" />
 
     <TextView
         android:id="@+id/layout_review_transaction_submit_button"

@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions
+package pm.gnosis.heimdall.ui.transactions.review
 
 import android.arch.lifecycle.LifecycleObserver
 import android.view.LayoutInflater

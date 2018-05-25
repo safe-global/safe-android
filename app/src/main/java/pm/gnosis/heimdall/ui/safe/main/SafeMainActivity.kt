@@ -33,7 +33,7 @@ import pm.gnosis.heimdall.ui.safe.overview.SafeAdapter
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
-import pm.gnosis.heimdall.ui.transactions.ReviewTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.mapToResult

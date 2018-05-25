@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions
+package pm.gnosis.heimdall.ui.transactions.review
 
 
 import android.content.Context
@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.*
@@ -113,8 +114,13 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             }
             is ReviewTransactionContract.ViewUpdate.TransactionSubmitted -> {
                 if (update.success) {
-                    // TODO: start correct activity
-                    finish()
+                    startActivity(
+                        SafeMainActivity.createIntent(
+                            this,
+                            null,
+                            R.string.tab_title_transactions
+                        )
+                    )
                 } else {
                     toggleReadyState(true)
                 }

@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.di.modules.ApplicationBindingsModule
 import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.di.modules.InterceptorsModule
 import pm.gnosis.heimdall.di.modules.ViewModelFactoryModule
+import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.services.HeimdallFirebaseService
@@ -53,6 +54,7 @@ interface ApplicationComponent {
 
     fun encryptionManager(): EncryptionManager
     fun qrCodeGenerator(): QrCodeGenerator
+    fun addressHelper(): AddressHelper
 
     // Base injects
     fun inject(activity: BaseActivity)

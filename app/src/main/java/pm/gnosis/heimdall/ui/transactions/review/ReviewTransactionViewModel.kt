@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions
+package pm.gnosis.heimdall.ui.transactions.review
 
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -10,8 +10,9 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.SignatureStore
-import pm.gnosis.heimdall.ui.transactions.viewholders.AssetTransferViewHolder
-import pm.gnosis.heimdall.ui.transactions.viewholders.GenericTransactionViewHolder
+import pm.gnosis.heimdall.ui.transactions.review.viewholders.AssetTransferViewHolder
+import pm.gnosis.heimdall.ui.transactions.review.viewholders.GenericTransactionViewHolder
+import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
@@ -171,18 +172,13 @@ class ReviewTransactionViewModel @Inject constructor(
                 is TransactionData.RecoverSafe -> TODO()
                 is TransactionData.ReplaceRecoveryPhrase -> TODO()
                 is TransactionData.AssetTransfer ->
-                        AssetTransferViewHolder(safe, transactionData, addressHelper, tokenRepository)
+                    AssetTransferViewHolder(
+                        safe,
+                        transactionData,
+                        addressHelper,
+                        tokenRepository
+                    )
             }
-        }
-
-    private fun <I, O> Observable<I>.emitAndNext(emit: (I) -> O, next: (I) -> Observable<O>) =
-        flatMap {
-            Observable.just(emit(it)).concatWith(next(it))
-        }
-
-    private fun <I, O> Single<I>.emitAndNext(emit: (I) -> O, next: (I) -> Observable<O>) =
-        flatMapObservable {
-            Observable.just(emit(it)).concatWith(next(it))
         }
 
 }

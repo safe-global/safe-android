@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions
+package pm.gnosis.heimdall.ui.transactions.review
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable

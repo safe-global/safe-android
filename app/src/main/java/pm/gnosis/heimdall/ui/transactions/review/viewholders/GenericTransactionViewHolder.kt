@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.viewholders
+package pm.gnosis.heimdall.ui.transactions.review.viewholders
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
@@ -11,12 +11,11 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.layout_generic_transaction_info.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionData
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
-import pm.gnosis.heimdall.ui.transactions.TransactionInfoViewHolder
+import pm.gnosis.heimdall.ui.transactions.builder.GenericTransactionBuilder
+import pm.gnosis.heimdall.ui.transactions.review.TransactionInfoViewHolder
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.removeHexPrefix
@@ -33,13 +32,7 @@ class GenericTransactionViewHolder(
 
     override fun loadTransaction(): Single<SafeTransaction> =
         Single.fromCallable {
-            SafeTransaction(
-                Transaction(
-                    data.to,
-                    value = Wei(data.value),
-                    data = data.data
-                ), TransactionExecutionRepository.Operation.CALL
-            )
+            GenericTransactionBuilder.build(data)
         }.subscribeOn(Schedulers.computation())
 
     override fun inflate(inflater: LayoutInflater, root: ViewGroup) {

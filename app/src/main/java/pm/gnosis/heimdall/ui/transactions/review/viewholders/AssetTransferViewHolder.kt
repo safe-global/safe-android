@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.viewholders
+package pm.gnosis.heimdall.ui.transactions.review.viewholders
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
@@ -20,7 +20,8 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
-import pm.gnosis.heimdall.ui.transactions.TransactionInfoViewHolder
+import pm.gnosis.heimdall.ui.transactions.builder.AssetTransferTransactionBuilder
+import pm.gnosis.heimdall.ui.transactions.review.TransactionInfoViewHolder
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -40,20 +41,7 @@ class AssetTransferViewHolder(
 
     override fun loadTransaction(): Single<SafeTransaction> =
         Single.fromCallable {
-            if (data.token == ERC20Token.ETHER_TOKEN.address)
-                SafeTransaction(
-                    Transaction(
-                        data.receiver,
-                        value = Wei(data.amount)
-                    ), TransactionExecutionRepository.Operation.CALL
-                )
-            else
-                SafeTransaction(
-                    Transaction(
-                        data.token,
-                        data = StandardToken.Transfer.encode(data.receiver, Solidity.UInt256(data.amount))
-                    ), TransactionExecutionRepository.Operation.CALL
-                )
+            AssetTransferTransactionBuilder.build(data)
         }.subscribeOn(Schedulers.computation())
 
     override fun inflate(inflater: LayoutInflater, root: ViewGroup) {
