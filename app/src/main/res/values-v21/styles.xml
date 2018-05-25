@@ -11,7 +11,7 @@
     </style>
 
     <style name="IntroTheme" parent="IntroThemeBase">
-        <item name="android:statusBarColor">#00b8e0</item>
+        <item name="android:statusBarColor">@color/aqua_blue</item>
     </style>
 
     <style name="WhiteTheme" parent="WhiteThemeBase" />

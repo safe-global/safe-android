@@ -13,33 +13,25 @@ import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_password_setup.*
-import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
+import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.setColorFilterCompat
-import pm.gnosis.heimdall.utils.setSelectedCompoundDrawablesWithIntrinsicBounds
+import pm.gnosis.heimdall.utils.setCompoundDrawables
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class PasswordSetupActivity : SecuredBaseActivity() {
+class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
 
     override fun screenId() = ScreenId.PASSWORD_SETUP
-
-    @Inject
-    lateinit var viewModel: PasswordSetupContract
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
         super.onCreate(savedInstanceState)
-        inject()
-        setContentView(R.layout.layout_password_setup)
 
         layout_password_setup_password.disableAccessibility()
         layout_password_setup_password.requestFocus()
@@ -50,13 +42,6 @@ class PasswordSetupActivity : SecuredBaseActivity() {
             }
             true
         }
-    }
-
-    override fun onWindowObscured() {
-        super.onWindowObscured()
-        // Window is obscured, clear input and disable to prevent potential leak
-        layout_password_setup_password.text = null
-        layout_password_setup_password.isEnabled = false
     }
 
     override fun onStart() {
@@ -74,58 +59,50 @@ class PasswordSetupActivity : SecuredBaseActivity() {
     }
 
     private fun onPasswordValidation(validationConditions: List<Pair<PasswordValidationCondition, Boolean>>) {
-        layout_password_setup_password.setSelectedCompoundDrawablesWithIntrinsicBounds(
-            right = ContextCompat.getDrawable(this, if (validationConditions.all { it.second }) R.drawable.ic_green_check else R.drawable.ic_error)
+        layout_password_setup_password.setCompoundDrawables(
+            right =
+            if (layout_password_setup_password.text.isEmpty()) null
+            else ContextCompat.getDrawable(this, if (validationConditions.all { it.second }) R.drawable.ic_green_check else R.drawable.ic_error)
         )
         layout_password_setup_validation_info.text = ""
         validationConditions.forEach {
-            when (it.first) {
-                PasswordValidationCondition.NON_IDENTICAL_CHARACTERS -> layout_password_setup_validation_info.append(
-                    getSpannableString(
-                        getString(R.string.password_validation_identical_characters),
-                        it.second
-                    )
+            layout_password_setup_validation_info.append(
+                getSpannableString(
+                    when (it.first) {
+                        PasswordValidationCondition.NON_IDENTICAL_CHARACTERS -> getString(R.string.password_validation_identical_characters)
+                        PasswordValidationCondition.MINIMUM_CHARACTERS -> getString(R.string.password_validation_minimum_characters)
+                        PasswordValidationCondition.ONE_NUMBER_ONE_LETTER -> getString(R.string.password_validation_one_number_one_letter)
+                    },
+                    it.second
                 )
-                PasswordValidationCondition.MINIMUM_CHARACTERS -> layout_password_setup_validation_info.append(
-                    getSpannableString(
-                        getString(R.string.password_validation_minimum_characters),
-                        it.second
-                    )
-                )
-                PasswordValidationCondition.ONE_NUMBER_ONE_LETTER -> layout_password_setup_validation_info.append(
-                    getSpannableString(
-                        getString(R.string.password_validation_one_number_one_letter),
-                        it.second
-                    )
-                )
-            }
+            )
         }
 
         enableNext(validationConditions.all { it.second })
     }
 
-    private fun getSpannableString(message: String, condition: Boolean) =
-        SpannableString(message).apply {
-            setSpan(
-                ForegroundColorSpan(if (condition) getColorCompat(R.color.green_new) else getColorCompat(R.color.red_new)),
-                0, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+    private fun getSpannableString(message: String, condition: Boolean): SpannableString {
+        val color = when {
+            layout_password_setup_password.text.isEmpty() -> getColorCompat(R.color.battleship_grey)
+            condition -> getColorCompat(R.color.green_teal)
+            else -> getColorCompat(R.color.tomato)
         }
-
+        return SpannableString(message).apply {
+            setSpan(ForegroundColorSpan(color), 0, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+    }
+    
     private fun enableNext(enable: Boolean) {
         layout_password_setup_next.isEnabled = enable
-        layout_password_setup_bottom_container.setBackgroundColor(getColorCompat(if (enable) R.color.blue_button_new else R.color.gray_bottom_bar))
-        layout_password_setup_next_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.text_light_2_new))
-        layout_password_confirm_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.disabled)
+        layout_password_setup_bottom_container.setBackgroundColor(getColorCompat(if (enable) R.color.azure else R.color.pale_grey))
+        layout_password_setup_next_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.bluey_grey))
+        layout_password_confirm_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.bluey_grey)
     }
 
-    private fun inject() {
-        DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this].component)
-            .viewModule(ViewModule(this))
-            .build()
-            .inject(this)
-    }
+    override fun layout() = R.layout.layout_password_setup
+
+    override fun inject(component: ViewComponent) = viewComponent().inject(this)
+
 
     companion object {
         fun createIntent(context: Context) = Intent(context, PasswordSetupActivity::class.java)

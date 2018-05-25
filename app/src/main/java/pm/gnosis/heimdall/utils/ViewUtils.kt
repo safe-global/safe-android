@@ -22,13 +22,13 @@ fun TextView.setFormattedText(res: Int, vararg params: Pair<String, String>) {
 }
 
 fun ImageView.setColorFilterCompat(@ColorRes color: Int) = setColorFilter(context.getColorCompat(color))
-// TODO: remove method after extracting colors
-fun ImageView.setColorFilterCompat2(color: Int) = setColorFilter(color)
 
-fun TextView.setSelectedCompoundDrawablesWithIntrinsicBounds(
+fun TextView.setCompoundDrawables(
     left: Drawable? = null,
     top: Drawable? = null,
     right: Drawable? = null,
-    bottom: Drawable? = null
+    bottom: Drawable? = null,
+    useIntrinsicBounds: Boolean = true
 ) =
-    setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom)
+    if (useIntrinsicBounds) setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom)
+    else setCompoundDrawablesRelative(left, top, right, bottom)

@@ -56,14 +56,17 @@
     <color name="security_bar_best">#10b3d4</color>
 
     <!-- New Design colors -->
-    <color name="green_new">#09a862</color>
-    <color name="red_new">#f02525</color>
-    <color name="text_dark_new">#21435a</color>
-    <color name="text_light_new">#65707e</color>
-    <color name="text_light_2_new">#757f8a</color>
-    <color name="gray_new">#f4f4f9</color>
-    <color name="blue_new">#00b8e0</color>
-    <color name="blue_button_new">#28b2fa</color>
-    <color name="gray_bottom_bar">#e4e8f1</color>
-    <color name="disabled">#a2a8ba</color>
+    <color name="aqua_blue">#00b8e0</color>
+    <color name="azure">#28b2fa</color>
+    <color name="pale_grey">#e4e8f1</color>
+    <color name="bluey_grey">#a2a8ba</color>
+    <color name="pale_grey_two">#f4f4f9</color>
+    <color name="battleship_grey">#65707e</color>
+    <color name="tomato">#f02525</color>
+    <color name="green_teal">#09a862</color>
+    <color name="dark_slate_blue">#21435a</color>
+    <color name="pale_grey_three">#f4f5f9</color>
+    <color name="tomato_15">#27f02525</color>
+    <color name="pale_grey_four">#e3e5ec</color>
+
 </resources>

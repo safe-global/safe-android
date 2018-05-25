@@ -28,4 +28,7 @@
     <dimen name="navigation_item_padding">16dp</dimen>
     <dimen name="navigation_item_icon">32dp</dimen>
     <dimen name="navigation_item_icon_padding">10dp</dimen>
+    <dimen name="bottom_bar_height">46dp</dimen>
+
+    <dimen name="primary_button_radius">4dp</dimen>
 </resources>

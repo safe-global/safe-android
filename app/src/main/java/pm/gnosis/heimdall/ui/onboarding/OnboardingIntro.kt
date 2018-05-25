@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
+import android.text.Html
+import android.text.method.LinkMovementMethod
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -24,6 +26,10 @@ class OnboardingIntro : BaseActivity() {
         skipSecurityCheck()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_onboarding_intro)
+        bottom_sheet_terms_and_conditions_description.apply {
+            text = Html.fromHtml(getString(R.string.terms_info))
+            movementMethod = LinkMovementMethod.getInstance()
+        }
         bottomSheetBehavior = BottomSheetBehavior.from(layout_onboarding_intro_bottom_sheet).apply { state = BottomSheetBehavior.STATE_HIDDEN }
     }
 

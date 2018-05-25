@@ -33,12 +33,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/layout_onboarding_intro_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:layout_marginEnd="70dp"
-            android:layout_marginStart="70dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginStart="22dp"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
             android:text="@string/onboarding_intro_info"
@@ -50,11 +50,11 @@
 
         <TextView
             android:id="@+id/layout_onboarding_intro_get_started"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="70dp"
-            android:layout_marginEnd="70dp"
-            android:layout_marginStart="70dp"
+            android:layout_marginEnd="42dp"
+            android:layout_marginStart="42dp"
             android:background="@drawable/round_button"
             android:gravity="center"
             android:paddingBottom="12dp"
@@ -63,9 +63,7 @@
             android:paddingTop="12dp"
             android:text="@string/setup_password"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/textView"
-            app:layout_constraintStart_toStartOf="@+id/textView" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 

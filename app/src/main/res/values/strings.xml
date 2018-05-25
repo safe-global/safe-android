@@ -351,7 +351,7 @@
     <string name="get_started">Get Started</string>
     <string name="onboarding_intro">Store your assets securely with 2FA</string>
     <string name="setup_password">Setup Password</string>
-    <string name="setup_password_info">This password will prevent unauthorized access to this application</string>
+    <string name="setup_password_info">This password is used to unlock the Safe app and to confirm transactions. <b>Do not share this password with others!</b></string>
     <string name="password">Password</string>
     <string name="next">Next</string>
     <string name="confirm_password">Confirm Password</string>
@@ -384,4 +384,8 @@
     <string name="password_validation_identical_characters">No more than 2 identical characters in a row\n</string>
     <string name="password_validation_minimum_characters">Use a minimum of 8 characters\n</string>
     <string name="password_validation_one_number_one_letter">Password with at least 1 number and 1 letter\n</string>
+    <string name="terms">Terms</string>
+    <string name="terms_info"><![CDATA[By continuing you accept and agree with the <a href="https://gnosis.pm">Terms of Use</a> and <a href="https://gnosis.pm/resources/default/pdf/PrivacyPolicyGnosisLtd.pdf">Privacy Policy</a>]]></string>
+    <string name="no_thanks">NO THANKS</string>
+    <string name="agree">AGREE</string>
 </resources>

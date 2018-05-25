@@ -13,7 +13,11 @@
         android:id="@+id/bottom_sheet_terms_and_conditions_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Terms"
+        android:fontFamily="sans-serif"
+        android:text="@string/terms"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -22,7 +26,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="By continuing you accept and agree with the Terms of Use and Privacy Policy"
+        android:fontFamily="sans-serif"
+        android:text="@string/terms_info"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="13sp"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_title" />
 
     <TextView
@@ -31,22 +38,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
-        android:layout_marginTop="24dp"
-        android:text="NO THANKS"
+        android:layout_marginTop="16dp"
+        android:autoLink="web"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/no_thanks"
+        android:textSize="13sp"
         android:theme="@style/SmallFlatButton"
         app:layout_constraintEnd_toStartOf="@+id/bottom_sheet_terms_and_conditions_agree"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_description" />
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_agree"
+        style="@style/WhiteTheme.PrimaryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="AGREE"
-        style="@style/PrimaryButton"
-        android:background="@drawable/primary_button_inline"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/agree"
+        android:textSize="13sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/bottom_sheet_terms_and_conditions_reject"
         app:layout_constraintEnd_toEndOf="parent" />
 

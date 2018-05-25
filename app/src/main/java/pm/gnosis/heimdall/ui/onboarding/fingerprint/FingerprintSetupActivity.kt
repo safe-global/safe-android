@@ -2,36 +2,23 @@ package pm.gnosis.heimdall.ui.onboarding.fingerprint
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_fingerprint_setup.*
-import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.svalinn.security.AuthenticationError
 import timber.log.Timber
-import javax.inject.Inject
 
-class FingerprintSetupActivity : BaseActivity() {
+class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
     override fun screenId() = ScreenId.FINGERPRINT_SETUP
-
-    @Inject
-    lateinit var viewModel: FingerprintSetupContract
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        inject()
-        setContentView(R.layout.layout_fingerprint_setup)
-    }
 
     override fun onStart() {
         super.onStart()
@@ -64,12 +51,9 @@ class FingerprintSetupActivity : BaseActivity() {
         startActivity(SafesOverviewActivity.createIntent(this), true)
     }
 
-    private fun inject() {
-        DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this].component)
-            .viewModule(ViewModule(this))
-            .build().inject(this)
-    }
+    override fun layout() = R.layout.layout_fingerprint_setup
+
+    override fun inject(component: ViewComponent) = viewComponent().inject(this)
 
     companion object {
         fun createIntent(context: Context) = Intent(context, FingerprintSetupActivity::class.java)

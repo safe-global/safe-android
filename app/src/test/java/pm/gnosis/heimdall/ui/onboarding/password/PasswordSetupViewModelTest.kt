@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.onboarding.password
 
 import android.content.Context
+import android.content.Intent
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -183,17 +184,19 @@ class PasswordSetupViewModelTest {
         given(bip39.generateMnemonic(anyInt(), anyInt())).willReturn("mnemonic")
         given(bip39.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(ByteArray(0))
         given(accountsRepository.saveAccountFromMnemonicSeed(MockUtils.any(), anyLong())).willReturn(testCompletable)
+        given(encryptionManagerMock.canSetupFingerprint()).willReturn(true)
 
         viewModel.createAccount(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
 
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
+        then(encryptionManagerMock).should().canSetupFingerprint()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(bip39).should().generateMnemonic(languageId = R.id.english)
         then(bip39).should().mnemonicToSeed("mnemonic")
         then(bip39).shouldHaveNoMoreInteractions()
         then(accountsRepository).should().saveAccountFromMnemonicSeed(ByteArray(0))
         then(accountsRepository).shouldHaveNoMoreInteractions()
-        observer.assertResult(DataResult(Unit))
+        observer.assertValue { it is DataResult }.assertComplete()
         assertEquals(1, testCompletable.callCount)
     }
 
@@ -218,5 +221,5 @@ class PasswordSetupViewModelTest {
         observer.assertResult(ErrorResult(exception))
     }
 
-    private fun createObserver() = TestObserver.create<Result<Unit>>()
+    private fun createObserver() = TestObserver.create<Result<Intent>>()
 }
