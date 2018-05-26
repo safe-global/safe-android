@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.getTestString
@@ -53,7 +54,7 @@ class SimpleSignatureStoreTest {
 
         val mappedObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val info = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS, BigInteger.ZERO, BigInteger.TEN, Wei.ZERO
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, info).subscribe(mappedObserver)
@@ -123,7 +124,7 @@ class SimpleSignatureStoreTest {
         val updateOwnersObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val updateOwnersInfo = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
-            TEST_OWNERS_2
+            TEST_OWNERS_2, BigInteger.ZERO, BigInteger.TEN, Wei.ZERO
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, updateOwnersInfo).subscribe(updateOwnersObserver)
@@ -150,7 +151,7 @@ class SimpleSignatureStoreTest {
         val updateHashObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val updateHashInfo = TransactionExecutionRepository.ExecuteInformation(
             "some_new_hash", TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
-            TEST_OWNERS_2
+            TEST_OWNERS_2, BigInteger.ZERO, BigInteger.TEN, Wei.ZERO
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, updateHashInfo).subscribe(updateHashObserver)

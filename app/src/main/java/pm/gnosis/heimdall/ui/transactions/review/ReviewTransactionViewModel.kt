@@ -69,15 +69,17 @@ class ReviewTransactionViewModel @Inject constructor(
                 .startWith(Unit)
                 .switchMapSingle { txParams(tx).mapToResult() }
         }.emitAndNext(
-            emit = { it.map {
-                ViewUpdate.Estimate(
-                    Wei(
-                        it.estimate.multiply(
-                            it.gasPrice
-                        )
-                    ), it.balance
-                )
-            } },
+            emit = {
+                it.map {
+                    ViewUpdate.Estimate(
+                        Wei(
+                            it.estimate.multiply(
+                                it.gasPrice
+                            )
+                        ), it.balance
+                    )
+                }
+            },
             next = { confirmations(events, it) })
 
     private fun confirmations(events: Events, params: Result<TransactionExecutionRepository.ExecuteInformation>) =
@@ -121,9 +123,10 @@ class ReviewTransactionViewModel @Inject constructor(
         ).publish {
             Observable.merge(
                 it.map {
+                    val threshold = params.requiredConfirmation - (if (params.isOwner) 1 else 0)
                     DataResult(
                         ViewUpdate.Confirmations(
-                            it.size >= params.requiredConfirmation
+                            it.size >= threshold
                         )
                     )
                 },
@@ -136,7 +139,7 @@ class ReviewTransactionViewModel @Inject constructor(
         }
 
     private fun submitTransaction(params: TransactionExecutionRepository.ExecuteInformation, signatures: Map<Solidity.Address, Signature>) =
-        executionRepository.submit(safe!!, params.transaction, signatures, false)
+        executionRepository.submit(safe!!, params.transaction, signatures, params.isOwner)
             .andThen(
                 Observable.just<ViewUpdate>(
                     ViewUpdate.TransactionSubmitted(

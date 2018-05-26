@@ -9,29 +9,40 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_review_transaction.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
+import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.*
-import pm.gnosis.utils.*
+import pm.gnosis.svalinn.common.utils.subscribeForResult
+import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.stringWithNoTrailingZeroes
+import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>() {
+class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>(), UnlockDialog.UnlockCallback {
 
     private var transactionInfoViewHolder: TransactionInfoViewHolder? = null
+
+    private val unlockStatusSubject = PublishSubject.create<Unit>()
 
     override fun screenId() = ScreenId.REVIEW_TRANSACTION
 
     override fun layout() = R.layout.layout_review_transaction
 
     override fun inject(component: ViewComponent) = component.inject(this)
+
+    override fun onUnlockSuccess() {
+        unlockStatusSubject.onNext(Unit)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +54,6 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
 
         viewModel.setup(safeAddress)
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -68,10 +78,16 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                 layout_review_transaction_request_button.isEnabled = false
                 layout_review_transaction_confirmations_timer.text = getString(R.string.request_confirmation_wait_x_s, 30.toString())
             }
-        val submitEvents = layout_review_transaction_submit_button.clicks()
+
+        val submitEvents = unlockStatusSubject
             .doOnNext {
-                toggleReadyState(false)
+                toggleReadyState(false, R.string.submitting_transaction)
             }
+
+        disposables += layout_review_transaction_submit_button.clicks()
+            .subscribeBy(onNext = {
+                UnlockDialog().show(supportFragmentManager, null)
+            })
 
         val events = ReviewTransactionContract.Events(retryEvents, requestConfirmationEvents, submitEvents)
         disposables += viewModel.observe(events, transactionData)
@@ -128,7 +144,11 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
         }
     }
 
-    private fun toggleReadyState(isReady: Boolean) {
+    private fun toggleReadyState(isReady: Boolean, inProgressMessage: Int = R.string.awaiting_confirmations) {
+        layout_review_transaction_confirmation_status.text = getString(
+            if (isReady) R.string.confirmations_ready
+            else inProgressMessage
+        )
         layout_review_transaction_submit_button.visible(isReady)
         layout_review_transaction_confirmation_progress.apply {
             isIndeterminate = !isReady

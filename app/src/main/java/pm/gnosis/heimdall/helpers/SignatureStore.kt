@@ -53,6 +53,7 @@ class SimpleSignatureStore @Inject constructor(
     override fun add(signature: Pair<Solidity.Address, Signature>) {
         transaction {
             SimpleLocalizedException.assert(info?.owners?.contains(signature.first) == true, context, R.string.error_signature_not_owner)
+            SimpleLocalizedException.assert(info?.sender != signature.first, context, R.string.error_signature_already_exists)
             SimpleLocalizedException.assert(!signatures.containsKey(signature.first), context, R.string.error_signature_already_exists)
             SimpleLocalizedException.assert(info?.requiredConfirmation?.let { signatures.size < it } == true,
                 context,

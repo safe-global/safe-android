@@ -86,8 +86,11 @@ class CreateAssetTransferViewModel @Inject constructor(
 
     private fun parseInput(input: Input): Observable<Pair<Solidity.Address?, BigDecimal?>> =
         Observable.fromCallable {
+            // Address needs to be completely entered
             val address = if (input.address.removeHexPrefix().length != 40) null else input.address.asEthereumAddress()
-            address to input.amount.toBigDecimalOrNull()
+            val amount = input.amount.toBigDecimalOrNull()
+            // Value should not be zero
+            address to if (amount != BigDecimal.ZERO) amount else null
         }
 
     private fun loadTokenInfo(safe: Solidity.Address, tokenAddress: Solidity.Address) =

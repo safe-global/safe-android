@@ -396,4 +396,7 @@
     <string name="request_confirmation">Re-send confirmation request</string>
     <string name="unknown_token">Unknown Token</string>
     <string name="continue_text">Continue</string>
+    <string name="awaiting_confirmations">awaiting confirmation</string>
+    <string name="confirmations_ready">confirmed by extension</string>
+    <string name="submitting_transaction">Submitting transaction</string>
 </resources>

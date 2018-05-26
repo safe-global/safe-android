@@ -44,12 +44,17 @@ interface TransactionExecutionRepository {
     data class ExecuteInformation(
         val transactionHash: String,
         val transaction: SafeTransaction,
+        val sender: Solidity.Address,
         val requiredConfirmation: Int,
         val owners: List<Solidity.Address>,
         val gasPrice: BigInteger,
         val estimate: BigInteger,
         val balance: Wei
-    )
+    ) {
+        val isOwner by lazy {
+            owners.contains(sender)
+        }
+    }
 
     enum class PublishStatus {
         UNKNOWN,

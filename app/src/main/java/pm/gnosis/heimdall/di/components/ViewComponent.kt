@@ -34,6 +34,7 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
+import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordActivity
@@ -102,4 +103,5 @@ interface ViewComponent {
     fun inject(dialog: RequestSignatureDialog)
     fun inject(dialog: ShareSafeAddressDialog)
     fun inject(dialog: SimpleAddressShareDialog)
+    fun inject(dialog: UnlockDialog)
 }

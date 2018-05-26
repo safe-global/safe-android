@@ -96,7 +96,8 @@ class GnosisSafeTransactionRepository @Inject constructor(
 
         }.subscribeOn(Schedulers.computation())
             .flatMap { ethereumRepository.request(it).singleOrError() }
-            .flatMap { info ->
+            .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
+            .flatMap { (info, sender) ->
                 val nonce = GnosisSafe.Nonce.decode(info.nonce.result()!!).param0.value
                 val threshold = GnosisSafe.Threshold.decode(info.threshold.result()!!).param0.value.toInt()
                 val owners = GnosisSafe.GetOwners.decode(info.owners.result()!!).param0.items
@@ -107,6 +108,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
                     TransactionExecutionRepository.ExecuteInformation(
                         it.toHexString(),
                         updatedTransaction,
+                        sender,
                         threshold,
                         owners,
                         BigInteger.valueOf(20000000000),
