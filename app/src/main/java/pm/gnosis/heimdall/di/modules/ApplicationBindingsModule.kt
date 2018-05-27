@@ -88,7 +88,7 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsTransactionDetailRepository(repository: SimpleTransactionDetailsRepository): TransactionDetailsRepository
+    abstract fun bindsTransactionInfoRepository(repository: DefaultTransactionInfoRepository): TransactionInfoRepository
 
     @Binds
     @Singleton

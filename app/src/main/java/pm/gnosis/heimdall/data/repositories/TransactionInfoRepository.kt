@@ -5,6 +5,7 @@ import android.os.Parcelable
 import io.reactivex.Single
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.TypeParceler
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.utils.OptionalSolidityAddressParceler
 import pm.gnosis.heimdall.utils.SolidityAddressParceler
 import pm.gnosis.model.Solidity
@@ -12,10 +13,11 @@ import java.math.BigInteger
 
 
 interface TransactionInfoRepository {
+    fun parseTransactionData(transaction: SafeTransaction): Single<TransactionData>
     fun loadTransactionInfo(id: String): Single<TransactionInfo>
 }
 
-data class TransactionInfo(val id: String, val safe: Solidity.Address, val data: TransactionData)
+data class TransactionInfo(val id: String, val safe: Solidity.Address, val data: TransactionData, val timestamp: Long)
 
 sealed class TransactionData: Parcelable {
     @Parcelize

@@ -25,8 +25,6 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.helpers.AddressInfoViewHolder
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.base.InflatingViewProvider
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeExtensionTransactionProgressDialog
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeSafeSettingsTransactionProgressDialog
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.setupToolbar
@@ -157,43 +155,25 @@ class SafeSettingsActivity : BaseActivity() {
                 getString(R.string.safe_confirmations_text, info.requiredConfirmations.toString(), info.owners.size.toString())
 
         layout_safe_settings_owners_container.removeAllViews()
-        val ownerCount = info.owners.size
-        val showDelete = ownerCount > 1
-        info.owners.forEachIndexed { index, address -> addOwner(address, index, ownerCount, showDelete) }
+        info.owners.forEach(::addOwner)
 
-        layout_safe_settings_add_owner_button.visible(ownerCount < 3)
-        layout_safe_settings_add_owner_button.setOnClickListener {
-            CreateChangeSafeSettingsTransactionProgressDialog
-                .addOwner(viewModel.getSafeAddress(), info.owners.size)
-                .show(supportFragmentManager, null)
-        }
+        layout_safe_settings_add_owner_button.visible(false)
 
+        layout_safe_settings_add_recovery_option_button.visible(false)
         layout_safe_settings_extensions_container.removeAllViews()
         disposables += viewModel.loadExtensionsInfo(info.extensions)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = {
-                layout_safe_settings_add_recovery_option_button.visible(!it.first)
                 it.second.forEachIndexed(::addExtension)
             }, onError = {
                 errorSnackbar(layout_safe_settings_add_recovery_option_button, it)
             })
-        layout_safe_settings_add_recovery_option_button.visible(false)
-        layout_safe_settings_add_recovery_option_button.setOnClickListener {
-            CreateChangeExtensionTransactionProgressDialog
-                .addRecoveryExtension(viewModel.getSafeAddress())
-                .show(supportFragmentManager, null)
-        }
     }
 
-    private fun addOwner(address: Solidity.Address, index: Int, count: Int, showDelete: Boolean) {
+    private fun addOwner(address: Solidity.Address) {
         AddressInfoViewHolder(this, viewProvider).apply {
             bind(address)
-            view.layout_additional_owner_delete_button.visible(showDelete)
-            view.layout_additional_owner_delete_button.setOnClickListener {
-                CreateChangeSafeSettingsTransactionProgressDialog
-                    .removeOwner(viewModel.getSafeAddress(), address, index.toLong(), count)
-                    .show(supportFragmentManager, null)
-            }
+            view.layout_additional_owner_delete_button.visible(false)
             layout_safe_settings_owners_container.addView(view)
         }
     }

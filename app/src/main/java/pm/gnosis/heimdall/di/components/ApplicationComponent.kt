@@ -48,7 +48,7 @@ interface ApplicationComponent {
     fun signaturePushRepository(): SignaturePushRepository
     fun tickerRepository(): TickerRepository
     fun tokenRepository(): TokenRepository
-    fun transactionDetailRepository(): TransactionDetailsRepository
+    fun transactionInfoRepository(): TransactionInfoRepository
 
     fun viewModelFactory(): ViewModelProvider.Factory
 

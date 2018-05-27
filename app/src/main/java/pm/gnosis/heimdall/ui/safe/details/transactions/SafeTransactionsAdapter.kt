@@ -14,12 +14,13 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_safe_transactions_item.view.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.TransactionDetails
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionInfo
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.heimdall.utils.formatAsLongDate
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -42,7 +43,7 @@ class SafeTransactionsAdapter @Inject constructor(
         private val disposables = CompositeDisposable()
 
         private var currentData: String? = null
-        private var cachedDetails: TransactionDetails? = null
+        private var cachedDetails: TransactionInfo? = null
 
         override fun bind(data: String, payloads: List<Any>) {
             currentData = data
@@ -56,7 +57,7 @@ class SafeTransactionsAdapter @Inject constructor(
             // Make sure no disposable are left over
             disposables.clear()
             val transactionId = currentData ?: return
-            disposables += viewModel.loadTransactionDetails(transactionId)
+            disposables += viewModel.loadTransactionInfo(transactionId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ (details, transferInfo) -> updateDetails(details, transferInfo) }, {
                     Timber.e(it)
@@ -87,16 +88,14 @@ class SafeTransactionsAdapter @Inject constructor(
             }
         }
 
-        private fun updateDetails(details: TransactionDetails, transferInfo: SafeTransactionsContract.TransferInfo?) {
+        private fun updateDetails(details: TransactionInfo, transferInfo: SafeTransactionsContract.TransferInfo?) {
             cachedDetails = details
             itemView.setOnClickListener {
                 currentData?.let { transactionSelectionSubject.onNext(it) }
             }
-            itemView.layout_safe_transactions_item_subject.apply {
-                text = details.subject
-                visibility = if (details.subject != null) View.VISIBLE else View.GONE
-            }
-            itemView.layout_safe_transactions_item_to.text = details.transaction.wrapped.address.asEthereumAddressString()
+            itemView.layout_safe_transactions_item_subject.visible(false)
+            // TODO: This is just so that it compiles ... this whole adapter needs to be reworked anyways
+            itemView.layout_safe_transactions_item_to.text = details.safe.asEthereumAddressString()
             if (transferInfo != null) {
                 itemView.layout_safe_transactions_item_value.text =
                         context.getString(R.string.outgoing_transaction_value, transferInfo.amount, transferInfo.symbol)

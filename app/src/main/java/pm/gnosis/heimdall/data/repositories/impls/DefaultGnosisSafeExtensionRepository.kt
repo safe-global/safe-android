@@ -103,9 +103,6 @@ class DefaultGnosisSafeExtensionRepository @Inject constructor(
             else -> Extension.UNKNOWN
         }
 
-    override fun loadRecoveryExtensionInfo(extension: Solidity.Address): Single<GnosisSafeExtensionRepository.RecoveryExtensionInfo> =
-        TODO() //ethereumRepository.request()
-
     private fun getExtensionMasterCopyAddress(extension: Extension): Solidity.Address =
         when (extension) {
             Extension.SINGLE_ACCOUNT_RECOVERY -> settingsRepository.getRecoveryExtensionMasterCopyAddress()

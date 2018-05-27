@@ -17,8 +17,6 @@ import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsViewModel
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressViewModel
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupViewModel
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
@@ -108,11 +106,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(CreateAssetTransferContract::class)
     abstract fun bindsCreateAssetTransferContract(viewModel: CreateAssetTransferViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(CreateTokenTransactionProgressContract::class)
-    abstract fun bindsCreateTokenTransactionProgressContract(viewModel: CreateTokenTransactionProgressViewModel): ViewModel
 
     @Binds
     @IntoMap

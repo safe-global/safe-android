@@ -223,6 +223,7 @@ dependencies {
     })
 
     // Testing
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$versions.kotlin"
     testImplementation "com.github.gnosis.svalinn-kotlin:utils-testing:$versions.svalinn"
     testImplementation "org.mockito:mockito-core:$versions.mockito"
     testImplementation "org.mockito:mockito-inline:$versions.mockito"

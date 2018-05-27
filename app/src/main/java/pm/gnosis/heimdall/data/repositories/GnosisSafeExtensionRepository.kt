@@ -10,7 +10,6 @@ interface GnosisSafeExtensionRepository {
 
     fun buildAddRecoverExtensionTransaction(recoverOwner: Solidity.Address): Single<SafeTransaction>
     fun loadExtensionsInfo(extensions: List<Solidity.Address>): Single<List<Pair<Extension, Solidity.Address>>>
-    fun loadRecoveryExtensionInfo(extension: Solidity.Address): Single<RecoveryExtensionInfo>
     fun buildAddDailyLimitExtensionTransaction(limits: List<Pair<Solidity.Address, BigInteger>>): Single<SafeTransaction>
     fun buildRemoveExtensionTransaction(safe: Solidity.Address, index: BigInteger, extension: Solidity.Address): Single<SafeTransaction>
 
@@ -22,10 +21,4 @@ interface GnosisSafeExtensionRepository {
     }
 
     class UnknownExtensionException : IllegalArgumentException("Unknown extension")
-
-    data class RecoveryExtensionInfo(
-        val recoverOwner: Solidity.Address,
-        val triggerTime: Long,
-        val replaceSafeOwnerData: ReplaceSafeOwnerData?
-    )
 }

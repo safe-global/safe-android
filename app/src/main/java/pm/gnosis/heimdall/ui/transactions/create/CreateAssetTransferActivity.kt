@@ -284,6 +284,9 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
             }
             CreateAssetTransferContract.ViewUpdate.EstimateError -> disableContinue()
             is CreateAssetTransferContract.ViewUpdate.TokenInfo -> {
+                update.value.token.name?.let{
+                    layout_create_asset_transfer_title.text = getString(R.string.transfer_x, it)
+                }
                 layout_create_asset_transfer_safe_balance.text = update.value.displayString()
                 layout_create_asset_transfer_input_label.text = update.value.token.symbol ?: "???"
             }

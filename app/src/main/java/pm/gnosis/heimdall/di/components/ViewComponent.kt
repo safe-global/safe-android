@@ -14,8 +14,6 @@ import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
 import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateChangeExtensionTransactionProgressDialog
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordConfirmActivity
@@ -97,8 +95,6 @@ interface ViewComponent {
 
     // Dialogs
 
-    fun inject(dialog: CreateChangeExtensionTransactionProgressDialog)
-    fun inject(dialog: CreateTokenTransactionProgressDialog)
     fun inject(dialog: FingerprintDialog)
     fun inject(dialog: RequestSignatureDialog)
     fun inject(dialog: ShareSafeAddressDialog)
