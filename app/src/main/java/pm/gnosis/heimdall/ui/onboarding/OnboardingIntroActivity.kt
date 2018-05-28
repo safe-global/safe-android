@@ -17,7 +17,7 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import timber.log.Timber
 
-class OnboardingIntro : BaseActivity() {
+class OnboardingIntroActivity : BaseActivity() {
     override fun screenId() = ScreenId.ONBOARDING_INTRO
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
@@ -53,6 +53,6 @@ class OnboardingIntro : BaseActivity() {
     }
 
     companion object {
-        fun createIntent(context: Context) = Intent(context, OnboardingIntro::class.java)
+        fun createIntent(context: Context) = Intent(context, OnboardingIntroActivity::class.java)
     }
 }

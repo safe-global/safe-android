@@ -27,10 +27,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.onboarding.account.AccountSetupActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
+
         <activity
             android:name=".ui.onboarding.password.PasswordSetupActivity"
             android:screenOrientation="portrait"
@@ -39,20 +36,14 @@
             android:name=".ui.onboarding.password.PasswordConfirmActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
-        <activity
-            android:name=".ui.onboarding.account.create.GenerateMnemonicActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
+
         <activity
             android:name=".ui.onboarding.SetupSafeIntroActivity"
             android:screenOrientation="portrait"
             android:theme="@style/OnBoardingTheme" />
+
         <activity
-            android:name=".ui.onboarding.account.restore.RestoreAccountActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
-        <activity
-            android:name=".ui.onboarding.OnboardingIntro"
+            android:name=".ui.onboarding.OnboardingIntroActivity"
             android:screenOrientation="portrait"
             android:theme="@style/IntroTheme" />
         <activity
@@ -128,7 +119,6 @@
             android:screenOrientation="portrait" />
 
         <activity android:name=".ui.qrscan.QRCodeScanActivity" />
-        <activity android:name=".ui.extensions.recovery.RecoveryStatusActivity" />
 
         <activity
             android:name=".ui.safe.main.SafeMainActivity"
