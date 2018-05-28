@@ -17,11 +17,11 @@ android {
         versionName getKey("APP_VERSION_NAME", "0.4.2-alpha")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x5a27c4325b2f35163fa28d9195e7038fb53e67ac"))
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0x057ad4d88c1aabecf899f33386c8abebabe00648"))
+        buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x075794c3797bb4cfea74a75d1aae636036af37cd"))
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0xec7c75c1548765ab51a165873b0b1b71663c1266"))
         buildConfigField javaTypes.STRING, "RECOVERY_MODULE_MASTER_COPY_ADDRESS", asString(getKey("RECOVERY_MODULE_MASTER_COPY_ADDRESS", "0xa46f52cb7fcf82524d411c535ccfa805d668926e"))
-        buildConfigField javaTypes.STRING, "DAILY_LIMIT_MODULE_MASTER_COPY_ADDRESS", asString(getKey("DAILY_LIMIT_MODULE_MASTER_COPY_ADDRESS", "0xe8a8c05268804fb0e02a1399206637563ab5b404"))
-        buildConfigField javaTypes.STRING, "CREATE_AND_ADD_MODULES_LIB_ADDRESS", asString(getKey("CREATE_AND_ADD_MODULES_LIB_ADDRESS", "0x9d02b0c39ea5a007d825c5a459691be4b906caa2"))
+        buildConfigField javaTypes.STRING, "DAILY_LIMIT_MODULE_MASTER_COPY_ADDRESS", asString(getKey("DAILY_LIMIT_MODULE_MASTER_COPY_ADDRESS", "0xac94a500b707fd5c4cdb89777f29b3b28bde2f0c"))
+        buildConfigField javaTypes.STRING, "CREATE_AND_ADD_MODULES_LIB_ADDRESS", asString(getKey("CREATE_AND_ADD_MODULES_LIB_ADDRESS", "0x8513246e65c474ad05e88ae8ca7c5a6b04246550"))
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io"))
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
 

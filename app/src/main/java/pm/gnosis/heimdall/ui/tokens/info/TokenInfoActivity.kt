@@ -39,7 +39,7 @@ class TokenInfoActivity : BaseActivity() {
         inject()
 
         try {
-            viewModel.setup(intent.extras.getString(ADDRESS_EXTRA, ""))
+            viewModel.setup(intent.getStringExtra(ADDRESS_EXTRA))
         } catch (e: Exception) {
             toast(R.string.invalid_ethereum_address)
             finish()

@@ -1,17 +1,12 @@
 package pm.gnosis.heimdall.ui.transactions.create
 
 
-import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.content.Intent
 import android.support.v4.content.ContextCompat
-import com.gojuno.koptional.None
-import com.gojuno.koptional.Optional
-import com.gojuno.koptional.toOptional
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
-import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
@@ -20,152 +15,20 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_create_asset_transfer.*
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TransactionData
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
-import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
-import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
-import pm.gnosis.heimdall.ui.transactions.builder.AssetTransferTransactionBuilder
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract.ViewUpdate
-import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.removeHexPrefix
 import pm.gnosis.utils.stringWithNoTrailingZeroes
-import java.math.BigDecimal
-import java.math.BigInteger
 import javax.inject.Inject
-
-class CreateAssetTransferViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val executionRepository: TransactionExecutionRepository,
-    private val tokenRepository: TokenRepository
-) : CreateAssetTransferContract() {
-    override fun processInput(
-        safe: Solidity.Address,
-        tokenAddress: Solidity.Address,
-        reviewEvents: Observable<Unit>
-    ) = ObservableTransformer<Input, Result<ViewUpdate>> { input ->
-        input.publish {
-            // We parse the input and load the token information
-            Observable.combineLatest(
-                it.flatMap(::parseInput),
-                loadTokenInfo(safe, tokenAddress),
-                BiFunction { checkedInput: Pair<Solidity.Address?, BigDecimal?>, token: Optional<ERC20TokenWithBalance> ->
-                    checkedInput to token.toNullable()
-                }
-            )
-                .switchMap<Result<ViewUpdate>> { (input, token) ->
-                    val updates = mutableListOf<Observable<Result<ViewUpdate>>>()
-                    val (address, value) = input
-                    token?.let {
-                        updates += Observable.just<Result<ViewUpdate>>(DataResult(ViewUpdate.TokenInfo(it)))
-                    }
-                    if (address == null || value == null) {
-                        updates += Observable.just<Result<ViewUpdate>>(
-                            DataResult(ViewUpdate.InvalidInput(value == null, address == null))
-                        )
-                    } else if (token != null) {
-                        updates += setupTokenCheck(safe, token, address, value, reviewEvents)
-                    }
-                    Observable.concat(updates)
-                }
-        }
-
-    }
-
-    private fun parseInput(input: Input): Observable<Pair<Solidity.Address?, BigDecimal?>> =
-        Observable.fromCallable {
-            // Address needs to be completely entered
-            val address = if (input.address.removeHexPrefix().length != 40) null else input.address.asEthereumAddress()
-            val amount = input.amount.toBigDecimalOrNull()
-            // Value should not be zero
-            address to if (amount != BigDecimal.ZERO) amount else null
-        }
-
-    private fun loadTokenInfo(safe: Solidity.Address, tokenAddress: Solidity.Address) =
-        (if (tokenAddress == ERC20Token.ETHER_TOKEN.address) Single.just(ERC20Token.ETHER_TOKEN)
-        else tokenRepository.loadToken(tokenAddress))
-            .emitAndNext(
-                emit = { ERC20TokenWithBalance(it, null).toOptional() },
-                next = { loadBalance(safe, it).map { it.toOptional() } }
-            )
-            .startWith(None)
-
-    private fun loadBalance(address: Solidity.Address, token: ERC20Token) =
-        tokenRepository.loadTokenBalances(address, listOf(token))
-            .map {
-                val (erc20Token, balance) = it.first()
-                ERC20TokenWithBalance(erc20Token, balance)
-            }
-            .onErrorReturn { ERC20TokenWithBalance(token, null) }
-
-    private fun setupTokenCheck(
-        safe: Solidity.Address,
-        token: ERC20TokenWithBalance,
-        receipient: Solidity.Address,
-        value: BigDecimal,
-        reviewEvents: Observable<Unit>
-    ): Observable<Result<ViewUpdate>> {
-        val amount = value.multiply(BigDecimal(10).pow(token.token.decimals)).toBigInteger()
-        // Not enough funds
-        if (token.balance == null || token.balance < amount) return Observable.just(DataResult(ViewUpdate.InvalidInput(true, false)))
-        val data = TransactionData.AssetTransfer(token.token.address, amount, receipient)
-        return Observable.merge(
-            estimate(safe, data),
-            reviewEvents
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .map {
-                    val intent = ReviewTransactionActivity.createIntent(context, safe, data)
-                    ViewUpdate.StartReview(intent)
-                }
-                .mapToResult()
-        )
-    }
-
-    private fun estimate(safe: Solidity.Address, data: TransactionData.AssetTransfer) =
-        Observable.fromCallable {
-            AssetTransferTransactionBuilder.build(data)
-        }.flatMapSingle {
-            executionRepository.loadExecuteInformation(safe, it)
-        }
-            .map<ViewUpdate> {
-                val estimate = Wei(it.estimate.multiply(it.gasPrice))
-                val canExecute =
-                    (estimate.value + (if (data.token == ERC20Token.ETHER_TOKEN.address) data.amount else BigInteger.ZERO)) <= it.balance.value
-                ViewUpdate.Estimate(estimate, it.balance, canExecute)
-            }
-            .onErrorReturn { ViewUpdate.EstimateError }
-            .mapToResult()
-}
-
-abstract class CreateAssetTransferContract : ViewModel() {
-    abstract fun processInput(
-        safe: Solidity.Address,
-        tokenAddress: Solidity.Address,
-        reviewEvents: Observable<Unit>
-    ): ObservableTransformer<Input, Result<ViewUpdate>>
-
-    data class Input(val amount: String, val address: String)
-
-    sealed class ViewUpdate {
-        data class Estimate(val estimate: Wei, val balance: Wei, val canExecute: Boolean) : ViewUpdate()
-        object EstimateError : ViewUpdate()
-        data class TokenInfo(val value: ERC20TokenWithBalance) : ViewUpdate()
-        data class InvalidInput(val amount: Boolean, val address: Boolean) : ViewUpdate()
-        data class StartReview(val intent: Intent) : ViewUpdate()
-    }
-}
 
 class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContract>() {
 

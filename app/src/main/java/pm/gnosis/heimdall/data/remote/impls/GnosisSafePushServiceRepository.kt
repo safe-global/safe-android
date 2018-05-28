@@ -9,7 +9,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.heimdall.data.remote.GnosisSafePushService
+import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.heimdall.data.remote.models.push.*
 import pm.gnosis.model.Solidity
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class GnosisSafePushServiceRepository @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val preferencesManager: PreferencesManager,
-    private val gnosisSafePushService: GnosisSafePushService,
+    private val gnosisSafePushService: PushServiceApi,
     private val moshi: Moshi
 ) : PushServiceRepository {
 
@@ -61,7 +61,7 @@ class GnosisSafePushServiceRepository @Inject constructor(
             .flatMap { (hash, extensionAddress) -> accountsRepository.sign(hash).map { it to extensionAddress } }
             .map { (signature, extensionAddress) ->
                 PushServicePairing(
-                    PushServiceSignature.fromSignature(signature),
+                    ServiceSignature.fromSignature(signature),
                     temporaryAuthorization = temporaryAuthorization
                 ) to extensionAddress
             }
@@ -72,7 +72,7 @@ class GnosisSafePushServiceRepository @Inject constructor(
             .flatMap { pushMessage ->
                 val rawJson = moshi.adapter(SafeCreationParams::class.java).toJson(pushMessage)
                 accountsRepository.sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$rawJson".toByteArray()))
-                    .map { PushServiceSignature.fromSignature(it) to rawJson }
+                    .map { ServiceSignature.fromSignature(it) to rawJson }
             }
             .map {
                 PushServiceNotification(
@@ -86,7 +86,7 @@ class GnosisSafePushServiceRepository @Inject constructor(
 
     private fun syncAuthentication(account: Account, pushToken: String) =
         accountsRepository.sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$pushToken".toByteArray()))
-            .map { PushServiceAuth(pushToken, PushServiceSignature.fromSignature(it)) }
+            .map { PushServiceAuth(pushToken, ServiceSignature.fromSignature(it)) }
             .flatMapCompletable { gnosisSafePushService.auth(it) }
             .doOnComplete {
                 preferencesManager.prefs.edit {

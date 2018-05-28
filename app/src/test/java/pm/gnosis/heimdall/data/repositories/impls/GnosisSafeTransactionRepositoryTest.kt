@@ -13,8 +13,8 @@ import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
+import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -42,7 +42,7 @@ class GnosisSafeTransactionRepositoryTest {
     lateinit var descriptionsDaoMock: DescriptionsDao
 
     @Mock
-    lateinit var txExecutorRepository: TxExecutorRepository
+    lateinit var relayServiceApiMock: RelayServiceApi
 
     @Mock
     lateinit var appDbMock: ApplicationDb
@@ -52,12 +52,24 @@ class GnosisSafeTransactionRepositoryTest {
     @Before
     fun setUp() {
         given(appDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
-        repository = GnosisSafeTransactionRepository(appDbMock, accountRepositoryMock, ethereumRepositoryMock, txExecutorRepository)
+        repository = GnosisSafeTransactionRepository(appDbMock, accountRepositoryMock, ethereumRepositoryMock, relayServiceApiMock)
     }
 
-    private fun verifyHash(safe: BigInteger, transaction: Transaction, expected: String) {
+    private fun verifyHash(
+        safe: BigInteger,
+        transaction: Transaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger,
+        gasToken: BigInteger,
+        operation: TransactionExecutionRepository.Operation,
+        expected: String
+    ) {
         val observer = TestObserver<ByteArray>()
-        repository.calculateHash(Solidity.Address(safe), SafeTransaction(transaction, TransactionExecutionRepository.Operation.CALL)).subscribe(observer)
+        repository.calculateHash(
+            Solidity.Address(safe), SafeTransaction(transaction, operation),
+            txGas, dataGas, gasPrice, Solidity.Address(gasToken)
+        ).subscribe(observer)
         observer.assertNoErrors().assertValueCount(1)
         assertEquals(expected, observer.values()[0].toHexString())
     }
@@ -68,7 +80,9 @@ class GnosisSafeTransactionRepositoryTest {
         verifyHash(
             "0xbbf289d846208c16edc8474705c748aff07732db".hexAsBigInteger(),
             Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.ZERO),
-            "590bde81024e8282c3fb14e96309bd8e909637f271587eb201da7d18cf71d8f0"
+            BigInteger("100000"), BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO,
+            TransactionExecutionRepository.Operation.CALL,
+            "975734ee1e75ec3300bbb8bad5f79597a30f8b61fac48350822cf60492386f7f"
         )
 
         // Ether transfer
@@ -79,7 +93,9 @@ class GnosisSafeTransactionRepositoryTest {
                 value = Wei(BigInteger("9223372036854775809")),
                 nonce = BigInteger("1337")
             ),
-            "6749f074761471b989596fffa4dafc7b8a7d931d9881e8e1c4f3af46d8adb86a"
+            BigInteger("4200000"), BigInteger("13337"), BigInteger("20000000000"), BigInteger.ZERO,
+            TransactionExecutionRepository.Operation.CALL,
+            "7e4cb4cd190aedb510e8c4d366a87a8ee948921796ea7d720c74db3fc4be4db3"
         )
 
         // Token transfer
@@ -93,7 +109,19 @@ class GnosisSafeTransactionRepositoryTest {
         )
         verifyHash(
             "0x09e1a843dfb9d1ae06c76a0c1e5c9a2b409cd9e4".hexAsBigInteger(), transaction,
-            "31b20c3b6a3960aaf65808b18ec6d492d2649f0c8dae463bfe001c95263d9447"
+            BigInteger("230000"), BigInteger("7331"), BigInteger("100"),
+            "0xbbf289d846208c16edc8474705c748aff07732db".asEthereumAddress()!!.value,
+            TransactionExecutionRepository.Operation.CALL,
+            "1297208903774650b1a7fa09a60ffd69b4a253a010df54d201c0f500a4f80c46"
+        )
+
+        // Token transfer as delegate call
+        verifyHash(
+            "0x09e1a843dfb9d1ae06c76a0c1e5c9a2b409cd9e4".hexAsBigInteger(), transaction,
+            BigInteger("230000"), BigInteger("7331"), BigInteger("100"),
+            "0xbbf289d846208c16edc8474705c748aff07732db".asEthereumAddress()!!.value,
+            TransactionExecutionRepository.Operation.DELEGATE_CALL,
+            "c93063108c748057a30815731a7e0777acd4df20d189c22088d01571c21f7e32"
         )
     }
 }

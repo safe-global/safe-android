@@ -12,7 +12,7 @@ data class SendTransactionParams(
     @Json(name = "value") val value: String,
     @Json(name = "data") val data: String,
     @Json(name = "operation") val operation: Int,
-    @Json(name = "signatures") val signatures: List<PushServiceSignature>
+    @Json(name = "signatures") val signatures: List<ServiceSignature>
 ) : PushMessage("sendTransaction")
 
 data class SendTransactionHashParams(

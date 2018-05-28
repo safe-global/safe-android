@@ -5,18 +5,20 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.GnosisSafePersonalEdition
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
+import pm.gnosis.heimdall.data.remote.RelayServiceApi
+import pm.gnosis.heimdall.data.remote.models.EstimateParams
+import pm.gnosis.heimdall.data.remote.models.ExecuteParams
+import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
-import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
-import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
-import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
@@ -33,20 +35,27 @@ class GnosisSafeTransactionRepository @Inject constructor(
     appDb: ApplicationDb,
     private val accountsRepository: AccountsRepository,
     private val ethereumRepository: EthereumRepository,
-    private val txExecutorRepository: TxExecutorRepository
+    private val relayServiceApi: RelayServiceApi
 ) : TransactionExecutionRepository {
 
     private val descriptionsDao = appDb.descriptionsDao()
 
-    override fun calculateHash(safeAddress: Solidity.Address, transaction: SafeTransaction): Single<ByteArray> =
+    override fun calculateHash(
+        safeAddress: Solidity.Address, transaction: SafeTransaction,
+        txGas: BigInteger, dataGas: BigInteger, gasPrice: BigInteger, gasToken: Solidity.Address
+    ): Single<ByteArray> =
         Single.fromCallable {
             val tx = transaction.wrapped
             val to = tx.address.asEthereumAddressString().removeHexPrefix()
             val value = tx.value?.value.paddedHexString()
             val data = tx.data?.removeHexPrefix() ?: ""
-            val operationString = transaction.operation.toSolidity().value.paddedHexString(2) // Call
+            val operationString = transaction.operation.toInt().toBigInteger().paddedHexString(2)
+            val gasPriceString = gasPrice.paddedHexString()
+            val txGasString = txGas.paddedHexString()
+            val dataGasString = dataGas.paddedHexString()
+            val gasTokenString = gasToken.asEthereumAddressString().removeHexPrefix()
             val nonce = (tx.nonce ?: DEFAULT_NONCE).paddedHexString()
-            hash(safeAddress, to, value, data, operationString, nonce)
+            hash(safeAddress, to, value, data, operationString, txGasString, dataGasString, gasPriceString, gasTokenString, nonce)
         }.subscribeOn(Schedulers.computation())
 
     private fun BigInteger?.paddedHexString(padding: Int = 64): String {
@@ -54,7 +63,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
     }
 
     private fun hash(safeAddress: Solidity.Address, vararg parts: String): ByteArray {
-        val initial = StringBuilder().append(ERC191_BYTE).append(safeAddress.asEthereumAddressString().removeHexPrefix())
+        val initial = StringBuilder().append(ERC191_BYTE).append(ERC191_VERSION).append(safeAddress.asEthereumAddressString().removeHexPrefix())
         return Sha3Utils.keccak(
             parts.fold(
                 initial,
@@ -83,36 +92,47 @@ class GnosisSafeTransactionRepository @Inject constructor(
                         safeAddress, data = GnosisSafePersonalEdition.GetOwners.encode()
                     ), id = 2
                 ),
-                EthEstimateGas(
-                    from = safeAddress,
-                    transaction = transaction.wrapped,
-                    id = 3
-                ),
                 EthBalance(
                     address = safeAddress,
-                    id = 4
+                    id = 3
                 )
             )
 
         }.subscribeOn(Schedulers.computation())
             .flatMap { ethereumRepository.request(it).singleOrError() }
+            .flatMap { info ->
+                relayServiceApi.estimate(
+                    EstimateParams(
+                        safeAddress.asEthereumAddressString(),
+                        transaction.wrapped.address.asEthereumAddressString(),
+                        transaction.wrapped.value?.value?.asDecimalString() ?: "0",
+                        transaction.wrapped.data ?: "0x",
+                        transaction.operation.toInt(),
+                        GnosisSafePersonalEdition.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
+                    )
+                ).map { info to it }
+            }
             .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
-            .flatMap { (info, sender) ->
+            .flatMap { (infoWithEstimate, sender) ->
+                val (info, estimate) = infoWithEstimate
                 val nonce = GnosisSafePersonalEdition.Nonce.decode(info.nonce.result()!!).param0.value
                 val threshold = GnosisSafePersonalEdition.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
                 val owners = GnosisSafePersonalEdition.GetOwners.decode(info.owners.result()!!).param0.items
                 val updatedTransaction = transaction.copy(wrapped = transaction.wrapped.updateTransactionWithStatus(nonce))
-                val estimatedFees = info.estimate.result()!!
+                val txGas = estimate.safeTxGas.decimalAsBigInteger()
+                val dataGas = estimate.dataGas.decimalAsBigInteger()
+                val gasPrice = estimate.gasPrice.decimalAsBigInteger()
                 val safeBalance = info.balance.result()!!
-                calculateHash(safeAddress, updatedTransaction).map {
+                calculateHash(safeAddress, updatedTransaction, txGas, dataGas, gasPrice).map {
                     TransactionExecutionRepository.ExecuteInformation(
                         it.toHexString(),
                         updatedTransaction,
                         sender,
                         threshold,
                         owners,
-                        BigInteger.valueOf(20000000000),
-                        estimatedFees,
+                        gasPrice,
+                        txGas,
+                        dataGas,
                         safeBalance
                     )
                 }
@@ -120,99 +140,105 @@ class GnosisSafeTransactionRepository @Inject constructor(
 
     private fun Transaction.updateTransactionWithStatus(safeNonce: BigInteger) = nonce?.let { this } ?: copy(nonce = safeNonce)
 
-    override fun sign(safeAddress: Solidity.Address, transaction: SafeTransaction): Single<Signature> =
-        calculateHash(safeAddress, transaction).flatMap {
+    override fun sign(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger
+    ): Single<Signature> =
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice).flatMap {
             accountsRepository.sign(it)
         }
 
     override fun checkSignature(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
-        signature: Signature
+        signature: Signature,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger
     ): Single<Pair<Solidity.Address, Signature>> =
-        calculateHash(safeAddress, transaction).flatMap {
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice).flatMap {
             accountsRepository.recover(it, signature).map { it to signature }
         }
-
-    override fun estimateFees(
-        safeAddress: Solidity.Address,
-        transaction: SafeTransaction,
-        signatures: Map<Solidity.Address, Signature>,
-        senderIsOwner: Boolean
-    ): Single<FeeEstimate> =
-        loadExecutableTransaction(safeAddress, transaction, signatures, senderIsOwner)
-            .flatMapObservable { txExecutorRepository.estimate(it) }
-            .map { FeeEstimate(it.first, it.second) }
-            .firstOrError()
 
     override fun submit(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
         signatures: Map<Solidity.Address, Signature>,
-        senderIsOwner: Boolean
+        senderIsOwner: Boolean,
+        gasPrice: BigInteger,
+        txGas: BigInteger,
+        dataGas: BigInteger
     ): Completable =
-        loadExecutableTransaction(safeAddress, transaction, signatures, senderIsOwner)
-            .flatMapObservable { submitSignedTransaction(it) }
-            .flatMapSingle { addLocalTransaction(safeAddress, transaction, it) }
-            .ignoreElements()
+        loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, gasPrice, txGas, dataGas)
+            .flatMap(relayServiceApi::execute)
+            .flatMap { addLocalTransaction(safeAddress, transaction, it.transactionHash, txGas, dataGas, gasPrice) }
+            .toCompletable()
 
-    override fun loadExecutableTransaction(
+    private fun loadExecutionParams(
         safeAddress: Solidity.Address,
         innerTransaction: SafeTransaction,
         signatures: Map<Solidity.Address, Signature>,
-        senderIsOwner: Boolean
-    ): Single<Transaction> =
+        senderIsOwner: Boolean,
+        gasPrice: BigInteger,
+        txGas: BigInteger,
+        dataGas: BigInteger
+    ): Single<ExecuteParams> =
         accountsRepository.loadActiveAccount()
             .flatMap { account ->
                 if (senderIsOwner)
-                    calculateHash(safeAddress, innerTransaction)
+                    calculateHash(safeAddress, innerTransaction, txGas, dataGas, gasPrice)
                         .flatMap { accountsRepository.sign(it) }
                         .map { signatures.plus(account.address to it) }
                 else
                     Single.just(signatures)
             }
-            .flatMap { finalSignatures ->
+            .map { finalSignatures ->
                 val sortedAddresses = finalSignatures.keys.map { it.value }.sorted()
-                val vList = mutableListOf<Solidity.UInt8>()
-                val rList = mutableListOf<Solidity.Bytes32>()
-                val sList = mutableListOf<Solidity.Bytes32>()
+                val serviceSignatures = mutableListOf<ServiceSignature>()
                 sortedAddresses.forEach {
                     finalSignatures[Solidity.Address(it)]?.let {
-                        vList.add(Solidity.UInt8(BigInteger.valueOf(it.v.toLong())))
-                        rList.add(Solidity.Bytes32(it.r.toBytes(32)))
-                        sList.add(Solidity.Bytes32(it.s.toBytes(32)))
+                        serviceSignatures += ServiceSignature(
+                            it.v.toInt(),
+                            it.r.asDecimalString(),
+                            it.s.asDecimalString()
+                        )
                     }
                 }
 
-                Single.fromCallable {
-                    val tx = innerTransaction.wrapped
-                    val to = tx.address
-                    val value = Solidity.UInt256(tx.value?.value ?: BigInteger.ZERO)
-                    val data = Solidity.Bytes(tx.data?.hexStringToByteArrayOrNull() ?: ByteArray(0))
-                    val operationInt = innerTransaction.operation.toSolidity()
-                    val confirmData = GnosisSafePersonalEdition.ExecAndPayTransaction.encode(
-                        to, value, data, operationInt,
-                        Solidity.UInt256(BigInteger.valueOf(100000)), Solidity.UInt256(BigInteger.ZERO),
-                        Solidity.UInt256(BigInteger.ZERO), Solidity.Address(BigInteger.ZERO),
-                        SolidityBase.Vector(vList), SolidityBase.Vector(rList), SolidityBase.Vector(sList)
-                    )
-                    Transaction(safeAddress, data = confirmData)
-                }
+                val tx = innerTransaction.wrapped
+                ExecuteParams(
+                    safeAddress.asEthereumAddressChecksumString(),
+                    tx.address.asEthereumAddressChecksumString(),
+                    tx.value?.value?.asDecimalString() ?: "0",
+                    tx.data ?: "0x",
+                    innerTransaction.operation.toInt(),
+                    serviceSignatures,
+                    txGas.asDecimalString(),
+                    dataGas.asDecimalString(),
+                    gasPrice.asDecimalString()
+                )
             }
 
-    private fun submitSignedTransaction(transaction: Transaction): Observable<String> =
-        txExecutorRepository.execute(transaction)
-
-    override fun addLocalTransaction(safeAddress: Solidity.Address, transaction: SafeTransaction, txChainHash: String): Single<String> =
-        calculateHash(safeAddress, transaction).flatMap {
-            Single.fromCallable {
+    private fun addLocalTransaction(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        txChainHash: String,
+        gasPrice: BigInteger,
+        txGas: BigInteger,
+        dataGas: BigInteger
+    ): Single<String> =
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
+            .map {
                 val tx = transaction.wrapped
                 val transactionUuid = UUID.randomUUID().toString()
                 descriptionsDao.insert(
                     TransactionDescriptionDb(
                         transactionUuid, safeAddress, tx.address,
                         tx.value?.value ?: BigInteger.ZERO,
-                        tx.data ?: "", transaction.operation.toSolidity().value,
+                        tx.data ?: "", transaction.operation.toInt().toBigInteger(),
                         tx.nonce
                                 ?: DEFAULT_NONCE, System.currentTimeMillis(), null, it.toHexString()
                     )
@@ -222,7 +248,6 @@ class GnosisSafeTransactionRepository @Inject constructor(
                 )
                 transactionUuid
             }
-        }
 
     override fun observePublishStatus(id: String): Observable<PublishStatus> =
         descriptionsDao.observeStatus(id)
@@ -248,31 +273,24 @@ class GnosisSafeTransactionRepository @Inject constructor(
             .startWith(PublishStatus.PENDING)
             .onErrorReturnItem(PublishStatus.UNKNOWN)
 
-    override fun loadChainHash(id: String): Single<String> =
-        descriptionsDao.observeStatus(id)
-            .firstOrError()
-            .map { it.transactionId }
-
     private class TransactionInfoRequest(
         val threshold: EthRequest<String>,
         val nonce: EthRequest<String>,
         val owners: EthRequest<String>,
-        val estimate: EthRequest<BigInteger>,
         val balance: EthRequest<Wei>
-    ) : BulkRequest(threshold, nonce, owners, estimate, balance)
+    ) : BulkRequest(threshold, nonce, owners, balance)
 
-    private fun TransactionExecutionRepository.Operation.toSolidity() =
-        Solidity.UInt8(
-            when (this) {
-                TransactionExecutionRepository.Operation.CALL -> OPERATION_CALL
-                TransactionExecutionRepository.Operation.DELEGATE_CALL -> OPERATION_DELEGATE_CALL
-            }
-        )
+    private fun TransactionExecutionRepository.Operation.toInt() =
+        when (this) {
+            TransactionExecutionRepository.Operation.CALL -> OPERATION_CALL
+            TransactionExecutionRepository.Operation.DELEGATE_CALL -> OPERATION_DELEGATE_CALL
+        }
 
     companion object {
         private const val ERC191_BYTE = "19"
-        private val OPERATION_CALL = BigInteger.ZERO
-        private val OPERATION_DELEGATE_CALL = BigInteger.ONE
+        private const val ERC191_VERSION = "00"
+        private const val OPERATION_CALL = 0
+        private const val OPERATION_DELEGATE_CALL = 1
         private val DEFAULT_NONCE = BigInteger.ZERO
     }
 }

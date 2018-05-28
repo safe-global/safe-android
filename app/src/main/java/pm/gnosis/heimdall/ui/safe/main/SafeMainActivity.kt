@@ -222,7 +222,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         supportFragmentManager.transaction {
             when (safe) {
                 is Safe -> {
-                    val selectedTab = intent.extras.getInt(EXTRA_SELECTED_TAB, 0)
+                    val selectedTab = intent.getIntExtra(EXTRA_SELECTED_TAB, 0)
                     intent.removeExtra(EXTRA_SELECTED_TAB)
                     replace(R.id.layout_safe_main_content_frame, SafeDetailsFragment.createInstance(safe, selectedTab))
                 }
@@ -233,7 +233,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
     private fun selectTab() {
-        val selectedTab = intent.extras.getInt(EXTRA_SELECTED_TAB, 0)
+        val selectedTab = intent.getIntExtra(EXTRA_SELECTED_TAB, 0)
         intent.removeExtra(EXTRA_SELECTED_TAB)
         if (selectedTab == 0) return
         (supportFragmentManager.findFragmentById(R.id.layout_safe_main_content_frame) as? SafeDetailsFragment)?.selectTab(selectedTab)

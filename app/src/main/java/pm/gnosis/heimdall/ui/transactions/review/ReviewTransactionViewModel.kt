@@ -21,6 +21,7 @@ import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.asEthereumAddressString
+import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -73,9 +74,7 @@ class ReviewTransactionViewModel @Inject constructor(
                 it.map {
                     ViewUpdate.Estimate(
                         Wei(
-                            it.estimate.multiply(
-                                it.gasPrice
-                            )
+                            (it.txGas + it.dataGas + BigInteger.valueOf(32000)) * it.gasPrice
                         ), it.balance
                     )
                 }
@@ -104,7 +103,7 @@ class ReviewTransactionViewModel @Inject constructor(
                     // TODO: replace with extension signature logic
                     Observable.timer(3, TimeUnit.SECONDS)
                         .flatMapSingle {
-                            executionRepository.sign(safe!!, params.transaction)
+                            executionRepository.sign(safe!!, params.transaction, params.txGas, params.dataGas, params.gasPrice)
                         }
                         .map {
                             signaturePushRepository.receivedSignature(
@@ -139,7 +138,7 @@ class ReviewTransactionViewModel @Inject constructor(
         }
 
     private fun submitTransaction(params: TransactionExecutionRepository.ExecuteInformation, signatures: Map<Solidity.Address, Signature>) =
-        executionRepository.submit(safe!!, params.transaction, signatures, params.isOwner)
+        executionRepository.submit(safe!!, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice)
             .andThen(
                 Observable.just<ViewUpdate>(
                     ViewUpdate.TransactionSubmitted(
@@ -160,7 +159,7 @@ class ReviewTransactionViewModel @Inject constructor(
     private fun observeIncomingConfirmations(params: TransactionExecutionRepository.ExecuteInformation) =
         signaturePushRepository.observe(safe!!)
             .flatMapSingle {
-                executionRepository.checkSignature(safe!!, params.transaction, it)
+                executionRepository.checkSignature(safe!!, params.transaction, it, params.txGas, params.dataGas, params.gasPrice)
             }
             .map(signatureStore::add)
             .flatMap { Observable.empty<Result<ViewUpdate>>() }

@@ -62,7 +62,7 @@ class SafeSettingsActivity : BaseActivity() {
         setContentView(R.layout.layout_safe_settings)
         setupToolbar(layout_safe_settings_toolbar)
 
-        intent.extras.getString(EXTRA_SAFE_ADDRESS).asEthereumAddress()?.let {
+        intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()?.let {
             viewModel.setup(it)
         } ?: finish()
     }

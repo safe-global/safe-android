@@ -47,7 +47,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
 
-        intent.extras.getString(EXTRA_ADDRESS_ENTRY).let {
+        intent.getStringExtra(EXTRA_ADDRESS_ENTRY).let {
             it.asEthereumAddress()?.let {
                 address = it
             } ?: run {
