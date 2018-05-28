@@ -1,11 +1,13 @@
 package pm.gnosis.heimdall.ui.splash
 
+import android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION
 import android.os.Bundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.HeimdallApplication
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -26,6 +28,7 @@ class SplashActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.layout_splash_screen)
         inject()
     }
 
@@ -45,11 +48,11 @@ class SplashActivity : BaseActivity() {
     }
 
     private fun startMain() {
-        startActivity(SafeMainActivity.createIntent(this), clearStack = true)
+        startActivity(SafeMainActivity.createIntent(this).apply { addFlags(FLAG_ACTIVITY_NO_ANIMATION) }, clearStack = true)
     }
 
     private fun startPasswordSetup() {
-        startActivity(OnboardingIntroActivity.createIntent(this), clearStack = true)
+        startActivity(OnboardingIntroActivity.createIntent(this).apply { addFlags(FLAG_ACTIVITY_NO_ANIMATION) }, clearStack = true)
     }
 
     private fun onError(throwable: Throwable) {

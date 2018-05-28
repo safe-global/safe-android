@@ -20,13 +20,12 @@
             android:name=".ui.splash.SplashActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/MountainTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
 
         <activity
             android:name=".ui.onboarding.password.PasswordSetupActivity"
@@ -45,7 +44,7 @@
         <activity
             android:name=".ui.onboarding.OnboardingIntroActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/IntroTheme" />
+            android:theme="@style/MountainTheme" />
         <activity
             android:name=".ui.safe.overview.SafesOverviewActivity"
             android:launchMode="singleTop"
@@ -85,7 +84,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.security.unlock.UnlockActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/MountainTheme"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.settings.security.SecuritySettingsActivity"
             android:screenOrientation="portrait" />

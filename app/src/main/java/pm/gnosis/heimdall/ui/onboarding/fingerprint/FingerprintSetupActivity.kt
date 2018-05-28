@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
+import pm.gnosis.heimdall.utils.setColorFilterCompat
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.svalinn.security.AuthenticationError
 import timber.log.Timber
@@ -39,6 +40,9 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
             layout_fingerprint_setup_info_title.text = getString(R.string.fingerprint_confirmed)
             layout_fingerprint_setup_continue_label.text = getString(R.string.finish)
             layout_fingerprint_setup_description.visible(false)
+            layout_fingerprint_setup_bottom_bar.setBackgroundColor(getColorCompat(R.color.azure))
+            layout_fingerprint_setup_continue_label.setTextColor(getColorCompat(R.color.white))
+            layout_fingerprint_setup_next_arrow.setColorFilterCompat(getColorCompat(R.color.white))
         } else {
             snackbar(layout_fingerprint_setup_coordinator, R.string.fingerprint_not_recognized)
             vibrate(200)

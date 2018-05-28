@@ -4,25 +4,21 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.view.animation.*
-import android.view.inputmethod.EditorInfo
+import android.support.design.widget.Snackbar
 import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.widget.textChanges
+import com.jakewharton.rxbinding2.widget.editorActions
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_unlock.*
-import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.SecuredBaseActivity
+import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.errorToast
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.svalinn.security.FingerprintUnlockFailed
@@ -30,18 +26,9 @@ import pm.gnosis.svalinn.security.FingerprintUnlockHelp
 import pm.gnosis.svalinn.security.FingerprintUnlockResult
 import pm.gnosis.svalinn.security.FingerprintUnlockSuccessful
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class UnlockActivity : SecuredBaseActivity() {
+class UnlockActivity : ViewModelActivity<UnlockContract>() {
     override fun screenId() = ScreenId.UNLOCK
-
-    @Inject
-    lateinit var viewModel: UnlockContract
-
-    private val nextClickSubject = PublishSubject.create<Unit>()
-
-    private var handleRotation = 0f
 
     private var fingerPrintDisposable: Disposable? = null
 
@@ -50,8 +37,6 @@ class UnlockActivity : SecuredBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
         super.onCreate(savedInstanceState)
-        inject()
-        setContentView(R.layout.layout_unlock)
 
         forceConfirmCredentials = intent?.getBooleanExtra(EXTRA_CONFIRM_CREDENTIALS, false) ?: false
         if (intent?.getBooleanExtra(EXTRA_CLOSE_APP, false) == true) {
@@ -59,20 +44,6 @@ class UnlockActivity : SecuredBaseActivity() {
         }
 
         layout_unlock_password_input.disableAccessibility()
-        layout_unlock_password_input.setOnEditorActionListener { _, actionId, _ ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE, EditorInfo.IME_NULL ->
-                    nextClickSubject.onNext(Unit)
-            }
-            true
-        }
-    }
-
-    override fun onWindowObscured() {
-        super.onWindowObscured()
-        // Window is obscured, clear input and disable to prevent potential leak
-        layout_unlock_password_input.text = null
-        layout_unlock_password_input.isEnabled = false
     }
 
     override fun onStart() {
@@ -80,7 +51,7 @@ class UnlockActivity : SecuredBaseActivity() {
         fingerPrintDisposable = encryptionManager.isFingerPrintSet()
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess {
-                layout_unlock_fingerprint.visible(it)
+                layout_unlock_fingerprint_group.visible(it)
                 layout_unlock_password_input.visible(!it)
             }
             .flatMapObservable {
@@ -93,81 +64,55 @@ class UnlockActivity : SecuredBaseActivity() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onState, onError = ::onStateCheckError)
 
-        disposables += nextClickSubject
+        disposables += layout_unlock_password_input.editorActions()
+            .filter { it == android.view.inputmethod.EditorInfo.IME_ACTION_DONE || it == android.view.inputmethod.EditorInfo.IME_NULL }
             .flatMap { viewModel.unlock(layout_unlock_password_input.text.toString()) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onState, onError = ::onUnlockError)
 
-        disposables += layout_unlock_password_input.textChanges()
-            .window(200, TimeUnit.MILLISECONDS)
-            .flatMapMaybe { it.lastElement() }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                animateHandle(it.length * 15f, interpolator = DecelerateInterpolator())
-            }, Timber::e)
-
         disposables += layout_unlock_switch_to_password.clicks()
             .subscribeBy(onNext = {
                 fingerPrintDisposable?.dispose()
-                layout_unlock_fingerprint.visibility = View.GONE
-                layout_unlock_password_input.visibility = View.VISIBLE
+                layout_unlock_fingerprint_group.visible(false)
+                layout_unlock_password_input.visible(true)
                 layout_unlock_password_input.showKeyboardForView()
             }, onError = Timber::e)
     }
 
     private fun onFingerprintResult(result: FingerprintUnlockResult) {
-        layout_unlock_error.visibility = View.INVISIBLE
         when (result) {
             is FingerprintUnlockSuccessful -> onState(UnlockContract.State.UNLOCKED)
             is FingerprintUnlockFailed -> {
                 vibrate(200)
-                animateHandleOnError()
-                layout_unlock_error.visibility = View.VISIBLE
-                layout_unlock_error.text = getString(R.string.fingerprint_not_recognized)
+                snackbar(layout_unlock_coordinator, R.string.fingerprint_not_recognized, Snackbar.LENGTH_SHORT)
             }
             is FingerprintUnlockHelp -> {
-                result.message?.let {
-                    layout_unlock_error.visibility = View.VISIBLE
-                    layout_unlock_error.text = it
-                }
+                result.message?.let { snackbar(layout_unlock_coordinator, it, Snackbar.LENGTH_SHORT) }
             }
         }
     }
 
     private fun onFingerprintError(throwable: Throwable) {
         Timber.e(throwable)
-        animateHandleOnError()
-        layout_unlock_fingerprint.visibility = View.GONE
-        layout_unlock_password_input.visibility = View.VISIBLE
+        layout_unlock_fingerprint_group.visible(false)
+        layout_unlock_password_input.visible(true)
         onStateCheckError(throwable)
     }
 
     private fun onState(state: UnlockContract.State) {
         when (state) {
             UnlockContract.State.UNINITIALIZED -> startActivity(createIntentToCloseApp(this))
-            UnlockContract.State.UNLOCKED -> animateHandle(handleRotation + 360f, {
+            UnlockContract.State.UNLOCKED -> {
                 viewModel.syncPushAuthentication()
                 setResult(Activity.RESULT_OK)
                 finish()
-            })
+            }
             UnlockContract.State.LOCKED -> {
             }
         }
     }
 
-    private fun animateHandle(rotation: Float, endAction: () -> Unit = {}, interpolator: Interpolator = LinearInterpolator()) {
-        handleRotation = rotation
-        layout_unlock_handle.clearAnimation()
-        layout_unlock_handle.animate()
-            .rotation(handleRotation)
-            .setDuration(300)
-            .setInterpolator(interpolator)
-            .withEndAction(endAction)
-    }
-
     override fun onStop() {
-        layout_unlock_handle.clearAnimation()
-        layout_unlock_handle.animate().cancel()
         fingerPrintDisposable?.dispose()
         super.onStop()
     }
@@ -182,36 +127,17 @@ class UnlockActivity : SecuredBaseActivity() {
     }
 
     private fun onStateCheckError(throwable: Throwable) {
-        errorToast(throwable)
+        errorSnackbar(layout_unlock_coordinator, throwable)
     }
 
     private fun onUnlockError(throwable: Throwable) {
         Timber.e(throwable)
-        animateHandleOnError()
         errorToast(throwable)
     }
 
-    private fun animateHandleOnError() {
-        val rotationAnimation = RotateAnimation(
-            0f, 20f,
-            Animation.RELATIVE_TO_SELF, 0.5f,
-            Animation.RELATIVE_TO_SELF, 0.5f
-        )
-            .apply {
-                duration = 50
-                repeatCount = 3
-                repeatMode = Animation.REVERSE
-            }
-        layout_unlock_handle.startAnimation(rotationAnimation)
-    }
+    override fun layout() = R.layout.layout_unlock
 
-    private fun inject() {
-        DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this].component)
-            .viewModule(ViewModule(this))
-            .build()
-            .inject(this)
-    }
+    override fun inject(component: ViewComponent) = component.inject(this)
 
     companion object {
         private const val EXTRA_CLOSE_APP = "extra.boolean.close_app"
