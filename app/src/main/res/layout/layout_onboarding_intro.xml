@@ -23,7 +23,7 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/layout_onboarding_intro_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
@@ -31,6 +31,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_horizontal"
+            android:letterSpacing="0.2"
+            android:lineSpacingExtra="14sp"
+            android:text="@string/personal_edition"
+            android:textAllCaps="true"
+            android:textColor="#b3ffffff"
+            android:textSize="10sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_onboarding_intro_logo" />
 
         <TextView
             android:id="@+id/layout_onboarding_intro_info"
@@ -41,6 +58,7 @@
             android:layout_marginStart="22dp"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
+            android:lineSpacingExtra="9sp"
             android:text="@string/onboarding_intro_info"
             android:textColor="@color/white"
             android:textSize="15sp"
