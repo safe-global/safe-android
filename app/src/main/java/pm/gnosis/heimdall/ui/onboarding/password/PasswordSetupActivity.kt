@@ -91,7 +91,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
             setSpan(ForegroundColorSpan(color), 0, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
-    
+
     private fun enableNext(enable: Boolean) {
         layout_password_setup_next.isEnabled = enable
         layout_password_setup_bottom_container.setBackgroundColor(getColorCompat(if (enable) R.color.azure else R.color.pale_grey))

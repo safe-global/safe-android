@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.inputmethod.EditorInfo
 import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding2.widget.editorActions
 import com.jakewharton.rxbinding2.widget.textChanges
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -38,18 +40,16 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
 
         layout_password_confirm_password.disableAccessibility()
         layout_password_confirm_password.requestFocus()
-        layout_password_confirm_password.setOnEditorActionListener { _, actionId, _ ->
-            when (actionId) {
-                EditorInfo.IME_ACTION_DONE, EditorInfo.IME_NULL ->
-                    layout_password_confirm_confirm.performClick()
-            }
-            true
-        }
     }
 
     override fun onStart() {
         super.onStart()
-        disposables += layout_password_confirm_confirm.clicks()
+        disposables += Observable.merge(
+            layout_password_confirm_confirm.clicks(),
+            layout_password_confirm_password.editorActions()
+                .filter { it == EditorInfo.IME_ACTION_DONE || it == EditorInfo.IME_NULL }
+                .map { Unit }
+        )
             .flatMapSingle {
                 viewModel.createAccount(passwordHash, layout_password_confirm_password.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())

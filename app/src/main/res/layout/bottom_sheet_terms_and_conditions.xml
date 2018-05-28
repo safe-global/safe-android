@@ -42,6 +42,7 @@
         android:autoLink="web"
         android:fontFamily="sans-serif-medium"
         android:text="@string/no_thanks"
+        android:textAllCaps="true"
         android:textSize="13sp"
         android:theme="@style/SmallFlatButton"
         app:layout_constraintEnd_toStartOf="@+id/bottom_sheet_terms_and_conditions_agree"
@@ -56,6 +57,7 @@
         android:layout_marginStart="24dp"
         android:fontFamily="sans-serif-medium"
         android:text="@string/agree"
+        android:textAllCaps="true"
         android:textSize="13sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/bottom_sheet_terms_and_conditions_reject"
         app:layout_constraintEnd_toEndOf="parent" />

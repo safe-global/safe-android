@@ -386,6 +386,6 @@
     <string name="password_validation_one_number_one_letter">Password with at least 1 number and 1 letter\n</string>
     <string name="terms">Terms</string>
     <string name="terms_info"><![CDATA[By continuing you accept and agree with the <a href="https://gnosis.pm">Terms of Use</a> and <a href="https://gnosis.pm/resources/default/pdf/PrivacyPolicyGnosisLtd.pdf">Privacy Policy</a>]]></string>
-    <string name="no_thanks">NO THANKS</string>
-    <string name="agree">AGREE</string>
+    <string name="no_thanks">No Thanks</string>
+    <string name="agree">Agree</string>
 </resources>

@@ -87,8 +87,8 @@
     </style>
 
     <style name="SmallFlatButton" parent="Theme.AppCompat.Light">
-        <item name="colorControlHighlight">#28b2fa</item>
-        <item name="android:textColor">#28b2fa</item>
+        <item name="colorControlHighlight">@color/azure</item>
+        <item name="android:textColor">@color/azure</item>
     </style>
 
     <style name="PrimaryButtonRound">
