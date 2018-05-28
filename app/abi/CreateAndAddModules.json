@@ -1,15 +1,15 @@
 {
-  "contract_name": "CreateAndAddExtension",
+  "contract_name": "CreateAndAddModules",
   "abi": [
     {
       "constant": false,
       "inputs": [
         {
-          "name": "extension",
+          "name": "module",
           "type": "address"
         }
       ],
-      "name": "addExtension",
+      "name": "enableModule",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
@@ -27,7 +27,7 @@
           "type": "bytes"
         }
       ],
-      "name": "createAndAddExtension",
+      "name": "createAndAddModules",
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",

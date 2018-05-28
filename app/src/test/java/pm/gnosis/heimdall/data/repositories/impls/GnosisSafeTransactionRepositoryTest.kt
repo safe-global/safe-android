@@ -10,7 +10,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.ethereum.EthereumRepository
-import pm.gnosis.heimdall.StandardToken
+import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
@@ -85,7 +85,7 @@ class GnosisSafeTransactionRepositoryTest {
         // Token transfer
         val target = Solidity.Address("0xa5056c8efadb5d6a1a6eb0176615692b6e648313".hexAsBigInteger())
         val value = Solidity.UInt256(BigInteger("9223372036854775808"))
-        val data = StandardToken.Transfer.encode(target, value)
+        val data = ERC20Contract.Transfer.encode(target, value)
         val transaction = Transaction(
             "0x9bebe3b9e7a461e35775ec935336891edf856da2".asEthereumAddress()!!,
             data = data,

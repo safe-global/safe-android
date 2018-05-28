@@ -26,7 +26,7 @@ import org.mockito.Mockito.reset
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.StandardToken
+import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.adapters.SolidityAddressAdapter
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
@@ -521,7 +521,7 @@ class DefaultTokenRepositoryTest {
                 EthCall(
                     transaction = Transaction(
                         Solidity.Address(BigInteger.ONE),
-                        data = StandardToken.BalanceOf.encode(Solidity.Address(BigInteger.TEN))
+                        data = ERC20Contract.BalanceOf.encode(Solidity.Address(BigInteger.TEN))
                     ), id = 1
                 )
             ),
@@ -540,7 +540,7 @@ class DefaultTokenRepositoryTest {
                 EthCall(
                     transaction = Transaction(
                         Solidity.Address(BigInteger.ONE),
-                        data = StandardToken.BalanceOf.encode(Solidity.Address(BigInteger.TEN))
+                        data = ERC20Contract.BalanceOf.encode(Solidity.Address(BigInteger.TEN))
                     ), id = 0
                 ),
                 EthBalance(Solidity.Address(BigInteger.TEN), id = 1)

@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.layout_safe_settings.*
 import kotlinx.android.synthetic.main.layout_simple_spinner_item.view.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeModulesRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
@@ -161,10 +161,10 @@ class SafeSettingsActivity : BaseActivity() {
 
         layout_safe_settings_add_recovery_option_button.visible(false)
         layout_safe_settings_extensions_container.removeAllViews()
-        disposables += viewModel.loadExtensionsInfo(info.extensions)
+        disposables += viewModel.loadModulesInfo(info.modules)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = {
-                it.second.forEachIndexed(::addExtension)
+                it.second.forEachIndexed(::addModule)
             }, onError = {
                 errorSnackbar(layout_safe_settings_add_recovery_option_button, it)
             })
@@ -178,18 +178,18 @@ class SafeSettingsActivity : BaseActivity() {
         }
     }
 
-    private fun addExtension(index: Int, extension: Pair<GnosisSafeExtensionRepository.Extension, Solidity.Address>) {
-        val extensionView = layoutInflater.inflate(R.layout.layout_simple_spinner_item, layout_safe_settings_extensions_container, false)
-        extensionView.layout_simple_spinner_item_name.setText(
-            when (extension.first) {
-                GnosisSafeExtensionRepository.Extension.SINGLE_ACCOUNT_RECOVERY -> R.string.single_account_recovery_extension
-                GnosisSafeExtensionRepository.Extension.SOCIAL_RECOVERY -> R.string.social_recovery_extension
-                GnosisSafeExtensionRepository.Extension.DAILY_LIMIT -> R.string.daily_limit_extension
-                GnosisSafeExtensionRepository.Extension.UNKNOWN -> R.string.unknown_extension
+    private fun addModule(index: Int, module: Pair<GnosisSafeModulesRepository.Module, Solidity.Address>) {
+        val moduleView = layoutInflater.inflate(R.layout.layout_simple_spinner_item, layout_safe_settings_extensions_container, false)
+        moduleView.layout_simple_spinner_item_name.setText(
+            when (module.first) {
+                GnosisSafeModulesRepository.Module.SINGLE_ACCOUNT_RECOVERY -> R.string.single_account_recovery_module
+                GnosisSafeModulesRepository.Module.SOCIAL_RECOVERY -> R.string.social_recovery_module
+                GnosisSafeModulesRepository.Module.DAILY_LIMIT -> R.string.daily_limit_module
+                GnosisSafeModulesRepository.Module.UNKNOWN -> R.string.unknown_module
             }
         )
-        extensionView.layout_simple_spinner_item_address.text = extension.second.asEthereumAddressString()
-        layout_safe_settings_extensions_container.addView(extensionView)
+        moduleView.layout_simple_spinner_item_address.text = module.second.asEthereumAddressString()
+        layout_safe_settings_extensions_container.addView(moduleView)
 
     }
 

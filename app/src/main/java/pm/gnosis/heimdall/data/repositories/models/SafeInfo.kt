@@ -9,5 +9,5 @@ data class SafeInfo(
     val requiredConfirmations: Long,
     val owners: List<Solidity.Address>,
     val isOwner: Boolean,
-    val extensions: List<Solidity.Address>
+    val modules: List<Solidity.Address>
 )

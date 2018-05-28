@@ -8,8 +8,7 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.ethereum.*
 import pm.gnosis.ethereum.models.TransactionReceipt
-import pm.gnosis.heimdall.GnosisSafe
-import pm.gnosis.heimdall.GnosisSafe.*
+import pm.gnosis.heimdall.GnosisSafePersonalEdition.*
 import pm.gnosis.heimdall.ProxyFactory
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
@@ -89,10 +88,10 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 val masterCopyAddress = settingsRepository.getSafeMasterCopyAddress()
                 val owners = SolidityBase.Vector(devices.toList() + account.address)
                 val confirmations = Math.max(1, Math.min(requiredConfirmations, devices.size))
-                val setupData = GnosisSafe.Setup.encode(
+                val setupData = Setup.encode(
                     // Safe owner info
                     owners, Solidity.UInt8(BigInteger.valueOf(confirmations.toLong())),
-                    // Extension info -> not set for now
+                    // Module info -> not set for now
                     Solidity.Address(BigInteger.ZERO), Solidity.Bytes(ByteArray(0))
                 )
                 val data = ProxyFactory.CreateProxy.encode(masterCopyAddress, Solidity.Bytes(setupData.hexStringToByteArray()))
@@ -186,7 +185,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 SafeInfoRequest(
                     EthBalance(address, 0),
                     EthCall(
-                        transaction = Transaction(address = address, data = Threshold.encode()),
+                        transaction = Transaction(address = address, data = GetThreshold.encode()),
                         id = 1
                     ),
                     EthCall(
@@ -196,11 +195,11 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     EthCall(
                         transaction = Transaction(
                             address = address,
-                            data = GnosisSafe.IsOwner.encode(it.address)
+                            data = IsOwner.encode(it.address)
                         ), id = 3
                     ),
                     EthCall(
-                        transaction = Transaction(address = address, data = GetExtensions.encode()),
+                        transaction = Transaction(address = address, data = GetModules.encode()),
                         id = 4
                     )
                 )
@@ -208,11 +207,11 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .flatMapObservable { bulk -> ethereumRepository.request(bulk) }
             .map {
                 val balance = it.balance.result() ?: throw IllegalArgumentException()
-                val threshold = Threshold.decode(it.threshold.result() ?: throw IllegalArgumentException()).param0.value.toLong()
+                val threshold = GetThreshold.decode(it.threshold.result() ?: throw IllegalArgumentException()).param0.value.toLong()
                 val owners = GetOwners.decode(it.owners.result() ?: throw IllegalArgumentException()).param0.items
                 val isOwner = IsOwner.decode(it.isOwner.result() ?: throw IllegalArgumentException()).param0.value
-                val extensions = GetExtensions.decode(it.extensions.result() ?: throw IllegalArgumentException()).param0.items.map { it }
-                SafeInfo(address.asEthereumAddressString(), balance, threshold, owners, isOwner, extensions)
+                val modules = GetModules.decode(it.modules.result() ?: throw IllegalArgumentException()).param0.items.map { it }
+                SafeInfo(address.asEthereumAddressString(), balance, threshold, owners, isOwner, modules)
             }
 
     override fun observeTransactionDescriptions(address: Solidity.Address): Flowable<List<String>> = descriptionsDao.observeDescriptions(address)
@@ -222,8 +221,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
         val threshold: EthRequest<String>,
         val owners: EthRequest<String>,
         val isOwner: EthRequest<String>,
-        val extensions: EthRequest<String>
-    ) : BulkRequest(balance, threshold, owners, isOwner, extensions)
+        val modules: EthRequest<String>
+    ) : BulkRequest(balance, threshold, owners, isOwner, modules)
 
     private class SafeDeploymentFailedException : IllegalArgumentException()
 }

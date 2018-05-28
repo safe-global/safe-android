@@ -15,9 +15,9 @@ interface SettingsRepository {
     fun getSafeMasterCopyAddress(): Solidity.Address
     fun setSafeMasterCopyAddress(address: Solidity.Address?)
 
-    fun getRecoveryExtensionMasterCopyAddress(): Solidity.Address
-    fun getDailyLimitExtensionMasterCopyAddress(): Solidity.Address
-    fun getCreateAndAddExtensionContractAddress(): Solidity.Address
+    fun getRecoveryModuleMasterCopyAddress(): Solidity.Address
+    fun getDailyLimitModuleMasterCopyAddress(): Solidity.Address
+    fun getCreateAndAddModulesContractAddress(): Solidity.Address
 
     fun needsAuth(): Boolean
 

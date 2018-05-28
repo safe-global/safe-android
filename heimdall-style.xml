@@ -50,7 +50,7 @@
   <JetCodeStyleSettings>
     <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
   </JetCodeStyleSettings>
-  <Objective-C-extensions>
+  <Objective-C-modules>
     <file>
       <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Import" />
       <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Macro" />
@@ -70,11 +70,11 @@
       <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="InstanceMethod" />
       <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="DeallocMethod" />
     </class>
-    <extensions>
+    <modules>
       <pair source="cpp" header="h" fileNamingConvention="NONE" />
       <pair source="c" header="h" fileNamingConvention="NONE" />
-    </extensions>
-  </Objective-C-extensions>
+    </modules>
+  </Objective-C-modules>
   <XML>
     <option name="XML_KEEP_LINE_BREAKS" value="false" />
     <option name="XML_ALIGN_ATTRIBUTES" value="false" />

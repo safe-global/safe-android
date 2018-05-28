@@ -1,0 +1,19 @@
+{
+  "contract_name": "MultiSend",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "transactions",
+          "type": "bytes"
+        }
+      ],
+      "name": "multiSend",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeModulesRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
@@ -48,14 +48,14 @@ class SafeSettingsViewModelTest {
     lateinit var repositoryMock: GnosisSafeRepository
 
     @Mock
-    lateinit var extensionRepositoryMock: GnosisSafeExtensionRepository
+    lateinit var modulesRepositoryMock: GnosisSafeModulesRepository
 
     lateinit var viewModel: SafeSettingsViewModel
 
     @Before
     fun setup() {
         contextMock.mockGetString()
-        viewModel = SafeSettingsViewModel(contextMock, extensionRepositoryMock, repositoryMock)
+        viewModel = SafeSettingsViewModel(contextMock, modulesRepositoryMock, repositoryMock)
     }
 
     private fun callSetupAndCheck(

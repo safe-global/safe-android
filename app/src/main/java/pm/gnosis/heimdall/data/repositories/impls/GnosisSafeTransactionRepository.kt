@@ -6,7 +6,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.ethereum.*
-import pm.gnosis.heimdall.GnosisSafe
+import pm.gnosis.heimdall.GnosisSafePersonalEdition
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
@@ -70,17 +70,17 @@ class GnosisSafeTransactionRepository @Inject constructor(
             TransactionInfoRequest(
                 EthCall(
                     transaction = Transaction(
-                        safeAddress, data = GnosisSafe.Threshold.encode()
+                        safeAddress, data = GnosisSafePersonalEdition.GetThreshold.encode()
                     ), id = 0
                 ),
                 EthCall(
                     transaction = Transaction(
-                        safeAddress, data = GnosisSafe.Nonce.encode()
+                        safeAddress, data = GnosisSafePersonalEdition.Nonce.encode()
                     ), id = 1
                 ),
                 EthCall(
                     transaction = Transaction(
-                        safeAddress, data = GnosisSafe.GetOwners.encode()
+                        safeAddress, data = GnosisSafePersonalEdition.GetOwners.encode()
                     ), id = 2
                 ),
                 EthEstimateGas(
@@ -98,9 +98,9 @@ class GnosisSafeTransactionRepository @Inject constructor(
             .flatMap { ethereumRepository.request(it).singleOrError() }
             .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
             .flatMap { (info, sender) ->
-                val nonce = GnosisSafe.Nonce.decode(info.nonce.result()!!).param0.value
-                val threshold = GnosisSafe.Threshold.decode(info.threshold.result()!!).param0.value.toInt()
-                val owners = GnosisSafe.GetOwners.decode(info.owners.result()!!).param0.items
+                val nonce = GnosisSafePersonalEdition.Nonce.decode(info.nonce.result()!!).param0.value
+                val threshold = GnosisSafePersonalEdition.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
+                val owners = GnosisSafePersonalEdition.GetOwners.decode(info.owners.result()!!).param0.items
                 val updatedTransaction = transaction.copy(wrapped = transaction.wrapped.updateTransactionWithStatus(nonce))
                 val estimatedFees = info.estimate.result()!!
                 val safeBalance = info.balance.result()!!
@@ -184,19 +184,17 @@ class GnosisSafeTransactionRepository @Inject constructor(
                     }
                 }
 
-                val confirmations = mutableListOf<Solidity.Address>()
-                val confirmationsIndexes = mutableListOf<Solidity.UInt256>()
-
                 Single.fromCallable {
                     val tx = innerTransaction.wrapped
                     val to = tx.address
                     val value = Solidity.UInt256(tx.value?.value ?: BigInteger.ZERO)
                     val data = Solidity.Bytes(tx.data?.hexStringToByteArrayOrNull() ?: ByteArray(0))
                     val operationInt = innerTransaction.operation.toSolidity()
-                    val confirmData = GnosisSafe.ExecuteTransaction.encode(
+                    val confirmData = GnosisSafePersonalEdition.ExecAndPayTransaction.encode(
                         to, value, data, operationInt,
-                        SolidityBase.Vector(vList), SolidityBase.Vector(rList), SolidityBase.Vector(sList),
-                        SolidityBase.Vector(confirmations), SolidityBase.Vector(confirmationsIndexes)
+                        Solidity.UInt256(BigInteger.valueOf(100000)), Solidity.UInt256(BigInteger.ZERO),
+                        Solidity.UInt256(BigInteger.ZERO), Solidity.Address(BigInteger.ZERO),
+                        SolidityBase.Vector(vList), SolidityBase.Vector(rList), SolidityBase.Vector(sList)
                     )
                     Transaction(safeAddress, data = confirmData)
                 }
