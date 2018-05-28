@@ -168,11 +168,11 @@ class GnosisSafeTransactionRepository @Inject constructor(
         transaction: SafeTransaction,
         signatures: Map<Solidity.Address, Signature>,
         senderIsOwner: Boolean,
-        gasPrice: BigInteger,
         txGas: BigInteger,
-        dataGas: BigInteger
+        dataGas: BigInteger,
+        gasPrice: BigInteger
     ): Completable =
-        loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, gasPrice, txGas, dataGas)
+        loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, txGas, dataGas, gasPrice)
             .flatMap(relayServiceApi::execute)
             .flatMap { addLocalTransaction(safeAddress, transaction, it.transactionHash, txGas, dataGas, gasPrice) }
             .toCompletable()
@@ -182,9 +182,9 @@ class GnosisSafeTransactionRepository @Inject constructor(
         innerTransaction: SafeTransaction,
         signatures: Map<Solidity.Address, Signature>,
         senderIsOwner: Boolean,
-        gasPrice: BigInteger,
         txGas: BigInteger,
-        dataGas: BigInteger
+        dataGas: BigInteger,
+        gasPrice: BigInteger
     ): Single<ExecuteParams> =
         accountsRepository.loadActiveAccount()
             .flatMap { account ->

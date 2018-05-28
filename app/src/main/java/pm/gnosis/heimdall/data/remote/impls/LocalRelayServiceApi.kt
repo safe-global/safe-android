@@ -85,7 +85,7 @@ class LocalRelayServiceApi(
         }
             .firstOrError()
             .map {
-                val gasPrice = BigInteger.valueOf(20000000000)
+                val gasPrice = BigInteger("20000000000")
                 val txGas = it.result()!!.substring(138).hexAsBigInteger()
                 val dataGas = calculateDataGas(params, txGas, gasPrice)
                 RelayEstimate(txGas.asDecimalString(), dataGas.asDecimalString(), gasPrice.asDecimalString())

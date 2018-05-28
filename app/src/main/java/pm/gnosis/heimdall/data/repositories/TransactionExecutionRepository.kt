@@ -41,9 +41,9 @@ interface TransactionExecutionRepository {
         transaction: SafeTransaction,
         signatures: Map<Solidity.Address, Signature>,
         senderIsOwner: Boolean,
-        gasPrice: BigInteger,
         txGas: BigInteger,
-        dataGas: BigInteger
+        dataGas: BigInteger,
+        gasPrice: BigInteger
     ): Completable
 
     data class ExecuteInformation(
