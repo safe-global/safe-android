@@ -77,7 +77,7 @@ class SplashViewModelTest {
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         observerNoSuchElement.assertNoErrors().assertTerminated()
-            .assertValueCount(1).assertValue { it is StartAccountSetup }
+            .assertValueCount(1).assertValue { it is StartPasswordSetup }
     }
 
     @Test
@@ -96,7 +96,7 @@ class SplashViewModelTest {
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         observerEmptyResult.assertNoErrors().assertTerminated()
-            .assertValueCount(1).assertValue { it is StartAccountSetup }
+            .assertValueCount(1).assertValue { it is StartPasswordSetup }
     }
 
     @Test
@@ -153,7 +153,7 @@ class SplashViewModelTest {
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         observerNoSuchElement.assertNoErrors().assertTerminated()
-            .assertValueCount(1).assertValue { it is StartAccountSetup }
+            .assertValueCount(1).assertValue { it is StartPasswordSetup }
     }
 
     @Test
@@ -172,7 +172,7 @@ class SplashViewModelTest {
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         observerEmptyResult.assertNoErrors().assertTerminated()
-            .assertValueCount(1).assertValue { it is StartAccountSetup }
+            .assertValueCount(1).assertValue { it is StartPasswordSetup }
     }
 
     @Test

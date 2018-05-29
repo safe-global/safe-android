@@ -38,7 +38,7 @@ class SplashViewModel @Inject constructor(
             .onErrorReturn {
                 when (it) {
                     is EmptyResultSetException, is NoSuchElementException ->
-                        StartAccountSetup()
+                        StartPasswordSetup()
                     else ->
                         StartMain()
                 }

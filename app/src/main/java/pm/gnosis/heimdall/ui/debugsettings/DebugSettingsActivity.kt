@@ -42,20 +42,19 @@ class DebugSettingsActivity : BaseActivity() {
 
         disposables += layout_debug_settings_pair.clicks()
             .subscribeBy(onNext = {
-                startActivity(PairingActivity.createIntent(this))
-                //QRCodeScanActivity.startForResult(this)
+                //startActivity(PairingActivity.createIntent(this))
+                QRCodeScanActivity.startForResult(this)
             }, onError = Timber::e)
 
         disposables += layout_debug_settings_safe_creation.clicks()
-            .flatMapCompletable {
-                viewModel.sendTestSafeCreationPush()
+            .flatMapSingle {
+                viewModel.sendTestSafeCreationPush(layout_debug_settings_address.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
-
                     .doOnSubscribe {
                         layout_debug_settings_pair.isEnabled = false
                         layout_debug_settings_progress_bar.visibility = View.VISIBLE
                     }
-                    .doOnTerminate {
+                    .doFinally {
                         layout_debug_settings_pair.isEnabled = true
                         layout_debug_settings_progress_bar.visibility = View.GONE
                     }

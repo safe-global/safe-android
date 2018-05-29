@@ -1,25 +1,30 @@
 package pm.gnosis.heimdall.ui.onboarding.password
 
 import android.content.Context
+import android.content.Intent
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.mnemonic.Bip39
+import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.TestCompletable
 import pm.gnosis.tests.utils.mockGetString
 
 @RunWith(MockitoJUnitRunner::class)
@@ -34,30 +39,109 @@ class PasswordSetupViewModelTest {
     @Mock
     private lateinit var encryptionManagerMock: EncryptionManager
 
+    @Mock
+    private lateinit var accountsRepository: AccountsRepository
+
+    @Mock
+    private lateinit var bip39: Bip39
+
     private lateinit var viewModel: PasswordSetupViewModel
 
     @Before
     fun setUp() {
-        viewModel = PasswordSetupViewModel(contextMock, encryptionManagerMock)
+        viewModel = PasswordSetupViewModel(contextMock, encryptionManagerMock, accountsRepository, bip39)
     }
 
     @Test
-    fun setupPasswordTooShort() {
-        val observer = createObserver()
-        val password = "11111"
-        val passwordHash = Sha3Utils.keccak(password.toByteArray())
+    fun emptyPassword() {
+        val testObserver = TestObserver.create<Result<List<Pair<PasswordValidationCondition, Boolean>>>>()
 
-        viewModel.setPassword(passwordHash, password).subscribe(observer)
+        viewModel.validatePassword("").subscribe(testObserver)
 
-        then(encryptionManagerMock).shouldHaveZeroInteractions()
-        observer.assertResult(ErrorResult(PasswordInvalidException(PasswordNotLongEnough(password.length, MIN_CHARS))))
+        testObserver.assertResult(
+            DataResult(
+                listOf(
+                    PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to false,
+                    PasswordValidationCondition.MINIMUM_CHARACTERS to false,
+                    PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to false
+                )
+            )
+        )
+    }
+
+    @Test
+    fun identicalCharacters() {
+        val testObserver = TestObserver.create<Result<List<Pair<PasswordValidationCondition, Boolean>>>>()
+
+        viewModel.validatePassword("aaabbb111").subscribe(testObserver)
+
+        testObserver.assertResult(
+            DataResult(
+                listOf(
+                    PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to false,
+                    PasswordValidationCondition.MINIMUM_CHARACTERS to true,
+                    PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to true
+                )
+            )
+        )
+    }
+
+    @Test
+    fun minimumCharacters() {
+        val testObserver = TestObserver.create<Result<List<Pair<PasswordValidationCondition, Boolean>>>>()
+
+        viewModel.validatePassword("acbb1").subscribe(testObserver)
+
+        testObserver.assertResult(
+            DataResult(
+                listOf(
+                    PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to true,
+                    PasswordValidationCondition.MINIMUM_CHARACTERS to false,
+                    PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to true
+                )
+            )
+        )
+    }
+
+    @Test
+    fun oneNumberOneLetter() {
+        val testObserver = TestObserver.create<Result<List<Pair<PasswordValidationCondition, Boolean>>>>()
+
+        viewModel.validatePassword("a1").subscribe(testObserver)
+
+        testObserver.assertResult(
+            DataResult(
+                listOf(
+                    PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to true,
+                    PasswordValidationCondition.MINIMUM_CHARACTERS to false,
+                    PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to true
+                )
+            )
+        )
+    }
+
+    @Test
+    fun validPassword() {
+        val testObserver = TestObserver.create<Result<List<Pair<PasswordValidationCondition, Boolean>>>>()
+
+        viewModel.validatePassword("asdqwe123").subscribe(testObserver)
+
+        testObserver.assertResult(
+            DataResult(
+                listOf(
+                    PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to true,
+                    PasswordValidationCondition.MINIMUM_CHARACTERS to true,
+                    PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to true
+                )
+            )
+        )
     }
 
     @Test
     fun setupPasswordNotSame() {
         val observer = createObserver()
 
-        viewModel.setPassword(Sha3Utils.keccak("111111".toByteArray()), "123456").subscribe(observer)
+        viewModel.createAccount(Sha3Utils.keccak("111111".toByteArray()), "123456").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         observer.assertValue { it is ErrorResult && it.error is PasswordInvalidException && (it.error as PasswordInvalidException).reason is PasswordsNotEqual }
@@ -70,7 +154,7 @@ class PasswordSetupViewModelTest {
         val exception = Exception()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
 
-        viewModel.setPassword(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
+        viewModel.createAccount(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
 
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -79,12 +163,12 @@ class PasswordSetupViewModelTest {
     }
 
     @Test
-    fun setupPasswordNoSuccess() {
+    fun createAccountErrorPassword() {
         contextMock.mockGetString()
         val observer = createObserver()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(false))
 
-        viewModel.setPassword(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
+        viewModel.createAccount(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
 
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -93,20 +177,49 @@ class PasswordSetupViewModelTest {
     }
 
     @Test
-    fun setupPasswordSuccess() {
+    fun createAccountSuccess() {
         val observer = createObserver()
+        val testCompletable = TestCompletable()
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
+        given(bip39.generateMnemonic(anyInt(), anyInt())).willReturn("mnemonic")
+        given(bip39.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(ByteArray(0))
+        given(accountsRepository.saveAccountFromMnemonicSeed(MockUtils.any(), anyLong())).willReturn(testCompletable)
+        given(encryptionManagerMock.canSetupFingerprint()).willReturn(true)
 
-        viewModel.setPassword(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
+        viewModel.createAccount(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
+
+        then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
+        then(encryptionManagerMock).should().canSetupFingerprint()
+        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
+        then(bip39).should().generateMnemonic(languageId = R.id.english)
+        then(bip39).should().mnemonicToSeed("mnemonic")
+        then(bip39).shouldHaveNoMoreInteractions()
+        then(accountsRepository).should().saveAccountFromMnemonicSeed(ByteArray(0))
+        then(accountsRepository).shouldHaveNoMoreInteractions()
+        observer.assertValue { it is DataResult }.assertComplete()
+        assertEquals(1, testCompletable.callCount)
+    }
+
+    @Test
+    fun createAccountError() {
+        val observer = createObserver()
+        val exception = Exception()
+        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
+        given(bip39.generateMnemonic(anyInt(), anyInt())).willReturn("mnemonic")
+        given(bip39.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(ByteArray(0))
+        given(accountsRepository.saveAccountFromMnemonicSeed(MockUtils.any(), anyLong())).willReturn(Completable.error(exception))
+
+        viewModel.createAccount(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
 
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertResult(DataResult(Unit))
+        then(bip39).should().generateMnemonic(languageId = R.id.english)
+        then(bip39).should().mnemonicToSeed("mnemonic")
+        then(bip39).shouldHaveNoMoreInteractions()
+        then(accountsRepository).should().saveAccountFromMnemonicSeed(ByteArray(0))
+        then(accountsRepository).shouldHaveNoMoreInteractions()
+        observer.assertResult(ErrorResult(exception))
     }
 
-    private fun createObserver() = TestObserver.create<Result<Unit>>()
-
-    companion object {
-        private const val MIN_CHARS = 6
-    }
+    private fun createObserver() = TestObserver.create<Result<Intent>>()
 }

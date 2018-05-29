@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.data.remote.impls
 
 import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
@@ -69,10 +68,9 @@ class GnosisSafePushServiceRepository @Inject constructor(
             .flatMap { gnosisSafePushService.pair(it.first).andThen(Single.just(it.second)) }
 
     override fun sendSafeCreationNotification(safeAddress: Solidity.Address, devicesToNotify: Set<Solidity.Address>): Completable =
-        Single.fromCallable { SafeCreationParams(safe = safeAddress.asEthereumAddressString()).buildMessage() }
+        Single.fromCallable { SafeCreationParams(safe = safeAddress.asEthereumAddressString()) }
             .flatMap { pushMessage ->
-                val rawJson = SAFE_CREATION_PARAMETERIZED_TYPE.let { moshi.adapter<PushMessage<SafeCreationParams>>(it) }.toJson(pushMessage)
-
+                val rawJson = moshi.adapter(SafeCreationParams::class.java).toJson(pushMessage)
                 accountsRepository.sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$rawJson".toByteArray()))
                     .map { PushServiceSignature.fromSignature(it) to rawJson }
             }
@@ -102,7 +100,5 @@ class GnosisSafePushServiceRepository @Inject constructor(
     companion object {
         const val LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY = "prefs.string.accounttoken"
         const val SIGNATURE_PREFIX = "GNO"
-
-        private val SAFE_CREATION_PARAMETERIZED_TYPE = Types.newParameterizedType(PushMessage::class.java, SafeCreationParams::class.java)
     }
 }

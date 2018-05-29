@@ -9,4 +9,10 @@
         <item name="android:statusBarColor">@color/gnosis_blue</item>
         <item name="android:navigationBarColor">@color/gnosis_blue</item>
     </style>
+
+    <style name="IntroTheme" parent="IntroThemeBase">
+        <item name="android:statusBarColor">@color/aqua_blue</item>
+    </style>
+
+    <style name="WhiteTheme" parent="WhiteThemeBase" />
 </resources>

@@ -32,6 +32,15 @@
         android:layout_marginTop="24dp"
         android:text="/notify safe creation" />
 
+    <EditText
+        android:id="@+id/layout_debug_settings_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Chrome extension address"
+        android:text="0xfff"
+        android:textColor="@color/white" />
+
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:id="@+id/layout_debug_settings_progress_bar"
         android:layout_width="24dp"

@@ -93,7 +93,7 @@ class ChangeSafeSettingsDetailsViewModel @Inject constructor(
         if (safeInfo?.owners?.contains(newOwner) == true) {
             throw TransactionInputException(context.getString(R.string.error_owner_already_added), TransactionInputException.TARGET_FIELD, true)
         }
-        // TODO: add proper error message
+        // TODO: add proper error messages
         SimpleLocalizedException.assert(safe != null, context, R.string.unknown_error)
         val newThreshold = cachedAddOwnerInfo?.second ?: safeInfo?.owners?.size?.let { GnosisSafeUtils.calculateThreshold(it + 1) }
         SimpleLocalizedException.assert(newThreshold != null, context, R.string.unknown_error)

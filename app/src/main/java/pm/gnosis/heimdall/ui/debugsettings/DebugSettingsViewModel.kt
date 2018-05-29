@@ -7,6 +7,9 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.heimdall.data.remote.models.push.PushServiceTemporaryAuthorization
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -24,6 +27,7 @@ class DebugSettingsViewModel @Inject constructor(
         Single.fromCallable { moshi.adapter(PushServiceTemporaryAuthorization::class.java).fromJson(payload) }
             .subscribeOn(Schedulers.io())
 
-    override fun sendTestSafeCreationPush(): Completable =
-        pushServiceRepository.sendSafeCreationNotification(Solidity.Address(BigInteger.ZERO), setOf(Solidity.Address(BigInteger.ONE)))
+    override fun sendTestSafeCreationPush(chromeExtensionAddress: String): Single<Result<Unit>> =
+        pushServiceRepository.sendSafeCreationNotification(Solidity.Address(BigInteger.ZERO), setOf(chromeExtensionAddress.asEthereumAddress()!!))
+            .mapToResult()
 }
