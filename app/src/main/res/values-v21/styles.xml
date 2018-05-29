@@ -10,7 +10,7 @@
         <item name="android:navigationBarColor">@color/gnosis_blue</item>
     </style>
 
-    <style name="IntroTheme" parent="IntroThemeBase">
+    <style name="MountainTheme" parent="MountainThemeBase">
         <item name="android:statusBarColor">@color/aqua_blue</item>
     </style>
 

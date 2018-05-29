@@ -10,11 +10,4 @@
             android:src="@drawable/ic_background_mountains" />
     </item>
 
-    <!--hack: 48dp accounts for status bar + margin. any other way?-->
-    <item android:top="48dp">
-        <bitmap
-            android:gravity="top|center_horizontal"
-            android:src="@drawable/ic_logo_splash" />
-    </item>
-
 </layer-list>

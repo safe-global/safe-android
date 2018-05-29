@@ -400,4 +400,7 @@
     <string name="confirmations_ready">confirmed by extension</string>
     <string name="submitting_transaction">Submitting transaction</string>
     <string name="transfer_x">Transfer %s</string>
+    <string name="enter_password">Enter password</string>
+    <string name="use_password">Use password</string>
+    <string name="place_your_finger_to_unlock">Place your finger to unlock</string>
 </resources>

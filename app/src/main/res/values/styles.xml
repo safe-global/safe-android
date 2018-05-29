@@ -75,13 +75,13 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <!-- Intro theme. -->
+    <!-- Mountain theme. -->
 
-    <style name="IntroThemeBase" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/onbarding_intro_gradient</item>
+    <style name="MountainThemeBase" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/mountain_background</item>
     </style>
 
-    <style name="IntroTheme" parent="IntroThemeBase" />
+    <style name="MountainTheme" parent="MountainThemeBase" />
 
     <style name="SmallButton" parent="Theme.AppCompat.Light">
         <item name="colorButtonNormal">@color/azure</item>

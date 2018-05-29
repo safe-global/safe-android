@@ -55,10 +55,11 @@
         </ScrollView>
 
         <RelativeLayout
+            android:id="@+id/layout_fingerprint_setup_bottom_bar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/bottom_bar_height"
             android:layout_alignParentBottom="true"
-            android:background="@color/azure">
+            android:background="@color/pale_grey">
 
             <LinearLayout
                 android:id="@+id/layout_fingerprint_setup_continue"
@@ -76,14 +77,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/skip"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/bluey_grey" />
 
                 <ImageView
+                    android:id="@+id/layout_fingerprint_setup_next_arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:rotation="180"
-                    android:tint="@color/white"
+                    android:tint="@color/bluey_grey"
                     app:srcCompat="@drawable/ic_arrow_back_24dp" />
 
             </LinearLayout>

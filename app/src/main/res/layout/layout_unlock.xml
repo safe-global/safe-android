@@ -1,111 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_unlock_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/gnosis_blue">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <ImageView
+            android:id="@+id/layout_unlock_logo"
+            android:layout_width="@dimen/safe_logo_size"
+            android:layout_height="@dimen/safe_logo_size"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/selectable_background"
+            android:src="@drawable/ic_logo_splash"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/layout_unlock_personal_edition_text"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/layout_unlock_password_input">
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:letterSpacing="0.21"
+            android:lineSpacingExtra="17sp"
+            android:padding="8dp"
+            android:text="@string/personal_edition"
+            android:textAllCaps="true"
+            android:textColor="@color/white_alpha_70"
+            android:textSize="7sp"
+            app:layout_constraintTop_toBottomOf="@+id/layout_unlock_logo" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
+        <ImageView
+            android:id="@+id/layout_unlock_door_hole"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:src="@drawable/ic_door_hole_unlock"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_unlock_personal_edition_text" />
 
-                <ImageView
-                    android:id="@+id/setup_fingerprint"
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    android:background="@drawable/selectable_background"
-                    android:src="@drawable/ic_logo_splash" />
+        <ImageView
+            android:id="@+id/layout_unlock_fingerprint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="96dp"
+            android:src="@drawable/ic_authenticate_light"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_unlock_door_hole" />
 
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp">
+        <TextView
+            android:id="@+id/layout_unlock_fingerprint_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="@string/place_your_finger_to_unlock"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_unlock_fingerprint" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="8dp"
-                        android:layout_gravity="center"
-                        android:background="@color/gnosis_dark_blue" />
+        <TextView
+            android:id="@+id/layout_unlock_switch_to_password"
+            style="@style/TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/use_password"
+            android:textColor="#a5ffffff"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_vault_background" />
-
-                    <ImageView
-                        android:id="@+id/layout_unlock_handle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:paddingBottom="20dp"
-                        android:src="@drawable/ic_vault_handle" />
-                </FrameLayout>
-            </LinearLayout>
-        </ScrollView>
 
         <EditText
             android:id="@+id/layout_unlock_password_input"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="46dp"
             android:layout_alignParentBottom="true"
             android:background="@color/gnosis_dark_blue"
+            android:fitsSystemWindows="true"
             android:gravity="center"
-            android:hint="@string/enter_master_password"
+            android:hint="@string/enter_password"
             android:inputType="textPassword"
             android:textColor="@color/white"
-            android:textColorHint="@color/white"
-            android:textSize="18sp"
-            android:textStyle="normal"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/layout_unlock_fingerprint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="16dp"
+            android:textColorHint="#80ffffff"
+            android:textSize="16sp"
             android:visibility="gone"
-            tools:visibility="visible">
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:src="@drawable/ic_authenticate_light" />
+        <android.support.constraint.Group
+            android:id="@+id/layout_unlock_fingerprint_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="layout_unlock_fingerprint,layout_unlock_fingerprint_info,layout_unlock_switch_to_password"
+            tools:visibility="visible" />
 
-            <TextView
-                android:id="@+id/layout_unlock_error"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:textColor="@android:color/holo_red_light"
-                android:visibility="invisible"
-                tools:text="Please try again"
-                tools:visibility="visible" />
+    </android.support.constraint.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/layout_unlock_switch_to_password"
-                style="@style/TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/switch_to_password"
-                android:textColor="@color/white" />
-        </LinearLayout>
-    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
