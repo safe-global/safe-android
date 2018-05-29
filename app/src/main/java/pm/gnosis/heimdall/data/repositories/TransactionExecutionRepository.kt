@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.data.repositories
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
@@ -18,7 +17,8 @@ interface TransactionExecutionRepository {
     ): Single<ByteArray>
 
     fun loadExecuteInformation(safeAddress: Solidity.Address, transaction: SafeTransaction): Single<ExecuteInformation>
-    fun sign(
+
+    fun signConfirmation(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
         txGas: BigInteger,
@@ -26,13 +26,30 @@ interface TransactionExecutionRepository {
         gasPrice: BigInteger
     ): Single<Signature>
 
-    fun checkSignature(
+    fun signRejection(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
-        signature: Signature,
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger
+    ): Single<Signature>
+
+    fun checkConfirmation(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger,
+        signature: Signature
+    ): Single<Pair<Solidity.Address, Signature>>
+
+    fun checkRejection(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger,
+        signature: Signature
     ): Single<Pair<Solidity.Address, Signature>>
 
     fun observePublishStatus(id: String): Observable<PublishStatus>

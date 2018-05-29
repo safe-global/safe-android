@@ -20,8 +20,9 @@ sealed class PushMessage(
         @Json(name = "r") val r: String,
         @Json(name = "s") val s: String,
         @Json(name = "v") val v: String
-    ) : PushMessage("sendTransaction") {
+    ) : PushMessage(TYPE) {
         companion object {
+            const val TYPE = "sendTransaction"
             fun fromMap(params: Map<String, String>) =
                 SendTransaction(
                     params.getOrThrow("hash"),
@@ -47,8 +48,9 @@ sealed class PushMessage(
         @Json(name = "r") val r: String,
         @Json(name = "s") val s: String,
         @Json(name = "v") val v: String
-    ) : PushMessage("confirmTransaction") {
+    ) : PushMessage(TYPE) {
         companion object {
+            const val TYPE = "confirmTransaction"
             fun fromMap(params: Map<String, String>) =
                 ConfirmTransaction(
                     params.getOrThrow("hash"),
@@ -64,8 +66,9 @@ sealed class PushMessage(
         @Json(name = "r") val r: String,
         @Json(name = "s") val s: String,
         @Json(name = "v") val v: String
-    ) : PushMessage("rejectTransaction") {
+    ) : PushMessage(TYPE) {
         companion object {
+            const val TYPE = "rejectTransaction"
             fun fromMap(params: Map<String, String>) =
                     RejectTransaction(
                         params.getOrThrow("hash"),

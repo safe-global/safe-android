@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.di.modules
 import dagger.Binds
 import dagger.Module
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
-import pm.gnosis.heimdall.data.repositories.impls.GnosisSafePushServiceRepository
+import pm.gnosis.heimdall.data.repositories.impls.DefaultPushServiceRepository
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.*
 import pm.gnosis.heimdall.helpers.*
@@ -54,7 +54,7 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsPushServiceRepository(repository: GnosisSafePushServiceRepository): PushServiceRepository
+    abstract fun bindsPushServiceRepository(repository: DefaultPushServiceRepository): PushServiceRepository
 
     @Binds
     @Singleton
@@ -74,7 +74,7 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsTransactionRepository(repository: GnosisSafeTransactionRepository): TransactionExecutionRepository
+    abstract fun bindsTransactionRepository(repository: DefaultTransactionExecutionRepository): TransactionExecutionRepository
 
     @Binds
     @Singleton

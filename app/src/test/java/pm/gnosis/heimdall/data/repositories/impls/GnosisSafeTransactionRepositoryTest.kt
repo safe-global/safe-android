@@ -47,12 +47,12 @@ class GnosisSafeTransactionRepositoryTest {
     @Mock
     lateinit var appDbMock: ApplicationDb
 
-    private lateinit var repository: GnosisSafeTransactionRepository
+    private lateinit var repository: DefaultTransactionExecutionRepository
 
     @Before
     fun setUp() {
         given(appDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
-        repository = GnosisSafeTransactionRepository(appDbMock, accountRepositoryMock, ethereumRepositoryMock, relayServiceApiMock)
+        repository = DefaultTransactionExecutionRepository(appDbMock, accountRepositoryMock, ethereumRepositoryMock, relayServiceApiMock)
     }
 
     private fun verifyHash(

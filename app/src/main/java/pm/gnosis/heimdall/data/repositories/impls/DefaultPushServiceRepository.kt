@@ -34,7 +34,7 @@ import java.math.BigInteger
 import java.util.concurrent.CopyOnWriteArraySet
 import javax.inject.Inject
 
-class GnosisSafePushServiceRepository @Inject constructor(
+class DefaultPushServiceRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val accountsRepository: AccountsRepository,
     private val notificationManager: LocalNotificationManager,
@@ -135,7 +135,7 @@ class GnosisSafePushServiceRepository @Inject constructor(
 
     private fun sendNotification(message: ServiceMessage, targets: Set<Solidity.Address>) =
         Single.fromCallable {
-            moshi.adapter(ServiceMessage::class.java).toJson(message)
+            moshi.adapter(message.javaClass).toJson(message)
         }
             .subscribeOn(Schedulers.io())
             .flatMap { rawJson ->
@@ -151,6 +151,10 @@ class GnosisSafePushServiceRepository @Inject constructor(
             }
             .flatMapCompletable { pushServiceApi.notify(it) }
 
+    /**
+     * This method is doing some blocking calculations (account recovery) and should not be used from the main thread.
+     * As the name indicates it is meant for push notifications that are received in a service.
+     */
     override fun handlePushMessage(pushMessage: PushMessage) {
         when (pushMessage) {
             is PushMessage.SendTransaction ->
@@ -161,8 +165,13 @@ class GnosisSafePushServiceRepository @Inject constructor(
                         Signature(pushMessage.r.decimalAsBigInteger(), pushMessage.s.decimalAsBigInteger(), pushMessage.v.toInt().toByte())
                     )
                 )
-            is PushMessage.RejectTransaction ->
-                observedTransaction[pushMessage.hash]?.publish(TransactionResponse.Rejected)
+            is PushMessage.RejectTransaction -> {
+                observedTransaction[pushMessage.hash]?.publish(
+                    TransactionResponse.Rejected(
+                        Signature(pushMessage.r.decimalAsBigInteger(), pushMessage.s.decimalAsBigInteger(), pushMessage.v.toInt().toByte())
+                    )
+                )
+            }
         }
     }
 
@@ -183,6 +192,12 @@ class GnosisSafePushServiceRepository @Inject constructor(
             intent
         )
     }
+
+    override fun calculateRejectionHash(transactionHash: ByteArray): Single<ByteArray> =
+        Single.fromCallable {
+            Sha3Utils.keccak("$SIGNATURE_PREFIX${transactionHash.toHexString().addHexPrefix()}$${PushMessage.RejectTransaction.TYPE}".toByteArray())
+        }
+
 
     override fun observe(hash: String): Observable<TransactionResponse> =
         observedTransaction.getOrPut(hash, {
@@ -215,7 +230,7 @@ class GnosisSafePushServiceRepository @Inject constructor(
     }
 
     companion object {
-        const val LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY = "prefs.string.accounttoken"
-        const val SIGNATURE_PREFIX = "GNO"
+        private const val LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY = "prefs.string.accounttoken"
+        private const val SIGNATURE_PREFIX = "GNO"
     }
 }

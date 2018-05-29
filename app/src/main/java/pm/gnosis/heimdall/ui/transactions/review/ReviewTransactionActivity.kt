@@ -3,7 +3,10 @@ package pm.gnosis.heimdall.ui.transactions.review
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,6 +23,7 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -63,6 +67,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             return
         }
 
+        toggleRejectionState(false)
         toggleReadyState(false)
         layout_review_transaction_confirmations_group.visible(false)
         val retryEvents = layout_review_transaction_retry_button.clicks()
@@ -75,6 +80,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
         layout_review_transaction_confirmations_timer.text = getString(R.string.request_confirmation_wait_x_s, 30.toString())
         val requestConfirmationEvents = layout_review_transaction_request_button.clicks()
             .doOnNext {
+                toggleRejectionState(false)
                 layout_review_transaction_request_button.isEnabled = false
                 layout_review_transaction_confirmations_timer.text = getString(R.string.request_confirmation_wait_x_s, 30.toString())
             }
@@ -108,14 +114,13 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                         "- ${getString(R.string.x_ether, update.fees.toEther().stringWithNoTrailingZeroes())}"
                 layout_review_transaction_confirmations_group.visible(true)
             }
-            is ReviewTransactionContract.ViewUpdate.Confirmations -> {
-                toggleReadyState(update.isReady)
-                layout_review_transaction_confirmations_group.visible(!update.isReady)
-            }
-            is ReviewTransactionContract.ViewUpdate.ConfirmationsError -> TODO("Show error message")
             is ReviewTransactionContract.ViewUpdate.EstimateError -> {
                 layout_review_transaction_confirmation_progress.visible(false)
                 layout_review_transaction_retry_button.visible(true)
+            }
+            is ReviewTransactionContract.ViewUpdate.Confirmations -> {
+                toggleReadyState(update.isReady)
+                layout_review_transaction_confirmations_group.visible(!update.isReady)
             }
             is ReviewTransactionContract.ViewUpdate.ConfirmationsRequested -> {
                 disposables += Observable.interval(1, TimeUnit.SECONDS).take(30)
@@ -127,6 +132,13 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                         layout_review_transaction_request_button.isEnabled = true
                         layout_review_transaction_confirmations_timer.text = null
                     })
+            }
+            is ReviewTransactionContract.ViewUpdate.ConfirmationsError -> {
+                layout_review_transaction_request_button.isEnabled = true
+                layout_review_transaction_confirmations_timer.text = null
+            }
+            ReviewTransactionContract.ViewUpdate.TransactionRejected -> {
+                toggleRejectionState(true)
             }
             is ReviewTransactionContract.ViewUpdate.TransactionSubmitted -> {
                 if (update.success) {
@@ -142,6 +154,25 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                 }
             }
         }
+    }
+
+    private fun toggleRejectionState(rejected: Boolean) {
+        layout_review_transaction_confirmation_progress.apply {
+            isIndeterminate = !rejected
+            max = 100
+            progress = 100
+        }
+        layout_review_transaction_confirmation_progress.progressTintList =
+                ColorStateList.valueOf(getColorCompat( if (rejected) R.color.tomato_15 else R.color.azure ))
+        layout_review_transaction_confirmation_progress.progressTintMode = PorterDuff.Mode.SRC_IN
+        layout_review_transaction_confirmations_image.setImageResource(
+            if (rejected) R.drawable.ic_rejected_extension else R.drawable.ic_confirmations_waiting
+        )
+        layout_review_transaction_confirmations_info.setTextColor(
+            getColorCompat(if (rejected) R.color.tomato else R.color.dark_slate_blue)
+        )
+        layout_review_transaction_confirmations_info.text =
+                getString(if (rejected) R.string.rejected_by_extension else R.string.confirm_with_extension)
     }
 
     private fun toggleReadyState(isReady: Boolean, inProgressMessage: Int = R.string.awaiting_confirmations) {

@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.models.EstimateParams
 import pm.gnosis.heimdall.data.remote.models.ExecuteParams
 import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
@@ -32,10 +33,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GnosisSafeTransactionRepository @Inject constructor(
+class DefaultTransactionExecutionRepository @Inject constructor(
     appDb: ApplicationDb,
     private val accountsRepository: AccountsRepository,
     private val ethereumRepository: EthereumRepository,
+    private val pushServiceRepository: PushServiceRepository,
     private val relayServiceApi: RelayServiceApi
 ) : TransactionExecutionRepository {
 
@@ -141,28 +143,52 @@ class GnosisSafeTransactionRepository @Inject constructor(
 
     private fun Transaction.updateTransactionWithStatus(safeNonce: BigInteger) = nonce?.let { this } ?: copy(nonce = safeNonce)
 
-    override fun sign(
+    override fun signConfirmation(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger
     ): Single<Signature> =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice).flatMap {
-            accountsRepository.sign(it)
-        }
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
+            .flatMap(accountsRepository::sign)
 
-    override fun checkSignature(
+    override fun signRejection(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
-        signature: Signature,
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger
+    ): Single<Signature> =
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
+            .flatMap(pushServiceRepository::calculateRejectionHash)
+            .flatMap(accountsRepository::sign)
+
+    override fun checkConfirmation(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger,
+        signature: Signature
     ): Single<Pair<Solidity.Address, Signature>> =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice).flatMap {
-            accountsRepository.recover(it, signature).map { it to signature }
-        }
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
+            .flatMap { accountsRepository.recover(it, signature) }
+            .map { it to signature }
+
+    override fun checkRejection(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger,
+        signature: Signature
+    ): Single<Pair<Solidity.Address, Signature>> =
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
+            .flatMap(pushServiceRepository::calculateRejectionHash)
+            .flatMap {
+                accountsRepository.recover(it, signature)
+            }.map { it to signature }
 
     override fun submit(
         safeAddress: Solidity.Address,

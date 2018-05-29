@@ -21,8 +21,10 @@ import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.utils.nullOnThrow
+import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asDecimalString
+import pm.gnosis.utils.nullOnThrow
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -95,31 +97,50 @@ class ReviewTransactionViewModel @Inject constructor(
         )
 
     private fun requestConfirmation(events: Events, params: TransactionExecutionRepository.ExecuteInformation) =
-        events.requestConfirmations
-            .startWith(Unit)
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .emitAndNext(
-                emit = { ViewUpdate.ConfirmationsRequested },
-                next = {
-                    // TODO: replace with extension signature logic
-                    Observable.timer(3, TimeUnit.SECONDS)
-                        .flatMapSingle {
-                            executionRepository.sign(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
-                        }
-                        .map {
-                            signaturePushRepository.handlePushMessage(
-                                PushMessage.ConfirmTransaction(
-                                    params.transactionHash,
-                                    it.r.asDecimalString(),
-                                    it.s.asDecimalString(),
-                                    it.v.toInt().toString()
-                                )
-                            )
-                        }
-                        .flatMap { Observable.empty<ViewUpdate>() }
+        if ((params.owners.size == 1 && params.isOwner))
+            // TODO: test code should be remove. Only empty observable should be returned
+            Observable.timer(3, TimeUnit.SECONDS)
+                .flatMapSingle {
+                    executionRepository.signRejection(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
                 }
-            )
-            .mapToResult()
+                .map {
+                    signaturePushRepository.handlePushMessage(
+                        PushMessage.RejectTransaction(
+                            params.transactionHash,
+                            it.r.asDecimalString(),
+                            it.s.asDecimalString(),
+                            it.v.toInt().toString()
+                        )
+                    )
+                }
+                .flatMap { Observable.empty<Result<ViewUpdate>>() }
+        else
+            events.requestConfirmations
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .startWith(Unit)
+                .switchMapSingle {
+                    val targets = params.owners - params.sender
+                    executionRepository.calculateHash(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
+                        .flatMapCompletable {
+                            signaturePushRepository.requestConfirmations(
+                                it.toHexString().addHexPrefix(),
+                                safe,
+                                params.transaction,
+                                params.txGas,
+                                params.dataGas,
+                                params.gasPrice,
+                                targets.toSet()
+                            )
+
+                        }
+                        .mapToResult()
+                }
+                .flatMap {
+                    when (it) {
+                        is DataResult -> Observable.just(DataResult(ViewUpdate.ConfirmationsRequested))
+                        is ErrorResult -> Observable.fromArray(DataResult(ViewUpdate.ConfirmationsError), ErrorResult<ViewUpdate>(it.error))
+                    }
+                }
 
     private fun observeConfirmationStore(events: Events, params: TransactionExecutionRepository.ExecuteInformation) =
         signatureStore.flatMapInfo(
@@ -166,11 +187,14 @@ class ReviewTransactionViewModel @Inject constructor(
             .flatMap {
                 when (it) {
                     is PushServiceRepository.TransactionResponse.Confirmed ->
-                        executionRepository.checkSignature(safe!!, params.transaction, it.signature, params.txGas, params.dataGas, params.gasPrice)
+                        executionRepository.checkConfirmation(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, it.signature)
                             .map(signatureStore::add)
                             .flatMapObservable { Observable.empty<Result<ViewUpdate>>() }
-                    PushServiceRepository.TransactionResponse.Rejected ->
-                        Observable.just<Result<ViewUpdate>>(DataResult(ViewUpdate.TransactionRejected))
+                    is PushServiceRepository.TransactionResponse.Rejected ->
+                        executionRepository.checkRejection(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, it.signature)
+                            .filter { (sender) -> params.owners.contains(sender) }
+                            .map { DataResult(ViewUpdate.TransactionRejected) }
+                            .toObservable()
                 }
             }
             .onErrorResumeNext { e: Throwable -> Observable.just(ErrorResult(e)) }
