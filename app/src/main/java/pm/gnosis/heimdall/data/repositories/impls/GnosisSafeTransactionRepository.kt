@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -280,17 +281,9 @@ class GnosisSafeTransactionRepository @Inject constructor(
         val balance: EthRequest<Wei>
     ) : BulkRequest(threshold, nonce, owners, balance)
 
-    private fun TransactionExecutionRepository.Operation.toInt() =
-        when (this) {
-            TransactionExecutionRepository.Operation.CALL -> OPERATION_CALL
-            TransactionExecutionRepository.Operation.DELEGATE_CALL -> OPERATION_DELEGATE_CALL
-        }
-
     companion object {
         private const val ERC191_BYTE = "19"
         private const val ERC191_VERSION = "00"
-        private const val OPERATION_CALL = 0
-        private const val OPERATION_DELEGATE_CALL = 1
         private val DEFAULT_NONCE = BigInteger.ZERO
     }
 }

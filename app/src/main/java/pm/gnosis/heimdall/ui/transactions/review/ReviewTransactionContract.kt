@@ -22,6 +22,7 @@ abstract class ReviewTransactionContract : ViewModel() {
         data class Confirmations(val isReady: Boolean) : ViewUpdate()
         object ConfirmationsRequested : ViewUpdate()
         object ConfirmationsError : ViewUpdate()
+        object TransactionRejected : ViewUpdate()
         data class TransactionSubmitted(val success: Boolean) : ViewUpdate()
     }
 }

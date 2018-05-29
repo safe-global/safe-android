@@ -11,7 +11,6 @@ import pm.gnosis.heimdall.ui.authenticate.AuthenticateActivity
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
-import pm.gnosis.heimdall.ui.dialogs.share.RequestSignatureDialog
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.onboarding.SetupSafeIntroActivity
@@ -94,7 +93,6 @@ interface ViewComponent {
     // Dialogs
 
     fun inject(dialog: FingerprintDialog)
-    fun inject(dialog: RequestSignatureDialog)
     fun inject(dialog: ShareSafeAddressDialog)
     fun inject(dialog: SimpleAddressShareDialog)
     fun inject(dialog: UnlockDialog)

@@ -2,10 +2,8 @@ package pm.gnosis.heimdall.di.modules
 
 import dagger.Binds
 import dagger.Module
-import pm.gnosis.heimdall.data.remote.MessageQueueRepository
-import pm.gnosis.heimdall.data.remote.PushServiceRepository
-import pm.gnosis.heimdall.data.remote.impls.FirebaseMessageQueueRepository
-import pm.gnosis.heimdall.data.remote.impls.GnosisSafePushServiceRepository
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
+import pm.gnosis.heimdall.data.repositories.impls.GnosisSafePushServiceRepository
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.*
 import pm.gnosis.heimdall.helpers.*
@@ -56,10 +54,6 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsMessageQueueRepository(repository: FirebaseMessageQueueRepository): MessageQueueRepository
-
-    @Binds
-    @Singleton
     abstract fun bindsPushServiceRepository(repository: GnosisSafePushServiceRepository): PushServiceRepository
 
     @Binds
@@ -73,10 +67,6 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsSettingsRepository(repository: DefaultSettingsRepository): SettingsRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindsSignaturePushRepository(repository: DefaultSignaturePushRepository): SignaturePushRepository
 
     @Binds
     @Singleton

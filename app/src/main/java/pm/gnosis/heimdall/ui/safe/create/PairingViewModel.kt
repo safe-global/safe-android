@@ -3,8 +3,8 @@ package pm.gnosis.heimdall.ui.safe.create
 import com.squareup.moshi.Moshi
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.heimdall.data.remote.models.push.PushServiceTemporaryAuthorization
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 

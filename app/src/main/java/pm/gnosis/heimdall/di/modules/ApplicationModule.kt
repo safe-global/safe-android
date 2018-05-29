@@ -22,7 +22,6 @@ import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.SolidityAddressAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
 import pm.gnosis.heimdall.data.db.ApplicationDb
-import pm.gnosis.heimdall.data.remote.DevelopmentPushServiceApi
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.TxExecutorApi
@@ -108,19 +107,6 @@ class ApplicationModule(private val application: Application) {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
         return retrofit.create(RetrofitEthereumRpcApi::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun providesDevelopmentPushServiceApi(moshi: Moshi, client: OkHttpClient): DevelopmentPushServiceApi {
-        val retrofit = Retrofit.Builder()
-            // Increase timeout since our server goes to sleeps
-            .client(client.newBuilder().readTimeout(30, TimeUnit.SECONDS).build())
-            .baseUrl(DevelopmentPushServiceApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-            .build()
-        return retrofit.create(DevelopmentPushServiceApi::class.java)
     }
 
     @Provides

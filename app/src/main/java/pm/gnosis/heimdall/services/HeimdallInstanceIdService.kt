@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.services
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.FirebaseInstanceIdService
 import pm.gnosis.heimdall.HeimdallApplication
-import pm.gnosis.heimdall.data.remote.impls.GnosisSafePushServiceRepository
+import pm.gnosis.heimdall.data.repositories.impls.GnosisSafePushServiceRepository
 import timber.log.Timber
 import javax.inject.Inject
 

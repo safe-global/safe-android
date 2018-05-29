@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.data.repositories
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
@@ -73,4 +74,15 @@ interface TransactionExecutionRepository {
         CALL,
         DELEGATE_CALL
     }
+
+    companion object {
+        const val OPERATION_INT_CALL = 0
+        const val OPERATION_INT_DELEGATE_CALL = 1
+    }
 }
+
+fun TransactionExecutionRepository.Operation.toInt() =
+    when (this) {
+        TransactionExecutionRepository.Operation.CALL -> TransactionExecutionRepository.OPERATION_INT_CALL
+        TransactionExecutionRepository.Operation.DELEGATE_CALL -> TransactionExecutionRepository.OPERATION_INT_DELEGATE_CALL
+    }
