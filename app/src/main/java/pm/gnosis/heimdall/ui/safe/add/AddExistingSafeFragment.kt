@@ -13,10 +13,10 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_add_existing_safe.*
 import kotlinx.android.synthetic.main.layout_address_item.view.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
-import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar

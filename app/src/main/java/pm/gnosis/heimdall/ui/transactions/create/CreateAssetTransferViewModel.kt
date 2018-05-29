@@ -8,6 +8,7 @@ import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
@@ -24,10 +25,9 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.removeHexPrefix
+import timber.log.Timber
 import java.math.BigDecimal
 import java.math.BigInteger
-import io.reactivex.functions.BiFunction
-import timber.log.Timber
 import javax.inject.Inject
 
 class CreateAssetTransferViewModel @Inject constructor(

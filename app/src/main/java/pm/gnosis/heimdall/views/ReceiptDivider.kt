@@ -3,10 +3,10 @@ package pm.gnosis.heimdall.views
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import pm.gnosis.heimdall.R
+import pm.gnosis.svalinn.common.utils.getColorCompat
 
 class ReceiptDivider : View {
 
@@ -21,7 +21,7 @@ class ReceiptDivider : View {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     init {
-        dividerPaint?.color = ContextCompat.getColor(context, R.color.divider)
+        dividerPaint?.color = context.getColorCompat(R.color.divider)
         dividerPaint?.strokeWidth = context.resources.getDimension(R.dimen.receipt_divider_width)
     }
 

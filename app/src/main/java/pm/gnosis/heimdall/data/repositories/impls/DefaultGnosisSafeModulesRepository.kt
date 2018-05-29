@@ -1,8 +1,11 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Single
-import pm.gnosis.ethereum.*
-import pm.gnosis.heimdall.*
+import pm.gnosis.ethereum.EthCall
+import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.MappedRequest
+import pm.gnosis.ethereum.MappingBulkRequest
+import pm.gnosis.heimdall.GnosisSafePersonalEdition
 import pm.gnosis.heimdall.data.repositories.GnosisSafeModulesRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeModulesRepository.Module
 import pm.gnosis.heimdall.data.repositories.SettingsRepository

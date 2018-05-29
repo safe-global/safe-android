@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.transactions.create
 
 import android.content.Context
 import android.content.Intent
-import android.support.v4.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
@@ -24,7 +23,10 @@ import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract.ViewUpdate
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.svalinn.common.utils.getColorCompat
+import pm.gnosis.svalinn.common.utils.subscribeForResult
+import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.stringWithNoTrailingZeroes
@@ -67,7 +69,7 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
         if (!address.isBlank()) {
             layout_create_asset_transfer_input_receiver.setText(address)
             layout_create_asset_transfer_input_receiver.setSelection(address.length)
-            layout_create_asset_transfer_input_receiver.setTextColor(ContextCompat.getColor(this, R.color.dark_slate_blue))
+            layout_create_asset_transfer_input_receiver.setTextColor(getColorCompat(R.color.dark_slate_blue))
         }
     }
 
@@ -88,11 +90,11 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
                 Observable.combineLatest(
                     layout_create_asset_transfer_input_value.textChanges()
                         .doOnNext {
-                            layout_create_asset_transfer_input_value.setTextColor(ContextCompat.getColor(this, R.color.dark_slate_blue))
+                            layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
                         },
                     layout_create_asset_transfer_input_receiver.textChanges()
                         .doOnNext {
-                            layout_create_asset_transfer_input_receiver.setTextColor(ContextCompat.getColor(this, R.color.dark_slate_blue))
+                            layout_create_asset_transfer_input_receiver.setTextColor(getColorCompat(R.color.dark_slate_blue))
                         },
                     BiFunction { value: CharSequence, receiver: CharSequence ->
                         CreateAssetTransferContract.Input(value.toString(), receiver.toString())
@@ -139,10 +141,10 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
                 layout_create_asset_transfer_fees_value.text =
                         "- ${getString(R.string.x_ether, update.estimate.toEther().stringWithNoTrailingZeroes())}"
                 layout_create_asset_transfer_continue_button.visible(update.canExecute)
-                if (!update.canExecute) layout_create_asset_transfer_input_value.setTextColor(ContextCompat.getColor(this, R.color.tomato))
+                if (!update.canExecute) layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.tomato))
                 else {
-                    layout_create_asset_transfer_input_receiver.setTextColor(ContextCompat.getColor(this, R.color.dark_slate_blue))
-                    layout_create_asset_transfer_input_value.setTextColor(ContextCompat.getColor(this, R.color.dark_slate_blue))
+                    layout_create_asset_transfer_input_receiver.setTextColor(getColorCompat(R.color.dark_slate_blue))
+                    layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
                 }
             }
             CreateAssetTransferContract.ViewUpdate.EstimateError -> disableContinue()
@@ -155,14 +157,12 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
             }
             is CreateAssetTransferContract.ViewUpdate.InvalidInput -> {
                 layout_create_asset_transfer_input_value.setTextColor(
-                    ContextCompat.getColor(
-                        this,
+                    getColorCompat(
                         if (update.amount) R.color.tomato else R.color.dark_slate_blue
                     )
                 )
                 layout_create_asset_transfer_input_receiver.setTextColor(
-                    ContextCompat.getColor(
-                        this,
+                    getColorCompat(
                         if (update.address) R.color.tomato else R.color.dark_slate_blue
                     )
                 )

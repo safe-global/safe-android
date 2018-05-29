@@ -1,9 +1,7 @@
 package pm.gnosis.heimdall.data.repositories
 
 import io.reactivex.Single
-import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
-import java.math.BigInteger
 
 
 interface GnosisSafeModulesRepository {
