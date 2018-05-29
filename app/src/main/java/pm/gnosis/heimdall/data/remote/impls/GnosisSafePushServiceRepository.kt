@@ -68,9 +68,9 @@ class GnosisSafePushServiceRepository @Inject constructor(
             .flatMap { gnosisSafePushService.pair(it.first).andThen(Single.just(it.second)) }
 
     override fun sendSafeCreationNotification(safeAddress: Solidity.Address, devicesToNotify: Set<Solidity.Address>): Completable =
-        Single.fromCallable { SafeCreationParams(safe = safeAddress.asEthereumAddressString()) }
+        Single.fromCallable { ServiceMessage.SafeCreation(safe = safeAddress.asEthereumAddressString()) }
             .flatMap { pushMessage ->
-                val rawJson = moshi.adapter(SafeCreationParams::class.java).toJson(pushMessage)
+                val rawJson = moshi.adapter(ServiceMessage.SafeCreation::class.java).toJson(pushMessage)
                 accountsRepository.sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$rawJson".toByteArray()))
                     .map { ServiceSignature.fromSignature(it) to rawJson }
             }
