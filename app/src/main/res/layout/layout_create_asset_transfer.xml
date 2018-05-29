@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/pale_grey_two">
+
+    <View
+        android:id="@+id/layout_create_asset_transfer_toolbar_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_title" />
+
+    <ImageView
+        android:id="@+id/layout_create_asset_transfer_back_button"
+        android:layout_width="@dimen/toolbar_height"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/dark_slate_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_close_24dp" />
+
+    <TextView
+        android:id="@+id/layout_create_asset_transfer_title"
+        style="@style/Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingEnd="16dp"
+        android:text="@string/transfer"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/layout_create_asset_transfer_back_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/layout_create_asset_transfer_continue_button"
+        app:layout_constraintTop_toBottomOf="@id/layout_create_asset_transfer_title">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <pm.gnosis.blockies.BlockiesImageView
+                android:id="@+id/layout_create_asset_transfer_safe_image"
+                android:layout_width="@dimen/info_blockies"
+                android:layout_height="@dimen/info_blockies"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@drawable/circle_settings" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_safe_balance"
+                style="@style/DarkText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintBottom_toTopOf="@+id/layout_create_asset_transfer_safe_fiat"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/layout_create_asset_transfer_safe_image"
+                tools:text="94.34934 ETH" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_safe_fiat"
+                style="@style/LightText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_safe_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_safe_balance"
+                tools:text="~ $340.23" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_safe_name"
+                style="@style/DarkText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintBottom_toTopOf="@+id/layout_create_asset_transfer_safe_address"
+                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_safe_balance"
+                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_safe_image"
+                app:layout_constraintTop_toTopOf="@+id/layout_create_asset_transfer_safe_image"
+                tools:text="My Safe" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_safe_address"
+                style="@style/LightText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_safe_image"
+                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_safe_balance"
+                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_safe_image"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_safe_name"
+                tools:text="0x9beb...856da2" />
+
+            <android.support.constraint.Barrier
+                android:id="@+id/layout_create_asset_transfer_input_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="layout_create_asset_transfer_safe_address,layout_create_asset_transfer_safe_image" />
+
+            <View
+                android:id="@+id/layout_create_asset_transfer_input_background"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_input_value"
+                app:layout_constraintTop_toTopOf="@+id/layout_create_asset_transfer_input_value" />
+
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_input_label"
+                style="@style/LightText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:maxLines="1"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_input_value"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/layout_create_asset_transfer_input_value"
+                tools:text="ETH" />
+
+            <EditText
+                android:id="@+id/layout_create_asset_transfer_input_value"
+                style="@style/DarkText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:background="@null"
+                android:gravity="end"
+                android:hint="@string/value_hint"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:textColorHint="@color/bluey_grey"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_input_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_barrier"
+                tools:text="33.1122568854">
+                <requestFocus />
+            </EditText>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider"
+                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_input_background" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider"
+                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_input_background" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_input_fiat"
+                style="@style/LightText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:maxLines="1"
+                android:paddingBottom="6dp"
+                android:paddingTop="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_background"
+                tools:text="≈ USD 1,345.34" />
+
+            <EditText
+                android:id="@+id/layout_create_asset_transfer_input_receiver"
+                style="@style/DarkText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="start|center_vertical"
+                android:hint="@string/address_hint"
+                android:maxLines="2"
+                android:minHeight="56dp"
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:textColorHint="@color/bluey_grey"
+                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_address_book"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_fiat" />
+
+            <ImageView
+                android:id="@+id/layout_create_asset_transfer_address_book"
+                android:layout_width="44dp"
+                android:layout_height="0dp"
+                android:background="@drawable/selectable_background"
+                android:scaleType="center"
+                android:tint="@color/azure"
+                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_input_receiver"
+                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_qr_code"
+                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_input_receiver"
+                app:srcCompat="@drawable/ic_add_from_addressbook" />
+
+            <View
+                android:layout_width="@dimen/divider_width"
+                android:layout_height="0dp"
+                android:background="@color/divider"
+                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_address_book"
+                app:layout_constraintStart_toStartOf="@+id/layout_create_asset_transfer_address_book"
+                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_address_book" />
+
+            <ImageView
+                android:id="@+id/layout_create_asset_transfer_qr_code"
+                android:layout_width="44dp"
+                android:layout_height="0dp"
+                android:background="@drawable/selectable_background"
+                android:paddingEnd="12dp"
+                android:paddingStart="12dp"
+                android:tint="@color/azure"
+                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_input_receiver"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_input_receiver"
+                app:srcCompat="@drawable/ic_qrcode_scan_white_24dp" />
+
+            <View
+                android:layout_width="@dimen/divider_width"
+                android:layout_height="0dp"
+                android:background="@color/divider"
+                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_qr_code"
+                app:layout_constraintStart_toStartOf="@+id/layout_create_asset_transfer_qr_code"
+                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_qr_code" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider"
+                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_input_receiver" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider"
+                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_input_receiver" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_balance_label"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:paddingTop="12dp"
+                android:text="@string/safe_balance"
+                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_balance_value"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_receiver" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_balance_value"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:gravity="end"
+                android:paddingTop="12dp"
+                android:text="-"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_balance_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_receiver"
+                tools:text="42.4242 ETH" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_fees_label"
+                style="@style/NormalText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="monospace-medium"
+                android:paddingBottom="12dp"
+                android:text="@string/estimated_transaction_fee"
+                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_fees_value"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_balance_label" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_fees_value"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="monospace-medium"
+                android:gravity="end"
+                android:paddingBottom="12dp"
+                android:text=""
+                android:textColor="@color/tomato"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_fees_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_balance_label"
+                tools:text="0.0023 ETH" />
+
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+    <View
+        android:id="@+id/layout_create_asset_transfer_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/layout_create_asset_transfer_title" />
+
+    <TextView
+        android:id="@+id/layout_create_asset_transfer_continue_button"
+        style="@style/PrimaryButton.FullWidth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/continue_text"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

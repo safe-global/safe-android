@@ -5,22 +5,20 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
-import pm.gnosis.ethereum.BulkRequest
-import pm.gnosis.ethereum.EthCall
-import pm.gnosis.ethereum.EthRequest
-import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
-import pm.gnosis.heimdall.data.repositories.TransactionRepository.PublishStatus
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
 import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.*
@@ -36,7 +34,7 @@ class GnosisSafeTransactionRepository @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val ethereumRepository: EthereumRepository,
     private val txExecutorRepository: TxExecutorRepository
-) : TransactionRepository {
+) : TransactionExecutionRepository {
 
     private val descriptionsDao = appDb.descriptionsDao()
 
@@ -67,42 +65,55 @@ class GnosisSafeTransactionRepository @Inject constructor(
     override fun loadExecuteInformation(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction
-    ): Single<TransactionRepository.ExecuteInformation> =
-        accountsRepository.loadActiveAccount()
-            .flatMap { account ->
-                val request = TransactionInfoRequest(
-                    EthCall(
-                        transaction = Transaction(
-                            safeAddress, data = GnosisSafe.Threshold.encode()
-                        ), id = 0
-                    ),
-                    EthCall(
-                        transaction = Transaction(
-                            safeAddress, data = GnosisSafe.Nonce.encode()
-                        ), id = 1
-                    ),
-                    EthCall(
-                        transaction = Transaction(
-                            safeAddress, data = GnosisSafe.GetOwners.encode()
-                        ), id = 2
-                    )
+    ): Single<TransactionExecutionRepository.ExecuteInformation> =
+        Single.fromCallable {
+            TransactionInfoRequest(
+                EthCall(
+                    transaction = Transaction(
+                        safeAddress, data = GnosisSafe.Threshold.encode()
+                    ), id = 0
+                ),
+                EthCall(
+                    transaction = Transaction(
+                        safeAddress, data = GnosisSafe.Nonce.encode()
+                    ), id = 1
+                ),
+                EthCall(
+                    transaction = Transaction(
+                        safeAddress, data = GnosisSafe.GetOwners.encode()
+                    ), id = 2
+                ),
+                EthEstimateGas(
+                    from = safeAddress,
+                    transaction = transaction.wrapped,
+                    id = 3
+                ),
+                EthBalance(
+                    address = safeAddress,
+                    id = 4
                 )
-                ethereumRepository.request(request)
-                    .singleOrError()
-                    .map { account to it }
-            }
-            .flatMap { (account, info) ->
+            )
+
+        }.subscribeOn(Schedulers.computation())
+            .flatMap { ethereumRepository.request(it).singleOrError() }
+            .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
+            .flatMap { (info, sender) ->
                 val nonce = GnosisSafe.Nonce.decode(info.nonce.result()!!).param0.value
                 val threshold = GnosisSafe.Threshold.decode(info.threshold.result()!!).param0.value.toInt()
                 val owners = GnosisSafe.GetOwners.decode(info.owners.result()!!).param0.items
                 val updatedTransaction = transaction.copy(wrapped = transaction.wrapped.updateTransactionWithStatus(nonce))
+                val estimatedFees = info.estimate.result()!!
+                val safeBalance = info.balance.result()!!
                 calculateHash(safeAddress, updatedTransaction).map {
-                    TransactionRepository.ExecuteInformation(
+                    TransactionExecutionRepository.ExecuteInformation(
                         it.toHexString(),
                         updatedTransaction,
-                        account.address,
+                        sender,
                         threshold,
-                        owners
+                        owners,
+                        BigInteger.valueOf(20000000000),
+                        estimatedFees,
+                        safeBalance
                     )
                 }
             }
@@ -247,14 +258,16 @@ class GnosisSafeTransactionRepository @Inject constructor(
     private class TransactionInfoRequest(
         val threshold: EthRequest<String>,
         val nonce: EthRequest<String>,
-        val owners: EthRequest<String>
-    ) : BulkRequest(threshold, nonce, owners)
+        val owners: EthRequest<String>,
+        val estimate: EthRequest<BigInteger>,
+        val balance: EthRequest<Wei>
+    ) : BulkRequest(threshold, nonce, owners, estimate, balance)
 
-    private fun TransactionRepository.Operation.toSolidity() =
+    private fun TransactionExecutionRepository.Operation.toSolidity() =
         Solidity.UInt8(
             when (this) {
-                TransactionRepository.Operation.CALL -> OPERATION_CALL
-                TransactionRepository.Operation.DELEGATE_CALL -> OPERATION_DELEGATE_CALL
+                TransactionExecutionRepository.Operation.CALL -> OPERATION_CALL
+                TransactionExecutionRepository.Operation.DELEGATE_CALL -> OPERATION_DELEGATE_CALL
             }
         )
 

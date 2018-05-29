@@ -14,6 +14,8 @@
 
     <dimen name="divider_width">1dp</dimen>
 
+    <dimen name="info_blockies">32dp</dimen>
+
     <dimen name="receipt_divider_width">2dp</dimen>
     <dimen name="receipt_divider_gap">10dp</dimen>
     <dimen name="receipt_divider_length">10dp</dimen>

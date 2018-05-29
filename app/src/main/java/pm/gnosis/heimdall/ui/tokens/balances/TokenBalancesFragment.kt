@@ -12,13 +12,13 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_token_balances.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
-import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressDialog
+import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.subscribeForResult
@@ -65,10 +65,8 @@ class TokenBalancesFragment : BaseFragment() {
             .subscribeForResult(onNext = ::onTokensList, onError = ::onTokensListError)
 
         disposables += adapter.tokenSelectedSubject
-            .subscribe({ tokenWithBalance ->
-                safeAddress?.let {
-                    CreateTokenTransactionProgressDialog.create(it, tokenWithBalance.token.address).show(fragmentManager, null)
-                }
+            .subscribe({ (token, _) ->
+                startActivity(CreateAssetTransferActivity.createIntent(context!!, safeAddress, token))
             }, Timber::e)
     }
 

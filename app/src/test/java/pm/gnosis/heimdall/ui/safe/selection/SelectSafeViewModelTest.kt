@@ -16,10 +16,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.TransactionDetailsRepository
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
-import pm.gnosis.heimdall.data.repositories.TransactionType
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -48,13 +45,13 @@ class SelectSafeViewModelTest {
     private lateinit var safeRepositoryMock: GnosisSafeRepository
 
     @Mock
-    private lateinit var detailsRepositoryMock: TransactionDetailsRepository
+    private lateinit var infoRepositoryMock: TransactionInfoRepository
 
     private lateinit var viewModel: SelectSafeViewModel
 
     @Before
     fun setUp() {
-        viewModel = SelectSafeViewModel(contextMock, safeRepositoryMock, detailsRepositoryMock)
+        viewModel = SelectSafeViewModel(contextMock, safeRepositoryMock, infoRepositoryMock)
     }
 
     @Test
@@ -114,53 +111,62 @@ class SelectSafeViewModelTest {
     @Test
     fun reviewTransactionNoSafe() {
         contextMock.mockGetString()
-        given(detailsRepositoryMock.loadTransactionType(MockUtils.any())).willReturn(Single.just(TransactionType.ETHER_TRANSFER))
+        given(infoRepositoryMock.parseTransactionData(MockUtils.any())).willReturn(
+            Single.just(
+                TransactionData.AssetTransfer(Solidity.Address(BigInteger.ZERO), BigInteger.TEN, Solidity.Address(BigInteger.ONE)))
+        )
 
         val testObserver = TestObserver<Result<Intent>>()
         viewModel.reviewTransaction(null, TEST_TRANSACTION).subscribe(testObserver)
 
         testObserver.assertResult(ErrorResult(SimpleLocalizedException(R.string.no_safe_selected_error.toString())))
 
-        then(detailsRepositoryMock).should().loadTransactionType(TEST_TRANSACTION.wrapped)
-        then(detailsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(infoRepositoryMock).should().parseTransactionData(TEST_TRANSACTION)
+        then(infoRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun reviewTransactionError() {
         val error = IllegalStateException()
-        given(detailsRepositoryMock.loadTransactionType(MockUtils.any())).willReturn(Single.error(error))
+        given(infoRepositoryMock.parseTransactionData(MockUtils.any())).willReturn(Single.error(error))
 
         val testObserver = TestObserver<Result<Intent>>()
         viewModel.reviewTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
 
         testObserver.assertResult(ErrorResult(error))
 
-        then(detailsRepositoryMock).should().loadTransactionType(TEST_TRANSACTION.wrapped)
-        then(detailsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(infoRepositoryMock).should().parseTransactionData(TEST_TRANSACTION)
+        then(infoRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
-    private fun testReviewTransaction(type: TransactionType) {
-        given(detailsRepositoryMock.loadTransactionType(MockUtils.any())).willReturn(Single.just(type))
+    private fun testReviewTransaction(type: TransactionData) {
+        given(infoRepositoryMock.parseTransactionData(MockUtils.any())).willReturn(Single.just(type))
 
         val testObserver = TestObserver<Result<Intent>>()
         viewModel.reviewTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
 
         testObserver.assertValue({ it is DataResult }).assertComplete()
 
-        then(detailsRepositoryMock).should().loadTransactionType(TEST_TRANSACTION.wrapped)
-        then(detailsRepositoryMock).shouldHaveNoMoreInteractions()
-        Mockito.reset(detailsRepositoryMock)
+        then(infoRepositoryMock).should().parseTransactionData(TEST_TRANSACTION)
+        then(infoRepositoryMock).shouldHaveNoMoreInteractions()
+        Mockito.reset(infoRepositoryMock)
     }
 
     @Test
     fun reviewTransaction() {
-        TransactionType.values().forEach {
-            testReviewTransaction(it)
+        TransactionData::class.nestedClasses.filter { it != TransactionData.Companion::class }.forEach {
+            testReviewTransaction(TEST_DATA[it] ?: throw IllegalStateException("Missing test for ${it.simpleName}"))
         }
     }
 
     companion object {
         private val TEST_SAFE = Solidity.Address(BigInteger.ONE)
-        private val TEST_TRANSACTION = SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionRepository.Operation.CALL)
+        private val TEST_TRANSACTION = SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionExecutionRepository.Operation.CALL)
+        private val TEST_DATA = mapOf(
+            TransactionData.Generic::class to TransactionData.Generic(TEST_SAFE, BigInteger.ONE, null),
+            TransactionData.AssetTransfer::class to TransactionData.AssetTransfer(TEST_SAFE, BigInteger.ONE, Solidity.Address(BigInteger.TEN)),
+            TransactionData.RecoverSafe::class to TransactionData.RecoverSafe(TEST_SAFE, Solidity.Address(BigInteger.TEN)),
+            TransactionData.ReplaceRecoveryPhrase::class to TransactionData.ReplaceRecoveryPhrase(TEST_SAFE, Solidity.Address(BigInteger.TEN))
+        )
     }
 }

@@ -10,9 +10,9 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionActivity
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
@@ -27,7 +27,7 @@ class SafeTransactionsViewModel @Inject constructor(
     private val safeRepository: GnosisSafeRepository,
     private val safeTransactionsRepository: GnosisSafeTransactionRepository,
     private val tokenRepository: TokenRepository,
-    private val transactionDetailsRepository: TransactionDetailsRepository
+    private val transactionInfoRepository: TransactionInfoRepository
 ) : SafeTransactionsContract() {
 
     private var address: Solidity.Address? = null
@@ -44,32 +44,27 @@ class SafeTransactionsViewModel @Inject constructor(
         } ?: Flowable.empty<Result<Adapter.Data<String>>>()
     }
 
-    override fun loadTransactionDetails(id: String): Single<Pair<TransactionDetails, TransferInfo?>> =
+    override fun loadTransactionInfo(id: String): Single<Pair<TransactionInfo, TransferInfo?>> =
         address?.let {
-            transactionDetailsRepository.loadTransactionDetails(id)
-                .flatMap { details ->
-                    when (details.type) {
-                        TransactionType.ETHER_TRANSFER -> {
+            transactionInfoRepository.loadTransactionInfo(id)
+                .flatMap { info ->
+                    (info.data as? TransactionData.AssetTransfer)?.let {
+                        if (it.token == ERC20Token.ETHER_TOKEN.address) {
                             // We always want to display the complete amount (all 18 decimals)
-                            val value = (details.transaction.wrapped.value ?: Wei.ZERO).toEther().stringWithNoTrailingZeroes()
+                            val value = (Wei(it.amount)).toEther().stringWithNoTrailingZeroes()
                             val symbol = context.getString(R.string.currency_eth)
-                            Single.just(details to TransferInfo(value, symbol))
+                            Single.just(info to TransferInfo(value, symbol))
+                        } else {
+                            loadTokenValue(it.token, it.amount).map { info to it.toNullable() }
                         }
-                        TransactionType.TOKEN_TRANSFER -> {
-                            (details.data as? TokenTransferData)?.let {
-                                loadTokenValue(details.transaction.wrapped.address, it.tokens)
-                                    .map { details to it.toNullable() }
-                            }
-                        }
-                        else -> null
-                    } ?: Single.just(details to null)
+                    } ?: Single.just(info to null)
                 }
         } ?: Single.error(IllegalStateException())
 
-    override fun observeTransactionStatus(id: String): Observable<TransactionRepository.PublishStatus> =
+    override fun observeTransactionStatus(id: String): Observable<TransactionExecutionRepository.PublishStatus> =
         safeTransactionsRepository.observePublishStatus(id)
 
-    override fun transactionSelected(id: String): Single<Intent> = Single.just(ReceiptTransactionActivity.createIntent(context, id))
+    override fun transactionSelected(id: String): Single<Intent> = Single.error(NotImplementedError()) // TODO: implement and activate test
 
     private fun loadTokenValue(token: Solidity.Address, value: BigInteger) =
         tokenRepository.observeToken(token)

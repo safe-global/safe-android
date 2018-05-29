@@ -17,8 +17,6 @@ import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsViewModel
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressContract
-import pm.gnosis.heimdall.ui.dialogs.transaction.CreateTokenTransactionProgressViewModel
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupViewModel
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
@@ -61,20 +59,10 @@ import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesViewModel
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoViewModel
-import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionContract
-import pm.gnosis.heimdall.ui.transactions.ReceiptTransactionViewModel
-import pm.gnosis.heimdall.ui.transactions.ViewTransactionContract
-import pm.gnosis.heimdall.ui.transactions.ViewTransactionViewModel
-import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.assets.AssetTransferDetailsViewModel
-import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.base.BaseTransactionDetailsViewModel
-import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.AddRecoveryExtensionContract
-import pm.gnosis.heimdall.ui.transactions.details.extensions.recovery.AddRecoveryExtensionViewModel
-import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.generic.GenericTransactionDetailsViewModel
-import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsContract
-import pm.gnosis.heimdall.ui.transactions.details.safe.ChangeSafeSettingsDetailsViewModel
+import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
+import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferViewModel
+import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionContract
+import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionViewModel
 import javax.inject.Singleton
 
 @Module
@@ -91,11 +79,6 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(AddRecoveryExtensionContract::class)
-    abstract fun bindsAddRecoveryExtensionContract(viewModel: AddRecoveryExtensionViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(AddSafeContract::class)
     abstract fun bindsAddSafeContract(viewModel: AddSafeViewModel): ViewModel
 
@@ -106,18 +89,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(AssetTransferDetailsContract::class)
-    abstract fun bindsAssetTransferTransactionDetailsContract(viewModel: AssetTransferDetailsViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(AuthenticateContract::class)
     abstract fun bindsAuthenticateContract(viewModel: AuthenticateViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(BaseTransactionDetailsContract::class)
-    abstract fun bindsBaseTransactionDetailsContract(viewModel: BaseTransactionDetailsViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -131,13 +104,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ChangeSafeSettingsDetailsContract::class)
-    abstract fun bindsChangeSafeSettingsDetailsContract(viewModel: ChangeSafeSettingsDetailsViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(CreateTokenTransactionProgressContract::class)
-    abstract fun bindsCreateTokenTransactionProgressContract(viewModel: CreateTokenTransactionProgressViewModel): ViewModel
+    @ViewModelKey(CreateAssetTransferContract::class)
+    abstract fun bindsCreateAssetTransferContract(viewModel: CreateAssetTransferViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -148,11 +116,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(FingerprintSetupContract::class)
     abstract fun bindsFingerprintSetupContract(viewModel: FingerprintSetupViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(GenericTransactionDetailsContract::class)
-    abstract fun bindsGenericTransactionDetailsContract(viewModel: GenericTransactionDetailsViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -171,13 +134,13 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ReceiptTransactionContract::class)
-    abstract fun bindsReceiptTransactionContract(viewModel: ReceiptTransactionViewModel): ViewModel
+    @ViewModelKey(RevealMnemonicContract::class)
+    abstract fun bindsRevealMnemonicContract(viewModel: RevealMnemonicViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(RevealMnemonicContract::class)
-    abstract fun bindsRevealMnemonicContract(viewModel: RevealMnemonicViewModel): ViewModel
+    @ViewModelKey(ReviewTransactionContract::class)
+    abstract fun bindsReviewTransactionContract(viewModel: ReviewTransactionViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -238,11 +201,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(TokenManagementContract::class)
     abstract fun bindsTokenManagementContract(viewModel: TokenManagementViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ViewTransactionContract::class)
-    abstract fun bindsViewTransactionContract(viewModel: ViewTransactionViewModel): ViewModel
 
     @Binds
     @IntoMap

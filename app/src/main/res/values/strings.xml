@@ -79,7 +79,8 @@
     <string name="share_your_address">Share your address</string>
     <string name="share_address">Share address</string>
     <string name="share_safe_address">Share %1$s address</string>
-    <string name="x_ether">%s Ξ</string>
+    <string name="x_data_bytes">%x bytes included</string>
+    <string name="x_ether">%s ETH</string>
     <string name="x_wei">%s Wei</string>
     <string name="x_gwei">%s GWei</string>
     <plurals name="x_confirmations">
@@ -389,4 +390,14 @@
     <string name="no_thanks">No Thanks</string>
     <string name="agree">Agree</string>
     <string name="personal_edition">Personal Edition</string>
+    <string name="safe_balance">Safe balance</string>
+    <string name="confirm_with_extension">Confirm this transaction with the browser extension</string>
+    <string name="request_confirmation_wait_x_s">wait 0:%ss before re-sending request</string>
+    <string name="request_confirmation">Re-send confirmation request</string>
+    <string name="unknown_token">Unknown Token</string>
+    <string name="continue_text">Continue</string>
+    <string name="awaiting_confirmations">awaiting confirmation</string>
+    <string name="confirmations_ready">confirmed by extension</string>
+    <string name="submitting_transaction">Submitting transaction</string>
+    <string name="transfer_x">Transfer %s</string>
 </resources>

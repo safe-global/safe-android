@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.AddressBookEntryDb
@@ -31,6 +32,11 @@ class DefaultAddressBookRepository @Inject constructor(
 
     override fun observeAddressBookEntry(address: Solidity.Address): Flowable<AddressBookEntry> =
         addressBookDao.observeAddressBookEntry(address)
+            .map { it.fromDB() }
+            .subscribeOn(Schedulers.io())
+
+    override fun loadAddressBookEntry(address: Solidity.Address): Single<AddressBookEntry> =
+        addressBookDao.loadAddressBookEntry(address)
             .map { it.fromDB() }
             .subscribeOn(Schedulers.io())
 

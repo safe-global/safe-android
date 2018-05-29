@@ -54,6 +54,7 @@ class SafeTransactionsFragment : BaseFragment() {
             .subscribe({
                 startActivity(it)
             }, Timber::e)
+
         disposables += viewModel.observeTransactions()
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {

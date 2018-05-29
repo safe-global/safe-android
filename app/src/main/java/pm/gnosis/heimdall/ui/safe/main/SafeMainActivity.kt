@@ -14,18 +14,18 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_safe_main.*
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
-import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
-import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
+import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
@@ -33,12 +33,15 @@ import pm.gnosis.heimdall.ui.safe.overview.SafeAdapter
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
+import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionActivity
+import pm.gnosis.model.Solidity
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.transaction
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
@@ -134,7 +137,17 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
 
         layout_safe_main_credits.setOnClickListener {
-            startActivity(BuyCreditsActivity.createIntent(this))
+            startActivity(
+                ReviewTransactionActivity.createIntent(
+                    this,
+                    Solidity.Address("0x1f781ccc28a9d49217f709ca7f89a76e46f65ce9".hexAsBigInteger()),
+                    TransactionData.AssetTransfer(
+                        Solidity.Address(BigInteger.ZERO),
+                        Wei.ether("0.00001").value,
+                        Solidity.Address(BigInteger.valueOf(132365887148412254))
+                    )
+                )
+            )
             closeDrawer()
         }
 
@@ -210,7 +223,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             when (safe) {
                 is Safe -> {
                     val selectedTab = intent.extras.getInt(EXTRA_SELECTED_TAB, 0)
-                    intent.extras.remove(EXTRA_SELECTED_TAB)
+                    intent.removeExtra(EXTRA_SELECTED_TAB)
                     replace(R.id.layout_safe_main_content_frame, SafeDetailsFragment.createInstance(safe, selectedTab))
                 }
                 is PendingSafe -> replace(R.id.layout_safe_main_content_frame, PendingSafeFragment.createInstance(safe))
@@ -221,7 +234,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     private fun selectTab() {
         val selectedTab = intent.extras.getInt(EXTRA_SELECTED_TAB, 0)
-        intent.extras.remove(EXTRA_SELECTED_TAB)
+        intent.removeExtra(EXTRA_SELECTED_TAB)
         if (selectedTab == 0) return
         (supportFragmentManager.findFragmentById(R.id.layout_safe_main_content_frame) as? SafeDetailsFragment)?.selectTab(selectedTab)
     }

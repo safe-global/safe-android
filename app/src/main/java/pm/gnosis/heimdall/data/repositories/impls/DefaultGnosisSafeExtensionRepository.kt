@@ -7,7 +7,7 @@ import pm.gnosis.heimdall.*
 import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository.Extension
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
-import pm.gnosis.heimdall.data.repositories.TransactionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
@@ -64,7 +64,7 @@ class DefaultGnosisSafeExtensionRepository @Inject constructor(
         )
 
         // wrapped send to gnosis safe to trigger initial delegatecall to CreateAndAddExtension
-        return SafeTransaction(Transaction(createAndAddExtensionAddress, data = data), TransactionRepository.Operation.DELEGATE_CALL)
+        return SafeTransaction(Transaction(createAndAddExtensionAddress, data = data), TransactionExecutionRepository.Operation.DELEGATE_CALL)
     }
 
     override fun buildRemoveExtensionTransaction(safe: Solidity.Address, index: BigInteger, extension: Solidity.Address): Single<SafeTransaction> =
@@ -73,7 +73,7 @@ class DefaultGnosisSafeExtensionRepository @Inject constructor(
                 Solidity.UInt256(index),
                 extension
             )
-            SafeTransaction(Transaction(address = safe, data = data), TransactionRepository.Operation.CALL)
+            SafeTransaction(Transaction(address = safe, data = data), TransactionExecutionRepository.Operation.CALL)
         }.subscribeOn(Schedulers.computation())
 
         override fun loadExtensionsInfo(extensions: List<Solidity.Address>): Single<List<Pair<Extension, Solidity.Address>>> {
@@ -102,9 +102,6 @@ class DefaultGnosisSafeExtensionRepository @Inject constructor(
             "Daily Limit Extension" -> Extension.DAILY_LIMIT
             else -> Extension.UNKNOWN
         }
-
-    override fun loadRecoveryExtensionInfo(extension: Solidity.Address): Single<GnosisSafeExtensionRepository.RecoveryExtensionInfo> =
-        TODO() //ethereumRepository.request()
 
     private fun getExtensionMasterCopyAddress(extension: Extension): Solidity.Address =
         when (extension) {

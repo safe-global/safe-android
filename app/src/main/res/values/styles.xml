@@ -21,6 +21,10 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
+    <style name="GreyBackgroundTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/pale_grey_two</item>
+    </style>
+
     <!-- Onboarding theme. -->
 
     <style name="OnBoardingThemeBase" parent="AppTheme">
@@ -336,6 +340,21 @@
     <style name="SafeSmallInfo">
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/default_text</item>
+    </style>
+
+    <style name="LightText" parent="Text">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/bluey_grey</item>
+    </style>
+
+    <style name="NormalText" parent="Text">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/battleship_grey</item>
+    </style>
+
+    <style name="DarkText" parent="Text">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/dark_slate_blue</item>
     </style>
 
     <!-- End: Text styles -->
