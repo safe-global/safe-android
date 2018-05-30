@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -316,4 +316,4 @@
             android:gravity="center"
             android:text="@string/deploy_with_external_wallet" />
     </LinearLayout>
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

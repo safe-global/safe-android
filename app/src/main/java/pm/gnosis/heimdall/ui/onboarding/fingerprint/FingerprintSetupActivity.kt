@@ -10,6 +10,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_fingerprint_setup.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -17,8 +18,13 @@ import pm.gnosis.heimdall.utils.setColorFilterCompat
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.svalinn.security.AuthenticationError
 import timber.log.Timber
+import javax.inject.Inject
 
 class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
+
     override fun screenId() = ScreenId.FINGERPRINT_SETUP
 
     override fun onStart() {
@@ -32,6 +38,9 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
                 onNext = { startActivity(SafeMainActivity.createIntent(this), true) },
                 onError = Timber::e
             )
+
+        toolbarHelper.setupShadow(layout_fingerprint_setup_toolbar_shadow, layout_fingerprint_setup_content_scroll)
+            .forEach { disposables += it }
     }
 
     private fun onFingerprintResult(isSuccessful: Boolean) {

@@ -15,6 +15,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_password_confirm.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
@@ -23,11 +24,16 @@ import pm.gnosis.heimdall.utils.setCompoundDrawables
 import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
-    override fun screenId() = ScreenId.PASSWORD_CONFIRM
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
 
     private lateinit var passwordHash: ByteArray
+
+    override fun screenId() = ScreenId.PASSWORD_CONFIRM
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
@@ -68,6 +74,9 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
             .flatMapSingle { viewModel.isSamePassword(passwordHash, it.toString()) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onIsSamePassword, onError = Timber::e)
+
+        toolbarHelper.setupShadow(layout_password_confirm_toolbar_shadow, layout_password_confirm_content_scroll)
+            .forEach { disposables += it }
     }
 
     private fun onIsSamePassword(isSamePassword: Boolean) {

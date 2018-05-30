@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.AddressHelper
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
@@ -36,6 +37,9 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
 
     @Inject
     lateinit var addressHelper: AddressHelper
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
 
     override fun screenId() = ScreenId.CREATE_ASSET_TRANSFER
 
@@ -131,6 +135,9 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
             layout_create_asset_transfer_safe_image,
             safe
         ).forEach { disposables += it }
+
+        toolbarHelper.setupShadow(layout_create_asset_transfer_toolbar_shadow, layout_create_asset_transfer_title_content_scroll)
+            .forEach { disposables += it }
     }
 
     private fun applyUpdate(update: ViewUpdate) {
@@ -149,7 +156,7 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
             }
             CreateAssetTransferContract.ViewUpdate.EstimateError -> disableContinue()
             is CreateAssetTransferContract.ViewUpdate.TokenInfo -> {
-                update.value.token.name?.let{
+                update.value.token.name?.let {
                     layout_create_asset_transfer_title.text = getString(R.string.transfer_x, it)
                 }
                 layout_create_asset_transfer_safe_balance.text = update.value.displayString()
