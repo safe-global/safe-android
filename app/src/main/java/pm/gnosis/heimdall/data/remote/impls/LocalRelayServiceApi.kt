@@ -1,14 +1,12 @@
 package pm.gnosis.heimdall.data.remote.impls
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.GnosisSafePersonalEdition
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
-import pm.gnosis.heimdall.data.remote.models.EstimateParams
-import pm.gnosis.heimdall.data.remote.models.ExecuteParams
-import pm.gnosis.heimdall.data.remote.models.RelayEstimate
-import pm.gnosis.heimdall.data.remote.models.RelayExecution
+import pm.gnosis.heimdall.data.remote.models.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
@@ -16,10 +14,10 @@ import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.*
 import java.math.BigInteger
 
-
 class LocalRelayServiceApi(
     private val accountsRepository: AccountsRepository,
-    private val ethereumRepository: EthereumRepository
+    private val ethereumRepository: EthereumRepository,
+    private val remoteService: RelayServiceApi
 ) : RelayServiceApi {
     override fun execute(params: ExecuteParams): Single<RelayExecution> =
         Single.fromCallable {
@@ -28,8 +26,8 @@ class LocalRelayServiceApi(
             val sList = mutableListOf<Solidity.Bytes32>()
             params.signatures.forEach {
                 vList.add(Solidity.UInt8(BigInteger.valueOf(it.v.toLong())))
-                rList.add(Solidity.Bytes32(it.r.decimalAsBigInteger().toBytes(32)))
-                sList.add(Solidity.Bytes32(it.s.decimalAsBigInteger().toBytes(32)))
+                rList.add(Solidity.Bytes32(it.r.toBytes(32)))
+                sList.add(Solidity.Bytes32(it.s.toBytes(32)))
             }
 
             val to = params.to.asEthereumAddress()!!
@@ -91,6 +89,15 @@ class LocalRelayServiceApi(
                 RelayEstimate(txGas.asDecimalString(), dataGas.asDecimalString(), gasPrice.asDecimalString())
             }
     }
+
+    override fun safeCreation(params: RelaySafeCreationParams): Single<RelaySafeCreation> =
+        remoteService.safeCreation(params)
+
+    override fun notifySafeFunded(address: String): Completable =
+        remoteService.notifySafeFunded(address)
+
+    override fun safeFundStatus(address: String): Single<RelaySafeFundStatus> =
+        remoteService.safeFundStatus(address)
 
     private fun calculateDataGas(params: EstimateParams, txGas: BigInteger, gasPrice: BigInteger): BigInteger {
         val signateCosts = 3L * (64 + 64) + params.threshold * (192 + 2176 + 2176)

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/layout_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_confirm_safe_recovery_phrase_title">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/layout_confirm_safe_recovery_phrase_info"
+                style="@style/WhiteTheme.FlatTextCenter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Select the right order of words to compose and verify your 12 word recovery phrase."
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/layout_confirm_safe_recovery_phrase_12_word_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:text="12 word phrase:"
+                android:textColor="@color/dark_slate_blue"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_confirm_safe_recovery_phrase_info" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/layout_confirm_safe_recovery_phrase_selected_words"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/recovery_phrase_container"
+                android:minHeight="92dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_confirm_safe_recovery_phrase_12_word_label" />
+
+            <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                android:id="@+id/layout_confirm_safe_recovery_phrase_progress_bar"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="12dp"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_confirm_safe_recovery_phrase_selected_words"
+                tools:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/layout_confirm_safe_recovery_phrase_first_column"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="14dp"
+                android:orientation="vertical"
+                android:padding="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/layout_confirm_safe_recovery_phrase_second_column"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_confirm_safe_recovery_phrase_progress_bar"
+                tools:background="@color/azure" />
+
+            <LinearLayout
+                android:id="@+id/layout_confirm_safe_recovery_phrase_second_column"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/layout_confirm_safe_recovery_phrase_third_column"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/layout_confirm_safe_recovery_phrase_first_column"
+                app:layout_constraintTop_toTopOf="@+id/layout_confirm_safe_recovery_phrase_first_column"
+                tools:background="@color/pale_grey_four" />
+
+            <LinearLayout
+                android:id="@+id/layout_confirm_safe_recovery_phrase_third_column"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/layout_confirm_safe_recovery_phrase_fourth_column"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/layout_confirm_safe_recovery_phrase_second_column"
+                app:layout_constraintTop_toTopOf="@+id/layout_confirm_safe_recovery_phrase_second_column"
+                tools:background="@color/azure" />
+
+            <LinearLayout
+                android:id="@+id/layout_confirm_safe_recovery_phrase_fourth_column"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:orientation="vertical"
+                android:padding="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/layout_confirm_safe_recovery_phrase_third_column"
+                app:layout_constraintTop_toTopOf="@+id/layout_confirm_safe_recovery_phrase_third_column"
+                tools:background="@color/pale_grey_four" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/layout_confirm_safe_recovery_phrase_title"
+        style="@style/WhiteTheme.ToolbarTitle"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
+        android:gravity="center"
+        android:text="Confirm recovery phrase"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/layout_safe_recovery_phrase_bottom_bar"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:background="@color/bluey_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/layout_confirm_safe_recovery_phrase_back"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@drawable/selectable_background"
+        android:paddingEnd="24dp"
+        android:paddingStart="24dp"
+        android:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintStart_toStartOf="@+id/layout_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintTop_toTopOf="@+id/layout_safe_recovery_phrase_bottom_bar"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <LinearLayout
+        android:id="@+id/layout_safe_recovery_phrase_finish"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@drawable/selectable_background"
+        android:paddingEnd="24dp"
+        android:paddingStart="24dp"
+        app:layout_constraintEnd_toEndOf="@id/layout_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintTop_toBottomOf="@id/layout_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintTop_toTopOf="@id/layout_safe_recovery_phrase_bottom_bar">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="12dp"
+            android:gravity="center"
+            android:text="Finish"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="46dp"
+            android:rotation="180"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_arrow_back_24dp" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

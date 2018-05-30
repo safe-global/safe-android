@@ -87,6 +87,7 @@ class UnlockActivity : ViewModelActivity<UnlockContract>() {
                 snackbar(layout_unlock_coordinator, R.string.fingerprint_not_recognized, Snackbar.LENGTH_SHORT)
             }
             is FingerprintUnlockHelp -> {
+                vibrate(200)
                 result.message?.let { snackbar(layout_unlock_coordinator, it, Snackbar.LENGTH_SHORT) }
             }
         }
@@ -96,7 +97,7 @@ class UnlockActivity : ViewModelActivity<UnlockContract>() {
         Timber.e(throwable)
         layout_unlock_fingerprint_group.visible(false)
         layout_unlock_password_input.visible(true)
-        onStateCheckError(throwable)
+        snackbar(layout_unlock_coordinator, R.string.fingerprint_many_tries)
     }
 
     private fun onState(state: UnlockContract.State) {

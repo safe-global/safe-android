@@ -28,10 +28,12 @@ import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
-import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
+import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.overview.SafeAdapter
+import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
+import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
@@ -140,7 +142,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
 
         layout_safe_main_add_safe.setOnClickListener {
-            startActivity(AddSafeActivity.createIntent(this))
+            startActivity(CreateSafeIntroActivity.createIntent(this))
             closeDrawer()
         }
 
@@ -224,7 +226,12 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     intent.removeExtra(EXTRA_SELECTED_TAB)
                     replace(R.id.layout_safe_main_content_frame, SafeDetailsFragment.createInstance(safe, selectedTab))
                 }
-                is PendingSafe -> replace(R.id.layout_safe_main_content_frame, PendingSafeFragment.createInstance(safe))
+                is PendingSafe -> {
+                    replace(
+                        R.id.layout_safe_main_content_frame,
+                        if (safe.isFunded) DeploySafeProgressFragment.createInstance(safe) else PendingSafeFragment.createInstance(safe)
+                    )
+                }
             }
         }
         updateToolbar()

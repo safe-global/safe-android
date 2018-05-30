@@ -259,11 +259,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 val serviceSignatures = mutableListOf<ServiceSignature>()
                 sortedAddresses.forEach {
                     finalSignatures[Solidity.Address(it)]?.let {
-                        serviceSignatures += ServiceSignature(
-                            it.v.toInt(),
-                            it.r.asDecimalString(),
-                            it.s.asDecimalString()
-                        )
+                        serviceSignatures += ServiceSignature(it.r, it.s, it.v.toInt())
                     }
                 }
 

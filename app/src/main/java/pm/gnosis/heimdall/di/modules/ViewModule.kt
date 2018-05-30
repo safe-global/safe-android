@@ -16,7 +16,7 @@ import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
-import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
+import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.create.PairingContract
 import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
@@ -24,6 +24,8 @@ import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
+import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
+import pm.gnosis.heimdall.ui.safe.pending.PendingSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
@@ -58,10 +60,6 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesAddSafeContract(provider: ViewModelProvider) = provider[AddSafeContract::class.java]
-
-    @Provides
-    @ForView
     fun providesAddTokenContract(provider: ViewModelProvider) = provider[AddTokenContract::class.java]
 
     @Provides
@@ -71,6 +69,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesBuyCreditsContract(provider: ViewModelProvider) = provider[BuyCreditsContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesConfirmSafeRecoveryPhraseContract(provider: ViewModelProvider) = provider[ConfirmSafeRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView
@@ -90,6 +92,10 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
+    fun providesDeploySafeProgressContract(provider: ViewModelProvider) = provider[DeploySafeProgressContract::class.java]
+
+    @Provides
+    @ForView
     fun providesFingerprintSetupContract(provider: ViewModelProvider) = provider[FingerprintSetupContract::class.java]
 
     @Provides
@@ -103,6 +109,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesPasswordSetupContract(provider: ViewModelProvider) = provider[PasswordSetupContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesPendingSafeContract(provider: ViewModelProvider) = provider[PendingSafeContract::class.java]
 
     @Provides
     @ForView

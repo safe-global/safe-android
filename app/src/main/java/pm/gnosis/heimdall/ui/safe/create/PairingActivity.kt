@@ -3,7 +3,10 @@ package pm.gnosis.heimdall.ui.safe.create
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.support.v4.content.ContextCompat
+import android.text.SpannableStringBuilder
+import android.text.style.ImageSpan
+import android.text.style.URLSpan
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -17,8 +20,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
-import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -33,8 +35,28 @@ class PairingActivity : BaseActivity() {
         inject()
         setContentView(R.layout.layout_pairing)
 
+        layout_pairing_extension_link.apply {
+            val linkDrawable = ContextCompat.getDrawable(context, R.drawable.ic_external_link)!!
+            linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
+            this.text = SpannableStringBuilder("")
+                .appendText(getString(R.string.share_browser_extension), URLSpan("https://gnosis.pm"))
+                .append(" ")
+                .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
+            setOnClickListener { shareExternalText("https://gnosis.pm", "Browser Extension URL") }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
         disposables += layout_pairing_scan.clicks()
-            .subscribeBy(onNext = { QRCodeScanActivity.startForResult(this) }, onError = Timber::e)
+            .subscribeBy(
+                onNext = { QRCodeScanActivity.startForResult(this) },
+                onError = Timber::e
+            )
+
+        disposables += layout_create_safe_intro_back_arrow.clicks()
+            .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -42,23 +64,23 @@ class PairingActivity : BaseActivity() {
         handleQrCodeActivityResult(requestCode, resultCode, data, onQrCodeResult = { disposables += pair(it) })
     }
 
-    private fun pair(payload: String) = viewModel.pair(payload)
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnSubscribe {
-            layout_pairing_scan.isEnabled = false
-            layout_pairing_progress_bar.visibility = View.VISIBLE
-        }
-        .doOnSuccess {
-            layout_pairing_scan.isEnabled = true
-            layout_pairing_progress_bar.visibility = View.GONE
-        }
-        .subscribeBy(onSuccess = {
-            toast("Devices paired successfully")
-            startActivity(SafeRecoveryPhraseActivity.createIntent(this, it))
-        }, onError = {
-            snackbar(layout_pairing_coordinator, "Error pairing devices")
-            Timber.e(it)
-        })
+    private fun pair(payload: String) =
+        viewModel.pair(payload)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { onPairingLoading(true) }
+            .doFinally { onPairingLoading(false) }
+            .subscribeBy(onSuccess = {
+                toast(R.string.devices_paired_successfuly)
+                startActivity(SafeRecoveryPhraseActivity.createIntent(this, it))
+            }, onError = {
+                snackbar(layout_pairing_coordinator, R.string.error_pairing_devices)
+                Timber.e(it)
+            })
+
+    private fun onPairingLoading(isLoading: Boolean) {
+        layout_pairing_scan.isEnabled = !isLoading
+        layout_pairing_progress_bar.visible(isLoading)
+    }
 
     private fun inject() {
         DaggerViewComponent.builder()

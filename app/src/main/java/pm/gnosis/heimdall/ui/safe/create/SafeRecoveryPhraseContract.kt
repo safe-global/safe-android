@@ -5,6 +5,8 @@ import io.reactivex.Single
 import pm.gnosis.model.Solidity
 
 abstract class SafeRecoveryPhraseContract : ViewModel() {
-    abstract fun generateMnemonic(): Single<String>
-    abstract fun getRecoveryAddress(safeRecoveryPhrase: String): Single<Solidity.Address>
+    abstract fun setup(chromeExtensionAddress: Solidity.Address)
+    abstract fun generateRecoveryPhrase(): Single<String>
+    abstract fun loadEncryptedRecoveryPhrase(): Single<String>
+    abstract fun getChromeExtensionAddress(): Solidity.Address
 }

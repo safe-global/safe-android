@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f7093e332f70cd75ecd4cc2b39d43439",
+    "identityHash": "e13ce301fb84f2b1165144c93771f1cc",
     "entities": [
       {
         "tableName": "address_book",
@@ -108,7 +108,7 @@
       },
       {
         "tableName": "gnosis_pending_safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionHash` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`transactionHash`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionHash` TEXT NOT NULL, `name` TEXT, `address` TEXT NOT NULL, `payment` TEXT NOT NULL, `funded` INTEGER NOT NULL, PRIMARY KEY(`transactionHash`))",
         "fields": [
           {
             "fieldPath": "transactionHash",
@@ -121,6 +121,24 @@
             "columnName": "name",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payment",
+            "columnName": "payment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFunded",
+            "columnName": "funded",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -265,7 +283,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"f7093e332f70cd75ecd4cc2b39d43439\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e13ce301fb84f2b1165144c93771f1cc\")"
     ]
   }
 }

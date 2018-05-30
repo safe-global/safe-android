@@ -19,7 +19,7 @@ import pm.gnosis.heimdall.data.db.models.*
         TransactionPublishStatusDb::class
     ], version = 1
 )
-@TypeConverters(BigIntegerConverter::class, SolidityAddressConverter::class)
+@TypeConverters(BigIntegerConverter::class, SolidityAddressConverter::class, WeiConverter::class)
 abstract class ApplicationDb : RoomDatabase() {
     companion object {
         const val DB_NAME = "gnosis-safe-db"
