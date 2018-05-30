@@ -49,6 +49,7 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
+
     @Inject
     lateinit var adapter: SafeAdapter
 

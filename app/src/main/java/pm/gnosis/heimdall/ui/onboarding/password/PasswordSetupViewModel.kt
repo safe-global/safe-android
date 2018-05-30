@@ -8,7 +8,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
-import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.Result
@@ -53,7 +53,7 @@ class PasswordSetupViewModel @Inject constructor(
             createAccount()
         }.andThen(Single.fromCallable {
             if (encryptionManager.canSetupFingerprint()) FingerprintSetupActivity.createIntent(context)
-            else SafesOverviewActivity.createIntent(context)
+            else SafeMainActivity.createIntent(context)
         }).mapToResult()
 
     private fun isEqualPassword(passwordHash: ByteArray, repeat: String) = Sha3Utils.keccak(repeat.toByteArray()).contentEquals(passwordHash)
