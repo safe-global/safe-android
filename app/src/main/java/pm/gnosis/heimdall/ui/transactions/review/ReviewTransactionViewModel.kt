@@ -98,22 +98,7 @@ class ReviewTransactionViewModel @Inject constructor(
 
     private fun requestConfirmation(events: Events, params: TransactionExecutionRepository.ExecuteInformation) =
         if ((params.owners.size == 1 && params.isOwner))
-            // TODO: test code should be remove. Only empty observable should be returned
-            Observable.timer(3, TimeUnit.SECONDS)
-                .flatMapSingle {
-                    executionRepository.signRejection(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
-                }
-                .map {
-                    signaturePushRepository.handlePushMessage(
-                        PushMessage.RejectTransaction(
-                            params.transactionHash,
-                            it.r.asDecimalString(),
-                            it.s.asDecimalString(),
-                            it.v.toInt().toString()
-                        )
-                    )
-                }
-                .flatMap { Observable.empty<Result<ViewUpdate>>() }
+            Observable.empty<Result<ViewUpdate>>()
         else
             events.requestConfirmations
                 .subscribeOn(AndroidSchedulers.mainThread())
