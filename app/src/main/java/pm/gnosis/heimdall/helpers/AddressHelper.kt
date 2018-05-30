@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,10 +42,13 @@ class AddressHelper @Inject constructor(
                     safeRepository.loadSafe(address).map { it.name }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {
-                    nameView.visible(true)
-                    nameView.text = it
-                }
+                .subscribeBy(
+                    onSuccess = {
+                        nameView.visible(true)
+                        nameView.text = it
+                    },
+                    onError = Timber::e
+                )
         )
     }
 }
