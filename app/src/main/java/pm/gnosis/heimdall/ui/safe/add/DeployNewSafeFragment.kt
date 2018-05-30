@@ -18,10 +18,10 @@ import kotlinx.android.synthetic.main.layout_address_item.view.*
 import kotlinx.android.synthetic.main.layout_deploy_new_safe.*
 import kotlinx.android.synthetic.main.layout_security_bars.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
-import pm.gnosis.heimdall.data.repositories.models.FeeEstimate
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity

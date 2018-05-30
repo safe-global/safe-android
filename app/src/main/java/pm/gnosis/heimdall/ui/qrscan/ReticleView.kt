@@ -5,11 +5,11 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import pm.gnosis.heimdall.R
+import pm.gnosis.svalinn.common.utils.getColorCompat
 
 /*
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
@@ -20,7 +20,7 @@ class ReticleView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     }
 
     private val framePaint = Paint().apply {
-        color = ContextCompat.getColor(context, R.color.white)
+        color = context.getColorCompat(R.color.white)
         style = Paint.Style.STROKE
         strokeWidth = pxToDp(2.0f)
     }

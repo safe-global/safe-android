@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -22,10 +21,7 @@ import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
-import pm.gnosis.svalinn.common.utils.shareExternalText
-import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.svalinn.common.utils.subscribeForResult
-import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
@@ -47,7 +43,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
 
-        intent.extras.getString(EXTRA_ADDRESS_ENTRY).let {
+        intent.getStringExtra(EXTRA_ADDRESS_ENTRY).let {
             it.asEthereumAddress()?.let {
                 address = it
             } ?: run {
@@ -78,7 +74,7 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
 
         disposables += generateQrCodeSubject
             .flatMap {
-                viewModel.generateQrCode(address, ContextCompat.getColor(this, R.color.window_background))
+                viewModel.generateQrCode(address, getColorCompat(R.color.window_background))
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { layout_address_book_entry_details_qr_code_loading.visibility = View.VISIBLE }
                     .doOnTerminate { layout_address_book_entry_details_qr_code_loading.visibility = View.GONE }

@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions.builder
 
-import pm.gnosis.heimdall.StandardToken
+import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -37,7 +37,7 @@ object AssetTransferTransactionBuilder : TransactionBuilder<TransactionData.Asse
             SafeTransaction(
                 Transaction(
                     data.token,
-                    data = StandardToken.Transfer.encode(data.receiver, Solidity.UInt256(data.amount))
+                    data = ERC20Contract.Transfer.encode(data.receiver, Solidity.UInt256(data.amount))
                 ), TransactionExecutionRepository.Operation.CALL
             )
 }

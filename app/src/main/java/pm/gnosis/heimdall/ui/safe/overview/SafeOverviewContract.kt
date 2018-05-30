@@ -13,12 +13,8 @@ import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.Result
 
 abstract class SafeOverviewContract : ViewModel() {
-    abstract fun removeSafe(address: Solidity.Address): Completable
-    abstract fun observeSafes(): Flowable<Result<Adapter.Data<AbstractSafe>>>
     abstract fun loadSafeInfo(address: Solidity.Address): Single<SafeInfo>
     abstract fun observeDeployStatus(hash: String): Observable<String>
-    abstract fun shouldShowLowBalanceView(): Observable<Result<Boolean>>
-    abstract fun dismissHasLowBalance()
 
     companion object {
         val LOW_BALANCE_THRESHOLD = Wei.ether("0.001")

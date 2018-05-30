@@ -21,6 +21,8 @@ import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.nullOnThrow
+import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -32,19 +34,18 @@ class ReviewTransactionViewModel @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ReviewTransactionContract() {
 
-    private var safe: Solidity.Address? = null
+    private lateinit var safe: Solidity.Address
 
     private val cachedState = mutableMapOf<SafeTransaction, TransactionExecutionRepository.ExecuteInformation>()
 
     override fun setup(safe: Solidity.Address) {
-        if (this.safe != safe) {
+        if (nullOnThrow { this.safe } != safe) {
             cachedState.clear()
         }
         this.safe = safe
     }
 
     private fun txParams(transaction: SafeTransaction): Single<TransactionExecutionRepository.ExecuteInformation> {
-        val safe = safe ?: return Single.error(IllegalStateException())
         return cachedState[transaction]?.let { Single.just(it) }
                 ?: executionRepository.loadExecuteInformation(safe, transaction)
                     .doOnSuccess { cachedState[transaction] = it }
@@ -73,9 +74,7 @@ class ReviewTransactionViewModel @Inject constructor(
                 it.map {
                     ViewUpdate.Estimate(
                         Wei(
-                            it.estimate.multiply(
-                                it.gasPrice
-                            )
+                            (it.txGas + it.dataGas + BigInteger.valueOf(32000)) * it.gasPrice
                         ), it.balance
                     )
                 }
@@ -104,11 +103,11 @@ class ReviewTransactionViewModel @Inject constructor(
                     // TODO: replace with extension signature logic
                     Observable.timer(3, TimeUnit.SECONDS)
                         .flatMapSingle {
-                            executionRepository.sign(safe!!, params.transaction)
+                            executionRepository.sign(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
                         }
                         .map {
                             signaturePushRepository.receivedSignature(
-                                "/topics/respond_signature.${safe!!.asEthereumAddressString()}",
+                                "/topics/respond_signature.${safe.asEthereumAddressString()}",
                                 it
                             )
                         }
@@ -119,7 +118,7 @@ class ReviewTransactionViewModel @Inject constructor(
 
     private fun observeConfirmationStore(events: Events, params: TransactionExecutionRepository.ExecuteInformation) =
         signatureStore.flatMapInfo(
-            safe!!, params
+            safe, params
         ).publish {
             Observable.merge(
                 it.map {
@@ -139,7 +138,7 @@ class ReviewTransactionViewModel @Inject constructor(
         }
 
     private fun submitTransaction(params: TransactionExecutionRepository.ExecuteInformation, signatures: Map<Solidity.Address, Signature>) =
-        executionRepository.submit(safe!!, params.transaction, signatures, params.isOwner)
+        executionRepository.submit(safe, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice)
             .andThen(
                 Observable.just<ViewUpdate>(
                     ViewUpdate.TransactionSubmitted(
@@ -158,9 +157,9 @@ class ReviewTransactionViewModel @Inject constructor(
             .mapToResult()
 
     private fun observeIncomingConfirmations(params: TransactionExecutionRepository.ExecuteInformation) =
-        signaturePushRepository.observe(safe!!)
+        signaturePushRepository.observe(safe)
             .flatMapSingle {
-                executionRepository.checkSignature(safe!!, params.transaction, it)
+                executionRepository.checkSignature(safe, params.transaction, it, params.txGas, params.dataGas, params.gasPrice)
             }
             .map(signatureStore::add)
             .flatMap { Observable.empty<Result<ViewUpdate>>() }
@@ -168,7 +167,6 @@ class ReviewTransactionViewModel @Inject constructor(
 
     private fun transactionViewHolder(transactionData: TransactionData): Single<TransactionInfoViewHolder> =
         Single.fromCallable {
-            val safe = safe ?: throw IllegalStateException()
             when (transactionData) {
                 is TransactionData.Generic ->
                     GenericTransactionViewHolder(safe, transactionData, addressHelper)

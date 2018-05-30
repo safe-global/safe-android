@@ -12,7 +12,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
-import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.setColorFilterCompat
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.svalinn.security.AuthenticationError
@@ -29,7 +29,7 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
 
         disposables += layout_fingerprint_setup_continue.clicks()
             .subscribeBy(
-                onNext = { startActivity(SafesOverviewActivity.createIntent(this), true) },
+                onNext = { startActivity(SafeMainActivity.createIntent(this), true) },
                 onError = Timber::e
             )
     }
@@ -52,7 +52,7 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
     private fun onFingerprintUnrecoverableError(throwable: Throwable) {
         Timber.e(throwable)
         (throwable as? AuthenticationError)?.errString ?: getString(R.string.unknown_error).let { toast(it) }
-        startActivity(SafesOverviewActivity.createIntent(this), true)
+        startActivity(SafeMainActivity.createIntent(this), true)
     }
 
     override fun layout() = R.layout.layout_fingerprint_setup

@@ -4,12 +4,12 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
-import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
 import android.view.Gravity
 import pm.gnosis.heimdall.R
+import pm.gnosis.svalinn.common.utils.getColorCompat
 
 class DividerTextView : AppCompatTextView {
 
@@ -25,7 +25,7 @@ class DividerTextView : AppCompatTextView {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     init {
-        dividerPaint?.color = ContextCompat.getColor(context, R.color.divider)
+        dividerPaint?.color = context.getColorCompat(R.color.divider)
         dividerPaint?.strokeWidth = context.resources.getDimension(R.dimen.divider_width)
         updateTextBounds()
     }

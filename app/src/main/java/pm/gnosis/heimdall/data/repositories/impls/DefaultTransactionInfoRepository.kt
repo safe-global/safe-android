@@ -2,11 +2,14 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.heimdall.StandardToken
+import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.fromDb
 import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
-import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.TransactionData
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionInfo
+import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.models.Transaction
@@ -32,7 +35,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
 
                 data.isNullOrBlank() -> // If we have no data we default to ether transfer
                     TransactionData.AssetTransfer(ERC20Token.ETHER_TOKEN.address, tx.value?.value ?: BigInteger.ZERO, tx.address)
-                data?.isSolidityMethod(StandardToken.Transfer.METHOD_ID) == true ->
+                data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true ->
                         parseTokenTransfer(tx)
                 else ->
                     TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data)
@@ -41,8 +44,8 @@ class DefaultTransactionInfoRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
 
     private fun parseTokenTransfer(transaction: Transaction): TransactionData.AssetTransfer {
-        val arguments = transaction.data!!.removeSolidityMethodPrefix(StandardToken.Transfer.METHOD_ID)
-        return StandardToken.Transfer.decodeArguments(arguments).let { TransactionData.AssetTransfer(transaction.address, it.value.value, it.to) }
+        val arguments = transaction.data!!.removeSolidityMethodPrefix(ERC20Contract.Transfer.METHOD_ID)
+        return ERC20Contract.Transfer.decodeArguments(arguments).let { TransactionData.AssetTransfer(transaction.address, it._value.value, it._to) }
     }
 
     override fun loadTransactionInfo(id: String): Single<TransactionInfo> =

@@ -29,7 +29,6 @@ import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.safe.main.PendingSafeFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
-import pm.gnosis.heimdall.ui.safe.overview.SafesOverviewActivity
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
@@ -84,7 +83,6 @@ interface ViewComponent {
     fun inject(activity: SafeMainActivity)
     fun inject(activity: SafeRecoveryPhraseActivity)
     fun inject(activity: SafeSettingsActivity)
-    fun inject(activity: SafesOverviewActivity)
     fun inject(activity: SecuritySettingsActivity)
     fun inject(activity: SelectSafeActivity)
     fun inject(activity: SetupSafeIntroActivity)

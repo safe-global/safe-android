@@ -5,8 +5,8 @@ import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.ObservableOnSubscribe
 import pm.gnosis.crypto.utils.Sha3Utils
+import pm.gnosis.heimdall.data.remote.DevelopmentPushServiceApi
 import pm.gnosis.heimdall.data.remote.MessageQueueRepository
-import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.RequestSignatureData
 import pm.gnosis.heimdall.data.remote.models.SendSignatureData
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
@@ -15,12 +15,12 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.utils.GnoSafeUrlParser
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.*
+import java.math.BigInteger
 import java.util.concurrent.CopyOnWriteArraySet
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,7 +30,7 @@ class DefaultSignaturePushRepository @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val messageQueueRepository: MessageQueueRepository,
     private val preferencesManager: PreferencesManager,
-    private val pushServiceApi: PushServiceApi,
+    private val pushServiceApi: DevelopmentPushServiceApi,
     private val safeRepository: GnosisSafeRepository,
     private val transactionRepository: GnosisSafeTransactionRepository
 ) : SignaturePushRepository {
@@ -64,8 +64,15 @@ class DefaultSignaturePushRepository @Inject constructor(
             }
     }
 
-    override fun send(safe: Solidity.Address, transaction: SafeTransaction, signature: Signature): Completable =
-        transactionRepository.calculateHash(safe, transaction).flatMapCompletable {
+    override fun send(
+        safe: Solidity.Address,
+        transaction: SafeTransaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger,
+        signature: Signature
+    ): Completable =
+        transactionRepository.calculateHash(safe, transaction, txGas, dataGas, gasPrice).flatMapCompletable {
             pushServiceApi.sendSignature(cleanAddress(safe), SendSignatureData(GnoSafeUrlParser.signResponse(signature), it.toHexString()))
         }
 

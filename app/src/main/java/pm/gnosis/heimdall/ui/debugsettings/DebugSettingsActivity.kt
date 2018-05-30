@@ -16,7 +16,6 @@ import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
-import pm.gnosis.heimdall.ui.safe.create.PairingActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.svalinn.common.utils.toast
 import timber.log.Timber

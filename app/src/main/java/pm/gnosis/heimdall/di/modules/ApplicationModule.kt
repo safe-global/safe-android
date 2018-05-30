@@ -22,9 +22,11 @@ import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
 import pm.gnosis.heimdall.data.adapters.SolidityAddressAdapter
 import pm.gnosis.heimdall.data.adapters.WeiAdapter
 import pm.gnosis.heimdall.data.db.ApplicationDb
-import pm.gnosis.heimdall.data.remote.GnosisSafePushService
+import pm.gnosis.heimdall.data.remote.DevelopmentPushServiceApi
 import pm.gnosis.heimdall.data.remote.PushServiceApi
+import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.TxExecutorApi
+import pm.gnosis.heimdall.data.remote.impls.LocalRelayServiceApi
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39Generator
@@ -110,15 +112,15 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesPushServiceApi(moshi: Moshi, client: OkHttpClient): PushServiceApi {
+    fun providesDevelopmentPushServiceApi(moshi: Moshi, client: OkHttpClient): DevelopmentPushServiceApi {
         val retrofit = Retrofit.Builder()
             // Increase timeout since our server goes to sleeps
             .client(client.newBuilder().readTimeout(30, TimeUnit.SECONDS).build())
-            .baseUrl(PushServiceApi.BASE_URL)
+            .baseUrl(DevelopmentPushServiceApi.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
-        return retrofit.create(PushServiceApi::class.java)
+        return retrofit.create(DevelopmentPushServiceApi::class.java)
     }
 
     @Provides
@@ -136,14 +138,20 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesGnosisSafePushService(moshi: Moshi, client: OkHttpClient): GnosisSafePushService {
+    fun providesPushServiceApi(moshi: Moshi, client: OkHttpClient): PushServiceApi {
         val retrofit = Retrofit.Builder()
             .client(client)
-            .baseUrl(GnosisSafePushService.BASE_URL)
+            .baseUrl(PushServiceApi.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
-        return retrofit.create(GnosisSafePushService::class.java)
+        return retrofit.create(PushServiceApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesRelayServiceApi(accountsRepository: AccountsRepository, ethereumRepository: EthereumRepository): RelayServiceApi {
+        return LocalRelayServiceApi(accountsRepository, ethereumRepository)
     }
 
     @Provides

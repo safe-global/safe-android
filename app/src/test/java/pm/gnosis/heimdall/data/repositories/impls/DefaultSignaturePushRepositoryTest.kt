@@ -19,8 +19,8 @@ import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
+import pm.gnosis.heimdall.data.remote.DevelopmentPushServiceApi
 import pm.gnosis.heimdall.data.remote.MessageQueueRepository
-import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.RequestSignatureData
 import pm.gnosis.heimdall.data.remote.models.SendSignatureData
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
@@ -60,7 +60,7 @@ class DefaultSignaturePushRepositoryTest {
     private lateinit var messagingQueueRepositoryMock: MessageQueueRepository
 
     @Mock
-    private lateinit var pushServiceApiMock: PushServiceApi
+    private lateinit var pushServiceApiMock: DevelopmentPushServiceApi
 
     @Mock
     private lateinit var safeRepositoryMock: GnosisSafeRepository
@@ -197,18 +197,27 @@ class DefaultSignaturePushRepositoryTest {
     @Test
     fun send() {
         val testHash = "ThisShouldBeAHash".toByteArray()
-        given(transactionRepositoryMock.calculateHash(MockUtils.any(), MockUtils.any()))
+        given(
+            transactionRepositoryMock.calculateHash(
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any()
+            )
+        )
             .willReturn(Single.just(testHash))
 
         given(pushServiceApiMock.sendSignature(anyString(), MockUtils.any()))
             .willReturn(Completable.complete())
 
         val testObserver = TestObserver<Unit>()
-        repository.send(TEST_SAFE_1, TEST_TRANSACTION, TEST_SIGNATURE).subscribe(testObserver)
+        repository.send(TEST_SAFE_1, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_SIGNATURE).subscribe(testObserver)
 
         testObserver.assertResult()
 
-        then(transactionRepositoryMock).should().calculateHash(TEST_SAFE_1, TEST_TRANSACTION)
+        then(transactionRepositoryMock).should().calculateHash(TEST_SAFE_1, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE)
         then(pushServiceApiMock).should()
             .sendSignature(cleanAddress(TEST_SAFE_1), SendSignatureData(GnoSafeUrlParser.signResponse(TEST_SIGNATURE), testHash.toHexString()))
 
@@ -220,18 +229,20 @@ class DefaultSignaturePushRepositoryTest {
     fun sendRequestFailure() {
         val error = IllegalStateException()
         val testHash = "ThisShouldBeAHash".toByteArray()
-        given(transactionRepositoryMock.calculateHash(MockUtils.any(), MockUtils.any()))
+        given(transactionRepositoryMock.calculateHash(
+            MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(),
+            MockUtils.any()))
             .willReturn(Single.just(testHash))
 
         given(pushServiceApiMock.sendSignature(anyString(), MockUtils.any()))
             .willReturn(Completable.error(error))
 
         val testObserver = TestObserver<Unit>()
-        repository.send(TEST_SAFE_1, TEST_TRANSACTION, TEST_SIGNATURE).subscribe(testObserver)
+        repository.send(TEST_SAFE_1, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_SIGNATURE).subscribe(testObserver)
 
         testObserver.assertFailure(Predicate { it == error })
 
-        then(transactionRepositoryMock).should().calculateHash(TEST_SAFE_1, TEST_TRANSACTION)
+        then(transactionRepositoryMock).should().calculateHash(TEST_SAFE_1, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE)
         then(pushServiceApiMock).should()
             .sendSignature(cleanAddress(TEST_SAFE_1), SendSignatureData(GnoSafeUrlParser.signResponse(TEST_SIGNATURE), testHash.toHexString()))
 
@@ -242,15 +253,16 @@ class DefaultSignaturePushRepositoryTest {
     @Test
     fun sendHashFailure() {
         val error = IllegalStateException()
-        given(transactionRepositoryMock.calculateHash(MockUtils.any(), MockUtils.any()))
+        given(transactionRepositoryMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(),
+            MockUtils.any()))
             .willReturn(Single.error(error))
 
         val testObserver = TestObserver<Unit>()
-        repository.send(TEST_SAFE_1, TEST_TRANSACTION, TEST_SIGNATURE).subscribe(testObserver)
+        repository.send(TEST_SAFE_1, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_SIGNATURE).subscribe(testObserver)
 
         testObserver.assertFailure(Predicate { it == error })
 
-        then(transactionRepositoryMock).should().calculateHash(TEST_SAFE_1, TEST_TRANSACTION)
+        then(transactionRepositoryMock).should().calculateHash(TEST_SAFE_1, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE)
 
         then(transactionRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
@@ -314,6 +326,9 @@ class DefaultSignaturePushRepositoryTest {
         private val TEST_SIGNATURE_2 = Signature(BigInteger.valueOf(6789), BigInteger.valueOf(1234), 28)
         private val TEST_TRANSACTION =
             SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)
+        private val TEST_TX_GAS = BigInteger.valueOf(100000)
+        private val TEST_DATA_GAS = BigInteger.ZERO
+        private val TEST_GAS_PRICE = BigInteger.ZERO
         private const val PREFS_OBSERVED_SAFES = "default_signature_push_repo.string_set.observed_safes"
         private const val REQUEST_SIGNATURE_TOPIC_PREFIX = "request_signature."
         private const val RESPOND_SIGNATURE_TOPIC_PREFIX = "respond_signature."

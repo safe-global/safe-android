@@ -14,7 +14,7 @@ import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.erc67.ERC67Parser
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.StandardToken
+import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -53,7 +53,7 @@ class AuthenticateViewModelTest {
 
     @Test
     fun checkResultTokenTransfer() {
-        val data = createTransactionString(data = StandardToken.Transfer.encode(Solidity.Address(BigInteger.TEN), Solidity.UInt256(BigInteger.ONE)))
+        val data = createTransactionString(data = ERC20Contract.Transfer.encode(Solidity.Address(BigInteger.TEN), Solidity.UInt256(BigInteger.ONE)))
         val observer = createObserver()
 
         viewModel.checkResult(data)

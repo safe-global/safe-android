@@ -5,8 +5,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.Function
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeExtensionRepository.Extension
+import pm.gnosis.heimdall.data.repositories.GnosisSafeModulesRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeModulesRepository.Module
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.di.ApplicationContext
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 class SafeSettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val extensionRepository: GnosisSafeExtensionRepository,
+    private val modulesRepository: GnosisSafeModulesRepository,
     private val safeRepository: GnosisSafeRepository
 ) : SafeSettingsContract() {
 
@@ -61,9 +61,9 @@ class SafeSettingsViewModel @Inject constructor(
             .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
             .mapToResult()
 
-    override fun loadExtensionsInfo(extensions: List<Solidity.Address>): Single<Pair<Boolean, List<Pair<Extension, Solidity.Address>>>> =
-        extensionRepository.loadExtensionsInfo(extensions)
-            .map { it.any { it.first == Extension.SINGLE_ACCOUNT_RECOVERY } to it }
+    override fun loadModulesInfo(extensions: List<Solidity.Address>): Single<Pair<Boolean, List<Pair<Module, Solidity.Address>>>> =
+        modulesRepository.loadModulesInfo(extensions)
+            .map { it.any { it.first == Module.SINGLE_ACCOUNT_RECOVERY } to it }
 
     private fun fromCache(ignoreCache: Boolean): Observable<SafeInfo>? {
         if (!ignoreCache) {

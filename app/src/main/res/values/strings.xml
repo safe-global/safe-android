@@ -293,12 +293,6 @@
     <string name="new_owner">New Owner</string>
     <string name="old_owner">Old Owner</string>
     <string name="security">Security</string>
-    <string name="review_asset_transfer_message">This transaction will send</string>
-    <string name="review_simple_transfer_message">This transaction will</string>
-    <string name="review_add_extension_message">This transaction adds</string>
-    <string name="receipt_asset_transfer_message">This transaction sent</string>
-    <string name="receipt_simple_transfer_message">This transaction</string>
-    <string name="receipt_add_extension_message">This transaction added</string>
     <string name="all_signatures_confirmed">All signatures confirmed!</string>
     <string name="transaction_details">Transaction Details</string>
     <string name="fee">fee</string>
@@ -365,10 +359,10 @@
     <string name="enter_your_recovery_phrase">Enter your recovery phrase</string>
     <string name="show_transaction_credits">Show transaction credits</string>
     <string name="transaction_title_social_recovery_extension">a Recovery Option</string>
-    <string name="single_account_recovery_extension">Recovery Extension</string>
-    <string name="social_recovery_extension">Recovery Extension (Deprecated)</string>
-    <string name="daily_limit_extension">Daily Limit Extension</string>
-    <string name="unknown_extension">Unknown Extension</string>
+    <string name="single_account_recovery_module">Recovery Module</string>
+    <string name="social_recovery_module">Recovery Module (Deprecated)</string>
+    <string name="daily_limit_module">Daily Limit Module</string>
+    <string name="unknown_module">Unknown Module</string>
     <string name="to_safe">To Safe</string>
     <string name="recovery_id">Recovery Id</string>
     <string name="add_recovery_option">Add recovery option</string>

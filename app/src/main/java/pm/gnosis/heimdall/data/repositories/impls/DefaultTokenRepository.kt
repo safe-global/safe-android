@@ -10,8 +10,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.ethereum.*
+import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.StandardToken
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -113,12 +113,12 @@ class DefaultTokenRepository @Inject constructor(
                     MappedRequest(EthCall(
                         transaction = Transaction(
                             token.address,
-                            data = StandardToken.BalanceOf.encode(ofAddress)
+                            data = ERC20Contract.BalanceOf.encode(ofAddress)
                         ),
                         id = index
                     ), {
                         token to nullOnThrow {
-                            StandardToken.BalanceOf.decode(it!!).param0.value
+                            ERC20Contract.BalanceOf.decode(it!!).balance.value
                         }
                     })
                 }

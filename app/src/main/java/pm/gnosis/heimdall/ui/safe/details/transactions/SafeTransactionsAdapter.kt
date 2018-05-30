@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.safe.details.transactions
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +19,7 @@ import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.heimdall.utils.formatAsLongDate
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
@@ -75,12 +75,12 @@ class SafeTransactionsAdapter @Inject constructor(
                         visibility = View.GONE
                     }
                     TransactionExecutionRepository.PublishStatus.PENDING -> {
-                        setTextColor(ContextCompat.getColor(context, R.color.light_text))
+                        setTextColor(context.getColorCompat(R.color.light_text))
                         text = context.getString(R.string.status_pending)
                         visibility = View.VISIBLE
                     }
                     TransactionExecutionRepository.PublishStatus.FAILED -> {
-                        setTextColor(ContextCompat.getColor(context, R.color.error))
+                        setTextColor(context.getColorCompat(R.color.error))
                         text = context.getString(R.string.status_failed)
                         visibility = View.VISIBLE
                     }
