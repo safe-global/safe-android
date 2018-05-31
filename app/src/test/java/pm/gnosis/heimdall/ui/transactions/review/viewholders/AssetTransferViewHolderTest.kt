@@ -94,14 +94,12 @@ class AssetTransferViewHolderTest {
     @Before
     fun setUp() {
         addressHelper = AddressHelper(addressBookRepository, safeRepository)
-        BDDMockito.given(contextMock.getString(BDDMockito.anyInt())).willReturn("")
     }
 
     @Test
     fun testNoInteractionWithoutView() {
-        val safe = Solidity.Address(BigInteger.TEN)
         val data = TransactionData.AssetTransfer(TEST_TOKEN, TEST_AMOUNT, TEST_RECEIVER)
-        viewHolder = AssetTransferViewHolder(safe, data, addressHelper, tokenRepositoryMock)
+        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock)
         viewHolder.start()
         then(contextMock).shouldHaveZeroInteractions()
         then(addressBookRepository).shouldHaveZeroInteractions()
@@ -320,7 +318,7 @@ class AssetTransferViewHolderTest {
     }
 
     @Test
-    fun testLoadTransction() {
+    fun testLoadTransaction() {
         val data = TransactionData.AssetTransfer(TEST_TOKEN, TEST_AMOUNT, TEST_RECEIVER)
         viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock)
         val testObserver = TestObserver<SafeTransaction>()
