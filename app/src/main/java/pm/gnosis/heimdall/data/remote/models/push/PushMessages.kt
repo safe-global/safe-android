@@ -91,4 +91,4 @@ sealed class PushMessage(
 }
 
 private fun Map<String, String>.getOrThrow(key: String) =
-    get("hash") ?: throw IllegalArgumentException("Missing param $key")
+    get(key) ?: throw IllegalArgumentException("Missing param $key")

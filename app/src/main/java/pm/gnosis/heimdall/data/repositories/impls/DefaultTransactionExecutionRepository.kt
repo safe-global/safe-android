@@ -128,7 +128,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 val safeBalance = info.balance.result()!!
                 calculateHash(safeAddress, updatedTransaction, txGas, dataGas, gasPrice).map {
                     TransactionExecutionRepository.ExecuteInformation(
-                        it.toHexString(),
+                        it.toHexString().addHexPrefix(),
                         updatedTransaction,
                         sender,
                         threshold,

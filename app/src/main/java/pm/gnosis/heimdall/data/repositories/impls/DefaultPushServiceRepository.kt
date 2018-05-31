@@ -40,12 +40,11 @@ class DefaultPushServiceRepository @Inject constructor(
     private val notificationManager: LocalNotificationManager,
     private val moshi: Moshi,
     private val preferencesManager: PreferencesManager,
-    private val pushServiceApi: PushServiceApi,
-    private val transactionInfoRepository: TransactionInfoRepository
+    private val pushServiceApi: PushServiceApi
 ) : PushServiceRepository {
 
 
-    private val observedTransaction = HashMap<String, ReceiveSignatureObservable>()
+    private val observedTransaction = HashMap<BigInteger, ReceiveSignatureObservable>()
 
     /*
     * Situations where a sync might be needed:
@@ -160,13 +159,13 @@ class DefaultPushServiceRepository @Inject constructor(
             is PushMessage.SendTransaction ->
                 showSendTransactionNotification(pushMessage)
             is PushMessage.ConfirmTransaction ->
-                observedTransaction[pushMessage.hash]?.publish(
+                observedTransaction[pushMessage.hash.hexAsBigInteger()]?.publish(
                     TransactionResponse.Confirmed(
                         Signature(pushMessage.r.decimalAsBigInteger(), pushMessage.s.decimalAsBigInteger(), pushMessage.v.toInt().toByte())
                     )
                 )
             is PushMessage.RejectTransaction -> {
-                observedTransaction[pushMessage.hash]?.publish(
+                observedTransaction[pushMessage.hash.hexAsBigInteger()]?.publish(
                     TransactionResponse.Rejected(
                         Signature(pushMessage.r.decimalAsBigInteger(), pushMessage.s.decimalAsBigInteger(), pushMessage.v.toInt().toByte())
                     )
@@ -195,14 +194,13 @@ class DefaultPushServiceRepository @Inject constructor(
 
     override fun calculateRejectionHash(transactionHash: ByteArray): Single<ByteArray> =
         Single.fromCallable {
-            Sha3Utils.keccak("$SIGNATURE_PREFIX${transactionHash.toHexString().addHexPrefix()}$${PushMessage.RejectTransaction.TYPE}".toByteArray())
+            Sha3Utils.keccak("$SIGNATURE_PREFIX${transactionHash.toHexString().addHexPrefix()}${PushMessage.RejectTransaction.TYPE}".toByteArray())
         }
 
-
     override fun observe(hash: String): Observable<TransactionResponse> =
-        observedTransaction.getOrPut(hash, {
+        observedTransaction.getOrPut(hash.hexAsBigInteger(), {
             ReceiveSignatureObservable({
-                observedTransaction.remove(hash)
+                observedTransaction.remove(hash.hexAsBigInteger())
             })
         }).observe()
 
