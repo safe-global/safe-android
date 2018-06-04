@@ -189,8 +189,6 @@ class ReviewTransactionViewModel @Inject constructor(
             when (transactionData) {
                 is TransactionData.Generic ->
                     GenericTransactionViewHolder(safe, transactionData, addressHelper)
-                is TransactionData.RecoverSafe -> TODO()
-                is TransactionData.ReplaceRecoveryPhrase -> TODO()
                 is TransactionData.AssetTransfer ->
                     AssetTransferViewHolder(
                         safe,

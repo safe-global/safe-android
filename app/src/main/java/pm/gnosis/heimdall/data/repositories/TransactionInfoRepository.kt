@@ -24,6 +24,7 @@ sealed class TransactionData: Parcelable {
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class Generic(val to: Solidity.Address, val value: BigInteger, val data: String?): TransactionData()
 
+    /* Not used yet, they break the tests right now!
     @Parcelize
     @TypeParceler<Solidity.Address?, OptionalSolidityAddressParceler>
     data class RecoverSafe(val appAddress: Solidity.Address?, val extensionAddress: Solidity.Address?): TransactionData()
@@ -31,6 +32,7 @@ sealed class TransactionData: Parcelable {
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class ReplaceRecoveryPhrase(val primaryKeyAddress: Solidity.Address, val secondaryKeyAddress: Solidity.Address): TransactionData()
+    */
 
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
@@ -45,8 +47,6 @@ sealed class TransactionData: Parcelable {
     private fun getType() =
         when (this) {
             is Generic -> TYPE_GENERIC
-            is RecoverSafe -> TYPE_RECOVER_SAFE
-            is ReplaceRecoveryPhrase -> TYPE_REPLACE_RECOVERY_PHRASE
             is AssetTransfer -> TYPE_ASSET_TRANSFER
         }
 
@@ -55,16 +55,12 @@ sealed class TransactionData: Parcelable {
         private const val EXTRA_DATA = "extra.parcelable.data"
 
         private const val TYPE_GENERIC = 0
-        private const val TYPE_RECOVER_SAFE = 1
-        private const val TYPE_REPLACE_RECOVERY_PHRASE = 2
-        private const val TYPE_ASSET_TRANSFER = 3
+        private const val TYPE_ASSET_TRANSFER = 1
 
         fun fromBundle(bundle: Bundle): TransactionData? =
             bundle.run {
                 when (getInt(TransactionData.EXTRA_DATA_TYPE, 0)) {
                     TransactionData.TYPE_GENERIC -> getParcelable<TransactionData.Generic>(TransactionData.EXTRA_DATA)
-                    TransactionData.TYPE_RECOVER_SAFE -> getParcelable<TransactionData.RecoverSafe>(TransactionData.EXTRA_DATA)
-                    TransactionData.TYPE_REPLACE_RECOVERY_PHRASE -> getParcelable<TransactionData.ReplaceRecoveryPhrase>(TransactionData.EXTRA_DATA)
                     TransactionData.TYPE_ASSET_TRANSFER -> getParcelable<TransactionData.AssetTransfer>(TransactionData.EXTRA_DATA)
                     else -> throw IllegalArgumentException("Unknown transaction data type")
                 }
