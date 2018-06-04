@@ -97,14 +97,14 @@ class ReviewTransactionViewModel @Inject constructor(
         )
 
     private fun requestConfirmation(events: Events, params: TransactionExecutionRepository.ExecuteInformation) =
-        if ((params.owners.size == 1 && params.isOwner))
+        if ((params.requiredConfirmation == 1 && params.isOwner))
             Observable.empty<Result<ViewUpdate>>()
         else
             events.requestConfirmations
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .startWith(Unit)
                 .switchMapSingle {
-                    val targets = params.owners - params.sender
+                    val targets = params.owners - params.sender // TODO: exclude owners that already confirmed
                     executionRepository.calculateHash(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
                         .flatMapCompletable {
                             signaturePushRepository.requestConfirmations(
