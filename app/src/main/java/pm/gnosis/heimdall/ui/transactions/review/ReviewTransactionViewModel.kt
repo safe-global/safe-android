@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.transactions.review
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import pm.gnosis.heimdall.data.remote.models.push.PushMessage
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
@@ -22,11 +21,9 @@ import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.addHexPrefix
-import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ReviewTransactionViewModel @Inject constructor(
@@ -175,14 +172,15 @@ class ReviewTransactionViewModel @Inject constructor(
                         executionRepository.checkConfirmation(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, it.signature)
                             .map(signatureStore::add)
                             .flatMapObservable { Observable.empty<Result<ViewUpdate>>() }
+                            .onErrorResumeNext { e: Throwable -> Observable.just(ErrorResult(e)) }
                     is PushServiceRepository.TransactionResponse.Rejected ->
                         executionRepository.checkRejection(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, it.signature)
                             .filter { (sender) -> params.owners.contains(sender) }
-                            .map { DataResult(ViewUpdate.TransactionRejected) }
+                            .map<Result<ViewUpdate>> { DataResult(ViewUpdate.TransactionRejected) }
                             .toObservable()
+                            .onErrorResumeNext { e: Throwable -> Observable.just(ErrorResult(e)) }
                 }
             }
-            .onErrorResumeNext { e: Throwable -> Observable.just(ErrorResult(e)) }
 
     private fun transactionViewHolder(transactionData: TransactionData): Single<TransactionInfoViewHolder> =
         Single.fromCallable {

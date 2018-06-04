@@ -48,7 +48,6 @@ class CreateAssetTransferViewModelTest {
 
     private lateinit var viewModel: CreateAssetTransferViewModel
 
-
     @Before
     fun setUp() {
         viewModel = CreateAssetTransferViewModel(contextMock, relayRepositoryMock, tokenRepositoryMock)
@@ -136,7 +135,7 @@ class CreateAssetTransferViewModelTest {
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
-        // Estimate, balance too low
+        // Estimate
         val validInfo = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO,
             Wei.ether("23")
