@@ -136,8 +136,7 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
             safe
         ).forEach { disposables += it }
 
-        toolbarHelper.setupShadow(layout_create_asset_transfer_toolbar_shadow, layout_create_asset_transfer_title_content_scroll)
-            .forEach { disposables += it }
+        disposables += toolbarHelper.setupShadow(layout_create_asset_transfer_toolbar_shadow, layout_create_asset_transfer_title_content_scroll)
     }
 
     private fun applyUpdate(update: ViewUpdate) {
