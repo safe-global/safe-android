@@ -14,8 +14,8 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
-import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
@@ -163,7 +163,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
             loadInfo(safeAddress).firstOrError().map { it.owners },
             BiFunction<Solidity.Address, List<Solidity.Address>, Set<Solidity.Address>> { deviceAddress, owners -> (owners - deviceAddress).toSet() }
         )
-            .flatMapCompletable { pushServiceRepository.sendSafeCreationNotification(safeAddress, it) }
+            .flatMapCompletable { pushServiceRepository.propagateSafeCreation(safeAddress, it) }
             .onErrorComplete()
 
     private fun decodeCreationEventOrNull(event: TransactionReceipt.Event) =

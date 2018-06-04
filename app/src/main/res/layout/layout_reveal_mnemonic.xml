@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/layout_reveal_mnemonic_toolbar">
@@ -54,7 +54,7 @@
                     android:text="@string/show_security_phrase" />
 
             </LinearLayout>
-        </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/layout_reveal_mnemonic_toolbar"

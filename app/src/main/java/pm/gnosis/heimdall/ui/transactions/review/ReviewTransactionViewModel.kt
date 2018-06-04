@@ -3,7 +3,8 @@ package pm.gnosis.heimdall.ui.transactions.review
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import pm.gnosis.heimdall.data.repositories.SignaturePushRepository
+import pm.gnosis.heimdall.data.remote.models.push.PushMessage
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
@@ -20,8 +21,10 @@ import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.addHexPrefix
+import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.nullOnThrow
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -29,7 +32,7 @@ import javax.inject.Inject
 class ReviewTransactionViewModel @Inject constructor(
     private val addressHelper: AddressHelper,
     private val executionRepository: TransactionExecutionRepository,
-    private val signaturePushRepository: SignaturePushRepository,
+    private val signaturePushRepository: PushServiceRepository,
     private val signatureStore: SignatureStore,
     private val tokenRepository: TokenRepository
 ) : ReviewTransactionContract() {
@@ -94,27 +97,35 @@ class ReviewTransactionViewModel @Inject constructor(
         )
 
     private fun requestConfirmation(events: Events, params: TransactionExecutionRepository.ExecuteInformation) =
-        events.requestConfirmations
-            .startWith(Unit)
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .emitAndNext(
-                emit = { ViewUpdate.ConfirmationsRequested },
-                next = {
-                    // TODO: replace with extension signature logic
-                    Observable.timer(3, TimeUnit.SECONDS)
-                        .flatMapSingle {
-                            executionRepository.sign(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
-                        }
-                        .map {
-                            signaturePushRepository.receivedSignature(
-                                "/topics/respond_signature.${safe.asEthereumAddressString()}",
-                                it
+        if ((params.owners.size == 1 && params.isOwner))
+            Observable.empty<Result<ViewUpdate>>()
+        else
+            events.requestConfirmations
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .startWith(Unit)
+                .switchMapSingle {
+                    val targets = params.owners - params.sender
+                    executionRepository.calculateHash(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
+                        .flatMapCompletable {
+                            signaturePushRepository.requestConfirmations(
+                                it.toHexString().addHexPrefix(),
+                                safe,
+                                params.transaction,
+                                params.txGas,
+                                params.dataGas,
+                                params.gasPrice,
+                                targets.toSet()
                             )
+
                         }
-                        .flatMap { Observable.empty<ViewUpdate>() }
+                        .mapToResult()
                 }
-            )
-            .mapToResult()
+                .flatMap {
+                    when (it) {
+                        is DataResult -> Observable.just(DataResult(ViewUpdate.ConfirmationsRequested))
+                        is ErrorResult -> Observable.fromArray(DataResult(ViewUpdate.ConfirmationsError), ErrorResult<ViewUpdate>(it.error))
+                    }
+                }
 
     private fun observeConfirmationStore(events: Events, params: TransactionExecutionRepository.ExecuteInformation) =
         signatureStore.flatMapInfo(
@@ -157,12 +168,20 @@ class ReviewTransactionViewModel @Inject constructor(
             .mapToResult()
 
     private fun observeIncomingConfirmations(params: TransactionExecutionRepository.ExecuteInformation) =
-        signaturePushRepository.observe(safe)
-            .flatMapSingle {
-                executionRepository.checkSignature(safe, params.transaction, it, params.txGas, params.dataGas, params.gasPrice)
+        signaturePushRepository.observe(params.transactionHash)
+            .flatMap {
+                when (it) {
+                    is PushServiceRepository.TransactionResponse.Confirmed ->
+                        executionRepository.checkConfirmation(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, it.signature)
+                            .map(signatureStore::add)
+                            .flatMapObservable { Observable.empty<Result<ViewUpdate>>() }
+                    is PushServiceRepository.TransactionResponse.Rejected ->
+                        executionRepository.checkRejection(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, it.signature)
+                            .filter { (sender) -> params.owners.contains(sender) }
+                            .map { DataResult(ViewUpdate.TransactionRejected) }
+                            .toObservable()
+                }
             }
-            .map(signatureStore::add)
-            .flatMap { Observable.empty<Result<ViewUpdate>>() }
             .onErrorResumeNext { e: Throwable -> Observable.just(ErrorResult(e)) }
 
     private fun transactionViewHolder(transactionData: TransactionData): Single<TransactionInfoViewHolder> =

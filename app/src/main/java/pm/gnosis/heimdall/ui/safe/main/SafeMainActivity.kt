@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
@@ -138,17 +139,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
 
         layout_safe_main_credits.setOnClickListener {
-            startActivity(
-                ReviewTransactionActivity.createIntent(
-                    this,
-                    Solidity.Address("0x1f781ccc28a9d49217f709ca7f89a76e46f65ce9".hexAsBigInteger()),
-                    TransactionData.AssetTransfer(
-                        Solidity.Address(BigInteger.ZERO),
-                        Wei.ether("0.00001").value,
-                        Solidity.Address(BigInteger.valueOf(132365887148412254))
-                    )
-                )
-            )
+            startActivity(BuyCreditsActivity.createIntent(this))
             closeDrawer()
         }
 

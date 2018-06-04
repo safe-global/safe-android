@@ -15,6 +15,7 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_password_setup.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
@@ -24,8 +25,12 @@ import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
 
     override fun screenId() = ScreenId.PASSWORD_SETUP
 
@@ -77,6 +82,9 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
                 )
             )
         }
+
+        toolbarHelper.setupShadow(layout_password_setup_toolbar_shadow, layout_password_setup_content_scroll)
+            .forEach { disposables += it }
 
         enableNext(validationConditions.all { it.second })
     }

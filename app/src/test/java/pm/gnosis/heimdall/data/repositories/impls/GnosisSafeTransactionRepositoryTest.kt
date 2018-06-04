@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
@@ -42,17 +43,26 @@ class GnosisSafeTransactionRepositoryTest {
     lateinit var descriptionsDaoMock: DescriptionsDao
 
     @Mock
+    lateinit var pushServiceRepositoryMock: PushServiceRepository
+
+    @Mock
     lateinit var relayServiceApiMock: RelayServiceApi
 
     @Mock
     lateinit var appDbMock: ApplicationDb
 
-    private lateinit var repository: GnosisSafeTransactionRepository
+    private lateinit var repository: DefaultTransactionExecutionRepository
 
     @Before
     fun setUp() {
         given(appDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
-        repository = GnosisSafeTransactionRepository(appDbMock, accountRepositoryMock, ethereumRepositoryMock, relayServiceApiMock)
+        repository = DefaultTransactionExecutionRepository(
+            appDbMock,
+            accountRepositoryMock,
+            ethereumRepositoryMock,
+            pushServiceRepositoryMock,
+            relayServiceApiMock
+        )
     }
 
     private fun verifyHash(

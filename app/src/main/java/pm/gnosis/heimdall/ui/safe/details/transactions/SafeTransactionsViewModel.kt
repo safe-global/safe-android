@@ -9,7 +9,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
-import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
+import pm.gnosis.heimdall.data.repositories.impls.DefaultTransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
@@ -25,7 +25,7 @@ import javax.inject.Inject
 class SafeTransactionsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val safeRepository: GnosisSafeRepository,
-    private val safeTransactionsRepository: GnosisSafeTransactionRepository,
+    private val safeTransactionsRepository: DefaultTransactionExecutionRepository,
     private val tokenRepository: TokenRepository,
     private val transactionInfoRepository: TransactionInfoRepository
 ) : SafeTransactionsContract() {

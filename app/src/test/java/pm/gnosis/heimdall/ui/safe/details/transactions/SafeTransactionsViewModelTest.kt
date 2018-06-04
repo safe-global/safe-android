@@ -18,7 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
-import pm.gnosis.heimdall.data.repositories.impls.GnosisSafeTransactionRepository
+import pm.gnosis.heimdall.data.repositories.impls.DefaultTransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.model.Solidity
@@ -44,7 +44,7 @@ class SafeTransactionsViewModelTest {
     private lateinit var safeRepository: GnosisSafeRepository
 
     @Mock
-    private lateinit var safeTransactionRepository: GnosisSafeTransactionRepository
+    private lateinit var safeTransactionRepository: DefaultTransactionExecutionRepository
 
     @Mock
     private lateinit var detailsRepository: TransactionInfoRepository

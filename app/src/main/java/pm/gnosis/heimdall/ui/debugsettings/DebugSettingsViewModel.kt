@@ -4,8 +4,8 @@ import com.squareup.moshi.Moshi
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.heimdall.data.remote.PushServiceRepository
 import pm.gnosis.heimdall.data.remote.models.push.PushServiceTemporaryAuthorization
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
@@ -28,6 +28,6 @@ class DebugSettingsViewModel @Inject constructor(
             .subscribeOn(Schedulers.io())
 
     override fun sendTestSafeCreationPush(chromeExtensionAddress: String): Single<Result<Unit>> =
-        pushServiceRepository.sendSafeCreationNotification(Solidity.Address(BigInteger.ZERO), setOf(chromeExtensionAddress.asEthereumAddress()!!))
+        pushServiceRepository.propagateSafeCreation(Solidity.Address(BigInteger.ZERO), setOf(chromeExtensionAddress.asEthereumAddress()!!))
             .mapToResult()
 }

@@ -15,15 +15,12 @@ sealed class ServiceMessage(
         @Json(name = "to") val to: String,
         @Json(name = "value") val value: String,
         @Json(name = "data") val data: String,
-        @Json(name = "operation") val operation: Int,
+        @Json(name = "operation") val operation: String,
         @Json(name = "txGas") val txGas: String,
         @Json(name = "dataGas") val dataGas: String,
         @Json(name = "gasPrice") val gasPrice: String,
         @Json(name = "gasToken") val gasToken: String,
-        @Json(name = "nonce") val nonce: String,
-        @Json(name = "r") val r: String,
-        @Json(name = "s") val s: String,
-        @Json(name = "v") val v: Int
+        @Json(name = "nonce") val nonce: String
     ): ServiceMessage("requestConfirmation")
 
     data class SendTransactionHash(

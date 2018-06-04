@@ -44,7 +44,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_arrow_back_24dp" />
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/layout_create_asset_transfer_title_content_scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/layout_create_asset_transfer_continue_button"
@@ -335,14 +336,14 @@
 
 
         </android.support.constraint.ConstraintLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <View
         android:id="@+id/layout_create_asset_transfer_toolbar_shadow"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_shadow_size"
         android:background="@drawable/toolbar_dropshadow"
-        android:visibility="gone"
+        android:alpha="0"
         app:layout_constraintTop_toBottomOf="@id/layout_create_asset_transfer_title" />
 
     <TextView

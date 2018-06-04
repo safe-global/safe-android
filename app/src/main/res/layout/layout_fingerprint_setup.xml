@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_fingerprint_setup_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,10 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/layout_fingerprint_setup_content_scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/layout_fingerprint_setup_title">
+            android:layout_above="@+id/layout_fingerprint_setup_bottom_bar"
+            android:layout_below="@+id/layout_fingerprint_setup_title"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -52,7 +57,7 @@
 
             </LinearLayout>
 
-        </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
 
         <RelativeLayout
             android:id="@+id/layout_fingerprint_setup_bottom_bar"
@@ -100,6 +105,15 @@
             android:text="@string/setup_fingerprint"
             android:textColor="@color/dark_slate_blue"
             android:textSize="16sp" />
+
+        <View
+            android:id="@+id/layout_fingerprint_setup_toolbar_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_shadow_size"
+            android:layout_below="@+id/layout_fingerprint_setup_title"
+            android:alpha="0"
+            android:background="@drawable/toolbar_dropshadow"
+            tools:alpha="1" />
 
     </RelativeLayout>
 

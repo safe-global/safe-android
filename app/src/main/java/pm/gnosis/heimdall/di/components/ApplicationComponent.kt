@@ -11,6 +11,7 @@ import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.di.modules.InterceptorsModule
 import pm.gnosis.heimdall.di.modules.ViewModelFactoryModule
 import pm.gnosis.heimdall.helpers.AddressHelper
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.services.HeimdallFirebaseService
@@ -44,8 +45,6 @@ interface ApplicationComponent {
     fun addressBookRepository(): AddressBookRepository
     fun billingRepository(): BillingRepository
     fun safeRepository(): GnosisSafeRepository
-    fun safeModulesRepository(): GnosisSafeModulesRepository
-    fun signaturePushRepository(): SignaturePushRepository
     fun tickerRepository(): TickerRepository
     fun tokenRepository(): TokenRepository
     fun transactionInfoRepository(): TransactionInfoRepository
@@ -55,6 +54,7 @@ interface ApplicationComponent {
     fun encryptionManager(): EncryptionManager
     fun qrCodeGenerator(): QrCodeGenerator
     fun addressHelper(): AddressHelper
+    fun toolbarHelper(): ToolbarHelper
 
     // Base injects
     fun inject(activity: BaseActivity)

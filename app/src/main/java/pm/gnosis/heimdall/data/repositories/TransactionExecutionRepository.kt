@@ -17,7 +17,8 @@ interface TransactionExecutionRepository {
     ): Single<ByteArray>
 
     fun loadExecuteInformation(safeAddress: Solidity.Address, transaction: SafeTransaction): Single<ExecuteInformation>
-    fun sign(
+
+    fun signConfirmation(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
         txGas: BigInteger,
@@ -25,13 +26,30 @@ interface TransactionExecutionRepository {
         gasPrice: BigInteger
     ): Single<Signature>
 
-    fun checkSignature(
+    fun signRejection(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
-        signature: Signature,
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger
+    ): Single<Signature>
+
+    fun checkConfirmation(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger,
+        signature: Signature
+    ): Single<Pair<Solidity.Address, Signature>>
+
+    fun checkRejection(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger,
+        signature: Signature
     ): Single<Pair<Solidity.Address, Signature>>
 
     fun observePublishStatus(id: String): Observable<PublishStatus>
@@ -73,4 +91,15 @@ interface TransactionExecutionRepository {
         CALL,
         DELEGATE_CALL
     }
+
+    companion object {
+        const val OPERATION_INT_CALL = 0
+        const val OPERATION_INT_DELEGATE_CALL = 1
+    }
 }
+
+fun TransactionExecutionRepository.Operation.toInt() =
+    when (this) {
+        TransactionExecutionRepository.Operation.CALL -> TransactionExecutionRepository.OPERATION_INT_CALL
+        TransactionExecutionRepository.Operation.DELEGATE_CALL -> TransactionExecutionRepository.OPERATION_INT_DELEGATE_CALL
+    }
