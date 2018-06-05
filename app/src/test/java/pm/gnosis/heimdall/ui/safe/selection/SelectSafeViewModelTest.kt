@@ -164,9 +164,7 @@ class SelectSafeViewModelTest {
         private val TEST_TRANSACTION = SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionExecutionRepository.Operation.CALL)
         private val TEST_DATA = mapOf(
             TransactionData.Generic::class to TransactionData.Generic(TEST_SAFE, BigInteger.ONE, null),
-            TransactionData.AssetTransfer::class to TransactionData.AssetTransfer(TEST_SAFE, BigInteger.ONE, Solidity.Address(BigInteger.TEN)),
-            TransactionData.RecoverSafe::class to TransactionData.RecoverSafe(TEST_SAFE, Solidity.Address(BigInteger.TEN)),
-            TransactionData.ReplaceRecoveryPhrase::class to TransactionData.ReplaceRecoveryPhrase(TEST_SAFE, Solidity.Address(BigInteger.TEN))
+            TransactionData.AssetTransfer::class to TransactionData.AssetTransfer(TEST_SAFE, BigInteger.ONE, Solidity.Address(BigInteger.TEN))
         )
     }
 }

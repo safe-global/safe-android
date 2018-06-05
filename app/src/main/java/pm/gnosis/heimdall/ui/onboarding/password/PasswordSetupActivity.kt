@@ -83,8 +83,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
             )
         }
 
-        toolbarHelper.setupShadow(layout_password_setup_toolbar_shadow, layout_password_setup_content_scroll)
-            .forEach { disposables += it }
+        disposables += toolbarHelper.setupShadow(layout_password_setup_toolbar_shadow, layout_password_setup_content_scroll)
 
         enableNext(validationConditions.all { it.second })
     }

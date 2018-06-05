@@ -75,8 +75,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onIsSamePassword, onError = Timber::e)
 
-        toolbarHelper.setupShadow(layout_password_confirm_toolbar_shadow, layout_password_confirm_content_scroll)
-            .forEach { disposables += it }
+        disposables += toolbarHelper.setupShadow(layout_password_confirm_toolbar_shadow, layout_password_confirm_content_scroll)
     }
 
     private fun onIsSamePassword(isSamePassword: Boolean) {

@@ -39,8 +39,7 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
                 onError = Timber::e
             )
 
-        toolbarHelper.setupShadow(layout_fingerprint_setup_toolbar_shadow, layout_fingerprint_setup_content_scroll)
-            .forEach { disposables += it }
+        disposables += toolbarHelper.setupShadow(layout_fingerprint_setup_toolbar_shadow, layout_fingerprint_setup_content_scroll)
     }
 
     private fun onFingerprintResult(isSuccessful: Boolean) {

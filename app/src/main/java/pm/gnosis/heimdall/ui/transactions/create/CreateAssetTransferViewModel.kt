@@ -40,42 +40,49 @@ class CreateAssetTransferViewModel @Inject constructor(
         tokenAddress: Solidity.Address,
         reviewEvents: Observable<Unit>
     ) = ObservableTransformer<Input, Result<ViewUpdate>> { input ->
-        input.publish {
-            // We parse the input and load the token information
-            Observable.combineLatest(
-                it.flatMap(::parseInput),
-                loadTokenInfo(safe, tokenAddress),
-                BiFunction { checkedInput: Pair<Solidity.Address?, BigDecimal?>, token: Optional<ERC20TokenWithBalance> ->
-                    checkedInput to token.toNullable()
-                }
+        loadTokenInfo(safe, tokenAddress).publish { tokenInfo ->
+            // Publish token info if available and parse input with token info for next steps
+            Observable.merge(
+                tokenInfo.flatMap {
+                    it.toNullable()?.let {
+                        Observable.just(DataResult(ViewUpdate.TokenInfo(it)))
+                    } ?: Observable.empty<Result<ViewUpdate>>()
+                },
+                handleInput(safe, reviewEvents, input, tokenInfo)
             )
-                .switchMap<Result<ViewUpdate>> { (input, token) ->
-                    val updates = mutableListOf<Observable<Result<ViewUpdate>>>()
-                    val (address, value) = input
-                    token?.let {
-                        updates += Observable.just<Result<ViewUpdate>>(
-                            DataResult(
-                                ViewUpdate.TokenInfo(it)
-                            )
-                        )
-                    }
-                    if (address == null || value == null) {
-                        updates += Observable.just<Result<ViewUpdate>>(
-                            DataResult(
-                                ViewUpdate.InvalidInput(
-                                    value == null,
-                                    address == null
-                                )
-                            )
-                        )
-                    } else if (token != null) {
-                        updates += setupTokenCheck(safe, token, address, value, reviewEvents)
-                    }
-                    Observable.concat(updates)
-                }
         }
-
     }
+
+    private fun handleInput(
+        safe: Solidity.Address,
+        reviewEvents: Observable<Unit>,
+        input: Observable<Input>,
+        tokenInfo: Observable<Optional<ERC20TokenWithBalance>>
+    ) =
+        Observable.combineLatest(
+            input.flatMap(::parseInput),
+            tokenInfo,
+            BiFunction { checkedInput: Pair<Solidity.Address?, BigDecimal?>, token: Optional<ERC20TokenWithBalance> ->
+                checkedInput to token.toNullable()
+            }
+        )
+            .switchMap<Result<ViewUpdate>> { (input, token) ->
+                val updates = mutableListOf<Observable<Result<ViewUpdate>>>()
+                val (address, value) = input
+                if (address == null || value == null) {
+                    updates += Observable.just<Result<ViewUpdate>>(
+                        DataResult(
+                            ViewUpdate.InvalidInput(
+                                value == null,
+                                address == null
+                            )
+                        )
+                    )
+                } else if (token != null) {
+                    updates += setupTokenCheck(safe, token, address, value, reviewEvents)
+                }
+                Observable.concat(updates)
+            }
 
     private fun parseInput(input: Input): Observable<Pair<Solidity.Address?, BigDecimal?>> =
         Observable.fromCallable {

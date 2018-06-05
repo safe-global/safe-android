@@ -13,16 +13,14 @@ class ToolbarHelper @Inject constructor() {
     fun setupShadow(
         toolbarShadow: View,
         scrollView: NestedScrollView
-    ): List<Disposable> {
+    ): Disposable {
         toolbarShadow.setRelativeScrollAlpha(scrollView.scrollY)
-        return listOf(
-            scrollView.scrollChangeEvents()
+        return scrollView.scrollChangeEvents()
                 .subscribeBy(
                     onNext = {
                         toolbarShadow.setRelativeScrollAlpha(it.scrollY())
                     }
                 )
-        )
     }
 
     private fun View.setRelativeScrollAlpha(scrollY: Int, shadowSize: Float = height.toFloat()) {

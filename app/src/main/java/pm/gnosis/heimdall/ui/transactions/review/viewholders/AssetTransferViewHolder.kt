@@ -56,7 +56,6 @@ class AssetTransferViewHolder(
     }
 
     private fun setupTokenInfo() {
-        view?.layout_asset_transfer_info_value?.text = "~ $"
         disposables += loadTokenInfo()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
