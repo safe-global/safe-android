@@ -16,7 +16,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.transactions.builder.AssetTransferTransactionBuilder
-import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei

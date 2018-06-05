@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.review
+package pm.gnosis.heimdall.ui.transactions.view.review
 
 import io.reactivex.Completable
 import io.reactivex.Single

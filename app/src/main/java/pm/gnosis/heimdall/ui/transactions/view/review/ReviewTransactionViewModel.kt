@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.review
+package pm.gnosis.heimdall.ui.transactions.view.review
 
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -10,8 +10,9 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.SignatureStore
-import pm.gnosis.heimdall.ui.transactions.review.viewholders.AssetTransferViewHolder
-import pm.gnosis.heimdall.ui.transactions.review.viewholders.GenericTransactionViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei

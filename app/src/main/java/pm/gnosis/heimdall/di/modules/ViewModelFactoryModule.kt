@@ -61,8 +61,8 @@ import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoViewModel
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferViewModel
-import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionContract
-import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionViewModel
+import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionContract
+import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionViewModel
 import javax.inject.Singleton
 
 @Module

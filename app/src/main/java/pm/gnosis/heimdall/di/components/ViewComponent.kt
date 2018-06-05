@@ -41,7 +41,7 @@ import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
-import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 
 @ForView
 @Component(

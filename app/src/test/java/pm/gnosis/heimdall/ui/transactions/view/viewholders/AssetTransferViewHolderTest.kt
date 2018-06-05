@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.review.viewholders
+package pm.gnosis.heimdall.ui.transactions.view.viewholders
 
 import android.content.Context
 import android.view.LayoutInflater

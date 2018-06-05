@@ -37,7 +37,7 @@ import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
-import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionContract
+import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionContract
 
 @Module
 class ViewModule(val context: Context) {

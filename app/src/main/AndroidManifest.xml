@@ -129,7 +129,7 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.transactions.review.ReviewTransactionActivity"
+            android:name=".ui.transactions.view.review.ReviewTransactionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
