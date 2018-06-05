@@ -21,6 +21,9 @@ import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
+import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events
+import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.ViewUpdate
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
@@ -95,7 +98,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                 UnlockDialog().show(supportFragmentManager, null)
             })
 
-        val events = ReviewTransactionContract.Events(retryEvents, requestConfirmationEvents, submitEvents)
+        val events = Events(retryEvents, requestConfirmationEvents, submitEvents)
         disposables += viewModel.observe(events, transactionData)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::applyUpdate, onError = this::dataError)
@@ -104,25 +107,25 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             .subscribeBy { onBackPressed() }
     }
 
-    private fun applyUpdate(update: ReviewTransactionContract.ViewUpdate) {
+    private fun applyUpdate(update: ViewUpdate) {
         when (update) {
-            is ReviewTransactionContract.ViewUpdate.TransactionInfo ->
+            is ViewUpdate.TransactionInfo ->
                 setupViewHolder(update.viewHolder)
-            is ReviewTransactionContract.ViewUpdate.Estimate -> {
+            is ViewUpdate.Estimate -> {
                 layout_review_transaction_data_balance_value.text = getString(R.string.x_ether, update.balance.toEther().stringWithNoTrailingZeroes())
                 layout_review_transaction_data_fees_value.text =
                         "- ${getString(R.string.x_ether, update.fees.toEther().stringWithNoTrailingZeroes())}"
                 layout_review_transaction_confirmations_group.visible(true)
             }
-            is ReviewTransactionContract.ViewUpdate.EstimateError -> {
+            is ViewUpdate.EstimateError -> {
                 layout_review_transaction_confirmation_progress.visible(false)
                 layout_review_transaction_retry_button.visible(true)
             }
-            is ReviewTransactionContract.ViewUpdate.Confirmations -> {
+            is ViewUpdate.Confirmations -> {
                 toggleReadyState(update.isReady)
                 layout_review_transaction_confirmations_group.visible(!update.isReady)
             }
-            is ReviewTransactionContract.ViewUpdate.ConfirmationsRequested -> {
+            is ViewUpdate.ConfirmationsRequested -> {
                 disposables += Observable.interval(1, TimeUnit.SECONDS).take(30)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onNext = {
@@ -133,14 +136,14 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                         layout_review_transaction_confirmations_timer.text = null
                     })
             }
-            is ReviewTransactionContract.ViewUpdate.ConfirmationsError -> {
+            is ViewUpdate.ConfirmationsError -> {
                 layout_review_transaction_request_button.isEnabled = true
                 layout_review_transaction_confirmations_timer.text = null
             }
-            ReviewTransactionContract.ViewUpdate.TransactionRejected -> {
+            ViewUpdate.TransactionRejected -> {
                 toggleRejectionState(true)
             }
-            is ReviewTransactionContract.ViewUpdate.TransactionSubmitted -> {
+            is ViewUpdate.TransactionSubmitted -> {
                 if (update.success) {
                     startActivity(
                         SafeMainActivity.createIntent(
