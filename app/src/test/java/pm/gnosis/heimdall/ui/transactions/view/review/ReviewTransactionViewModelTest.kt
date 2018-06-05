@@ -85,14 +85,10 @@ class ReviewTransactionViewModelTest {
 
     companion object {
         private val TEST_SAFE = "0xA7e15e2e76Ab469F8681b576cFF168F37Aa246EC".asEthereumAddress()!!
-        private val TEST_ADDRESS = "0xc257274276a4e539741ca11b590b9447b26a8051".asEthereumAddress()!!
-        private val TEST_ETHER_TOKEN = Solidity.Address(BigInteger.ZERO)
-        private val TEST_ETH_AMOUNT = Wei.ether("23").value
         private const val TEST_TRANSACTION_HASH = "SomeHash"
         private val TEST_TRANSACTION =
             SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)
         private val TEST_SIGNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13)).map { Solidity.Address(it) }
         private val TEST_OWNERS = TEST_SIGNERS + Solidity.Address(BigInteger.valueOf(5))
-        private val TEST_SIGNATURE = Signature(BigInteger.TEN, BigInteger.TEN, 27)
     }
 }

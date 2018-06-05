@@ -3,11 +3,8 @@ package pm.gnosis.heimdall.ui.transactions.view.review
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.PorterDuff
 import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -24,18 +21,20 @@ import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.ViewUpdate
+import pm.gnosis.heimdall.ui.transactions.view.helpers.TransactionSubmitInfoViewHelper
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>(), UnlockDialog.UnlockCallback {
+
+    @Inject
+    lateinit var infoViewHelper: TransactionSubmitInfoViewHelper
 
     private var transactionInfoViewHolder: TransactionInfoViewHolder? = null
 
@@ -60,6 +59,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
         }
 
         viewModel.setup(safeAddress)
+        infoViewHelper.bind(layout_review_transaction_transaction_info)
     }
 
     override fun onStart() {
@@ -70,23 +70,9 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             return
         }
 
-        toggleRejectionState(false)
         toggleReadyState(false)
-        layout_review_transaction_confirmations_group.visible(false)
-        val retryEvents = layout_review_transaction_retry_button.clicks()
-            .doOnNext {
-                layout_review_transaction_confirmation_progress.visible(true)
-                layout_review_transaction_retry_button.visible(false)
-            }
-
-        layout_review_transaction_request_button.isEnabled = false
-        layout_review_transaction_confirmations_timer.text = getString(R.string.request_confirmation_wait_x_s, 30.toString())
-        val requestConfirmationEvents = layout_review_transaction_request_button.clicks()
-            .doOnNext {
-                toggleRejectionState(false)
-                layout_review_transaction_request_button.isEnabled = false
-                layout_review_transaction_confirmations_timer.text = getString(R.string.request_confirmation_wait_x_s, 30.toString())
-            }
+        infoViewHelper.toggleRejectionState(false)
+        infoViewHelper.resetConfirmationViews()
 
         val submitEvents = unlockStatusSubject
             .doOnNext {
@@ -98,7 +84,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                 UnlockDialog().show(supportFragmentManager, null)
             })
 
-        val events = Events(retryEvents, requestConfirmationEvents, submitEvents)
+        val events = Events(infoViewHelper.retryEvents(), infoViewHelper.requestConfirmationEvents(), submitEvents)
         disposables += viewModel.observe(events, transactionData)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::applyUpdate, onError = this::dataError)
@@ -111,39 +97,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
         when (update) {
             is ViewUpdate.TransactionInfo ->
                 setupViewHolder(update.viewHolder)
-            is ViewUpdate.Estimate -> {
-                layout_review_transaction_data_balance_value.text = getString(R.string.x_ether, update.balance.toEther().stringWithNoTrailingZeroes())
-                layout_review_transaction_data_fees_value.text =
-                        "- ${getString(R.string.x_ether, update.fees.toEther().stringWithNoTrailingZeroes())}"
-                layout_review_transaction_confirmations_group.visible(true)
-            }
-            is ViewUpdate.EstimateError -> {
-                layout_review_transaction_confirmation_progress.visible(false)
-                layout_review_transaction_retry_button.visible(true)
-            }
-            is ViewUpdate.Confirmations -> {
-                toggleReadyState(update.isReady)
-                layout_review_transaction_confirmations_group.visible(!update.isReady)
-            }
-            is ViewUpdate.ConfirmationsRequested -> {
-                disposables += Observable.interval(1, TimeUnit.SECONDS).take(30)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = {
-                        layout_review_transaction_confirmations_timer.text =
-                                getString(R.string.request_confirmation_wait_x_s, (30 - it - 1).toString().padStart(2, '0'))
-                    }, onComplete = {
-                        layout_review_transaction_request_button.isEnabled = true
-                        layout_review_transaction_confirmations_timer.text = null
-                    })
-            }
-            is ViewUpdate.ConfirmationsError -> {
-                layout_review_transaction_request_button.isEnabled = true
-                layout_review_transaction_confirmations_timer.text = null
-            }
-            ViewUpdate.TransactionRejected -> {
-                toggleRejectionState(true)
-            }
-            is ViewUpdate.TransactionSubmitted -> {
+            is SubmitTransactionHelper.ViewUpdate.TransactionSubmitted -> {
                 if (update.success) {
                     startActivity(
                         SafeMainActivity.createIntent(
@@ -156,40 +110,14 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                     toggleReadyState(true)
                 }
             }
+            else ->
+                infoViewHelper.applyUpdate(update)?.let { disposables += it }
         }
-    }
-
-    private fun toggleRejectionState(rejected: Boolean) {
-        layout_review_transaction_confirmation_progress.apply {
-            isIndeterminate = !rejected
-            max = 100
-            progress = 100
-        }
-        layout_review_transaction_confirmation_progress.progressTintList =
-                ColorStateList.valueOf(getColorCompat( if (rejected) R.color.tomato_15 else R.color.azure ))
-        layout_review_transaction_confirmation_progress.progressTintMode = PorterDuff.Mode.SRC_IN
-        layout_review_transaction_confirmations_image.setImageResource(
-            if (rejected) R.drawable.ic_rejected_extension else R.drawable.ic_confirmations_waiting
-        )
-        layout_review_transaction_confirmations_info.setTextColor(
-            getColorCompat(if (rejected) R.color.tomato else R.color.dark_slate_blue)
-        )
-        layout_review_transaction_confirmations_info.text =
-                getString(if (rejected) R.string.rejected_by_extension else R.string.confirm_with_extension)
     }
 
     private fun toggleReadyState(isReady: Boolean, inProgressMessage: Int = R.string.awaiting_confirmations) {
-        layout_review_transaction_confirmation_status.text = getString(
-            if (isReady) R.string.confirmations_ready
-            else inProgressMessage
-        )
+        infoViewHelper.toggleReadyState(true, inProgressMessage)
         layout_review_transaction_submit_button.visible(isReady)
-        layout_review_transaction_confirmation_progress.apply {
-            isIndeterminate = !isReady
-            max = 100
-            progress = 100
-        }
-
     }
 
     private fun setupViewHolder(viewHolder: TransactionInfoViewHolder) {
@@ -203,10 +131,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
 
         transactionInfoViewHolder = viewHolder
 
-        // Remove previous views (normally the progress bar)
-        layout_review_transaction_data_container.removeAllViews()
-        // Add view holder views
-        viewHolder.inflate(layoutInflater, layout_review_transaction_data_container)
+        infoViewHelper.setupViewHolder(layoutInflater, viewHolder)
 
         // Register new view holder
         lifecycle.addObserver(viewHolder)
@@ -214,7 +139,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
 
     private fun dataError(throwable: Throwable) {
         Timber.e(throwable)
-        errorSnackbar(layout_review_transaction_data_container, throwable)
+        errorSnackbar(layout_review_transaction_transaction_info, throwable)
     }
 
     companion object {
