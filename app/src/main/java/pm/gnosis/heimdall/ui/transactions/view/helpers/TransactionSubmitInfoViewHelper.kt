@@ -58,10 +58,11 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
             isIndeterminate = !rejected
             max = 100
             progress = 100
+            progressTintList =
+                    ColorStateList.valueOf(context.getColorCompat(if (rejected) R.color.tomato_15 else R.color.azure))
+            progressTintMode = PorterDuff.Mode.SRC_IN
         }
-        view.include_transaction_submit_info_confirmation_progress.progressTintList =
-                ColorStateList.valueOf(context.getColorCompat(if (rejected) R.color.tomato_15 else R.color.azure))
-        view.include_transaction_submit_info_confirmation_progress.progressTintMode = PorterDuff.Mode.SRC_IN
+
         view.include_transaction_submit_info_confirmations_image.setImageResource(
             if (rejected) R.drawable.ic_rejected_extension else R.drawable.ic_confirmations_waiting
         )
