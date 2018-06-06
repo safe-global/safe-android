@@ -54,6 +54,37 @@
         app:layout_constraintBottom_toTopOf="@id/layout_confirm_transaction_confirm_button"
         app:layout_constraintTop_toBottomOf="@id/layout_confirm_transaction_toolbar_shadow" />
 
+    <TextView
+        android:id="@+id/layout_confirm_transaction_loading_error_message"
+        style="@style/SpacedCapsText"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center_horizontal"
+        android:text="@string/error_loading_transaction"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_confirm_transaction_title" />
+
+    <View
+        android:id="@+id/layout_confirm_transaction_loading_error_indicator"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:layout_margin="16dp"
+        android:background="@color/tomato_15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_confirm_transaction_loading_error_message" />
+
+    <android.support.constraint.Group
+        android:id="@+id/layout_confirm_transaction_loading_error_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="layout_confirm_transaction_loading_error_message,layout_confirm_transaction_loading_error_indicator"
+        tools:visibility="visible" />
+
     <View
         android:id="@+id/layout_confirm_transaction_toolbar_shadow"
         android:layout_width="match_parent"

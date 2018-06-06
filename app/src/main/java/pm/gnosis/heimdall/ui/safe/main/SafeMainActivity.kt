@@ -151,7 +151,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     value = Wei(BigInteger.valueOf(10000000000000000)),
                     nonce = BigInteger.ONE
                 ),
-                TransactionExecutionRepository.Operation.CALL
+                TransactionExecutionRepository.Operation.DELEGATE_CALL
             )
             startActivity(
                 ConfirmTransactionActivity.createIntent(

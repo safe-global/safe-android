@@ -19,7 +19,7 @@ interface TransactionInfoRepository {
     fun loadTransactionInfo(id: String): Single<TransactionInfo>
 }
 
-class RestrictedTransactionException(@StringRes msgId: Int): IllegalArgumentException()
+class RestrictedTransactionException(@StringRes val messageId: Int): IllegalArgumentException()
 
 data class TransactionInfo(val id: String, val safe: Solidity.Address, val data: TransactionData, val timestamp: Long)
 

@@ -404,4 +404,5 @@
     <string name="restricted_transaction_delegatecall">Delegate calls are not allowed</string>
     <string name="restricted_transaction_modify_owners">It is not allowed to modify the owners of the Safe</string>
     <string name="restricted_transaction_modify_modules">It is not allowed to modify the modules of the Safe</string>
+    <string name="error_loading_transaction">Error loading transaction</string>
 </resources>
