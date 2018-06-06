@@ -21,6 +21,8 @@ import javax.inject.Inject
 
 class TransactionSubmitInfoViewHelper @Inject constructor() {
 
+    var onToggleReadyState: ((Boolean) -> Unit)? = null
+
     private lateinit var view: View
     private lateinit var context: Context
 
@@ -80,7 +82,7 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
             max = 100
             progress = 100
         }
-
+        onToggleReadyState?.invoke(isReady)
     }
 
     fun setupViewHolder(layoutInflater: LayoutInflater, viewHolder: TransactionInfoViewHolder) {

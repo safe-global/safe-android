@@ -46,7 +46,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
 
     override fun inject(component: ViewComponent) = component.inject(this)
 
-    override fun onUnlockSuccess() {
+    override fun onUnlockSuccess(requestCode: Int) {
         unlockStatusSubject.onNext(Unit)
     }
 
@@ -70,18 +70,19 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             return
         }
 
-        toggleReadyState(false)
+        infoViewHelper.onToggleReadyState = this::toggleReadyState
         infoViewHelper.toggleRejectionState(false)
         infoViewHelper.resetConfirmationViews()
+        infoViewHelper.toggleReadyState(false)
 
         val submitEvents = unlockStatusSubject
             .doOnNext {
-                toggleReadyState(false, R.string.submitting_transaction)
+                infoViewHelper.toggleReadyState(false, R.string.submitting_transaction)
             }
 
         disposables += layout_review_transaction_submit_button.clicks()
             .subscribeBy(onNext = {
-                UnlockDialog().show(supportFragmentManager, null)
+                UnlockDialog.create().show(supportFragmentManager, null)
             })
 
         val events = Events(infoViewHelper.retryEvents(), infoViewHelper.requestConfirmationEvents(), submitEvents)
@@ -107,7 +108,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                         )
                     )
                 } else {
-                    toggleReadyState(true)
+                    infoViewHelper.toggleReadyState(true)
                 }
             }
             else ->
@@ -115,8 +116,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
         }
     }
 
-    private fun toggleReadyState(isReady: Boolean, inProgressMessage: Int = R.string.awaiting_confirmations) {
-        infoViewHelper.toggleReadyState(true, inProgressMessage)
+    private fun toggleReadyState(isReady: Boolean) {
         layout_review_transaction_submit_button.visible(isReady)
     }
 

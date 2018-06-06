@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
-import android.content.Intent
 import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.moshi.Moshi
 import io.reactivex.*
@@ -15,11 +14,11 @@ import pm.gnosis.heimdall.data.remote.models.push.*
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository.TransactionResponse
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
+import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -103,6 +102,27 @@ class DefaultPushServiceRepository @Inject constructor(
                 sendNotification(it, targets)
             }
 
+    override fun propagateSubmittedTransaction(hash: String, chainHash: String, targets: Set<Solidity.Address>): Completable =
+        Single.fromCallable { ServiceMessage.SendTransactionHash(hash, chainHash) }
+            .subscribeOn(Schedulers.io())
+            .flatMapCompletable {
+                sendNotification(it, targets)
+            }
+
+    override fun propagateTransactionRejected(hash: String, signature: Signature, targets: Set<Solidity.Address>): Completable =
+        Single.fromCallable {
+            ServiceMessage.RejectTransaction(
+                hash,
+                signature.r.asDecimalString(),
+                signature.s.asDecimalString(),
+                signature.v.toInt().toString()
+            )
+        }
+            .subscribeOn(Schedulers.io())
+            .flatMapCompletable {
+                sendNotification(it, targets)
+            }
+
     override fun requestConfirmations(
         hash: String,
         safeAddress: Solidity.Address,
@@ -175,21 +195,26 @@ class DefaultPushServiceRepository @Inject constructor(
     }
 
     private fun showSendTransactionNotification(pushMessage: PushMessage.SendTransaction) {
-        val transaction = Transaction(
-            address = pushMessage.to.asEthereumAddress()!!,
-            value = pushMessage.value.decimalAsBigIntegerOrNull()?.let { Wei(it) },
-            data = pushMessage.data,
-            nonce = pushMessage.nonce.decimalAsBigIntegerOrNull()
-        )
-        val safeTransaction = SafeTransaction(transaction, TransactionExecutionRepository.Operation.values()[pushMessage.operation.toInt()])
-        // TODO: create confirm activity
-        val intent = Intent()
-        notificationManager.show(
-            pushMessage.hash.hashCode(),
-            context.getString(R.string.sign_transaction_request_title),
-            context.getString(R.string.sign_transaction_request_message),
-            intent
-        )
+        pushMessage.apply {
+            val transaction = Transaction(
+                address = to.asEthereumAddress()!!,
+                value = value.decimalAsBigIntegerOrNull()?.let { Wei(it) },
+                data = data,
+                nonce = nonce.decimalAsBigIntegerOrNull()
+            )
+            val safeTransaction = SafeTransaction(transaction, TransactionExecutionRepository.Operation.values()[operation.toInt()])
+            val signature = Signature(r.decimalAsBigInteger(), s.decimalAsBigInteger(), v.toInt().toByte())
+            val intent = ConfirmTransactionActivity.createIntent(
+                context, signature, safe.asEthereumAddress()!!, safeTransaction, hash,
+                dataGas.decimalAsBigInteger(), txGas.decimalAsBigInteger(), gasToken.asEthereumAddress()!!, gasPrice.decimalAsBigInteger()
+            )
+            notificationManager.show(
+                hash.hashCode(),
+                context.getString(R.string.sign_transaction_request_title),
+                context.getString(R.string.sign_transaction_request_message),
+                intent
+            )
+        }
     }
 
     override fun calculateRejectionHash(transactionHash: ByteArray): Single<ByteArray> =

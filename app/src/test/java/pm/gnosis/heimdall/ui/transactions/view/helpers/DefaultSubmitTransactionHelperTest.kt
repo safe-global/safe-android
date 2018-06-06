@@ -4,19 +4,19 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito
+import org.mockito.ArgumentMatchers.*
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.SignatureStore
-import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
 import pm.gnosis.model.Solidity
@@ -73,13 +73,15 @@ class DefaultSubmitTransactionHelperTest {
     private fun testFlow(data: TransactionData, viewHolderCheck: ((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)) {
         val error = TimeoutException()
         val estimationSingleFactory = TestSingleFactory<TransactionExecutionRepository.ExecuteInformation>()
-        BDDMockito.given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(estimationSingleFactory.get())
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(estimationSingleFactory.get())
         val signatureSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
-        BDDMockito.given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
+        given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
+        val signatureSingleFactory = TestSingleFactory<Map<Solidity.Address, Signature>>()
+        given(signatureStore.load()).willReturn(signatureSingleFactory.get())
         val pushMessageSubject = PublishSubject.create<PushServiceRepository.TransactionResponse>()
-        BDDMockito.given(signaturePushRepository.observe(BDDMockito.anyString())).willReturn(pushMessageSubject)
+        given(signaturePushRepository.observe(anyString())).willReturn(pushMessageSubject)
         val hashSingleFactory = TestSingleFactory<ByteArray>()
-        BDDMockito.given(
+        given(
             relayRepositoryMock.calculateHash(
                 MockUtils.any(),
                 MockUtils.any(),
@@ -119,54 +121,11 @@ class DefaultSubmitTransactionHelperTest {
             TEST_OWNERS, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO,
             Wei.ether("23")
         )
-        BDDMockito.given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
         retryEvents.onNext(Unit)
 
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(Wei(BigInteger.valueOf(32010)), Wei.ether("23"))) }
-        testObserver.assertUpdates(updates)
-
-        /*
-         * Test error requesting confirmation
-         */
-        BDDMockito.given(
-            signaturePushRepository.requestConfirmations(
-                BDDMockito.anyString(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                BDDMockito.anySet()
-            )
-        )
-            .willReturn(Completable.error(error))
-        hashSingleFactory.success("7e4cb4cd190aedb510e8c4d366a87a8ee948921796ea7d720c74db3fc4be4db3".hexToByteArray())
-        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.ConfirmationsError) }
-        updates += { it == ErrorResult<SubmitTransactionHelper.ViewUpdate>(error) }
-        testObserver.assertUpdates(updates)
-
-        /*
-         * Test success requesting confirmation
-         */
-        // No new events before actual request
-        requestEvents.onNext(Unit)
-        testObserver.assertUpdates(updates)
-
-        BDDMockito.given(
-            signaturePushRepository.requestConfirmations(
-                BDDMockito.anyString(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                BDDMockito.anySet()
-            )
-        )
-            .willReturn(Completable.complete())
-        hashSingleFactory.success("7e4cb4cd190aedb510e8c4d366a87a8ee948921796ea7d720c74db3fc4be4db3".hexToByteArray())
-        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.ConfirmationsRequested) }
         testObserver.assertUpdates(updates)
 
         /*
@@ -180,47 +139,119 @@ class DefaultSubmitTransactionHelperTest {
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(true)) }
         testObserver.assertUpdates(updates)
 
+        then(signaturePushRepository).should().observe(TEST_TRANSACTION_HASH)
+        /*
+         * Test error requesting confirmation
+         */
+        given(
+            signaturePushRepository.requestConfirmations(
+                anyString(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                anySet()
+            )
+        )
+            .willReturn(Completable.error(error))
+        signatureSingleFactory.success(emptyMap())
+        hashSingleFactory.success("7e4cb4cd190aedb510e8c4d366a87a8ee948921796ea7d720c74db3fc4be4db3".hexToByteArray())
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.ConfirmationsError) }
+        updates += { it == ErrorResult<SubmitTransactionHelper.ViewUpdate>(error) }
+        testObserver.assertUpdates(updates)
+        then(signaturePushRepository).should()
+            .requestConfirmations(
+                "0x7e4cb4cd190aedb510e8c4d366a87a8ee948921796ea7d720c74db3fc4be4db3",
+                TEST_SAFE,
+                info.transaction,
+                info.txGas,
+                info.dataGas,
+                info.gasPrice,
+                setOf(TEST_OWNERS[0], TEST_OWNERS[1])
+            )
+
+        /*
+         * Test success requesting confirmation
+         */
+        // No new events before actual request
+        requestEvents.onNext(Unit)
+        testObserver.assertUpdates(updates)
+
+        given(
+            signaturePushRepository.requestConfirmations(
+                anyString(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                anySet()
+            )
+        )
+            .willReturn(Completable.complete())
+        signatureSingleFactory.success(mapOf(TEST_OWNERS[0] to TEST_SIGNATURE))
+        hashSingleFactory.success("7e4cb4cd190aedb510e8c4d366a87a8ee948921796ea7d720c74db3fc4be4db3".hexToByteArray())
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.ConfirmationsRequested) }
+        testObserver.assertUpdates(updates)
+        then(signaturePushRepository).should()
+            .requestConfirmations(
+                "0x7e4cb4cd190aedb510e8c4d366a87a8ee948921796ea7d720c74db3fc4be4db3",
+                TEST_SAFE,
+                info.transaction,
+                info.txGas,
+                info.dataGas,
+                info.gasPrice,
+                setOf(TEST_OWNERS[1])
+            )
+
         /*
          * Test submit transaction failure
          */
-        BDDMockito.given(
+        given(
             relayRepositoryMock.submit(
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                BDDMockito.anyBoolean(),
+                anyBoolean(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any()
             )
-        ).willReturn(Completable.error(error))
+        ).willReturn(Single.error(error))
         submitEvents.onNext(Unit)
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(false)) }
         updates += { it == ErrorResult<SubmitTransactionHelper.ViewUpdate>(error) }
         testObserver.assertUpdates(updates)
+        then(signaturePushRepository).shouldHaveNoMoreInteractions()
 
         /*
          * Test submit transaction failure
          */
-        BDDMockito.given(
+        given(
             relayRepositoryMock.submit(
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                BDDMockito.anyBoolean(),
+                anyBoolean(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any()
             )
+        ).willReturn(Single.just(TEST_CHAIN_HASH))
+        given(
+            signaturePushRepository.propagateSubmittedTransaction(anyString(), anyString(), anySet())
         ).willReturn(Completable.complete())
         submitEvents.onNext(Unit)
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(true)) }
         testObserver.assertUpdates(updates)
+        then(signaturePushRepository).should()
+            .propagateSubmittedTransaction(TEST_TRANSACTION_HASH, TEST_CHAIN_HASH, setOf(TEST_OWNERS[0], TEST_OWNERS[1]))
 
         /*
          * Test confirmation push message
          */
-        BDDMockito.given(
+        given(
             relayRepositoryMock.checkConfirmation(
                 MockUtils.any(),
                 MockUtils.any(),
@@ -236,7 +267,7 @@ class DefaultSubmitTransactionHelperTest {
         /*
          * Test confirmation push message error
          */
-        BDDMockito.given(
+        given(
             relayRepositoryMock.checkConfirmation(
                 MockUtils.any(),
                 MockUtils.any(),
@@ -253,7 +284,7 @@ class DefaultSubmitTransactionHelperTest {
         /*
          * Test reject push message wrong sender
          */
-        BDDMockito.given(
+        given(
             relayRepositoryMock.checkRejection(
                 MockUtils.any(),
                 MockUtils.any(),
@@ -269,7 +300,7 @@ class DefaultSubmitTransactionHelperTest {
         /*
          * Test reject push message error
          */
-        BDDMockito.given(
+        given(
             relayRepositoryMock.checkRejection(
                 MockUtils.any(),
                 MockUtils.any(),
@@ -286,7 +317,7 @@ class DefaultSubmitTransactionHelperTest {
         /*
          * Test reject push message
          */
-        BDDMockito.given(
+        given(
             relayRepositoryMock.checkRejection(
                 MockUtils.any(),
                 MockUtils.any(),
@@ -326,9 +357,9 @@ class DefaultSubmitTransactionHelperTest {
     @Test
     fun singleOwner() {
         val signatureSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
-        BDDMockito.given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
+        given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
         val pushMessageSubject = PublishSubject.create<PushServiceRepository.TransactionResponse>()
-        BDDMockito.given(signaturePushRepository.observe(BDDMockito.anyString())).willReturn(pushMessageSubject)
+        given(signaturePushRepository.observe(anyString())).willReturn(pushMessageSubject)
 
         submitTransactionHelper.setup(TEST_SAFE, ::loadExecutionInfo)
         val retryEvents = PublishSubject.create<Unit>()
@@ -345,7 +376,7 @@ class DefaultSubmitTransactionHelperTest {
             TEST_OWNERS.subList(0, 1), BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO,
             Wei.ether("23")
         )
-        BDDMockito.given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
 
         submitTransactionHelper.observe(events, TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS))
@@ -356,6 +387,10 @@ class DefaultSubmitTransactionHelperTest {
                     (result.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder is AssetTransferViewHolder
         })
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(Wei(BigInteger.valueOf(32010)), Wei.ether("23"))) }
+        testObserver.assertUpdates(updates)
+
+        signatureSubject.onNext(emptyMap())
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(true)) }
         testObserver.assertUpdates(updates)
     }
 
@@ -377,6 +412,7 @@ class DefaultSubmitTransactionHelperTest {
         private val TEST_ADDRESS = "0xc257274276a4e539741ca11b590b9447b26a8051".asEthereumAddress()!!
         private val TEST_ETHER_TOKEN = Solidity.Address(BigInteger.ZERO)
         private val TEST_ETH_AMOUNT = Wei.ether("23").value
+        private const val TEST_CHAIN_HASH = "SomeChainHash"
         private const val TEST_TRANSACTION_HASH = "SomeHash"
         private val TEST_TRANSACTION =
             SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)

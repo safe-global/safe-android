@@ -61,6 +61,8 @@ import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoViewModel
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferViewModel
+import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionContract
+import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionViewModel
 import javax.inject.Singleton
@@ -101,6 +103,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ChangePasswordContract::class)
     abstract fun bindsChangePasswordContract(viewModel: ChangePasswordViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConfirmTransactionContract::class)
+    abstract fun bindsConfirmTransactionContract(viewModel: ConfirmTransactionViewModel): ViewModel
 
     @Binds
     @IntoMap

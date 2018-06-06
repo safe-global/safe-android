@@ -3,13 +3,12 @@ package pm.gnosis.heimdall.data.repositories.impls
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.ERC20Contract
+import pm.gnosis.heimdall.GnosisSafePersonalEdition
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.fromDb
 import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
-import pm.gnosis.heimdall.data.repositories.TransactionData
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.TransactionInfo
-import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.models.Transaction
@@ -27,6 +26,26 @@ class DefaultTransactionInfoRepository @Inject constructor(
 
     private val descriptionsDao = appDb.descriptionsDao()
 
+    override fun checkRestrictedTransaction(transaction: SafeTransaction): Single<SafeTransaction> =
+        Single.fromCallable {
+            when {
+                transaction.operation == TransactionExecutionRepository.Operation.DELEGATE_CALL ->
+                    throw RestrictedTransactionException(R.string.restricted_transaction_delegatecall)
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.AddOwnerWithThreshold.METHOD_ID) == true ->
+                    throw RestrictedTransactionException(R.string.restricted_transaction_modify_owners)
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.RemoveOwner.METHOD_ID) == true ->
+                    throw RestrictedTransactionException(R.string.restricted_transaction_modify_owners)
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.SwapOwner.METHOD_ID) == true ->
+                    throw RestrictedTransactionException(R.string.restricted_transaction_modify_owners)
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.EnableModule.METHOD_ID) == true ->
+                    throw RestrictedTransactionException(R.string.restricted_transaction_modify_modules)
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.DisableModule.METHOD_ID) == true ->
+                    throw RestrictedTransactionException(R.string.restricted_transaction_modify_modules)
+            }
+            transaction
+        }
+            .subscribeOn(Schedulers.io())
+
     override fun parseTransactionData(transaction: SafeTransaction): Single<TransactionData> =
         Single.fromCallable {
             val tx = transaction.wrapped
@@ -36,7 +55,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
                 data.isNullOrBlank() -> // If we have no data we default to ether transfer
                     TransactionData.AssetTransfer(ERC20Token.ETHER_TOKEN.address, tx.value?.value ?: BigInteger.ZERO, tx.address)
                 data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true ->
-                        parseTokenTransfer(tx)
+                    parseTokenTransfer(tx)
                 else ->
                     TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data)
             }

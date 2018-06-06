@@ -33,7 +33,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class UnlockDialog : BaseDialog() {
+class UnlockDialog private constructor() : BaseDialog() {
 
     @Inject
     lateinit var encryptionManager: EncryptionManager
@@ -160,7 +160,7 @@ class UnlockDialog : BaseDialog() {
                 dismiss()
             }
             UnlockContract.State.UNLOCKED -> {
-                (context as? UnlockCallback)?.onUnlockSuccess()
+                (context as? UnlockCallback)?.onUnlockSuccess(arguments?.getInt(ARG_REQUEST_CODE) ?: 0)
                 dismiss()
             }
             UnlockContract.State.LOCKED -> {
@@ -178,6 +178,17 @@ class UnlockDialog : BaseDialog() {
     }
 
     interface UnlockCallback {
-        fun onUnlockSuccess()
+        fun onUnlockSuccess(requestCode: Int)
+    }
+
+    companion object {
+        private const val ARG_REQUEST_CODE = "arg.int.request_code"
+
+        fun create(requestCode: Int = 0) =
+            UnlockDialog().apply{
+                arguments = Bundle().apply {
+                    putInt(ARG_REQUEST_CODE, requestCode)
+                }
+            }
     }
 }

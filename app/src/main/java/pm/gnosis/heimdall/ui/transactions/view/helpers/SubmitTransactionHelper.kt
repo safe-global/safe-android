@@ -30,9 +30,16 @@ import javax.inject.Inject
 
 interface SubmitTransactionHelper {
 
-    fun setup(safe: Solidity.Address, executionInfo: (SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>)
+    fun setup(
+        safe: Solidity.Address,
+        executionInfo: (SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>
+    )
 
-    fun observe(events: Events, transactionData: TransactionData): Observable<Result<ViewUpdate>>
+    fun observe(
+        events: Events,
+        transactionData: TransactionData,
+        initialSignatures: Map<Solidity.Address, Signature>? = null
+    ): Observable<Result<ViewUpdate>>
 
     data class Events(val retry: Observable<Unit>, val requestConfirmations: Observable<Unit>, val submit: Observable<Unit>)
 
@@ -59,12 +66,19 @@ class DefaultSubmitTransactionHelper @Inject constructor(
     private lateinit var safe: Solidity.Address
     private lateinit var executionInfo: (SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>
 
-    override fun setup(safe: Solidity.Address, executionInfo: (SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>) {
+    override fun setup(
+        safe: Solidity.Address,
+        executionInfo: (SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>
+    ) {
         this.safe = safe
         this.executionInfo = executionInfo
     }
 
-    override fun observe(events: Events, transactionData: TransactionData): Observable<Result<ViewUpdate>> =
+    override fun observe(
+        events: Events,
+        transactionData: TransactionData,
+        initialSignatures: Map<Solidity.Address, Signature>?
+    ): Observable<Result<ViewUpdate>> =
         transactionViewHolder(transactionData)
             .emitAndNext(
                 emit = {
@@ -74,9 +88,13 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                         )
                     )
                 },
-                next = { estimation(events, it) })
+                next = { estimation(events, it, initialSignatures) })
 
-    private fun estimation(events: Events, viewHolder: TransactionInfoViewHolder) =
+    private fun estimation(
+        events: Events,
+        viewHolder: TransactionInfoViewHolder,
+        initialSignatures: Map<Solidity.Address, Signature>?
+    ) =
         viewHolder.loadTransaction().flatMapObservable { tx ->
             events.retry
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -92,29 +110,63 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                     )
                 }
             },
-            next = { confirmations(events, it) })
+            next = { confirmations(events, it, initialSignatures) })
 
-    private fun confirmations(events: Events, params: Result<TransactionExecutionRepository.ExecuteInformation>) =
+    private fun confirmations(
+        events: Events,
+        params: Result<TransactionExecutionRepository.ExecuteInformation>,
+        initialSignatures: Map<Solidity.Address, Signature>?
+    ) =
         (params as? DataResult)?.data?.let {
             // Once we have the execution information we can setup everything related to requesting and receiving confirmation
             Observable.merge(
-                requestConfirmation(events, it),
-                observeConfirmationStore(events, it),
+                observeConfirmationStore(events, it, initialSignatures),
                 observeIncomingConfirmations(it)
             )
         } ?: Observable.just<Result<ViewUpdate>>(
             DataResult(ViewUpdate.EstimateError)
         )
 
-    private fun requestConfirmation(events: Events, params: TransactionExecutionRepository.ExecuteInformation) =
-        if ((params.requiredConfirmation == 1 && params.isOwner))
+    private fun observeConfirmationStore(
+        events: Events,
+        params: TransactionExecutionRepository.ExecuteInformation,
+        initialSignatures: Map<Solidity.Address, Signature>?
+    ) =
+        signatureStore.flatMapInfo(
+            safe, params, initialSignatures
+        ).publish {
+            Observable.merge(
+                it.firstElement().flatMapObservable { requestConfirmation(events, params, it) },
+                it.map {
+                    val threshold = params.requiredConfirmation - (if (params.isOwner) 1 else 0)
+                    DataResult(
+                        ViewUpdate.Confirmations(
+                            it.size >= threshold
+                        )
+                    )
+                },
+                it.switchMap { signatures ->
+                    events.submit
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .switchMap { submitTransaction(params, signatures) }
+                }
+            )
+        }
+
+    private fun requestConfirmation(
+        events: Events,
+        params: TransactionExecutionRepository.ExecuteInformation,
+        initialConfirmations: Map<Solidity.Address, Signature>
+    ) =
+        if ((params.requiredConfirmation == initialConfirmations.size + (if (params.isOwner) 1 else 0)))
             Observable.empty<Result<ViewUpdate>>()
         else
             events.requestConfirmations
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .startWith(Unit)
+                .flatMapSingle { signatureStore.load() }
                 .switchMapSingle {
-                    val targets = params.owners - params.sender // TODO: exclude owners that already confirmed
+                    val targets = params.owners - params.sender - it.keys
                     executionRepository.calculateHash(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
                         .flatMapCompletable {
                             signaturePushRepository.requestConfirmations(
@@ -137,29 +189,11 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                     }
                 }
 
-    private fun observeConfirmationStore(events: Events, params: TransactionExecutionRepository.ExecuteInformation) =
-        signatureStore.flatMapInfo(
-            safe, params
-        ).publish {
-            Observable.merge(
-                it.map {
-                    val threshold = params.requiredConfirmation - (if (params.isOwner) 1 else 0)
-                    DataResult(
-                        ViewUpdate.Confirmations(
-                            it.size >= threshold
-                        )
-                    )
-                },
-                it.switchMap { signatures ->
-                    events.submit
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .switchMap { submitTransaction(params, signatures) }
-                }
-            )
-        }
-
     private fun submitTransaction(params: TransactionExecutionRepository.ExecuteInformation, signatures: Map<Solidity.Address, Signature>) =
         executionRepository.submit(safe, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice)
+            .flatMapCompletable {
+                signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, it, (params.owners - params.sender).toSet())
+            }
             .andThen(
                 Observable.just<ViewUpdate>(
                     ViewUpdate.TransactionSubmitted(

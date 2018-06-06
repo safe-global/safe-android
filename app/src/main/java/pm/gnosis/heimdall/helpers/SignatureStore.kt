@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.utils.nullOnThrow
 import javax.inject.Inject
 
 class SimpleSignatureStore @Inject constructor(
@@ -32,7 +33,8 @@ class SimpleSignatureStore @Inject constructor(
 
     override fun flatMapInfo(
         safeAddress: Solidity.Address,
-        info: TransactionExecutionRepository.ExecuteInformation
+        info: TransactionExecutionRepository.ExecuteInformation,
+        initialSignatures: Map<Solidity.Address, Signature>?
     ): Observable<Map<Solidity.Address, Signature>> {
         transaction {
             this.safeAddress = safeAddress
@@ -41,6 +43,8 @@ class SimpleSignatureStore @Inject constructor(
             val validSignatures = signatures.filter { info.owners.contains(it.key) }
             signatures.clear()
             signatures.putAll(validSignatures)
+            // We ignore invalid signatures
+            initialSignatures?.forEach { nullOnThrow { internalAdd(it.toPair()) } }
         }
         // We only emit a copy of the signatures
         publish()
@@ -52,21 +56,31 @@ class SimpleSignatureStore @Inject constructor(
 
     override fun add(signature: Pair<Solidity.Address, Signature>) {
         transaction {
-            SimpleLocalizedException.assert(info?.owners?.contains(signature.first) == true, context, R.string.error_signature_not_owner)
-            SimpleLocalizedException.assert(info?.sender != signature.first, context, R.string.error_signature_already_exists)
-            SimpleLocalizedException.assert(!signatures.containsKey(signature.first), context, R.string.error_signature_already_exists)
-            SimpleLocalizedException.assert(info?.requiredConfirmation?.let { signatures.size < it } == true,
-                context,
-                R.string.error_signature_already_exists)
-            signatures[signature.first] = signature.second
+            internalAdd(signature)
         }
         // We only emit a copy of the signatures
         publish()
     }
+
+    // Does not use a transaction and does not publish at the end
+    private fun internalAdd(signature: Pair<Solidity.Address, Signature>) {
+        SimpleLocalizedException.assert(info?.owners?.contains(signature.first) == true, context, R.string.error_signature_not_owner)
+        SimpleLocalizedException.assert(info?.sender != signature.first, context, R.string.error_signature_already_exists)
+        SimpleLocalizedException.assert(!signatures.containsKey(signature.first), context, R.string.error_signature_already_exists)
+        SimpleLocalizedException.assert(info?.requiredConfirmation?.let { signatures.size < it } == true,
+            context,
+            R.string.error_signature_already_exists)
+        signatures[signature.first] = signature.second
+    }
 }
 
 interface SignatureStore {
-    fun flatMapInfo(safeAddress: Solidity.Address, info: TransactionExecutionRepository.ExecuteInformation): Observable<Map<Solidity.Address, Signature>>
+    fun flatMapInfo(
+        safeAddress: Solidity.Address,
+        info: TransactionExecutionRepository.ExecuteInformation,
+        initialSignatures: Map<Solidity.Address, Signature>?
+    ): Observable<Map<Solidity.Address, Signature>>
+
     fun loadSingingInfo(): Single<Pair<Solidity.Address, SafeTransaction>>
     fun load(): Single<Map<Solidity.Address, Signature>>
     fun observe(): Observable<Map<Solidity.Address, Signature>>

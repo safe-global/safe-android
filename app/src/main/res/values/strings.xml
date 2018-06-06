@@ -236,6 +236,7 @@
     <string name="enter_master_password">Enter Master Password</string>
     <string name="mnemonic_required_words">%1d/%2d words</string>
     <string name="review_transaction">Review transaction</string>
+    <string name="review_transaction_request">Review transaction request</string>
     <string name="safe_overview_empty_title">You have no safes yet.</string>
     <string name="safe_overview_empty_description">Add a new or existing safe and it will show up right here.</string>
     <string name="safe_overview_empty_action">Add a Safe</string>
@@ -394,8 +395,13 @@
     <string name="awaiting_confirmations">awaiting confirmation</string>
     <string name="confirmations_ready">confirmed by extension</string>
     <string name="submitting_transaction">Submitting transaction</string>
+    <string name="rejecting_transaction">Rejecting transaction</string>
     <string name="transfer_x">Transfer %s</string>
     <string name="enter_password">Enter password</string>
     <string name="use_password">Use password</string>
     <string name="place_your_finger_to_unlock">Place your finger to unlock</string>
+    <string name="reject">Reject</string>
+    <string name="restricted_transaction_delegatecall">Delegate calls are not allowed</string>
+    <string name="restricted_transaction_modify_owners">It is not allowed to modify the owners of the Safe</string>
+    <string name="restricted_transaction_modify_modules">It is not allowed to modify the modules of the Safe</string>
 </resources>
