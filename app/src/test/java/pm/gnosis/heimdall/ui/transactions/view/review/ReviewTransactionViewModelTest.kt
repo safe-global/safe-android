@@ -76,7 +76,7 @@ class ReviewTransactionViewModelTest {
         val events = SubmitTransactionHelper.Events(Observable.empty(), Observable.empty(), Observable.empty())
         val transactionData = mock(TransactionData::class.java)
         val observable = Observable.empty<Result<SubmitTransactionHelper.ViewUpdate>>()
-        given(submitTransactionHelper.observe(MockUtils.any(), MockUtils.any())).willReturn(observable)
+        given(submitTransactionHelper.observe(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(observable)
         assertEquals(observable, viewModel.observe(events, transactionData))
         then(submitTransactionHelper).should().observe(events, transactionData)
         then(submitTransactionHelper).shouldHaveNoMoreInteractions()
