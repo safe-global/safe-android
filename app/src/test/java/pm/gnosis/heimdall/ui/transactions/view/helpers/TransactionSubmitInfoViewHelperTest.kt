@@ -141,10 +141,7 @@ class TransactionSubmitInfoViewHelperTest {
     fun requestConfirmationEvents() {
         contextMock.mockGetString()
         contextMock.mockGetStringWithArgs()
-
-        val resourceMock = mock(Resources::class.java)
-        given(resourceMock.getColor(ArgumentMatchers.anyInt())).willAnswer { it.arguments.first() as Int }
-        given(contextMock.resources).willReturn(resourceMock)
+        contextMock.mockGetColor()
 
         val requestButton = mock(TextView::class.java)
         val confirmationTimer = mock(TextView::class.java)
@@ -181,10 +178,7 @@ class TransactionSubmitInfoViewHelperTest {
 
     private fun testRejectionState(rejected: Boolean) {
         contextMock.mockGetString()
-
-        val resourceMock = mock(Resources::class.java)
-        given(resourceMock.getColor(ArgumentMatchers.anyInt())).willAnswer { it.arguments.first() as Int }
-        given(contextMock.resources).willReturn(resourceMock)
+        contextMock.mockGetColor()
 
         val rejectionStateMocks = mockRejectionStateViews()
 
@@ -290,11 +284,14 @@ class TransactionSubmitInfoViewHelperTest {
     @Test
     fun applyUpdateEstimate() {
         contextMock.mockGetStringWithArgs()
+        contextMock.mockGetColor()
 
         val dataBalance = mock(TextView::class.java)
+        val dataBalanceLabel = mock(TextView::class.java)
         val dataFees = mock(TextView::class.java)
         val confirmationsGroup = mock(Group::class.java)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_balance_value, dataBalance)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_data_balance_label, dataBalanceLabel)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_value, dataFees)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
 
@@ -303,7 +300,43 @@ class TransactionSubmitInfoViewHelperTest {
         assertNull(helper.applyUpdate(data))
 
         then(dataBalance).should().text = "${R.string.x_ether}, 1"
+        then(dataBalance).should().setTextColor(R.color.battleship_grey)
         then(dataBalance).shouldHaveNoMoreInteractions()
+
+        then(dataBalanceLabel).should().setTextColor(R.color.battleship_grey)
+        then(dataBalanceLabel).shouldHaveNoMoreInteractions()
+
+        then(dataFees).should().text = "- ${R.string.x_ether}, 0.1"
+        then(dataFees).shouldHaveNoMoreInteractions()
+
+        then(confirmationsGroup).should().visibility = View.VISIBLE
+        then(confirmationsGroup).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun applyUpdateEstimateNotEnoughFunds() {
+        contextMock.mockGetStringWithArgs()
+        contextMock.mockGetColor()
+
+        val dataBalance = mock(TextView::class.java)
+        val dataBalanceLabel = mock(TextView::class.java)
+        val dataFees = mock(TextView::class.java)
+        val confirmationsGroup = mock(Group::class.java)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_data_balance_value, dataBalance)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_data_balance_label, dataBalanceLabel)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_value, dataFees)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
+
+        val data = SubmitTransactionHelper.ViewUpdate.Estimate(Wei.ether("0.1"), Wei.ZERO)
+        helper.bind(containerView)
+        assertNull(helper.applyUpdate(data))
+
+        then(dataBalance).should().text = "${R.string.x_ether}, 0"
+        then(dataBalance).should().setTextColor(R.color.tomato)
+        then(dataBalance).shouldHaveNoMoreInteractions()
+
+        then(dataBalanceLabel).should().setTextColor(R.color.tomato)
+        then(dataBalanceLabel).shouldHaveNoMoreInteractions()
 
         then(dataFees).should().text = "- ${R.string.x_ether}, 0.1"
         then(dataFees).shouldHaveNoMoreInteractions()
@@ -411,10 +444,7 @@ class TransactionSubmitInfoViewHelperTest {
     @Test
     fun applyUpdateTransactionRejected() {
         contextMock.mockGetString()
-
-        val resourceMock = mock(Resources::class.java)
-        given(resourceMock.getColor(ArgumentMatchers.anyInt())).willAnswer { it.arguments.first() as Int }
-        given(contextMock.resources).willReturn(resourceMock)
+        contextMock.mockGetColor()
 
         val viewMocks = mockRejectionStateViews()
 
@@ -423,6 +453,12 @@ class TransactionSubmitInfoViewHelperTest {
         assertNull(helper.applyUpdate(data))
 
         assertRejectionState(viewMocks, true)
+    }
+
+    private fun Context.mockGetColor() {
+        val resourceMock = mock(Resources::class.java)
+        given(resourceMock.getColor(ArgumentMatchers.anyInt())).willAnswer { it.arguments.first() as Int }
+        given(resources).willReturn(resourceMock)
     }
 
     data class ReadyStateMocks(val confirmationProgress: MaterialProgressBar, val confirmationStatus: TextView)

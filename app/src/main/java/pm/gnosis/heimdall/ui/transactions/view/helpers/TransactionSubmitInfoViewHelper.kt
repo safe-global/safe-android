@@ -96,6 +96,9 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
     fun applyUpdate(update: SubmitTransactionHelper.ViewUpdate): Disposable? {
         when (update) {
             is SubmitTransactionHelper.ViewUpdate.Estimate -> {
+                val balanceColor = context.getColorCompat(if (update.balance.value < update.fees.value) R.color.tomato else R.color.battleship_grey)
+                view.include_transaction_submit_info_data_balance_label.setTextColor(balanceColor)
+                view.include_transaction_submit_info_data_balance_value.setTextColor(balanceColor)
                 view.include_transaction_submit_info_data_balance_value.text =
                         context.getString(R.string.x_ether, update.balance.toEther().stringWithNoTrailingZeroes())
                 view.include_transaction_submit_info_data_fees_value.text =
