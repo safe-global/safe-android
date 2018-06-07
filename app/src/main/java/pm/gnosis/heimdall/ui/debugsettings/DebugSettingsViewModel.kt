@@ -24,7 +24,7 @@ class DebugSettingsViewModel @Inject constructor(
             .flatMapCompletable { pushServiceRepository.pair(it).toCompletable() }
 
     private fun parseChromeExtensionPayload(payload: String): Single<PushServiceTemporaryAuthorization> =
-        Single.fromCallable { moshi.adapter(PushServiceTemporaryAuthorization::class.java).fromJson(payload) }
+        Single.fromCallable { moshi.adapter(PushServiceTemporaryAuthorization::class.java).fromJson(payload)!! }
             .subscribeOn(Schedulers.io())
 
     override fun sendTestSafeCreationPush(chromeExtensionAddress: String): Single<Result<Unit>> =

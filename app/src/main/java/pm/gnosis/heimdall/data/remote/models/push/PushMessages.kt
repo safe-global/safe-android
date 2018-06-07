@@ -3,23 +3,23 @@ package pm.gnosis.heimdall.data.remote.models.push
 import com.squareup.moshi.Json
 
 sealed class PushMessage(
-    @Json(name = "type") val type: String
+    val type: String
 ) {
     data class SendTransaction(
-        @Json(name = "hash") val hash: String,
-        @Json(name = "safe") val safe: String,
-        @Json(name = "to") val to: String,
-        @Json(name = "value") val value: String,
-        @Json(name = "data") val data: String,
-        @Json(name = "operation") val operation: String,
-        @Json(name = "txGas") val txGas: String,
-        @Json(name = "dataGas") val dataGas: String,
-        @Json(name = "gasPrice") val gasPrice: String,
-        @Json(name = "gasToken") val gasToken: String,
-        @Json(name = "nonce") val nonce: String,
-        @Json(name = "r") val r: String,
-        @Json(name = "s") val s: String,
-        @Json(name = "v") val v: String
+        val hash: String,
+        val safe: String,
+        val to: String,
+        val value: String,
+        val data: String,
+        val operation: String,
+        val txGas: String,
+        val dataGas: String,
+        val gasPrice: String,
+        val gasToken: String,
+        val nonce: String,
+        val r: String,
+        val s: String,
+        val v: String
     ) : PushMessage(TYPE) {
         companion object {
             const val TYPE = "sendTransaction"
@@ -44,10 +44,10 @@ sealed class PushMessage(
     }
 
     data class ConfirmTransaction(
-        @Json(name = "hash") val hash: String,
-        @Json(name = "r") val r: String,
-        @Json(name = "s") val s: String,
-        @Json(name = "v") val v: String
+        val hash: String,
+        val r: String,
+        val s: String,
+        val v: String
     ) : PushMessage(TYPE) {
         companion object {
             const val TYPE = "confirmTransaction"
@@ -62,10 +62,10 @@ sealed class PushMessage(
     }
 
     data class RejectTransaction(
-        @Json(name = "hash") val hash: String,
-        @Json(name = "r") val r: String,
-        @Json(name = "s") val s: String,
-        @Json(name = "v") val v: String
+        val hash: String,
+        val r: String,
+        val s: String,
+        val v: String
     ) : PushMessage(TYPE) {
         companion object {
             const val TYPE = "rejectTransaction"

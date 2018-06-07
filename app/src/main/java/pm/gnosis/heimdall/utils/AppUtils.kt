@@ -15,8 +15,6 @@ import android.text.style.URLSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import pm.gnosis.erc67.ERC67Parser
-import pm.gnosis.erc67.erc67Uri
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
@@ -27,6 +25,8 @@ import pm.gnosis.svalinn.common.utils.appendText
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
+import pm.gnosis.svalinn.utils.ethereum.erc67Uri
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 

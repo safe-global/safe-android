@@ -1,9 +1,10 @@
 package pm.gnosis.heimdall.data.remote.models
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 
-
+@JsonClass(generateAdapter = true)
 data class ExecuteParams(
     @Json(name = "safe")
     val safe: String,
@@ -25,12 +26,13 @@ data class ExecuteParams(
     val gasPrice: String
 )
 
+@JsonClass(generateAdapter = true)
 data class RelayExecution(
     @Json(name = "transactionHash")
     val transactionHash: String
 )
 
-
+@JsonClass(generateAdapter = true)
 data class EstimateParams(
     @Json(name = "safe")
     val safe: String,
@@ -47,6 +49,7 @@ data class EstimateParams(
 
 )
 
+@JsonClass(generateAdapter = true)
 data class RelayEstimate(
     @Json(name = "safeTxGas")
     val safeTxGas: String,

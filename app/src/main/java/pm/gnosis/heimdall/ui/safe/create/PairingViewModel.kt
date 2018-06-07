@@ -17,6 +17,6 @@ class PairingViewModel @Inject constructor(
             .flatMap { pushServiceRepository.pair(it) }
 
     private fun parseChromeExtensionPayload(payload: String): Single<PushServiceTemporaryAuthorization> =
-        Single.fromCallable { moshi.adapter(PushServiceTemporaryAuthorization::class.java).fromJson(payload) }
+        Single.fromCallable { moshi.adapter(PushServiceTemporaryAuthorization::class.java).fromJson(payload)!! }
             .subscribeOn(Schedulers.io())
 }

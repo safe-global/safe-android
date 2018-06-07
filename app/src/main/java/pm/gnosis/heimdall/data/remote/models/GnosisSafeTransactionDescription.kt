@@ -1,10 +1,12 @@
 package pm.gnosis.heimdall.data.remote.models
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import java.math.BigInteger
 
+@JsonClass(generateAdapter = true)
 data class GnosisSafeTransactionDescription(
     @Json(name = "safeAddress")
     val safeAddress: Solidity.Address,
