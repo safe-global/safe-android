@@ -1,14 +1,16 @@
 package pm.gnosis.heimdall.data.remote.models.push
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-sealed class ServiceMessage(
-    @Json(name = "type") val type: String
-) {
+sealed class ServiceMessage {
+    @JsonClass(generateAdapter = true)
     data class SafeCreation(
-        @Json(name = "safe") val safe: String
-    ): ServiceMessage("safeCreation")
+        @Json(name = "safe") val safe: String,
+        @Json(name = "type") val type: String = "safeCreation" // Workaround since moshi is not parsing parent or non-constructor fields
+    ) : ServiceMessage()
 
+    @JsonClass(generateAdapter = true)
     data class RequestConfirmation(
         @Json(name = "hash") val hash: String,
         @Json(name = "safe") val safe: String,
@@ -20,11 +22,14 @@ sealed class ServiceMessage(
         @Json(name = "dataGas") val dataGas: String,
         @Json(name = "gasPrice") val gasPrice: String,
         @Json(name = "gasToken") val gasToken: String,
-        @Json(name = "nonce") val nonce: String
-    ): ServiceMessage("requestConfirmation")
+        @Json(name = "nonce") val nonce: String,
+        @Json(name = "type") val type: String = "requestConfirmation" // Workaround since moshi is not parsing parent or non-constructor fields
+    ) : ServiceMessage()
 
+    @JsonClass(generateAdapter = true)
     data class SendTransactionHash(
         @Json(name = "hash") val hash: String,
-        @Json(name = "txHash") val txHash: String
-    ) : ServiceMessage("sendTransactionHash")
+        @Json(name = "txHash") val txHash: String,
+        @Json(name = "type") val type: String = "sendTransactionHash" // Workaround since moshi is not parsing parent or non-constructor fields
+    ) : ServiceMessage()
 }

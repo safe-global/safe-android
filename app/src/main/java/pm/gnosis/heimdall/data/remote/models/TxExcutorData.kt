@@ -1,7 +1,9 @@
 package pm.gnosis.heimdall.data.remote.models
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class TxExecutionData(
     @Json(name = "target")
     val target: String,
@@ -14,11 +16,13 @@ data class TxExecutionResponse(
     val hash: String
 )
 
+@JsonClass(generateAdapter = true)
 data class TxExecutionBalance(
     @Json(name = "balance")
     val balance: Long
 )
 
+@JsonClass(generateAdapter = true)
 data class TxExecutionEstimate(
     @Json(name = "balance")
     val balance: Long,
@@ -26,6 +30,7 @@ data class TxExecutionEstimate(
     val requiredCredits: Long
 )
 
+@JsonClass(generateAdapter = true)
 data class TxExecutionVoucherData(
     @Json(name = "voucher_id")
     val voucherId: String

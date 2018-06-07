@@ -130,7 +130,7 @@ dependencies {
     implementation ("com.github.gnosis.svalinn-kotlin:ethereum-rpc-retrofit:$versions.svalinn") {
         exclude group: "com.squareup.retrofit2", module: "converter-moshi"
     }
-    implementation "com.github.gnosis.svalinn-kotlin:erc67:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:mnemonic-android:$versions.svalinn"
     implementation ("com.github.gnosis.svalinn-kotlin:ticker:$versions.svalinn") {
         exclude group: "com.squareup.retrofit2", module: "converter-moshi"
@@ -164,16 +164,16 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
 
     // Android Architecture Components
-    kapt "android.arch.lifecycle:compiler:$versions.architecture_components"
-    implementation "android.arch.persistence.room:runtime:$versions.architecture_components"
-    kapt "android.arch.persistence.room:compiler:$versions.architecture_components"
-    implementation "android.arch.persistence.room:rxjava2:$versions.architecture_components"
+    kapt "android.arch.lifecycle:compiler:$versions.android_lifecycle"
     implementation "android.arch.lifecycle:extensions:$versions.android_lifecycle"
+    kapt "android.arch.persistence.room:compiler:$versions.android_room"
+    implementation "android.arch.persistence.room:runtime:$versions.android_room"
+    implementation "android.arch.persistence.room:rxjava2:$versions.android_room"
     implementation "com.android.support:multidex:$versions.multidex"
 
     // Firebase
-    implementation "com.google.firebase:firebase-core:$versions.firebase"
-    implementation "com.google.firebase:firebase-messaging:$versions.firebase"
+    implementation "com.google.firebase:firebase-core:$versions.firebase_core"
+    implementation "com.google.firebase:firebase-messaging:$versions.firebase_messaging"
     implementation "com.google.android.gms:play-services-auth:$versions.play_services_auth"
 
     // String formatting
@@ -185,6 +185,7 @@ dependencies {
 
     // Moshi
     implementation "com.squareup.moshi:moshi:$versions.moshi"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"

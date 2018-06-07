@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import io.reactivex.Completable
@@ -144,7 +145,7 @@ class DefaultTokenRepository @Inject constructor(
             val json = context.resources.openRawResource(R.raw.verified_tokens).bufferedReader().use { it.readText() }
             val verifiedTokens = adapter.fromJson(json)
 
-            verifiedTokens.map {
+            verifiedTokens!!.map {
                 ERC20TokenDb(
                     address = it.address, name = it.name, symbol = it.symbol,
                     decimals = it.decimals, verified = true
@@ -160,7 +161,8 @@ class DefaultTokenRepository @Inject constructor(
         }
     }
 
-    private data class VerifiedTokenJson(
+    @JsonClass(generateAdapter = true)
+    internal data class VerifiedTokenJson(
         @Json(name = "address") val address: Solidity.Address,
         @Json(name = "name") val name: String,
         @Json(name = "symbol") val symbol: String,

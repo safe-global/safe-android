@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.erc67.ERC67Parser
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
@@ -13,6 +12,7 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import javax.inject.Inject
 
 class AuthenticateViewModel @Inject constructor(
