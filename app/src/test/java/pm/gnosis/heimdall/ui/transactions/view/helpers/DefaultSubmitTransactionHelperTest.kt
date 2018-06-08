@@ -12,11 +12,13 @@ import org.mockito.ArgumentMatchers.*
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
+import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.SignatureStore
+import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
 import pm.gnosis.model.Solidity
@@ -54,7 +56,13 @@ class DefaultSubmitTransactionHelperTest {
     private lateinit var signatureStore: SignatureStore
 
     @Mock
-    private lateinit var tokenRepositoryMock: TokenRepository
+    private lateinit var transactionData: TransactionData
+
+    @Mock
+    private lateinit var transactionViewHolder: TransactionInfoViewHolder
+
+    @Mock
+    private lateinit var transactionViewHolderBuilder: TransactionViewHolderBuilder
 
     @Mock
     private lateinit var relayRepositoryMock: TransactionExecutionRepository
@@ -65,12 +73,17 @@ class DefaultSubmitTransactionHelperTest {
 
     @Before
     fun setUp() {
+        given(transactionViewHolder.loadTransaction())
+            .willReturn(Single.just(TEST_TRANSACTION))
+        given(transactionViewHolderBuilder.build(MockUtils.any(), MockUtils.any(), anyBoolean()))
+            .willReturn(Single.just(transactionViewHolder))
         addressHelper = AddressHelper(addressBookRepository, safeRepository)
         submitTransactionHelper =
-                DefaultSubmitTransactionHelper(addressHelper, relayRepositoryMock, signaturePushRepository, signatureStore, tokenRepositoryMock)
+                DefaultSubmitTransactionHelper(relayRepositoryMock, signaturePushRepository, signatureStore, transactionViewHolderBuilder)
     }
 
-    private fun testFlow(data: TransactionData, viewHolderCheck: ((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)) {
+    @Test
+    fun testFlow() {
         val error = TimeoutException()
         val estimationSingleFactory = TestSingleFactory<TransactionExecutionRepository.ExecuteInformation>()
         given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(estimationSingleFactory.get())
@@ -102,10 +115,15 @@ class DefaultSubmitTransactionHelperTest {
         )
         val testObserver = TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>()
 
-        submitTransactionHelper.observe(events, data)
+        submitTransactionHelper.observe(events, transactionData)
             .subscribe(testObserver)
 
-        val updates = mutableListOf(viewHolderCheck)
+        then(transactionViewHolderBuilder).should().build(TEST_SAFE, transactionData, true)
+        then(transactionViewHolder).should().loadTransaction()
+
+        val updates = mutableListOf<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>({
+            ((it as? DataResult)?.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder == transactionViewHolder
+        })
         testObserver.assertUpdates(updates)
 
         // Estimate error
@@ -226,7 +244,30 @@ class DefaultSubmitTransactionHelperTest {
         then(signaturePushRepository).shouldHaveNoMoreInteractions()
 
         /*
-         * Test submit transaction failure
+         * Test submit transaction push failure -> should still be returned as submitted
+         */
+        given(
+            relayRepositoryMock.submit(
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                anyBoolean(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any()
+            )
+        ).willReturn(Single.just(TEST_CHAIN_HASH))
+        given(
+            signaturePushRepository.propagateSubmittedTransaction(anyString(), anyString(), anySet())
+        ).willReturn(Completable.error(TimeoutException()))
+        submitEvents.onNext(Unit)
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(true)) }
+        testObserver.assertUpdates(updates)
+        then(signaturePushRepository).should()
+            .propagateSubmittedTransaction(TEST_TRANSACTION_HASH, TEST_CHAIN_HASH, setOf(TEST_OWNERS[0], TEST_OWNERS[1]))
+
+        /*
+         * Test submit transaction success
          */
         given(
             relayRepositoryMock.submit(
@@ -245,7 +286,7 @@ class DefaultSubmitTransactionHelperTest {
         submitEvents.onNext(Unit)
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(true)) }
         testObserver.assertUpdates(updates)
-        then(signaturePushRepository).should()
+        then(signaturePushRepository).should(times(2))
             .propagateSubmittedTransaction(TEST_TRANSACTION_HASH, TEST_CHAIN_HASH, setOf(TEST_OWNERS[0], TEST_OWNERS[1]))
 
         /*
@@ -333,28 +374,6 @@ class DefaultSubmitTransactionHelperTest {
     }
 
     @Test
-    fun observeAssetTransfer() {
-        testFlow(
-            TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS),
-            { result ->
-                result is DataResult &&
-                        (result.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder is AssetTransferViewHolder
-            }
-        )
-    }
-
-    @Test
-    fun observeGenericTransaction() {
-        testFlow(
-            TransactionData.Generic(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, null),
-            { result ->
-                result is DataResult &&
-                        (result.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder is GenericTransactionViewHolder
-            }
-        )
-    }
-
-    @Test
     fun singleOwner() {
         val signatureSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
         given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
@@ -382,9 +401,8 @@ class DefaultSubmitTransactionHelperTest {
         submitTransactionHelper.observe(events, TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS))
             .subscribe(testObserver)
 
-        val updates = mutableListOf<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>({ result ->
-            result is DataResult &&
-                    (result.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder is AssetTransferViewHolder
+        val updates = mutableListOf<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>({
+            ((it as? DataResult)?.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder == transactionViewHolder
         })
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(Wei(BigInteger.valueOf(32010)), Wei.ether("23"))) }
         testObserver.assertUpdates(updates)
@@ -398,6 +416,7 @@ class DefaultSubmitTransactionHelperTest {
         relayRepositoryMock.loadExecuteInformation(TEST_SAFE, transaction)
 
     private fun TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>.assertUpdates(updates: List<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>): TestObserver<Result<SubmitTransactionHelper.ViewUpdate>> {
+        System.out.println("Updated: ${values()}")
         assertValueCount(updates.size)
         updates.forEachIndexed { index, predicate ->
             assertValueAt(index, predicate)

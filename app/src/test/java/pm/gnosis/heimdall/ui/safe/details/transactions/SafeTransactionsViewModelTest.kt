@@ -176,6 +176,7 @@ class SafeTransactionsViewModelTest {
 
         val details = TransactionInfo(
             testId,
+            "chain_hash",
             TEST_SAFE,
             TransactionData.Generic(Solidity.Address(BigInteger.TEN), BigInteger.ZERO, null),
             TEST_TIME,
@@ -206,6 +207,7 @@ class SafeTransactionsViewModelTest {
 
         val details = TransactionInfo(
             testId,
+            "chain_hash",
             TEST_SAFE,
             TransactionData.AssetTransfer(tokenAddress, BigInteger.valueOf(42), Solidity.Address(BigInteger.ONE)),
             TEST_TIME,
@@ -238,6 +240,7 @@ class SafeTransactionsViewModelTest {
 
         val details = TransactionInfo(
             testId,
+            "chain_hash",
             TEST_SAFE,
             TransactionData.AssetTransfer(tokenAddress, BigInteger.valueOf(42), Solidity.Address(BigInteger.ONE)),
             TEST_TIME,
@@ -271,6 +274,7 @@ class SafeTransactionsViewModelTest {
         val details =
             TransactionInfo(
                 testId,
+                "chain_hash",
                 TEST_SAFE,
                 TransactionData.AssetTransfer(Solidity.Address(BigInteger.ZERO), amount, Solidity.Address(BigInteger.ONE)),
                 TEST_TIME,

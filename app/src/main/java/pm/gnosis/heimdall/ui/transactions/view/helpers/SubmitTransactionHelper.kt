@@ -180,8 +180,6 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                             )
 
                         }
-                        // Ignore error here ... if push fails ... it fails
-                        .onErrorComplete()
                         .mapToResult()
                 }
                 .flatMap {
@@ -200,6 +198,8 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                     return@flatMapCompletable Completable.complete()
                 }
                 signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, it, targets)
+                    // Ignore error here ... if push fails ... it fails
+                    .onErrorComplete()
             }
             .andThen(
                 Observable.just<ViewUpdate>(
