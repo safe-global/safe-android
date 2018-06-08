@@ -1,82 +1,23 @@
 package pm.gnosis.heimdall.ui.transactions.view.status
 
 
-import android.arch.lifecycle.ViewModel
 import android.content.Context
 import android.content.Intent
-import android.support.annotation.StringRes
 import com.jakewharton.rxbinding2.view.clicks
-import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_transaction_status.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
-import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.helpers.TransactionViewHolderBuilder
-import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusContract.ViewUpdate.Details
 import pm.gnosis.heimdall.utils.DateTimeUtils
-import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.heimdall.utils.setupEtherscanTransactionUrl
-import java.math.BigInteger
 import javax.inject.Inject
-
-class TransactionStatusViewModel @Inject constructor(
-    private val infoRepository: TransactionInfoRepository,
-    private val executionRepository: TransactionExecutionRepository,
-    private val tokenRepository: TokenRepository,
-    private val transactionViewHolderBuilder: TransactionViewHolderBuilder
-) : TransactionStatusContract() {
-    override fun observeUpdates(id: String): Observable<ViewUpdate> =
-        infoRepository.loadTransactionInfo(id)
-            .flatMap { info ->
-                if (info.gasToken == ERC20Token.ETHER_TOKEN.address) {
-                    Single.just(ERC20Token.ETHER_TOKEN).map { info to it }
-                } else {
-                    tokenRepository.loadToken(info.gasToken).map { info to it }
-                        .onErrorReturnItem(info to ERC20Token(info.gasToken, decimals = 0))
-                }
-            }
-            .emitAndNext(
-                emit = { (info, token) ->
-                    val gasCosts = info.gasLimit * info.gasPrice
-                    ViewUpdate.Params(info.chainHash, info.timestamp, gasCosts, token, info.data.toType())
-                },
-                next = { (info) -> transactionViewHolderBuilder.build(info.safe, info.data, false).map<ViewUpdate>(::Details).toObservable() }
-            )
-
-    override fun observeStatus(id: String): Observable<TransactionExecutionRepository.PublishStatus> =
-        executionRepository.observePublishStatus(id)
-
-    private fun TransactionData.toType() =
-            when (this) {
-                is TransactionData.Generic -> R.string.transaction_type_generic
-                is TransactionData.AssetTransfer -> R.string.transaction_type_asset_transfer
-            }
-}
-
-abstract class TransactionStatusContract : ViewModel() {
-    abstract fun observeUpdates(id: String): Observable<ViewUpdate>
-
-    abstract fun observeStatus(id: String): Observable<TransactionExecutionRepository.PublishStatus>
-
-    sealed class ViewUpdate {
-        data class Params(val hash: String, val submitted: Long, val gasCosts: BigInteger, val gasToken: ERC20Token, @StringRes val type: Int) :
-            ViewUpdate()
-
-        data class Details(val viewHolder: TransactionInfoViewHolder) : ViewUpdate()
-    }
-}
 
 class TransactionStatusActivity : ViewModelActivity<TransactionStatusContract>() {
 
