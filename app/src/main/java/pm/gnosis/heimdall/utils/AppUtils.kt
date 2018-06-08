@@ -98,9 +98,8 @@ fun TextView.setupEtherscanAddressUrl(address: String, text: String) {
 private fun TextView.setupEtherscanLink(url: String, text: String) {
     val linkDrawable = ContextCompat.getDrawable(this.context, R.drawable.ic_external_link)!!
     linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
-    this.text = SpannableStringBuilder(text)
-        .append(" ")
-        .appendText(context.getString(R.string.etherscan_io), URLSpan(url))
+    this.text = SpannableStringBuilder()
+        .appendText("$text ${context.getString(R.string.etherscan_io)}", URLSpan(url))
         .append(" ")
         .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
     setOnClickListener { this.context.openUrl(url) }

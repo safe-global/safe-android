@@ -64,7 +64,7 @@
         style="@style/LightText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@color/tomato"
@@ -116,7 +116,7 @@
         android:id="@+id/layout_asset_transfer_info_to_image"
         android:layout_width="@dimen/info_blockies"
         android:layout_height="@dimen/info_blockies"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_asset_transfer_info_fiat"
         tools:background="@drawable/circle_settings" />

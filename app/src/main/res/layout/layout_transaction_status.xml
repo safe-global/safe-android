@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_transaction_status_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/pale_grey_two"
+    tools:context=".ui.transactions.view.review.ReviewTransactionActivity">
+
+    <View
+        android:id="@+id/layout_transaction_status_toolbar_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/layout_transaction_status_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/layout_transaction_status_title" />
+
+    <ImageView
+        android:id="@+id/layout_transaction_status_back_button"
+        android:layout_width="@dimen/toolbar_height"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/dark_slate_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <TextView
+        android:id="@+id/layout_transaction_status_title"
+        style="@style/Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingEnd="16dp"
+        android:text="@string/transaction_details"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/layout_transaction_status_back_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/layout_transaction_status_transaction_info"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_toolbar_shadow">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:paddingBottom="12dp"
+            android:layout_height="wrap_content">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/layout_transaction_status_info_data_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <View
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_info_data_container"
+                android:id="@+id/layout_transaction_status_info_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider" />
+
+            <TextView
+                android:id="@+id/layout_transaction_status_type_label"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_info_divider"
+                style="@style/DarkText"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Type" />
+
+            <TextView
+                android:id="@+id/layout_transaction_status_type_value"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_type_label"
+                style="@style/NormalText"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Contract interaction" />
+
+            <TextView
+                android:id="@+id/layout_transaction_status_submitted_label"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_type_value"
+                style="@style/DarkText"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submitted" />
+
+            <TextView
+                android:id="@+id/layout_transaction_status_submitted_value"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_submitted_label"
+                style="@style/NormalText"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="May 6, 2018 - 3:34PM (2 months ago)"
+                />
+
+            <TextView
+                android:id="@+id/layout_transaction_status_status_label"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_submitted_value"
+                style="@style/DarkText"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Status" />
+
+            <TextView
+                android:id="@+id/layout_transaction_status_status_value"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_status_label"
+                style="@style/NormalText"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Pending"
+                />
+
+            <TextView
+                android:id="@+id/layout_transaction_status_fee_label"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_status_value"
+                style="@style/DarkText"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Transaction fee" />
+
+            <TextView
+                android:id="@+id/layout_transaction_status_fee_value"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_fee_label"
+                style="@style/NormalText"
+                android:textColor="@color/tomato"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="-0.00034 ETH"
+                />
+
+            <TextView
+                android:id="@+id/layout_transaction_status_etherscan_link"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_fee_value"
+                style="@style/NormalText"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="View on Etherscan.io"
+                />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <View
+        android:id="@+id/layout_transaction_status_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_title" />
+
+</android.support.constraint.ConstraintLayout>

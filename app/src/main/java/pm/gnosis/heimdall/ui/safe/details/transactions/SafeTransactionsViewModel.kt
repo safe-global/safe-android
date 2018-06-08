@@ -9,10 +9,10 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
-import pm.gnosis.heimdall.data.repositories.impls.DefaultTransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusActivity
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
@@ -25,7 +25,7 @@ import javax.inject.Inject
 class SafeTransactionsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val safeRepository: GnosisSafeRepository,
-    private val safeTransactionsRepository: DefaultTransactionExecutionRepository,
+    private val safeTransactionsRepository: TransactionExecutionRepository,
     private val tokenRepository: TokenRepository,
     private val transactionInfoRepository: TransactionInfoRepository
 ) : SafeTransactionsContract() {
@@ -64,7 +64,8 @@ class SafeTransactionsViewModel @Inject constructor(
     override fun observeTransactionStatus(id: String): Observable<TransactionExecutionRepository.PublishStatus> =
         safeTransactionsRepository.observePublishStatus(id)
 
-    override fun transactionSelected(id: String): Single<Intent> = Single.error(NotImplementedError()) // TODO: implement and activate test
+    override fun transactionSelected(id: String): Single<Intent> =
+        Single.just(TransactionStatusActivity.createIntent(context, id))
 
     private fun loadTokenValue(token: Solidity.Address, value: BigInteger) =
         tokenRepository.observeToken(token)

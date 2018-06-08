@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "81f54c59bce18543e3950f4c0b050eaa",
+    "identityHash": "f7093e332f70cd75ecd4cc2b39d43439",
     "entities": [
       {
         "tableName": "address_book",
@@ -134,7 +134,7 @@
       },
       {
         "tableName": "transaction_details",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `safeAddress` TEXT NOT NULL, `to` TEXT NOT NULL, `value` TEXT NOT NULL, `data` TEXT NOT NULL, `operation` TEXT NOT NULL, `nonce` TEXT NOT NULL, `submittedAt` INTEGER NOT NULL, `subject` TEXT, `txHash` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `safeAddress` TEXT NOT NULL, `to` TEXT NOT NULL, `value` TEXT NOT NULL, `data` TEXT NOT NULL, `operation` TEXT NOT NULL, `txGas` TEXT NOT NULL, `dataGas` TEXT NOT NULL, `gasToken` TEXT NOT NULL, `gasPrice` TEXT NOT NULL, `nonce` TEXT NOT NULL, `submittedAt` INTEGER NOT NULL, `txHash` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -173,6 +173,30 @@
             "notNull": true
           },
           {
+            "fieldPath": "txGas",
+            "columnName": "txGas",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataGas",
+            "columnName": "dataGas",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gasToken",
+            "columnName": "gasToken",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gasPrice",
+            "columnName": "gasPrice",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "nonce",
             "columnName": "nonce",
             "affinity": "TEXT",
@@ -183,12 +207,6 @@
             "columnName": "submittedAt",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "subject",
-            "columnName": "subject",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "transactionHash",
@@ -208,7 +226,7 @@
       },
       {
         "tableName": "transaction_publish_status",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `transactionId` TEXT NOT NULL, `success` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `transactionId` TEXT NOT NULL, `success` INTEGER, `timestamp` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -227,6 +245,12 @@
             "columnName": "success",
             "affinity": "INTEGER",
             "notNull": false
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -241,7 +265,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"81f54c59bce18543e3950f4c0b050eaa\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"f7093e332f70cd75ecd4cc2b39d43439\")"
     ]
   }
 }

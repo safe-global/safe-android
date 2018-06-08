@@ -8,6 +8,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
+import java.sql.Timestamp
 
 
 interface TransactionExecutionRepository {
@@ -102,11 +103,11 @@ interface TransactionExecutionRepository {
         }
     }
 
-    enum class PublishStatus {
-        UNKNOWN,
-        PENDING,
-        FAILED,
-        SUCCESS
+    sealed class PublishStatus {
+        object Unknown: PublishStatus()
+        object Pending: PublishStatus()
+        data class Failed(val timestamp: Long): PublishStatus()
+        data class Success(val timestamp: Long): PublishStatus()
     }
 
     enum class Operation {

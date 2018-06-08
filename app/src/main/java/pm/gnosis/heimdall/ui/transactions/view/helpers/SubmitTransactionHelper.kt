@@ -1,20 +1,17 @@
 package pm.gnosis.heimdall.ui.transactions.view.helpers
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
-import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
-import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.ViewUpdate
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
@@ -56,11 +53,10 @@ interface SubmitTransactionHelper {
 }
 
 class DefaultSubmitTransactionHelper @Inject constructor(
-    private val addressHelper: AddressHelper,
     private val executionRepository: TransactionExecutionRepository,
     private val signaturePushRepository: PushServiceRepository,
     private val signatureStore: SignatureStore,
-    private val tokenRepository: TokenRepository
+    private val transactionViewHolderBuilder: TransactionViewHolderBuilder
 ) : SubmitTransactionHelper {
 
     private lateinit var safe: Solidity.Address
@@ -79,7 +75,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
         transactionData: TransactionData,
         initialSignatures: Map<Solidity.Address, Signature>?
     ): Observable<Result<ViewUpdate>> =
-        transactionViewHolder(transactionData)
+        transactionViewHolderBuilder.build(safe, transactionData)
             .emitAndNext(
                 emit = {
                     DataResult(
@@ -167,6 +163,10 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                 .flatMapSingle { signatureStore.load() }
                 .switchMapSingle {
                     val targets = params.owners - params.sender - it.keys
+                    if (targets.isEmpty()) {
+                        // Nothing to push
+                        return@switchMapSingle Single.just(DataResult(Unit))
+                    }
                     executionRepository.calculateHash(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
                         .flatMapCompletable {
                             signaturePushRepository.requestConfirmations(
@@ -180,6 +180,8 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                             )
 
                         }
+                        // Ignore error here ... if push fails ... it fails
+                        .onErrorComplete()
                         .mapToResult()
                 }
                 .flatMap {
@@ -192,7 +194,12 @@ class DefaultSubmitTransactionHelper @Inject constructor(
     private fun submitTransaction(params: TransactionExecutionRepository.ExecuteInformation, signatures: Map<Solidity.Address, Signature>) =
         executionRepository.submit(safe, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice)
             .flatMapCompletable {
-                signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, it, (params.owners - params.sender).toSet())
+                val targets = (params.owners - params.sender).toSet()
+                if (targets.isEmpty()) {
+                    // Nothing to push
+                    return@flatMapCompletable Completable.complete()
+                }
+                signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, it, targets)
             }
             .andThen(
                 Observable.just<ViewUpdate>(
@@ -228,20 +235,5 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                             .onErrorResumeNext { e: Throwable -> Observable.just(ErrorResult(e)) }
                 }
             }
-
-    private fun transactionViewHolder(transactionData: TransactionData): Single<TransactionInfoViewHolder> =
-        Single.fromCallable {
-            when (transactionData) {
-                is TransactionData.Generic ->
-                    GenericTransactionViewHolder(safe, transactionData, addressHelper)
-                is TransactionData.AssetTransfer ->
-                    AssetTransferViewHolder(
-                        safe,
-                        transactionData,
-                        addressHelper,
-                        tokenRepository
-                    )
-            }
-        }
 
 }

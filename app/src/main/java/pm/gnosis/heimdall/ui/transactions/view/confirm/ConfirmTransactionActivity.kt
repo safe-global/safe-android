@@ -4,6 +4,7 @@ package pm.gnosis.heimdall.ui.transactions.view.confirm
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.widget.NestedScrollView
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -16,6 +17,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.RestrictedTransactionException
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
@@ -41,6 +43,9 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
 
     @Inject
     lateinit var infoViewHelper: TransactionSubmitInfoViewHelper
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
 
     private var transactionInfoViewHolder: TransactionInfoViewHolder? = null
 
@@ -128,6 +133,11 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
 
         disposables += layout_confirm_transaction_back_button.clicks()
             .subscribeBy { onBackPressed() }
+
+
+        (layout_confirm_transaction_transaction_info as? NestedScrollView)?.let {
+            disposables += toolbarHelper.setupShadow(layout_confirm_transaction_toolbar_shadow, it)
+        }
     }
 
     private fun applyUpdate(update: ViewUpdate) {

@@ -7,7 +7,6 @@ import io.reactivex.Single
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.TypeParceler
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
-import pm.gnosis.heimdall.utils.OptionalSolidityAddressParceler
 import pm.gnosis.heimdall.utils.SolidityAddressParceler
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
@@ -19,14 +18,17 @@ interface TransactionInfoRepository {
     fun loadTransactionInfo(id: String): Single<TransactionInfo>
 }
 
-class RestrictedTransactionException(@StringRes val messageId: Int): IllegalArgumentException()
+class RestrictedTransactionException(@StringRes val messageId: Int) : IllegalArgumentException()
 
-data class TransactionInfo(val id: String, val safe: Solidity.Address, val data: TransactionData, val timestamp: Long)
+data class TransactionInfo(
+    val id: String, val chainHash: String, val safe: Solidity.Address, val data: TransactionData, val timestamp: Long,
+    val gasLimit: BigInteger, val gasPrice: BigInteger, val gasToken: Solidity.Address
+)
 
-sealed class TransactionData: Parcelable {
+sealed class TransactionData : Parcelable {
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
-    data class Generic(val to: Solidity.Address, val value: BigInteger, val data: String?): TransactionData()
+    data class Generic(val to: Solidity.Address, val value: BigInteger, val data: String?) : TransactionData()
 
     /* Not used yet, they break the tests right now!
     @Parcelize
@@ -40,7 +42,7 @@ sealed class TransactionData: Parcelable {
 
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
-    data class AssetTransfer(val token: Solidity.Address, val amount: BigInteger, val receiver: Solidity.Address): TransactionData()
+    data class AssetTransfer(val token: Solidity.Address, val amount: BigInteger, val receiver: Solidity.Address) : TransactionData()
 
     fun addToBundle(bundle: Bundle) =
         bundle.let {

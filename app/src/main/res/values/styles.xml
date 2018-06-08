@@ -21,7 +21,7 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
-    <style name="GreyBackgroundTheme" parent="AppTheme">
+    <style name="GreyBackgroundTheme" parent="WhiteTheme">
         <item name="android:windowBackground">@color/pale_grey_two</item>
     </style>
 

@@ -29,7 +29,8 @@ class AssetTransferViewHolder(
     private val safe: Solidity.Address,
     private val data: TransactionData.AssetTransfer,
     private val addressHelper: AddressHelper,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val showExtraInfo: Boolean
 ) : TransactionInfoViewHolder {
 
     private val disposables = CompositeDisposable()
@@ -76,6 +77,10 @@ class AssetTransferViewHolder(
     }
 
     private fun loadSafeTokenBalance(token: ERC20Token? = null) {
+        if (!showExtraInfo) {
+            view?.layout_asset_transfer_info_safe_balance?.text = null
+            return
+        }
         val erc20Token = token ?: ERC20Token(data.token, decimals = 0)
         // We build a erc20 token wrapper to request the balance
         disposables += tokenRepository.loadTokenBalances(safe, listOf(erc20Token))
