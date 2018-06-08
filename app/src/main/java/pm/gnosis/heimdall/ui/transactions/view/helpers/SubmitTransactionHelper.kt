@@ -22,6 +22,7 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.toHexString
+import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -199,6 +200,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                 }
                 signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, it, targets)
                     // Ignore error here ... if push fails ... it fails
+                    .doOnError(Timber::e)
                     .onErrorComplete()
             }
             .andThen(

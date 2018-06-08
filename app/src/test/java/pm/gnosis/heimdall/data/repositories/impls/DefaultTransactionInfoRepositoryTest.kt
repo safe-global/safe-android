@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
+import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.CALL
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.DELEGATE_CALL
@@ -90,12 +91,22 @@ class DefaultTransactionInfoRepositoryTest {
                             )
                         )
                     )
+                    given(descriptionsDaoMock.loadStatus(testId)).willReturn(
+                        Single.just(
+                            TransactionPublishStatusDb(
+                                testId,
+                                "chain-hash",
+                                null,
+                                null
+                            )
+                        )
+                    )
                     val testObserver = TestObserver<TransactionInfo>()
                     repository.loadTransactionInfo(testId).subscribe(testObserver)
                     testObserver.assertResult(
                         TransactionInfo(
                             testId,
-                            "some-tx-hash",
+                            "chain-hash",
                             TEST_SAFE,
                             it.expected,
                             testSubmitDate,

@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.isSolidityMethod
+import pm.gnosis.utils.removeHexPrefix
 import pm.gnosis.utils.removeSolidityMethodPrefix
 import java.math.BigInteger
 import javax.inject.Inject
@@ -49,9 +50,8 @@ class DefaultTransactionInfoRepository @Inject constructor(
     override fun parseTransactionData(transaction: SafeTransaction): Single<TransactionData> =
         Single.fromCallable {
             val tx = transaction.wrapped
-            val data = tx.data
+            val data = tx.data?.removeHexPrefix()
             when {
-
                 data.isNullOrBlank() -> // If we have no data we default to ether transfer
                     TransactionData.AssetTransfer(ERC20Token.ETHER_TOKEN.address, tx.value?.value ?: BigInteger.ZERO, tx.address)
                 data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true ->
