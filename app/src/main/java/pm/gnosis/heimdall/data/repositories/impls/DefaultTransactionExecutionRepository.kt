@@ -74,10 +74,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         )
     }
 
-    override fun loadExecuteInformation(
-        safeAddress: Solidity.Address,
-        transaction: SafeTransaction
-    ): Single<TransactionExecutionRepository.ExecuteInformation> =
+    private fun loadSafeState(safeAddress: Solidity.Address) =
         Single.fromCallable {
             TransactionInfoRequest(
                 EthCall(
@@ -103,6 +100,29 @@ class DefaultTransactionExecutionRepository @Inject constructor(
 
         }.subscribeOn(Schedulers.computation())
             .flatMap { ethereumRepository.request(it).singleOrError() }
+
+    override fun loadSafeExecuteState(safeAddress: Solidity.Address): Single<TransactionExecutionRepository.SafeExecuteState> =
+        loadSafeState(safeAddress)
+            .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
+            .map { (info, sender) ->
+                val nonce = GnosisSafePersonalEdition.Nonce.decode(info.nonce.result()!!).param0.value
+                val threshold = GnosisSafePersonalEdition.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
+                val owners = GnosisSafePersonalEdition.GetOwners.decode(info.owners.result()!!).param0.items
+                val safeBalance = info.balance.result()!!
+                TransactionExecutionRepository.SafeExecuteState(
+                    sender,
+                    threshold,
+                    owners,
+                    nonce,
+                    safeBalance
+                )
+            }
+
+    override fun loadExecuteInformation(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction
+    ): Single<TransactionExecutionRepository.ExecuteInformation> =
+        loadSafeState(safeAddress)
             .flatMap { info ->
                 relayServiceApi.estimate(
                     EstimateParams(
@@ -190,6 +210,18 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 accountsRepository.recover(it, signature)
             }.map { it to signature }
 
+    override fun notifyReject(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger,
+        targets: Set<Solidity.Address>
+    ): Completable =
+        signRejection(safeAddress, transaction, txGas, dataGas, gasPrice)
+            .flatMap { signature -> calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice).map { it.toHexString() to signature } }
+            .flatMapCompletable { (hash, signature) -> pushServiceRepository.propagateTransactionRejected(hash, signature, targets) }
+
     override fun submit(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
@@ -198,11 +230,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger
-    ): Completable =
+    ): Single<String> =
         loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, txGas, dataGas, gasPrice)
             .flatMap(relayServiceApi::execute)
-            .flatMap { addLocalTransaction(safeAddress, transaction, it.transactionHash, txGas, dataGas, gasPrice) }
-            .toCompletable()
+            .flatMap { handleSubmittedTransaction(safeAddress, transaction, it.transactionHash, txGas, dataGas, gasPrice) }
 
     private fun loadExecutionParams(
         safeAddress: Solidity.Address,
@@ -249,31 +280,28 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 )
             }
 
-    private fun addLocalTransaction(
+    private fun handleSubmittedTransaction(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
         txChainHash: String,
         gasPrice: BigInteger,
         txGas: BigInteger,
         dataGas: BigInteger
-    ): Single<String> =
+    ) =
         calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
             .map {
                 val tx = transaction.wrapped
                 val transactionUuid = UUID.randomUUID().toString()
-                descriptionsDao.insert(
-                    TransactionDescriptionDb(
-                        transactionUuid, safeAddress, tx.address,
-                        tx.value?.value ?: BigInteger.ZERO,
-                        tx.data ?: "", transaction.operation.toInt().toBigInteger(),
-                        tx.nonce
-                                ?: DEFAULT_NONCE, System.currentTimeMillis(), null, it.toHexString()
-                    )
+                val transactionObject = TransactionDescriptionDb(
+                    transactionUuid, safeAddress, tx.address,
+                    tx.value?.value ?: BigInteger.ZERO,
+                    tx.data ?: "", transaction.operation.toInt().toBigInteger(),
+                    tx.nonce
+                            ?: DEFAULT_NONCE, System.currentTimeMillis(), null, it.toHexString()
                 )
-                descriptionsDao.insert(
-                    TransactionPublishStatusDb(transactionUuid, txChainHash, null)
-                )
-                transactionUuid
+                descriptionsDao.insert(transactionObject)
+                descriptionsDao.insert(TransactionPublishStatusDb(transactionUuid, txChainHash, null))
+                txChainHash
             }
 
     override fun observePublishStatus(id: String): Observable<PublishStatus> =

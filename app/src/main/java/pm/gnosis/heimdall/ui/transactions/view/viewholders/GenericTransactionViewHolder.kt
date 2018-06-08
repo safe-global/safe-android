@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.transactions.review.viewholders
+package pm.gnosis.heimdall.ui.transactions.view.viewholders
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.OnLifecycleEvent
@@ -14,7 +14,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.builder.GenericTransactionBuilder
-import pm.gnosis.heimdall.ui.transactions.review.TransactionInfoViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.visible

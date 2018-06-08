@@ -41,7 +41,8 @@ import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
-import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 
 @ForView
 @Component(
@@ -68,6 +69,7 @@ interface ViewComponent {
     fun inject(activity: AuthenticateActivity)
     fun inject(activity: BuyCreditsActivity)
     fun inject(activity: ChangePasswordActivity)
+    fun inject(activity: ConfirmTransactionActivity)
     fun inject(activity: CreateAssetTransferActivity)
     fun inject(activity: CreateSafeActivity)
     fun inject(activity: FingerprintSetupActivity)

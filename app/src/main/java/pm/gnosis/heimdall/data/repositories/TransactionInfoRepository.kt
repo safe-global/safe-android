@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.repositories
 
 import android.os.Bundle
 import android.os.Parcelable
+import android.support.annotation.StringRes
 import io.reactivex.Single
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.TypeParceler
@@ -13,9 +14,12 @@ import java.math.BigInteger
 
 
 interface TransactionInfoRepository {
+    fun checkRestrictedTransaction(transaction: SafeTransaction): Single<SafeTransaction>
     fun parseTransactionData(transaction: SafeTransaction): Single<TransactionData>
     fun loadTransactionInfo(id: String): Single<TransactionInfo>
 }
+
+class RestrictedTransactionException(@StringRes val messageId: Int): IllegalArgumentException()
 
 data class TransactionInfo(val id: String, val safe: Solidity.Address, val data: TransactionData, val timestamp: Long)
 

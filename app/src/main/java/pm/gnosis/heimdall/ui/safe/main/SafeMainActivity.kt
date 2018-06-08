@@ -14,17 +14,17 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_safe_main.*
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.TransactionData
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
-import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.add.AddSafeActivity
@@ -34,17 +34,16 @@ import pm.gnosis.heimdall.ui.safe.overview.SafeAdapter
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
-import pm.gnosis.heimdall.ui.transactions.review.ReviewTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.transaction
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.hexAsBigIntegerOrNull
-import pm.gnosis.utils.toHexString
+import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigInteger
 import javax.inject.Inject
@@ -139,7 +138,28 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
 
         layout_safe_main_credits.setOnClickListener {
-            startActivity(BuyCreditsActivity.createIntent(this))
+            //startActivity(BuyCreditsActivity.createIntent(this))
+            val signature = Signature(
+                "afc632e143987aff66f38554f44972a662dd906d9a390521fb1efebaec2e738b".hexAsBigInteger(),
+                "0c2045441bc21aaf44efec4547d9bf923a58ee9b5c5dde402455b90f0ea18552".hexAsBigInteger(),
+                27
+            )
+            val safe = "0x6dfd9aa3ea3406ad6508972ce5b6f87b65a16c54".asEthereumAddress()!!
+            val transaction = SafeTransaction(
+                Transaction(
+                    "0x05c85Ab5B09Eb8A55020d72daf6091E04e264af9".asEthereumAddress()!!,
+                    value = Wei(BigInteger.valueOf(10000000000000000)),
+                    nonce = BigInteger.ONE
+                ),
+                TransactionExecutionRepository.Operation.DELEGATE_CALL
+            )
+            startActivity(
+                ConfirmTransactionActivity.createIntent(
+                    this, signature, safe, transaction, "0x255ed2f7cbd18dfdccbd729cf78297c1bd2943cd62c16bcacefb4c792d082322",
+                    BigInteger.valueOf(100000), BigInteger.valueOf(100000),
+                    Solidity.Address(BigInteger.ZERO), BigInteger.valueOf(20000000000)
+                )
+            )
             closeDrawer()
         }
 

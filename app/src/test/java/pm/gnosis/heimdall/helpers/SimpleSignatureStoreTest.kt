@@ -57,7 +57,7 @@ class SimpleSignatureStoreTest {
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, Wei.ZERO
         )
         // Set store info an observe it
-        store.flatMapInfo(TEST_SAFE, info).subscribe(mappedObserver)
+        store.flatMapInfo(TEST_SAFE, info, null).subscribe(mappedObserver)
         mappedObserver.assertValuesOnly(emptyMap())
 
         // Values updated still no signatures
@@ -127,7 +127,7 @@ class SimpleSignatureStoreTest {
             TEST_OWNERS_2, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, Wei.ZERO
         )
         // Set store info an observe it
-        store.flatMapInfo(TEST_SAFE, updateOwnersInfo).subscribe(updateOwnersObserver)
+        store.flatMapInfo(TEST_SAFE, updateOwnersInfo, null).subscribe(updateOwnersObserver)
         updateOwnersObserver.dispose()
         // Owners changes, signatures should update (remove old owners signatures)
         mappedObserver.assertValuesOnly(
@@ -154,7 +154,7 @@ class SimpleSignatureStoreTest {
             TEST_OWNERS_2, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, Wei.ZERO
         )
         // Set store info an observe it
-        store.flatMapInfo(TEST_SAFE, updateHashInfo).subscribe(updateHashObserver)
+        store.flatMapInfo(TEST_SAFE, updateHashInfo, mapOf(TEST_OWNERS_2[1] to TEST_SIGNATURE)).subscribe(updateHashObserver)
         updateHashObserver.dispose()
         // Owners changes, signatures should update (remove old owners signatures)
         mappedObserver.assertValuesOnly(
@@ -164,7 +164,7 @@ class SimpleSignatureStoreTest {
             TEST_SIGNERS.associate { it to TEST_SIGNATURE },
             mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE),
             // New value
-            emptyMap()
+            mapOf(TEST_OWNERS_2[1] to TEST_SIGNATURE)
         )
         signaturesObserver.assertValuesOnly(
             // Previous value
@@ -173,9 +173,9 @@ class SimpleSignatureStoreTest {
             TEST_SIGNERS.associate { it to TEST_SIGNATURE },
             mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE),
             // New value
-            emptyMap()
+            mapOf(TEST_OWNERS_2[1] to TEST_SIGNATURE)
         )
-        updateHashObserver.assertValuesOnly(emptyMap())
+        updateHashObserver.assertValuesOnly(mapOf(TEST_OWNERS_2[1] to TEST_SIGNATURE))
         // Was disposed before, should not get any updates
         updateOwnersObserver.assertValuesOnly(mapOf(TEST_OWNERS_2[0] to TEST_SIGNATURE))
 

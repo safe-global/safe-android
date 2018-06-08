@@ -129,15 +129,22 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.transactions.review.ReviewTransactionActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/GreyBackgroundTheme" />
-
-        <activity
             android:name=".ui.transactions.create.CreateAssetTransferActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/GreyBackgroundTheme" />
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.transactions.view.review.ReviewTransactionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.transactions.view.confirm.ConfirmTransactionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

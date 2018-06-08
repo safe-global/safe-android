@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_confirm_transaction_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/pale_grey_two"
+    tools:context=".ui.transactions.view.review.ReviewTransactionActivity">
+
+    <View
+        android:id="@+id/layout_confirm_transaction_toolbar_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/layout_confirm_transaction_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/layout_confirm_transaction_title" />
+
+    <ImageView
+        android:id="@+id/layout_confirm_transaction_back_button"
+        android:layout_width="@dimen/toolbar_height"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/dark_slate_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_close_24dp" />
+
+    <TextView
+        android:id="@+id/layout_confirm_transaction_title"
+        style="@style/Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingEnd="16dp"
+        android:text="@string/review_transaction_request"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/layout_confirm_transaction_back_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <include
+        android:id="@+id/layout_confirm_transaction_transaction_info"
+        layout="@layout/include_transaction_submit_info"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/layout_confirm_transaction_confirm_button"
+        app:layout_constraintTop_toBottomOf="@id/layout_confirm_transaction_toolbar_shadow" />
+
+    <TextView
+        android:id="@+id/layout_confirm_transaction_loading_error_message"
+        style="@style/SpacedCapsText"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center_horizontal"
+        android:text="@string/error_loading_transaction"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_confirm_transaction_title" />
+
+    <View
+        android:id="@+id/layout_confirm_transaction_loading_error_indicator"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:layout_margin="16dp"
+        android:background="@color/tomato_15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_confirm_transaction_loading_error_message" />
+
+    <android.support.constraint.Group
+        android:id="@+id/layout_confirm_transaction_loading_error_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="layout_confirm_transaction_loading_error_message,layout_confirm_transaction_loading_error_indicator"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/layout_confirm_transaction_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/layout_confirm_transaction_title" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_confirm_transaction_reject_button"
+        app:layout_constraintEnd_toEndOf="@+id/layout_confirm_transaction_reject_button"
+        app:layout_constraintStart_toStartOf="@+id/layout_confirm_transaction_reject_button"
+        app:layout_constraintTop_toTopOf="@+id/layout_confirm_transaction_reject_button" />
+
+    <TextView
+        android:id="@+id/layout_confirm_transaction_reject_button"
+        style="@style/PrimaryButton.FullWidth"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selectable_background"
+        android:text="@string/reject"
+        android:textColor="@color/tomato"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/layout_confirm_transaction_confirm_button"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/layout_confirm_transaction_confirm_button"
+        style="@style/PrimaryButton.FullWidth"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_confirm_transaction_reject_button"
+        tools:visibility="visible" />
+
+</android.support.constraint.ConstraintLayout>

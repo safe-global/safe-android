@@ -16,6 +16,7 @@ interface TransactionExecutionRepository {
         txGas: BigInteger, dataGas: BigInteger, gasPrice: BigInteger, gasToken: Solidity.Address = Solidity.Address(BigInteger.ZERO)
     ): Single<ByteArray>
 
+    fun loadSafeExecuteState(safeAddress: Solidity.Address): Single<SafeExecuteState>
     fun loadExecuteInformation(safeAddress: Solidity.Address, transaction: SafeTransaction): Single<ExecuteInformation>
 
     fun signConfirmation(
@@ -62,7 +63,28 @@ interface TransactionExecutionRepository {
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger
+    ): Single<String>
+
+    fun notifyReject(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger,
+        targets: Set<Solidity.Address>
     ): Completable
+
+    data class SafeExecuteState(
+        val sender: Solidity.Address,
+        val requiredConfirmation: Int,
+        val owners: List<Solidity.Address>,
+        val nonce: BigInteger,
+        val balance: Wei
+    ) {
+        val isOwner by lazy {
+            owners.contains(sender)
+        }
+    }
 
     data class ExecuteInformation(
         val transactionHash: String,
