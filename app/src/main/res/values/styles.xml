@@ -297,7 +297,7 @@
 
     <style name="CapsText">
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/light_text</item>
+        <item name="android:textColor">@color/bluey_grey</item>
         <item name="android:textSize">12sp</item>
     </style>
 

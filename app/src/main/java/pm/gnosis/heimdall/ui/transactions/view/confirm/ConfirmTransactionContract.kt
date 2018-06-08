@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.transactions.view.confirm
 
 import android.arch.lifecycle.ViewModel
+import android.support.annotation.StringRes
 import io.reactivex.Completable
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
@@ -27,4 +28,6 @@ abstract class ConfirmTransactionContract : ViewModel() {
     abstract fun observe(events: Events, transaction: SafeTransaction): Observable<Result<ViewUpdate>>
 
     abstract fun rejectTransaction(transaction: SafeTransaction): Completable
+
+    data class InvalidTransactionException(@StringRes val messageId: Int): IllegalArgumentException("Invalid transaction")
 }

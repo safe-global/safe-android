@@ -408,4 +408,9 @@
     <string name="error_loading_transaction">Error loading transaction</string>
     <string name="transaction_type_generic">Contract interaction</string>
     <string name="transaction_type_asset_transfer">Outgoing transfer</string>
+    <string name="header_pending">Pending</string>
+    <string name="header_today">Today</string>
+    <string name="header_yesterday">Yesterday</string>
+    <string name="header_older">Older</string>
+    <string name="header_submitted">Submitted</string>
 </resources>

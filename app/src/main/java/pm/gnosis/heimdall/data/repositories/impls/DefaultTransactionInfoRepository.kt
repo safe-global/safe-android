@@ -31,17 +31,17 @@ class DefaultTransactionInfoRepository @Inject constructor(
         Single.fromCallable {
             when {
                 transaction.operation == TransactionExecutionRepository.Operation.DELEGATE_CALL ->
-                    throw RestrictedTransactionException(R.string.restricted_transaction_delegatecall)
+                    throw RestrictedTransactionException.DelegateCall
                 transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.AddOwnerWithThreshold.METHOD_ID) == true ->
-                    throw RestrictedTransactionException(R.string.restricted_transaction_modify_owners)
+                    throw RestrictedTransactionException.ModifyOwners
                 transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.RemoveOwner.METHOD_ID) == true ->
-                    throw RestrictedTransactionException(R.string.restricted_transaction_modify_owners)
+                    throw RestrictedTransactionException.ModifyOwners
                 transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.SwapOwner.METHOD_ID) == true ->
-                    throw RestrictedTransactionException(R.string.restricted_transaction_modify_owners)
+                    throw RestrictedTransactionException.ModifyOwners
                 transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.EnableModule.METHOD_ID) == true ->
-                    throw RestrictedTransactionException(R.string.restricted_transaction_modify_modules)
+                    throw RestrictedTransactionException.ModifyModules
                 transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.DisableModule.METHOD_ID) == true ->
-                    throw RestrictedTransactionException(R.string.restricted_transaction_modify_modules)
+                    throw RestrictedTransactionException.ModifyModules
             }
             transaction
         }

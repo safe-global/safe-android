@@ -67,7 +67,7 @@ class SafeTransactionsFragment : BaseFragment() {
             .subscribeForResult(::displayTransactions, Timber::e)
     }
 
-    private fun displayTransactions(transactions: Adapter.Data<String>) {
+    private fun displayTransactions(transactions: Adapter.Data<SafeTransactionsContract.AdapterEntry>) {
         adapter.updateData(transactions)
         layout_safe_transactions_empty_view.visibility = if (transactions.entries.isEmpty()) {
             View.VISIBLE

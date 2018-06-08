@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_adapter_entry_header_title"
+    style="@style/SpacedCapsText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:textAllCaps="true"
+    android:textSize="10sp"
+    android:textStyle="bold"
+    tools:text="Pending" />

@@ -308,8 +308,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                             ?: DEFAULT_NONCE, System.currentTimeMillis(),
                     it.toHexString()
                 )
-                descriptionsDao.insert(transactionObject)
-                descriptionsDao.insert(TransactionPublishStatusDb(transactionUuid, txChainHash, null, null))
+                descriptionsDao.insert(transactionObject, TransactionPublishStatusDb(transactionUuid, txChainHash, null, null))
                 txChainHash
             }
 

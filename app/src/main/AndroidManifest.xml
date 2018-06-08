@@ -106,6 +106,7 @@
 
         <activity
             android:name=".ui.safe.main.SafeMainActivity"
+            android:theme="@style/GreyBackgroundTheme"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.debugsettings.DebugSettingsActivity"

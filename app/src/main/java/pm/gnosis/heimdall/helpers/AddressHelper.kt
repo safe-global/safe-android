@@ -34,12 +34,14 @@ class AddressHelper @Inject constructor(
             }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {
+                .doOnSuccess {
                     addressView.text = "${it.subSequence(0, 6)}...${it.subSequence(it.length - 6, it.length)}"
-                },
-            addressBookRepository.loadAddressBookEntry(address).map { it.name }
-                .onErrorResumeNext {
-                    safeRepository.loadSafe(address).map { it.name }
+                }
+                .flatMap {
+                    addressBookRepository.loadAddressBookEntry(address).map { it.name }
+                        .onErrorResumeNext {
+                            safeRepository.loadSafe(address).map { it.name }
+                        }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(

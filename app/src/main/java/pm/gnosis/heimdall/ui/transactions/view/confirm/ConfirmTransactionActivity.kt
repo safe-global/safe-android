@@ -10,8 +10,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.include_transaction_submit_info.*
-import kotlinx.android.synthetic.main.include_transaction_submit_info.view.*
 import kotlinx.android.synthetic.main.layout_confirm_transaction.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.RestrictedTransactionException
@@ -182,7 +180,7 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
         Timber.e(throwable)
         errorSnackbar(layout_confirm_transaction_transaction_info, throwable)
         layout_confirm_transaction_transaction_info.visible(false)
-        val errorMsgId = (throwable as? RestrictedTransactionException)?.messageId ?: R.string.error_loading_transaction
+        val errorMsgId = (throwable as? ConfirmTransactionContract.InvalidTransactionException)?.messageId ?: R.string.error_loading_transaction
         layout_confirm_transaction_loading_error_message.text = getString(errorMsgId)
         layout_confirm_transaction_loading_error_group.visible(true)
     }

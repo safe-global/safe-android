@@ -1,81 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/selectable_background"
-    android:padding="16dp">
+    android:background="@color/white">
 
-
-    <LinearLayout
-        android:id="@+id/layout_safe_transactions_item_status_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/layout_safe_transactions_item_status"
-            style="@style/SpacedCapsTextSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            tools:text="pending" />
-
-        <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/layout_safe_transactions_item_value"
-            style="@style/BoldContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/transaction_amount_background"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/out_transaction"
-            tools:text="300 ETH" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_safe_transactions_item_info_container"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/layout_safe_transactions_item_status_container"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/layout_safe_transactions_item_to"
-            style="@style/BoldContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="middle"
-            android:singleLine="true"
-            tools:text="0x00000023479345734578623456234523658234583245fafafa123468" />
-
-        <TextView
-            android:id="@+id/layout_safe_transactions_item_timestamp"
-            style="@style/Content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            tools:text="3 days ago" />
-
-    </LinearLayout>
+        android:layout_height="0dp"
+        android:background="@drawable/selectable_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/layout_safe_transactions_item_subject"
-        style="@style/Content"
-        android:layout_width="match_parent"
+        android:id="@+id/layout_safe_transactions_item_value"
+        style="@style/DarkText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_safe_transactions_item_info_container"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:visibility="visible"
-        tools:text="Buy a nice work laptop ... with this money" />
-</RelativeLayout>
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:textColor="@color/tomato"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_safe_transactions_item_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/layout_safe_transactions_item_target_image"
+        tools:text="- 300 ETH" />
+
+    <TextView
+        android:id="@+id/layout_safe_transactions_item_info"
+        style="@style/NormalText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        app:layout_constraintBottom_toBottomOf="@id/layout_safe_transactions_item_target_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_safe_transactions_item_value"
+        tools:text="pending"
+        tools:visibility="gone" />
+
+    <android.support.constraint.Barrier
+        android:id="@+id/layout_safe_transactions_item_content_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="layout_safe_transactions_item_info,layout_safe_transactions_item_value" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/layout_safe_transactions_item_target_image"
+        android:layout_width="@dimen/action_circle"
+        android:layout_height="@dimen/action_circle"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@drawable/action_circle_dark_blue" />
+
+    <ImageView
+        android:id="@+id/layout_safe_transactions_item_type_image"
+        android:layout_width="@dimen/action_circle"
+        android:layout_height="@dimen/action_circle"
+        android:src="@drawable/ic_transaction_failed"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_safe_transactions_item_target_image"
+        app:layout_constraintEnd_toEndOf="@+id/layout_safe_transactions_item_target_image"
+        app:layout_constraintStart_toStartOf="@+id/layout_safe_transactions_item_target_image"
+        app:layout_constraintTop_toTopOf="@+id/layout_safe_transactions_item_target_image" />
+
+    <ImageView
+        android:id="@+id/layout_safe_transactions_item_type_icon"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="28dp"
+        android:src="@drawable/ic_transaction_outgoing"
+        app:layout_constraintEnd_toEndOf="@+id/layout_safe_transactions_item_target_image"
+        app:layout_constraintStart_toStartOf="@+id/layout_safe_transactions_item_target_image"
+        app:layout_constraintTop_toTopOf="@+id/layout_safe_transactions_item_target_image" />
+
+    <TextView
+        android:id="@+id/layout_safe_transactions_item_target_label"
+        style="@style/DarkText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="middle"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:singleLine="true"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_safe_transactions_item_timestamp"
+        app:layout_constraintEnd_toStartOf="@+id/layout_safe_transactions_item_content_barrier"
+        app:layout_constraintStart_toEndOf="@+id/layout_safe_transactions_item_target_image"
+        app:layout_constraintTop_toTopOf="@id/layout_safe_transactions_item_target_image"
+        tools:text="0x0000...123468" />
+
+    <TextView
+        android:id="@+id/layout_safe_transactions_item_timestamp"
+        style="@style/NormalText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/layout_safe_transactions_item_target_image"
+        app:layout_constraintEnd_toStartOf="@+id/layout_safe_transactions_item_content_barrier"
+        app:layout_constraintStart_toEndOf="@+id/layout_safe_transactions_item_target_image"
+        app:layout_constraintTop_toBottomOf="@+id/layout_safe_transactions_item_target_label"
+        tools:text="3 days ago" />
+
+    <android.support.constraint.Barrier
+        android:id="@+id/layout_safe_transactions_item_progress_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="layout_safe_transactions_item_timestamp,layout_safe_transactions_item_target_image,layout_safe_transactions_item_info" />
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/layout_safe_transactions_item_progress"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal.NoPadding"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/pale_grey"
+        app:mpb_setBothDrawables="true"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_useIntrinsicPadding="false"
+        app:mpb_progressTint="@color/azure"
+        app:mpb_showProgressBackground="false"
+        app:layout_constraintTop_toBottomOf="@+id/layout_safe_transactions_item_progress_barrier" />
+</android.support.constraint.ConstraintLayout>

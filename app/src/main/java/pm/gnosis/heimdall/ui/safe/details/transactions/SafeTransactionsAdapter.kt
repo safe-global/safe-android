@@ -10,56 +10,84 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.layout_adapter_entry_header.view.*
 import kotlinx.android.synthetic.main.layout_safe_transactions_item.view.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfo
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
+import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
+import pm.gnosis.heimdall.ui.base.LifecycleAdapter.LifecycleViewHolder
+import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract.AdapterEntry.Header
+import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract.AdapterEntry.Transaction
+import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.heimdall.utils.formatAsLongDate
+import pm.gnosis.model.Solidity
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.asDecimalString
+import pm.gnosis.utils.removeHexPrefix
 import timber.log.Timber
+import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @ForView
 class SafeTransactionsAdapter @Inject constructor(
     @ViewContext private val context: Context,
+    private val addressHelper: AddressHelper,
     private val viewModel: SafeTransactionsContract
-) : LifecycleAdapter<String, SafeTransactionsAdapter.ViewHolder>(context) {
+) : LifecycleAdapter<SafeTransactionsContract.AdapterEntry, LifecycleViewHolder<SafeTransactionsContract.AdapterEntry>>(context) {
     val transactionSelectionSubject: PublishSubject<String> = PublishSubject.create()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_safe_transactions_item, parent, false)
-        return ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LifecycleViewHolder<SafeTransactionsContract.AdapterEntry> =
+        when (viewType) {
+            R.id.adapter_entry_header ->
+                HeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_adapter_entry_header, parent, false))
+            R.id.adapter_entry_transaction ->
+                TransactionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_safe_transactions_item, parent, false))
+            else -> throw IllegalArgumentException("Unknown type")
+        }
+
+    override fun getItemViewType(position: Int): Int {
+        return items.getOrNull(position)?.type ?: 0
     }
 
-    inner class ViewHolder(itemView: View) : LifecycleViewHolder<String>(itemView) {
+    inner class HeaderViewHolder(itemView: View) : LifecycleViewHolder<SafeTransactionsContract.AdapterEntry>(itemView) {
+        override fun bind(data: SafeTransactionsContract.AdapterEntry, payloads: List<Any>) {
+            (data as? Header)?.apply {
+                itemView.layout_adapter_entry_header_title.text = itemView.context.getString(titleRes)
+            }
+        }
+    }
+
+    inner class TransactionViewHolder(itemView: View) : LifecycleViewHolder<SafeTransactionsContract.AdapterEntry>(itemView) {
 
         private val disposables = CompositeDisposable()
 
-        private var currentData: String? = null
+        private var currentData: Transaction? = null
         private var cachedDetails: TransactionInfo? = null
 
-        override fun bind(data: String, payloads: List<Any>) {
-            currentData = data
+        override fun bind(data: SafeTransactionsContract.AdapterEntry, payloads: List<Any>) {
+            currentData = data as? Transaction
             itemView.layout_safe_transactions_item_timestamp.text = itemView.context.getString(R.string.loading)
-            itemView.layout_safe_transactions_item_value.visibility = View.GONE
-            itemView.layout_safe_transactions_item_subject.visibility = View.GONE
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_START)
         fun start() {
             // Make sure no disposable are left over
             disposables.clear()
-            val transactionId = currentData ?: return
+            val transactionId = currentData?.id ?: return
+            itemView.layout_safe_transactions_item_target_label.setTextColor(context.getColorCompat(R.color.dark_slate_blue))
             disposables += viewModel.loadTransactionInfo(transactionId)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ (details, transferInfo) -> updateDetails(details, transferInfo) }, {
+                .subscribe(::updateInfo, {
                     Timber.e(it)
                     itemView.layout_safe_transactions_item_timestamp.text = itemView.context.getString(R.string.transaction_details_error)
                 })
@@ -69,45 +97,93 @@ class SafeTransactionsAdapter @Inject constructor(
         }
 
         private fun updateStatus(status: TransactionExecutionRepository.PublishStatus) {
-            itemView.layout_safe_transactions_item_status.apply {
-                when (status) {
-                    is TransactionExecutionRepository.PublishStatus.Unknown,
-                    is TransactionExecutionRepository.PublishStatus.Success -> {
-                        visibility = View.GONE
-                    }
-                    is TransactionExecutionRepository.PublishStatus.Pending -> {
-                        setTextColor(context.getColorCompat(R.color.light_text))
-                        text = context.getString(R.string.status_pending)
-                        visibility = View.VISIBLE
-                    }
-                    is TransactionExecutionRepository.PublishStatus.Failed -> {
-                        setTextColor(context.getColorCompat(R.color.error))
-                        text = context.getString(R.string.status_failed)
-                        visibility = View.VISIBLE
-                    }
+            itemView.layout_safe_transactions_item_progress.isIndeterminate = false
+            itemView.layout_safe_transactions_item_progress.max = 100
+            itemView.layout_safe_transactions_item_progress.progress = 0
+            when (status) {
+                is TransactionExecutionRepository.PublishStatus.Unknown,
+                is TransactionExecutionRepository.PublishStatus.Success -> {
+                    itemView.layout_safe_transactions_item_target_image.visible(true)
+                    itemView.layout_safe_transactions_item_type_image.visible(false)
                 }
+                is TransactionExecutionRepository.PublishStatus.Pending -> {
+                    itemView.layout_safe_transactions_item_target_image.visible(true)
+                    itemView.layout_safe_transactions_item_type_image.visible(false)
+                    itemView.layout_safe_transactions_item_progress.isIndeterminate = true
+                }
+                is TransactionExecutionRepository.PublishStatus.Failed -> {
+                    itemView.layout_safe_transactions_item_value.setTextColor(context.getColorCompat(R.color.battleship_grey))
+                    itemView.layout_safe_transactions_item_target_label.setTextColor(context.getColorCompat(R.color.tomato))
+                    itemView.layout_safe_transactions_item_type_image.visible(true)
+                    itemView.layout_safe_transactions_item_type_image.setImageResource(R.drawable.ic_transaction_failed)
+                    itemView.layout_safe_transactions_item_target_image.visible(false, View.INVISIBLE)
+                }
+            }
+            itemView.layout_safe_transactions_item_progress.apply {
+
             }
         }
 
-        private fun updateDetails(details: TransactionInfo, transferInfo: SafeTransactionsContract.TransferInfo?) {
-            cachedDetails = details
+        private fun updateInfo(info: TransactionInfo) {
+            cachedDetails = info
             itemView.setOnClickListener {
-                currentData?.let { transactionSelectionSubject.onNext(it) }
+                currentData?.let { transactionSelectionSubject.onNext(it.id) }
             }
-            itemView.layout_safe_transactions_item_subject.visible(false)
-            // TODO: This is just so that it compiles ... this whole adapter needs to be reworked anyways
-            itemView.layout_safe_transactions_item_to.text = details.safe.asEthereumAddressString()
-            if (transferInfo != null) {
-                itemView.layout_safe_transactions_item_value.text =
-                        context.getString(R.string.outgoing_transaction_value, transferInfo.amount, transferInfo.symbol)
-                itemView.layout_safe_transactions_item_value.visibility = View.VISIBLE
-            } else {
-                itemView.layout_safe_transactions_item_value.visibility = View.GONE
+            val address: Solidity.Address
+            val infoText: String?
+            val valueText: String?
+            val valueColor: Int
+            val iconRes: Int
+            when (info.data) {
+                is TransactionData.Generic -> {
+                    address = info.data.to
+                    infoText = context.getString(R.string.x_data_bytes, (info.data.data?.removeHexPrefix()?.length ?: 0) / 2)
+                    valueText = Wei(info.data.value).displayString(context)
+                    valueColor = R.color.tomato
+                    iconRes = R.drawable.ic_transaction_outgoing
+                }
+                is TransactionData.AssetTransfer -> {
+                    address = info.data.receiver
+                    infoText = null
+                    valueText = null
+                    valueColor = R.color.tomato
+                    iconRes = R.drawable.ic_transaction_outgoing
+
+                    loadTokenInfo(info.data.token, info.data.amount)
+                }
             }
+            itemView.layout_safe_transactions_item_type_icon.setImageResource(iconRes)
+            itemView.layout_safe_transactions_item_value.text = valueText
+            itemView.layout_safe_transactions_item_value.setTextColor(context.getColorCompat(valueColor))
+
+            itemView.layout_safe_transactions_item_info.visible(infoText != null)
+            itemView.layout_safe_transactions_item_info.text = infoText
+
+            addressHelper.populateAddressInfo(
+                itemView.layout_safe_transactions_item_target_label,
+                itemView.layout_safe_transactions_item_target_label,
+                itemView.layout_safe_transactions_item_target_image,
+                address
+            ).forEach { disposables += it }
+
             updateTimestamp()
             disposables += Observable.interval(60, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ updateTimestamp() }, Timber::e)
+        }
+
+        private fun loadTokenInfo(token: Solidity.Address, amount: BigInteger) {
+            disposables += viewModel.loadTokenInfo(token)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = {
+                        itemView.layout_safe_transactions_item_value.text = "- ${it.displayString(amount)}"
+                    },
+                    onError = {
+                        Timber.e(it)
+                        itemView.layout_safe_transactions_item_value.text = "- ${amount.asDecimalString()}"
+                    }
+                )
         }
 
         private fun updateTimestamp() {

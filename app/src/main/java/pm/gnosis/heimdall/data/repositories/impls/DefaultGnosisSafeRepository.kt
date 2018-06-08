@@ -11,6 +11,7 @@ import pm.gnosis.ethereum.models.TransactionReceipt
 import pm.gnosis.heimdall.GnosisSafePersonalEdition.*
 import pm.gnosis.heimdall.ProxyFactory
 import pm.gnosis.heimdall.data.db.ApplicationDb
+import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
@@ -21,6 +22,7 @@ import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.heimdall.data.repositories.models.TransactionStatus
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
@@ -214,7 +216,13 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 SafeInfo(address.asEthereumAddressString(), balance, threshold, owners, isOwner, modules)
             }
 
-    override fun observeTransactionDescriptions(address: Solidity.Address): Flowable<List<String>> = descriptionsDao.observeDescriptions(address)
+    override fun observePendingTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>> =
+        descriptionsDao.observePendingTransaction(address)
+            .map { it.map { TransactionStatus(it.id, it.timestamp, true) } }
+
+    override fun observeSubmittedTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>> =
+        descriptionsDao.observeSubmittedTransaction(address)
+            .map { it.map { TransactionStatus(it.id, it.timestamp, false) } }
 
     private class SafeInfoRequest(
         val balance: EthRequest<Wei>,
