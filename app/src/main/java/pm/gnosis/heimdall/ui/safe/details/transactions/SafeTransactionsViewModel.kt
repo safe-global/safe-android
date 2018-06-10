@@ -30,6 +30,7 @@ class SafeTransactionsViewModel @Inject constructor(
 ) : SafeTransactionsContract() {
 
     private var address: Solidity.Address? = null
+    private var cachedData: Adapter.Data<AdapterEntry>? = null
 
     override fun setup(address: Solidity.Address) {
         this.address = address
@@ -65,7 +66,8 @@ class SafeTransactionsViewModel @Inject constructor(
                     combined
                 }
             )
-                .scanToAdapterData()
+                .scanToAdapterData(initialData = cachedData)
+                .doOnNext { cachedData = it }
                 .mapToResult()
         } ?: Flowable.empty<Result<Adapter.Data<AdapterEntry>>>()
     }

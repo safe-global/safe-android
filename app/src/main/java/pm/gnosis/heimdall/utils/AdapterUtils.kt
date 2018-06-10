@@ -10,15 +10,17 @@ import pm.gnosis.svalinn.common.utils.Result
 
 fun <D> Flowable<List<D>>.scanToAdapterData(
     idExtractor: ((D) -> Any) = defaultIdExtractor(),
-    payloadCalc: ((D, D) -> Any?)? = null
+    payloadCalc: ((D, D) -> Any?)? = null,
+    initialData: Adapter.Data<D>? = null
 ): Flowable<Adapter.Data<D>> =
-    scan(Adapter.Data(), scanner(idExtractor, payloadCalc))
+    scan(initialData ?: Adapter.Data(), scanner(idExtractor, payloadCalc))
 
 fun <D> Observable<List<D>>.scanToAdapterData(
     idExtractor: ((D) -> Any) = defaultIdExtractor(),
-    payloadCalc: ((D, D) -> Any?)? = null
+    payloadCalc: ((D, D) -> Any?)? = null,
+    initialData: Adapter.Data<D>? = null
 ): Observable<Adapter.Data<D>> =
-    scan(Adapter.Data(), scanner(idExtractor, payloadCalc))
+    scan(initialData ?: Adapter.Data(), scanner(idExtractor, payloadCalc))
 
 fun <D> Observable<Result<List<D>>>.scanToAdapterDataResult(
     idExtractor: ((D) -> Any) = defaultIdExtractor(),
