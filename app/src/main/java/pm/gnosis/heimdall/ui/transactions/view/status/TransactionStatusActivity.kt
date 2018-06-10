@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.transactions.view.status
 
 import android.content.Context
 import android.content.Intent
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import com.jakewharton.rxbinding2.view.clicks

@@ -4,7 +4,6 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction

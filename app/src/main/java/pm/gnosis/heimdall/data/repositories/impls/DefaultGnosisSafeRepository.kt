@@ -11,7 +11,6 @@ import pm.gnosis.ethereum.models.TransactionReceipt
 import pm.gnosis.heimdall.GnosisSafePersonalEdition.*
 import pm.gnosis.heimdall.ProxyFactory
 import pm.gnosis.heimdall.data.db.ApplicationDb
-import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb

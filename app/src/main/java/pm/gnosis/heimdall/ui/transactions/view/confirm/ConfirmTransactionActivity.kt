@@ -12,7 +12,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_confirm_transaction.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.RestrictedTransactionException
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper

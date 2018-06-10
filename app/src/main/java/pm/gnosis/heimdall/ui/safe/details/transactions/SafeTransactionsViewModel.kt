@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.ui.safe.details.transactions
 
 import android.content.Context
 import android.content.Intent
-import android.os.SystemClock
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single

@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.data.repositories
 
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.annotation.StringRes
 import io.reactivex.Single
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.TypeParceler
