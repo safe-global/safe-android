@@ -16,20 +16,22 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.TransactionStatus
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.utils.DateTimeUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
-import java.util.*
+import java.util.concurrent.TimeoutException
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeTransactionsViewModelTest {
@@ -63,39 +65,112 @@ class SafeTransactionsViewModelTest {
 
     @Test
     fun observeTransactions() {
-        val processor = PublishProcessor.create<List<TransactionStatus>>()
-        given(safeRepository.observePendingTransactions(testAddress)).willReturn(Flowable.just(emptyList()))
-        given(safeRepository.observeSubmittedTransactions(testAddress)).willReturn(processor)
+        val pendingProcessor = PublishProcessor.create<List<TransactionStatus>>()
+        val submittedProcessor = PublishProcessor.create<List<TransactionStatus>>()
+        given(safeRepository.observePendingTransactions(testAddress)).willReturn(pendingProcessor)
+        given(safeRepository.observeSubmittedTransactions(testAddress)).willReturn(submittedProcessor)
         viewModel.setup(testAddress)
 
         val subscriber = TestSubscriber<Result<Adapter.Data<SafeTransactionsContract.AdapterEntry>>>()
         viewModel.observeTransactions().subscribe(subscriber)
 
+        // Default AdapterData should be emitted if no cached value is present
         subscriber.assertValueCount(1).assertValueAt(0, {
-            it is DataResult &&
-                    it.data.diff == null && it.data.entries == emptyList<String>()
+            it is DataResult && it.data.diff == null && it.data.entries == emptyList<String>()
         }).assertNoErrors()
 
-        val initialDataId = (subscriber.values().first() as DataResult).data.id
+        var currentId = (subscriber.values().last() as DataResult).data.id
 
-        processor.onNext(generateList(to = 8))
+        submittedProcessor.onNext(emptyList())
+        pendingProcessor.onNext(
+            listOf(
+                TransactionStatus("id_1", TEST_TIME, true)
+            )
+        )
 
         subscriber.assertValueCount(2).assertValueAt(1, {
-            it is DataResult && it.data.parentId == initialDataId &&
-                    it.data.diff != null && it.data.entries == generateList(to = 8)
+            it is DataResult && it.data.parentId == currentId && it.data.diff != null &&
+                    it.data.entries == listOf(
+                SafeTransactionsContract.AdapterEntry.Header(R.string.header_pending),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_1")
+            )
         }).assertNoErrors()
 
-        val firstDataId = (subscriber.values()[1] as DataResult).data.id
+        currentId = (subscriber.values().last() as DataResult).data.id
 
-        processor.onNext(generateList(from = 1, to = 9))
+        submittedProcessor.onNext(
+            listOf(
+                TransactionStatus("id_2", System.currentTimeMillis() - (DateTimeUtils.DAY_IN_MS / 2), false),
+                TransactionStatus("id_3", System.currentTimeMillis() - (3 * DateTimeUtils.DAY_IN_MS / 2), false),
+                TransactionStatus("id_4", System.currentTimeMillis() - (5 * DateTimeUtils.DAY_IN_MS), false)
+            )
+        )
 
         subscriber.assertValueCount(3).assertValueAt(2, {
-            it is DataResult && it.data.parentId == firstDataId &&
-                    it.data.diff != null && it.data.entries == generateList(from = 1, to = 9)
+            it is DataResult && it.data.parentId == currentId &&
+                    it.data.entries == listOf(
+                SafeTransactionsContract.AdapterEntry.Header(R.string.header_pending),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_1"),
+                SafeTransactionsContract.AdapterEntry.Header(R.string.header_today),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_2"),
+                SafeTransactionsContract.AdapterEntry.Header(R.string.header_yesterday),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_3"),
+                SafeTransactionsContract.AdapterEntry.Header(R.string.header_older),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_4")
+            )
+        }).assertNoErrors()
+
+        currentId = (subscriber.values().last() as DataResult).data.id
+
+        submittedProcessor.onNext(
+            listOf(
+                TransactionStatus("id_4", System.currentTimeMillis() - (5 * DateTimeUtils.DAY_IN_MS), false)
+            )
+        )
+
+        System.out.println((subscriber.values()[3] as DataResult).data.entries)
+        subscriber.assertValueCount(4).assertValueAt(3, {
+            it is DataResult && it.data.parentId == currentId &&
+                    it.data.entries == listOf(
+                SafeTransactionsContract.AdapterEntry.Header(R.string.header_pending),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_1"),
+                SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_4")
+            )
+        }).assertNoErrors()
+
+        currentId = (subscriber.values().last() as DataResult).data.id
+
+        pendingProcessor.onNext(emptyList())
+
+        subscriber.assertValueCount(5).assertValueAt(4, {
+            it is DataResult && it.data.parentId == currentId &&
+                    it.data.entries == listOf(
+                SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_4")
+            )
         }).assertNoErrors()
 
         then(safeRepository).should().observePendingTransactions(testAddress)
         then(safeRepository).should().observeSubmittedTransactions(testAddress)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+
+        subscriber.dispose()
+
+        val cachedSubscriber = TestSubscriber<Result<Adapter.Data<SafeTransactionsContract.AdapterEntry>>>()
+        viewModel.observeTransactions().subscribe(cachedSubscriber)
+
+        // On subscribe the last (cached) value should be emitted again
+        cachedSubscriber.assertValueCount(1).assertValueAt(0, {
+            it is DataResult && it.data.parentId == currentId &&
+                    it.data.entries == listOf(
+                SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_4")
+            )
+        }).assertNoErrors()
+
+        then(safeRepository).should(times(2)).observePendingTransactions(testAddress)
+        then(safeRepository).should(times(2)).observeSubmittedTransactions(testAddress)
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
@@ -219,21 +294,66 @@ class SafeTransactionsViewModelTest {
         then(detailsRepository).shouldHaveNoMoreInteractions()
     }
 
-    private fun generateList(
-        from: Int = 0,
-        to: Int = 0,
-        step: Int = 1,
-        pending: Boolean = false
-    ): List<TransactionStatus> {
-        val list = ArrayList<TransactionStatus>(Math.abs(to - from))
-        for (i in LongProgression.fromClosedRange(from.toLong(), to.toLong(), step.toLong())) {
-            list += TransactionStatus("$i", TEST_TIME, pending)
-        }
-        return list
+    @Test
+    fun loadTokenInfoEtherToken() {
+        val token = ERC20Token.ETHER_TOKEN
+
+        val observer = TestObserver<ERC20Token>()
+        viewModel.loadTokenInfo(token.address).subscribe(observer)
+
+        observer.assertResult(token)
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadTokenInfoUnknownToken() {
+        val error = TimeoutException()
+        given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
+        given(tokenRepository.loadTokenInfo(MockUtils.any())).willReturn(Observable.error(error))
+
+        val token = ERC20Token(TEST_TOKEN_ADDRESS, decimals = 18, name = "Test Token", symbol = "TT")
+
+        val observer = TestObserver<ERC20Token>()
+        viewModel.loadTokenInfo(token.address).subscribe(observer)
+
+        observer.assertError(error)
+        then(tokenRepository).should().loadToken(token.address)
+        then(tokenRepository).should().loadTokenInfo(token.address)
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadTokenInfoLocalToken() {
+        val token = ERC20Token(TEST_TOKEN_ADDRESS, decimals = 18, name = "Test Token", symbol = "TT")
+
+        given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.just(token))
+
+        val observer = TestObserver<ERC20Token>()
+        viewModel.loadTokenInfo(token.address).subscribe(observer)
+
+        observer.assertResult(token)
+        then(tokenRepository).should().loadToken(token.address)
+        then(tokenRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadTokenInfoNetworkToken() {
+        val token = ERC20Token(TEST_TOKEN_ADDRESS, decimals = 18, name = "Test Token", symbol = "TT")
+        given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
+        given(tokenRepository.loadTokenInfo(MockUtils.any())).willReturn(Observable.just(token))
+
+        val observer = TestObserver<ERC20Token>()
+        viewModel.loadTokenInfo(token.address).subscribe(observer)
+
+        observer.assertResult(token)
+        then(tokenRepository).should().loadToken(token.address)
+        then(tokenRepository).should().loadTokenInfo(token.address)
+        then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     companion object {
-        const val TEST_TIME = 123456987L
-        val TEST_SAFE = Solidity.Address(BigInteger.TEN)
+        private const val TEST_TIME = 123456987L
+        private val TEST_SAFE = Solidity.Address(BigInteger.TEN)
+        private val TEST_TOKEN_ADDRESS = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!
     }
 }

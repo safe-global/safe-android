@@ -10,7 +10,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.RestrictedTransactionException
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
@@ -153,18 +155,20 @@ class ConfirmTransactionViewModelTest {
         then(txRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
-    @Test
-    fun observeRestrictedTransaction() {
+    private fun testRestrictedTransaction(exception: RestrictedTransactionException, expected: Exception) {
+        reset(submitTransactionHelper)
+        reset(relayRepositoryMock)
+        reset(txRepositoryMock)
+
         val events = SubmitTransactionHelper.Events(Observable.empty(), Observable.empty(), Observable.empty())
-        val error = RestrictedTransactionException(0)
-        given(txRepositoryMock.checkRestrictedTransaction(MockUtils.any())).willReturn(Single.error(error))
+        given(txRepositoryMock.checkRestrictedTransaction(MockUtils.any())).willReturn(Single.error(exception))
 
         val observer = TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>()
 
         viewModel.setup(TEST_SAFE, TEST_TRANSACTION_HASH, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE, TEST_NONCE, TEST_SIGNATURE)
         viewModel.observe(events, TEST_TRANSACTION).subscribe(observer)
 
-        observer.assertError(error).assertNoValues()
+        observer.assertError(expected).assertNoValues()
 
         then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any())
         then(submitTransactionHelper).shouldHaveNoMoreInteractions()
@@ -173,6 +177,26 @@ class ConfirmTransactionViewModelTest {
 
         then(txRepositoryMock).should().checkRestrictedTransaction(TEST_TRANSACTION)
         then(txRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeRestrictedTransaction() {
+        val testData = mapOf(
+            RestrictedTransactionException.DelegateCall::class to
+                    (RestrictedTransactionException.DelegateCall to
+                    ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_delegatecall)),
+            RestrictedTransactionException.ModifyOwners::class to
+                    (RestrictedTransactionException.ModifyOwners to
+                    ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_owners)),
+            RestrictedTransactionException.ModifyModules::class to
+                    (RestrictedTransactionException.ModifyModules to
+                    ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_modules))
+        )
+
+        RestrictedTransactionException::class.nestedClasses.forEach {
+            val (exception, expected) = testData[it] ?: throw IllegalStateException("Missing test for ${it.simpleName}")
+            testRestrictedTransaction(exception, expected)
+        }
     }
 
     @Test
