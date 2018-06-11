@@ -122,16 +122,12 @@ class DefaultGnosisSafeRepository @Inject constructor(
     override fun observeDeployStatus(hash: String): Observable<String> {
         return ethereumRepository.getTransactionReceipt(hash)
             .flatMap {
-                if (it.status != null) {
-                    it.logs.forEach {
-                        decodeCreationEventOrNull(it)?.let {
-                            return@flatMap Observable.just(it.proxy)
-                        }
+                it.logs.forEach {
+                    decodeCreationEventOrNull(it)?.let {
+                        return@flatMap Observable.just(it.proxy)
                     }
-                    Observable.error<Solidity.Address>(SafeDeploymentFailedException())
-                } else {
-                    Observable.error<Solidity.Address>(IllegalStateException())
                 }
+                Observable.error<Solidity.Address>(SafeDeploymentFailedException())
             }
             .retryWhen {
                 it.flatMap {
@@ -217,10 +213,12 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun observePendingTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>> =
         descriptionsDao.observePendingTransaction(address)
+            .subscribeOn(Schedulers.io())
             .map { it.map { TransactionStatus(it.id, it.timestamp, true) } }
 
     override fun observeSubmittedTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>> =
         descriptionsDao.observeSubmittedTransaction(address)
+            .subscribeOn(Schedulers.io())
             .map { it.map { TransactionStatus(it.id, it.timestamp, false) } }
 
     private class SafeInfoRequest(

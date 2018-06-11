@@ -12,7 +12,6 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import junit.framework.Assert.assertNotNull
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
