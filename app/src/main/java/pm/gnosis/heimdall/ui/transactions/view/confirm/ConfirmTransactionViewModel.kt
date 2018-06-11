@@ -100,6 +100,10 @@ class ConfirmTransactionViewModel @Inject constructor(
                             InvalidTransactionException(R.string.restricted_transaction_modify_owners)
                         is RestrictedTransactionException.ModifyModules ->
                             InvalidTransactionException(R.string.restricted_transaction_modify_modules)
+                        is RestrictedTransactionException.ChangeThreshold ->
+                            InvalidTransactionException(R.string.restricted_transaction_change_threshold)
+                        is RestrictedTransactionException.ChangeMasterCopy ->
+                            InvalidTransactionException(R.string.restricted_transaction_modify_proxy)
                         else ->
                             it
                     }
