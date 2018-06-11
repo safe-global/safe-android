@@ -13,10 +13,12 @@ import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
+import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.CALL
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.DELEGATE_CALL
 import pm.gnosis.heimdall.data.repositories.TransactionInfo
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
@@ -79,16 +81,40 @@ class DefaultTransactionInfoRepositoryTest {
                                 it.transaction.wrapped.value?.value ?: BigInteger.ZERO,
                                 it.transaction.wrapped.data ?: "",
                                 it.transaction.operation.toInt().toBigInteger(),
+                                BigInteger.TEN,
+                                BigInteger.ZERO,
+                                ERC20Token.ETHER_TOKEN.address,
+                                BigInteger.ZERO,
                                 it.transaction.wrapped.nonce ?: BigInteger.ZERO,
                                 testSubmitDate,
-                                null,
                                 "some-tx-hash"
+                            )
+                        )
+                    )
+                    given(descriptionsDaoMock.loadStatus(testId)).willReturn(
+                        Single.just(
+                            TransactionPublishStatusDb(
+                                testId,
+                                "chain-hash",
+                                null,
+                                null
                             )
                         )
                     )
                     val testObserver = TestObserver<TransactionInfo>()
                     repository.loadTransactionInfo(testId).subscribe(testObserver)
-                    testObserver.assertResult(TransactionInfo(testId, TEST_SAFE, it.expected, testSubmitDate))
+                    testObserver.assertResult(
+                        TransactionInfo(
+                            testId,
+                            "chain-hash",
+                            TEST_SAFE,
+                            it.expected,
+                            testSubmitDate,
+                            BigInteger.valueOf(32010),
+                            BigInteger.ZERO,
+                            ERC20Token.ETHER_TOKEN.address
+                        )
+                    )
                 }
             } ?: throw IllegalStateException("Missing tests for ${klass.simpleName}")
         }

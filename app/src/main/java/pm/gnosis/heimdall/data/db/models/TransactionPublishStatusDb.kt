@@ -15,12 +15,16 @@ data class TransactionPublishStatusDb(
     var transactionId: String,
 
     @ColumnInfo(name = COL_SUCCESS)
-    var success: Boolean?
+    var success: Boolean?,
+
+    @ColumnInfo(name = COL_TIMESTAMP)
+    var timestamp: Long?
 ) {
     companion object {
         const val TABLE_NAME = "transaction_publish_status"
         const val COL_ID = "id"
         const val COL_TRANSACTION_ID = "transactionId"
         const val COL_SUCCESS = "success"
+        const val COL_TIMESTAMP = "timestamp"
     }
 }

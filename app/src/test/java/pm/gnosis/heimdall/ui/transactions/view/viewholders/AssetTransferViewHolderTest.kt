@@ -97,7 +97,9 @@ class AssetTransferViewHolderTest {
     @Test
     fun testNoInteractionWithoutView() {
         val data = TransactionData.AssetTransfer(TEST_TOKEN, TEST_AMOUNT, TEST_RECEIVER)
-        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock)
+        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock, true)
+        viewHolder.start()
+        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock, false)
         viewHolder.start()
         then(contextMock).shouldHaveZeroInteractions()
         then(addressBookRepository).shouldHaveZeroInteractions()
@@ -145,13 +147,12 @@ class AssetTransferViewHolderTest {
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
-    @Test
-    fun testEtherToken() {
+    private fun testEtherToken(showExtraInfo: Boolean) {
         val balancesObservable = TestObservableFactory<List<Pair<ERC20Token, BigInteger?>>>()
         setupViewMocks(balancesObservable.get())
 
         val data = TransactionData.AssetTransfer(ERC20Token.ETHER_TOKEN.address, TEST_AMOUNT, TEST_RECEIVER)
-        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock)
+        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock, showExtraInfo)
 
         viewHolder.inflate(layoutInflater, containerView)
         then(layoutInflater).should().inflate(R.layout.layout_asset_transfer_info, containerView, true)
@@ -163,8 +164,10 @@ class AssetTransferViewHolderTest {
         then(fiatView).should().text = "~ $"
         then(fiatView).shouldHaveNoMoreInteractions()
 
-        then(safeBalanceView).shouldHaveZeroInteractions()
-        balancesObservable.error(TimeoutException())
+        if (showExtraInfo) {
+            then(safeBalanceView).shouldHaveNoMoreInteractions()
+            balancesObservable.error(TimeoutException())
+        }
         then(safeBalanceView).should().text = null
         then(safeBalanceView).shouldHaveNoMoreInteractions()
 
@@ -174,19 +177,30 @@ class AssetTransferViewHolderTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Check repository interaction
-        then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
+        if (showExtraInfo) {
+            then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
+        }
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
-    fun testKnownToken() {
+    fun etherTokenWithBalance() {
+        testEtherToken(true)
+    }
+
+    @Test
+    fun etherTokenWithoutBalance() {
+        testEtherToken(false)
+    }
+
+    private fun testKnownToken(showExtraInfo: Boolean) {
         val tokenSingle = TestSingleFactory<ERC20Token>()
         val erc20Token = ERC20Token(TEST_TOKEN, "Test Token", "TT", 2, false)
         setupViewMocks(Observable.just(listOf(erc20Token to BigInteger.valueOf(1000))))
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenSingle.get())
 
         val data = TransactionData.AssetTransfer(TEST_TOKEN, TEST_AMOUNT, TEST_RECEIVER)
-        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock)
+        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock, showExtraInfo)
 
         viewHolder.inflate(layoutInflater, containerView)
         then(layoutInflater).should().inflate(R.layout.layout_asset_transfer_info, containerView, true)
@@ -201,22 +215,34 @@ class AssetTransferViewHolderTest {
         then(valueView).should().text = "4000000000000000 TT"
         then(valueView).shouldHaveNoMoreInteractions()
 
-        then(safeBalanceView).should().text = "10 TT"
-        then(safeBalanceView).shouldHaveNoMoreInteractions()
-
         // Check view interaction
         assertAddressHelperInteractions()
 
         then(contextMock).shouldHaveZeroInteractions()
 
         // Check repository interaction
-        then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(erc20Token))
+        if(showExtraInfo) {
+            then(safeBalanceView).should().text = "10 TT"
+            then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(erc20Token))
+        } else {
+            then(safeBalanceView).should().text = null
+        }
+        then(safeBalanceView).shouldHaveNoMoreInteractions()
         then(tokenRepositoryMock).should().loadToken(TEST_TOKEN)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
-    fun testUnknownToken() {
+    fun knownTokenWithBalance() {
+        testKnownToken(true)
+    }
+
+    @Test
+    fun knownTokenWithoutBalance() {
+        testKnownToken(false)
+    }
+
+    private fun testUnknownToken(showExtraInfo: Boolean) {
         contextMock.mockGetString()
         given(viewHolderView.context).willReturn(contextMock)
         setupViewMocks(Observable.just(listOf()))
@@ -225,7 +251,7 @@ class AssetTransferViewHolderTest {
         given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(tokenInfoObservable.get())
 
         val data = TransactionData.AssetTransfer(TEST_TOKEN, TEST_AMOUNT, TEST_RECEIVER)
-        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock)
+        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock, showExtraInfo)
 
         viewHolder.inflate(layoutInflater, containerView)
         then(layoutInflater).should().inflate(R.layout.layout_asset_transfer_info, containerView, true)
@@ -243,9 +269,6 @@ class AssetTransferViewHolderTest {
         then(valueView).should().text = "400000000000000000"
         then(valueView).shouldHaveNoMoreInteractions()
 
-        then(safeBalanceView).should().text = "0"
-        then(safeBalanceView).shouldHaveNoMoreInteractions()
-
         // Check view interaction
         assertAddressHelperInteractions()
 
@@ -253,10 +276,26 @@ class AssetTransferViewHolderTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Check repository interaction
-        then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token(TEST_TOKEN, decimals = 0)))
+        if (showExtraInfo) {
+            then(safeBalanceView).should().text = "0"
+            then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token(TEST_TOKEN, decimals = 0)))
+        } else {
+            then(safeBalanceView).should().text = null
+        }
+        then(safeBalanceView).shouldHaveNoMoreInteractions()
         then(tokenRepositoryMock).should().loadToken(TEST_TOKEN)
         then(tokenRepositoryMock).should().loadTokenInfo(TEST_TOKEN)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun unknownTokenWithBalance() {
+        testUnknownToken(true)
+    }
+
+    @Test
+    fun unknownTokenWithoutBalance() {
+        testUnknownToken(false)
     }
 
     @Test
@@ -266,7 +305,7 @@ class AssetTransferViewHolderTest {
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenSingle.get())
 
         val data = TransactionData.AssetTransfer(TEST_TOKEN, TEST_AMOUNT, TEST_RECEIVER)
-        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock)
+        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock, true)
 
         viewHolder.inflate(layoutInflater, containerView)
         then(layoutInflater).should().inflate(R.layout.layout_asset_transfer_info, containerView, true)
@@ -285,7 +324,7 @@ class AssetTransferViewHolderTest {
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenSingle.get())
 
         val data = TransactionData.AssetTransfer(TEST_TOKEN, TEST_AMOUNT, TEST_RECEIVER)
-        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock)
+        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock, true)
 
         viewHolder.inflate(layoutInflater, containerView)
         then(layoutInflater).should().inflate(R.layout.layout_asset_transfer_info, containerView, true)
@@ -318,7 +357,7 @@ class AssetTransferViewHolderTest {
     @Test
     fun testLoadTransaction() {
         val data = TransactionData.AssetTransfer(TEST_TOKEN, TEST_AMOUNT, TEST_RECEIVER)
-        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock)
+        viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock, true)
         val testObserver = TestObserver<SafeTransaction>()
         viewHolder.loadTransaction().subscribe(testObserver)
         testObserver.assertResult(AssetTransferTransactionBuilder.build(data))

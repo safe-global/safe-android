@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
@@ -284,23 +285,31 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
         txChainHash: String,
-        gasPrice: BigInteger,
         txGas: BigInteger,
-        dataGas: BigInteger
+        dataGas: BigInteger,
+        gasPrice: BigInteger
     ) =
         calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
             .map {
                 val tx = transaction.wrapped
                 val transactionUuid = UUID.randomUUID().toString()
                 val transactionObject = TransactionDescriptionDb(
-                    transactionUuid, safeAddress, tx.address,
+                    transactionUuid,
+                    safeAddress,
+                    tx.address,
                     tx.value?.value ?: BigInteger.ZERO,
-                    tx.data ?: "", transaction.operation.toInt().toBigInteger(),
+                    tx.data ?: "",
+                    transaction.operation.toInt().toBigInteger(),
+                    txGas,
+                    dataGas,
+                    ERC20Token.ETHER_TOKEN.address,
+                    gasPrice,
                     tx.nonce
-                            ?: DEFAULT_NONCE, System.currentTimeMillis(), null, it.toHexString()
+                            ?: DEFAULT_NONCE, System.currentTimeMillis(),
+                    it.toHexString()
                 )
                 descriptionsDao.insert(transactionObject)
-                descriptionsDao.insert(TransactionPublishStatusDb(transactionUuid, txChainHash, null))
+                descriptionsDao.insert(TransactionPublishStatusDb(transactionUuid, txChainHash, null, null))
                 txChainHash
             }
 
@@ -309,24 +318,33 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             .toObservable()
             .switchMap { status ->
                 status.success?.let {
-                    Observable.just(it)
+                    Observable.just(it to (status.timestamp ?: 0))
                 } ?: ethereumRepository.getTransactionReceipt(status.transactionId)
-                    .flatMap {
-                        it.status?.let {
-                            Observable.just(it == BigInteger.ONE)
-                        } ?: Observable.error<Boolean>(IllegalStateException())
+                    .flatMap { receipt ->
+                        ethereumRepository.getBlockByHash(receipt.blockHash)
+                            .map { receipt to (it.timestamp.toLong() * 1000) }
                     }
                     .retryWhen {
                         it.delay(20, TimeUnit.SECONDS)
                     }
-                    .map {
-                        descriptionsDao.update(status.apply { success = it })
-                        it
+                    .map { (receipt, time) ->
+                        val executed = if (receipt.status == BigInteger.ZERO) false
+                        else {
+                            // If we have a failure event than the transaction failed
+                            receipt.logs.none {
+                                it.topics.getOrNull(0) == GnosisSafePersonalEdition.Events.ExecutionFailed.EVENT_ID
+                            }
+                        }
+                        descriptionsDao.update(status.apply {
+                            success = executed
+                            timestamp = time
+                        })
+                        executed to time
                     }
             }
-            .map { if (it) PublishStatus.SUCCESS else PublishStatus.FAILED }
-            .startWith(PublishStatus.PENDING)
-            .onErrorReturnItem(PublishStatus.UNKNOWN)
+            .map { (success, timestamp) -> if (success) PublishStatus.Success(timestamp) else PublishStatus.Failed(timestamp) }
+            .startWith(PublishStatus.Pending)
+            .onErrorReturnItem(PublishStatus.Unknown)
 
     private class TransactionInfoRequest(
         val threshold: EthRequest<String>,

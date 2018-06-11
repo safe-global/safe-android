@@ -18,7 +18,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
-import pm.gnosis.heimdall.data.repositories.impls.DefaultTransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.model.Solidity
@@ -44,7 +43,7 @@ class SafeTransactionsViewModelTest {
     private lateinit var safeRepository: GnosisSafeRepository
 
     @Mock
-    private lateinit var safeTransactionRepository: DefaultTransactionExecutionRepository
+    private lateinit var safeTransactionRepository: TransactionExecutionRepository
 
     @Mock
     private lateinit var detailsRepository: TransactionInfoRepository
@@ -177,9 +176,13 @@ class SafeTransactionsViewModelTest {
 
         val details = TransactionInfo(
             testId,
+            "chain_hash",
             TEST_SAFE,
             TransactionData.Generic(Solidity.Address(BigInteger.TEN), BigInteger.ZERO, null),
-            TEST_TIME
+            TEST_TIME,
+            BigInteger.TEN,
+            BigInteger.ZERO,
+            ERC20Token.ETHER_TOKEN.address
         )
         given(detailsRepository.loadTransactionInfo(anyString()))
             .willReturn(Single.just(details))
@@ -204,9 +207,13 @@ class SafeTransactionsViewModelTest {
 
         val details = TransactionInfo(
             testId,
+            "chain_hash",
             TEST_SAFE,
             TransactionData.AssetTransfer(tokenAddress, BigInteger.valueOf(42), Solidity.Address(BigInteger.ONE)),
-            TEST_TIME
+            TEST_TIME,
+            BigInteger.TEN,
+            BigInteger.ZERO,
+            ERC20Token.ETHER_TOKEN.address
         )
         given(detailsRepository.loadTransactionInfo(anyString()))
             .willReturn(Single.just(details))
@@ -233,9 +240,13 @@ class SafeTransactionsViewModelTest {
 
         val details = TransactionInfo(
             testId,
+            "chain_hash",
             TEST_SAFE,
             TransactionData.AssetTransfer(tokenAddress, BigInteger.valueOf(42), Solidity.Address(BigInteger.ONE)),
-            TEST_TIME
+            TEST_TIME,
+            BigInteger.TEN,
+            BigInteger.ZERO,
+            ERC20Token.ETHER_TOKEN.address
         )
         given(detailsRepository.loadTransactionInfo(anyString()))
             .willReturn(Single.just(details))
@@ -263,9 +274,13 @@ class SafeTransactionsViewModelTest {
         val details =
             TransactionInfo(
                 testId,
+                "chain_hash",
                 TEST_SAFE,
                 TransactionData.AssetTransfer(Solidity.Address(BigInteger.ZERO), amount, Solidity.Address(BigInteger.ONE)),
-                TEST_TIME
+                TEST_TIME,
+                BigInteger.TEN,
+                BigInteger.ZERO,
+                ERC20Token.ETHER_TOKEN.address
             )
         given(detailsRepository.loadTransactionInfo(anyString()))
             .willReturn(Single.just(details))
@@ -286,13 +301,13 @@ class SafeTransactionsViewModelTest {
     @Test
     fun observeTransactionStatus() {
         val testId = "some_transaction_id"
-        given(safeTransactionRepository.observePublishStatus(MockUtils.any())).willReturn(Observable.just(PublishStatus.SUCCESS))
+        given(safeTransactionRepository.observePublishStatus(MockUtils.any())).willReturn(Observable.just(PublishStatus.Success(0)))
 
         val observer = TestObserver<PublishStatus>()
         viewModel.observeTransactionStatus(testId)
             .subscribe(observer)
 
-        observer.assertResult(PublishStatus.SUCCESS)
+        observer.assertResult(PublishStatus.Success(0))
         then(safeTransactionRepository).should().observePublishStatus(testId)
         then(safeTransactionRepository).shouldHaveNoMoreInteractions()
         then(detailsRepository).shouldHaveNoMoreInteractions()

@@ -43,6 +43,7 @@ import pm.gnosis.heimdall.ui.tokens.info.TokenInfoActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
+import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusActivity
 
 @ForView
 @Component(
@@ -90,6 +91,7 @@ interface ViewComponent {
     fun inject(activity: SplashActivity)
     fun inject(activity: TokenManagementActivity)
     fun inject(activity: TokenInfoActivity)
+    fun inject(activity: TransactionStatusActivity)
     fun inject(activity: UnlockActivity)
 
     // Dialogs

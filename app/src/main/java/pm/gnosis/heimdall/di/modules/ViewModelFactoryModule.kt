@@ -65,6 +65,8 @@ import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionContrac
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionViewModel
+import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusContract
+import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusViewModel
 import javax.inject.Singleton
 
 @Module
@@ -208,6 +210,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(TokenManagementContract::class)
     abstract fun bindsTokenManagementContract(viewModel: TokenManagementViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TransactionStatusContract::class)
+    abstract fun bindsTransactionStatusContract(viewModel: TransactionStatusViewModel): ViewModel
 
     @Binds
     @IntoMap

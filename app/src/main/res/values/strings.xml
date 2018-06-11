@@ -257,6 +257,7 @@
     <string name="fast">Fast</string>
     <string name="status_pending">Pending</string>
     <string name="status_failed">Failed</string>
+    <string name="status_success">Success</string>
     <string name="please_confirm_credentials">Please confirm your credentials to submit the transaction.</string>
     <string name="just_a_moment_ago">Just a moment ago</string>
     <string name="error_deploying_safe">There was an error deploying the safe. Therefore it was removed!</string>
@@ -295,7 +296,7 @@
     <string name="old_owner">Old Owner</string>
     <string name="security">Security</string>
     <string name="all_signatures_confirmed">All signatures confirmed!</string>
-    <string name="transaction_details">Transaction Details</string>
+    <string name="transaction_details">Transaction details</string>
     <string name="fee">fee</string>
     <string name="url">url</string>
     <string name="transaction_status_failed">Failed Transaction</string>
@@ -405,4 +406,6 @@
     <string name="restricted_transaction_modify_owners">It is not allowed to modify the owners of the Safe</string>
     <string name="restricted_transaction_modify_modules">It is not allowed to modify the modules of the Safe</string>
     <string name="error_loading_transaction">Error loading transaction</string>
+    <string name="transaction_type_generic">Contract interaction</string>
+    <string name="transaction_type_asset_transfer">Outgoing transfer</string>
 </resources>

@@ -71,15 +71,16 @@ class SafeTransactionsAdapter @Inject constructor(
         private fun updateStatus(status: TransactionExecutionRepository.PublishStatus) {
             itemView.layout_safe_transactions_item_status.apply {
                 when (status) {
-                    TransactionExecutionRepository.PublishStatus.UNKNOWN, TransactionExecutionRepository.PublishStatus.SUCCESS -> {
+                    is TransactionExecutionRepository.PublishStatus.Unknown,
+                    is TransactionExecutionRepository.PublishStatus.Success -> {
                         visibility = View.GONE
                     }
-                    TransactionExecutionRepository.PublishStatus.PENDING -> {
+                    is TransactionExecutionRepository.PublishStatus.Pending -> {
                         setTextColor(context.getColorCompat(R.color.light_text))
                         text = context.getString(R.string.status_pending)
                         visibility = View.VISIBLE
                     }
-                    TransactionExecutionRepository.PublishStatus.FAILED -> {
+                    is TransactionExecutionRepository.PublishStatus.Failed -> {
                         setTextColor(context.getColorCompat(R.color.error))
                         text = context.getString(R.string.status_failed)
                         visibility = View.VISIBLE

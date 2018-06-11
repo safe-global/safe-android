@@ -25,5 +25,8 @@ interface DescriptionsDao {
     fun update(status: TransactionPublishStatusDb)
 
     @Query("SELECT * FROM ${TransactionPublishStatusDb.TABLE_NAME} WHERE ${TransactionPublishStatusDb.COL_ID} = :id")
+    fun loadStatus(id: String): Single<TransactionPublishStatusDb>
+
+    @Query("SELECT * FROM ${TransactionPublishStatusDb.TABLE_NAME} WHERE ${TransactionPublishStatusDb.COL_ID} = :id")
     fun observeStatus(id: String): Flowable<TransactionPublishStatusDb>
 }

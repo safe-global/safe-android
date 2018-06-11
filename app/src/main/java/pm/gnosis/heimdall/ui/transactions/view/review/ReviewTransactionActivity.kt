@@ -4,6 +4,7 @@ package pm.gnosis.heimdall.ui.transactions.view.review
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.widget.NestedScrollView
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -13,6 +14,7 @@ import kotlinx.android.synthetic.main.layout_review_transaction.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -35,6 +37,9 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
 
     @Inject
     lateinit var infoViewHelper: TransactionSubmitInfoViewHelper
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
 
     private var transactionInfoViewHolder: TransactionInfoViewHolder? = null
 
@@ -92,6 +97,10 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
 
         disposables += layout_review_transaction_back_button.clicks()
             .subscribeBy { onBackPressed() }
+
+        (layout_review_transaction_transaction_info as? NestedScrollView)?.let {
+            disposables += toolbarHelper.setupShadow(layout_review_transaction_toolbar_shadow, it)
+        }
     }
 
     private fun applyUpdate(update: ViewUpdate) {

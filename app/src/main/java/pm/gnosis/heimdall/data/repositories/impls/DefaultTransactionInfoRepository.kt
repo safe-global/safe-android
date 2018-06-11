@@ -6,13 +6,14 @@ import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.GnosisSafePersonalEdition
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
-import pm.gnosis.heimdall.data.db.models.fromDb
-import pm.gnosis.heimdall.data.remote.models.GnosisSafeTransactionDescription
+import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
 import pm.gnosis.utils.isSolidityMethod
+import pm.gnosis.utils.removeHexPrefix
 import pm.gnosis.utils.removeSolidityMethodPrefix
 import java.math.BigInteger
 import javax.inject.Inject
@@ -49,9 +50,8 @@ class DefaultTransactionInfoRepository @Inject constructor(
     override fun parseTransactionData(transaction: SafeTransaction): Single<TransactionData> =
         Single.fromCallable {
             val tx = transaction.wrapped
-            val data = tx.data
+            val data = tx.data?.removeHexPrefix()
             when {
-
                 data.isNullOrBlank() -> // If we have no data we default to ether transfer
                     TransactionData.AssetTransfer(ERC20Token.ETHER_TOKEN.address, tx.value?.value ?: BigInteger.ZERO, tx.address)
                 data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true ->
@@ -71,14 +71,25 @@ class DefaultTransactionInfoRepository @Inject constructor(
         descriptionsDao.loadDescription(id)
             .subscribeOn(Schedulers.io())
             .flatMap { info ->
-                parseTransactionData(info.fromDb().toTransaction())
-                    .map { TransactionInfo(id, info.safeAddress, it, info.submittedAt) }
+                descriptionsDao.loadStatus(id).map { info to it }
+            }
+            .flatMap { (info, status) ->
+                val transaction = info.toTransaction()
+                parseTransactionData(transaction)
+                    .map {
+                        val gasLimit = info.dataGas + info.txGas + SAFE_TX_BASE_COSTS
+                        TransactionInfo(id, status.transactionId, info.safeAddress, it, info.submittedAt, gasLimit, info.gasPrice, info.gasToken)
+                    }
             }
 
-    private fun GnosisSafeTransactionDescription.toTransaction(): SafeTransaction =
+    private fun TransactionDescriptionDb.toTransaction(): SafeTransaction =
         SafeTransaction(
-            Transaction(to, value = value, data = data, nonce = nonce),
+            Transaction(to, value = Wei(value), data = data, nonce = nonce),
             TransactionExecutionRepository.Operation.values()[operation.toInt()]
         )
 
+    companion object {
+        // These additional costs are hardcoded in the smart contract
+        private val SAFE_TX_BASE_COSTS = BigInteger.valueOf(32000)
+    }
 }

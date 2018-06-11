@@ -29,7 +29,7 @@ sealed class ServiceMessage {
     @JsonClass(generateAdapter = true)
     data class SendTransactionHash(
         @Json(name = "hash") val hash: String,
-        @Json(name = "txHash") val txHash: String,
+        @Json(name = "chainHash") val txHash: String,
         @Json(name = "type") val type: String = "sendTransactionHash" // Workaround since moshi is not parsing parent or non-constructor fields
     ) : ServiceMessage()
 
