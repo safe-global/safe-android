@@ -35,6 +35,7 @@ import java.util.concurrent.TimeoutException
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeTransactionsViewModelTest {
+
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()

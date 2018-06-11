@@ -18,7 +18,7 @@ data class ERC20Token(
         BigDecimal(unscaledAmount).setScale(decimals).div(BigDecimal.TEN.pow(decimals))
 
     fun displayString(amount: BigInteger) =
-        "${convertAmount(amount).setScale(5, RoundingMode.DOWN).stringWithNoTrailingZeroes()} ${symbol}"
+        "${convertAmount(amount).setScale(5, RoundingMode.DOWN).stringWithNoTrailingZeroes()} $symbol"
 
     companion object {
         val ETHER_TOKEN = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 18, symbol = "ETH", name = "Ether")

@@ -12,6 +12,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.layout_adapter_entry_header.view.*
 import kotlinx.android.synthetic.main.layout_safe_transactions_item.view.*
 import pm.gnosis.heimdall.R
@@ -51,7 +52,12 @@ class SafeTransactionsAdapter @Inject constructor(
             R.id.adapter_entry_header ->
                 HeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_adapter_entry_header, parent, false))
             R.id.adapter_entry_transaction ->
-                TransactionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_safe_transactions_item, parent, false))
+                TransactionViewHolder(
+                    addressHelper,
+                    viewModel,
+                    transactionSelectionSubject,
+                    LayoutInflater.from(parent.context).inflate(R.layout.layout_safe_transactions_item, parent, false)
+                )
             else -> throw IllegalArgumentException("Unknown type")
         }
 
@@ -59,7 +65,7 @@ class SafeTransactionsAdapter @Inject constructor(
         return items.getOrNull(position)?.type ?: 0
     }
 
-    inner class HeaderViewHolder(itemView: View) : LifecycleViewHolder<SafeTransactionsContract.AdapterEntry>(itemView) {
+    class HeaderViewHolder(itemView: View) : LifecycleViewHolder<SafeTransactionsContract.AdapterEntry>(itemView) {
         override fun bind(data: SafeTransactionsContract.AdapterEntry, payloads: List<Any>) {
             (data as? Header)?.apply {
                 itemView.layout_adapter_entry_header_title.text = itemView.context.getString(titleRes)
@@ -67,7 +73,14 @@ class SafeTransactionsAdapter @Inject constructor(
         }
     }
 
-    inner class TransactionViewHolder(itemView: View) : LifecycleViewHolder<SafeTransactionsContract.AdapterEntry>(itemView) {
+    class TransactionViewHolder(
+        private val addressHelper: AddressHelper,
+        private val viewModel: SafeTransactionsContract,
+        private val selectionSubject: Subject<String>,
+        itemView: View
+    ) : LifecycleViewHolder<SafeTransactionsContract.AdapterEntry>(itemView) {
+
+        private val context = itemView.context
 
         private val disposables = CompositeDisposable()
 
@@ -97,9 +110,11 @@ class SafeTransactionsAdapter @Inject constructor(
         }
 
         private fun updateStatus(status: TransactionExecutionRepository.PublishStatus) {
-            itemView.layout_safe_transactions_item_progress.isIndeterminate = false
-            itemView.layout_safe_transactions_item_progress.max = 100
-            itemView.layout_safe_transactions_item_progress.progress = 0
+            itemView.layout_safe_transactions_item_progress.apply {
+                isIndeterminate = false
+                max = 100
+                progress = 0
+            }
             when (status) {
                 is TransactionExecutionRepository.PublishStatus.Unknown,
                 is TransactionExecutionRepository.PublishStatus.Success -> {
@@ -119,15 +134,12 @@ class SafeTransactionsAdapter @Inject constructor(
                     itemView.layout_safe_transactions_item_target_image.visible(false, View.INVISIBLE)
                 }
             }
-            itemView.layout_safe_transactions_item_progress.apply {
-
-            }
         }
 
         private fun updateInfo(info: TransactionInfo) {
             cachedDetails = info
             itemView.setOnClickListener {
-                currentData?.let { transactionSelectionSubject.onNext(it.id) }
+                currentData?.let { selectionSubject.onNext(it.id) }
             }
             val address: Solidity.Address
             val infoText: String?
@@ -138,7 +150,7 @@ class SafeTransactionsAdapter @Inject constructor(
                 is TransactionData.Generic -> {
                     address = info.data.to
                     infoText = context.getString(R.string.x_data_bytes, (info.data.data?.removeHexPrefix()?.length ?: 0) / 2)
-                    valueText = Wei(info.data.value).displayString(context)
+                    valueText = "- ${Wei(info.data.value).displayString(context)}"
                     valueColor = R.color.tomato
                     iconRes = R.drawable.ic_transaction_outgoing
                 }
