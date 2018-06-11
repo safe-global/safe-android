@@ -35,12 +35,12 @@ class AddTokenViewModel @Inject constructor(
             .mapToResult()
     }
 
-    override fun loadTokenInfo(tokenAddress: String): Observable<Result<ERC20Token>> =
-        Observable
+    override fun loadTokenInfo(tokenAddress: String): Single<Result<ERC20Token>> =
+        Single
             .fromCallable { tokenAddress.asEthereumAddress() ?: throw InvalidAddressException(tokenAddress) }
-            .flatMap { tokenRepository.loadTokenInfo(it) }
-            .doOnNext { this.erc20Token = it }
-            .onErrorResumeNext { throwable: Throwable -> errorHandler.observable(throwable) }
+            .flatMap { tokenRepository.loadToken(it) }
+            .doOnSuccess { this.erc20Token = it }
+            .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
             .mapToResult()
 
     private class NoTokenSetException : Exception()

@@ -60,11 +60,17 @@ class DefaultTokenRepository @Inject constructor(
             .map { it.map { it.fromDb() } }
 
     override fun loadToken(address: Solidity.Address): Single<ERC20Token> =
-        erc20TokenDao.loadToken(address)
-            .map { it.fromDb() }
-            .subscribeOn(Schedulers.io())
+        if (address == ETHER_TOKEN.address)
+            Single.just(ETHER_TOKEN)
+        else
+            erc20TokenDao.loadToken(address)
+                .map { it.fromDb() }
+                .subscribeOn(Schedulers.io())
+                .onErrorResumeNext {
+                    loadTokenFromChain(address).firstOrError()
+                }
 
-    override fun loadTokenInfo(contractAddress: Solidity.Address): Observable<ERC20Token> {
+    private fun loadTokenFromChain(contractAddress: Solidity.Address): Observable<ERC20Token> {
         val bulk = TokenInfoRequest(
             EthCall(
                 transaction = Transaction(

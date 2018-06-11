@@ -64,7 +64,7 @@ class TransactionStatusViewModelTest {
 
     private fun testObserve(
         gasTokenAddress: Solidity.Address,
-        gasToken: Result<ERC20Token>?,
+        gasToken: Result<ERC20Token>,
         transactionData: TransactionData,
         type: Int
     ) {
@@ -86,7 +86,7 @@ class TransactionStatusViewModelTest {
                 )
             )
 
-        gasToken?.let {
+        gasToken.let {
             when (it) {
                 is DataResult ->
                     given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(it.data))
@@ -100,7 +100,6 @@ class TransactionStatusViewModelTest {
         val expectedGasToken = when (gasToken) {
             is DataResult -> gasToken.data
             is ErrorResult -> ERC20Token(gasTokenAddress, decimals = 0)
-            null -> ERC20Token.ETHER_TOKEN
         }
         observer.assertResult(
             TransactionStatusContract.ViewUpdate.Params(
@@ -115,9 +114,7 @@ class TransactionStatusViewModelTest {
             )
         )
 
-        gasToken?.let {
-            then(tokenRepositoryMock).should().loadToken(gasTokenAddress)
-        }
+        then(tokenRepositoryMock).should().loadToken(expectedGasToken.address)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         then(infoRepositoryMock).should().loadTransactionInfo(TEST_ID)
@@ -130,7 +127,7 @@ class TransactionStatusViewModelTest {
     @Test
     fun observeUpdateAssetTransferEtherGasToken() {
         val transactionData = TransactionData.AssetTransfer(TEST_GAS_TOKEN.address, BigInteger.TEN, TEST_SAFE)
-        testObserve(ERC20Token.ETHER_TOKEN.address, null, transactionData, R.string.transaction_type_asset_transfer)
+        testObserve(ERC20Token.ETHER_TOKEN.address, DataResult(ERC20Token.ETHER_TOKEN), transactionData, R.string.transaction_type_asset_transfer)
     }
 
     @Test
@@ -148,7 +145,7 @@ class TransactionStatusViewModelTest {
     @Test
     fun observeUpdateGenericTransactionEtherGasToken() {
         val transactionData = TransactionData.Generic(TEST_SAFE, BigInteger.TEN, null)
-        testObserve(ERC20Token.ETHER_TOKEN.address, null, transactionData, R.string.transaction_type_generic)
+        testObserve(ERC20Token.ETHER_TOKEN.address, DataResult(ERC20Token.ETHER_TOKEN), transactionData, R.string.transaction_type_generic)
     }
 
     @Test

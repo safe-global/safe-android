@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions.view.status
 
 import io.reactivex.Observable
-import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
@@ -21,12 +20,8 @@ class TransactionStatusViewModel @Inject constructor(
     override fun observeUpdates(id: String): Observable<ViewUpdate> =
         infoRepository.loadTransactionInfo(id)
             .flatMap { info ->
-                if (info.gasToken == ERC20Token.ETHER_TOKEN.address) {
-                    Single.just(ERC20Token.ETHER_TOKEN).map { info to it }
-                } else {
-                    tokenRepository.loadToken(info.gasToken).map { info to it }
-                        .onErrorReturnItem(info to ERC20Token(info.gasToken, decimals = 0))
-                }
+                tokenRepository.loadToken(info.gasToken).map { info to it }
+                    .onErrorReturnItem(info to ERC20Token(info.gasToken, decimals = 0))
             }
             .emitAndNext(
                 emit = { (info, token) ->
@@ -39,17 +34,19 @@ class TransactionStatusViewModel @Inject constructor(
                         info.data.toType()
                     )
                 },
-                next = { (info) -> transactionViewHolderBuilder.build(info.safe, info.data, false).map<ViewUpdate>(
-                    ViewUpdate::Details
-                ).toObservable() }
+                next = { (info) ->
+                    transactionViewHolderBuilder.build(info.safe, info.data, false).map<ViewUpdate>(
+                        ViewUpdate::Details
+                    ).toObservable()
+                }
             )
 
     override fun observeStatus(id: String): Observable<TransactionExecutionRepository.PublishStatus> =
         executionRepository.observePublishStatus(id)
 
     private fun TransactionData.toType() =
-            when (this) {
-                is TransactionData.Generic -> R.string.transaction_type_generic
-                is TransactionData.AssetTransfer -> R.string.transaction_type_asset_transfer
-            }
+        when (this) {
+            is TransactionData.Generic -> R.string.transaction_type_generic
+            is TransactionData.AssetTransfer -> R.string.transaction_type_asset_transfer
+        }
 }

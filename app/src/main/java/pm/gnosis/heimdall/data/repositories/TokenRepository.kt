@@ -13,7 +13,6 @@ interface TokenRepository {
     fun observeToken(address: Solidity.Address): Flowable<ERC20Token>
     fun loadTokens(): Single<List<ERC20Token>>
     fun loadToken(address: Solidity.Address): Single<ERC20Token>
-    fun loadTokenInfo(contractAddress: Solidity.Address): Observable<ERC20Token>
     fun loadTokenBalances(ofAddress: Solidity.Address, erC20Tokens: List<ERC20Token>): Observable<List<Pair<ERC20Token, BigInteger?>>>
     fun addToken(erC20Token: ERC20Token): Completable
     fun removeToken(address: Solidity.Address): Completable
