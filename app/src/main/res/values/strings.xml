@@ -73,7 +73,7 @@
     <string name="deposit">Deposit</string>
     <string name="withdraw">Withdraw</string>
     <string name="tab_title_transactions">Transactions</string>
-    <string name="tab_title_assets">Assets</string>
+    <string name="tab_title_assets">Tokens</string>
     <string name="address_clipboard_success">Address copied to clipboard</string>
     <string name="data_clipboard_success">Data copied to clipboard</string>
     <string name="share_your_address">Share your address</string>
@@ -416,4 +416,8 @@
     <string name="header_older">Older</string>
     <string name="header_submitted">Submitted</string>
     <string name="send_token">Send token</string>
+    <string name="share_qr_code_hint">This QR code can be scanned by the person who wants to send you tokens</string>
+    <string name="your_safe">Your Safe</string>
+    <string name="send">Send</string>
+    <string name="receive">Receive</string>
 </resources>

@@ -130,7 +130,6 @@ class SafeTransactionsViewModelTest {
             )
         )
 
-        System.out.println((subscriber.values()[3] as DataResult).data.entries)
         subscriber.assertValueCount(4).assertValueAt(3, {
             it is DataResult && it.data.parentId == currentId &&
                     it.data.entries == listOf(
@@ -168,6 +167,25 @@ class SafeTransactionsViewModelTest {
                     it.data.entries == listOf(
                 SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_4")
+            )
+        }).assertNoErrors()
+
+        currentId = (cachedSubscriber.values().last() as DataResult).data.id
+
+        pendingProcessor.onNext(emptyList())
+        submittedProcessor.onNext(listOf(
+            TransactionStatus("id_4", System.currentTimeMillis() - (5 * DateTimeUtils.DAY_IN_MS), false),
+            TransactionStatus("id_5", System.currentTimeMillis() - (6 * DateTimeUtils.DAY_IN_MS), false),
+            TransactionStatus("id_6", System.currentTimeMillis() - (7 * DateTimeUtils.DAY_IN_MS), false)
+        ))
+
+        cachedSubscriber.assertValueCount(2).assertValueAt(1, {
+            it is DataResult && it.data.parentId == currentId &&
+                    it.data.entries == listOf(
+                SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_4"),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_5"),
+                SafeTransactionsContract.AdapterEntry.Transaction("id_6")
             )
         }).assertNoErrors()
 

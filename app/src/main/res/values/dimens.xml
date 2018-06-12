@@ -32,7 +32,7 @@
     <dimen name="navigation_item_icon_padding">10dp</dimen>
     <dimen name="bottom_bar_height">46dp</dimen>
 
-    <dimen name="primary_button_radius">4dp</dimen>
+    <dimen name="primary_button_radius">6dp</dimen>
     <dimen name="round_button_radius">20dp</dimen>
     <dimen name="safe_logo_size">72dp</dimen>
 </resources>

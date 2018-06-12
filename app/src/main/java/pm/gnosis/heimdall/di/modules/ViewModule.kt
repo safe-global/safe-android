@@ -12,7 +12,6 @@ import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
-import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
@@ -36,6 +35,7 @@ import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
+import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenContract
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionContract
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionContract
@@ -67,10 +67,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesAddressBookContract(provider: ViewModelProvider) = provider[AddressBookContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesAuthenticateContract(provider: ViewModelProvider) = provider[AuthenticateContract::class.java]
 
     @Provides
     @ForView
@@ -107,6 +103,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesPasswordSetupContract(provider: ViewModelProvider) = provider[PasswordSetupContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesReceiveTokenContract(provider: ViewModelProvider) = provider[ReceiveTokenContract::class.java]
 
     @Provides
     @ForView

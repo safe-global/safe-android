@@ -11,8 +11,6 @@ import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.account.AccountViewModel
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookViewModel
-import pm.gnosis.heimdall.ui.authenticate.AuthenticateContract
-import pm.gnosis.heimdall.ui.authenticate.AuthenticateViewModel
 import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.credits.BuyCreditsViewModel
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
@@ -59,6 +57,8 @@ import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesViewModel
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
 import pm.gnosis.heimdall.ui.tokens.info.TokenInfoViewModel
+import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenContract
+import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenViewModel
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferViewModel
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionContract
@@ -90,11 +90,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AddTokenContract::class)
     abstract fun bindsAddTokenContract(viewModel: AddTokenViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(AuthenticateContract::class)
-    abstract fun bindsAuthenticateContract(viewModel: AuthenticateViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -140,6 +135,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(PasswordSetupContract::class)
     abstract fun bindsPasswordSetupContract(viewModel: PasswordSetupViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ReceiveTokenContract::class)
+    abstract fun bindsReceiveTokenContract(viewModel: ReceiveTokenViewModel): ViewModel
 
     @Binds
     @IntoMap

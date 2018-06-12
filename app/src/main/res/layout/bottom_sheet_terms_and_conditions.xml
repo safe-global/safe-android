@@ -50,7 +50,7 @@
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_agree"
-        style="@style/WhiteTheme.PrimaryButton"
+        style="@style/PrimaryButton.Blue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"

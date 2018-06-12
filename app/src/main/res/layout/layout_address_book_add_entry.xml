@@ -85,7 +85,7 @@
 
                 <TextView
                     android:id="@+id/layout_add_address_book_entry_save"
-                    style="@style/PrimaryButton"
+                    style="@style/PrimaryButton.Blue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

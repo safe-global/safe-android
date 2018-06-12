@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@color/pale_grey_two"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -135,15 +136,15 @@
 
         <TextView
             android:id="@+id/include_transaction_submit_info_retry_button"
-            style="@style/PrimaryButton"
+            style="@style/PrimaryButton.White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="monospace-medium"
             android:gravity="center"
             android:paddingBottom="12dp"
             android:text="@string/retry"
-            android:textColor="@color/white"
             android:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmation_progress" />
@@ -205,7 +206,7 @@
 
         <TextView
             android:id="@+id/include_transaction_submit_info_request_button"
-            style="@style/PrimaryButton"
+            style="@style/PrimaryButton.White"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -218,7 +219,6 @@
             android:paddingRight="16dp"
             android:paddingTop="8dp"
             android:text="@string/request_confirmation"
-            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmations_timer" />

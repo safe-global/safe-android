@@ -2,5 +2,5 @@
 <ripple
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/pressed_shade">
-    <item android:drawable="@drawable/primary_button_new_base" />
+    <item android:drawable="@drawable/primary_button_blue_base" />
 </ripple>

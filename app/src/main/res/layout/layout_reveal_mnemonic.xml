@@ -47,7 +47,7 @@
 
                 <TextView
                     android:id="@+id/layout_reveal_mnemonic_button"
-                    style="@style/PrimaryButton"
+                    style="@style/PrimaryButton.Blue"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
                     android:layout_marginTop="16dp"

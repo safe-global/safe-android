@@ -73,9 +73,6 @@
             android:name=".ui.settings.tokens.TokenManagementActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.authenticate.AuthenticateActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.tokens.info.TokenInfoActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -106,8 +103,8 @@
 
         <activity
             android:name=".ui.safe.main.SafeMainActivity"
-            android:theme="@style/GreyBackgroundTheme"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
         <activity
             android:name=".ui.debugsettings.DebugSettingsActivity"
             android:screenOrientation="portrait"
@@ -147,12 +144,20 @@
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name=".ui.transactions.view.status.TransactionStatusActivity"
+        <activity
+            android:name=".ui.transactions.view.status.TransactionStatusActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name=".ui.tokens.select.SelectTokenActivity"
+        <activity
+            android:name=".ui.tokens.select.SelectTokenActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.tokens.receive.ReceiveTokenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
