@@ -2,8 +2,6 @@ package pm.gnosis.heimdall.di.modules
 
 import dagger.Binds
 import dagger.Module
-import pm.gnosis.heimdall.data.repositories.PushServiceRepository
-import pm.gnosis.heimdall.data.repositories.impls.DefaultPushServiceRepository
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.*
 import pm.gnosis.heimdall.helpers.*

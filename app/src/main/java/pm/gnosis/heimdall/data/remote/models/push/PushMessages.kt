@@ -1,7 +1,5 @@
 package pm.gnosis.heimdall.data.remote.models.push
 
-import com.squareup.moshi.Json
-
 sealed class PushMessage(
     val type: String
 ) {

@@ -3,6 +3,8 @@ package pm.gnosis.heimdall.ui.transactions.view.status
 
 import android.content.Context
 import android.content.Intent
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -17,6 +19,8 @@ import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.utils.DateTimeUtils
 import pm.gnosis.heimdall.utils.setupEtherscanTransactionUrl
+import pm.gnosis.svalinn.common.utils.appendText
+import pm.gnosis.svalinn.common.utils.getColorCompat
 import javax.inject.Inject
 
 class TransactionStatusActivity : ViewModelActivity<TransactionStatusContract>() {
@@ -58,11 +62,17 @@ class TransactionStatusActivity : ViewModelActivity<TransactionStatusContract>()
             }
             is TransactionExecutionRepository.PublishStatus.Failed -> {
                 layout_transaction_status_status_value.text =
-                        "${getString(R.string.status_failed)} - ${DateTimeUtils.getLongTimeString(this, status.timestamp)}"
+                        SpannableStringBuilder()
+                            .appendText(getString(R.string.status_failed), ForegroundColorSpan(getColorCompat(R.color.tomato)))
+                            .append(" - ")
+                            .append(DateTimeUtils.getLongTimeString(this, status.timestamp))
             }
             is TransactionExecutionRepository.PublishStatus.Success -> {
                 layout_transaction_status_status_value.text =
-                        "${getString(R.string.status_success)} - ${DateTimeUtils.getLongTimeString(this, status.timestamp)}"
+                        SpannableStringBuilder()
+                            .appendText(getString(R.string.status_success), ForegroundColorSpan(getColorCompat(R.color.green_teal)))
+                            .append(" - ")
+                            .append(DateTimeUtils.getLongTimeString(this, status.timestamp))
             }
         }
     }

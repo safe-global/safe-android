@@ -8,7 +8,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
-import java.sql.Timestamp
 
 
 interface TransactionExecutionRepository {

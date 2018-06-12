@@ -4,10 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
-import pm.gnosis.heimdall.data.repositories.models.PendingSafe
-import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import java.math.BigInteger
@@ -26,7 +23,8 @@ interface GnosisSafeRepository {
     fun observeDeployStatus(hash: String): Observable<String>
 
     fun loadInfo(address: Solidity.Address): Observable<SafeInfo>
-    fun observeTransactionDescriptions(address: Solidity.Address): Flowable<List<String>>
+    fun observePendingTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
+    fun observeSubmittedTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
     fun loadSafeDeployTransaction(devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<Transaction>
     fun savePendingSafe(transactionHash: BigInteger, name: String): Completable
     fun loadPendingSafe(transactionHash: BigInteger): Single<PendingSafe>

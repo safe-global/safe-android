@@ -20,6 +20,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
@@ -453,12 +454,6 @@ class TransactionSubmitInfoViewHelperTest {
         assertNull(helper.applyUpdate(data))
 
         assertRejectionState(viewMocks, true)
-    }
-
-    private fun Context.mockGetColor() {
-        val resourceMock = mock(Resources::class.java)
-        given(resourceMock.getColor(ArgumentMatchers.anyInt())).willAnswer { it.arguments.first() as Int }
-        given(resources).willReturn(resourceMock)
     }
 
     data class ReadyStateMocks(val confirmationProgress: MaterialProgressBar, val confirmationStatus: TextView)

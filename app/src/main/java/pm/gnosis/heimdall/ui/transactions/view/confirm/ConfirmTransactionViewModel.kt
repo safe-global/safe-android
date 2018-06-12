@@ -3,6 +3,8 @@ package pm.gnosis.heimdall.ui.transactions.view.confirm
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.RestrictedTransactionException
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
@@ -89,6 +91,20 @@ class ConfirmTransactionViewModel @Inject constructor(
 
     override fun observe(events: Events, transaction: SafeTransaction): Observable<Result<ViewUpdate>> =
         transactionInfoRepository.checkRestrictedTransaction(transaction)
+            .onErrorResumeNext {
+                Single.error(
+                    when (it) {
+                        is RestrictedTransactionException.DelegateCall ->
+                            InvalidTransactionException(R.string.restricted_transaction_delegatecall)
+                        is RestrictedTransactionException.ModifyOwners ->
+                            InvalidTransactionException(R.string.restricted_transaction_modify_owners)
+                        is RestrictedTransactionException.ModifyModules ->
+                            InvalidTransactionException(R.string.restricted_transaction_modify_modules)
+                        else ->
+                            it
+                    }
+                )
+            }
             .flatMap { transactionInfoRepository.parseTransactionData(transaction) }
             .flatMap { data -> executionRepository.checkConfirmation(safe, transaction, txGas, dataGas, gasPrice, signature).map { data to it } }
             .flatMapObservable { (data, signatureInfo) -> submitTransactionHelper.observe(events, data, mapOf(signatureInfo)) }
