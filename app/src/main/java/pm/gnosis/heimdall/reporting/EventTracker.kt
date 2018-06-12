@@ -53,6 +53,7 @@ enum class ScreenId {
     SAFE_SETTINGS,
     SECURITY_SETTINGS,
     SELECT_SAFE,
+    SELECT_TOKEN,
     SETTINGS,
     SETUP_INTRO,
     SIGN_TRANSACTION,
@@ -65,7 +66,7 @@ enum class ScreenId {
 
     DIALOG_REQUEST_SIGNATURE,
     DIALOG_SHARE_SAFE,
-    DIALOG_SHARE_ADDRESS
+    DIALOG_SHARE_ADDRESS,
 }
 
 enum class ButtonId {
