@@ -62,7 +62,7 @@ class ReceiveTokenActivity : ViewModelActivity<ReceiveTokenContract>() {
                 ).subscribeBy { shareViaClipboard(update.checksumAddress) }
                 layout_receive_token_share_button.isEnabled = true
                 disposables += layout_receive_token_share_button.clicks()
-                    .subscribeBy { shareExternalText(update.checksumAddress, R.string.share_safe_address) }
+                    .subscribeBy { shareExternalText(update.checksumAddress, R.string.share_address) }
             }
             is ReceiveTokenContract.ViewUpdate.Info ->
                 layout_receive_token_safe_name.text = update.name
