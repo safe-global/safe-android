@@ -7,27 +7,79 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    tools:background="@color/pale_grey_two"
+    tools:openDrawer="">
 
     <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/layout_safe_main_toolbar"
-            style="@style/Toolbar"
+        <View
             android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon"
+            app:layout_constraintTop_toTopOf="@+id/layout_safe_main_toolbar_nav_icon" />
+
+        <ImageView
+            android:id="@+id/layout_safe_main_toolbar_nav_icon"
+            android:layout_width="@dimen/toolbar_height"
             android:layout_height="@dimen/toolbar_height"
-            app:layout_scrollFlags="scroll|enterAlways"
-            tools:title="Safe Name" />
+            android:background="@drawable/selectable_circle_background"
+            android:padding="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_menu" />
+
+        <ImageView
+            android:id="@+id/layout_safe_main_toolbar_icon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_gnosis_safe"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon"
+            app:layout_constraintEnd_toStartOf="@id/layout_safe_main_toolbar_title"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@id/layout_safe_main_toolbar_nav_icon"
+            app:layout_constraintTop_toTopOf="@+id/layout_safe_main_toolbar_nav_icon" />
+
+        <TextView
+            android:id="@+id/layout_safe_main_toolbar_title"
+            style="@style/DarkText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:singleLine="true"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon"
+            app:layout_constraintEnd_toStartOf="@id/layout_safe_main_toolbar_overflow"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@id/layout_safe_main_toolbar_icon"
+            app:layout_constraintTop_toTopOf="@+id/layout_safe_main_toolbar_nav_icon"
+            app:layout_goneMarginEnd="64dp"
+            tools:text="MySafe" />
+
+        <ImageView
+            android:id="@+id/layout_safe_main_toolbar_overflow"
+            android:layout_width="@dimen/toolbar_height"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/selectable_circle_background"
+            android:padding="16dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_more_vert" />
 
         <FrameLayout
             android:id="@+id/layout_safe_main_content_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon" />
+    </android.support.constraint.ConstraintLayout>
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
     <android.support.design.widget.NavigationView
@@ -305,7 +357,7 @@
 
                 <TextView
                     android:id="@+id/layout_safe_main_add_safe"
-                    style="@style/PrimaryButton"
+                    style="@style/PrimaryButton.White"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"

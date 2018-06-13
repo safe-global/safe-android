@@ -2,10 +2,10 @@
 <resources>
     <color name="primary">@color/gnosis_blue</color>
     <color name="primary_dark">@color/gnosis_blue_shade</color>
-    <color name="accent">@color/gnosis_blue</color>
+    <color name="accent">@color/dark_slate_blue</color>
     <color name="window_background">@color/white</color>
     <color name="card_window_background">@color/divider</color>
-    <color name="toolbar_action">@color/gnosis_blue_shade</color>
+    <color name="toolbar_action">@color/dark_slate_blue</color>
 
     <color name="white">#ffffff</color>
     <color name="white_alpha_70">#b3ffffff</color>
@@ -22,10 +22,10 @@
     <color name="gnosis_dark_blue_alpha_60">#9921435a</color>
     <color name="gnosis_dark_blue_alpha_70">#b221435a</color>
 
-    <color name="secondary_button">#dee2e7</color>
+    <color name="secondary_button">#c8ced4</color>
     <color name="secondary_button_disabled">#e8eaec</color>
     <color name="secondary_button_pressed">#aaadb1</color>
-    <color name="secondary_button_text">#7e21435a</color>
+    <color name="secondary_button_text">@color/dark_slate_blue</color>
 
     <color name="error">#f64056</color>
     <color name="error_hint">#b3f64056</color>
@@ -35,8 +35,6 @@
 
     <color name="list_divider">#e4e3e3</color>
 
-    <color name="selected_tab">@color/white</color>
-    <color name="unselected_tab">@color/white_alpha_70</color>
     <color name="default_icon">#4a4a4a</color>
 
     <color name="enabled_input">@color/accent</color>

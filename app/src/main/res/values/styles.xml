@@ -11,6 +11,11 @@
         <item name="editTextStyle">@style/Input</item>
         <item name="actionMenuTextColor">@color/toolbar_action</item>
         <item name="colorControlNormal">@color/toolbar_action</item>
+        <item name="popupMenuStyle">@style/PopupMenu</item>
+    </style>
+
+    <style name="PopupMenu" parent="Widget.AppCompat.Light.PopupMenu">
+        <item name="overlapAnchor">true</item>
     </style>
 
     <style name="CardTheme" parent="AppTheme">
@@ -95,17 +100,6 @@
         <item name="android:textColor">@color/azure</item>
     </style>
 
-    <style name="PrimaryButtonRound">
-        <item name="android:background">@drawable/primary_button_inline</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/primary_button_text_size</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:gravity">center</item>
-    </style>
-
     <!-- White theme (will be the main theme for the app) -->
 
     <style name="WhiteThemeBase" parent="AppTheme">
@@ -120,9 +114,7 @@
         <item name="android:textColor">@color/azure</item>
     </style>
 
-    <style name="WhiteTheme.PrimaryButton">
-        <item name="android:background">@drawable/primary_button_new</item>
-        <item name="android:textColor">@color/white</item>
+    <style name="PrimaryButton">
         <item name="android:textSize">@dimen/primary_button_text_size</item>
         <item name="android:paddingStart">24dp</item>
         <item name="android:paddingEnd">24dp</item>
@@ -131,49 +123,36 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="PrimaryButton.Blue">
+        <item name="android:background">@drawable/primary_button_blue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/primary_button_text_size</item>
+    </style>
+
     <!-- Start: Toolbar styles -->
 
     <style name="AppBarLayout" parent="ThemeOverlay.AppCompat.Light">
         <item name="toolbarStyle">@style/Toolbar</item>
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="titleTextAppearance">@style/ToolbarTitle</item>
         <item name="subtitleTextAppearance">@style/ToolbarSubtitle</item>
-        <item name="android:background">@color/primary</item>
+        <item name="android:background">@color/white</item>
+        <!-- navigation icon color -->
+        <item name="colorControlNormal">@color/dark_slate_blue</item>
+        <!-- color of the menu overflow icon -->
+        <item name="android:textColorSecondary">@color/dark_slate_blue</item>
     </style>
 
     <style name="ToolbarTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/dark_slate_blue</item>
     </style>
 
     <style name="ToolbarSubtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
-        <item name="android:textColor">@color/white_alpha_70</item>
+        <item name="android:textColor">@color/battleship_grey</item>
         <item name="android:textSize">12sp</item>
-    </style>
-
-    <style name="LightToolbar" parent="Widget.AppCompat.Toolbar">
-        <item name="titleTextAppearance">@style/LightToolbarTitle</item>
-        <item name="subtitleTextAppearance">@style/LightToolbarSubtitle</item>
-        <item name="android:background">@color/white</item>
-    </style>
-
-    <style name="LightToolbarTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textColor">@color/gnosis_dark_blue</item>
-    </style>
-
-    <style name="LightToolbarSubtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
-        <item name="android:textColor">@color/gnosis_blue_shade</item>
-        <item name="android:textSize">12sp</item>
-    </style>
-
-    <style name="LightToolbarTheme" parent="Theme.AppCompat.Light">
-
-        <!-- navigation icon color -->
-        <item name="colorControlNormal">@color/gnosis_dark_blue_alpha_70</item>
-
-        <!-- color of the menu overflow icon -->
-        <item name="android:textColorSecondary">@color/gnosis_dark_blue_alpha_70</item>
     </style>
 
     <!-- End: Toolbar styles -->
@@ -181,24 +160,19 @@
 
     <!-- Start: Button styles -->
 
-    <style name="PrimaryButtonText">
-        <item name="android:textColor">@color/white</item>
+    <style name="PrimaryButton.White.Text" parent="Text">
+        <item name="android:textColor">@color/azure</item>
         <item name="android:textSize">@dimen/primary_button_text_size</item>
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="PrimaryButton">
-        <item name="android:background">@drawable/primary_button_inline</item>
-        <item name="android:textColor">@color/white</item>
+    <style name="PrimaryButton.White">
+        <item name="android:background">@drawable/primary_button_white</item>
+        <item name="android:textColor">@color/azure</item>
         <item name="android:textSize">@dimen/primary_button_text_size</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:gravity">center</item>
     </style>
 
-    <style name="PrimaryButton.Wide">
+    <style name="PrimaryButton.Blue.Wide">
         <item name="android:minHeight">@dimen/primary_button_height</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
@@ -206,7 +180,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="PrimaryButton.FullWidth">
+    <style name="PrimaryButton.Blue.FullWidth">
         <item name="android:background">@drawable/primary_button_full_width</item>
         <item name="android:minHeight">@dimen/primary_button_height</item>
         <item name="android:paddingTop">8dp</item>

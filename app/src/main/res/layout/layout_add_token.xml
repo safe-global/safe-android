@@ -79,7 +79,7 @@
 
                 <TextView
                     android:id="@+id/layout_add_token_load_info_button"
-                    style="@style/PrimaryButton"
+                    style="@style/PrimaryButton.Blue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -149,7 +149,7 @@
 
         <TextView
             android:id="@+id/layout_add_token_add_token_button"
-            style="@style/PrimaryButton.FullWidth"
+            style="@style/PrimaryButton.Blue.FullWidth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

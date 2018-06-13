@@ -23,6 +23,7 @@ import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
+import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
 import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.withArgs
@@ -61,14 +62,29 @@ class SafeDetailsFragment : BaseFragment() {
         viewModel.setup(safeAddress, safeName)
 
         layout_safe_details_viewpager.adapter = pagerAdapter()
-        layout_safe_details_tabbar.setupWithViewPager(layout_safe_details_viewpager)
         layout_safe_details_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 layout_safe_details_appbar.setExpanded(true, true)
                 positionToTabID(position)?.let { eventTracker.submit(Event.TabSelect(it)) }
             }
         })
+        setupTabLayout()
         setSelectedTab()
+    }
+
+    private fun setupTabLayout() {
+        layout_safe_details_tabbar.setupWithViewPager(layout_safe_details_viewpager)
+        (0 until layout_safe_details_tabbar.tabCount).forEach {
+            // We need to set this manually as 'setupWithViewPager' resets the layout specified in the xml
+            layout_safe_details_tabbar.getTabAt(it)?.apply {
+                setCustomView(R.layout.layout_tab_item)
+                positionToIcon(it)?.let {
+                    setIcon(it)
+                } ?: run {
+                    setIcon(null)
+                }
+            }
+        }
     }
 
     private fun setSelectedTab() {
@@ -92,19 +108,34 @@ class SafeDetailsFragment : BaseFragment() {
 
         disposables += layout_safe_details_send_button.clicks()
             .subscribeBy { startActivity(SelectTokenActivity.createIntent(context!!, safeAddress)) }
+
+        disposables += layout_safe_details_receive_button.clicks()
+            .subscribeBy { startActivity(ReceiveTokenActivity.createIntent(context!!, safeAddress)) }
     }
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
 
-    private fun positionToTabID(position: Int) = when (positionToId(position)) {
-        R.string.tab_title_assets -> {
-            TabId.SAFE_DETAILS_ASSETS
+    private fun positionToTabID(position: Int) =
+        when (positionToId(position)) {
+            R.string.tab_title_assets -> {
+                TabId.SAFE_DETAILS_ASSETS
+            }
+            R.string.tab_title_transactions -> {
+                TabId.SAFE_DETAILS_TRANSACTIONS
+            }
+            else -> null
         }
-        R.string.tab_title_transactions -> {
-            TabId.SAFE_DETAILS_TRANSACTIONS
+
+    private fun positionToIcon(position: Int) =
+        when (positionToId(position)) {
+            R.string.tab_title_assets -> {
+                R.drawable.ic_token_white_24dp
+            }
+            R.string.tab_title_transactions -> {
+                R.drawable.ic_transaction_white_24dp
+            }
+            else -> null
         }
-        else -> null
-    }
 
     private fun pagerAdapter() = FactoryPagerAdapter(childFragmentManager, FactoryPagerAdapter.Factory(items.size, {
         when (positionToId(it)) {

@@ -16,18 +16,37 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/layout_safe_details_appbar"
         android:layout_width="match_parent"
+        android:background="@color/white"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/layout_safe_details_send_button"
-            style="@style/SecondaryButton"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="8dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/send_token"
-            android:textColor="@color/white" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/layout_safe_details_receive_button"
+                style="@style/SecondaryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_margin="8dp"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_qrcode_scan_azure"
+                android:gravity="center"
+                android:text="@string/receive" />
+
+            <TextView
+                android:id="@+id/layout_safe_details_send_button"
+                style="@style/SecondaryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_margin="8dp"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_send_azure"
+                android:gravity="center"
+                android:text="@string/send" />
+        </LinearLayout>
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             android:id="@+id/layout_safe_details_progress_bar"
@@ -44,20 +63,24 @@
         <android.support.design.widget.TabLayout
             android:id="@+id/layout_safe_details_tabbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:tabIndicatorColor="@color/selected_tab"
-            app:tabSelectedTextColor="@color/selected_tab"
-            app:tabTextColor="@color/unselected_tab">
+            app:tabIndicatorColor="@color/azure"
+            app:tabSelectedTextColor="@color/dark_slate_blue"
+            app:tabTextColor="@color/bluey_grey">
 
             <android.support.design.widget.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout="@layout/layout_tab_item"
+                android:icon="@drawable/ic_token_white_24dp"
                 android:text="@string/tab_title_assets" />
 
             <android.support.design.widget.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:icon="@drawable/ic_transaction_white_24dp"
+                android:layout="@layout/layout_tab_item"
                 android:text="@string/tab_title_transactions" />
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>

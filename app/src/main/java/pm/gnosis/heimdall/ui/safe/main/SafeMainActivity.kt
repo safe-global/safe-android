@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.PopupMenu
 import android.view.Gravity
 import android.view.View
 import com.jakewharton.rxbinding2.support.v7.widget.itemClicks
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -52,6 +54,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     @Inject
     lateinit var layoutManager: LinearLayoutManager
 
+    private lateinit var popupMenu: PopupMenu
+
     private var selectedSafe: AbstractSafe? = null
 
     private var screenActive: Boolean = false
@@ -76,8 +80,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        layout_safe_main_toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp)
-        layout_safe_main_toolbar.setNavigationOnClickListener {
+        layout_safe_main_toolbar_nav_icon.setOnClickListener {
             layout_safe_main_drawer_layout.openDrawer(Gravity.START)
         }
 
@@ -85,6 +88,10 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_safes_list.adapter = adapter
 
         layout_safe_main_debug_settings.visible(BuildConfig.DEBUG)
+
+        popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
+            inflate(R.menu.safe_details_menu)
+        }
     }
 
     override fun onStart() {
@@ -95,6 +102,10 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         disposables += (selectedSafe?.let { viewModel.selectSafe(it) } ?: viewModel.loadSelectedSafe())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = ::showSafe, onError = ::showSafeError)
+
+        disposables += layout_safe_main_toolbar_overflow.clicks()
+            .subscribeBy { popupMenu.show() }
+
         updateToolbar()
         setupNavigation()
     }
@@ -227,18 +238,17 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
     private fun updateToolbar() {
+        popupMenu.setOnMenuItemClickListener(null)
         val safe = selectedSafe
-        layout_safe_main_toolbar.menu.clear()
         when (safe) {
             is Safe -> {
                 layout_safe_main_selected_safe_icon.visible(true)
                 layout_safe_main_selected_safe_icon.setAddress(safe.address)
                 layout_safe_main_selected_safe_name.text = safe.name
-                layout_safe_main_toolbar.title = safe.name
-                layout_safe_main_toolbar.subtitle = safe.address.asEthereumAddressString()
+                layout_safe_main_toolbar_title.text = safe.name
+                layout_safe_main_toolbar_overflow.visible(true)
 
-                layout_safe_main_toolbar.inflateMenu(R.menu.safe_details_menu)
-                disposables += layout_safe_main_toolbar.itemClicks()
+                disposables += popupMenu.itemClicks()
                     .subscribeBy(onNext = {
                         when (it.itemId) {
                             R.id.safe_details_menu_share ->
@@ -251,14 +261,14 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             is PendingSafe -> {
                 layout_safe_main_selected_safe_name.text = safe.name
                 layout_safe_main_selected_safe_icon.visible(false)
-                layout_safe_main_toolbar.title = safe.name
-                layout_safe_main_toolbar.subtitle = null
+                layout_safe_main_toolbar_title.text = safe.name
+                layout_safe_main_toolbar_overflow.visible(false)
             }
             else -> {
                 layout_safe_main_selected_safe_name.setText(R.string.no_safe_selected)
                 layout_safe_main_selected_safe_icon.visible(false)
-                layout_safe_main_toolbar.setTitle(R.string.app_name)
-                layout_safe_main_toolbar.subtitle = null
+                layout_safe_main_toolbar_title.text = getString(R.string.app_name)
+                layout_safe_main_toolbar_overflow.visible(false)
             }
         }
     }

@@ -12,7 +12,7 @@
 
     <TextView
         android:id="@+id/dialog_request_signature_scan"
-        style="@style/PrimaryButton.FullWidth"
+        style="@style/PrimaryButton.Blue.FullWidth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

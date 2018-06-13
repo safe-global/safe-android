@@ -39,7 +39,7 @@
 
         <TextView
             android:id="@+id/layout_buy_credits_buy_button"
-            style="@style/PrimaryButton"
+            style="@style/PrimaryButton.White"
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_marginTop="24dp"
@@ -48,7 +48,7 @@
 
         <TextView
             android:id="@+id/layout_buy_credits_redeem_button"
-            style="@style/PrimaryButton"
+            style="@style/PrimaryButton.White"
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_marginTop="24dp"

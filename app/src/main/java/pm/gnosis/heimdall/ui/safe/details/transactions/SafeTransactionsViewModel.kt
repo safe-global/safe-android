@@ -53,7 +53,7 @@ class SafeTransactionsViewModel @Inject constructor(
                         val headerRes = when {
                             timeDiff < DateTimeUtils.DAY_IN_MS -> R.string.header_today
                             timeDiff < 2 * DateTimeUtils.DAY_IN_MS -> R.string.header_yesterday
-                            lastHeaderRes == 0 -> R.string.header_submitted // First header should never be "older"
+                            lastHeaderRes == 0 || lastHeaderRes == R.string.header_submitted -> R.string.header_submitted // First header should never be "older"
                             else -> R.string.header_older
                         }
                         if (lastHeaderRes != headerRes && headerRes != 0) {
