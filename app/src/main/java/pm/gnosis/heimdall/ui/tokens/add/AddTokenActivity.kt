@@ -61,11 +61,11 @@ class AddTokenActivity : BaseActivity() {
             }, onError = Timber::e)
 
         disposables += layout_add_token_load_info_button.clicks()
-            .flatMap {
+            .flatMapSingle {
                 viewModel.loadTokenInfo(layout_add_token_address.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe { onTokenInfoLoading(true) }
-                    .doOnTerminate { onTokenInfoLoading(false) }
+                    .doAfterTerminate { onTokenInfoLoading(false) }
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onTokenInfo, onError = ::onTokenInfoError)

@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import io.reactivex.Single
+import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import org.junit.Before
 import org.junit.Rule
@@ -10,10 +11,12 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.ERC20Contract
+import pm.gnosis.heimdall.GnosisSafePersonalEdition
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
+import pm.gnosis.heimdall.data.repositories.RestrictedTransactionException
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.CALL
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.DELEGATE_CALL
@@ -51,9 +54,144 @@ class DefaultTransactionInfoRepositoryTest {
     }
 
     @Test
+    fun checkRestrictedTransaction() {
+        val testData = mapOf(
+            RestrictedTransactionException.ChangeThreshold::class to (
+                    RestrictedTransactionException.ChangeThreshold to
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(
+                                        address = "0x0".asEthereumAddress()!!,
+                                        data = GnosisSafePersonalEdition.ChangeThreshold.encode(Solidity.UInt8(BigInteger.ONE))
+                                    ), CALL
+                                )
+                            )
+                    ),
+            RestrictedTransactionException.ChangeMasterCopy::class to (
+                    RestrictedTransactionException.ChangeMasterCopy to
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(
+                                        address = "0x0".asEthereumAddress()!!,
+                                        data = GnosisSafePersonalEdition.ChangeMasterCopy.encode("0x1".asEthereumAddress()!!)
+                                    ), CALL
+                                )
+                            )
+                    ),
+            RestrictedTransactionException.ModifyOwners::class to (
+                    RestrictedTransactionException.ModifyOwners to
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(
+                                        address = "0x0".asEthereumAddress()!!,
+                                        data = GnosisSafePersonalEdition.AddOwnerWithThreshold.encode(
+                                            "0x1".asEthereumAddress()!!,
+                                            Solidity.UInt8(BigInteger.ZERO)
+                                        )
+                                    ), CALL
+                                ),
+                                SafeTransaction(
+                                    Transaction(
+                                        address = "0x0".asEthereumAddress()!!,
+                                        data = GnosisSafePersonalEdition.SwapOwner.encode(
+                                            "0x1".asEthereumAddress()!!,
+                                            "0x2".asEthereumAddress()!!,
+                                            "0x3".asEthereumAddress()!!
+                                        )
+                                    ), CALL
+                                ),
+                                SafeTransaction(
+                                    Transaction(
+                                        address = "0x0".asEthereumAddress()!!,
+                                        data = GnosisSafePersonalEdition.RemoveOwner.encode(
+                                            "0x1".asEthereumAddress()!!,
+                                            "0x2".asEthereumAddress()!!,
+                                            Solidity.UInt8(BigInteger.ZERO)
+                                        )
+                                    ), CALL
+                                )
+                            )
+                    ),
+            RestrictedTransactionException.ModifyModules::class to (
+                    RestrictedTransactionException.ModifyModules to
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(
+                                        address = "0x0".asEthereumAddress()!!,
+                                        data = GnosisSafePersonalEdition.EnableModule.encode(
+                                            "0x1".asEthereumAddress()!!
+                                        )
+                                    ), CALL
+                                ),
+                                SafeTransaction(
+                                    Transaction(
+                                        address = "0x0".asEthereumAddress()!!,
+                                        data = GnosisSafePersonalEdition.DisableModule.encode(
+                                            "0x1".asEthereumAddress()!!,
+                                            "0x2".asEthereumAddress()!!
+                                        )
+                                    ), CALL
+                                )
+                            )
+                    ),
+            RestrictedTransactionException.DelegateCall::class to (
+                    RestrictedTransactionException.DelegateCall to
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(
+                                        address = "0x0".asEthereumAddress()!!,
+                                        value = Wei.ether("12")
+                                    ), DELEGATE_CALL
+                                ),
+                                SafeTransaction(
+                                    Transaction(
+                                        address = "0x0".asEthereumAddress()!!,
+                                        data = ERC20Contract.Transfer.encode(
+                                            "0x1".asEthereumAddress()!!,
+                                            Solidity.UInt256(BigInteger.ONE)
+                                        )
+                                    ), DELEGATE_CALL
+                                )
+                            )
+                    )
+        )
+        RestrictedTransactionException::class.nestedClasses.forEach {
+            val (expected, tests) = testData[it] ?: throw IllegalStateException("Missing tests for ${it.simpleName}")
+            if (tests.isEmpty()) throw IllegalStateException("Missing tests for ${it.simpleName}")
+            tests.forEach {
+                val testObserver = TestObserver<SafeTransaction>()
+                repository.checkRestrictedTransaction(it).subscribe(testObserver)
+                testObserver.assertFailure(Predicate { it == expected })
+            }
+        }
+
+        listOf(
+            SafeTransaction(
+                Transaction(
+                    address = "0x0".asEthereumAddress()!!,
+                    value = Wei.ether("12")
+                ), CALL
+            ),
+            SafeTransaction(
+                Transaction(
+                    address = "0x0".asEthereumAddress()!!,
+                    data = ERC20Contract.Transfer.encode(
+                        "0x1".asEthereumAddress()!!,
+                        Solidity.UInt256(BigInteger.ONE)
+                    )
+                ), CALL
+            )
+        ).forEach {
+            val validObserver = TestObserver<SafeTransaction>()
+            repository.checkRestrictedTransaction(it).subscribe(validObserver)
+            validObserver.assertResult(it)
+        }
+    }
+
+    @Test
     fun parseTransactionData() {
         TransactionData::class.nestedClasses.filter { it != TransactionData.Companion::class }.forEach { klass ->
-            TEST_DATA[klass]?.let { tests ->
+            TEST_DATA_TRANSACTION_INFO[klass]?.let { tests ->
                 if (tests.isEmpty()) throw IllegalStateException("Missing tests for ${klass.simpleName}")
                 tests.forEach {
                     val testObserver = TestObserver<TransactionData>()
@@ -67,7 +205,7 @@ class DefaultTransactionInfoRepositoryTest {
     @Test
     fun loadTransactionInfo() {
         TransactionData::class.nestedClasses.filter { it != TransactionData.Companion::class }.forEach { klass ->
-            TEST_DATA[klass]?.let { tests ->
+            TEST_DATA_TRANSACTION_INFO[klass]?.let { tests ->
                 if (tests.isEmpty()) throw IllegalStateException("Missing tests for ${klass.simpleName}")
                 tests.forEach {
                     val testId = UUID.randomUUID().toString()
@@ -129,7 +267,7 @@ class DefaultTransactionInfoRepositoryTest {
         private val TEST_ETH_AMOUNT = Wei.ether("23")
         private val TEST_TOKEN_ADDRESS = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!
         private val TEST_TOKEN_AMOUNT = BigInteger("230000000000")
-        private val TEST_DATA = mapOf(
+        private val TEST_DATA_TRANSACTION_INFO = mapOf(
             TransactionData.AssetTransfer::class to
                     listOf(
                         TestData(

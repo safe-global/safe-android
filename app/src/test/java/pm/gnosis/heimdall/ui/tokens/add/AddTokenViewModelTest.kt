@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.tokens.add
 
 import android.content.Context
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -52,13 +53,13 @@ class AddTokenViewModelTest {
         val testObserver = TestObserver<Result<Unit>>()
         val testCompletable = TestCompletable()
         given(tokenRepositoryMock.addToken(MockUtils.any())).willReturn(testCompletable)
-        given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(Observable.just(testToken))
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(testToken))
 
         viewModel.loadTokenInfo(testAddress.asEthereumAddressString()).subscribe(TestObserver())
         viewModel.addToken().subscribe(testObserver)
 
         then(tokenRepositoryMock).should().addToken(testToken)
-        then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
+        then(tokenRepositoryMock).should().loadToken(testAddress)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, testCompletable.callCount)
         testObserver.assertValue(DataResult(Unit)).assertNoErrors()
@@ -77,11 +78,11 @@ class AddTokenViewModelTest {
     @Test
     fun loadTokenInfo() {
         val testObserver = TestObserver<Result<ERC20Token>>()
-        given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(Observable.just(testToken))
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(testToken))
 
         viewModel.loadTokenInfo(testAddress.asEthereumAddressString()).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
+        then(tokenRepositoryMock).should().loadToken(testAddress)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(testToken)).assertNoErrors()
     }
@@ -100,11 +101,11 @@ class AddTokenViewModelTest {
     @Test
     fun loadTokenInfoErrorLoadingInfo() {
         val testObserver = TestObserver<Result<ERC20Token>>()
-        given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(Observable.just(testToken))
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(testToken))
 
         viewModel.loadTokenInfo(testAddress.asEthereumAddressString()).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().loadTokenInfo(testAddress)
+        then(tokenRepositoryMock).should().loadToken(testAddress)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertValue(DataResult(testToken)).assertNoErrors()
     }

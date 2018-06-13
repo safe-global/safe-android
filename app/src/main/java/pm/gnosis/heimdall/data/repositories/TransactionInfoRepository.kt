@@ -21,6 +21,8 @@ sealed class RestrictedTransactionException : IllegalArgumentException() {
     object DelegateCall: RestrictedTransactionException()
     object ModifyOwners: RestrictedTransactionException()
     object ModifyModules: RestrictedTransactionException()
+    object ChangeThreshold: RestrictedTransactionException()
+    object ChangeMasterCopy: RestrictedTransactionException()
 }
 
 data class TransactionInfo(

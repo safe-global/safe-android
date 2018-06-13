@@ -148,6 +148,8 @@ class AssetTransferViewHolderTest {
     }
 
     private fun testEtherToken(showExtraInfo: Boolean) {
+        val tokenSingle = TestSingleFactory<ERC20Token>()
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenSingle.get())
         val balancesObservable = TestObservableFactory<List<Pair<ERC20Token, BigInteger?>>>()
         setupViewMocks(balancesObservable.get())
 
@@ -159,10 +161,13 @@ class AssetTransferViewHolderTest {
 
         viewHolder.start()
         then(valueView).should().text = "~"
-        then(valueView).should().text = "0.4 ETH"
         then(valueView).shouldHaveNoMoreInteractions()
         then(fiatView).should().text = "~ $"
         then(fiatView).shouldHaveNoMoreInteractions()
+
+        tokenSingle.success(ERC20Token.ETHER_TOKEN)
+        then(valueView).should().text = "0.4 ETH"
+        then(valueView).shouldHaveNoMoreInteractions()
 
         if (showExtraInfo) {
             then(safeBalanceView).shouldHaveNoMoreInteractions()
@@ -180,6 +185,7 @@ class AssetTransferViewHolderTest {
         if (showExtraInfo) {
             then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
         }
+        then(tokenRepositoryMock).should().loadToken(ERC20Token.ETHER_TOKEN.address)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -246,9 +252,8 @@ class AssetTransferViewHolderTest {
         contextMock.mockGetString()
         given(viewHolderView.context).willReturn(contextMock)
         setupViewMocks(Observable.just(listOf()))
-        val tokenInfoObservable = TestObservableFactory<ERC20Token>()
-        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
-        given(tokenRepositoryMock.loadTokenInfo(MockUtils.any())).willReturn(tokenInfoObservable.get())
+        val tokenInfoSingle = TestSingleFactory<ERC20Token>()
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenInfoSingle.get())
 
         val data = TransactionData.AssetTransfer(TEST_TOKEN, TEST_AMOUNT, TEST_RECEIVER)
         viewHolder = AssetTransferViewHolder(TEST_SAFE, data, addressHelper, tokenRepositoryMock, showExtraInfo)
@@ -262,7 +267,7 @@ class AssetTransferViewHolderTest {
         then(fiatView).should().text = "~ $"
         then(fiatView).shouldHaveNoMoreInteractions()
 
-        tokenInfoObservable.error(TimeoutException())
+        tokenInfoSingle.error(TimeoutException())
 
         then(fiatView).should().text = R.string.unknown_token.toString()
         then(fiatView).shouldHaveNoMoreInteractions()
@@ -284,7 +289,6 @@ class AssetTransferViewHolderTest {
         }
         then(safeBalanceView).shouldHaveNoMoreInteractions()
         then(tokenRepositoryMock).should().loadToken(TEST_TOKEN)
-        then(tokenRepositoryMock).should().loadTokenInfo(TEST_TOKEN)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 

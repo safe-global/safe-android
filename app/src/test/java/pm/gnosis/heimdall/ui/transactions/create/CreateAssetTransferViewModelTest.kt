@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.transactions.create
 
 import android.content.Context
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import org.junit.Before
@@ -55,6 +56,7 @@ class CreateAssetTransferViewModelTest {
 
     @Test
     fun processInputEtherTransfer() {
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         val balancesSubject = PublishSubject.create<List<Pair<ERC20Token, BigInteger?>>>()
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(balancesSubject)
         val estimationSingleFactory = TestSingleFactory<TransactionExecutionRepository.ExecuteInformation>()
@@ -149,6 +151,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValueCount(10)
         testObserver.assertValueAt(9, { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview })
 
+        then(tokenRepositoryMock).should().loadToken(TEST_ETHER_TOKEN)
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any())
@@ -265,6 +268,7 @@ class CreateAssetTransferViewModelTest {
 
     @Test
     fun processInputLoadTokenError() {
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(Observable.error(TimeoutException()))
         val reviewEvents = TestObservableFactory<Unit>()
         val inputSubject = PublishSubject.create<CreateAssetTransferContract.Input>()
@@ -277,6 +281,7 @@ class CreateAssetTransferViewModelTest {
             DataResult(CreateAssetTransferContract.ViewUpdate.TokenInfo(ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null))),
             DataResult(CreateAssetTransferContract.ViewUpdate.TokenInfo(ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null)))
         )
+        then(tokenRepositoryMock).should().loadToken(TEST_ETHER_TOKEN)
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayRepositoryMock).shouldHaveZeroInteractions()
