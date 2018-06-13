@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.safe.main
 
 import com.gojuno.koptional.toOptional
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
@@ -55,6 +56,7 @@ class SafeMainViewModel @Inject constructor(
             loadSelectedSafe()
         }
 
+    override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)
 
     companion object {
         private const val KEY_SELECTED_SAFE = "safe_main.string.selected_safe"

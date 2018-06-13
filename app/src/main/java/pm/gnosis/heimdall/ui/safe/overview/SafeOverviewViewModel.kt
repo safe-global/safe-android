@@ -15,6 +15,4 @@ class SafeOverviewViewModel @Inject constructor(
         safeRepository.loadInfo(address).firstOrError()
             .doOnSuccess { infoCache[address] = it }
             .onErrorResumeNext { infoCache[address]?.let { Single.just(it) } ?: Single.error(it) }
-
-    override fun observeDeployStatus(hash: String) = safeRepository.observeDeployStatus(hash)
 }

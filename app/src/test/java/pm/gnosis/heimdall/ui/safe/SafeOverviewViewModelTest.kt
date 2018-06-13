@@ -69,30 +69,4 @@ class SafeOverviewViewModelTest {
         then(repositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception)
     }
-
-    @Test
-    fun observeDeployedStatus() {
-        val result = "result"
-        val testObserver = TestObserver.create<String>()
-        given(repositoryMock.observeDeployStatus(anyString())).willReturn(Observable.just(result))
-
-        viewModel.observeDeployStatus("test").subscribe(testObserver)
-
-        then(repositoryMock).should().observeDeployStatus("test")
-        then(repositoryMock).shouldHaveNoMoreInteractions()
-        testObserver.assertResult(result)
-    }
-
-    @Test
-    fun observeDeployedStatusError() {
-        val exception = Exception()
-        val testObserver = TestObserver.create<String>()
-        given(repositoryMock.observeDeployStatus(anyString())).willReturn(Observable.error(exception))
-
-        viewModel.observeDeployStatus("test").subscribe(testObserver)
-
-        then(repositoryMock).should().observeDeployStatus("test")
-        then(repositoryMock).shouldHaveNoMoreInteractions()
-        testObserver.assertError(exception)
-    }
 }
