@@ -7,7 +7,6 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.ethereum.*
-import pm.gnosis.ethereum.models.TransactionReceipt
 import pm.gnosis.heimdall.GnosisSafePersonalEdition.*
 import pm.gnosis.heimdall.ProxyFactory
 import pm.gnosis.heimdall.data.db.ApplicationDb
@@ -32,9 +31,7 @@ import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexStringToByteArray
-import pm.gnosis.utils.nullOnThrow
 import java.math.BigInteger
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -129,57 +126,19 @@ class DefaultGnosisSafeRepository @Inject constructor(
             safeDao.updatePendingSafe(pendingSafe.toDb())
         }.subscribeOn(Schedulers.io())
 
-    override fun observeDeployStatus(hash: String): Observable<String> {
-        return ethereumRepository.getTransactionReceipt(hash)
-            .flatMap {
-                it.logs.forEach {
-                    decodeCreationEventOrNull(it)?.let {
-                        return@flatMap Observable.just(it.proxy)
-                    }
-                }
-                Observable.error<Solidity.Address>(SafeDeploymentFailedException())
-            }
-            .retryWhen {
-                it.flatMap {
-                    if (it is SafeDeploymentFailedException) {
-                        Observable.error(it)
-                    } else {
-                        Observable.just(it).delay(20, TimeUnit.SECONDS)
-                    }
-                }
-            }
-            .flatMapSingle { safeAddress ->
-                safeDao.loadPendingSafe(hash.hexAsBigInteger()).map { pendingSafe ->
-                    safeAddress to pendingSafe
-                }
-            }
-            .map {
-                safeDao.removePendingSafe(hash.hexAsBigInteger())
-                safeDao.insertSafe(GnosisSafeDb(it.first, it.second.name))
-                it
-            }
-            .flatMap { sendSafeCreationPush(it.first).andThen(Observable.just(it.first.asEthereumAddressString())) }
-            .doOnError {
-                safeDao.removePendingSafe(hash.hexAsBigInteger())
-            }
-    }
-
     override fun pendingSafeToDeployedSafe(pendingSafe: PendingSafe): Completable =
-        Completable.fromCallable {
-            safeDao.pendingSafeToDeployedSafe(pendingSafe)
-        }.subscribeOn(Schedulers.io())
+        Completable.fromCallable { safeDao.pendingSafeToDeployedSafe(pendingSafe) }
+            .andThen(sendSafeCreationPush(pendingSafe.address).onErrorComplete())
+            .subscribeOn(Schedulers.io())
 
-    private fun sendSafeCreationPush(safeAddress: Solidity.Address) =
+    override fun sendSafeCreationPush(safeAddress: Solidity.Address): Completable =
         Single.zip(
             accountsRepository.loadActiveAccount().map { it.address },
             loadInfo(safeAddress).firstOrError().map { it.owners },
             BiFunction<Solidity.Address, List<Solidity.Address>, Set<Solidity.Address>> { deviceAddress, owners -> (owners - deviceAddress).toSet() }
         )
             .flatMapCompletable { pushServiceRepository.propagateSafeCreation(safeAddress, it) }
-            .onErrorComplete()
-
-    private fun decodeCreationEventOrNull(event: TransactionReceipt.Event) =
-        nullOnThrow { ProxyFactory.Events.ProxyCreation.decode(event.topics, event.data) }
+            .subscribeOn(Schedulers.io())
 
     override fun removeSafe(address: Solidity.Address) =
         Completable.fromCallable {

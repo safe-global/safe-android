@@ -37,10 +37,7 @@ import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
-import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.svalinn.common.utils.subscribeForResult
-import pm.gnosis.svalinn.common.utils.transaction
-import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import pm.gnosis.utils.toHexString
@@ -262,6 +259,13 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                                 ShareSafeAddressDialog.create(safe.address).show(supportFragmentManager, null)
                             R.id.safe_details_menu_settings ->
                                 startActivity(SafeSettingsActivity.createIntent(this, safe.address.asEthereumAddressString()))
+                            R.id.safe_details_menu_sync -> {
+                                disposables += viewModel.syncWithChromeExtension(safe.address)
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribeBy(onComplete = { toast(R.string.sync_successful) },
+                                        onError = { toast(R.string.error_syncing) })
+                            }
+
                         }
                     }, onError = Timber::e)
             }

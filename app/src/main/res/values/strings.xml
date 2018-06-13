@@ -438,4 +438,7 @@
     <string name="devices_paired_successfuly">Devices paired successfully</string>
     <string name="error_pairing_devices">Error pairing devices</string>
     <string name="mnemonic_error_invalid">Mnemonic error (invalid mnemonic)</string>
+    <string name="sync_with_extension">Sync with extension</string>
+    <string name="sync_successful">Sync successful</string>
+    <string name="error_syncing">Error syncing</string>
 </resources>

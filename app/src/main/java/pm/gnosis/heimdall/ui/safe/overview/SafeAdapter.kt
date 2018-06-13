@@ -23,9 +23,7 @@ import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
 import pm.gnosis.heimdall.utils.displayString
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.asTransactionHash
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -124,9 +122,6 @@ class SafeAdapter @Inject constructor(
     }
 
     inner class PendingViewHolder(itemView: View) : CastingViewHolder<PendingSafe>(PendingSafe::class.java, itemView), View.OnClickListener {
-
-        private val disposables = CompositeDisposable()
-
         private var currentEntry: PendingSafe? = null
 
         init {
@@ -138,26 +133,7 @@ class SafeAdapter @Inject constructor(
             itemView.layout_pending_safe_item_name.text = data.name
         }
 
-        @OnLifecycleEvent(Lifecycle.Event.ON_START)
-        fun start() {
-            // Make sure no disposable are left over
-            disposables.clear()
-            val pendingSafe = currentEntry ?: return
-            disposables += viewModel.observeDeployStatus(pendingSafe.hash.asTransactionHash())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onError = {
-                    context.toast(R.string.error_deploying_safe)
-                    Timber.e(it)
-                })
-        }
-
-        @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-        fun stop() {
-            disposables.clear()
-        }
-
         override fun unbind() {
-            stop()
             currentEntry = null
             super.unbind()
         }
