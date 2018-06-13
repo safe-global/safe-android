@@ -21,12 +21,7 @@ class ReceiveTokenViewModel @Inject constructor(
     override fun observeSafeInfo(safeAddress: Solidity.Address): Observable<ViewUpdate> =
         Observable.merge(
             safeRepository.loadSafe(safeAddress).map {
-                ViewUpdate.Info(
-                    when {
-                        it.name.isNullOrBlank() -> context.getString(R.string.your_safe)
-                        else -> it.name!!
-                    }
-                )
+                ViewUpdate.Info(it.displayName(context))
             }
                 .onErrorReturn { ViewUpdate.Info(context.getString(R.string.your_safe)) }
                 .toObservable(),

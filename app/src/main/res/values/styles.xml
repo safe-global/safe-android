@@ -211,14 +211,14 @@
     <!-- Start: Button styles -->
 
     <style name="PrimaryButton.White.Text" parent="Text">
-        <item name="android:textColor">@color/azure</item>
+        <item name="android:textColor">@color/primary_button_white_text</item>
         <item name="android:textSize">@dimen/primary_button_text_size</item>
         <item name="android:gravity">center</item>
     </style>
 
     <style name="PrimaryButton.White">
         <item name="android:background">@drawable/primary_button_white</item>
-        <item name="android:textColor">@color/azure</item>
+        <item name="android:textColor">@color/primary_button_white_text</item>
         <item name="android:textSize">@dimen/primary_button_text_size</item>
     </style>
 

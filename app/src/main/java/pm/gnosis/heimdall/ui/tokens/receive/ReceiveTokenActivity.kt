@@ -19,6 +19,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.copyToClipboard
 import pm.gnosis.svalinn.common.utils.shareExternalText
 import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
@@ -66,8 +67,10 @@ class ReceiveTokenActivity : ViewModelActivity<ReceiveTokenContract>() {
             }
             is ReceiveTokenContract.ViewUpdate.Info ->
                 layout_receive_token_safe_name.text = update.name
-            is ReceiveTokenContract.ViewUpdate.QrCode ->
+            is ReceiveTokenContract.ViewUpdate.QrCode -> {
+                layout_receive_token_qr_progress.visible(false)
                 layout_receive_token_qr_image.setImageBitmap(update.qrCode)
+            }
         }
     }
 

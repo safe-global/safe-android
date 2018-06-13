@@ -40,7 +40,8 @@
     <string name="restore_account">Restore Account</string>
     <string name="mnemonic">Mnemonic</string>
     <string name="empty_verified_tokens">No balance in any of the verified tokens</string>
-    <string name="empty_safe_transactions">No transactions in safe history</string>
+    <string name="empty_safe_transactions_title">¯\\_(ツ)_/¯</string>
+    <string name="empty_safe_transactions_message">No transactions yet</string>
     <string name="transaction_hash">Transaction Hash</string>
     <string name="safe_address">Safe Address</string>
     <string name="add_safe">Add safe</string>
