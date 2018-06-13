@@ -63,7 +63,7 @@
             android:layout_marginBottom="70dp"
             android:layout_marginEnd="42dp"
             android:layout_marginStart="42dp"
-            android:background="@drawable/round_button"
+            android:background="@drawable/round_button_border"
             android:gravity="center"
             android:paddingBottom="12dp"
             android:paddingLeft="24dp"

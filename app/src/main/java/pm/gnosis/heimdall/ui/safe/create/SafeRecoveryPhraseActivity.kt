@@ -3,88 +3,93 @@ package pm.gnosis.heimdall.ui.safe.create
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.text.Html
-import android.view.View
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_safe_recovery_phrase.*
-import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.getColorCompat
+import pm.gnosis.svalinn.common.utils.toast
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.words
 import timber.log.Timber
-import javax.inject.Inject
 
-class SafeRecoveryPhraseActivity : BaseActivity() {
+class SafeRecoveryPhraseActivity : ViewModelActivity<SafeRecoveryPhraseContract>() {
     override fun screenId() = ScreenId.SAFE_RECOVERY_PHRASE
-
-    @Inject
-    lateinit var viewModel: SafeRecoveryPhraseContract
-
-    private lateinit var chromeExtension: Solidity.Address
-
-    private val confirmDialogClick = PublishSubject.create<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        chromeExtension = intent.getStringExtra(CHROME_EXTENSION_ADDRESS_EXTRA).asEthereumAddress() ?: run { finish(); return }
+        intent.getStringExtra(CHROME_EXTENSION_ADDRESS_EXTRA)?.asEthereumAddress()
+            ?.let { viewModel.setup(it) } ?: run { finish(); return }
 
-        inject()
-        setContentView(R.layout.layout_safe_recovery_phrase)
+        disposables += viewModel.generateRecoveryPhrase()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onSuccess = ::onMnemonic, onError = ::onMnemonicError)
     }
 
     override fun onStart() {
         super.onStart()
-
-        disposables += viewModel.generateMnemonic()
+        disposables += layout_safe_recovery_phrase_finish.clicks()
+            .flatMapSingle {
+                viewModel.loadEncryptedRecoveryPhrase()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { isLoading(true) }
+                    .doFinally { isLoading(false) }
+            }
             .observeOn(AndroidSchedulers.mainThread())
-            //TODO: what if this fails? Retry button vs Rx.retry
-            .subscribeBy(onSuccess = {
-                layout_safe_recovery_phrase_mnemonic.text = it
-            }, onError = Timber::e)
-
-        disposables += layout_safe_recovery_phrase_reveal.clicks()
             .subscribeBy(onNext = {
-                layout_safe_recovery_phrase_container.visibility = View.VISIBLE
-                layout_safe_recovery_phrase_reveal.visibility = View.GONE
-            }, onError = Timber::e)
-
-        disposables += layout_safe_recovery_phrase_save.clicks()
-            .subscribeBy(onNext = { showConfirmationDialog(layout_safe_recovery_phrase_mnemonic.text.toString()) })
-
-        disposables += confirmDialogClick
-            .flatMapSingle { viewModel.getRecoveryAddress(it) }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onNext = { recoveryAddress ->
-                startActivity(CreateSafeActivity.createIntent(this, chromeExtension, recoveryAddress))
+                startActivity(
+                    ConfirmSafeRecoveryPhraseActivity.createIntent(
+                        this,
+                        it,
+                        viewModel.getChromeExtensionAddress()
+                    )
+                )
             }, onError = Timber::e)
     }
 
-    private fun showConfirmationDialog(mnemonic: String) {
-        AlertDialog.Builder(this)
-            .setPositiveButton(getString(R.string.yes), { _, _ -> confirmDialogClick.onNext(mnemonic) })
-            .setNegativeButton(getString(R.string.no), { _, _ -> })
-            .setTitle(getString(R.string.dialog_title_save_mnemonic))
-            .setMessage(Html.fromHtml(resources.getString(R.string.generate_mnemonic_activity_dialog, mnemonic)))
-            .show()
+    private fun isLoading(isLoading: Boolean) {
+        layout_safe_recovery_phrase_progress_bar.visible(isLoading)
+        layout_safe_recovery_phrase_finish.isEnabled = !isLoading
+        layout_safe_recovery_phrase_bottom_bar.setBackgroundColor(getColorCompat(if (isLoading) R.color.bluey_grey else R.color.azure))
     }
 
-    private fun inject() {
-        DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this].component)
-            .viewModule(ViewModule(this))
-            .build().inject(this)
+    private fun onMnemonic(mnemonic: String) {
+        val words = mnemonic.words()
+        if (words.size != 12) toast(R.string.mnemonic_error_invalid) //TODO: finish activity?
+        val firstGroupStringBuilder = StringBuilder()
+        val secondGroupStringBuilder = StringBuilder()
+        val thirdGroupStringBuilder = StringBuilder()
+        words.forEachIndexed { index, word ->
+            when {
+                index < 4 -> firstGroupStringBuilder.append("${index + 1}. $word\n\n")
+                index < 8 -> secondGroupStringBuilder.append("${index + 1}. $word\n\n")
+                index < 12 -> thirdGroupStringBuilder.append("${index + 1}. $word\n\n")
+            }
+        }
+
+        layout_safe_recovery_phrase_1_4.text = firstGroupStringBuilder.toString()
+        layout_safe_recovery_phrase_5_8.text = secondGroupStringBuilder.toString()
+        layout_safe_recovery_phrase_9_12.text = thirdGroupStringBuilder.toString()
+
     }
+
+    private fun onMnemonicError(throwable: Throwable) {
+        Timber.e(throwable)
+        toast(R.string.mnemonic_error_invalid) //TODO: finish activity?
+    }
+
+    override fun layout() = R.layout.layout_safe_recovery_phrase
+
+    override fun inject(component: ViewComponent) = component.inject(this)
 
     companion object {
         private const val CHROME_EXTENSION_ADDRESS_EXTRA = "extra.string.chrome_extension_address"

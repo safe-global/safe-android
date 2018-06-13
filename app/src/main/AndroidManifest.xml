@@ -30,17 +30,13 @@
         <activity
             android:name=".ui.onboarding.password.PasswordSetupActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
+            android:theme="@style/WhiteTheme"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.onboarding.password.PasswordConfirmActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
-
-        <activity
-            android:name=".ui.onboarding.SetupSafeIntroActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
-
+            android:theme="@style/WhiteTheme"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.onboarding.OnboardingIntroActivity"
             android:screenOrientation="portrait"
@@ -59,9 +55,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.settings.SettingsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.safe.add.AddSafeActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.settings.network.NetworkSettingsActivity"
@@ -112,15 +105,12 @@
         <activity
             android:name=".ui.safe.create.PairingActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
+            android:theme="@style/WhiteTheme" />
         <activity
             android:name=".ui.safe.create.SafeRecoveryPhraseActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
-        <activity
-            android:name=".ui.safe.create.CreateSafeActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
+            android:theme="@style/WhiteTheme" />
+
         <activity
             android:name=".ui.onboarding.fingerprint.FingerprintSetupActivity"
             android:screenOrientation="portrait"
@@ -161,6 +151,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.safe.create.CreateSafeIntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.create.ConfirmSafeRecoveryPhraseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

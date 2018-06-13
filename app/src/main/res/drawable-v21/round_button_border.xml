@@ -4,6 +4,6 @@
     android:color="@color/pressed_shade">
     <item
         android:id="@android:id/mask"
-        android:drawable="@drawable/round_button_mask" />
-    <item android:drawable="@drawable/round_button_base" />
+        android:drawable="@drawable/round_button_border_mask" />
+    <item android:drawable="@drawable/round_button_border_base" />
 </ripple>

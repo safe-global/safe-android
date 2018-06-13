@@ -129,6 +129,56 @@
         <item name="android:textSize">@dimen/primary_button_text_size</item>
     </style>
 
+    <style name="WhiteTheme.RoundPrimaryButton">
+        <item name="android:background">@drawable/round_button_fill</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/primary_button_text_size</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="WhiteTheme.ToolbarTitle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:lineSpacingExtra">12sp</item>
+        <item name="android:textColor">@color/dark_slate_blue</item>
+    </style>
+
+    <style name="WhiteTheme.SubtitleBold">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:textColor">@color/dark_slate_blue</item>
+    </style>
+
+    <style name="WhiteTheme.FlatTextCenter">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:lineSpacingExtra">7sp</item>
+        <item name="android:textColor">@color/battleship_grey</item>
+    </style>
+
+    <style name="WhiteTheme.RecoveryPhrasePick">
+        <item name="android:background">@drawable/word_pick</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textColor">@color/dark_slate_blue</item>
+    </style>
+
     <!-- Start: Toolbar styles -->
 
     <style name="AppBarLayout" parent="ThemeOverlay.AppCompat.Light">

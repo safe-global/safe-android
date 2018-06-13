@@ -18,9 +18,7 @@ import pm.gnosis.ethereum.rpc.RpcEthereumRepository
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcApi
 import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcConnector
 import pm.gnosis.heimdall.BuildConfig
-import pm.gnosis.heimdall.data.adapters.HexNumberAdapter
-import pm.gnosis.heimdall.data.adapters.SolidityAddressAdapter
-import pm.gnosis.heimdall.data.adapters.WeiAdapter
+import pm.gnosis.heimdall.data.adapters.*
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
@@ -91,6 +89,8 @@ class ApplicationModule(private val application: Application) {
         return Moshi.Builder()
             .add(WeiAdapter())
             .add(HexNumberAdapter())
+            .add(DecimalNumberAdapter())
+            .add(DefaultNumberAdapter())
             .add(TickerAdapter())
             .add(SolidityAddressAdapter())
             .build()
@@ -98,8 +98,7 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient)
-            : RetrofitEthereumRpcApi {
+    fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): RetrofitEthereumRpcApi {
         val retrofit = Retrofit.Builder()
             .client(client)
             .baseUrl(BuildConfig.BLOCKCHAIN_NET_URL)
@@ -136,8 +135,16 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesRelayServiceApi(accountsRepository: AccountsRepository, ethereumRepository: EthereumRepository): RelayServiceApi {
-        return LocalRelayServiceApi(accountsRepository, ethereumRepository)
+    fun providesRelayServiceApi(
+        accountsRepository: AccountsRepository, ethereumRepository: EthereumRepository, moshi: Moshi, client: OkHttpClient
+    ): RelayServiceApi {
+        val retrofit = Retrofit.Builder()
+            .client(client)
+            .baseUrl(RelayServiceApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
+        return LocalRelayServiceApi(accountsRepository, ethereumRepository, retrofit.create(RelayServiceApi::class.java))
     }
 
     @Provides

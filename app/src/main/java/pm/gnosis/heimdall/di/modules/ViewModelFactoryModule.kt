@@ -19,12 +19,7 @@ import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupViewModel
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupViewModel
-import pm.gnosis.heimdall.ui.safe.add.AddSafeContract
-import pm.gnosis.heimdall.ui.safe.add.AddSafeViewModel
-import pm.gnosis.heimdall.ui.safe.create.PairingContract
-import pm.gnosis.heimdall.ui.safe.create.PairingViewModel
-import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.create.*
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsViewModel
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract
@@ -35,6 +30,10 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainViewModel
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
+import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
+import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressViewModel
+import pm.gnosis.heimdall.ui.safe.pending.PendingSafeContract
+import pm.gnosis.heimdall.ui.safe.pending.PendingSafeViewModel
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeViewModel
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
@@ -83,11 +82,6 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(AddSafeContract::class)
-    abstract fun bindsAddSafeContract(viewModel: AddSafeViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(AddTokenContract::class)
     abstract fun bindsAddTokenContract(viewModel: AddTokenViewModel): ViewModel
 
@@ -95,6 +89,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(BuyCreditsContract::class)
     abstract fun bindsBuyCreditsContract(viewModel: BuyCreditsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConfirmSafeRecoveryPhraseContract::class)
+    abstract fun bindsConfirmSafeRecoveryPhraseContract(viewModel: ConfirmSafeRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -118,6 +117,11 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(DeploySafeProgressContract::class)
+    abstract fun bindsDeploySafeProgressContract(viewModel: DeploySafeProgressViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(FingerprintSetupContract::class)
     abstract fun bindsFingerprintSetupContract(viewModel: FingerprintSetupViewModel): ViewModel
 
@@ -135,6 +139,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(PasswordSetupContract::class)
     abstract fun bindsPasswordSetupContract(viewModel: PasswordSetupViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PendingSafeContract::class)
+    abstract fun bindsPendingSafeContract(viewModel: PendingSafeViewModel): ViewModel
 
     @Binds
     @IntoMap

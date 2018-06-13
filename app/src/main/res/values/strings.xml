@@ -420,4 +420,22 @@
     <string name="your_safe">Your Safe</string>
     <string name="send">Send</string>
     <string name="receive">Receive</string>
+    <string name="safe_intro_message_1">I understand that my funds are held securely in my Safe. They cannot be accessed by Gnosis. My Safe is a smart contract on the Ethereum blockchain.</string>
+    <string name="safe_intro_message_2">I understand that my Safe will be connected to: \n1 - This mobile app \n2 - My browser extension \n3 - A 12 word recovery phrase</string>
+    <string name="safe_intro_message_3">I will need the recovery phrase to recover my funds in case I lose any device.</string>
+    <string name="before_we_start">Before we start</string>
+    <string name="i_understand">I understand!</string>
+    <string name="browser_extension">Browser Extension</string>
+    <string name="pairing_info">Please download the Gnosis Safe browser extension and scan the QR code in the interface. All your Safe transactions will need to be approved by this device and the browser extension.</string>
+    <string name="new_safe">New Safe</string>
+    <string name="scan_qr_code">Scan QR Code</string>
+    <string name="pending_safe_deposit_value">Send at least %1s ETH to your Safe\'s address:</string>
+    <string name="fingerprint_many_tries">Too many tries. Switching to password</string>
+    <string name="deposit_received">Deposit received.</string>
+    <string name="creating_your_new_safe">Creating your new safe...</string>
+    <string name="deploy_safe_description">This process should take a couple of minutes. Follow progress on</string>
+    <string name="share_browser_extension">Share browser extension download link</string>
+    <string name="devices_paired_successfuly">Devices paired successfully</string>
+    <string name="error_pairing_devices">Error pairing devices</string>
+    <string name="mnemonic_error_invalid">Mnemonic error (invalid mnemonic)</string>
 </resources>

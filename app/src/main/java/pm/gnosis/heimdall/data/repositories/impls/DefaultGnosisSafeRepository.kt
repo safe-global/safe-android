@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.fromDb
+import pm.gnosis.heimdall.data.db.models.toDb
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
@@ -77,6 +78,9 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .map { it.fromDb() }
 
+    override fun observePendingSafe(transactionHash: BigInteger): Flowable<PendingSafe> =
+        safeDao.observePendingSafe(transactionHash).map { it.fromDb() }
+
     override fun addSafe(address: Solidity.Address, name: String) =
         Completable.fromCallable {
             safeDao.insertSafe(GnosisSafeDb(address, name))
@@ -108,16 +112,22 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .flatMapObservable(txExecutorRepository::execute)
             .flatMapSingle {
                 Single.fromCallable {
-                    safeDao.insertPendingSafe(PendingGnosisSafeDb(it.hexAsBigInteger(), name))
+                    safeDao.insertPendingSafe(PendingGnosisSafeDb(it.hexAsBigInteger(), name, Solidity.Address(BigInteger.ZERO), Wei.ZERO))
                     it
                 }
             }
             .firstOrError()
     }
 
-    override fun savePendingSafe(transactionHash: BigInteger, name: String): Completable = Completable.fromAction {
-        safeDao.insertPendingSafe(PendingGnosisSafeDb(transactionHash, name))
-    }.subscribeOn(Schedulers.io())
+    override fun savePendingSafe(transactionHash: BigInteger, name: String?, safeAddress: Solidity.Address, payment: Wei): Completable =
+        Completable.fromAction {
+            safeDao.insertPendingSafe(PendingGnosisSafeDb(transactionHash, name, safeAddress, payment))
+        }.subscribeOn(Schedulers.io())
+
+    override fun updatePendingSafe(pendingSafe: PendingSafe): Completable =
+        Completable.fromCallable {
+            safeDao.updatePendingSafe(pendingSafe.toDb())
+        }.subscribeOn(Schedulers.io())
 
     override fun observeDeployStatus(hash: String): Observable<String> {
         return ethereumRepository.getTransactionReceipt(hash)
@@ -153,6 +163,11 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 safeDao.removePendingSafe(hash.hexAsBigInteger())
             }
     }
+
+    override fun pendingSafeToDeployedSafe(pendingSafe: PendingSafe): Completable =
+        Completable.fromCallable {
+            safeDao.pendingSafeToDeployedSafe(pendingSafe)
+        }.subscribeOn(Schedulers.io())
 
     private fun sendSafeCreationPush(safeAddress: Solidity.Address) =
         Single.zip(
