@@ -248,7 +248,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             is Safe -> {
                 layout_safe_main_selected_safe_icon.visible(true)
                 layout_safe_main_selected_safe_icon.setAddress(safe.address)
-                val safeName = safe.name ?: getString(R.string.your_safe)
+                val safeName = safe.displayName(this)
                 layout_safe_main_selected_safe_name.text = safeName
                 layout_safe_main_toolbar_title.text = safeName
                 layout_safe_main_toolbar_overflow.visible(true)
@@ -271,7 +271,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     }, onError = Timber::e)
             }
             is PendingSafe -> {
-                val safeName = safe.name ?: getString(R.string.your_safe)
+                val safeName = safe.displayName(this)
                 layout_safe_main_selected_safe_name.text = safeName
                 layout_safe_main_selected_safe_icon.visible(false)
                 layout_safe_main_toolbar_title.text = safeName
