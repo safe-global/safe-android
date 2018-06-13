@@ -9,6 +9,7 @@ import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.subscribers.TestSubscriber
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -296,59 +297,34 @@ class SafeTransactionsViewModelTest {
     }
 
     @Test
-    fun loadTokenInfoEtherToken() {
-        val token = ERC20Token.ETHER_TOKEN
+    fun loadTokenInfo() {
+        val testToken = ERC20Token(TEST_TOKEN_ADDRESS, name = "Test Token", symbol = "TT", decimals = 6)
+        val expectedSingle = Single.just(testToken)
+        given(tokenRepository.loadToken(MockUtils.any())).willReturn(expectedSingle)
 
         val observer = TestObserver<ERC20Token>()
-        viewModel.loadTokenInfo(token.address).subscribe(observer)
+        val actualSingle = viewModel.loadTokenInfo(TEST_TOKEN_ADDRESS)
+        assertEquals(actualSingle, expectedSingle)
+        actualSingle.subscribe(observer)
 
-        observer.assertResult(token)
+        observer.assertResult(testToken)
+        then(tokenRepository).should().loadToken(TEST_TOKEN_ADDRESS)
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
-    fun loadTokenInfoUnknownToken() {
-        val error = TimeoutException()
-        given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
-        given(tokenRepository.loadTokenInfo(MockUtils.any())).willReturn(Observable.error(error))
-
-        val token = ERC20Token(TEST_TOKEN_ADDRESS, decimals = 18, name = "Test Token", symbol = "TT")
+    fun loadTokenInfoError() {
+        val error = NoSuchElementException()
+        val expectedSingle = Single.error<ERC20Token>(error)
+        given(tokenRepository.loadToken(MockUtils.any())).willReturn(expectedSingle)
 
         val observer = TestObserver<ERC20Token>()
-        viewModel.loadTokenInfo(token.address).subscribe(observer)
+        val actualSingle = viewModel.loadTokenInfo(TEST_TOKEN_ADDRESS)
+        assertEquals(actualSingle, expectedSingle)
+        actualSingle.subscribe(observer)
 
-        observer.assertError(error)
-        then(tokenRepository).should().loadToken(token.address)
-        then(tokenRepository).should().loadTokenInfo(token.address)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun loadTokenInfoLocalToken() {
-        val token = ERC20Token(TEST_TOKEN_ADDRESS, decimals = 18, name = "Test Token", symbol = "TT")
-
-        given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.just(token))
-
-        val observer = TestObserver<ERC20Token>()
-        viewModel.loadTokenInfo(token.address).subscribe(observer)
-
-        observer.assertResult(token)
-        then(tokenRepository).should().loadToken(token.address)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun loadTokenInfoNetworkToken() {
-        val token = ERC20Token(TEST_TOKEN_ADDRESS, decimals = 18, name = "Test Token", symbol = "TT")
-        given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
-        given(tokenRepository.loadTokenInfo(MockUtils.any())).willReturn(Observable.just(token))
-
-        val observer = TestObserver<ERC20Token>()
-        viewModel.loadTokenInfo(token.address).subscribe(observer)
-
-        observer.assertResult(token)
-        then(tokenRepository).should().loadToken(token.address)
-        then(tokenRepository).should().loadTokenInfo(token.address)
+        observer.assertFailure(Predicate { it == error })
+        then(tokenRepository).should().loadToken(TEST_TOKEN_ADDRESS)
         then(tokenRepository).shouldHaveNoMoreInteractions()
     }
 

@@ -75,13 +75,7 @@ class SafeTransactionsViewModel @Inject constructor(
         transactionInfoRepository.loadTransactionInfo(id)
 
     override fun loadTokenInfo(token: Solidity.Address): Single<ERC20Token> =
-        if (token == ERC20Token.ETHER_TOKEN.address)
-            Single.just(ERC20Token.ETHER_TOKEN)
-        else
-            tokenRepository.loadToken(token)
-                .onErrorResumeNext {
-                    tokenRepository.loadTokenInfo(token).firstOrError()
-                }
+        tokenRepository.loadToken(token)
 
     override fun observeTransactionStatus(id: String): Observable<TransactionExecutionRepository.PublishStatus> =
         safeTransactionsRepository.observePublishStatus(id)

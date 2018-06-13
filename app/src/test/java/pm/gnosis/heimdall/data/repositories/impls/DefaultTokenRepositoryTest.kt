@@ -387,6 +387,12 @@ class DefaultTokenRepositoryTest {
 
         then(erc20DaoMock).should().loadToken(Solidity.Address(BigInteger.TEN))
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
+
+        val etherObserver = TestObserver<ERC20Token>()
+        repository.loadToken(ERC20Token.ETHER_TOKEN.address).subscribe(etherObserver)
+        etherObserver.assertResult(ERC20Token.ETHER_TOKEN)
+
+        then(erc20DaoMock).shouldHaveNoMoreInteractions()
     }
 
     private fun testLoadTokenInfo(
@@ -395,6 +401,7 @@ class DefaultTokenRepositoryTest {
         symbolResult: EthRequest.Response<String>,
         decimalResult: EthRequest.Response<String>
     ) {
+        given(erc20DaoMock.loadToken(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
         given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
             val bulk = it.arguments.first() as BulkRequest
             val requests = bulk.requests
@@ -434,7 +441,7 @@ class DefaultTokenRepositoryTest {
         }
 
         val testObserver = TestObserver<ERC20Token>()
-        repository.loadTokenInfo(Solidity.Address(BigInteger.TEN)).subscribe(testObserver)
+        repository.loadToken(Solidity.Address(BigInteger.TEN)).subscribe(testObserver)
         expectedResult.handle({
             testObserver.assertResult(it)
         }, { error ->

@@ -57,7 +57,7 @@ class AssetTransferViewHolder(
     }
 
     private fun setupTokenInfo() {
-        disposables += loadTokenInfo()
+        disposables += tokenRepository.loadToken(data.token)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = {
@@ -92,15 +92,6 @@ class AssetTransferViewHolder(
                 view?.layout_asset_transfer_info_safe_balance?.text = null
             })
     }
-
-    private fun loadTokenInfo() =
-        if (data.token == ERC20Token.ETHER_TOKEN.address)
-            Single.just(ERC20Token.ETHER_TOKEN)
-        else
-            tokenRepository.loadToken(data.token)
-                .onErrorResumeNext {
-                    tokenRepository.loadTokenInfo(data.token).firstOrError()
-                }
 
     private fun setupSafeInfo() {
         view?.apply {

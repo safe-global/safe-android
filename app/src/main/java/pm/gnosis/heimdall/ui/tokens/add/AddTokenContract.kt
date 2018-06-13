@@ -8,5 +8,5 @@ import pm.gnosis.svalinn.common.utils.Result
 
 abstract class AddTokenContract : ViewModel() {
     abstract fun addToken(): Single<Result<Unit>>
-    abstract fun loadTokenInfo(tokenAddress: String): Observable<Result<ERC20Token>>
+    abstract fun loadTokenInfo(tokenAddress: String): Single<Result<ERC20Token>>
 }

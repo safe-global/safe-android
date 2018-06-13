@@ -6,7 +6,6 @@ import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -94,8 +93,7 @@ class CreateAssetTransferViewModel @Inject constructor(
         }
 
     private fun loadTokenInfo(safe: Solidity.Address, tokenAddress: Solidity.Address) =
-        (if (tokenAddress == ERC20Token.ETHER_TOKEN.address) Single.just(ERC20Token.ETHER_TOKEN)
-        else tokenRepository.loadToken(tokenAddress))
+        tokenRepository.loadToken(tokenAddress)
             .emitAndNext(
                 emit = { ERC20TokenWithBalance(it, null).toOptional() },
                 next = { loadBalance(safe, it).map { it.toOptional() } }

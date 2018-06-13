@@ -41,6 +41,10 @@ class DefaultTransactionInfoRepository @Inject constructor(
                     throw RestrictedTransactionException.ModifyModules
                 transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.DisableModule.METHOD_ID) == true ->
                     throw RestrictedTransactionException.ModifyModules
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.ChangeThreshold.METHOD_ID) == true ->
+                    throw RestrictedTransactionException.ChangeThreshold
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.ChangeMasterCopy.METHOD_ID) == true ->
+                    throw RestrictedTransactionException.ChangeMasterCopy
             }
             transaction
         }
