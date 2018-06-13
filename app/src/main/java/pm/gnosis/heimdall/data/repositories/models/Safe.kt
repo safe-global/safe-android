@@ -21,4 +21,4 @@ data class PendingSafe(val hash: BigInteger, val name: String?, val address: Sol
 
 }
 
-private fun safeName(context: Context, name: String?): String = if (name.isNullOrEmpty()) context.getString(R.string.your_safe) else name!!
+private fun safeName(context: Context, name: String?): String = if (name.isNullOrBlank()) context.getString(R.string.your_safe) else name!!
