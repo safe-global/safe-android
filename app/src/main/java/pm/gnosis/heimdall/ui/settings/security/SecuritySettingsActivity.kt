@@ -18,7 +18,6 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
 import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordActivity
-import pm.gnosis.heimdall.ui.settings.security.revealmnemonic.RevealMnemonicActivity
 import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.toast
@@ -44,11 +43,6 @@ class SecuritySettingsActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         if (viewModel.isFingerprintAvailable()) setupFingerprintAction()
-
-        disposables += layout_security_settings_show_mnemonic.clicks()
-            .subscribeBy(onNext = {
-                startActivity(RevealMnemonicActivity.createIntent(this))
-            }, onError = Timber::e)
 
         disposables += layout_security_settings_change_password.clicks()
             .subscribeBy(onNext = {

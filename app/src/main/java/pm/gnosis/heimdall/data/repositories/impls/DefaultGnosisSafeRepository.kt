@@ -17,7 +17,6 @@ import pm.gnosis.heimdall.data.db.models.toDb
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.SettingsRepository
-import pm.gnosis.heimdall.data.repositories.TxExecutorRepository
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
@@ -29,7 +28,6 @@ import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.hexStringToByteArray
 import java.math.BigInteger
 import javax.inject.Inject
@@ -41,7 +39,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val ethereumRepository: EthereumRepository,
     private val settingsRepository: SettingsRepository,
-    private val txExecutorRepository: TxExecutorRepository,
     private val pushServiceRepository: PushServiceRepository
 ) : GnosisSafeRepository {
 
@@ -102,19 +99,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun loadSafeDeployTransaction(devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<Transaction> =
         loadSafeDeployTransactionWithSender(devices, requiredConfirmations).map { it.second }
-
-    override fun deploy(name: String, devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<String> {
-        return loadSafeDeployTransactionWithSender(devices, requiredConfirmations)
-            .map { (_, tx) -> tx }
-            .flatMapObservable(txExecutorRepository::execute)
-            .flatMapSingle {
-                Single.fromCallable {
-                    safeDao.insertPendingSafe(PendingGnosisSafeDb(it.hexAsBigInteger(), name, Solidity.Address(BigInteger.ZERO), Wei.ZERO))
-                    it
-                }
-            }
-            .firstOrError()
-    }
 
     override fun savePendingSafe(transactionHash: BigInteger, name: String?, safeAddress: Solidity.Address, payment: Wei): Completable =
         Completable.fromAction {

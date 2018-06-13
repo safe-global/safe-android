@@ -129,7 +129,7 @@ class SafeDetailsFragment : BaseFragment() {
     private fun positionToIcon(position: Int) =
         when (positionToId(position)) {
             R.string.tab_title_assets -> {
-                R.drawable.ic_token_white_24dp
+                R.drawable.ic_tokens
             }
             R.string.tab_title_transactions -> {
                 R.drawable.ic_transaction_white_24dp

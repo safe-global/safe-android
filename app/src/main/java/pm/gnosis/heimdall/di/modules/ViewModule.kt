@@ -12,7 +12,6 @@ import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
-import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
@@ -23,7 +22,6 @@ import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
-import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
@@ -31,7 +29,6 @@ import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsContract
 import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordContract
-import pm.gnosis.heimdall.ui.settings.security.revealmnemonic.RevealMnemonicContract
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
@@ -65,10 +62,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesAddressBookContract(provider: ViewModelProvider) = provider[AddressBookContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesBuyCreditsContract(provider: ViewModelProvider) = provider[BuyCreditsContract::class.java]
 
     @Provides
     @ForView
@@ -120,10 +113,6 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesRevealMnemonicContract(provider: ViewModelProvider) = provider[RevealMnemonicContract::class.java]
-
-    @Provides
-    @ForView
     fun providesReviewTransactionContract(provider: ViewModelProvider) = provider[ReviewTransactionContract::class.java]
 
     @Provides
@@ -137,10 +126,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesSafeMainContract(provider: ViewModelProvider) = provider[SafeMainContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesSafeOverviewContract(provider: ViewModelProvider) = provider[SafeOverviewContract::class.java]
 
     @Provides
     @ForView

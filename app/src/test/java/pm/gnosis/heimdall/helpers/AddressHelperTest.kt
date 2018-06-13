@@ -57,9 +57,8 @@ class AddressHelperTest {
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
         given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
 
-        helper.populateAddressInfo(addressView, nameView, imageView, testAddress)
+        helper.populateAddressInfo(addressView, nameView, null, testAddress)
 
-        then(imageView).should().setAddress(testAddress)
         then(imageView).shouldHaveNoMoreInteractions()
         then(addressView).should().text = "0x0000...00000A"
         then(addressView).shouldHaveNoMoreInteractions()

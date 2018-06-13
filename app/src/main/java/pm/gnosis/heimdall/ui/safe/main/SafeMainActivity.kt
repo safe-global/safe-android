@@ -14,6 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_safe_main.*
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
@@ -25,18 +26,18 @@ import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
-import pm.gnosis.heimdall.ui.credits.BuyCreditsActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
-import pm.gnosis.heimdall.ui.safe.overview.SafeAdapter
+import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigIntegerOrNull
@@ -83,6 +84,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             layout_safe_main_drawer_layout.openDrawer(Gravity.START)
         }
 
+        layout_safe_main_safes_list.itemAnimator = null
         layout_safe_main_safes_list.layoutManager = layoutManager
         layout_safe_main_safes_list.adapter = adapter
 
@@ -110,9 +112,10 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
     private fun setupNavigation() {
-        layout_safe_main_navigation_header_background.setOnClickListener {
-            toggleSafes(layout_safe_main_navigation_safes.visibility == View.GONE)
+        layout_safe_main_selected_safe_background.setOnClickListener {
+            toggleSafes(layout_safe_main_navigation_safe_list.visibility == View.GONE)
         }
+
         layout_safe_main_address_book.setOnClickListener {
             startActivity(AddressBookActivity.createIntent(this))
             closeDrawer()
@@ -143,11 +146,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             closeDrawer()
         }
 
-        layout_safe_main_credits.setOnClickListener {
-            startActivity(BuyCreditsActivity.createIntent(this))
-            closeDrawer()
-        }
-
         layout_safe_main_debug_settings.setOnClickListener {
             startActivity(DebugSettingsActivity.createIntent(this))
             closeDrawer()
@@ -168,11 +166,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::showSafe, onError = Timber::e)
-
-        disposables += adapter.shareSelection
-            .subscribeBy(onNext = {
-                ShareSafeAddressDialog.create(it).show(supportFragmentManager, null)
-            }, onError = Timber::e)
     }
 
     private fun closeDrawer() {
@@ -181,10 +174,17 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
     private fun toggleSafes(visible: Boolean) {
-        layout_safe_main_navigation_safes.visible(visible)
+        layout_safe_main_navigation_safe_creation.visible(visible)
+        layout_safe_main_navigation_safe_list.visible(visible)
         layout_safe_main_navigation_settings.visible(!visible)
-        val arrowDrawable = if (visible) R.drawable.ic_arrow_drop_up_white_24dp else R.drawable.ic_arrow_drop_down_white_24dp
-        layout_safe_main_selected_safe_name.setCompoundDrawablesWithIntrinsicBounds(0, 0, arrowDrawable, 0)
+        layout_safe_main_selected_safe_button.setImageResource(if (visible) R.drawable.ic_close_safe_selection else R.drawable.ic_open_safe_selection)
+    }
+
+    private fun toggleHasSafes(hasSafes: Boolean) {
+        layout_safe_main_selected_safe_group.visible(hasSafes)
+        layout_safe_main_no_safe_message.visible(!hasSafes)
+        layout_safe_main_navigation_safe_creation.visible(!hasSafes)
+        layout_safe_main_navigation_safe_creation_divider.visible(!hasSafes)
     }
 
     private fun onSafes(data: Adapter.Data<AbstractSafe>) {
@@ -207,9 +207,11 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             replace(R.id.layout_safe_main_content_frame, NoSafesFragment())
         }
         updateToolbar()
+        toggleHasSafes(false)
     }
 
     private fun showSafe(safe: AbstractSafe) {
+        toggleHasSafes(true)
         closeDrawer()
         if (selectedSafe == safe) {
             selectTab()
@@ -246,8 +248,11 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         val safe = selectedSafe
         when (safe) {
             is Safe -> {
+                layout_safe_main_selected_safe_progress.visible(false)
                 layout_safe_main_selected_safe_icon.visible(true)
                 layout_safe_main_selected_safe_icon.setAddress(safe.address)
+                // TODO: find a good way to get this off the UI thread
+                layout_safe_main_selected_safe_info.text = safe.address.shortChecksumString()
                 val safeName = safe.displayName(this)
                 layout_safe_main_selected_safe_name.text = safeName
                 layout_safe_main_toolbar_title.text = safeName
@@ -271,20 +276,28 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     }, onError = Timber::e)
             }
             is PendingSafe -> {
+                // TODO: find a good way to get this off the UI thread
+                layout_safe_main_selected_safe_info.text = safe.address.shortChecksumString()
                 val safeName = safe.displayName(this)
                 layout_safe_main_selected_safe_name.text = safeName
                 layout_safe_main_selected_safe_icon.visible(false)
+                layout_safe_main_selected_safe_progress.visible(true)
                 layout_safe_main_toolbar_title.text = safeName
                 layout_safe_main_toolbar_overflow.visible(false)
             }
             else -> {
                 layout_safe_main_selected_safe_name.setText(R.string.no_safe_selected)
+                layout_safe_main_selected_safe_info.text = null
                 layout_safe_main_selected_safe_icon.visible(false)
+                layout_safe_main_selected_safe_progress.visible(false)
                 layout_safe_main_toolbar_title.text = getString(R.string.your_safe)
                 layout_safe_main_toolbar_overflow.visible(false)
             }
         }
     }
+
+    private fun Solidity.Address.shortChecksumString() =
+        asEthereumAddressChecksumString().let { "${it.subSequence(0, 6)}...${it.subSequence(it.length - 6, it.length)}" }
 
     companion object {
         private const val EXTRA_SELECTED_SAFE = "extra.string.selected_safe"

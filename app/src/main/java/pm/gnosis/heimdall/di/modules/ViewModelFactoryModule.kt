@@ -11,8 +11,6 @@ import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.account.AccountViewModel
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookViewModel
-import pm.gnosis.heimdall.ui.credits.BuyCreditsContract
-import pm.gnosis.heimdall.ui.credits.BuyCreditsViewModel
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
@@ -28,8 +26,6 @@ import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsViewModel
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainViewModel
-import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewContract
-import pm.gnosis.heimdall.ui.safe.overview.SafeOverviewViewModel
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressViewModel
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeContract
@@ -44,8 +40,6 @@ import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsContract
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsViewModel
 import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordContract
 import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordViewModel
-import pm.gnosis.heimdall.ui.settings.security.revealmnemonic.RevealMnemonicContract
-import pm.gnosis.heimdall.ui.settings.security.revealmnemonic.RevealMnemonicViewModel
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementViewModel
 import pm.gnosis.heimdall.ui.splash.SplashContract
@@ -84,11 +78,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AddTokenContract::class)
     abstract fun bindsAddTokenContract(viewModel: AddTokenViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(BuyCreditsContract::class)
-    abstract fun bindsBuyCreditsContract(viewModel: BuyCreditsViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -152,11 +141,6 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(RevealMnemonicContract::class)
-    abstract fun bindsRevealMnemonicContract(viewModel: RevealMnemonicViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(ReviewTransactionContract::class)
     abstract fun bindsReviewTransactionContract(viewModel: ReviewTransactionViewModel): ViewModel
 
@@ -174,11 +158,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SafeMainContract::class)
     abstract fun bindsSafeMainContract(viewModel: SafeMainViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(SafeOverviewContract::class)
-    abstract fun bindsSafeOverviewContract(viewModel: SafeOverviewViewModel): ViewModel
 
     @Binds
     @IntoMap

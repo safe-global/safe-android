@@ -24,10 +24,10 @@ class AddressHelper @Inject constructor(
     fun populateAddressInfo(
         addressView: TextView,
         nameView: TextView,
-        imageView: BlockiesImageView,
+        imageView: BlockiesImageView?,
         address: Solidity.Address
     ): List<Disposable> {
-        imageView.setAddress(address)
+        imageView?.setAddress(address)
         return listOf(
             Single.fromCallable {
                 address.asEthereumAddressChecksumString()
@@ -40,7 +40,7 @@ class AddressHelper @Inject constructor(
                 .flatMap {
                     addressBookRepository.loadAddressBookEntry(address).map { it.name }
                         .onErrorResumeNext {
-                            safeRepository.loadSafe(address).map { it.name }
+                            safeRepository.loadSafe(address).map { it.displayName(nameView.context) }
                         }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
