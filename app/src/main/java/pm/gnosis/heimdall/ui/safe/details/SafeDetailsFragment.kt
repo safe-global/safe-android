@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -22,6 +23,7 @@ import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
+import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
@@ -87,6 +89,9 @@ class SafeDetailsFragment : BaseFragment() {
             .subscribeBy(onNext = {
                 safeName = it.name
             }, onError = Timber::e)
+
+        disposables += layout_safe_details_send_button.clicks()
+            .subscribeBy { startActivity(SelectTokenActivity.createIntent(context!!, safeAddress)) }
     }
 
     private fun positionToId(position: Int) = items.getOrElse(position, { -1 })

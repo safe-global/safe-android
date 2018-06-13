@@ -197,7 +197,7 @@
     <string name="x_of_x_confirmations">%s/%s</string>
     <string name="error_not_enough_confirmations">More confirmations are required</string>
     <string name="create_transaction">Create Transaction</string>
-    <string name="select_token">Select token</string>
+    <string name="select_token">Select token to send</string>
     <string name="max_balance">Max. balance</string>
     <string name="outgoing_transaction_value">-%s %s</string>
     <string name="unknown_balance">The current balance for the selected asset is unknown.</string>
@@ -415,4 +415,5 @@
     <string name="header_yesterday">Yesterday</string>
     <string name="header_older">Older</string>
     <string name="header_submitted">Submitted</string>
+    <string name="send_token">Send token</string>
 </resources>
