@@ -13,7 +13,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_create_safe_intro_title">
+        app:layout_constraintTop_toBottomOf="@id/layout_manage_tokens">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -107,7 +107,7 @@
         app:srcCompat="@drawable/ic_arrow_back_24dp" />
 
     <TextView
-        android:id="@+id/layout_create_safe_intro_title"
+        android:id="@+id/layout_pairing_title"
         style="@style/WhiteTheme.ToolbarTitle"
         android:layout_width="0dp"
         android:layout_height="@dimen/toolbar_height"
@@ -123,7 +123,7 @@
         android:layout_height="@dimen/toolbar_shadow_size"
         android:background="@drawable/toolbar_dropshadow"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/layout_create_safe_intro_title"
+        app:layout_constraintTop_toBottomOf="@id/layout_manage_tokens"
         tools:visibility="visible" />
 
 </android.support.constraint.ConstraintLayout>

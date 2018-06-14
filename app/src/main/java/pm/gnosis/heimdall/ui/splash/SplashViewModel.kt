@@ -18,15 +18,10 @@ class SplashViewModel @Inject constructor(
     }
 
     override fun initialSetup(): Single<ViewAction> {
-        return tokenRepository.setup()
-            .onErrorComplete()
-            .andThen(encryptionManager.initialized())
+        return encryptionManager.initialized()
             .flatMap { isEncryptionInitialized ->
-                if (isEncryptionInitialized) {
-                    checkAccount()
-                } else {
-                    Single.just(StartPasswordSetup())
-                }
+                if (isEncryptionInitialized) checkAccount()
+                else Single.just(StartPasswordSetup())
             }
             // We need a short delay to avoid weird flickering
             .delay(LAUNCH_DELAY, TimeUnit.MILLISECONDS)

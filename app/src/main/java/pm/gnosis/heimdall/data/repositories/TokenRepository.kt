@@ -9,12 +9,13 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 interface TokenRepository {
-    fun observeTokens(): Flowable<List<ERC20Token>>
+    fun observeEnabledTokens(): Flowable<List<ERC20Token>>
     fun observeToken(address: Solidity.Address): Flowable<ERC20Token>
     fun loadTokens(): Single<List<ERC20Token>>
     fun loadToken(address: Solidity.Address): Single<ERC20Token>
     fun loadTokenBalances(ofAddress: Solidity.Address, erC20Tokens: List<ERC20Token>): Observable<List<Pair<ERC20Token, BigInteger?>>>
-    fun addToken(erC20Token: ERC20Token): Completable
-    fun removeToken(address: Solidity.Address): Completable
-    fun setup(): Completable
+
+    fun enableToken(token: ERC20Token): Completable
+    fun disableToken(address: Solidity.Address): Completable
+    fun loadVerifiedTokens(): Single<List<ERC20Token>>
 }

@@ -21,7 +21,7 @@ class TransactionStatusViewModel @Inject constructor(
         infoRepository.loadTransactionInfo(id)
             .flatMap { info ->
                 tokenRepository.loadToken(info.gasToken).map { info to it }
-                    .onErrorReturnItem(info to ERC20Token(info.gasToken, decimals = 0))
+                    .onErrorReturnItem(info to ERC20Token(info.gasToken, "", "", 0, ""))
             }
             .emitAndNext(
                 emit = { (info, token) ->

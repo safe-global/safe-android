@@ -1,66 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentStart="true"
-    android:layout_centerVertical="true"
-    android:background="@drawable/selectable_background"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/white">
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/layout_tokens_item_balance_symbol"
-        style="@style/Title"
-        android:layout_width="@dimen/action_circle"
-        android:layout_height="@dimen/action_circle"
-        android:layout_alignParentStart="true"
-        android:background="@drawable/action_circle_background"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="1"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        app:autoSizeMaxTextSize="14sp"
-        app:autoSizeMinTextSize="8sp"
-        app:autoSizeTextType="uniform"
-        tools:text="WAVES" />
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/selectable_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/layout_tokens_item_balance_symbol_image"
-        android:layout_width="@dimen/action_circle"
-        android:layout_height="@dimen/action_circle"
-        android:layout_alignParentStart="true"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:scaleType="center"
-        android:visibility="gone"
-        tools:src="@drawable/ic_ether_symbol"
-        tools:visibility="visible" />
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/layout_tokens_item_balance_balance"
-        style="@style/Content"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:gravity="end"
-        android:maxLines="2"
-        app:autoSizeMaxTextSize="14sp"
-        app:autoSizeMinTextSize="8sp"
-        app:autoSizeTextType="uniform"
-        tools:text="3342434.23545 WAVES" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_ether_symbol" />
 
     <TextView
-        android:id="@+id/layout_tokens_item_balance_name"
-        style="@style/BoldContent"
-        android:layout_width="wrap_content"
+        android:id="@+id/layout_tokens_item_balance_symbol"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_toEndOf="@id/layout_tokens_item_balance_symbol"
-        android:layout_toStartOf="@id/layout_tokens_item_balance_balance"
+        android:fontFamily="sans-serif-medium"
         android:maxLines="2"
-        tools:text="Gnosis" />
-</RelativeLayout>
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/layout_tokens_item_balance_balance"
+        app:layout_constraintStart_toEndOf="@+id/layout_tokens_item_balance_symbol_image"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="ETH" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/layout_tokens_item_balance_balance"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="RobotoMono-Medium"
+        android:gravity="end"
+        android:letterSpacing="-0.05"
+        android:maxLines="2"
+        android:textColor="@color/dark_slate_blue"
+        android:textStyle="bold"
+        app:autoSizeMaxTextSize="14sp"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="3342434.23545 ETH" />
+
+</android.support.constraint.ConstraintLayout>

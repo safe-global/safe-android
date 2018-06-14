@@ -38,16 +38,12 @@ import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsContract
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsViewModel
 import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordContract
 import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordViewModel
-import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementContract
-import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementViewModel
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.splash.SplashViewModel
-import pm.gnosis.heimdall.ui.tokens.add.AddTokenContract
-import pm.gnosis.heimdall.ui.tokens.add.AddTokenViewModel
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesViewModel
-import pm.gnosis.heimdall.ui.tokens.info.TokenInfoContract
-import pm.gnosis.heimdall.ui.tokens.info.TokenInfoViewModel
+import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensContract
+import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensViewModel
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenContract
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenViewModel
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
@@ -71,11 +67,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(AddressBookContract::class)
     abstract fun bindsAddressBookContract(viewModel: AddressBookViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(AddTokenContract::class)
-    abstract fun bindsAddTokenContract(viewModel: AddTokenViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -111,6 +102,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(FingerprintSetupContract::class)
     abstract fun bindsFingerprintSetupContract(viewModel: FingerprintSetupViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ManageTokensContract::class)
+    abstract fun bindsManageTokensContract(viewModel: ManageTokensViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -181,16 +177,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(TokenBalancesContract::class)
     abstract fun bindsTokensContract(viewModel: TokenBalancesViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(TokenInfoContract::class)
-    abstract fun bindsTokensInfoContract(viewModel: TokenInfoViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(TokenManagementContract::class)
-    abstract fun bindsTokenManagementContract(viewModel: TokenManagementViewModel): ViewModel
 
     @Binds
     @IntoMap

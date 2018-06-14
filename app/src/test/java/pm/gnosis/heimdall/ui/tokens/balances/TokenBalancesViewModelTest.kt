@@ -51,18 +51,18 @@ class TokenBalancesViewModelTest {
         val testObserver = TestObserver<Result<Adapter.Data<ERC20TokenWithBalance>>>()
         val loadingObserver = TestObserver<Boolean>()
         val refreshEvents = Observable.empty<Unit>()
-        val token = ERC20Token(testAddress, decimals = 18)
+        val token = ERC20Token(testAddress, "", "", 18)
         val balance = BigInteger.ZERO
         val tokensWithBalances = arrayListOf(token to balance)
         val tokensWithBalancesMapped = arrayListOf(ERC20TokenWithBalance(token, balance))
-        given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.just(items))
+        given(tokenRepositoryMock.observeEnabledTokens()).willReturn(Flowable.just(items))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), anyList())).willReturn(Observable.just(tokensWithBalances))
 
         viewModel.setup(testAddress)
         viewModel.observeLoadingStatus().subscribe(loadingObserver)
         viewModel.observeTokens(refreshEvents).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().observeTokens()
+        then(tokenRepositoryMock).should().observeEnabledTokens()
         then(tokenRepositoryMock).should().loadTokenBalances(testAddress, listOf(ERC20Token.ETHER_TOKEN) + items)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValueCount(2)
@@ -85,18 +85,18 @@ class TokenBalancesViewModelTest {
         val testObserver = TestObserver<Result<Adapter.Data<ERC20TokenWithBalance>>>()
         val loadingObserver = TestObserver<Boolean>()
         val refreshEvents = Observable.empty<Unit>()
-        val token = ERC20Token(testAddress, decimals = 18)
+        val token = ERC20Token(testAddress, "", "", 18)
         val balance = BigInteger.ZERO
         val tokensWithBalances = arrayListOf(token to balance)
         val tokensWithBalancesMapped = arrayListOf(ERC20TokenWithBalance(token, balance))
-        given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.just(items))
+        given(tokenRepositoryMock.observeEnabledTokens()).willReturn(Flowable.just(items))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), anyList())).willReturn(Observable.just(tokensWithBalances))
 
         viewModel.setup(testAddress)
         viewModel.observeLoadingStatus().subscribe(loadingObserver)
         viewModel.observeTokens(refreshEvents).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().observeTokens()
+        then(tokenRepositoryMock).should().observeEnabledTokens()
         then(tokenRepositoryMock).should().loadTokenBalances(testAddress, listOf(ERC20Token.ETHER_TOKEN) + items)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValueCount(2)
@@ -119,12 +119,12 @@ class TokenBalancesViewModelTest {
         val loadingObserver = TestObserver<Boolean>()
         val refreshEvents = Observable.empty<Unit>()
         val exception = Exception()
-        given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.error(exception))
+        given(tokenRepositoryMock.observeEnabledTokens()).willReturn(Flowable.error(exception))
 
         viewModel.observeLoadingStatus().subscribe(loadingObserver)
         viewModel.observeTokens(refreshEvents).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().observeTokens()
+        then(tokenRepositoryMock).should().observeEnabledTokens()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertError(exception).assertValueCount(1)
         testObserver.assertValueAt(0, {
@@ -143,14 +143,14 @@ class TokenBalancesViewModelTest {
         val refreshEvents = Observable.empty<Unit>()
         val exception = Exception()
         val errorResult = ErrorResult<List<ERC20TokenWithBalance>>(exception)
-        given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.just(items))
+        given(tokenRepositoryMock.observeEnabledTokens()).willReturn(Flowable.just(items))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), anyList())).willReturn(Observable.error(exception))
 
         viewModel.setup(testAddress)
         viewModel.observeLoadingStatus().subscribe(loadingObserver)
         viewModel.observeTokens(refreshEvents).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().observeTokens()
+        then(tokenRepositoryMock).should().observeEnabledTokens()
         then(tokenRepositoryMock).should().loadTokenBalances(testAddress, etherTokenList)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         val values = testObserver.values()
@@ -179,17 +179,17 @@ class TokenBalancesViewModelTest {
         val loadingObserver = TestObserver<Boolean>()
         val refreshEventsSubject = PublishSubject.create<Unit>()
 
-        val token = ERC20Token(testAddress, decimals = 18)
+        val token = ERC20Token(testAddress, "", "", 18)
         val balance = BigInteger.ZERO
         val tokensWithBalances = arrayListOf(token to balance)
-        given(tokenRepositoryMock.observeTokens()).willReturn(Flowable.just(items))
+        given(tokenRepositoryMock.observeEnabledTokens()).willReturn(Flowable.just(items))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), anyList())).willReturn(Observable.just(tokensWithBalances))
 
         viewModel.setup(testAddress)
         viewModel.observeLoadingStatus().subscribe(loadingObserver)
         viewModel.observeTokens(refreshEventsSubject).subscribe(testObserver)
 
-        then(tokenRepositoryMock).should().observeTokens()
+        then(tokenRepositoryMock).should().observeEnabledTokens()
         then(tokenRepositoryMock).should().loadTokenBalances(testAddress, etherTokenList)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         testObserver.assertNoErrors().assertValueCount(2)

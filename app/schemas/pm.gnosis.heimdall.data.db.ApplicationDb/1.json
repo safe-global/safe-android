@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e13ce301fb84f2b1165144c93771f1cc",
+    "identityHash": "17a950219105218de9c6b57a883511ae",
     "entities": [
       {
         "tableName": "address_book",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "erc20_tokens",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT, `symbol` TEXT, `decimals` INTEGER NOT NULL, `verified` INTEGER NOT NULL, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT NOT NULL, `symbol` TEXT NOT NULL, `decimals` INTEGER NOT NULL, `logoUrl` TEXT NOT NULL, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "address",
@@ -50,13 +50,13 @@
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "symbol",
             "columnName": "symbol",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "decimals",
@@ -65,9 +65,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "verified",
-            "columnName": "verified",
-            "affinity": "INTEGER",
+            "fieldPath": "logoUrl",
+            "columnName": "logoUrl",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -283,7 +283,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e13ce301fb84f2b1165144c93771f1cc\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"17a950219105218de9c6b57a883511ae\")"
     ]
   }
 }

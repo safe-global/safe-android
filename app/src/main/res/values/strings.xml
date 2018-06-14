@@ -450,4 +450,6 @@
     <string name="remove_safe_title">Are you sure you want to remove your Safe \'%s\'?</string>
     <string name="remove_safe_notice_1">By removing this Safe, the Safe remains existing and your funds will not be lost. You simply remove it from this device.</string>
     <string name="remove_safe_notice_2">To add it again to this or any other device, you will need your recovery phrase.</string>
+    <string name="missing_token_manage"><![CDATA[Missing a token? <font color=#28b2fa><u>Manage your token list</u></font>]]></string>
+    <string name="manage_tokens_description">Select token(s) to use with ALL your Safes</string>
 </resources>

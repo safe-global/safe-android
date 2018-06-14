@@ -15,7 +15,6 @@ import pm.gnosis.heimdall.utils.scanToAdapterDataResult
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.exceptions.InvalidAddressException
-import java.math.BigInteger
 import javax.inject.Inject
 
 class TokenBalancesViewModel @Inject constructor(
@@ -36,7 +35,7 @@ class TokenBalancesViewModel @Inject constructor(
 
     override fun observeTokens(refreshEvents: Observable<Unit>) =
         Observable
-            .combineLatest(refreshEvents.map { false }.startWith(true), tokenRepository.observeTokens().toObservable(),
+            .combineLatest(refreshEvents.map { false }.startWith(true), tokenRepository.observeEnabledTokens().toObservable(),
                 BiFunction { initialLoad: Boolean, tokens: List<ERC20Token> -> initialLoad to tokens })
             .flatMap { (initialLoad, tokens) ->
                 val tokensWithEther = listOf(ETHER_TOKEN) + tokens
@@ -46,12 +45,7 @@ class TokenBalancesViewModel @Inject constructor(
 
     private fun loadTokenBalances(ofAddress: Solidity.Address, tokens: List<ERC20Token>, initialLoad: Boolean) =
         tokenRepository.loadTokenBalances(ofAddress, tokens)
-            .map {
-                it.mapNotNull { (token, balance) ->
-                    if (token.verified && (balance == BigInteger.ZERO)) null
-                    else ERC20TokenWithBalance(token, balance)
-                }
-            }
+            .map { it.map { ERC20TokenWithBalance(it.first, it.second) } }
             .onErrorResumeNext { throwable: Throwable ->
                 val mappedError = errorHandler.observable<List<ERC20TokenWithBalance>>(throwable)
                 if (initialLoad) {

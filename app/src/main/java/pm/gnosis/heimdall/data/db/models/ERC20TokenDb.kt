@@ -12,16 +12,16 @@ data class ERC20TokenDb(
     var address: Solidity.Address,
 
     @ColumnInfo(name = COL_NAME)
-    var name: String?,
+    var name: String,
 
     @ColumnInfo(name = COL_SYMBOL)
-    var symbol: String?,
+    var symbol: String,
 
     @ColumnInfo(name = COL_DECIMALS)
     var decimals: Int,
 
-    @ColumnInfo(name = COL_VERIFIED)
-    var verified: Boolean
+    @ColumnInfo(name = COL_LOGO_URL)
+    var logoUrl: String
 ) {
     companion object {
         const val TABLE_NAME = "erc20_tokens"
@@ -29,6 +29,6 @@ data class ERC20TokenDb(
         const val COL_NAME = "name"
         const val COL_SYMBOL = "symbol"
         const val COL_DECIMALS = "decimals"
-        const val COL_VERIFIED = "verified"
+        const val COL_LOGO_URL = "logoUrl"
     }
 }

@@ -33,7 +33,6 @@ import kotlin.NoSuchElementException
 @RunWith(MockitoJUnitRunner::class)
 class TransactionStatusViewModelTest {
 
-
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -99,7 +98,7 @@ class TransactionStatusViewModelTest {
 
         val expectedGasToken = when (gasToken) {
             is DataResult -> gasToken.data
-            is ErrorResult -> ERC20Token(gasTokenAddress, decimals = 0)
+            is ErrorResult -> ERC20Token(gasTokenAddress, "", "", decimals = 0)
         }
         observer.assertResult(
             TransactionStatusContract.ViewUpdate.Params(

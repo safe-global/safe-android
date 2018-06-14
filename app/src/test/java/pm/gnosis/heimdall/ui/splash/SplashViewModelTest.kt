@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.splash
 
 import android.arch.persistence.room.EmptyResultSetException
-import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.Before
@@ -44,14 +43,12 @@ class SplashViewModelTest {
 
     @Test
     fun initialSetupTokenSetupErrorWithAccount() {
-        given(tokenRepositoryMock.setup()).willReturn(Completable.error(IllegalStateException()))
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(Solidity.Address(BigInteger.ONE))))
         val observer = TestObserver.create<ViewAction>()
 
         viewModel.initialSetup().subscribe(observer)
 
-        then(tokenRepositoryMock).should().setup()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -64,13 +61,11 @@ class SplashViewModelTest {
     @Test
     fun initialSetupTokenSetupErrorNoAccountNoSuchElement() {
         val observerNoSuchElement = TestObserver.create<ViewAction>()
-        given(tokenRepositoryMock.setup()).willReturn(Completable.error(IllegalStateException()))
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(NoSuchElementException()))
 
         viewModel.initialSetup().subscribe(observerNoSuchElement)
 
-        then(tokenRepositoryMock).should().setup()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -83,13 +78,11 @@ class SplashViewModelTest {
     @Test
     fun initialSetupTokenSetupErrorNoAccountEmptyResultSet() {
         val observerEmptyResult = TestObserver.create<ViewAction>()
-        given(tokenRepositoryMock.setup()).willReturn(Completable.error(IllegalStateException()))
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(EmptyResultSetException("")))
 
         viewModel.initialSetup().subscribe(observerEmptyResult)
 
-        then(tokenRepositoryMock).should().setup()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -101,14 +94,12 @@ class SplashViewModelTest {
 
     @Test
     fun initialSetupTokenSetupErrorAccountError() {
-        given(tokenRepositoryMock.setup()).willReturn(Completable.error(IllegalStateException()))
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(IllegalStateException()))
         val observer = TestObserver.create<ViewAction>()
 
         viewModel.initialSetup().subscribe(observer)
 
-        then(tokenRepositoryMock).should().setup()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -120,14 +111,12 @@ class SplashViewModelTest {
 
     @Test
     fun initialSetupTokenSetupCompletedWithAccount() {
-        given(tokenRepositoryMock.setup()).willReturn(Completable.complete())
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(Solidity.Address(BigInteger.ONE))))
         val observer = TestObserver.create<ViewAction>()
 
         viewModel.initialSetup().subscribe(observer)
 
-        then(tokenRepositoryMock).should().setup()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -140,13 +129,11 @@ class SplashViewModelTest {
     @Test
     fun initialSetupTokenSetupCompletedNoAccountNoSuchElement() {
         val observerNoSuchElement = TestObserver.create<ViewAction>()
-        given(tokenRepositoryMock.setup()).willReturn(Completable.complete())
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(NoSuchElementException()))
 
         viewModel.initialSetup().subscribe(observerNoSuchElement)
 
-        then(tokenRepositoryMock).should().setup()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -159,13 +146,11 @@ class SplashViewModelTest {
     @Test
     fun initialSetupTokenSetupCompletedNoAccountEmptyResultSet() {
         val observerEmptyResult = TestObserver.create<ViewAction>()
-        given(tokenRepositoryMock.setup()).willReturn(Completable.complete())
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(EmptyResultSetException("")))
 
         viewModel.initialSetup().subscribe(observerEmptyResult)
 
-        then(tokenRepositoryMock).should().setup()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -177,14 +162,12 @@ class SplashViewModelTest {
 
     @Test
     fun initialSetupTokenSetupCompletedAccountError() {
-        given(tokenRepositoryMock.setup()).willReturn(Completable.complete())
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(IllegalStateException()))
         val observer = TestObserver.create<ViewAction>()
 
         viewModel.initialSetup().subscribe(observer)
 
-        then(tokenRepositoryMock).should().setup()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
