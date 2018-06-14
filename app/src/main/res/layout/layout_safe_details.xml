@@ -73,7 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout="@layout/layout_tab_item"
-                android:icon="@drawable/ic_token_white_24dp"
+                android:icon="@drawable/ic_tokens"
                 android:text="@string/tab_title_assets" />
 
             <android.support.design.widget.TabItem

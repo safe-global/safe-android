@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:background="@color/pale_grey_two"
-    tools:openDrawer="">
+    tools:openDrawer="start">
 
     <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
     <android.support.constraint.ConstraintLayout
@@ -87,6 +87,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="@color/white"
         android:fitsSystemWindows="true">
 
         <android.support.v4.widget.NestedScrollView
@@ -95,275 +96,121 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingTop="24dp">
 
                 <View
-                    android:id="@+id/layout_safe_main_navigation_header_background"
+                    android:id="@+id/layout_safe_main_safes_list_background"
                     android:layout_width="wrap_content"
-                    android:layout_height="128dp"
-                    android:background="@drawable/primary_button_full_width" />
+                    android:layout_height="0dp"
+                    android:background="@drawable/menu_safes_list_background"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_safes_list"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <pm.gnosis.blockies.BlockiesImageView
-                    android:id="@+id/layout_safe_main_selected_safe_icon"
-                    android:layout_width="@dimen/navigation_item_icon"
-                    android:layout_height="@dimen/navigation_item_icon"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintBottom_toBottomOf="@id/layout_safe_main_navigation_header_background"
-                    app:layout_constraintStart_toStartOf="parent" />
+                <View
+                    android:id="@+id/layout_safe_main_safes_list_background_padding_bottom"
+                    android:layout_width="0dp"
+                    android:layout_height="16dp"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_safe_main_selected_safe_info" />
+
+                <View
+                    android:id="@+id/layout_safe_main_selected_safe_background"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selectable_background"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_safes_list_background_padding_bottom"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <FrameLayout
+                    android:id="@+id/layout_safe_main_selected_safe_icon_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_selected_safe_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_safe_main_selected_safe_name">
+
+                    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                        android:id="@+id/layout_safe_main_selected_safe_progress"
+                        android:layout_width="@dimen/navigation_item_icon"
+                        android:layout_height="@dimen/navigation_item_icon"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/circle_azure"
+                        android:padding="4dp"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        app:mpb_indeterminateTint="@color/white" />
+
+                    <pm.gnosis.blockies.BlockiesImageView
+                        android:id="@+id/layout_safe_main_selected_safe_icon"
+                        android:layout_width="@dimen/navigation_item_icon"
+                        android:layout_height="@dimen/navigation_item_icon"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_selected_safe_info"
+                        app:layout_constraintStart_toEndOf="@+id/layout_safe_main_selected_safe_progress"
+                        app:layout_constraintTop_toTopOf="@+id/layout_safe_main_selected_safe_name"
+                        tools:background="@drawable/circle_settings"
+                        tools:visibility="gone" />
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/layout_safe_main_selected_safe_name"
-                    style="@style/Content"
+                    style="@style/DarkText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="24dp"
                     android:background="@drawable/selectable_background"
-                    android:drawableEnd="@drawable/ic_arrow_drop_down_white_24dp"
                     android:gravity="bottom"
-                    android:padding="16dp"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="@id/layout_safe_main_navigation_header_background"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_safe_main_selected_safe_icon"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@+id/layout_safe_main_selected_safe_button"
+                    app:layout_constraintStart_toEndOf="@+id/layout_safe_main_selected_safe_icon_container"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="Test Safe" />
 
-                <LinearLayout
-                    android:id="@+id/layout_safe_main_credits"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/layout_safe_main_selected_safe_info"
+                    style="@style/LightText"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:background="@drawable/selectable_background"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/navigation_item_padding"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_navigation_header_background">
+                    android:gravity="bottom"
+                    android:singleLine="true"
+                    app:layout_constraintEnd_toStartOf="@+id/layout_safe_main_selected_safe_button"
+                    app:layout_constraintStart_toEndOf="@+id/layout_safe_main_selected_safe_icon_container"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_safe_main_selected_safe_name"
+                    tools:text="Test Safe" />
 
-                    <ImageView
-                        android:layout_width="@dimen/navigation_item_icon"
-                        android:layout_height="@dimen/navigation_item_icon"
-                        android:background="@drawable/circle_settings"
-                        android:padding="@dimen/navigation_item_icon_padding"
-                        android:scaleType="center"
-                        android:tint="@color/gnosis_dark_blue"
-                        app:srcCompat="@drawable/ic_credits_white_24dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/show_transaction_credits"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <View
-                    android:id="@+id/layout_safe_main_divider_credits"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/divider_width"
-                    android:background="@color/divider"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_credits" />
-
-                <LinearLayout
-                    android:id="@+id/layout_safe_main_account"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/selectable_background"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/navigation_item_padding"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_divider_credits">
-
-                    <ImageView
-                        android:layout_width="@dimen/navigation_item_icon"
-                        android:layout_height="@dimen/navigation_item_icon"
-                        android:background="@drawable/circle_settings"
-                        android:padding="@dimen/navigation_item_icon_padding"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_settings_account" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/my_account"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <View
-                    android:id="@+id/layout_safe_main_divider_account"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/divider_width"
-                    android:background="@color/divider"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_account" />
-
-                <LinearLayout
-                    android:id="@+id/layout_safe_main_address_book"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/selectable_background"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/navigation_item_padding"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_divider_account">
-
-                    <ImageView
-                        android:layout_width="@dimen/navigation_item_icon"
-                        android:layout_height="@dimen/navigation_item_icon"
-                        android:background="@drawable/circle_settings"
-                        android:padding="@dimen/navigation_item_icon_padding"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_settings_addressbook" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/address_book"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <View
-                    android:id="@+id/layout_safe_main_divider_address_book"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/divider_width"
-                    android:background="@color/divider"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_address_book" />
-
-                <LinearLayout
-                    android:id="@+id/layout_safe_main_tokens"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/selectable_background"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/navigation_item_padding"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_divider_address_book">
-
-                    <ImageView
-                        android:layout_width="@dimen/navigation_item_icon"
-                        android:layout_height="@dimen/navigation_item_icon"
-                        android:background="@drawable/circle_settings"
-                        android:padding="@dimen/navigation_item_icon_padding"
-                        android:scaleType="center"
-                        android:tint="@color/gnosis_dark_blue"
-                        app:srcCompat="@drawable/ic_token_white_24dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/manage_verified_tokens"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <View
-                    android:id="@+id/layout_safe_main_divider_tokens"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/divider_width"
-                    android:background="@color/divider"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_tokens" />
-
-                <LinearLayout
-                    android:id="@+id/layout_safe_main_security"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/selectable_background"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/navigation_item_padding"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_divider_tokens">
-
-                    <ImageView
-                        android:layout_width="@dimen/navigation_item_icon"
-                        android:layout_height="@dimen/navigation_item_icon"
-                        android:background="@drawable/circle_settings"
-                        android:padding="@dimen/navigation_item_icon_padding"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_settings_security" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/security"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <View
-                    android:id="@+id/layout_safe_main_divider_security"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/divider_width"
-                    android:background="@color/divider"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_security" />
-
-                <LinearLayout
-                    android:id="@+id/layout_safe_main_network"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/selectable_background"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/navigation_item_padding"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_divider_security">
-
-                    <ImageView
-                        android:layout_width="@dimen/navigation_item_icon"
-                        android:layout_height="@dimen/navigation_item_icon"
-                        android:background="@drawable/circle_settings"
-                        android:padding="@dimen/navigation_item_icon_padding"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_settings_network" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/network"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <View
-                    android:id="@+id/layout_safe_main_divider_network"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/divider_width"
-                    android:background="@color/divider"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_network" />
-
-                <LinearLayout
-                    android:id="@+id/layout_safe_main_debug_settings"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/selectable_background"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/navigation_item_padding"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_divider_network">
-
-                    <ImageView
-                        android:layout_width="@dimen/navigation_item_icon"
-                        android:layout_height="@dimen/navigation_item_icon"
-                        android:background="@drawable/circle_settings"
-                        android:padding="@dimen/navigation_item_icon_padding"
-                        android:scaleType="center"
-                        android:tint="@color/gnosis_dark_blue"
-                        app:srcCompat="@drawable/ic_token_white_24dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="Debug Settings"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/layout_safe_main_selected_safe_button"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_selected_safe_info"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_safe_main_selected_safe_name"
+                    app:srcCompat="@drawable/ic_open_safe_selection" />
 
                 <TextView
-                    android:id="@+id/layout_safe_main_add_safe"
-                    style="@style/PrimaryButton.White"
+                    android:id="@+id/layout_safe_main_no_safe_message"
+                    style="@style/NormalText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:text="@string/add_safe"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_navigation_header_background" />
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/selectable_background"
+                    android:gravity="bottom"
+                    android:paddingBottom="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="32dp"
+                    android:text="@string/no_safe_added"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_selected_safe_info"
+                    tools:visibility="gone" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/layout_safe_main_safes_list"
@@ -371,21 +218,112 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:visibility="gone"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_add_safe"
-                    tools:listitem="@layout/layout_safe_item" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_no_safe_message"
+                    tools:listitem="@layout/layout_safe_item"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/layout_safe_main_add_safe"
+                    style="@style/NavigationText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_create_new_safe"
+                    android:text="@string/create_safe"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_safes_list" />
+
+                <View
+                    android:id="@+id/layout_safe_main_navigation_safe_creation_divider"
+                    android:layout_width="200dp"
+                    android:layout_height="@dimen/divider_width"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/divider"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_add_safe" />
+
+                <TextView
+                    android:id="@+id/layout_safe_main_account"
+                    style="@style/NavigationText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawableStart="@drawable/ic_settings_account"
+                    android:text="@string/my_account"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_navigation_safe_creation_divider"
+                    app:layout_goneMarginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/layout_safe_main_tokens"
+                    style="@style/NavigationText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_tokens"
+                    android:text="@string/manage_tokens"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_account" />
+
+                <TextView
+                    android:id="@+id/layout_safe_main_address_book"
+                    style="@style/NavigationText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_settings_address_book"
+                    android:text="@string/address_book"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_tokens" />
+
+                <TextView
+                    android:id="@+id/layout_safe_main_security"
+                    style="@style/NavigationText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_settings_security"
+                    android:text="@string/settings"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_address_book" />
+
+                <TextView
+                    android:id="@+id/layout_safe_main_network"
+                    style="@style/NavigationText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_settings_network"
+                    android:text="@string/network"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_security" />
+
+                <TextView
+                    android:id="@+id/layout_safe_main_debug_settings"
+                    style="@style/NavigationText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_settings_debug"
+                    android:text="Debug Settings"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_network" />
 
                 <android.support.constraint.Group
-                    android:id="@+id/layout_safe_main_navigation_safes"
+                    android:id="@+id/layout_safe_main_navigation_safe_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    app:constraint_referenced_ids="layout_safe_main_safes_list,layout_safe_main_add_safe" />
+                    app:constraint_referenced_ids="layout_safe_main_safes_list,layout_safe_main_safes_list_background"
+                    tools:visibility="visible" />
+
+                <android.support.constraint.Group
+                    android:id="@+id/layout_safe_main_selected_safe_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="layout_safe_main_selected_safe_background,layout_safe_main_safes_list_background_padding_bottom,layout_safe_main_selected_safe_icon_container,layout_safe_main_selected_safe_name,layout_safe_main_selected_safe_info,layout_safe_main_selected_safe_button"
+                    tools:visibility="visible" />
+
+                <android.support.constraint.Group
+                    android:id="@+id/layout_safe_main_navigation_safe_creation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="layout_safe_main_add_safe"
+                    tools:visibility="visible" />
 
                 <android.support.constraint.Group
                     android:id="@+id/layout_safe_main_navigation_settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="layout_safe_main_divider_address_book,layout_safe_main_divider_account,layout_safe_main_tokens,layout_safe_main_divider_tokens,layout_safe_main_divider_network,layout_safe_main_security,layout_safe_main_address_book,layout_safe_main_divider_security,layout_safe_main_network,layout_safe_main_account,layout_safe_main_debug_settings" />
+                    app:constraint_referenced_ids="layout_safe_main_tokens,layout_safe_main_security,layout_safe_main_address_book,layout_safe_main_network,layout_safe_main_account,layout_safe_main_debug_settings"
+                    tools:visibility="gone" />
             </android.support.constraint.ConstraintLayout>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.NavigationView>

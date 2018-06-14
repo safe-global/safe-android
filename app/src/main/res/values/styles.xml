@@ -381,5 +381,12 @@
         <item name="android:textColor">@color/dark_slate_blue</item>
     </style>
 
+    <style name="NavigationText" parent="DarkText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:drawablePadding">32dp</item>
+        <item name="android:padding">@dimen/navigation_item_padding</item>
+        <item name="android:background">@drawable/selectable_background</item>
+    </style>
+
     <!-- End: Text styles -->
 </resources>

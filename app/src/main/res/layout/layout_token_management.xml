@@ -20,7 +20,7 @@
             style="@style/Toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
-            app:title="@string/manage_verified_tokens" />
+            app:title="@string/manage_tokens" />
 
         <View
             android:layout_width="match_parent"

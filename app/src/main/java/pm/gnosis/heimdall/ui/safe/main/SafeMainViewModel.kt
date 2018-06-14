@@ -1,9 +1,12 @@
 package pm.gnosis.heimdall.ui.safe.main
 
+import com.gojuno.koptional.None
+import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
-import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
+import io.reactivex.processors.BehaviorProcessor
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.ui.base.Adapter
@@ -22,8 +25,17 @@ class SafeMainViewModel @Inject constructor(
     private val preferenceManager: PreferencesManager,
     private val safeRepository: GnosisSafeRepository
 ) : SafeMainContract() {
+
+    private val safeSelectionProcessor = BehaviorProcessor.create<Optional<AbstractSafe>>()
+
     override fun observeSafes(): Flowable<Result<Adapter.Data<AbstractSafe>>> =
-        safeRepository.observeSafes()
+        Flowable.combineLatest(
+            safeRepository.observeSafes(),
+            safeSelectionProcessor.startWith(None),
+            BiFunction { safes: List<AbstractSafe>, selection: Optional<AbstractSafe> ->
+                selection.toNullable()?.let { safes - it } ?: safes
+            }
+        )
             .scanToAdapterData()
             .mapToResult()
 
@@ -42,9 +54,10 @@ class SafeMainViewModel @Inject constructor(
                 }
                 .firstOrError()
         }
+            .doOnError { safeSelectionProcessor.offer(None) }
+            .doOnSuccess { safeSelectionProcessor.offer(it.toOptional()) }
 
     private fun loadSafe(addressOrHash: BigInteger): Single<AbstractSafe> =
-    // Fuck you kotlin why do I have to add this map for type casting?
         Single.fromCallable { Solidity.Address(addressOrHash) }
             .flatMap { safeRepository.loadSafe(it).map<AbstractSafe> { it } }
             .onErrorResumeNext { safeRepository.loadPendingSafe(addressOrHash) }

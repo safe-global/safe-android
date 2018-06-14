@@ -60,10 +60,6 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsBillingRepository(repository: PlayBillingRepository): BillingRepository
-
-    @Binds
-    @Singleton
     abstract fun bindsPushServiceRepository(repository: DefaultPushServiceRepository): PushServiceRepository
 
     @Binds
@@ -89,8 +85,4 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsTransactionInfoRepository(repository: DefaultTransactionInfoRepository): TransactionInfoRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindsTxExecutorRepository(repository: DefaultTxExecutorRepository): TxExecutorRepository
 }
