@@ -54,11 +54,10 @@ class SafeMainViewModel @Inject constructor(
                 }
                 .firstOrError()
         }
-            .doOnError { safeSelectionProcessor.onNext(None) }
-            .doOnSuccess { safeSelectionProcessor.onNext(it.toOptional()) }
+            .doOnError { safeSelectionProcessor.offer(None) }
+            .doOnSuccess { safeSelectionProcessor.offer(it.toOptional()) }
 
     private fun loadSafe(addressOrHash: BigInteger): Single<AbstractSafe> =
-    // Fuck you kotlin why do I have to add this map for type casting?
         Single.fromCallable { Solidity.Address(addressOrHash) }
             .flatMap { safeRepository.loadSafe(it).map<AbstractSafe> { it } }
             .onErrorResumeNext { safeRepository.loadPendingSafe(addressOrHash) }

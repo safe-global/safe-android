@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.layout_pending_safe_item.view.*
 import kotlinx.android.synthetic.main.layout_safe_item.view.*
 import pm.gnosis.heimdall.R
@@ -23,7 +24,7 @@ import javax.inject.Inject
 
 @ForView
 class SafeAdapter @Inject constructor(
-    @ViewContext private val context: Context,
+    @ViewContext context: Context,
     private val addressHelper: AddressHelper
 ) : LifecycleAdapter<AbstractSafe, SafeAdapter.CastingViewHolder<out AbstractSafe>>(context) {
 
@@ -37,10 +38,18 @@ class SafeAdapter @Inject constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SafeAdapter.CastingViewHolder<out AbstractSafe> {
         return when (viewType) {
             TYPE_SAFE -> {
-                ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_safe_item, parent, false))
+                ViewHolder(
+                    LayoutInflater.from(parent.context).inflate(R.layout.layout_safe_item, parent, false),
+                    safeSelection,
+                    addressHelper
+                )
             }
             TYPE_PENDING_SAFE -> {
-                PendingViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_pending_safe_item, parent, false))
+                PendingViewHolder(
+                    LayoutInflater.from(parent.context).inflate(R.layout.layout_pending_safe_item, parent, false),
+                    safeSelection,
+                    addressHelper
+                )
             }
             else -> throw IllegalArgumentException()
         }
@@ -53,7 +62,7 @@ class SafeAdapter @Inject constructor(
         }
     }
 
-    abstract inner class CastingViewHolder<T : AbstractSafe>(val type: Class<T>, itemView: View) : LifecycleViewHolder<AbstractSafe>(itemView) {
+    abstract class CastingViewHolder<T : AbstractSafe>(val type: Class<T>, itemView: View) : LifecycleViewHolder<AbstractSafe>(itemView) {
         final override fun bind(data: AbstractSafe, payloads: List<Any>) {
             if (type.isInstance(data)) {
                 castedBind(type.cast(data), payloads)
@@ -63,7 +72,11 @@ class SafeAdapter @Inject constructor(
         abstract fun castedBind(data: T, payloads: List<Any>)
     }
 
-    inner class ViewHolder(itemView: View) : CastingViewHolder<Safe>(Safe::class.java, itemView), View.OnClickListener {
+    class ViewHolder(
+        itemView: View,
+        private val safeSelection: Subject<AbstractSafe>,
+        private val addressHelper: AddressHelper
+    ) : CastingViewHolder<Safe>(Safe::class.java, itemView), View.OnClickListener {
         private val disposables = CompositeDisposable()
 
         private var currentEntry: Safe? = null
@@ -75,7 +88,7 @@ class SafeAdapter @Inject constructor(
         override fun castedBind(data: Safe, payloads: List<Any>) {
             currentEntry = data
             itemView.layout_safe_item_address.text = null
-            itemView.layout_safe_item_name.text = data.displayName(context)
+            itemView.layout_safe_item_name.text = data.displayName(itemView.context)
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -98,6 +111,7 @@ class SafeAdapter @Inject constructor(
         }
 
         override fun unbind() {
+            stop()
             currentEntry = null
             super.unbind()
         }
@@ -107,7 +121,11 @@ class SafeAdapter @Inject constructor(
         }
     }
 
-    inner class PendingViewHolder(itemView: View) : CastingViewHolder<PendingSafe>(PendingSafe::class.java, itemView), View.OnClickListener {
+    class PendingViewHolder(
+        itemView: View,
+        private val safeSelection: Subject<AbstractSafe>,
+        private val addressHelper: AddressHelper
+    ) : CastingViewHolder<PendingSafe>(PendingSafe::class.java, itemView), View.OnClickListener {
         private val disposables = CompositeDisposable()
 
         private var currentEntry: PendingSafe? = null
@@ -119,7 +137,7 @@ class SafeAdapter @Inject constructor(
         override fun castedBind(data: PendingSafe, payloads: List<Any>) {
             currentEntry = data
             itemView.layout_pending_safe_item_address.text = null
-            itemView.layout_pending_safe_item_name.text = data.displayName(context)
+            itemView.layout_pending_safe_item_name.text = data.displayName(itemView.context)
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -142,6 +160,7 @@ class SafeAdapter @Inject constructor(
         }
 
         override fun unbind() {
+            stop()
             currentEntry = null
             super.unbind()
         }
