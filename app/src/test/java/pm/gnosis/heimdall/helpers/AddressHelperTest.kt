@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.helpers
 
+import android.content.Context
 import android.view.View
 import android.widget.TextView
 import io.reactivex.Single
@@ -7,9 +8,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
@@ -94,6 +95,7 @@ class AddressHelperTest {
 
     @Test
     fun testSafeAddress() {
+        given(nameView.context).willReturn(mock(Context::class.java))
         val testAddress = "0x31B98D14007bDEe637298086988A0bBd31184523".asEthereumAddress()!!
         val safe = Safe(testAddress, "The mate vault!")
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
@@ -108,6 +110,7 @@ class AddressHelperTest {
         then(addressView).shouldHaveNoMoreInteractions()
         then(nameView).should().text = "The mate vault!"
         then(nameView).should().visibility = View.VISIBLE
+        then(nameView).should().context
         then(nameView).shouldHaveNoMoreInteractions()
 
         then(addressBookRepository).should().loadAddressBookEntry(testAddress)
