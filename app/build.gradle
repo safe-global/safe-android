@@ -18,7 +18,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x075794c3797bb4cfea74a75d1aae636036af37cd"))
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0xec7c75c1548765ab51a165873b0b1b71663c1266"))
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0x2aab3573ecfd2950a30b75b6f3651b84f4e130da"))
         buildConfigField javaTypes.STRING, "RECOVERY_MODULE_MASTER_COPY_ADDRESS", asString(getKey("RECOVERY_MODULE_MASTER_COPY_ADDRESS", "0xa46f52cb7fcf82524d411c535ccfa805d668926e"))
         buildConfigField javaTypes.STRING, "DAILY_LIMIT_MODULE_MASTER_COPY_ADDRESS", asString(getKey("DAILY_LIMIT_MODULE_MASTER_COPY_ADDRESS", "0xac94a500b707fd5c4cdb89777f29b3b28bde2f0c"))
         buildConfigField javaTypes.STRING, "CREATE_AND_ADD_MODULES_LIB_ADDRESS", asString(getKey("CREATE_AND_ADD_MODULES_LIB_ADDRESS", "0x8513246e65c474ad05e88ae8ca7c5a6b04246550"))
