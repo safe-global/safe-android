@@ -21,14 +21,13 @@ class LocalRelayServiceApi(
 ) : RelayServiceApi {
     override fun execute(params: ExecuteParams): Single<RelayExecution> =
         Single.fromCallable {
-            val vList = mutableListOf<Solidity.UInt8>()
-            val rList = mutableListOf<Solidity.Bytes32>()
-            val sList = mutableListOf<Solidity.Bytes32>()
-            params.signatures.forEach {
-                vList.add(Solidity.UInt8(BigInteger.valueOf(it.v.toLong())))
-                rList.add(Solidity.Bytes32(it.r.toBytes(32)))
-                sList.add(Solidity.Bytes32(it.s.toBytes(32)))
-            }
+            val signatureBytes = StringBuilder().apply {
+                params.signatures.forEach {
+                    append(it.r.toString(16).padStart(64, '0').substring(0, 64))
+                    append(it.s.toString(16).padStart(64, '0').substring(0, 64))
+                    append(it.v.toString(16).padStart(2, '0'))
+                }
+            }.toString().hexStringToByteArray()
 
             val to = params.to.asEthereumAddress()!!
             val value = Solidity.UInt256(params.value.decimalAsBigInteger())
@@ -37,11 +36,11 @@ class LocalRelayServiceApi(
             val txGas = params.safeTxGas.decimalAsBigInteger()
             val dataGas = params.dataGas.decimalAsBigInteger()
             val gasPrice = params.gasPrice.decimalAsBigInteger()
-            val executionData = GnosisSafePersonalEdition.ExecAndPayTransaction.encode(
+            val executionData = GnosisSafePersonalEdition.ExecTransactionAndPaySubmitter.encode(
                 to, value, data, operation,
                 Solidity.UInt256(txGas), Solidity.UInt256(dataGas),
                 Solidity.UInt256(gasPrice), Solidity.Address(BigInteger.ZERO),
-                SolidityBase.Vector(vList), SolidityBase.Vector(rList), SolidityBase.Vector(sList)
+                Solidity.Bytes(signatureBytes)
             )
             Transaction(params.safe.asEthereumAddress()!!, data = executionData)
         }
@@ -84,8 +83,8 @@ class LocalRelayServiceApi(
             .firstOrError()
             .map {
                 val gasPrice = BigInteger("20000000000")
-                val txGas = it.result()!!.substring(138).hexAsBigInteger()
-                val dataGas = calculateDataGas(params, txGas, gasPrice)
+                val txGas = it.result()!!.substring(138).hexAsBigInteger() + BigInteger.valueOf(10000)
+                val dataGas = calculateDataGas(params, txGas, gasPrice) + BigInteger.valueOf(32000)
                 RelayEstimate(txGas.asDecimalString(), dataGas.asDecimalString(), gasPrice.asDecimalString())
             }
     }
@@ -100,18 +99,18 @@ class LocalRelayServiceApi(
         remoteService.safeFundStatus(address)
 
     private fun calculateDataGas(params: EstimateParams, txGas: BigInteger, gasPrice: BigInteger): BigInteger {
-        val signateCosts = 3L * (64 + 64) + params.threshold * (192 + 2176 + 2176)
+        val signatureCosts = params.threshold * (68 + 2176 + 2176)
         val to = params.to.asEthereumAddress()!!
         val value = Solidity.UInt256(params.value.decimalAsBigInteger())
         val data = Solidity.Bytes(params.data.hexStringToByteArrayOrNull() ?: ByteArray(0))
         val operation = Solidity.UInt8(params.operation.toBigInteger())
-        val payload = GnosisSafePersonalEdition.ExecAndPayTransaction.encode(
+        val payload = GnosisSafePersonalEdition.ExecTransactionAndPaySubmitter.encode(
             to, value, data, operation,
             Solidity.UInt256(txGas), Solidity.UInt256(BigInteger.ZERO),
             Solidity.UInt256(gasPrice), Solidity.Address(BigInteger.ZERO),
-            SolidityBase.Vector(emptyList()), SolidityBase.Vector(emptyList()), SolidityBase.Vector(emptyList())
+            Solidity.Bytes(byteArrayOf())
         )
-        val dataGasEstimate = payload.chunked(2).fold(0L, { acc, part -> acc + dataGasValue(part) }) + signateCosts
+        val dataGasEstimate = payload.chunked(2).fold(0L) { acc, part -> acc + dataGasValue(part) } + signatureCosts
         return (dataGasEstimate + (if (dataGasEstimate > 65536) 128 else 64)).toBigInteger()
     }
 

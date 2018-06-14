@@ -66,6 +66,33 @@
       "type": "function"
     },
     {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "txHash",
+          "type": "bytes32"
+        },
+        {
+          "name": "messageSignature",
+          "type": "bytes"
+        },
+        {
+          "name": "pos",
+          "type": "uint256"
+        }
+      ],
+      "name": "recoverKey",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
       "constant": false,
       "inputs": [
         {
@@ -226,6 +253,37 @@
       "type": "function"
     },
     {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "signatures",
+          "type": "bytes"
+        },
+        {
+          "name": "pos",
+          "type": "uint256"
+        }
+      ],
+      "name": "signatureSplit",
+      "outputs": [
+        {
+          "name": "v",
+          "type": "uint8"
+        },
+        {
+          "name": "r",
+          "type": "bytes32"
+        },
+        {
+          "name": "s",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
       "constant": false,
       "inputs": [
         {
@@ -318,7 +376,13 @@
     },
     {
       "anonymous": false,
-      "inputs": [],
+      "inputs": [
+        {
+          "indexed": false,
+          "name": "txHash",
+          "type": "bytes32"
+        }
+      ],
       "name": "ExecutionFailed",
       "type": "event"
     },
@@ -370,45 +434,19 @@
           "type": "address"
         },
         {
-          "name": "v",
-          "type": "uint8[]"
-        },
-        {
-          "name": "r",
-          "type": "bytes32[]"
-        },
-        {
-          "name": "s",
-          "type": "bytes32[]"
+          "name": "signatures",
+          "type": "bytes"
         }
       ],
-      "name": "execAndPayTransaction",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "executionGas",
-          "type": "uint256"
-        },
-        {
-          "name": "dataGas",
-          "type": "uint256"
-        }
-      ],
-      "name": "totalGasCosts",
+      "name": "execTransactionAndPaySubmitter",
       "outputs": [
         {
-          "name": "",
-          "type": "uint256"
+          "name": "success",
+          "type": "bool"
         }
       ],
       "payable": false,
-      "stateMutability": "pure",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
