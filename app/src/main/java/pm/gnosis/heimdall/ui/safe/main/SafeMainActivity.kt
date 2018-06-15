@@ -6,8 +6,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.View
+import android.widget.PopupWindow
 import com.jakewharton.rxbinding2.support.v7.widget.itemClicks
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -27,7 +30,6 @@ import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
-import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
@@ -92,6 +94,9 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
             inflate(R.menu.safe_details_menu)
+            menu.findItem(R.id.safe_details_menu_settings).title = SpannableStringBuilder().appendText(
+                getString(R.string.settings), ForegroundColorSpan(getColorCompat(R.color.tomato))
+            )
         }
     }
 
@@ -174,7 +179,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
     private fun toggleSafes(visible: Boolean) {
-        layout_safe_main_navigation_safe_creation.visible(visible)
+        // If we don't have a safe we should always show the creation button
+        layout_safe_main_navigation_safe_creation.visible(visible || selectedSafe == null)
         layout_safe_main_navigation_safe_list.visible(visible)
         layout_safe_main_navigation_settings.visible(!visible)
         layout_safe_main_selected_safe_button.setImageResource(if (visible) R.drawable.ic_close_safe_selection else R.drawable.ic_open_safe_selection)
@@ -261,8 +267,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 disposables += popupMenu.itemClicks()
                     .subscribeBy(onNext = {
                         when (it.itemId) {
-                            R.id.safe_details_menu_share ->
-                                ShareSafeAddressDialog.create(safe.address).show(supportFragmentManager, null)
                             R.id.safe_details_menu_settings ->
                                 startActivity(SafeSettingsActivity.createIntent(this, safe.address.asEthereumAddressString()))
                             R.id.safe_details_menu_sync -> {
@@ -270,6 +274,9 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribeBy(onComplete = { toast(R.string.sync_successful) },
                                         onError = { toast(R.string.error_syncing) })
+                            }
+                            R.id.safe_details_menu_show_on_etherscan -> {
+                                openUrl(getString(R.string.etherscan_address_url, safe.address.asEthereumAddressString()))
                             }
 
                         }

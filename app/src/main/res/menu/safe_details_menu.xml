@@ -3,15 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/safe_details_menu_share"
-        android:title="@string/share_address"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/safe_details_menu_settings"
-        android:title="@string/settings"
+        android:id="@+id/safe_details_menu_show_on_etherscan"
+        android:title="@string/show_safe_on_etherscan"
         app:showAsAction="never" />
     <item
         android:id="@+id/safe_details_menu_sync"
         android:title="@string/sync_with_extension"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/safe_details_menu_settings"
+        android:title="@string/settings"
         app:showAsAction="never" />
 </menu>

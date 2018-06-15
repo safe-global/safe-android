@@ -11,14 +11,14 @@
 
     <Button
         android:id="@+id/layout_debug_settings_auth"
-        style="@style/OnBoardingTheme.Button"
+        style="@style/PrimaryButton.White"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="/auth" />
 
     <Button
         android:id="@+id/layout_debug_settings_pair"
-        style="@style/OnBoardingTheme.Button"
+        style="@style/PrimaryButton.White"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -26,7 +26,7 @@
 
     <Button
         android:id="@+id/layout_debug_settings_safe_creation"
-        style="@style/OnBoardingTheme.Button"
+        style="@style/PrimaryButton.White"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"

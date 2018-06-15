@@ -238,9 +238,6 @@
     <string name="mnemonic_required_words">%1d/%2d words</string>
     <string name="review_transaction">Review transaction</string>
     <string name="review_transaction_request">Review transaction request</string>
-    <string name="safe_overview_empty_title">You have no safes yet.</string>
-    <string name="safe_overview_empty_description">Add a new or existing safe and it will show up right here.</string>
-    <string name="safe_overview_empty_action">Add a Safe</string>
     <string name="owner">owner</string>
     <string name="owner_label">Owner</string>
     <string name="owner_x">owner number %s</string>
@@ -444,4 +441,7 @@
     <string name="error_syncing">Error syncing</string>
     <string name="no_safe_added">No Safe added yet</string>
     <string name="create_safe">Create new Safe</string>
+    <string name="setup_successful">Device was setup successfully!</string>
+    <string name="no_safe_yet">You didn\'t create any Safes yet.</string>
+    <string name="show_safe_on_etherscan">View Safe on Etherscan.io</string>
 </resources>

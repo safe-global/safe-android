@@ -26,58 +26,12 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
-    <style name="GreyBackgroundTheme" parent="WhiteTheme">
+    <style name="GreyBackgroundThemeBase" parent="WhiteTheme">
         <item name="android:windowBackground">@color/pale_grey_two</item>
     </style>
 
-    <!-- Onboarding theme. -->
-
-    <style name="OnBoardingThemeBase" parent="AppTheme">
-        <item name="android:windowBackground">@color/gnosis_blue</item>
-    </style>
-
-    <style name="OnBoardingTheme" parent="OnBoardingThemeBase" />
-
-    <style name="OnBoardingTheme.Text.Large" parent="android:TextAppearance">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-    </style>
-
-    <style name="OnBoardingTheme.Text.Medium" parent="android:TextAppearance">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-    </style>
-
-    <style name="OnBoardingTheme.FloatingLabel" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="OnBoardingTheme.InputField" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/white_alpha_70</item>
-        <item name="colorControlActivated">@color/white</item>
-        <item name="android:editTextColor">@color/white</item>
-    </style>
-
-    <style name="OnBoardingTheme.TextButton" parent="android:TextAppearance">
-        <item name="android:padding">16dp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:background">@drawable/selectable_background</item>
-    </style>
-
-    <style name="OnBoardingTheme.TextInputLayout" parent="Widget.Design.TextInputLayout">
-        <item name="android:textColorHint">@color/white</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="OnBoardingTheme.Button" parent="Base.Widget.AppCompat.Button">
-        <item name="android:tint">@color/white</item>
-        <item name="backgroundTint">@color/white</item>
-        <item name="android:textColor">@color/gnosis_blue</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+    <style name="GreyBackgroundTheme" parent="GreyBackgroundThemeBase">
+        <item name="android:windowBackground">@color/pale_grey_two</item>
     </style>
 
     <!-- Mountain theme. -->
