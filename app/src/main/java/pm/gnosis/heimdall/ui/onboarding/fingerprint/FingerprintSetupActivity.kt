@@ -50,7 +50,7 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
             layout_fingerprint_setup_description.visible(false)
             layout_fingerprint_setup_bottom_bar.setBackgroundColor(getColorCompat(R.color.azure))
             layout_fingerprint_setup_continue_label.setTextColor(getColorCompat(R.color.white))
-            layout_fingerprint_setup_next_arrow.setColorFilterCompat(getColorCompat(R.color.white))
+            layout_fingerprint_setup_next_arrow.setColorFilterCompat(R.color.white)
         } else {
             snackbar(layout_fingerprint_setup_coordinator, R.string.fingerprint_not_recognized)
             vibrate(200)

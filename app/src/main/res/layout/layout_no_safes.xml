@@ -1,41 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/DarkText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical">
-
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_no_safes"/>
+        android:text="@string/setup_successful"
+        android:textSize="16sp" />
 
     <TextView
-            style="@style/Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:gravity="center"
-            android:text="@string/safe_overview_empty_title"
-            android:textSize="16sp"/>
+        style="@style/DarkText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:text="@string/no_safe_yet" />
 
     <TextView
-            style="@style/Content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:text="@string/safe_overview_empty_description"/>
-
-    <TextView
-            android:id="@+id/layout_no_safes_add_safe_button"
-            style="@style/TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="@string/safe_overview_empty_action"
-            android:textAllCaps="true"
-            android:textSize="14sp"/>
+        android:id="@+id/layout_no_safes_add_safe_button"
+        style="@style/WhiteTheme.RoundPrimaryButton"
+        android:layout_width="264dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/create_safe"
+        android:textSize="16sp" />
 
 </LinearLayout>

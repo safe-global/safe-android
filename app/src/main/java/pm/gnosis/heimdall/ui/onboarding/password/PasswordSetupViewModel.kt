@@ -5,6 +5,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
@@ -18,8 +19,9 @@ import javax.inject.Inject
 
 class PasswordSetupViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val encryptionManager: EncryptionManager,
     private val accountsRepository: AccountsRepository,
+    private val encryptionManager: EncryptionManager,
+    private val pushServiceRepository: PushServiceRepository,
     private val bip39: Bip39
 ) : PasswordSetupContract() {
     override fun validatePassword(password: String): Single<Result<List<Pair<PasswordValidationCondition, Boolean>>>> =
@@ -51,6 +53,8 @@ class PasswordSetupViewModel @Inject constructor(
                 .onErrorResumeNext { _: Throwable -> Single.error(SimpleLocalizedException(context.getString(R.string.password_error_saving))) }
         }.flatMapCompletable {
             createAccount()
+        }.doOnComplete {
+            pushServiceRepository.syncAuthentication(true)
         }.andThen(Single.fromCallable {
             if (encryptionManager.canSetupFingerprint()) FingerprintSetupActivity.createIntent(context)
             else SafeMainActivity.createIntent(context)

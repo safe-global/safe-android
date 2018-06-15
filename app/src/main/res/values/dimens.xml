@@ -33,6 +33,6 @@
     <dimen name="bottom_bar_height">46dp</dimen>
 
     <dimen name="primary_button_radius">6dp</dimen>
-    <dimen name="round_button_radius">20dp</dimen>
+    <dimen name="round_button_radius">23dp</dimen>
     <dimen name="safe_logo_size">72dp</dimen>
 </resources>

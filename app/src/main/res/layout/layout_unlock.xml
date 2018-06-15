@@ -5,9 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_unlock_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <android.support.constraint.ConstraintLayout
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -92,7 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/gnosis_dark_blue"
+            android:background="@color/dark_slate_blue"
             android:fitsSystemWindows="true"
             android:gravity="center"
             android:hint="@string/enter_password"

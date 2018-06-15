@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:padding="16dp"
+    android:fitsSystemWindows="true"
     app:behavior_hideable="true"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
@@ -13,23 +13,31 @@
         android:id="@+id/bottom_sheet_terms_and_conditions_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="sans-serif"
         android:text="@string/terms"
         android:textColor="@color/dark_slate_blue"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_description"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:fontFamily="sans-serif"
         android:text="@string/terms_info"
         android:textColor="@color/dark_slate_blue"
         android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_title" />
 
     <TextView
@@ -37,6 +45,7 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="24dp"
         android:layout_marginTop="16dp"
         android:autoLink="web"
@@ -45,6 +54,7 @@
         android:textAllCaps="true"
         android:textSize="13sp"
         android:theme="@style/SmallFlatButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/bottom_sheet_terms_and_conditions_agree"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_description" />
 
@@ -53,13 +63,15 @@
         style="@style/PrimaryButton.Blue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
         android:fontFamily="sans-serif-medium"
         android:text="@string/agree"
         android:textAllCaps="true"
         android:textSize="13sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/bottom_sheet_terms_and_conditions_reject"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

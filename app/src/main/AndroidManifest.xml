@@ -111,7 +111,7 @@
         <activity
             android:name=".ui.debugsettings.DebugSettingsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/OnBoardingTheme" />
+            android:theme="@style/WhiteTheme" />
 
         <activity
             android:name=".ui.safe.create.PairingActivity"

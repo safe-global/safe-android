@@ -3,8 +3,10 @@ package pm.gnosis.heimdall.ui.security.unlock
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.editorActions
 import io.reactivex.Observable
@@ -51,8 +53,7 @@ class UnlockActivity : ViewModelActivity<UnlockContract>() {
         fingerPrintDisposable = encryptionManager.isFingerPrintSet()
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess {
-                layout_unlock_fingerprint_group.visible(it)
-                layout_unlock_password_input.visible(!it)
+                togglePasswordInput(!it)
             }
             .flatMapObservable {
                 if (it) viewModel.observeFingerprint() else Observable.empty()
@@ -73,10 +74,22 @@ class UnlockActivity : ViewModelActivity<UnlockContract>() {
         disposables += layout_unlock_switch_to_password.clicks()
             .subscribeBy(onNext = {
                 fingerPrintDisposable?.dispose()
-                layout_unlock_fingerprint_group.visible(false)
-                layout_unlock_password_input.visible(true)
+                togglePasswordInput(true)
                 layout_unlock_password_input.showKeyboardForView()
             }, onError = Timber::e)
+    }
+
+    private fun togglePasswordInput(visible: Boolean) {
+        layout_unlock_fingerprint_group.visible(!visible)
+        layout_unlock_password_input.visible(visible)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (visible) {
+                window.clearFlags(FLAG_TRANSLUCENT_NAVIGATION)
+                window.navigationBarColor = getColorCompat(R.color.dark_slate_blue)
+            } else {
+                window.addFlags(FLAG_TRANSLUCENT_NAVIGATION)
+            }
+        }
     }
 
     private fun onFingerprintResult(result: FingerprintUnlockResult) {
