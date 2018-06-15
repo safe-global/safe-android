@@ -7,6 +7,7 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_deploy_safe_progress.*
@@ -56,6 +57,7 @@ class DeploySafeProgressFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         disposables += viewModel.notifySafeFunded()
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = ::onDeployedSafe, onError = Timber::e)
     }
 

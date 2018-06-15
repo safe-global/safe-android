@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.data.remote.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import pm.gnosis.heimdall.data.adapters.DecimalNumber
-import pm.gnosis.heimdall.data.adapters.HexNumber
 import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
@@ -93,7 +92,7 @@ data class RelaySafeCreationTx(
 data class RelaySafeFundStatus(
     @Json(name = "safeFunded") val safeFunded: Boolean,
     @Json(name = "deployerFunded") val deployerFunded: Boolean,
-    @Json(name = "deployerFundedTxHash") val deployerFundedTxHash: String,
+    @Json(name = "deployerFundedTxHash") val deployerFundedTxHash: String?,
     @Json(name = "safeDeployed") val safeDeployed: Boolean,
-    @Json(name = "safeDeployedTxHash") val safeDeployedTxHash: String
+    @Json(name = "safeDeployedTxHash") val safeDeployedTxHash: String?
 )
