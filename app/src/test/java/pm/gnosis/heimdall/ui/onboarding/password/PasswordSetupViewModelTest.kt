@@ -15,6 +15,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
@@ -43,13 +44,16 @@ class PasswordSetupViewModelTest {
     private lateinit var accountsRepository: AccountsRepository
 
     @Mock
+    private lateinit var pushServiceRepository: PushServiceRepository
+
+    @Mock
     private lateinit var bip39: Bip39
 
     private lateinit var viewModel: PasswordSetupViewModel
 
     @Before
     fun setUp() {
-        viewModel = PasswordSetupViewModel(contextMock, encryptionManagerMock, accountsRepository, bip39)
+        viewModel = PasswordSetupViewModel(contextMock, accountsRepository, encryptionManagerMock, pushServiceRepository, bip39)
     }
 
     @Test
@@ -144,6 +148,7 @@ class PasswordSetupViewModelTest {
         viewModel.createAccount(Sha3Utils.keccak("111111".toByteArray()), "123456").subscribe(observer)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
+        then(pushServiceRepository).shouldHaveZeroInteractions()
         observer.assertValue { it is ErrorResult && it.error is PasswordInvalidException && (it.error as PasswordInvalidException).reason is PasswordsNotEqual }
     }
 
@@ -158,6 +163,7 @@ class PasswordSetupViewModelTest {
 
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
+        then(pushServiceRepository).shouldHaveZeroInteractions()
         then(contextMock).should().getString(R.string.password_error_saving)
         observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
     }
@@ -172,6 +178,7 @@ class PasswordSetupViewModelTest {
 
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
+        then(pushServiceRepository).shouldHaveZeroInteractions()
         then(contextMock).should().getString(R.string.password_error_saving)
         observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
     }
@@ -191,6 +198,8 @@ class PasswordSetupViewModelTest {
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).should().canSetupFingerprint()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
+        then(pushServiceRepository).should().syncAuthentication(true)
+        then(pushServiceRepository).shouldHaveNoMoreInteractions()
         then(bip39).should().generateMnemonic(languageId = R.id.english)
         then(bip39).should().mnemonicToSeed("mnemonic")
         then(bip39).shouldHaveNoMoreInteractions()
@@ -213,6 +222,7 @@ class PasswordSetupViewModelTest {
 
         then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
+        then(pushServiceRepository).shouldHaveZeroInteractions()
         then(bip39).should().generateMnemonic(languageId = R.id.english)
         then(bip39).should().mnemonicToSeed("mnemonic")
         then(bip39).shouldHaveNoMoreInteractions()
