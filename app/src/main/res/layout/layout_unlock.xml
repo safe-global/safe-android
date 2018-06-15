@@ -94,7 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/gnosis_dark_blue"
+            android:background="@color/dark_slate_blue"
             android:fitsSystemWindows="true"
             android:gravity="center"
             android:hint="@string/enter_password"

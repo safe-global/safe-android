@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.security.unlock
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.KeyEvent
@@ -175,6 +176,12 @@ class UnlockDialog private constructor() : BaseDialog() {
     override fun onStop() {
         dismissAllowingStateLoss()
         super.onStop()
+    }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        fingerPrintDisposable?.dispose()
+        disposables.clear()
+        super.onDismiss(dialog)
     }
 
     interface UnlockCallback {
