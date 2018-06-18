@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.setColorFilterCompat
 import pm.gnosis.heimdall.utils.setCompoundDrawables
+import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import timber.log.Timber
@@ -52,6 +53,9 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
     override fun onStart() {
         super.onStart()
         disposables += layout_password_setup_next.clicks()
+            // We validate again the password on each click
+            .switchMapSingle { viewModel.validatePassword(layout_password_setup_password.text.toString()) }
+            .filter { it is DataResult && it.data.all { it.second } }
             .flatMapSingle { viewModel.passwordToHash(layout_password_setup_password.text.toString()) }
             .subscribeForResult(onNext = { startActivity(PasswordConfirmActivity.createIntent(this, it)) }, onError = Timber::e)
 
