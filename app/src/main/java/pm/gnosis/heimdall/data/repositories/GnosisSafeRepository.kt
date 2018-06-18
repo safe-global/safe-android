@@ -18,7 +18,7 @@ interface GnosisSafeRepository {
 
     fun addSafe(address: Solidity.Address, name: String): Completable
     fun removeSafe(address: Solidity.Address): Completable
-    fun updateName(address: Solidity.Address, newName: String): Completable
+    fun updateSafe(safe: Safe): Completable
 
     fun loadInfo(address: Solidity.Address): Observable<SafeInfo>
     fun observePendingTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>

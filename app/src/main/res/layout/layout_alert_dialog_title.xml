@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_alert_dialog_title_text"
+    style="@style/DarkText"
+    android:padding="16dp"
+    android:textSize="18sp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:text="Edit Safe Name" />

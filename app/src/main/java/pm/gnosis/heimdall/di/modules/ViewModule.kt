@@ -19,7 +19,6 @@ import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.create.PairingContract
 import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
-import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
@@ -118,10 +117,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesSafeDetailsContract(provider: ViewModelProvider) = provider[SafeDetailsContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesSafeInfoContract(provider: ViewModelProvider) = provider[SafeSettingsContract::class.java]
 
     @Provides
     @ForView

@@ -1,11 +1,14 @@
 package pm.gnosis.heimdall.ui.safe.main
 
 import android.app.Application
+import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
+import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import io.reactivex.processors.BehaviorProcessor
+import io.reactivex.processors.PublishProcessor
 import io.reactivex.subscribers.TestSubscriber
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -20,6 +23,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
@@ -32,6 +36,7 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
+import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.utils.*
 
 @RunWith(MockitoJUnitRunner::class)
@@ -47,6 +52,9 @@ class SafeMainViewModelTest {
     private lateinit var application: Application
 
     @Mock
+    private lateinit var context: Context
+
+    @Mock
     private lateinit var safeRepository: GnosisSafeRepository
 
     private lateinit var preferencesManager: PreferencesManager
@@ -57,7 +65,7 @@ class SafeMainViewModelTest {
     fun setUp() {
         BDDMockito.given(application.getSharedPreferences(anyString(), anyInt())).willReturn(preferences)
         preferencesManager = PreferencesManager(application)
-        viewModel = SafeMainViewModel(preferencesManager, safeRepository)
+        viewModel = SafeMainViewModel(context, preferencesManager, safeRepository)
     }
 
     @Test
@@ -235,6 +243,164 @@ class SafeMainViewModelTest {
         assertEquals(viewModel.syncWithChromeExtension(TEST_SAFE), sendCompletable)
 
         then(safeRepository).should().sendSafeCreationPush(TEST_SAFE)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun updateSafeName() {
+        val safe = Safe(TEST_SAFE, "Old Name")
+        given(safeRepository.updateSafe(MockUtils.any())).willReturn(Completable.complete())
+
+        val nullObserver = TestObserver<Unit>()
+        viewModel.updateSafeName(safe, null).subscribe(nullObserver)
+        nullObserver.assertResult()
+
+        then(safeRepository).should().updateSafe(Safe(TEST_SAFE, null))
+        then(safeRepository).shouldHaveNoMoreInteractions()
+
+        val nameObserver = TestObserver<Unit>()
+        viewModel.updateSafeName(safe, "New Name").subscribe(nameObserver)
+        nameObserver.assertResult()
+
+        then(safeRepository).should().updateSafe(Safe(TEST_SAFE, "New Name"))
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun updateSafeNameError() {
+        val safe = Safe(TEST_SAFE, "Old Name")
+        val error = NoSuchElementException()
+        given(safeRepository.updateSafe(MockUtils.any())).willReturn(Completable.error(error))
+
+        val nullObserver = TestObserver<Unit>()
+        viewModel.updateSafeName(safe, null).subscribe(nullObserver)
+        nullObserver.assertError(error)
+
+        then(safeRepository).should().updateSafe(Safe(TEST_SAFE, null))
+        then(safeRepository).shouldHaveNoMoreInteractions()
+
+        val nameObserver = TestObserver<Unit>()
+        viewModel.updateSafeName(safe, "New Name").subscribe(nameObserver)
+        nameObserver.assertError(error)
+
+        then(safeRepository).should().updateSafe(Safe(TEST_SAFE, "New Name"))
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun updatePendingSafeName() {
+        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)
+        given(safeRepository.updatePendingSafe(MockUtils.any())).willReturn(Completable.complete())
+
+        val nullObserver = TestObserver<Unit>()
+        viewModel.updateSafeName(safe, null).subscribe(nullObserver)
+        nullObserver.assertResult()
+
+        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, null, TEST_SAFE, Wei.ZERO))
+        then(safeRepository).shouldHaveNoMoreInteractions()
+
+        val nameObserver = TestObserver<Unit>()
+        viewModel.updateSafeName(safe, "New Name").subscribe(nameObserver)
+        nameObserver.assertResult()
+
+        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, "New Name", TEST_SAFE, Wei.ZERO))
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun updatePendingSafeNameError() {
+        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)
+        val error = NoSuchElementException()
+        given(safeRepository.updatePendingSafe(MockUtils.any())).willReturn(Completable.error(error))
+
+        val nullObserver = TestObserver<Unit>()
+        viewModel.updateSafeName(safe, null).subscribe(nullObserver)
+        nullObserver.assertError(error)
+
+        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, null, TEST_SAFE, Wei.ZERO))
+        then(safeRepository).shouldHaveNoMoreInteractions()
+
+        val nameObserver = TestObserver<Unit>()
+        viewModel.updateSafeName(safe, "New Name").subscribe(nameObserver)
+        nameObserver.assertError(error)
+
+        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, "New Name", TEST_SAFE, Wei.ZERO))
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeSafe() {
+        context.mockGetString()
+        val safe = Safe(TEST_SAFE, "Old Name")
+        val safeProcessor = PublishProcessor.create<Safe>()
+        given(safeRepository.observeSafe(MockUtils.any())).willReturn(safeProcessor)
+
+        val safeSubscriber = TestSubscriber<Pair<String, String>>()
+        viewModel.observeSafe(safe).subscribe(safeSubscriber)
+
+        safeProcessor.offer(Safe(TEST_SAFE, "Old Name"))
+        safeSubscriber
+            .assertValueCount(1)
+            .assertValueAt(0, "Old Name" to "0x1f81...C65C7E")
+
+        safeProcessor.offer(Safe(TEST_SAFE, null))
+        safeSubscriber
+            .assertValueCount(2)
+            .assertValueAt(1, R.string.your_safe.toString() to "0x1f81...C65C7E")
+
+        then(safeRepository).should().observeSafe(TEST_SAFE)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeSafeError() {
+        val error = NoSuchElementException()
+        given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.error(error))
+
+        val safeSubscriber = TestSubscriber<Pair<String, String>>()
+        viewModel.observeSafe(Safe(TEST_SAFE, "Old Name")).subscribe(safeSubscriber)
+
+        safeSubscriber.assertFailure(Predicate { it == error })
+
+        then(safeRepository).should().observeSafe(TEST_SAFE)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observePendingSafe() {
+        context.mockGetString()
+        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)
+        val safeProcessor = PublishProcessor.create<PendingSafe>()
+        given(safeRepository.observePendingSafe(MockUtils.any())).willReturn(safeProcessor)
+
+        val safeSubscriber = TestSubscriber<Pair<String, String>>()
+        viewModel.observeSafe(safe).subscribe(safeSubscriber)
+
+        safeProcessor.offer(PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO))
+        safeSubscriber
+            .assertValueCount(1)
+            .assertValueAt(0, "Old Name" to "0x1f81...C65C7E")
+
+        safeProcessor.offer(PendingSafe(TEST_TX_HASH, null, TEST_SAFE, Wei.ZERO))
+        safeSubscriber
+            .assertValueCount(2)
+            .assertValueAt(1, R.string.your_safe.toString() to "0x1f81...C65C7E")
+
+        then(safeRepository).should().observePendingSafe(TEST_TX_HASH)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observePendingSafeError() {
+        val error = NoSuchElementException()
+        given(safeRepository.observePendingSafe(MockUtils.any())).willReturn(Flowable.error(error))
+
+        val safeSubscriber = TestSubscriber<Pair<String, String>>()
+        viewModel.observeSafe(PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)).subscribe(safeSubscriber)
+
+        safeSubscriber.assertFailure(Predicate { it == error })
+
+        then(safeRepository).should().observePendingSafe(TEST_TX_HASH)
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 

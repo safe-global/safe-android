@@ -37,6 +37,7 @@ import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeSettingsViewModelTest {
+    /*
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -231,4 +232,5 @@ class SafeSettingsViewModelTest {
         viewModel.setup(Solidity.Address(BigInteger.ZERO))
         assertEquals(Solidity.Address(BigInteger.ZERO), viewModel.getSafeAddress())
     }
+    */
 }
