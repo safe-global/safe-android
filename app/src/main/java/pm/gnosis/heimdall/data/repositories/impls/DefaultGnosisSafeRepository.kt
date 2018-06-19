@@ -8,7 +8,6 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.GnosisSafePersonalEdition.*
-import pm.gnosis.heimdall.ProxyFactory
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
@@ -16,19 +15,15 @@ import pm.gnosis.heimdall.data.db.models.fromDb
 import pm.gnosis.heimdall.data.db.models.toDb
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
-import pm.gnosis.heimdall.data.repositories.SettingsRepository
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.TransactionStatus
 import pm.gnosis.model.Solidity
-import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexStringToByteArray
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,7 +33,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
     gnosisAuthenticatorDb: ApplicationDb,
     private val accountsRepository: AccountsRepository,
     private val ethereumRepository: EthereumRepository,
-    private val settingsRepository: SettingsRepository,
     private val pushServiceRepository: PushServiceRepository
 ) : GnosisSafeRepository {
 
@@ -79,26 +73,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
         Completable.fromCallable {
             safeDao.insertSafe(GnosisSafeDb(address, name))
         }.subscribeOn(Schedulers.io())!!
-
-    private fun loadSafeDeployTransactionWithSender(devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<Pair<Account, Transaction>> =
-        accountsRepository.loadActiveAccount()
-            .map { account ->
-                val factoryAddress = settingsRepository.getProxyFactoryAddress()
-                val masterCopyAddress = settingsRepository.getSafeMasterCopyAddress()
-                val owners = SolidityBase.Vector(devices.toList() + account.address)
-                val confirmations = Math.max(1, Math.min(requiredConfirmations, devices.size))
-                val setupData = Setup.encode(
-                    // Safe owner info
-                    owners, Solidity.UInt8(BigInteger.valueOf(confirmations.toLong())),
-                    // Module info -> not set for now
-                    Solidity.Address(BigInteger.ZERO), Solidity.Bytes(ByteArray(0))
-                )
-                val data = ProxyFactory.CreateProxy.encode(masterCopyAddress, Solidity.Bytes(setupData.hexStringToByteArray()))
-                account to Transaction(factoryAddress, data = data)
-            }
-
-    override fun loadSafeDeployTransaction(devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<Transaction> =
-        loadSafeDeployTransactionWithSender(devices, requiredConfirmations).map { it.second }
 
     override fun savePendingSafe(transactionHash: BigInteger, name: String?, safeAddress: Solidity.Address, payment: Wei): Completable =
         Completable.fromAction {
@@ -186,6 +160,4 @@ class DefaultGnosisSafeRepository @Inject constructor(
         val isOwner: EthRequest<String>,
         val modules: EthRequest<String>
     ) : BulkRequest(balance, threshold, owners, isOwner, modules)
-
-    private class SafeDeploymentFailedException : IllegalArgumentException()
 }

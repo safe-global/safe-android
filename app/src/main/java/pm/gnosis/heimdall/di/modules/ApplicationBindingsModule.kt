@@ -68,14 +68,6 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
-    abstract fun bindsSafeModulesRepository(repository: DefaultGnosisSafeModulesRepository): GnosisSafeModulesRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindsSettingsRepository(repository: DefaultSettingsRepository): SettingsRepository
-
-    @Binds
-    @Singleton
     abstract fun bindsTokenRepository(repository: DefaultTokenRepository): TokenRepository
 
     @Binds

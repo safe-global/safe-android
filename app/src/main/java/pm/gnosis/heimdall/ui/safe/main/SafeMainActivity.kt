@@ -34,7 +34,6 @@ import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
-import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
@@ -128,11 +127,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         layout_safe_main_account.setOnClickListener {
             startActivity(AccountActivity.createIntent(this))
-            closeDrawer()
-        }
-
-        layout_safe_main_network.setOnClickListener {
-            startActivity(NetworkSettingsActivity.createIntent(this))
             closeDrawer()
         }
 

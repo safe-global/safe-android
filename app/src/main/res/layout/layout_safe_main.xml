@@ -278,22 +278,13 @@
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_address_book" />
 
                 <TextView
-                    android:id="@+id/layout_safe_main_network"
-                    style="@style/NavigationText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_settings_network"
-                    android:text="@string/network"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_security" />
-
-                <TextView
                     android:id="@+id/layout_safe_main_debug_settings"
                     style="@style/NavigationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_settings_debug"
                     android:text="Debug Settings"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_network" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_security" />
 
                 <android.support.constraint.Group
                     android:id="@+id/layout_safe_main_navigation_safe_list"

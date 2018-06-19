@@ -159,7 +159,6 @@
     <string name="retry">Retry</string>
     <string name="address_book_entry_delete_error">Error deleting entry</string>
     <string name="success_update_settings">Successfully updated settings!</string>
-    <string name="settings_safe_factory_hint">Safe Factory Address (e.g. 0x13de59675d22fb7befd213324f3f829135c6e8f8)</string>
     <string name="safe_name_hint">Safe Name</string>
     <string name="deploy_new_safe">Deploy New Safe</string>
     <string name="estimated_transaction_fee">Estimated Transaction Fee</string>
@@ -174,7 +173,6 @@
     <string name="get_token_info">Get Token Info</string>
     <string name="save_token">Save token</string>
     <string name="manage_tokens">Manage Tokens</string>
-    <string name="network">Network</string>
     <string name="token_name">Token Name</string>
     <string name="token_symbol">Token Symbol</string>
     <string name="token_decimals">Token Decimals</string>
@@ -452,4 +450,5 @@
     <string name="remove_safe_notice_2">To add it again to this or any other device, you will need your recovery phrase.</string>
     <string name="missing_token_manage"><![CDATA[Missing a token? <font color=#28b2fa><u>Manage your token list</u></font>]]></string>
     <string name="manage_tokens_description">Select token(s) to use with ALL your Safes</string>
+    <string name="settings_safe_master_copy_hint">Master Copy Address</string>
 </resources>

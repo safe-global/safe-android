@@ -26,7 +26,6 @@ import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
-import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordActivity
 import pm.gnosis.heimdall.ui.splash.SplashActivity
@@ -65,7 +64,6 @@ interface ViewComponent {
     fun inject(activity: CreateAssetTransferActivity)
     fun inject(activity: FingerprintSetupActivity)
     fun inject(activity: ManageTokensActivity)
-    fun inject(activity: NetworkSettingsActivity)
     fun inject(activity: DebugSettingsActivity)
     fun inject(activity: PairingActivity)
     fun inject(activity: PasswordConfirmActivity)
