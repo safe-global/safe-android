@@ -231,5 +231,37 @@ class PasswordSetupViewModelTest {
         observer.assertResult(ErrorResult(exception))
     }
 
+    @Test
+    fun passwordToHash() {
+        val testObserver = TestObserver<Result<ByteArray>>()
+        val password = "test"
+
+        viewModel.passwordToHash(password).subscribe(testObserver)
+
+        testObserver.assertValue { it is DataResult && it.data.contentEquals(Sha3Utils.keccak(password.toByteArray())) }
+    }
+
+    @Test
+    fun isSamePassword() {
+        val testObserver = TestObserver<Result<Boolean>>()
+        val password = "test"
+        val passwordHash = Sha3Utils.keccak(password.toByteArray())
+
+        viewModel.isSamePassword(passwordHash, password).subscribe(testObserver)
+
+        testObserver.assertResult(DataResult(true))
+    }
+
+    @Test
+    fun isNotSamePassword() {
+        val testObserver = TestObserver<Result<Boolean>>()
+        val password = "test"
+        val passwordHash = Sha3Utils.keccak("test2".toByteArray())
+
+        viewModel.isSamePassword(passwordHash, password).subscribe(testObserver)
+
+        testObserver.assertResult(DataResult(false))
+    }
+
     private fun createObserver() = TestObserver.create<Result<Intent>>()
 }
