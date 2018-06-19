@@ -1,9 +1,12 @@
 package pm.gnosis.heimdall.reporting
 
+import android.app.Activity
 import io.reactivex.Single
 
 
 interface EventTracker {
+    fun setCurrentScreenId(activity: Activity, id: ScreenId)
+
     fun submit(event: Event)
 
     fun loadTrackingIdentifier(): Single<String>
