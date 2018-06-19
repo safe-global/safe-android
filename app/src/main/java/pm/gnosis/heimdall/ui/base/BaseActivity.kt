@@ -36,6 +36,7 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         HeimdallApplication[this].component.inject(this)
+        eventTracker.setCurrentScreenId(this, screenId())
         if (!BuildConfig.DEBUG) {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
