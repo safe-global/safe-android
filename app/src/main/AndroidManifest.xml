@@ -86,15 +86,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.settings.security.revealmnemonic.RevealMnemonicActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".ui.settings.security.changepassword.ChangePasswordActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.safe.details.info.SafeSettingsActivity"
             android:screenOrientation="portrait" />
 
         <activity

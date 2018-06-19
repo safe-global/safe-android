@@ -1,14 +1,20 @@
 package pm.gnosis.heimdall.ui.safe.main
 
+import android.content.Context
 import com.gojuno.koptional.None
 import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.processors.BehaviorProcessor
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
+import pm.gnosis.heimdall.data.repositories.models.PendingSafe
+import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity
@@ -22,6 +28,7 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 class SafeMainViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val preferenceManager: PreferencesManager,
     private val safeRepository: GnosisSafeRepository
 ) : SafeMainContract() {
@@ -69,7 +76,24 @@ class SafeMainViewModel @Inject constructor(
             loadSelectedSafe()
         }
 
+    override fun observeSafe(safe: AbstractSafe): Flowable<Pair<String, String>> =
+        when(safe) {
+            is Safe -> safeRepository.observeSafe(safe.address)
+                .map { it.displayName(context) to it.address.shortChecksumString() }
+            is PendingSafe -> safeRepository.observePendingSafe(safe.hash)
+                .map { it.displayName(context) to it.address.shortChecksumString() }
+        }
+
+    override fun updateSafeName(safe: AbstractSafe, name: String?): Completable =
+        when(safe) {
+            is Safe -> safeRepository.updateSafe(safe.copy(name = name))
+            is PendingSafe -> safeRepository.updatePendingSafe(safe.copy(name = name))
+        }
+
     override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)
+
+    private fun Solidity.Address.shortChecksumString() =
+        asEthereumAddressChecksumString().let { "${it.subSequence(0, 6)}...${it.subSequence(it.length - 6, it.length)}" }
 
     companion object {
         private const val KEY_SELECTED_SAFE = "safe_main.string.selected_safe"

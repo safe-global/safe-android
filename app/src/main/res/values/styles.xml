@@ -59,7 +59,6 @@
     <style name="WhiteThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@color/white</item>
         <item name="colorAccent">@color/azure</item>
-        <item name="android:textColor">@color/text_grey_background</item>
     </style>
 
     <style name="WhiteTheme" parent="WhiteThemeBase" />

@@ -37,7 +37,7 @@
 
     <color name="default_icon">#4a4a4a</color>
 
-    <color name="enabled_input">@color/accent</color>
+    <color name="enabled_input">@color/azure</color>
     <color name="disabled_input">@color/disabled_button</color>
 
     <color name="onboarding_description">#b221435a</color>
