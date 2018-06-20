@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.support.v4.widget.refreshes
 import com.jakewharton.rxbinding2.view.clicks
-import io.reactivex.BackpressureStrategy
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -42,7 +41,7 @@ class ManageTokensActivity : ViewModelActivity<ManageTokensContract>() {
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
 
         layout_manage_tokens_swipe_refresh.isRefreshing = true
-        disposables += layout_manage_tokens_swipe_refresh.refreshes().toFlowable(BackpressureStrategy.DROP)
+        disposables += layout_manage_tokens_swipe_refresh.refreshes()
             .startWith(Unit)
             .compose(viewModel.observeVerifiedTokens())
             .observeOn(AndroidSchedulers.mainThread())
