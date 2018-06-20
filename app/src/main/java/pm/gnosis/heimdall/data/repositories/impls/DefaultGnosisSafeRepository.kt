@@ -129,9 +129,9 @@ class DefaultGnosisSafeRepository @Inject constructor(
             safeDao.removeSafe(address)
         }.subscribeOn(Schedulers.io())!!
 
-    override fun updateName(address: Solidity.Address, newName: String) =
+    override fun updateSafe(safe: Safe) =
         Completable.fromCallable {
-            safeDao.updateSafe(GnosisSafeDb(address, newName))
+            safeDao.updateSafe(safe.toDb())
         }.subscribeOn(Schedulers.io())!!
 
     override fun loadInfo(address: Solidity.Address): Observable<SafeInfo> =

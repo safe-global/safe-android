@@ -6,18 +6,20 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import java.math.BigInteger
 
-sealed class AbstractSafe
+sealed class AbstractSafe {
+    abstract fun displayName(context: Context): String
+}
 
 data class Safe(val address: Solidity.Address, val name: String? = null) : AbstractSafe() {
 
-    fun displayName(context: Context) = safeName(context, name)
+    override fun displayName(context: Context) = safeName(context, name)
 
 }
 
 data class PendingSafe(val hash: BigInteger, val name: String?, val address: Solidity.Address, val payment: Wei, val isFunded: Boolean = false) :
     AbstractSafe() {
 
-    fun displayName(context: Context) = safeName(context, name)
+    override fun displayName(context: Context) = safeName(context, name)
 
 }
 

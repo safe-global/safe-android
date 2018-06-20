@@ -11,7 +11,11 @@
         android:title="@string/sync_with_extension"
         app:showAsAction="never" />
     <item
-        android:id="@+id/safe_details_menu_settings"
-        android:title="@string/settings"
+        android:id="@+id/safe_details_menu_rename"
+        android:title="@string/change_name"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/safe_details_menu_remove"
+        android:title="@string/remove_from_device"
         app:showAsAction="never" />
 </menu>

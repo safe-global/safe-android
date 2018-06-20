@@ -444,4 +444,10 @@
     <string name="setup_successful">Device was setup successfully!</string>
     <string name="no_safe_yet">You didn\'t create any Safes yet.</string>
     <string name="show_safe_on_etherscan">View Safe on Etherscan.io</string>
+    <string name="save">Save</string>
+    <string name="edit_safe_name">Edit Safe name</string>
+    <string name="update_name_success">Updated Safe name</string>
+    <string name="remove_safe_title">Are you sure you want to remove your Safe \'%s\'?</string>
+    <string name="remove_safe_notice_1">By removing this Safe, the Safe remains existing and your funds will not be lost. You simply remove it from this device.</string>
+    <string name="remove_safe_notice_2">To add it again to this or any other device, you will need your recovery phrase.</string>
 </resources>

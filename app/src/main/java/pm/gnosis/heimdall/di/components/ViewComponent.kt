@@ -19,7 +19,6 @@ import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.create.PairingActivity
 import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
-import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
@@ -78,7 +77,6 @@ interface ViewComponent {
     fun inject(activity: ReviewTransactionActivity)
     fun inject(activity: SafeMainActivity)
     fun inject(activity: SafeRecoveryPhraseActivity)
-    fun inject(activity: SafeSettingsActivity)
     fun inject(activity: SecuritySettingsActivity)
     fun inject(activity: SelectSafeActivity)
     fun inject(activity: SelectTokenActivity)

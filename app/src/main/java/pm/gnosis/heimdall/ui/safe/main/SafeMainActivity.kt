@@ -10,14 +10,13 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.View
-import android.widget.PopupWindow
 import com.jakewharton.rxbinding2.support.v7.widget.itemClicks
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.android.synthetic.main.dialog_content_edit_name.view.*
 import kotlinx.android.synthetic.main.layout_safe_main.*
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
@@ -32,13 +31,14 @@ import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
-import pm.gnosis.heimdall.ui.safe.details.info.SafeSettingsActivity
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
+import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddressString
@@ -94,8 +94,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
             inflate(R.menu.safe_details_menu)
-            menu.findItem(R.id.safe_details_menu_settings).title = SpannableStringBuilder().appendText(
-                getString(R.string.settings), ForegroundColorSpan(getColorCompat(R.color.tomato))
+            menu.findItem(R.id.safe_details_menu_remove).title = SpannableStringBuilder().appendText(
+                getString(R.string.remove_from_device), ForegroundColorSpan(getColorCompat(R.color.tomato))
             )
         }
     }
@@ -217,13 +217,14 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
     private fun showSafe(safe: AbstractSafe) {
+        val hasSafeChanged = selectedSafe != safe
+        selectedSafe = safe
         toggleHasSafes(true)
         closeDrawer()
-        if (selectedSafe == safe) {
+        if (!hasSafeChanged) {
             selectTab()
             return
         }
-        selectedSafe = safe
         supportFragmentManager.transaction {
             when (safe) {
                 is Safe -> {
@@ -257,40 +258,20 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 layout_safe_main_selected_safe_progress.visible(false)
                 layout_safe_main_selected_safe_icon.visible(true)
                 layout_safe_main_selected_safe_icon.setAddress(safe.address)
-                // TODO: find a good way to get this off the UI thread
-                layout_safe_main_selected_safe_info.text = safe.address.shortChecksumString()
-                val safeName = safe.displayName(this)
-                layout_safe_main_selected_safe_name.text = safeName
-                layout_safe_main_toolbar_title.text = safeName
                 layout_safe_main_toolbar_overflow.visible(true)
 
-                disposables += popupMenu.itemClicks()
-                    .subscribeBy(onNext = {
-                        when (it.itemId) {
-                            R.id.safe_details_menu_settings ->
-                                startActivity(SafeSettingsActivity.createIntent(this, safe.address.asEthereumAddressString()))
-                            R.id.safe_details_menu_sync -> {
-                                disposables += viewModel.syncWithChromeExtension(safe.address)
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribeBy(onComplete = { toast(R.string.sync_successful) },
-                                        onError = { toast(R.string.error_syncing) })
-                            }
-                            R.id.safe_details_menu_show_on_etherscan -> {
-                                openUrl(getString(R.string.etherscan_address_url, safe.address.asEthereumAddressString()))
-                            }
-
-                        }
-                    }, onError = Timber::e)
+                setupOverflowMenu(safe.address, safe.name, safe)
+                updateSafeInfo(safe.displayName(this) to safe.address.asEthereumAddressString())
+                observeSafeInfo(safe)
             }
             is PendingSafe -> {
-                // TODO: find a good way to get this off the UI thread
-                layout_safe_main_selected_safe_info.text = safe.address.shortChecksumString()
-                val safeName = safe.displayName(this)
-                layout_safe_main_selected_safe_name.text = safeName
                 layout_safe_main_selected_safe_icon.visible(false)
                 layout_safe_main_selected_safe_progress.visible(true)
-                layout_safe_main_toolbar_title.text = safeName
                 layout_safe_main_toolbar_overflow.visible(false)
+
+                setupOverflowMenu(safe.address, safe.name, safe)
+                updateSafeInfo(safe.displayName(this) to safe.address.asEthereumAddressString())
+                observeSafeInfo(safe)
             }
             else -> {
                 layout_safe_main_selected_safe_name.setText(R.string.no_safe_selected)
@@ -303,8 +284,80 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
     }
 
-    private fun Solidity.Address.shortChecksumString() =
-        asEthereumAddressChecksumString().let { "${it.subSequence(0, 6)}...${it.subSequence(it.length - 6, it.length)}" }
+    private fun observeSafeInfo(safe: AbstractSafe) {
+        disposables += viewModel.observeSafe(safe)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onNext = ::updateSafeInfo)
+    }
+
+    private fun updateSafeInfo(info: Pair<String, String>) {
+        val (name, address) = info
+        layout_safe_main_selected_safe_info.text = address
+        layout_safe_main_selected_safe_name.text = name
+        layout_safe_main_toolbar_title.text = name
+    }
+
+    private fun setupOverflowMenu(address: Solidity.Address, name: String?, originalSafe: AbstractSafe) {
+        val extendedMenu = originalSafe is Safe
+        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = extendedMenu
+        disposables += popupMenu.itemClicks()
+            .subscribeBy(onNext = {
+                when (it.itemId) {
+                    R.id.safe_details_menu_remove ->
+                        removeSafe(originalSafe)
+                    R.id.safe_details_menu_rename ->
+                        renameSafe(originalSafe, name)
+                    R.id.safe_details_menu_sync -> {
+                        disposables += viewModel.syncWithChromeExtension(address)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeBy(onComplete = { toast(R.string.sync_successful) },
+                                onError = { toast(R.string.error_syncing) })
+                    }
+                    R.id.safe_details_menu_show_on_etherscan -> {
+                        openUrl(getString(R.string.etherscan_address_url, address.asEthereumAddressString()))
+                    }
+                }
+            }, onError = Timber::e)
+    }
+
+    private fun renameSafe(safe: AbstractSafe, default: String?) {
+        val alertContent = layoutInflater.inflate(R.layout.dialog_content_edit_name, null)
+            .apply {
+                dialog_content_edit_name_input.apply {
+                    setText(default)
+                    setSelection(default?.length ?: 0)
+                }
+            }
+        CustomAlertDialogBuilder.build(
+            this, getString(R.string.edit_safe_name), alertContent, R.string.save, { _, _ ->
+                disposables += viewModel.updateSafeName(safe, alertContent.dialog_content_edit_name_input.text.toString())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        snackbar(layout_safe_main_toolbar_title, R.string.update_name_success)
+                    }, {
+                        errorSnackbar(layout_safe_main_toolbar_title, it)
+                    })
+            }
+        )
+            .show()
+    }
+
+    private fun removeSafe(safe: AbstractSafe) {
+        val alertContent = layoutInflater.inflate(R.layout.dialog_content_remove_safe, null)
+        CustomAlertDialogBuilder.build(
+            this, getString(R.string.remove_safe_title, safe.displayName(this)), alertContent, R.string.remove, { _, _ ->
+                disposables += viewModel.updateSafeName(safe, alertContent.dialog_content_edit_name_input.text.toString())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        snackbar(layout_safe_main_toolbar_title, R.string.update_name_success)
+                    }, {
+                        errorSnackbar(layout_safe_main_toolbar_title, it)
+                    })
+            },
+            confirmColor = R.color.tomato
+        )
+            .show()
+    }
 
     companion object {
         private const val EXTRA_SELECTED_SAFE = "extra.string.selected_safe"
