@@ -8,6 +8,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.svalinn.security.EncryptionManager
@@ -38,19 +39,23 @@ class FingerprintSetupViewModelTest {
         viewModel.observeFingerprintForSetup().subscribe(testObserver)
 
         fingerprintSubject.onNext(true)
-        testObserver.assertValueAt(0, true)
+        testObserver.assertValues(true)
         fingerprintSubject.onNext(false)
-        testObserver.assertValueAt(1, false)
+        testObserver.assertValues(true, false)
+
+        then(encryptionManagerMock).should().observeFingerprintForSetup()
+        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeFingerprintForSetupError() {
         val testObserver = TestObserver.create<Boolean>()
-        val exception = Exception()
-        given(encryptionManagerMock.observeFingerprintForSetup()).willReturn(Observable.error(exception))
+        given(encryptionManagerMock.observeFingerprintForSetup()).willReturn(Observable.error(Exception()))
 
         viewModel.observeFingerprintForSetup().subscribe(testObserver)
 
-        testObserver.assertError(exception)
+        testObserver.assertFailure(Exception::class.java)
+        then(encryptionManagerMock).should().observeFingerprintForSetup()
+        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
     }
 }
