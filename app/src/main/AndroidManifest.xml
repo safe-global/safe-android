@@ -166,6 +166,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 
+        <activity
+            android:name=".ui.tokens.manage.ManageTokensActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize" />
+
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

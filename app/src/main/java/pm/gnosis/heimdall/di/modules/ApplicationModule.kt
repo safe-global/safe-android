@@ -7,6 +7,7 @@ import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsClient
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.squareup.moshi.Moshi
+import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import io.reactivex.schedulers.Schedulers
@@ -23,6 +24,7 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.TxExecutorApi
+import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
 import pm.gnosis.heimdall.data.remote.impls.LocalRelayServiceApi
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39
@@ -149,6 +151,18 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
+    fun providesVerifiedTokensServiceApi(moshi: Moshi, client: OkHttpClient): VerifiedTokensServiceApi {
+        val retrofit = Retrofit.Builder()
+            .client(client)
+            .baseUrl(VerifiedTokensServiceApi.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
+        return retrofit.create(VerifiedTokensServiceApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     @Named(INFURA_REST_CLIENT)
     fun providesInfuraOkHttpClient(okHttpClient: OkHttpClient, @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>): OkHttpClient {
         return okHttpClient.newBuilder().apply {
@@ -234,4 +248,8 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesQrCodeGenerator(): QrCodeGenerator = ZxingQrCodeGenerator()
+
+    @Provides
+    @Singleton
+    fun providesPicasso(): Picasso = Picasso.get()
 }

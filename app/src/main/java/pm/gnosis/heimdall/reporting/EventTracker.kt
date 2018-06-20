@@ -22,7 +22,6 @@ sealed class Event {
 
 enum class ScreenId {
     ACCOUNT,
-    ADD_TOKEN,
     ADDRESS_BOOK,
     ADDRESS_BOOK_ENTRY,
     ADDRESS_BOOK_ENTRY_DETAILS,
@@ -33,6 +32,7 @@ enum class ScreenId {
     CREATE_SAFE_INTRO,
     DEBUG_SETTINGS,
     FINGERPRINT_SETUP,
+    MANAGE_TOKENS,
     NETWORK_SETTINGS,
     ONBOARDING_INTRO,
     PAIRING,
@@ -47,8 +47,6 @@ enum class ScreenId {
     SELECT_SAFE,
     SELECT_TOKEN,
     SPLASH,
-    TOKEN_INFO,
-    TOKEN_MANAGEMENT,
     TRANSACTION_STATUS,
     UNLOCK,
 

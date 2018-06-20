@@ -36,7 +36,7 @@ import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
-import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
+import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
@@ -137,7 +137,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
 
         layout_safe_main_tokens.setOnClickListener {
-            startActivity(TokenManagementActivity.createIntent(this))
+            startActivity(ManageTokensActivity.createIntent(this))
             closeDrawer()
         }
 

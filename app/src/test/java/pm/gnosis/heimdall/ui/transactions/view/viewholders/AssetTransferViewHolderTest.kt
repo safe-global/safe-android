@@ -201,7 +201,7 @@ class AssetTransferViewHolderTest {
 
     private fun testKnownToken(showExtraInfo: Boolean) {
         val tokenSingle = TestSingleFactory<ERC20Token>()
-        val erc20Token = ERC20Token(TEST_TOKEN, "Test Token", "TT", 2, false)
+        val erc20Token = ERC20Token(TEST_TOKEN, "Test Token", "TT", 2, "")
         setupViewMocks(Observable.just(listOf(erc20Token to BigInteger.valueOf(1000))))
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenSingle.get())
 
@@ -227,7 +227,7 @@ class AssetTransferViewHolderTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Check repository interaction
-        if(showExtraInfo) {
+        if (showExtraInfo) {
             then(safeBalanceView).should().text = "10 TT"
             then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(erc20Token))
         } else {
@@ -283,7 +283,7 @@ class AssetTransferViewHolderTest {
         // Check repository interaction
         if (showExtraInfo) {
             then(safeBalanceView).should().text = "0"
-            then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token(TEST_TOKEN, decimals = 0)))
+            then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token(TEST_TOKEN, "", "", decimals = 0)))
         } else {
             then(safeBalanceView).should().text = null
         }

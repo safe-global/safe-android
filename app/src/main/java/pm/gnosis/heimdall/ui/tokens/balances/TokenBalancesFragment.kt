@@ -1,12 +1,15 @@
 package pm.gnosis.heimdall.ui.tokens.balances
 
 import android.os.Bundle
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding2.support.v4.widget.refreshes
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -18,6 +21,7 @@ import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
@@ -46,9 +50,13 @@ class TokenBalancesFragment : BaseFragment() {
         viewModel.setup(safeAddress)
 
         val layoutManager = LinearLayoutManager(context)
-        layout_tokens_list.layoutManager = layoutManager
-        layout_tokens_list.adapter = adapter
-        layout_tokens_list.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
+        ViewCompat.setNestedScrollingEnabled(layout_token_balances_list, false)
+        layout_token_balances_list.layoutManager = layoutManager
+        layout_token_balances_list.adapter = adapter
+        layout_token_balances_list.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
+
+        // lazy way
+        layout_token_balances_missing.text = Html.fromHtml(getString(R.string.missing_token_manage))
     }
 
     override fun onStart() {
@@ -68,11 +76,15 @@ class TokenBalancesFragment : BaseFragment() {
             .subscribe({ (token, _) ->
                 startActivity(CreateAssetTransferActivity.createIntent(context!!, safeAddress, token))
             }, Timber::e)
+
+        disposables += layout_token_balances_missing.clicks()
+            .subscribeBy(onNext = {
+                startActivity(ManageTokensActivity.createIntent(context!!))
+            }, onError = Timber::e)
     }
 
     private fun onTokensList(tokens: Adapter.Data<ERC20TokenWithBalance>) {
         adapter.updateData(tokens)
-        layout_tokens_empty_view.visibility = if (tokens.entries.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun onTokensListError(throwable: Throwable) {

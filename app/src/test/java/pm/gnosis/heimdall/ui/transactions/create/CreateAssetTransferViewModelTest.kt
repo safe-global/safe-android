@@ -293,7 +293,7 @@ class CreateAssetTransferViewModelTest {
         private val TEST_ETHER_TOKEN = Solidity.Address(BigInteger.ZERO)
         private val TEST_ETH_AMOUNT = Wei.ether("23").value
         private val TEST_TOKEN_ADDRESS = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!
-        private val TEST_TOKEN = ERC20Token(TEST_TOKEN_ADDRESS, "Test Token", "TT", 10, false)
+        private val TEST_TOKEN = ERC20Token(TEST_TOKEN_ADDRESS, "Test Token", "TT", 10, "")
         private val TEST_TOKEN_AMOUNT = BigInteger("230000000000")
         private const val TEST_TRANSACTION_HASH = "SomeHash"
         private val TEST_TRANSACTION =

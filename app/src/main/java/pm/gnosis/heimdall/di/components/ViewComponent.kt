@@ -29,11 +29,9 @@ import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
 import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordActivity
-import pm.gnosis.heimdall.ui.settings.tokens.TokenManagementActivity
 import pm.gnosis.heimdall.ui.splash.SplashActivity
-import pm.gnosis.heimdall.ui.tokens.add.AddTokenActivity
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
-import pm.gnosis.heimdall.ui.tokens.info.TokenInfoActivity
+import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
 import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
@@ -61,12 +59,12 @@ interface ViewComponent {
     fun inject(activity: AddressBookActivity)
     fun inject(activity: AddressBookAddEntryActivity)
     fun inject(activity: AddressBookEntryDetailsActivity)
-    fun inject(activity: AddTokenActivity)
     fun inject(activity: ConfirmSafeRecoveryPhraseActivity)
     fun inject(activity: ChangePasswordActivity)
     fun inject(activity: ConfirmTransactionActivity)
     fun inject(activity: CreateAssetTransferActivity)
     fun inject(activity: FingerprintSetupActivity)
+    fun inject(activity: ManageTokensActivity)
     fun inject(activity: NetworkSettingsActivity)
     fun inject(activity: DebugSettingsActivity)
     fun inject(activity: PairingActivity)
@@ -81,8 +79,6 @@ interface ViewComponent {
     fun inject(activity: SelectSafeActivity)
     fun inject(activity: SelectTokenActivity)
     fun inject(activity: SplashActivity)
-    fun inject(activity: TokenManagementActivity)
-    fun inject(activity: TokenInfoActivity)
     fun inject(activity: TransactionStatusActivity)
     fun inject(activity: UnlockActivity)
 

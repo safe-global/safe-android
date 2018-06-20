@@ -81,7 +81,7 @@ class AssetTransferViewHolder(
             view?.layout_asset_transfer_info_safe_balance?.text = null
             return
         }
-        val erc20Token = token ?: ERC20Token(data.token, decimals = 0)
+        val erc20Token = token ?: ERC20Token(data.token, "", "", 0, "")
         // We build a erc20 token wrapper to request the balance
         disposables += tokenRepository.loadTokenBalances(safe, listOf(erc20Token))
             .observeOn(AndroidSchedulers.mainThread())

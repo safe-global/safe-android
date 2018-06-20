@@ -1,10 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.app.Application
-import android.content.res.Resources
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.ToJson
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.Predicate
@@ -25,12 +21,13 @@ import org.mockito.Mock
 import org.mockito.Mockito.reset
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.ethereum.*
-import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ERC20Contract
-import pm.gnosis.heimdall.data.adapters.SolidityAddressAdapter
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
+import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
+import pm.gnosis.heimdall.data.remote.models.tokens.VerifiedTokenJson
+import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -44,7 +41,6 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.net.UnknownHostException
@@ -62,16 +58,16 @@ class DefaultTokenRepositoryTest {
     private lateinit var application: Application
 
     @Mock
-    lateinit var dbMock: ApplicationDb
+    private lateinit var dbMock: ApplicationDb
 
     @Mock
-    lateinit var erc20DaoMock: ERC20TokenDao
+    private lateinit var erc20DaoMock: ERC20TokenDao
 
     @Mock
-    lateinit var ethereumRepositoryMock: EthereumRepository
+    private lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
-    lateinit var resourcesMock: Resources
+    private lateinit var verifiedTokensServiceApiMock: VerifiedTokensServiceApi
 
     private val preferences = TestPreferences()
 
@@ -83,85 +79,7 @@ class DefaultTokenRepositoryTest {
         repository = DefaultTokenRepository(
             dbMock,
             ethereumRepositoryMock,
-            preferencesManager,
-            Moshi.Builder().add(HexNumberAdapter()).add(SolidityAddressAdapter()).build(),
-            application
-        )
-    }
-
-    @Test
-    fun setupAddTokens() {
-        given(resourcesMock.openRawResource(R.raw.verified_tokens)).willReturn(
-            javaClass.getResourceAsStream(
-                "/verified_tokens.json"
-            )
-        )
-        given(application.resources).willReturn(resourcesMock)
-        val testObserver = TestObserver<Unit>()
-        // Should be initial start
-        preferences.clear().putBoolean(PREFS_TOKEN_SETUP, false)
-        repository.setup().subscribe(testObserver)
-        testObserver.assertResult()
-
-        then(erc20DaoMock).should().insertERC20Tokens(
-            listOf(
-                ERC20TokenDb(
-                    "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
-                    "World Energy",
-                    "WE",
-                    4,
-                    true
-                ),
-                ERC20TokenDb(
-                    "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
-                    "Love",
-                    "<3",
-                    6,
-                    true
-                )
-            )
-        )
-        then(erc20DaoMock).shouldHaveNoMoreInteractions()
-        assertEquals(
-            "Token setup should be marked as done",
-            true,
-            preferences.getBoolean(PREFS_TOKEN_SETUP, false)
-        )
-    }
-
-    @Test
-    fun setupTokensAlreadyAdded() {
-        val testObserver = TestObserver<Unit>()
-        // Should be initial start
-        preferences.clear().putBoolean(PREFS_TOKEN_SETUP, true)
-        repository.setup().subscribe(testObserver)
-        testObserver.assertResult()
-        then(erc20DaoMock).shouldHaveNoMoreInteractions()
-        assertEquals(
-            "Token setup should be marked as done",
-            true,
-            preferences.getBoolean(PREFS_TOKEN_SETUP, false)
-        )
-    }
-
-    @Test
-    fun setupErrorAddingTokens() {
-        given(resourcesMock.openRawResource(R.raw.verified_tokens)).willReturn(
-            javaClass.getResourceAsStream(
-                "/invalid_verified_tokens.json"
-            )
-        )
-        given(application.resources).willReturn(resourcesMock)
-        val testObserver = TestObserver<Unit>()
-        // Should be initial start
-        preferences.clear().putBoolean(PREFS_TOKEN_SETUP, false)
-        repository.setup().subscribe(testObserver)
-        //testObserver.assertError(KotlinNullPointerException::class.java)
-        then(erc20DaoMock).shouldHaveNoMoreInteractions()
-        assertEquals(
-            "Token setup should not be marked as done",
-            false,
-            preferences.getBoolean(PREFS_TOKEN_SETUP, false)
+            verifiedTokensServiceApiMock
         )
     }
 
@@ -171,7 +89,7 @@ class DefaultTokenRepositoryTest {
         given(erc20DaoMock.observeTokens()).willReturn(testProcessor)
 
         val testSubscriber = TestSubscriber<List<ERC20Token>>()
-        repository.observeTokens().subscribe(testSubscriber)
+        repository.observeEnabledTokens().subscribe(testSubscriber)
 
         testSubscriber.assertEmpty()
 
@@ -182,14 +100,14 @@ class DefaultTokenRepositoryTest {
                     "World Energy",
                     "WE",
                     4,
-                    true
+                    ""
                 ),
                 ERC20TokenDb(
                     "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                     "Love",
                     "<3",
                     6,
-                    true
+                    ""
                 )
             )
         )
@@ -200,14 +118,14 @@ class DefaultTokenRepositoryTest {
                 "World Energy",
                 "WE",
                 4,
-                true
+                ""
             ),
             ERC20Token(
                 "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                 "Love",
                 "<3",
                 6,
-                true
+                ""
             )
         )
         testSubscriber.assertValuesOnly(initialTokenList)
@@ -219,14 +137,14 @@ class DefaultTokenRepositoryTest {
                     "Love",
                     "<3",
                     6,
-                    true
+                    ""
                 ),
                 ERC20TokenDb(
                     "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                     "World Energy",
                     "WE",
                     4,
-                    true
+                    ""
                 )
             )
         )
@@ -239,14 +157,14 @@ class DefaultTokenRepositoryTest {
                     "Love",
                     "<3",
                     6,
-                    true
+                    ""
                 ),
                 ERC20Token(
                     "0x826921230178969e9142acdfb9bd2f57330ede18".asEthereumAddress()!!,
                     "World Energy",
                     "WE",
                     4,
-                    true
+                    ""
                 )
             )
         )
@@ -271,7 +189,7 @@ class DefaultTokenRepositoryTest {
                 "World Energy",
                 "WE",
                 4,
-                true
+                ""
             )
         )
 
@@ -281,7 +199,7 @@ class DefaultTokenRepositoryTest {
                 "World Energy",
                 "WE",
                 4,
-                true
+                ""
             )
 
         testSubscriber.assertValuesOnly(initialToken)
@@ -292,7 +210,7 @@ class DefaultTokenRepositoryTest {
                 "Love",
                 "<3",
                 6,
-                true
+                ""
             )
         )
 
@@ -303,7 +221,7 @@ class DefaultTokenRepositoryTest {
                 "Love",
                 "<3",
                 6,
-                true
+                ""
             )
         )
 
@@ -321,14 +239,14 @@ class DefaultTokenRepositoryTest {
                         "World Energy",
                         "WE",
                         4,
-                        true
+                        ""
                     ),
                     ERC20TokenDb(
                         "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                         "Love",
                         "<3",
                         6,
-                        true
+                        ""
                     )
                 )
             )
@@ -343,14 +261,14 @@ class DefaultTokenRepositoryTest {
                 "World Energy",
                 "WE",
                 4,
-                true
+                ""
             ),
             ERC20Token(
                 "0x9d3de1be7309764824211f9e4219e01a5f223d99".asEthereumAddress()!!,
                 "Love",
                 "<3",
                 6,
-                true
+                ""
             )
         )
         testObserver.assertResult(initialTokenList)
@@ -368,7 +286,7 @@ class DefaultTokenRepositoryTest {
                     "World Energy",
                     "WE",
                     4,
-                    true
+                    ""
                 )
             )
         )
@@ -381,7 +299,7 @@ class DefaultTokenRepositoryTest {
             "World Energy",
             "WE",
             4,
-            true
+            ""
         )
         testObserver.assertResult(initialToken)
 
@@ -570,34 +488,55 @@ class DefaultTokenRepositoryTest {
     }
 
     @Test
-    fun addToken() {
+    fun enableToken() {
         val testObserver = TestObserver<Unit>()
-        repository.addToken(TEST_TOKEN).subscribe(testObserver)
+        repository.enableToken(TEST_TOKEN).subscribe(testObserver)
         testObserver.assertResult()
         then(erc20DaoMock).should()
-            .insertERC20Token(ERC20TokenDb(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10, false))
+            .insertERC20Token(ERC20TokenDb(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10, ""))
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
-    fun removeToken() {
+    fun disableToken() {
         val testObserver = TestObserver<Unit>()
-        repository.removeToken(Solidity.Address(BigInteger.ONE)).subscribe(testObserver)
+        repository.disableToken(Solidity.Address(BigInteger.ONE)).subscribe(testObserver)
         testObserver.assertResult()
         then(erc20DaoMock).should().deleteToken(Solidity.Address(BigInteger.ONE))
         then(erc20DaoMock).shouldHaveNoMoreInteractions()
     }
 
-    class HexNumberAdapter {
-        @ToJson
-        fun toJson(hexNumber: BigInteger): String {
-            return StringBuilder("0x").append(hexNumber.toString(16)).toString()
-        }
+    @Test
+    fun loadVerifiedTokens() {
+        val testObserver = TestObserver<List<ERC20Token>>()
+        val verifiedToken = VerifiedTokenJson(
+            address = Solidity.Address(BigInteger.ZERO),
+            name = "Test Token",
+            symbol = "TST",
+            decimals = 18,
+            logoUrl = ""
+        )
+        val verifiedTokensList = listOf(verifiedToken)
+        given(verifiedTokensServiceApiMock.loadVerifiedTokenList()).willReturn(Single.just(verifiedTokensList))
 
-        @FromJson
-        fun fromJson(hexNumber: String): BigInteger {
-            return hexNumber.hexAsBigInteger()
-        }
+        repository.loadVerifiedTokens().subscribe(testObserver)
+
+        testObserver.assertResult(listOf(verifiedToken.fromNetwork()))
+        then(verifiedTokensServiceApiMock).should().loadVerifiedTokenList()
+        then(verifiedTokensServiceApiMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadVerifiedTokensError() {
+        val testObserver = TestObserver<List<ERC20Token>>()
+        val exception = Exception()
+        given(verifiedTokensServiceApiMock.loadVerifiedTokenList()).willReturn(Single.error(exception))
+
+        repository.loadVerifiedTokens().subscribe(testObserver)
+
+        testObserver.assertError(exception)
+        then(verifiedTokensServiceApiMock).should().loadVerifiedTokenList()
+        then(verifiedTokensServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     private fun assertEqualRequests(expected: List<EthRequest<*>>, actual: List<EthRequest<*>>) {
@@ -629,7 +568,6 @@ class DefaultTokenRepositoryTest {
     }
 
     companion object {
-        const val PREFS_TOKEN_SETUP = "prefs.boolean.finished_tokens_setup"
         val TEST_TOKEN = ERC20Token(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10)
     }
 }

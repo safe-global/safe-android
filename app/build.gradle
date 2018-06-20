@@ -214,6 +214,8 @@ dependencies {
         exclude group: "io.reactivex.rxjava2", module: "rxandroid"
     }
 
+    implementation "com.squareup.picasso:picasso:$versions.picasso"
+
     // More
     implementation "com.github.clans:fab:$versions.floating_action_button"
     implementation("me.zhanghai.android.materialprogressbar:library:$versions.material_progressbar") {
