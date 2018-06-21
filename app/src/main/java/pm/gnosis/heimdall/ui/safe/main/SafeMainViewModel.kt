@@ -77,7 +77,7 @@ class SafeMainViewModel @Inject constructor(
         }
 
     override fun observeSafe(safe: AbstractSafe): Flowable<Pair<String, String>> =
-        when(safe) {
+        when (safe) {
             is Safe -> safeRepository.observeSafe(safe.address)
                 .map { it.displayName(context) to it.address.shortChecksumString() }
             is PendingSafe -> safeRepository.observePendingSafe(safe.hash)
@@ -85,9 +85,15 @@ class SafeMainViewModel @Inject constructor(
         }
 
     override fun updateSafeName(safe: AbstractSafe, name: String?): Completable =
-        when(safe) {
+        when (safe) {
             is Safe -> safeRepository.updateSafe(safe.copy(name = name))
             is PendingSafe -> safeRepository.updatePendingSafe(safe.copy(name = name))
+        }
+
+    override fun removeSafe(safe: AbstractSafe): Completable =
+        when (safe) {
+            is Safe -> safeRepository.removeSafe(safe.address)
+            is PendingSafe -> safeRepository.removePendingSafe(safe.hash)
         }
 
     override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)

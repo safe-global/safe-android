@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Gnosis Safe</string>
     <string name="scan_instructions">
-        <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Note:</b> This device must be one of the owners of the safe the transaction is for, in order to sign the confirmation.
+        <b>1.</b> Generate a Confirm/Revoke transaction QRCode (following the ERC67 scheme)\n<b>2.</b> Scan the transaction and verify the fields before confirming/revoking it\n\n<b>Note:</b> This device must be one of the owners of the Safe the transaction is for, in order to sign the confirmation.
     </string>
-    <string name="select_safe_message">Please select a safe to use for this transaction</string>
+    <string name="select_safe_message">Please select a Safe to use for this transaction</string>
     <string name="error_try_again">An error occurred. Please try again!</string>
     <string name="pin_repeat_wrong">The two PINs are not the same!</string>
     <string name="error_wrong_credentials">The entered password is wrong.</string>
@@ -12,7 +12,7 @@
     <string name="fatal_error">An error occurred that prevents the app from working. Please restart the app and try again!</string>
     <string name="save_pin">Save PIN</string>
     <string name="unlock">Unlock</string>
-    <string name="generate_mnemonic_activity_dialog"><![CDATA[The mnemonic <font color="#00a6c4"><b>%1$s</b></font> is going to be used to generate your account. <br/><br/>Have you saved it in a safe place? ]]></string>
+    <string name="generate_mnemonic_activity_dialog"><![CDATA[The mnemonic <font color="#00a6c4"><b>%1$s</b></font> is going to be used to generate your account. <br/><br/>Have you saved it in a Safe place? ]]></string>
     <string name="dialog_title_save_mnemonic">Save mnemonic</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -34,7 +34,7 @@
     <string name="create_new_account">Create new Account</string>
     <string name="mnemonic_generate_reminder">Write the words below in a secure place. They\'ll be used to generate your account.</string>
     <string name="mnemonic_generate_save_action">I\'ve securely stored the words</string>
-    <string name="empty_safes">No safes</string>
+    <string name="empty_safes">No Safes</string>
     <string name="onboarding_restore_option">Restore account with mnemonic phrase</string>
     <string name="oboarding_create_option">Create new account</string>
     <string name="restore_account">Restore Account</string>
@@ -44,7 +44,7 @@
     <string name="empty_safe_transactions_message">No transactions yet</string>
     <string name="transaction_hash">Transaction Hash</string>
     <string name="safe_address">Safe Address</string>
-    <string name="add_safe">Add safe</string>
+    <string name="add_safe">Add Safe</string>
     <string name="add">Add</string>
     <string name="as_a_safe_owner">as a Safe owner</string>
     <string name="change_number_of_confirmations_to">Change number of confirmations to</string>
@@ -99,8 +99,8 @@
     <string name="transaction_error">Something went wrong. Transaction not completed.</string>
     <string name="transaction_number">Transaction %1s</string>
     <string name="change_number_of_confirmations">Change number of confirmations to</string>
-    <string name="add_safe_owner">Add safe owner</string>
-    <string name="remove_safe_owner">Remove safe owner</string>
+    <string name="add_safe_owner">Add Safe owner</string>
+    <string name="remove_safe_owner">Remove Safe owner</string>
     <string name="replace_current_owner">Replace current owner</string>
     <string name="with_new_owner">with new owner</string>
     <string name="transfer">Transfer</string>
@@ -125,14 +125,14 @@
     <string name="no_token_loaded">There is no token to be added</string>
     <string name="qrcode">QRCode</string>
     <string name="copy_to_clipboard">Copy to clipboard</string>
-    <string name="safe_remove_error">Could not remove safe from this device</string>
+    <string name="safe_remove_error">Could not remove Safe from this device</string>
     <string name="safe_remove_success">Removed %1s from this device</string>
-    <string name="safe_name_change_success">Changed safe name</string>
-    <string name="safe_name_change_error">Could not change safe name</string>
-    <string name="remove_safe_dialog_title">Remove safe?</string>
+    <string name="safe_name_change_success">Changed Safe name</string>
+    <string name="safe_name_change_error">Could not change Safe name</string>
+    <string name="remove_safe_dialog_title">Remove Safe?</string>
     <string name="remove_safe_dialog_description">Do you want to remove %1s from your device?</string>
-    <string name="change_name">Change name</string>
-    <string name="this_safe">this safe</string>
+    <string name="change_name">Edit Safe name</string>
+    <string name="this_safe">this Safe</string>
     <string name="loading">Loading …</string>
     <string name="sharing_x">Sharing %s</string>
     <string name="write_safe_address">Write Safe Address</string>
@@ -164,7 +164,7 @@
     <string name="estimated_transaction_fee">Estimated Transaction Fee</string>
     <string name="confirm_transaction_hint">This signing device will initiate and confirm this transaction. Only <u><b>{required_confirmations} other devices</b></u> need to additionally confirm the transaction, before it can be submitted.</string>
     <string name="submit_transaction_hint">This signing device will initiate and confirm this transaction. All required confirmations have been added and the transaction can be submitted for execution.</string>
-    <string name="add_existing_safe">Add existing safe</string>
+    <string name="add_existing_safe">Add existing Safe</string>
     <string name="tab_title_add_existing">add existing</string>
     <string name="tab_title_create_new">create new</string>
     <string name="error_blank_name">Name should not be blank!</string>
@@ -187,10 +187,10 @@
     <string name="data">Data</string>
     <string name="value_hint">Enter Value</string>
     <string name="value">Value</string>
-    <string name="from_safe">From safe</string>
+    <string name="from_safe">From Safe</string>
     <string name="token_transaction_description">Once approved by all required signing devices, this transaction will transfer tokens to the specified recipient address in the <b>To</b> field.</string>
-    <string name="add_owner_transaction_description">Once approved by all required signing devices, this transaction will add the address specified in the <b>Add</b> field as an owner to the safe.</string>
-    <string name="add_recovery_extension_transaction_description">Once approved by all required signing devices, this transaction will add a recovery option to the safe. With the recovery phrase any owner of the safe can be replaced</string>
+    <string name="add_owner_transaction_description">Once approved by all required signing devices, this transaction will add the address specified in the <b>Add</b> field as an owner to the Safe.</string>
+    <string name="add_recovery_extension_transaction_description">Once approved by all required signing devices, this transaction will add a recovery option to the Safe. With the recovery phrase any owner of the Safe can be replaced</string>
     <string name="generic_transaction_description">Once approved by all required signing devices, this transaction will be executed by sending the <b>Data</b> and <b>Value</b> to the address in the <b>To</b> field.</string>
     <string name="error_transaction_params">Please check your transaction parameters and try again!</string>
     <string name="x_of_x_confirmations">%s/%s</string>
@@ -203,15 +203,15 @@
     <string name="safe_name_label">Safe name</string>
     <string name="safe_information_loading">Safe information not yet loaded!</string>
     <string name="safe_owning_devices">Safe owning devices</string>
-    <string name="safe_confirmations_text"><b>%1$s</b> of <b>%2$s</b> safe owning device/s need to confirm transactions for this safe</string>
-    <string name="delete_this_safe">Delete this safe</string>
+    <string name="safe_confirmations_text"><b>%1$s</b> of <b>%2$s</b> Safe owning device/s need to confirm transactions for this Safe</string>
+    <string name="delete_this_safe">Delete this Safe</string>
     <string name="prepare_transaction">Preparing transaction</string>
     <string name="error_invalid_token_address">Please provide a valid token address!</string>
     <string name="passwords_do_not_match">The passwords don\'t match</string>
     <string name="password_too_short">Password should be at least 6 characters long</string>
     <string name="password_error_saving">Something went wrong. Could not save password.</string>
     <string name="finish_setup_title">You\'re Setup and Ready!</string>
-    <string name="finish_setup_description">Next you can create or add an existing safe. Or use this app as a transaction authenticator.</string>
+    <string name="finish_setup_description">Next you can create or add an existing Safe. Or use this app as a transaction authenticator.</string>
     <string name="finish_setup_safe">I Want To Setup a Safe</string>
     <string name="finish_setup_skip">Skip for now</string>
     <string name="generate_mnemonic_title">Set your personal recovery phrase</string>
@@ -223,7 +223,7 @@
     <string name="account_setup_create">Create New Account</string>
     <string name="account_setup_restore">Restore Account</string>
     <string name="onboarding_intro_title">Secure 2FA Wallet</string>
-    <string name="onboarding_intro_description">Store all your tokens in one or more safes, with or without multiple owners.</string>
+    <string name="onboarding_intro_description">Store all your tokens in one or more Safes, with or without multiple owners.</string>
     <string name="onboarding_intro_start">Get Started</string>
     <string name="password_setup_title">Create a Master Password</string>
     <string name="password_setup_description">To properly secure this device, please set a master password. This password is used to unlock the Gnosis Safe app and to sign and confirm for transactions on this device.</string>
@@ -257,14 +257,14 @@
     <string name="status_success">Success</string>
     <string name="please_confirm_credentials">Please confirm your credentials to submit the transaction.</string>
     <string name="just_a_moment_ago">Just a moment ago</string>
-    <string name="error_deploying_safe">There was an error deploying the safe. Therefore it was removed!</string>
+    <string name="error_deploying_safe">There was an error deploying the Safe. Therefore it was removed!</string>
     <string name="fiat_approximation">≈ %1s%2s</string>
     <string name="fiat_approximation_parentheses">(≈ %1s%2s)</string>
     <string name="sign_transaction">Sign Transaction</string>
     <string name="this_device">This device</string>
     <string name="scan_signature">Scan Signature</string>
     <string name="request_signature">Request Signature</string>
-    <string name="error_signature_not_owner">The signature was not created by a safe owning device!</string>
+    <string name="error_signature_not_owner">The signature was not created by a Safe owning device!</string>
     <string name="error_signature_already_exists">This signature has already been added!</string>
     <string name="error_signature_already_enough">No more signatures are required!</string>
     <string name="error_owner_already_added">This device has already been added as an owner!</string>
@@ -303,7 +303,7 @@
     <string name="view_contract_on">View contract on</string>
     <string name="etherscan_io">Etherscan.io</string>
     <string name="unknown_transaction_url">Unknown transaction url</string>
-    <string name="low_balance_warning">No sufficient balance in your account to deploy a new safe. Send %1s ETH to your account address.</string>
+    <string name="low_balance_warning">No sufficient balance in your account to deploy a new Safe. Send %1s ETH to your account address.</string>
     <string name="dismiss">Dismiss</string>
     <string name="view_account">View Account</string>
     <string name="push_signature_request">Push Signature Request</string>
@@ -317,11 +317,11 @@
     <string name="add_device">Add device</string>
     <string name="security_level">Security level</string>
     <string name="security_info_weak">Only this device needs to sign to confirm transactions. No recovery option if access to one device is lost.</string>
-    <string name="security_info_good">Only one device needs to sign to confirm transactions. The additional device can be used for recovering access to your safe.</string>
-    <string name="security_info_best">Two devices needed to sign to confirm transactions. An additional device is used for recovering access to your safe.</string>
-    <string name="enter_safe_name">Enter a name for your safe</string>
+    <string name="security_info_good">Only one device needs to sign to confirm transactions. The additional device can be used for recovering access to your Safe.</string>
+    <string name="security_info_best">Two devices needed to sign to confirm transactions. An additional device is used for recovering access to your Safe.</string>
+    <string name="enter_safe_name">Enter a name for your Safe</string>
     <string name="authenticating_owner_devices">Authenticating owner devices</string>
-    <string name="deploy_new_safe_security_info">Adding more authenticating devices will increase the security of your safe.</string>
+    <string name="deploy_new_safe_security_info">Adding more authenticating devices will increase the security of your Safe.</string>
     <string name="weak">weak</string>
     <string name="good">good</string>
     <string name="best">best</string>
@@ -336,10 +336,10 @@
     <string name="credits_balance">Balance: %s</string>
     <string name="voucher_already_redeemed">This voucher was already redeemed</string>
     <string name="continue_with_google">Continue with Google</string>
-    <string name="account_setup_warning">The recovery phrase allows access to the safes you create within the app in case you want to restore your access in another device. \n\n Beware! Anyone with access to it might get access to your funds! \n\n For a simple backup mechanism please continue with Google. If you already used this application with Google before, your account will be restored.</string>
+    <string name="account_setup_warning">The recovery phrase allows access to the Safes you create within the app in case you want to restore your access in another device. \n\n Beware! Anyone with access to it might get access to your funds! \n\n For a simple backup mechanism please continue with Google. If you already used this application with Google before, your account will be restored.</string>
     <string name="recovery_phrase">Recovery Phrase</string>
     <string name="advanced">Advanced</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="smartlock_not_enabled_title">SmartLock not enabled</string>
     <string name="smartlock_not_enabled_description"><![CDATA[Your Google account doesn\'t have SmartLock enabled or it is disabled for this app. Please enable it to continue with Google. <a href="https://support.google.com/accounts/answer/6197437">More information here</a>]]></string>
     <string name="get_started">Get Started</string>
@@ -431,7 +431,7 @@
     <string name="pending_safe_deposit_value">Send at least %1s ETH to your Safe\'s address:</string>
     <string name="fingerprint_many_tries">Too many tries. Switching to password</string>
     <string name="deposit_received">Deposit received.</string>
-    <string name="creating_your_new_safe">Creating your new safe...</string>
+    <string name="creating_your_new_safe">Creating your new Safe…</string>
     <string name="deploy_safe_description">This process should take a couple of minutes. Follow progress on</string>
     <string name="share_browser_extension">Share browser extension download link</string>
     <string name="devices_paired_successfuly">Devices paired successfully</string>
