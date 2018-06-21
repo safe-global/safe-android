@@ -90,6 +90,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_safes_list.adapter = adapter
 
         layout_safe_main_debug_settings.visible(BuildConfig.DEBUG)
+        layout_safe_main_account.visible(BuildConfig.DEBUG)
 
         popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
             inflate(R.menu.safe_details_menu)
