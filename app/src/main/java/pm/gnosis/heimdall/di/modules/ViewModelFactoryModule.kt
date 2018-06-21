@@ -32,12 +32,10 @@ import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeViewModel
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockViewModel
-import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsContract
-import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsViewModel
-import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsContract
-import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsViewModel
-import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordContract
-import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordViewModel
+import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
+import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsViewModel
+import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordContract
+import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordViewModel
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.splash.SplashViewModel
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
@@ -105,13 +103,13 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ManageTokensContract::class)
-    abstract fun bindsManageTokensContract(viewModel: ManageTokensViewModel): ViewModel
+    @ViewModelKey(GeneralSettingsContract::class)
+    abstract fun bindsGeneralSettingsContract(viewModel: GeneralSettingsViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(NetworkSettingsContract::class)
-    abstract fun bindsNetworkSettingsContract(viewModel: NetworkSettingsViewModel): ViewModel
+    @ViewModelKey(ManageTokensContract::class)
+    abstract fun bindsManageTokensContract(viewModel: ManageTokensViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -157,11 +155,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SafeTransactionsContract::class)
     abstract fun bindsSafeTransactionsContract(viewModel: SafeTransactionsViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(SecuritySettingsContract::class)
-    abstract fun bindsSecuritySettingsContract(viewModel: SecuritySettingsViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -3,23 +3,23 @@ package pm.gnosis.heimdall.ui.account
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.PopupMenu
 import com.jakewharton.rxbinding2.support.v4.widget.refreshes
 import com.jakewharton.rxbinding2.support.v7.widget.itemClicks
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_account.*
-import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.format
-import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.common.utils.doOnNextForResult
@@ -33,23 +33,36 @@ import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class AccountActivity : BaseActivity() {
+class AccountActivity : ViewModelActivity<AccountContract>() {
+
     @Inject
-    lateinit var viewModel: AccountContract
+    lateinit var toolbarHelper: ToolbarHelper
+
+    private lateinit var popupMenu: PopupMenu
+
+    override fun inject(component: ViewComponent) = component.inject(this)
+
+    override fun layout() = R.layout.layout_account
 
     override fun screenId() = ScreenId.ACCOUNT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        inject()
-        setContentView(R.layout.layout_account)
-        setupToolbar(layout_account_toolbar)
-        layout_account_toolbar.inflateMenu(R.menu.account_menu)
+        popupMenu = PopupMenu(this, layout_account_overflow).apply {
+            inflate(R.menu.account_menu)
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        disposables += layout_account_toolbar.itemClicks()
+        disposables += toolbarHelper.setupShadow(layout_account_toolbar_shadow, layout_account_content_scroll)
+        disposables += layout_account_back_button.clicks()
+            .subscribeBy { onBackPressed() }
+
+        disposables += layout_account_overflow.clicks()
+            .subscribeBy { popupMenu.show() }
+
+        disposables += popupMenu.itemClicks()
             .subscribeBy(onNext = {
                 when (it.itemId) {
                     R.id.account_menu_share -> if (layout_account_address.text.toString().isValidEthereumAddress()) {
@@ -110,14 +123,6 @@ class AccountActivity : BaseActivity() {
 
     private fun handleError(throwable: Throwable) {
         errorSnackbar(layout_account_coordinator_layout, throwable)
-    }
-
-    private fun inject() {
-        DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this].component)
-            .viewModule(ViewModule(this))
-            .build()
-            .inject(this)
     }
 
     companion object {

@@ -6,7 +6,7 @@
     <string name="select_safe_message">Please select a safe to use for this transaction</string>
     <string name="error_try_again">An error occurred. Please try again!</string>
     <string name="pin_repeat_wrong">The two PINs are not the same!</string>
-    <string name="error_wrong_credentials">The entered credentials are wrong.</string>
+    <string name="error_wrong_credentials">The entered password is wrong.</string>
     <string name="enter_pin">Enter PIN</string>
     <string name="repeat_pin">Repeat PIN</string>
     <string name="fatal_error">An error occurred that prevents the app from working. Please restart the app and try again!</string>
@@ -159,7 +159,6 @@
     <string name="retry">Retry</string>
     <string name="address_book_entry_delete_error">Error deleting entry</string>
     <string name="success_update_settings">Successfully updated settings!</string>
-    <string name="settings_safe_factory_hint">Safe Factory Address (e.g. 0x13de59675d22fb7befd213324f3f829135c6e8f8)</string>
     <string name="safe_name_hint">Safe Name</string>
     <string name="deploy_new_safe">Deploy New Safe</string>
     <string name="estimated_transaction_fee">Estimated Transaction Fee</string>
@@ -174,7 +173,6 @@
     <string name="get_token_info">Get Token Info</string>
     <string name="save_token">Save token</string>
     <string name="manage_tokens">Manage Tokens</string>
-    <string name="network">Network</string>
     <string name="token_name">Token Name</string>
     <string name="token_symbol">Token Symbol</string>
     <string name="token_decimals">Token Decimals</string>
@@ -248,6 +246,7 @@
     <string name="fingerprint_registered">Fingerprint registered</string>
     <string name="switch_to_password">Switch to Password</string>
     <string name="fingerprint_unlock_disabled">Fingerprint unlock disabled</string>
+    <string name="fingerprint_unlock_enabled">Fingerprint unlock enabled</string>
     <string name="transaction_execution_time_estimate_sec">~%s sec</string>
     <string name="transaction_execution_time_estimate_min">~%s min</string>
     <string name="slow">Slow</string>
@@ -380,7 +379,9 @@
     <string name="password_validation_minimum_characters">Use a minimum of 8 characters\n</string>
     <string name="password_validation_one_number_one_letter">Password with at least 1 number and 1 letter\n</string>
     <string name="terms">Terms</string>
-    <string name="terms_info"><![CDATA[By continuing you accept and agree with the <a href="https://gnosis.pm">Terms of Use</a> and <a href="https://gnosis.pm/assets/pdf/PrivacyPolicyGnosisLtd.pdf">Privacy Policy</a>]]></string>
+    <string name="terms_info"><![CDATA[By continuing you accept and agree with the <a href="https://gnosis.pm">Terms of Service</a> and <a href="https://gnosis.pm/assets/pdf/PrivacyPolicyGnosisLtd.pdf">Privacy Policy</a>]]></string>
+    <string name="tos_link">https://gnosis.pm</string>
+    <string name="privacy_link">https://gnosis.pm/assets/pdf/PrivacyPolicyGnosisLtd.pdf</string>
     <string name="no_thanks">No Thanks</string>
     <string name="agree">Agree</string>
     <string name="personal_edition">Personal Edition</string>
@@ -452,4 +453,15 @@
     <string name="remove_safe_notice_2">To add it again to this or any other device, you will need your recovery phrase.</string>
     <string name="missing_token_manage"><![CDATA[Missing a token? <font color=#28b2fa><u>Manage your token list</u></font>]]></string>
     <string name="manage_tokens_description">Select token(s) to use with ALL your Safes</string>
+    <string name="settings_safe_master_copy_hint">Master Copy Address</string>
+    <string name="general_settings">General settings</string>
+    <string name="disabled">Disabled</string>
+    <string name="enabled">Enabled</string>
+    <string name="fingerprint">Fingerprint</string>
+    <string name="device_password">Device password</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="open_in_browser">Open in Browser</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="fingerprint_hint">Place your finger on the sensor to submit transaction</string>
+    <string name="debug_settings">Debug Settings</string>
 </resources>

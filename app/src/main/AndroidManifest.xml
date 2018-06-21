@@ -14,7 +14,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/WhiteTheme">
         <activity
             android:name=".ui.splash.SplashActivity"
             android:launchMode="singleTask"
@@ -44,35 +44,23 @@
             android:theme="@style/MountainTheme" />
 
         <activity
-            android:name=".ui.tokens.add.AddTokenActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".ui.addressbook.list.AddressBookActivity"
+            android:theme="@style/GreyBackgroundTheme"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.addressbook.add.AddressBookAddEntryActivity"
+            android:theme="@style/GreyBackgroundTheme"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.addressbook.detail.AddressBookEntryDetailsActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.settings.network.NetworkSettingsActivity"
+            android:theme="@style/GreyBackgroundTheme"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.account.AccountActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.settings.tokens.TokenManagementActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.tokens.info.TokenInfoActivity"
+            android:theme="@style/GreyBackgroundTheme"
             android:screenOrientation="portrait" />
 
         <activity
@@ -82,11 +70,8 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.settings.security.SecuritySettingsActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.settings.security.changepassword.ChangePasswordActivity"
+            android:name=".ui.settings.general.GeneralSettingsActivity"
+            android:theme="@style/GreyBackgroundTheme"
             android:screenOrientation="portrait" />
 
         <activity

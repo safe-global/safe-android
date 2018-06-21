@@ -141,8 +141,8 @@
                         android:background="@drawable/circle_azure"
                         android:padding="4dp"
                         android:visibility="gone"
-                        tools:visibility="visible"
-                        app:mpb_indeterminateTint="@color/white" />
+                        app:mpb_indeterminateTint="@color/white"
+                        tools:visibility="visible" />
 
                     <pm.gnosis.blockies.BlockiesImageView
                         android:id="@+id/layout_safe_main_selected_safe_icon"
@@ -239,16 +239,25 @@
                     android:background="@color/divider"
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_add_safe" />
 
-                <TextView
-                    android:id="@+id/layout_safe_main_account"
-                    style="@style/NavigationText"
+                <!-- Container to hide this when not in Debug Mode (else it is controlled by ContraintGroup) -->
+                <FrameLayout
+                    android:id="@+id/layout_safe_main_account_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:drawableStart="@drawable/ic_settings_account"
-                    android:text="@string/my_account"
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_navigation_safe_creation_divider"
-                    app:layout_goneMarginTop="16dp" />
+                    android:layout_marginTop="8dp"
+                    app:layout_goneMarginTop="16dp">
+
+                    <TextView
+                        android:id="@+id/layout_safe_main_account"
+                        style="@style/NavigationText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_settings_account"
+                        android:text="@string/my_account"
+                        android:visibility="gone"
+                        tools:visibility="visible"/>
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/layout_safe_main_tokens"
@@ -257,7 +266,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_tokens"
                     android:text="@string/manage_tokens"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_account" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_account_container" />
 
                 <TextView
                     android:id="@+id/layout_safe_main_address_book"
@@ -269,31 +278,31 @@
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_tokens" />
 
                 <TextView
-                    android:id="@+id/layout_safe_main_security"
+                    android:id="@+id/layout_safe_main_general_settings"
                     style="@style/NavigationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_settings_security"
+                    android:drawableStart="@drawable/ic_general_settings"
                     android:text="@string/settings"
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_address_book" />
 
-                <TextView
-                    android:id="@+id/layout_safe_main_network"
-                    style="@style/NavigationText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_settings_network"
-                    android:text="@string/network"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_security" />
 
-                <TextView
-                    android:id="@+id/layout_safe_main_debug_settings"
-                    style="@style/NavigationText"
+                <!-- Container to hide this when not in Debug Mode (else it is controlled by ContraintGroup) -->
+                <FrameLayout
+                    android:id="@+id/layout_safe_main_debug_settings_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_settings_debug"
-                    android:text="Debug Settings"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_network" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_general_settings">
+
+                    <TextView
+                        android:id="@+id/layout_safe_main_debug_settings"
+                        style="@style/NavigationText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_settings_debug"
+                        android:text="@string/debug_settings"
+                        android:visibility="gone" />
+                </FrameLayout>
 
                 <android.support.constraint.Group
                     android:id="@+id/layout_safe_main_navigation_safe_list"
@@ -301,7 +310,7 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:constraint_referenced_ids="layout_safe_main_safes_list,layout_safe_main_safes_list_background"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
                 <android.support.constraint.Group
                     android:id="@+id/layout_safe_main_selected_safe_group"
@@ -316,14 +325,14 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:constraint_referenced_ids="layout_safe_main_add_safe"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
                 <android.support.constraint.Group
                     android:id="@+id/layout_safe_main_navigation_settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="layout_safe_main_tokens,layout_safe_main_security,layout_safe_main_address_book,layout_safe_main_network,layout_safe_main_account,layout_safe_main_debug_settings"
-                    tools:visibility="gone" />
+                    app:constraint_referenced_ids="layout_safe_main_tokens,layout_safe_main_general_settings,layout_safe_main_address_book,layout_safe_main_account_container,layout_safe_main_debug_settings_container"
+                    tools:visibility="visible" />
             </android.support.constraint.ConstraintLayout>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.NavigationView>

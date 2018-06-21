@@ -23,7 +23,6 @@ interface GnosisSafeRepository {
     fun loadInfo(address: Solidity.Address): Observable<SafeInfo>
     fun observePendingTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
     fun observeSubmittedTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
-    fun loadSafeDeployTransaction(devices: Set<Solidity.Address>, requiredConfirmations: Int): Single<Transaction>
     fun savePendingSafe(transactionHash: BigInteger, name: String?, safeAddress: Solidity.Address, payment: Wei): Completable
     fun loadPendingSafe(transactionHash: BigInteger): Single<PendingSafe>
     fun observePendingSafe(transactionHash: BigInteger): Flowable<PendingSafe>

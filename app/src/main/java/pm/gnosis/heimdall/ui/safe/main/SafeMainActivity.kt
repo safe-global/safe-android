@@ -34,8 +34,7 @@ import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
-import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
-import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
+import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
 import pm.gnosis.heimdall.utils.errorSnackbar
@@ -91,6 +90,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_safes_list.adapter = adapter
 
         layout_safe_main_debug_settings.visible(BuildConfig.DEBUG)
+        layout_safe_main_account.visible(BuildConfig.DEBUG)
 
         popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
             inflate(R.menu.safe_details_menu)
@@ -131,18 +131,13 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             closeDrawer()
         }
 
-        layout_safe_main_network.setOnClickListener {
-            startActivity(NetworkSettingsActivity.createIntent(this))
-            closeDrawer()
-        }
-
         layout_safe_main_tokens.setOnClickListener {
             startActivity(ManageTokensActivity.createIntent(this))
             closeDrawer()
         }
 
-        layout_safe_main_security.setOnClickListener {
-            startActivity(SecuritySettingsActivity.createIntent(this))
+        layout_safe_main_general_settings.setOnClickListener {
+            startActivity(GeneralSettingsActivity.createIntent(this))
             closeDrawer()
         }
 
@@ -329,7 +324,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 }
             }
         CustomAlertDialogBuilder.build(
-            this, getString(R.string.edit_safe_name), alertContent, R.string.save, { _, _ ->
+            this, getString(R.string.edit_safe_name), alertContent, R.string.save, { dialog ->
                 disposables += viewModel.updateSafeName(safe, alertContent.dialog_content_edit_name_input.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -337,6 +332,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     }, {
                         errorSnackbar(layout_safe_main_toolbar_title, it)
                     })
+                dialog.dismiss()
             }
         )
             .show()
@@ -345,7 +341,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     private fun removeSafe(safe: AbstractSafe) {
         val alertContent = layoutInflater.inflate(R.layout.dialog_content_remove_safe, null)
         CustomAlertDialogBuilder.build(
-            this, getString(R.string.remove_safe_title, safe.displayName(this)), alertContent, R.string.remove, { _, _ ->
+            this, getString(R.string.remove_safe_title, safe.displayName(this)), alertContent, R.string.remove, { dialog ->
                 disposables += viewModel.updateSafeName(safe, alertContent.dialog_content_edit_name_input.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
@@ -353,6 +349,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     }, {
                         errorSnackbar(layout_safe_main_toolbar_title, it)
                     })
+                dialog.dismiss()
             },
             confirmColor = R.color.tomato
         )

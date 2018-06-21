@@ -7,6 +7,8 @@ import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.helpers.PasswordHelper
+import pm.gnosis.heimdall.helpers.PasswordValidationCondition
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -24,13 +26,9 @@ class PasswordSetupViewModel @Inject constructor(
     private val pushServiceRepository: PushServiceRepository,
     private val bip39: Bip39
 ) : PasswordSetupContract() {
-    override fun validatePassword(password: String): Single<Result<List<Pair<PasswordValidationCondition, Boolean>>>> =
+    override fun validatePassword(password: String): Single<Result<Collection<PasswordValidationCondition>>> =
         Single.fromCallable {
-            listOf(
-                PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to (!password.hasConsecutiveChars(CONSECUTIVE_CHARS) && password.isNotEmpty()),
-                PasswordValidationCondition.MINIMUM_CHARACTERS to (password.length >= MIN_CHARS),
-                PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to (password.matches(CONTAINS_DIGIT_REGEX) && password.matches(CONTAINS_LETTER_REGEX))
-            )
+            PasswordHelper.Validator.validate(password)
         }
             .mapToResult()
             .subscribeOn(Schedulers.computation())
@@ -65,20 +63,4 @@ class PasswordSetupViewModel @Inject constructor(
     private fun createAccount() =
         Single.fromCallable { bip39.mnemonicToSeed(bip39.generateMnemonic(languageId = R.id.english)) }
             .flatMapCompletable { accountsRepository.saveAccountFromMnemonicSeed(it) }
-
-    private fun String.hasConsecutiveChars(consecutiveChars: Int): Boolean {
-        var currentStart = 0
-        this.forEachIndexed { index, c ->
-            if (c != this[currentStart]) currentStart = index
-            if ((index - currentStart + 1) >= consecutiveChars) return true
-        }
-        return false
-    }
-
-    companion object {
-        private const val MIN_CHARS = 8
-        private const val CONSECUTIVE_CHARS = 3
-        private val CONTAINS_DIGIT_REGEX = ".*\\d+.*".toRegex()
-        private val CONTAINS_LETTER_REGEX = ".*[[:alpha:]].*".toRegex()
-    }
 }

@@ -8,8 +8,6 @@ import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
-import pm.gnosis.heimdall.ui.dialogs.fingerprint.FingerprintDialog
-import pm.gnosis.heimdall.ui.dialogs.share.ShareSafeAddressDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordConfirmActivity
@@ -26,9 +24,9 @@ import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
-import pm.gnosis.heimdall.ui.settings.network.NetworkSettingsActivity
-import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsActivity
-import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordActivity
+import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
+import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordDialog
+import pm.gnosis.heimdall.ui.settings.general.fingerprint.FingerprintDialog
 import pm.gnosis.heimdall.ui.splash.SplashActivity
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
@@ -60,12 +58,10 @@ interface ViewComponent {
     fun inject(activity: AddressBookAddEntryActivity)
     fun inject(activity: AddressBookEntryDetailsActivity)
     fun inject(activity: ConfirmSafeRecoveryPhraseActivity)
-    fun inject(activity: ChangePasswordActivity)
     fun inject(activity: ConfirmTransactionActivity)
     fun inject(activity: CreateAssetTransferActivity)
     fun inject(activity: FingerprintSetupActivity)
     fun inject(activity: ManageTokensActivity)
-    fun inject(activity: NetworkSettingsActivity)
     fun inject(activity: DebugSettingsActivity)
     fun inject(activity: PairingActivity)
     fun inject(activity: PasswordConfirmActivity)
@@ -75,7 +71,7 @@ interface ViewComponent {
     fun inject(activity: ReviewTransactionActivity)
     fun inject(activity: SafeMainActivity)
     fun inject(activity: SafeRecoveryPhraseActivity)
-    fun inject(activity: SecuritySettingsActivity)
+    fun inject(activity: GeneralSettingsActivity)
     fun inject(activity: SelectSafeActivity)
     fun inject(activity: SelectTokenActivity)
     fun inject(activity: SplashActivity)
@@ -84,8 +80,8 @@ interface ViewComponent {
 
     // Dialogs
 
+    fun inject(dialog: ChangePasswordDialog)
     fun inject(dialog: FingerprintDialog)
-    fun inject(dialog: ShareSafeAddressDialog)
     fun inject(dialog: SimpleAddressShareDialog)
     fun inject(dialog: UnlockDialog)
 }

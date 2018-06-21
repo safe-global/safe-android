@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_general_settings_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/layout_general_settings_toolbar_background"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/layout_general_settings_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/layout_general_settings_title" />
+
+        <ImageView
+            android:id="@+id/layout_general_settings_back_button"
+            android:layout_width="@dimen/toolbar_height"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/selectable_circle_background"
+            android:padding="16dp"
+            android:tint="@color/dark_slate_blue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+        <TextView
+            android:id="@+id/layout_general_settings_title"
+            style="@style/Text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/toolbar_height"
+            android:paddingEnd="16dp"
+            android:text="@string/general_settings"
+            android:textColor="@color/dark_slate_blue"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/layout_general_settings_back_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/layout_general_settings_content_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_title">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!-- Fingerprint Button -->
+                <View
+                    android:id="@+id/layout_general_settings_fingerprint_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selectable_background"
+                    android:clickable="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_fingerprint_info"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_fingerprint_title" />
+
+                <ImageView
+                    android:id="@+id/layout_general_settings_fingerprint_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:padding="4dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_fingerprint_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_fingerprint_title"
+                    app:srcCompat="@drawable/ic_settings_fingerprint" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_fingerprint_title"
+                    style="@style/DarkText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/fingerprint"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toStartOf="@+id/layout_general_settings_fingerprint_switch"
+                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_fingerprint_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_fingerprint_info"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/disabled"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@+id/layout_general_settings_fingerprint_switch"
+                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_fingerprint_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_fingerprint_title" />
+
+                <Switch
+                    android:id="@+id/layout_general_settings_fingerprint_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:clickable="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_fingerprint_info"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_fingerprint_title" />
+                
+                <android.support.constraint.Group
+                    android:id="@+id/layout_general_settings_fingerprint_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="layout_general_settings_fingerprint_background,layout_general_settings_fingerprint_icon,layout_general_settings_fingerprint_title,layout_general_settings_fingerprint_info,layout_general_settings_fingerprint_switch"/>
+                
+                <!-- Device Password Button -->
+                <View
+                    android:id="@+id/layout_general_settings_password_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selectable_background"
+                    android:clickable="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_password_info"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_password_title" />
+
+                <ImageView
+                    android:id="@+id/layout_general_settings_password_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_password_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_password_title"
+                    app:srcCompat="@drawable/ic_settings_device_password" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_password_title"
+                    style="@style/DarkText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/device_password"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_password_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_fingerprint_info" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_password_info"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/change_password"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_password_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_password_title" />
+                
+                <!-- ToS Button -->
+                <View
+                    android:id="@+id/layout_general_settings_tos_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selectable_background"
+                    android:clickable="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_tos_info"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_tos_title" />
+
+                <ImageView
+                    android:id="@+id/layout_general_settings_tos_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_tos_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_tos_title"
+                    app:srcCompat="@drawable/ic_settings_tos" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_tos_title"
+                    style="@style/DarkText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/terms_of_service"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_tos_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_password_info" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_tos_info"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/open_in_browser"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_tos_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_tos_title" />
+                
+                <!-- Privacy Button -->
+                <View
+                    android:id="@+id/layout_general_settings_privacy_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selectable_background"
+                    android:clickable="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_privacy_info"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_privacy_title" />
+
+                <ImageView
+                    android:id="@+id/layout_general_settings_privacy_icon"
+                    android:layout_width="24dp"
+                    android:padding="4dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_privacy_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_privacy_title"
+                    app:srcCompat="@drawable/ic_settings_privacy" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_privacy_title"
+                    style="@style/DarkText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/privacy_policy"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_privacy_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_tos_info" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_privacy_info"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/open_in_browser"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_privacy_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_privacy_title" />
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <View
+            android:id="@+id/layout_general_settings_toolbar_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_shadow_size"
+            android:background="@drawable/toolbar_dropshadow"
+            app:layout_constraintTop_toBottomOf="@id/layout_general_settings_title" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.design.widget.CoordinatorLayout>

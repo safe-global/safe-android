@@ -17,7 +17,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.layout_unlock_dialog.*
+import kotlinx.android.synthetic.main.dialog_unlock.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
@@ -34,7 +34,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class UnlockDialog private constructor() : BaseDialog() {
+class UnlockDialog() : BaseDialog() {
 
     @Inject
     lateinit var encryptionManager: EncryptionManager
@@ -57,7 +57,7 @@ class UnlockDialog private constructor() : BaseDialog() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.layout_unlock_dialog, container, false)
+        inflater.inflate(R.layout.dialog_unlock, container, false)
 
     override fun onResume() {
         super.onResume()
@@ -67,7 +67,7 @@ class UnlockDialog private constructor() : BaseDialog() {
     override fun onStart() {
         super.onStart()
 
-        disposables += layout_unlock_dialog_alpha_background.clicks()
+        disposables += dialog_unlock_alpha_background.clicks()
             .subscribeBy(onNext = {
                 dismiss()
             })
@@ -77,21 +77,21 @@ class UnlockDialog private constructor() : BaseDialog() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onState, onError = ::onStateCheckError)
 
-        disposables += layout_unlock_dialog_switch_to_password.clicks()
+        disposables += dialog_unlock_switch_to_password.clicks()
             .subscribeBy(onNext = {
                 togglePasswordInput(true)
                 fingerPrintDisposable?.dispose()
             }, onError = Timber::e)
 
-        layout_unlock_dialog_password_input.disableAccessibility()
+        dialog_unlock_password_input.disableAccessibility()
 
-        disposables += layout_unlock_dialog_password_input.editorActions()
+        disposables += dialog_unlock_password_input.editorActions()
             .filter { it == EditorInfo.IME_ACTION_DONE || it == EditorInfo.IME_NULL }
-            .flatMap { viewModel.unlock(layout_unlock_dialog_password_input.text.toString()) }
+            .flatMap { viewModel.unlock(dialog_unlock_password_input.text.toString()) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onState, onError = ::onStateCheckError)
 
-        layout_unlock_dialog_password_input.keyPreImeListener = { keyCode, event ->
+        dialog_unlock_password_input.keyPreImeListener = { keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_BACK) {
                 togglePasswordInput(false)
                 enableFingerprint()
@@ -120,29 +120,29 @@ class UnlockDialog private constructor() : BaseDialog() {
     }
 
     private fun togglePasswordInput(visible: Boolean) {
-        layout_unlock_dialog_fingerprint.visible(!visible)
-        layout_unlock_dialog_password_input.visible(visible)
-        layout_unlock_dialog_progress.visible(false)
-        if (visible) layout_unlock_dialog_password_input.showKeyboardForView()
+        dialog_unlock_fingerprint.visible(!visible)
+        dialog_unlock_password_input.visible(visible)
+        dialog_unlock_progress.visible(false)
+        if (visible) dialog_unlock_password_input.showKeyboardForView()
         else (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(
-            layout_unlock_dialog_password_input.windowToken,
+            dialog_unlock_password_input.windowToken,
             0
         )
     }
 
     private fun onFingerprintResult(result: FingerprintUnlockResult) {
-        layout_unlock_dialog_error.visibility = View.INVISIBLE
+        dialog_unlock_error.visibility = View.INVISIBLE
         when (result) {
             is FingerprintUnlockSuccessful -> onState(UnlockContract.State.UNLOCKED)
             is FingerprintUnlockFailed -> {
                 context?.vibrate(200)
-                layout_unlock_dialog_error.visibility = View.VISIBLE
-                layout_unlock_dialog_error.text = getString(R.string.fingerprint_not_recognized)
+                dialog_unlock_error.visibility = View.VISIBLE
+                dialog_unlock_error.text = getString(R.string.fingerprint_not_recognized)
             }
             is FingerprintUnlockHelp -> {
                 result.message?.let {
-                    layout_unlock_dialog_error.visibility = View.VISIBLE
-                    layout_unlock_dialog_error.text = it
+                    dialog_unlock_error.visibility = View.VISIBLE
+                    dialog_unlock_error.text = it
                 }
             }
         }

@@ -5,34 +5,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@color/azure"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:background="@color/azure">
 
     <View
-        android:id="@+id/layout_unlock_dialog_alpha_background"
+        android:id="@+id/dialog_unlock_alpha_background"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:background="@color/black_alpha_70"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/layout_unlock_dialog_content_background"
-        android:layout_height="0dp" />
+        app:layout_constraintBottom_toTopOf="@id/dialog_unlock_content_background"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
-        app:layout_constraintTop_toTopOf="@+id/layout_unlock_dialog_content_barrier"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/layout_unlock_dialog_content_background"
-        android:background="@color/white"
+        android:id="@+id/dialog_unlock_content_background"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dialog_unlock_content_barrier" />
 
     <android.support.constraint.Barrier
-        android:id="@+id/layout_unlock_dialog_content_barrier"
+        android:id="@+id/dialog_unlock_content_barrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="top"
-        app:constraint_referenced_ids="layout_unlock_dialog_password_input,layout_unlock_dialog_progress,layout_unlock_dialog_fingerprint_icon"/>
+        app:constraint_referenced_ids="dialog_unlock_password_input,dialog_unlock_progress,dialog_unlock_fingerprint_icon" />
 
     <pm.gnosis.heimdall.views.ExtendedEditText
-        android:id="@+id/layout_unlock_dialog_password_input"
+        android:id="@+id/dialog_unlock_password_input"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@null"
@@ -44,56 +44,55 @@
         android:textSize="18sp"
         android:textStyle="normal"
         android:visibility="gone"
-        tools:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="gone" />
 
     <android.support.constraint.Group
-        android:id="@+id/layout_unlock_dialog_fingerprint"
+        android:id="@+id/dialog_unlock_fingerprint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        tools:visibility="visible"
-        app:constraint_referenced_ids="layout_unlock_dialog_fingerprint_icon,layout_unlock_dialog_error,layout_unlock_dialog_switch_to_password" />
+        app:constraint_referenced_ids="dialog_unlock_fingerprint_icon,dialog_unlock_error,dialog_unlock_switch_to_password"
+        tools:visibility="visible" />
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-        android:id="@+id/layout_unlock_dialog_progress"
+        android:id="@+id/dialog_unlock_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
     <ImageView
-        android:id="@+id/layout_unlock_dialog_fingerprint_icon"
+        android:id="@+id/dialog_unlock_fingerprint_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
         android:paddingBottom="8dp"
+        android:paddingTop="16dp"
         android:src="@drawable/ic_fingerprint_pending"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_unlock_error"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/layout_unlock_dialog_error"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/layout_unlock_dialog_error"
+        android:id="@+id/dialog_unlock_error"
         style="@style/DarkText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:paddingBottom="24dp"
         android:gravity="center"
+        android:paddingBottom="24dp"
+        android:text="@string/fingerprint_hint"
         android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_unlock_switch_to_password"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/layout_unlock_dialog_switch_to_password"
-        tools:text="Place your finger on the sensor  to submit transaction"
-        tools:visibility="visible" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/layout_unlock_dialog_switch_to_password"
+        android:id="@+id/dialog_unlock_switch_to_password"
         style="@style/TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

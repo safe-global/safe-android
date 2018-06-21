@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.settings.security
+package pm.gnosis.heimdall.ui.settings.general
 
 import io.reactivex.Single
 import pm.gnosis.svalinn.common.utils.Result
@@ -6,9 +6,9 @@ import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.security.EncryptionManager
 import javax.inject.Inject
 
-class SecuritySettingsViewModel @Inject constructor(
+class GeneralSettingsViewModel @Inject constructor(
     private val encryptionManager: EncryptionManager
-) : SecuritySettingsContract() {
+) : GeneralSettingsContract() {
     override fun isFingerprintAvailable() = encryptionManager.canSetupFingerprint()
 
     override fun clearFingerprintData(): Single<Result<Unit>> =

@@ -6,8 +6,6 @@ import dagger.multibindings.IntKey
 import dagger.multibindings.IntoMap
 import okhttp3.Interceptor
 import pm.gnosis.heimdall.BuildConfig
-import pm.gnosis.heimdall.data.repositories.SettingsRepository
-import pm.gnosis.heimdall.data.repositories.changeUrl
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -31,33 +29,12 @@ class InterceptorsModule {
     @IntoMap
     @IntKey(0)
     @Named(INTERCEPTORS_WITH_PRIORITY)
-    fun providesApiKeyInterceptor(settingsRepository: SettingsRepository): Interceptor {
+    fun providesApiKeyInterceptor(): Interceptor {
         return Interceptor {
-            var request = it.request()
-            if (settingsRepository.needsAuth()) {
-                val builder = request.url().newBuilder()
-                val url = builder.addQueryParameter("token", BuildConfig.INFURA_API_KEY).build()
-                request = request.newBuilder().url(url).build()
-            }
-            it.proceed(request)
-        }
-    }
-
-    @Provides
-    @Singleton
-    @IntoMap
-    @IntKey(1)
-    @Named(INTERCEPTORS_WITH_PRIORITY)
-    fun providesEndpointInterceptor(settingsRepository: SettingsRepository): Interceptor {
-        return Interceptor {
-            var request = it.request()
-            val url = request.url()
-            request = when {
-                url.toString().startsWith(BuildConfig.BLOCKCHAIN_NET_URL) ->
-                    request.changeUrl(settingsRepository.getEthereumRPCUrl())
-                else -> request
-            }
-            it.proceed(request)
+            val request = it.request()
+            val builder = request.url().newBuilder()
+            val url = builder.addQueryParameter("token", BuildConfig.INFURA_API_KEY).build()
+            it.proceed(request.newBuilder().url(url).build())
         }
     }
 }
