@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.settings.security.changepassword
+package pm.gnosis.heimdall.ui.settings.general.changepassword
 
 import android.content.Context
 import io.reactivex.Single

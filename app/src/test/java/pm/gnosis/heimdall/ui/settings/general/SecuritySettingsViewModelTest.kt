@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.settings.security
+package pm.gnosis.heimdall.ui.settings.general
 
 import io.reactivex.Completable
 import io.reactivex.observers.TestObserver
@@ -27,11 +27,11 @@ class SecuritySettingsViewModelTest {
     @Mock
     private lateinit var encryptionManagerMock: EncryptionManager
 
-    private lateinit var viewModel: SecuritySettingsViewModel
+    private lateinit var viewModel: GeneralSettingsViewModel
 
     @Before
     fun setUp() {
-        viewModel = SecuritySettingsViewModel(encryptionManagerMock)
+        viewModel = GeneralSettingsViewModel(encryptionManagerMock)
     }
 
     @Test

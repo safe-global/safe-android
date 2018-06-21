@@ -25,8 +25,8 @@ import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
-import pm.gnosis.heimdall.ui.settings.security.SecuritySettingsContract
-import pm.gnosis.heimdall.ui.settings.security.changepassword.ChangePasswordContract
+import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
+import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensContract
@@ -125,7 +125,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesSecuritySettingsContract(provider: ViewModelProvider) = provider[SecuritySettingsContract::class.java]
+    fun providesSecuritySettingsContract(provider: ViewModelProvider) = provider[GeneralSettingsContract::class.java]
 
     @Provides
     @ForView

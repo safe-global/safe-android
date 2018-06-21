@@ -1,34 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp">
+    tools:background="@color/azure">
+
+    <View
+        android:id="@+id/dialog_fingerprint_scan_alpha_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/black_alpha_70"
+        app:layout_constraintBottom_toTopOf="@id/dialog_fingerprint_scan_content_background"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/dialog_fingerprint_scan_content_background"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dialog_fingerprint_scan_content_barrier" />
+
+    <android.support.constraint.Barrier
+        android:id="@+id/dialog_fingerprint_scan_content_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="dialog_fingerprint_scan_fingerprint_icon" />
+
+    <android.support.constraint.Group
+        android:id="@+id/dialog_fingerprint_scan_fingerprint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="dialog_fingerprint_scan_fingerprint_icon,dialog_fingerprint_scan_error" />
 
     <ImageView
+        android:id="@+id/dialog_fingerprint_scan_fingerprint_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_authenticate_light"
-        android:tint="@color/gnosis_dark_blue" />
+        android:paddingBottom="8dp"
+        android:paddingTop="16dp"
+        android:src="@drawable/ic_fingerprint_pending"
+        app:layout_constraintBottom_toTopOf="@+id/dialog_fingerprint_scan_error"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/dialog_fingerprint_scan"
-        android:layout_width="wrap_content"
+        android:id="@+id/dialog_fingerprint_scan_error"
+        style="@style/DarkText"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="@string/fingerprint_not_recognized"
-        android:textColor="@android:color/holo_red_light"
+        android:paddingBottom="24dp"
+        android:text="@string/fingerprint_hint"
         android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="@string/touch_fingerprint"
-        android:textColor="@color/gnosis_dark_blue" />
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

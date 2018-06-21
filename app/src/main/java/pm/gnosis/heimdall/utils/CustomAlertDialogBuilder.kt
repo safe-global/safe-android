@@ -19,15 +19,15 @@ object CustomAlertDialogBuilder {
         title: CharSequence,
         contentView: View,
         @StringRes confirmRes: Int,
-        confirmCallback: (DialogInterface, Int) -> Unit,
+        confirmCallback: (DialogInterface) -> Unit,
         @StringRes cancelRes: Int = android.R.string.cancel,
-        cancelCallback: (DialogInterface, Int) -> Unit = { dialog, _ -> dialog.dismiss() },
+        cancelCallback: (DialogInterface) -> Unit = { dialog -> dialog.dismiss() },
         @ColorRes confirmColor: Int = R.color.azure,
         @ColorRes cancelColor: Int = R.color.azure
     ): AlertDialog =
         AlertDialog.Builder(context).apply {
-            setPositiveButton(confirmRes, confirmCallback)
-            setNegativeButton(cancelRes, cancelCallback)
+            setPositiveButton(confirmRes, null)
+            setNegativeButton(cancelRes, null)
             setView(contentView)
             setCustomTitle(LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_title, null).apply {
                 layout_alert_dialog_title_text.text = title
@@ -35,9 +35,19 @@ object CustomAlertDialogBuilder {
         }
             .create()
             .apply {
-                setOnShowListener {
-                    getButton(Dialog.BUTTON_POSITIVE).setTextColor(context.getColorCompat(confirmColor))
-                    getButton(Dialog.BUTTON_NEGATIVE).setTextColor(context.getColorCompat(cancelColor))
+                setOnShowListener { dialog ->
+                    getButton(Dialog.BUTTON_POSITIVE).apply {
+                        setTextColor(context.getColorCompat(confirmColor))
+                        setOnClickListener {
+                            confirmCallback(dialog)
+                        }
+                    }
+                    getButton(Dialog.BUTTON_NEGATIVE).apply {
+                        setTextColor(context.getColorCompat(cancelColor))
+                        setOnClickListener {
+                            cancelCallback(dialog)
+                        }
+                    }
                 }
             }
 }

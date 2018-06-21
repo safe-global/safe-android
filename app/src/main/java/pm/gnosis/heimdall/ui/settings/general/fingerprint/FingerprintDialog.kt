@@ -1,9 +1,11 @@
-package pm.gnosis.heimdall.ui.dialogs.fingerprint
+package pm.gnosis.heimdall.ui.settings.general.fingerprint
 
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -24,7 +26,10 @@ class FingerprintDialog : BaseDialog() {
     @Inject
     lateinit var encryptionManager: EncryptionManager
 
+    var successListener: ((Boolean) -> Unit)? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        setStyle(DialogFragment.STYLE_NO_FRAME, 0)
         super.onCreate(savedInstanceState)
         inject()
     }
@@ -32,20 +37,28 @@ class FingerprintDialog : BaseDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(R.layout.dialog_fingerprint_scan, container, false)
 
+    override fun onResume() {
+        super.onResume()
+        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+    }
+
     override fun onStart() {
         super.onStart()
+        disposables += dialog_fingerprint_scan_alpha_background.clicks()
+            .subscribeBy {
+                dismiss()
+                successListener?.invoke(false)
+            }
         disposables += encryptionManager.observeFingerprintForSetup()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onNext = ::onFingerprintResult, onError = ::onFingerprintUnrecoverableError)
     }
 
     private fun onFingerprintResult(isSuccessful: Boolean) {
-        dialog_fingerprint_scan.visibility = View.INVISIBLE
         if (isSuccessful) {
-            context!!.toast(R.string.fingerprint_registered)
             dismiss()
+            successListener?.invoke(true)
         } else {
-            dialog_fingerprint_scan.visibility = View.VISIBLE
             context!!.vibrate(200)
         }
     }
@@ -55,6 +68,7 @@ class FingerprintDialog : BaseDialog() {
         val message = (throwable as? AuthenticationError)?.errString ?: getString(R.string.unknown_error)
         context!!.toast(message)
         dismiss()
+        successListener?.invoke(false)
     }
 
     private fun inject() {

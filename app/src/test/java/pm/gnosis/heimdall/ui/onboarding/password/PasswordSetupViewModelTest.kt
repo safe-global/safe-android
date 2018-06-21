@@ -16,6 +16,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
+import pm.gnosis.heimdall.helpers.PasswordValidationCondition
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
@@ -58,16 +59,16 @@ class PasswordSetupViewModelTest {
 
     @Test
     fun emptyPassword() {
-        val testObserver = TestObserver.create<Result<List<Pair<PasswordValidationCondition, Boolean>>>>()
+        val testObserver = TestObserver.create<Result<Collection<PasswordValidationCondition>>>()
 
         viewModel.validatePassword("").subscribe(testObserver)
 
         testObserver.assertResult(
             DataResult(
                 listOf(
-                    PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to false,
-                    PasswordValidationCondition.MINIMUM_CHARACTERS to false,
-                    PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to false
+                    PasswordValidationCondition.NonIdenticalCharacters(false),
+                    PasswordValidationCondition.MinimumCharacters(false),
+                    PasswordValidationCondition.OneNumberOneLetter(false)
                 )
             )
         )
@@ -75,16 +76,16 @@ class PasswordSetupViewModelTest {
 
     @Test
     fun identicalCharacters() {
-        val testObserver = TestObserver.create<Result<List<Pair<PasswordValidationCondition, Boolean>>>>()
+        val testObserver = TestObserver.create<Result<Collection<PasswordValidationCondition>>>()
 
         viewModel.validatePassword("aaabbb111").subscribe(testObserver)
 
         testObserver.assertResult(
             DataResult(
                 listOf(
-                    PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to false,
-                    PasswordValidationCondition.MINIMUM_CHARACTERS to true,
-                    PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to true
+                    PasswordValidationCondition.NonIdenticalCharacters(false),
+                    PasswordValidationCondition.MinimumCharacters(true),
+                    PasswordValidationCondition.OneNumberOneLetter(true)
                 )
             )
         )
@@ -92,16 +93,16 @@ class PasswordSetupViewModelTest {
 
     @Test
     fun minimumCharacters() {
-        val testObserver = TestObserver.create<Result<List<Pair<PasswordValidationCondition, Boolean>>>>()
+        val testObserver = TestObserver.create<Result<Collection<PasswordValidationCondition>>>()
 
         viewModel.validatePassword("acbb1").subscribe(testObserver)
 
         testObserver.assertResult(
             DataResult(
                 listOf(
-                    PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to true,
-                    PasswordValidationCondition.MINIMUM_CHARACTERS to false,
-                    PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to true
+                    PasswordValidationCondition.NonIdenticalCharacters(true),
+                    PasswordValidationCondition.MinimumCharacters(false),
+                    PasswordValidationCondition.OneNumberOneLetter(true)
                 )
             )
         )
@@ -109,16 +110,16 @@ class PasswordSetupViewModelTest {
 
     @Test
     fun oneNumberOneLetter() {
-        val testObserver = TestObserver.create<Result<List<Pair<PasswordValidationCondition, Boolean>>>>()
+        val testObserver = TestObserver.create<Result<Collection<PasswordValidationCondition>>>()
 
         viewModel.validatePassword("a1").subscribe(testObserver)
 
         testObserver.assertResult(
             DataResult(
                 listOf(
-                    PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to true,
-                    PasswordValidationCondition.MINIMUM_CHARACTERS to false,
-                    PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to true
+                    PasswordValidationCondition.NonIdenticalCharacters(true),
+                    PasswordValidationCondition.MinimumCharacters(false),
+                    PasswordValidationCondition.OneNumberOneLetter(true)
                 )
             )
         )
@@ -126,16 +127,16 @@ class PasswordSetupViewModelTest {
 
     @Test
     fun validPassword() {
-        val testObserver = TestObserver.create<Result<List<Pair<PasswordValidationCondition, Boolean>>>>()
+        val testObserver = TestObserver.create<Result<Collection<PasswordValidationCondition>>>()
 
         viewModel.validatePassword("asdqwe123").subscribe(testObserver)
 
         testObserver.assertResult(
             DataResult(
                 listOf(
-                    PasswordValidationCondition.NON_IDENTICAL_CHARACTERS to true,
-                    PasswordValidationCondition.MINIMUM_CHARACTERS to true,
-                    PasswordValidationCondition.ONE_NUMBER_ONE_LETTER to true
+                    PasswordValidationCondition.NonIdenticalCharacters(true),
+                    PasswordValidationCondition.MinimumCharacters(true),
+                    PasswordValidationCondition.OneNumberOneLetter(true)
                 )
             )
         )

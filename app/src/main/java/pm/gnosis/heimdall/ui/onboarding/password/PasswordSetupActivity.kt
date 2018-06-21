@@ -15,6 +15,8 @@ import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_password_setup.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.PasswordHelper
+import pm.gnosis.heimdall.helpers.PasswordValidationCondition
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
@@ -65,42 +67,15 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
             .switchMapSingle { viewModel.validatePassword(it.toString()) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onPasswordValidation, onError = Timber::e)
-    }
-
-    private fun onPasswordValidation(validationConditions: List<Pair<PasswordValidationCondition, Boolean>>) {
-        layout_password_setup_password.setCompoundDrawables(
-            right =
-            if (layout_password_setup_password.text.isEmpty()) null
-            else ContextCompat.getDrawable(this, if (validationConditions.all { it.second }) R.drawable.ic_green_check else R.drawable.ic_error)
-        )
-        layout_password_setup_validation_info.text = ""
-        validationConditions.forEach {
-            layout_password_setup_validation_info.append(
-                getSpannableString(
-                    when (it.first) {
-                        PasswordValidationCondition.NON_IDENTICAL_CHARACTERS -> getString(R.string.password_validation_identical_characters)
-                        PasswordValidationCondition.MINIMUM_CHARACTERS -> getString(R.string.password_validation_minimum_characters)
-                        PasswordValidationCondition.ONE_NUMBER_ONE_LETTER -> getString(R.string.password_validation_one_number_one_letter)
-                    },
-                    it.second
-                )
-            )
-        }
 
         disposables += toolbarHelper.setupShadow(layout_password_setup_toolbar_shadow, layout_password_setup_content_scroll)
-
-        enableNext(validationConditions.all { it.second })
     }
 
-    private fun getSpannableString(message: String, condition: Boolean): SpannableString {
-        val color = when {
-            layout_password_setup_password.text.isEmpty() -> getColorCompat(R.color.battleship_grey)
-            condition -> getColorCompat(R.color.green_teal)
-            else -> getColorCompat(R.color.tomato)
-        }
-        return SpannableString(message).apply {
-            setSpan(ForegroundColorSpan(color), 0, this.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
+    private fun onPasswordValidation(validationConditions: Collection<PasswordValidationCondition>) {
+        val (_, validPassword) =
+                PasswordHelper.Handler.applyToView(layout_password_setup_password, layout_password_setup_validation_info, validationConditions)
+
+        enableNext(validPassword)
     }
 
     private fun enableNext(enable: Boolean) {

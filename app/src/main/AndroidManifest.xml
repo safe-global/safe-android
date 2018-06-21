@@ -60,10 +60,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.settings.network.NetworkSettingsActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".ui.account.AccountActivity"
             android:screenOrientation="portrait" />
 
@@ -82,11 +78,8 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.settings.security.SecuritySettingsActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".ui.settings.security.changepassword.ChangePasswordActivity"
+            android:name=".ui.settings.general.GeneralSettingsActivity"
+            android:theme="@style/GreyBackgroundTheme"
             android:screenOrientation="portrait" />
 
         <activity

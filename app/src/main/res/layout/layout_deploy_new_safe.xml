@@ -81,7 +81,7 @@
             android:layout_marginBottom="12dp"
             android:layout_marginTop="16dp"
             android:drawablePadding="8dp"
-            android:drawableStart="@drawable/ic_settings_security"
+            android:drawableStart="@drawable/ic_settings_tos"
             android:gravity="center"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"

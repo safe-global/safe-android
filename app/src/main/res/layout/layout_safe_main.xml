@@ -269,11 +269,11 @@
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_tokens" />
 
                 <TextView
-                    android:id="@+id/layout_safe_main_security"
+                    android:id="@+id/layout_safe_main_general_settings"
                     style="@style/NavigationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_settings_security"
+                    android:drawableStart="@drawable/ic_general_settings"
                     android:text="@string/settings"
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_address_book" />
 
@@ -284,7 +284,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_settings_debug"
                     android:text="Debug Settings"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_security" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_general_settings" />
 
                 <android.support.constraint.Group
                     android:id="@+id/layout_safe_main_navigation_safe_list"
@@ -292,7 +292,7 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:constraint_referenced_ids="layout_safe_main_safes_list,layout_safe_main_safes_list_background"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
                 <android.support.constraint.Group
                     android:id="@+id/layout_safe_main_selected_safe_group"
@@ -307,14 +307,14 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:constraint_referenced_ids="layout_safe_main_add_safe"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
                 <android.support.constraint.Group
                     android:id="@+id/layout_safe_main_navigation_settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="layout_safe_main_tokens,layout_safe_main_security,layout_safe_main_address_book,layout_safe_main_network,layout_safe_main_account,layout_safe_main_debug_settings"
-                    tools:visibility="gone" />
+                    app:constraint_referenced_ids="layout_safe_main_tokens,layout_safe_main_general_settings,layout_safe_main_address_book,layout_safe_main_account,layout_safe_main_debug_settings"
+                    tools:visibility="visible" />
             </android.support.constraint.ConstraintLayout>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.NavigationView>
