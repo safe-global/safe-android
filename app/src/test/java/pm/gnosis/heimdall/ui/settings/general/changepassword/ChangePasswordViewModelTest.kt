@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.settings.general.changepassword
 
-import android.content.Context
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.Before
@@ -8,16 +7,15 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.helpers.PasswordValidationCondition
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.security.EncryptionManager
-import pm.gnosis.tests.utils.*
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
 
 @RunWith(MockitoJUnitRunner::class)
 class ChangePasswordViewModelTest {
@@ -26,80 +24,109 @@ class ChangePasswordViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    private lateinit var contextMock: Context
-
-    @Mock
     private lateinit var encryptionManagerMock: EncryptionManager
 
     private lateinit var viewModel: ChangePasswordViewModel
 
     @Before
     fun setUp() {
-        contextMock.mockGetString()
-        contextMock.mockGetStringWithArgs()
-        viewModel = ChangePasswordViewModel(contextMock, encryptionManagerMock)
+        viewModel = ChangePasswordViewModel(encryptionManagerMock)
     }
 
     @Test
-    fun setupPasswordTooShort() {
-        val observer = createObserver()
-
-        viewModel.setPassword("111111", "", "").subscribe(observer)
-
-        then(encryptionManagerMock).shouldHaveZeroInteractions()
-        then(contextMock).should().getString(R.string.password_too_short, emptyArray<Any>())
-        observer.assertResult(ErrorResult(SimpleLocalizedException(contextMock.getTestString(R.string.password_too_short))))
+    fun validatePasswordValid() {
+        val observer = TestObserver<Result<Collection<PasswordValidationCondition>>>()
+        viewModel.validatePassword("qwe123qwe").subscribe(observer)
+        observer.assertResult(DataResult(listOf(
+            PasswordValidationCondition.NonIdenticalCharacters(true),
+            PasswordValidationCondition.MinimumCharacters(true),
+            PasswordValidationCondition.OneNumberOneLetter(true)
+        )))
     }
 
     @Test
-    fun setupPasswordNotSame() {
-        val observer = createObserver()
-
-        viewModel.setPassword("111111", "123456", "").subscribe(observer)
-
-        then(encryptionManagerMock).shouldHaveZeroInteractions()
-        then(contextMock).should().getString(R.string.passwords_do_not_match, emptyArray<Any>())
-        observer.assertResult(ErrorResult(SimpleLocalizedException(contextMock.getTestString(R.string.passwords_do_not_match))))
+    fun validatePasswordInvalid() {
+        val observer = TestObserver<Result<Collection<PasswordValidationCondition>>>()
+        viewModel.validatePassword("").subscribe(observer)
+        observer.assertResult(DataResult(listOf(
+            PasswordValidationCondition.NonIdenticalCharacters(false),
+            PasswordValidationCondition.MinimumCharacters(false),
+            PasswordValidationCondition.OneNumberOneLetter(false)
+        )))
     }
 
     @Test
-    fun setupPasswordException() {
-        val observer = createObserver()
-        val exception = Exception()
-        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
-
-        viewModel.setPassword("111111", "123456", "123456").subscribe(observer)
-
-        then(encryptionManagerMock).should().setupPassword("123456".toByteArray(), "111111".toByteArray())
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        then(contextMock).should().getString(R.string.password_error_saving)
-        observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
+    fun validateRepeatValid() {
+        val observer = TestObserver<Result<Boolean>>()
+        viewModel.validateRepeat("qwe123qwe", "qwe123qwe").subscribe(observer)
+        observer.assertResult(DataResult(true))
     }
 
     @Test
-    fun setupPasswordNoSuccess() {
-        val observer = createObserver()
+    fun validateRepeatInvalid() {
+        val observer = TestObserver<Result<Boolean>>()
+        viewModel.validateRepeat("", "12e").subscribe(observer)
+        observer.assertResult(DataResult(false))
+    }
+
+    @Test
+    fun setPasswordWrongPassword() {
+        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(false))
+        val observer = TestObserver<Result<ChangePasswordContract.State>>()
+        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe").subscribe(observer)
+        observer.assertResult(DataResult(ChangePasswordContract.State.INVALID_PASSWORD))
+    }
+
+    @Test
+    fun setPasswordPasswordTooWeak() {
+        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
+        val observer = TestObserver<Result<ChangePasswordContract.State>>()
+        viewModel.setPassword("wqe", "", "").subscribe(observer)
+        observer.assertResult(DataResult(ChangePasswordContract.State.ENTER_NEW_PASSWORD))
+    }
+
+    @Test
+    fun setPasswordNoSamePassword() {
+        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
+        val observer = TestObserver<Result<ChangePasswordContract.State>>()
+        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe2").subscribe(observer)
+        observer.assertResult(DataResult(ChangePasswordContract.State.ENTER_NEW_PASSWORD))
+    }
+
+    @Test
+    fun setPasswordCouldNotSet() {
+        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(false))
-
-        viewModel.setPassword("111111", "123456", "123456").subscribe(observer)
-
-        then(encryptionManagerMock).should().setupPassword("123456".toByteArray(), "111111".toByteArray())
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        then(contextMock).should().getString(R.string.password_error_saving)
-        observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
+        val observer = TestObserver<Result<ChangePasswordContract.State>>()
+        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe").subscribe(observer)
+        observer.assertResult(DataResult(ChangePasswordContract.State.INVALID_PASSWORD))
     }
 
     @Test
-    fun setupPasswordSuccess() {
-        val observer = createObserver()
+    fun setPassword() {
+        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
-
-        viewModel.setPassword("111111", "123456", "123456").subscribe(observer)
-
-        then(encryptionManagerMock).should().setupPassword("123456".toByteArray(), "111111".toByteArray())
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        observer.assertResult(DataResult(Unit))
+        val observer = TestObserver<Result<ChangePasswordContract.State>>()
+        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe").subscribe(observer)
+        observer.assertResult(DataResult(ChangePasswordContract.State.PASSWORD_CHANGED))
     }
 
-    private fun createObserver() = TestObserver.create<Result<Unit>>()
+    @Test
+    fun setPasswordErrorUnlock() {
+        val error = IllegalArgumentException()
+        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.error(error))
+        val observer = TestObserver<Result<ChangePasswordContract.State>>()
+        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe").subscribe(observer)
+        observer.assertResult(ErrorResult(error))
+    }
+
+    @Test
+    fun setPasswordErrorSet() {
+        val error = IllegalArgumentException()
+        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
+        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.error(error))
+        val observer = TestObserver<Result<ChangePasswordContract.State>>()
+        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe").subscribe(observer)
+        observer.assertResult(ErrorResult(error))
+    }
 }

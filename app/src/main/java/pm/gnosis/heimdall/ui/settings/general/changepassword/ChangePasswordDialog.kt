@@ -76,6 +76,7 @@ class ChangePasswordDialog : BaseDialog() {
             .subscribeForResult(::applyState) {
                 Timber.e(it)
                 snackbar(dialogView.dialog_change_password_current, R.string.unknown_error)
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
             }
 
         disposables += dialogView.dialog_change_password_new.textChanges()

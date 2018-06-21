@@ -57,7 +57,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
         disposables += layout_password_setup_next.clicks()
             // We validate again the password on each click
             .switchMapSingle { viewModel.validatePassword(layout_password_setup_password.text.toString()) }
-            .filter { it is DataResult && it.data.all { it.second } }
+            .filter { it is DataResult && it.data.all { it.valid } }
             .flatMapSingle { viewModel.passwordToHash(layout_password_setup_password.text.toString()) }
             .subscribeForResult(onNext = { startActivity(PasswordConfirmActivity.createIntent(this, it)) }, onError = Timber::e)
 

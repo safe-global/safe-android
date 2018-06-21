@@ -18,7 +18,7 @@ object PasswordHelper {
         private const val MIN_CHARS = 8
         private const val CONSECUTIVE_CHARS = 3
         private val CONTAINS_DIGIT_REGEX = ".*\\d+.*".toRegex()
-        private val CONTAINS_LETTER_REGEX = ".*[[:alpha:]].*".toRegex()
+        private val CONTAINS_LETTER_REGEX = ".*\\p{L}.*".toRegex()
 
         fun validate(password: String): Collection<PasswordValidationCondition> =
             listOf(
