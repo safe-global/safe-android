@@ -30,7 +30,7 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
     private val removeFingerprintClick = PublishSubject.create<Unit>()
     private val getFingerprintStateSubject = PublishSubject.create<Unit>()
 
-    override fun screenId() = ScreenId.SECURITY_SETTINGS
+    override fun screenId() = ScreenId.GENERAL_SETTINGS
 
     override fun inject(component: ViewComponent) = component.inject(this)
 

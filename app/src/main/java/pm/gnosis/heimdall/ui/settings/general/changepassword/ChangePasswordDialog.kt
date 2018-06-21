@@ -55,8 +55,6 @@ class ChangePasswordDialog : BaseDialog() {
         return alertDialog
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = null
-
     override fun onStart() {
         super.onStart()
 

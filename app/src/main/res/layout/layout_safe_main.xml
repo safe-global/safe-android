@@ -300,7 +300,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/ic_settings_debug"
-                        android:text="Debug Settings"
+                        android:text="@string/debug_settings"
                         android:visibility="gone" />
                 </FrameLayout>
 

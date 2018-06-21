@@ -463,4 +463,5 @@
     <string name="open_in_browser">Open in Browser</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="fingerprint_hint">Place your finger on the sensor to submit transaction</string>
+    <string name="debug_settings">Debug Settings</string>
 </resources>

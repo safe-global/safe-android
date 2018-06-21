@@ -103,6 +103,11 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(GeneralSettingsContract::class)
+    abstract fun bindsGeneralSettingsContract(viewModel: GeneralSettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(ManageTokensContract::class)
     abstract fun bindsManageTokensContract(viewModel: ManageTokensViewModel): ViewModel
 
@@ -150,11 +155,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(SafeTransactionsContract::class)
     abstract fun bindsSafeTransactionsContract(viewModel: SafeTransactionsViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(GeneralSettingsContract::class)
-    abstract fun bindsSecuritySettingsContract(viewModel: GeneralSettingsViewModel): ViewModel
 
     @Binds
     @IntoMap

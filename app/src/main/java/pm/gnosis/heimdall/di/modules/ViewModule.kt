@@ -85,6 +85,10 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
+    fun providesGeneralSettingsContract(provider: ViewModelProvider) = provider[GeneralSettingsContract::class.java]
+
+    @Provides
+    @ForView
     fun providesManageTokensContract(provider: ViewModelProvider) = provider[ManageTokensContract::class.java]
 
     @Provides
@@ -122,10 +126,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesSafeTransactionsContract(provider: ViewModelProvider) = provider[SafeTransactionsContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesSecuritySettingsContract(provider: ViewModelProvider) = provider[GeneralSettingsContract::class.java]
 
     @Provides
     @ForView
