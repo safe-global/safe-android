@@ -18,14 +18,6 @@
         <item name="overlapAnchor">true</item>
     </style>
 
-    <style name="CardTheme" parent="AppTheme">
-        <item name="android:windowBackground">@color/card_window_background</item>
-    </style>
-
-    <style name="SplashTheme" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/splash_background</item>
-    </style>
-
     <style name="GreyBackgroundThemeBase" parent="WhiteTheme">
         <item name="android:windowBackground">@color/pale_grey_two</item>
     </style>
@@ -41,13 +33,6 @@
     </style>
 
     <style name="MountainTheme" parent="MountainThemeBase" />
-
-    <style name="SmallButton" parent="Theme.AppCompat.Light">
-        <item name="colorButtonNormal">@color/azure</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:paddingStart">40dp</item>
-        <item name="android:paddingEnd">40dp</item>
-    </style>
 
     <style name="SmallFlatButton" parent="Theme.AppCompat.Light">
         <item name="colorControlHighlight">@color/azure</item>
@@ -134,11 +119,6 @@
 
     <!-- Start: Toolbar styles -->
 
-    <style name="AppBarLayout" parent="ThemeOverlay.AppCompat.Light">
-        <item name="toolbarStyle">@style/Toolbar</item>
-        <item name="android:background">@color/white</item>
-    </style>
-
     <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="titleTextAppearance">@style/ToolbarTitle</item>
         <item name="subtitleTextAppearance">@style/ToolbarSubtitle</item>
@@ -175,14 +155,6 @@
         <item name="android:textSize">@dimen/primary_button_text_size</item>
     </style>
 
-    <style name="PrimaryButton.Blue.Wide">
-        <item name="android:minHeight">@dimen/primary_button_height</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
     <style name="PrimaryButton.Blue.FullWidth">
         <item name="android:background">@drawable/primary_button_full_width</item>
         <item name="android:minHeight">@dimen/primary_button_height</item>
@@ -214,10 +186,6 @@
         <item name="android:paddingRight">16dp</item>
     </style>
 
-    <style name="SecondaryTextButton" parent="TextButton">
-        <item name="android:textColor">@color/secondary_button_text</item>
-    </style>
-
     <!-- End: Button styles -->
 
 
@@ -242,36 +210,6 @@
         <item name="android:textColor">@color/default_text</item>
     </style>
 
-    <style name="Label" parent="TextAppearance.AppCompat.Caption">
-        <item name="android:textColor">@color/default_text</item>
-    </style>
-
-    <style name="TxLabel" parent="Content">
-        <item name="android:textColor">@color/light_text</item>
-        <item name="android:paddingStart">16dp</item>
-    </style>
-
-    <style name="TxLabel.Review">
-        <item name="android:textColor">@color/gnosis_dark_blue_alpha_50</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">12sp</item>
-    </style>
-
-    <style name="TxValue" parent="BoldContent">
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-    </style>
-
-    <style name="TxValueLight" parent="Content">
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-    </style>
-
-    <style name="Title" parent="TextAppearance.AppCompat.Title">
-        <item name="android:textColor">@color/default_text</item>
-    </style>
-
     <style name="CapsText">
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/bluey_grey</item>
@@ -279,10 +217,6 @@
     </style>
 
     <style name="SpacedCapsText" parent="CapsText" />
-
-    <style name="SpacedCapsTextSmall" parent="SpacedCapsText">
-        <item name="android:textSize">9sp</item>
-    </style>
 
     <style name="Input" parent="Widget.AppCompat.EditText">
         <item name="android:textColor">@color/default_text</item>
@@ -312,11 +246,6 @@
         <item name="android:paddingLeft">8dp</item>
         <item name="android:paddingRight">8dp</item>
         <item name="android:drawablePadding">8dp</item>
-    </style>
-
-    <style name="SafeSmallInfo">
-        <item name="android:textSize">13sp</item>
-        <item name="android:textColor">@color/default_text</item>
     </style>
 
     <style name="LightText" parent="Text">
