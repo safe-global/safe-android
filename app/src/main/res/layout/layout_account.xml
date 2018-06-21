@@ -18,6 +18,7 @@
             app:layout_constraintTop_toBottomOf="@id/layout_account_title">
 
             <android.support.v4.widget.NestedScrollView
+                android:id="@+id/layout_account_content_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 

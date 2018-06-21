@@ -14,6 +14,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_account.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
@@ -30,8 +31,12 @@ import pm.gnosis.utils.isValidEthereumAddress
 import pm.gnosis.utils.stringWithNoTrailingZeroes
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class AccountActivity : ViewModelActivity<AccountContract>() {
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
 
     private lateinit var popupMenu: PopupMenu
 
@@ -50,6 +55,7 @@ class AccountActivity : ViewModelActivity<AccountContract>() {
 
     override fun onStart() {
         super.onStart()
+        disposables += toolbarHelper.setupShadow(layout_account_toolbar_shadow, layout_account_content_scroll)
         disposables += layout_account_back_button.clicks()
             .subscribeBy { onBackPressed() }
 
