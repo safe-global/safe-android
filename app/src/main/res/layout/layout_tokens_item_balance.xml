@@ -31,7 +31,7 @@
 
     <TextView
         android:id="@+id/layout_tokens_item_balance_symbol"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
@@ -41,17 +41,17 @@
         android:textColor="@color/dark_slate_blue"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/layout_tokens_item_balance_balance"
         app:layout_constraintStart_toEndOf="@+id/layout_tokens_item_balance_symbol_image"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="ETH" />
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/layout_tokens_item_balance_balance"
-        android:layout_width="100dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:fontFamily="RobotoMono-Medium"
         android:gravity="end"
         android:letterSpacing="-0.05"
@@ -63,6 +63,7 @@
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_tokens_item_balance_symbol"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="3342434.23545 ETH" />
 

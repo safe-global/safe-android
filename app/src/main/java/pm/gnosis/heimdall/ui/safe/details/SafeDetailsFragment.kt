@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.TabId
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.base.FactoryPagerAdapter
+import pm.gnosis.heimdall.ui.base.ScrollableContainer
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
@@ -42,6 +43,8 @@ class SafeDetailsFragment : BaseFragment() {
 
     private val items = listOf(R.string.tab_title_assets, R.string.tab_title_transactions)
 
+    private lateinit var pagerAdapter: FactoryPagerAdapter
+
     private lateinit var safeAddress: Solidity.Address
     private var safeName: String? = null
     private var tabToSelect: Int = 0
@@ -50,6 +53,7 @@ class SafeDetailsFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         tabToSelect = arguments?.getInt(EXTRA_SELECTED_TAB, tabToSelect) ?: tabToSelect
         arguments?.remove(EXTRA_SELECTED_TAB)
+        pagerAdapter = pagerAdapter()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -61,7 +65,7 @@ class SafeDetailsFragment : BaseFragment() {
         safeName = arguments?.getString(EXTRA_SAFE_NAME)
         viewModel.setup(safeAddress, safeName)
 
-        layout_safe_details_viewpager.adapter = pagerAdapter()
+        layout_safe_details_viewpager.adapter = pagerAdapter
         layout_safe_details_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 layout_safe_details_appbar.setExpanded(true, true)
@@ -88,7 +92,11 @@ class SafeDetailsFragment : BaseFragment() {
     }
 
     private fun setSelectedTab() {
-        layout_safe_details_viewpager.currentItem = items.indexOf(tabToSelect)
+        val tabPosition = items.indexOf(tabToSelect)
+        if (tabPosition >= 0) {
+            layout_safe_details_viewpager.currentItem = tabPosition
+            (pagerAdapter.getItem(tabPosition) as? ScrollableContainer)?.scrollToTop()
+        }
         tabToSelect = 0
     }
 
@@ -113,7 +121,7 @@ class SafeDetailsFragment : BaseFragment() {
             .subscribeBy { startActivity(ReceiveTokenActivity.createIntent(context!!, safeAddress)) }
     }
 
-    private fun positionToId(position: Int) = items.getOrElse(position, { -1 })
+    private fun positionToId(position: Int) = items.getOrElse(position) { -1 }
 
     private fun positionToTabID(position: Int) =
         when (positionToId(position)) {
