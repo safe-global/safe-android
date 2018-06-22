@@ -111,7 +111,7 @@ class DefaultTokenRepository @Inject constructor(
     ): Observable<List<Pair<ERC20Token, BigInteger?>>> {
         val requests =
             erC20Tokens.mapIndexed { index, token ->
-                if (token == ETHER_TOKEN) {
+                if (token.address == ETHER_TOKEN.address) {
                     MappedRequest(EthBalance(ofAddress, id = index)) {
                         token to it?.value
                     }

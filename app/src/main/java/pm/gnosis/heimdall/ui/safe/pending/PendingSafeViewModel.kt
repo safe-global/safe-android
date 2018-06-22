@@ -60,7 +60,7 @@ class PendingSafeViewModel @Inject constructor(
                     .map { if (it < pendingSafe.paymentAmount) throw NotEnoughFundsException() }
                     .retryWhen { errors ->
                         errors.flatMap {
-                            if (it is NotEnoughFundsException) Observable.just(it).delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS)
+                                if (it is NotEnoughFundsException) Observable.just(it).delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS)
                             else Observable.error(it)
                         }
                     }
