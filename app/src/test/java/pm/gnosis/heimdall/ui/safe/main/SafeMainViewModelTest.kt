@@ -404,6 +404,60 @@ class SafeMainViewModelTest {
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
+    @Test
+    fun removeSafe() {
+        val safe = Safe(TEST_SAFE, "Old Name")
+        given(safeRepository.removeSafe(MockUtils.any())).willReturn(Completable.complete())
+
+        val testObserver = TestObserver<Unit>()
+        viewModel.removeSafe(safe).subscribe(testObserver)
+        testObserver.assertResult()
+
+        then(safeRepository).should().removeSafe(TEST_SAFE)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun removeSafeError() {
+        val safe = Safe(TEST_SAFE, "Old Name")
+        val error = NoSuchElementException()
+        given(safeRepository.removeSafe(MockUtils.any())).willReturn(Completable.error(error))
+
+        val testObserver = TestObserver<Unit>()
+        viewModel.removeSafe(safe).subscribe(testObserver)
+        testObserver.assertFailure(Predicate { it == error })
+
+        then(safeRepository).should().removeSafe(TEST_SAFE)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun removePendingSafe() {
+        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)
+        given(safeRepository.removePendingSafe(MockUtils.any())).willReturn(Completable.complete())
+
+        val testObserver = TestObserver<Unit>()
+        viewModel.removeSafe(safe).subscribe(testObserver)
+        testObserver.assertResult()
+
+        then(safeRepository).should().removePendingSafe(TEST_TX_HASH)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun removePendingSafeError() {
+        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)
+        val error = NoSuchElementException()
+        given(safeRepository.removePendingSafe(MockUtils.any())).willReturn(Completable.error(error))
+
+        val testObserver = TestObserver<Unit>()
+        viewModel.removeSafe(safe).subscribe(testObserver)
+        testObserver.assertFailure(Predicate { it == error })
+
+        then(safeRepository).should().removePendingSafe(TEST_TX_HASH)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
     companion object {
         private val TEST_TX_HASH = "0xdae721569a948b87c269ebacaa5a4a67728095e32f9e7e4626f109f27a73b40f".hexAsBigInteger()
         private val TEST_SAFE = "0x1f81FFF89Bd57811983a35650296681f99C65C7E".asEthereumAddress()!!

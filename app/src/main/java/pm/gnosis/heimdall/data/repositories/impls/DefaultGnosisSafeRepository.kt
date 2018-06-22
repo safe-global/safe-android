@@ -84,6 +84,11 @@ class DefaultGnosisSafeRepository @Inject constructor(
             safeDao.updatePendingSafe(pendingSafe.toDb())
         }.subscribeOn(Schedulers.io())
 
+    override fun removePendingSafe(transactionHash: BigInteger) =
+        Completable.fromCallable {
+            safeDao.removePendingSafe(transactionHash)
+        }.subscribeOn(Schedulers.io())!!
+
     override fun pendingSafeToDeployedSafe(pendingSafe: PendingSafe): Completable =
         Completable.fromCallable { safeDao.pendingSafeToDeployedSafe(pendingSafe) }
             .andThen(sendSafeCreationPush(pendingSafe.address).onErrorComplete())

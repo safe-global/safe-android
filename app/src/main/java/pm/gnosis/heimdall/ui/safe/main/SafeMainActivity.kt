@@ -70,12 +70,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         this.intent = intent
-        val selectedSafe = intent?.getStringExtra(EXTRA_SELECTED_SAFE)?.hexAsBigIntegerOrNull()
-        if (selectedSafe != null && screenActive) {
-            intent.removeExtra(EXTRA_SELECTED_SAFE)
-            disposables += viewModel.selectSafe(selectedSafe)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = ::showSafe, onError = Timber::e)
+        if (screenActive) {
+            setupSelectedSafe()
         }
     }
 
@@ -103,17 +99,21 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     override fun onStart() {
         super.onStart()
         screenActive = true
-        val selectedSafe = intent?.getStringExtra(EXTRA_SELECTED_SAFE)?.hexAsBigIntegerOrNull()
-        intent.removeExtra(EXTRA_SELECTED_SAFE)
-        disposables += (selectedSafe?.let { viewModel.selectSafe(it) } ?: viewModel.loadSelectedSafe())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onSuccess = ::showSafe, onError = ::showSafeError)
+        setupSelectedSafe()
 
         disposables += layout_safe_main_toolbar_overflow.clicks()
             .subscribeBy { popupMenu.show() }
 
         updateToolbar()
         setupNavigation()
+    }
+
+    private fun setupSelectedSafe() {
+        val selectedSafe = intent?.getStringExtra(EXTRA_SELECTED_SAFE)?.hexAsBigIntegerOrNull()
+        intent.removeExtra(EXTRA_SELECTED_SAFE)
+        disposables += (selectedSafe?.let { viewModel.selectSafe(it) } ?: viewModel.loadSelectedSafe())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onSuccess = ::showSafe, onError = ::showSafeError)
     }
 
     private fun setupNavigation() {
@@ -208,6 +208,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             replace(R.id.layout_safe_main_content_frame, NoSafesFragment())
         }
         updateToolbar()
+        toggleSafes(false)
         toggleHasSafes(false)
     }
 
@@ -262,7 +263,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             is PendingSafe -> {
                 layout_safe_main_selected_safe_icon.visible(false)
                 layout_safe_main_selected_safe_progress.visible(true)
-                layout_safe_main_toolbar_overflow.visible(false)
+                layout_safe_main_toolbar_overflow.visible(true)
 
                 setupOverflowMenu(safe.address, safe.name, safe)
                 updateSafeInfo(safe.displayName(this) to safe.address.asEthereumAddressString())
@@ -342,10 +343,11 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         val alertContent = layoutInflater.inflate(R.layout.dialog_content_remove_safe, null)
         CustomAlertDialogBuilder.build(
             this, getString(R.string.remove_safe_title, safe.displayName(this)), alertContent, R.string.remove, { dialog ->
-                disposables += viewModel.updateSafeName(safe, alertContent.dialog_content_edit_name_input.text.toString())
+                disposables += viewModel.removeSafe(safe)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        snackbar(layout_safe_main_toolbar_title, R.string.update_name_success)
+                        startActivity(SafeMainActivity.createIntent(this))
+                        snackbar(layout_safe_main_toolbar_title, getString(R.string.safe_remove_success, safe.displayName(this)))
                     }, {
                         errorSnackbar(layout_safe_main_toolbar_title, it)
                     })

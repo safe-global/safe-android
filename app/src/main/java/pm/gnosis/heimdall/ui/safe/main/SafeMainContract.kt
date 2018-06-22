@@ -5,8 +5,6 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
-import pm.gnosis.heimdall.data.repositories.models.PendingSafe
-import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
@@ -19,4 +17,5 @@ abstract class SafeMainContract : ViewModel() {
     abstract fun syncWithChromeExtension(address: Solidity.Address): Completable
     abstract fun updateSafeName(safe: AbstractSafe, name: String?): Completable
     abstract fun observeSafe(safe: AbstractSafe): Flowable<Pair<String, String>>
+    abstract fun removeSafe(safe: AbstractSafe): Completable
 }

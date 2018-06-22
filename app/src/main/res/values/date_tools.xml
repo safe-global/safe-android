@@ -1,7 +1,6 @@
 <?xml version="1.0" ?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="date_tools_dy">%dy</string>
-    <string name="date_tools_dM">%dM</string>
     <string name="date_tools_dw">%dw</string>
     <string name="date_tools_dd">%dd</string>
     <string name="date_tools_dh">%dh</string>

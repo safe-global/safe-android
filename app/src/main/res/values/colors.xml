@@ -4,22 +4,17 @@
     <color name="primary_dark">@color/gnosis_blue_shade</color>
     <color name="accent">@color/dark_slate_blue</color>
     <color name="window_background">@color/white</color>
-    <color name="card_window_background">@color/divider</color>
     <color name="toolbar_action">@color/dark_slate_blue</color>
 
     <color name="white">#ffffff</color>
     <color name="white_alpha_70">#b3ffffff</color>
-    <color name="black">#000000</color>
     <color name="black_alpha_70">#b3000000</color>
     <color name="disabled_button">#9b9b9b</color>
     <color name="pressed_shade">#33000000</color>
-    <color name="shadow_shade">#11000000</color>
     <color name="gnosis_blue">#10b3d4</color>
-    <color name="gnosis_blue_alpha_08">#1410b3d4</color>
     <color name="gnosis_blue_shade">#0083a3</color>
     <color name="gnosis_dark_blue">#21435a</color>
     <color name="gnosis_dark_blue_alpha_50">#7f21435a</color>
-    <color name="gnosis_dark_blue_alpha_60">#9921435a</color>
     <color name="gnosis_dark_blue_alpha_70">#b221435a</color>
 
     <color name="secondary_button">#c8ced4</color>
@@ -27,31 +22,13 @@
     <color name="secondary_button_pressed">#aaadb1</color>
     <color name="secondary_button_text">@color/dark_slate_blue</color>
 
-    <color name="error">#f64056</color>
-    <color name="error_hint">#b3f64056</color>
-
     <color name="light_text">@color/gnosis_dark_blue_alpha_70</color>
     <color name="default_text">@color/gnosis_dark_blue</color>
 
-    <color name="list_divider">#e4e3e3</color>
-
-    <color name="default_icon">#4a4a4a</color>
-
     <color name="enabled_input">@color/azure</color>
-    <color name="disabled_input">@color/disabled_button</color>
 
-    <color name="onboarding_description">#b221435a</color>
     <color name="text_grey_background">#f4f4f9</color>
-    <color name="onboarding_background">#f4f4f9</color>
-    <color name="background">#f9f9f9</color>
     <color name="divider">#e3e5ec</color>
-
-    <color name="out_transaction">#de2c42</color>
-
-    <color name="security_bar_default">#e3e5ec</color>
-    <color name="security_bar_low">#eab41c</color>
-    <color name="security_bar_good">#09a862</color>
-    <color name="security_bar_best">#10b3d4</color>
 
     <!-- New Design colors -->
     <color name="aqua_blue">#00b8e0</color>
