@@ -9,6 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_pending_safe.*
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.di.components.ApplicationComponent
@@ -17,7 +18,9 @@ import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.svalinn.common.utils.shareExternalText
+import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asTransactionHash
@@ -44,9 +47,11 @@ class PendingSafeFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        disposables += viewModel.observePendingSafe()
+        disposables += viewModel.observeCreationInfo()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onNext = ::onPendingSafe, onError = Timber::e)
+            .subscribeForResult (onNext = ::onCreationInfo, onError = {
+                errorSnackbar(layout_pending_safe_qr_code_button, it)
+            })
 
         disposables += viewModel.observeHasEnoughDeployBalance()
             .observeOn(AndroidSchedulers.mainThread())
@@ -68,10 +73,11 @@ class PendingSafeFragment : BaseFragment() {
         startActivity(SafeMainActivity.createIntent(context!!, viewModel.getTransactionHash()))
     }
 
-    private fun onPendingSafe(pendingSafe: PendingSafe) {
-        layout_pending_safe_address.text = pendingSafe.address.asEthereumAddressString()
-        layout_pending_safe_amount_label.text =
-                getString(R.string.pending_safe_deposit_value, pendingSafe.payment.toEther(5).stringWithNoTrailingZeroes())
+    private fun onCreationInfo(info: PendingSafeContract.CreationInfo) {
+        layout_pending_safe_address.text = info.safeAddress
+        info.paymentToken?.let {
+            layout_pending_safe_amount_label.text = getString(R.string.pending_safe_deposit_value, it.displayString(info.paymentAmount))
+        }
     }
 
     companion object {

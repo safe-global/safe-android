@@ -23,7 +23,10 @@ class SafeTest {
     @Test
     fun displayName() {
         assertEquals(Safe(TEST_SAFE, "Deployed Safe").displayName(context), "Deployed Safe")
-        assertEquals(PendingSafe(TEST_TX_HASH, "Pending Safe", TEST_PENDING_SAFE, TEST_PAYMENT).displayName(context), "Pending Safe")
+        assertEquals(
+            PendingSafe(TEST_TX_HASH, "Pending Safe", TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT).displayName(context),
+            "Pending Safe"
+        )
         then(context).shouldHaveZeroInteractions()
     }
 
@@ -33,7 +36,10 @@ class SafeTest {
         assertEquals(Safe(TEST_SAFE).displayName(context), R.string.your_safe.toString())
         then(context).should().getString(R.string.your_safe)
         then(context).shouldHaveZeroInteractions()
-        assertEquals(PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE, TEST_PAYMENT).displayName(context), R.string.your_safe.toString())
+        assertEquals(
+            PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT).displayName(context),
+            R.string.your_safe.toString()
+        )
         then(context).should(times(2)).getString(R.string.your_safe)
         then(context).shouldHaveZeroInteractions()
     }
@@ -42,6 +48,7 @@ class SafeTest {
         private val TEST_SAFE = "0x1f81FFF89Bd57811983a35650296681f99C65C7E".asEthereumAddress()!!
         private val TEST_TX_HASH = "0xdae721569a948b87c269ebacaa5a4a67728095e32f9e7e4626f109f27a73b40f".hexAsBigInteger()
         private val TEST_PENDING_SAFE = "0xC2AC20b3Bb950C087f18a458DB68271325a48132".asEthereumAddress()!!
-        private val TEST_PAYMENT = Wei.ether("0.1")
+        private val TEST_PAYMENT_TOKEN = ERC20Token.ETHER_TOKEN.address
+        private val TEST_PAYMENT_AMOUNT = Wei.ether("0.1").value
     }
 }

@@ -88,9 +88,9 @@
     <View
         android:id="@+id/layout_confirm_transaction_toolbar_shadow"
         android:layout_width="match_parent"
+        android:alpha="0"
         android:layout_height="@dimen/toolbar_shadow_size"
         android:background="@drawable/toolbar_dropshadow"
-        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/layout_confirm_transaction_title" />
 
     <View

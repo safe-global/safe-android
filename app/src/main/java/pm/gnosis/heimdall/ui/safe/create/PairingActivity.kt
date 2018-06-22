@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
@@ -25,10 +26,14 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class PairingActivity : BaseActivity() {
-    override fun screenId() = ScreenId.PAIRING
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
 
     @Inject
     lateinit var viewModel: PairingContract
+
+    override fun screenId() = ScreenId.PAIRING
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +62,8 @@ class PairingActivity : BaseActivity() {
 
         disposables += layout_create_safe_intro_back_arrow.clicks()
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
+
+        disposables += toolbarHelper.setupShadow(layout_pairing_toolbar_shadow, layout_pairing_content_scroll)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

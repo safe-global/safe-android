@@ -191,7 +191,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_shadow_size"
         android:background="@drawable/toolbar_dropshadow"
-        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_title" />
 
 </android.support.constraint.ConstraintLayout>

@@ -40,8 +40,11 @@ data class PendingGnosisSafeDb(
     @ColumnInfo(name = COL_SAFE_ADDRESS)
     var address: Solidity.Address,
 
-    @ColumnInfo(name = COL_PAYMENT)
-    var payment: Wei,
+    @ColumnInfo(name = COL_PAYMENT_TOKEN)
+    var paymentToken: Solidity.Address,
+
+    @ColumnInfo(name = COL_PAYMENT_AMOUNT)
+    var paymentAmount: BigInteger,
 
     @ColumnInfo(name = COL_IS_FUNDED)
     var isFunded: Boolean = false
@@ -51,10 +54,11 @@ data class PendingGnosisSafeDb(
         const val COL_TX_HASH = "transactionHash"
         const val COL_NAME = "name"
         const val COL_SAFE_ADDRESS = "address"
-        const val COL_PAYMENT = "payment"
+        const val COL_PAYMENT_AMOUNT = "paymentAmount"
+        const val COL_PAYMENT_TOKEN = "paymentToken"
         const val COL_IS_FUNDED = "funded"
     }
 }
 
-fun PendingSafe.toDb() = PendingGnosisSafeDb(hash, name, address, payment, isFunded)
-fun PendingGnosisSafeDb.fromDb() = PendingSafe(transactionHash, name, address, payment, isFunded)
+fun PendingSafe.toDb() = PendingGnosisSafeDb(hash, name, address, paymentToken, paymentAmount, isFunded)
+fun PendingGnosisSafeDb.fromDb() = PendingSafe(transactionHash, name, address, paymentToken, paymentAmount, isFunded)

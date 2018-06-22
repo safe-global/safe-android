@@ -7,10 +7,11 @@
     android:layout_height="match_parent">
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/layout_confirm_safe_recovery_phrase_content_scroll"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@+id/layout_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintBottom_toTopOf="@+id/layout_confirm_safe_recovery_phrase_bottom_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_confirm_safe_recovery_phrase_title">
@@ -129,12 +130,19 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/toolbar_height"
         android:gravity="center"
-        android:text="Confirm recovery phrase"
+        android:text="@string/confirm_recovery_phrase"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <View
-        android:id="@+id/layout_safe_recovery_phrase_bottom_bar"
+        android:id="@+id/layout_confirm_safe_recovery_phrase_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/layout_confirm_safe_recovery_phrase_title" />
+
+    <View
+        android:id="@+id/layout_confirm_safe_recovery_phrase_bottom_bar"
         android:layout_width="0dp"
         android:layout_height="46dp"
         android:background="@color/bluey_grey"
@@ -150,28 +158,28 @@
         android:paddingEnd="24dp"
         android:paddingStart="24dp"
         android:tint="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/layout_safe_recovery_phrase_bottom_bar"
-        app:layout_constraintStart_toStartOf="@+id/layout_safe_recovery_phrase_bottom_bar"
-        app:layout_constraintTop_toTopOf="@+id/layout_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_confirm_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintStart_toStartOf="@+id/layout_confirm_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintTop_toTopOf="@+id/layout_confirm_safe_recovery_phrase_bottom_bar"
         app:srcCompat="@drawable/ic_arrow_back_24dp" />
 
     <LinearLayout
-        android:id="@+id/layout_safe_recovery_phrase_finish"
+        android:id="@+id/layout_confirm_safe_recovery_phrase_finish"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:background="@drawable/selectable_background"
         android:paddingEnd="24dp"
         android:paddingStart="24dp"
-        app:layout_constraintEnd_toEndOf="@id/layout_safe_recovery_phrase_bottom_bar"
-        app:layout_constraintTop_toBottomOf="@id/layout_safe_recovery_phrase_bottom_bar"
-        app:layout_constraintTop_toTopOf="@id/layout_safe_recovery_phrase_bottom_bar">
+        app:layout_constraintEnd_toEndOf="@id/layout_confirm_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintTop_toBottomOf="@id/layout_confirm_safe_recovery_phrase_bottom_bar"
+        app:layout_constraintTop_toTopOf="@id/layout_confirm_safe_recovery_phrase_bottom_bar">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginEnd="12dp"
             android:gravity="center"
-            android:text="Finish"
+            android:text="@string/finish"
             android:textColor="@color/white" />
 
         <ImageView
