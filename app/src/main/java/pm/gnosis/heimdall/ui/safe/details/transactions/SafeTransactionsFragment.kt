@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
+import pm.gnosis.heimdall.ui.base.ScrollableContainer
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.withArgs
@@ -22,11 +23,13 @@ import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 
-class SafeTransactionsFragment : BaseFragment() {
+class SafeTransactionsFragment : BaseFragment(), ScrollableContainer {
     @Inject
     lateinit var viewModel: SafeTransactionsContract
     @Inject
     lateinit var adapter: SafeTransactionsAdapter
+    @Inject
+    lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +43,7 @@ class SafeTransactionsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        layout_safe_transactions_list.layoutManager = LinearLayoutManager(context)
+        layout_safe_transactions_list.layoutManager = layoutManager
         layout_safe_transactions_list.adapter = adapter
     }
 
@@ -67,8 +70,19 @@ class SafeTransactionsFragment : BaseFragment() {
             .subscribeForResult(::displayTransactions, Timber::e)
     }
 
+    override fun scrollToTop() {
+        // check that the view has been created
+        view ?: return
+        layoutManager.scrollToPositionWithOffset(0, 0)
+    }
+
     private fun displayTransactions(transactions: Adapter.Data<SafeTransactionsContract.AdapterEntry>) {
+        // If we were at the top of the list, stay at the top
+        val scrollToTop = layoutManager.findFirstVisibleItemPosition() == 0
         adapter.updateData(transactions)
+        if (scrollToTop) {
+            layoutManager.scrollToPositionWithOffset(0, 0)
+        }
         layout_safe_transactions_empty_view.visibility = if (transactions.entries.isEmpty()) {
             View.VISIBLE
         } else {
