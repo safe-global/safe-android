@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.data.remote
 import io.reactivex.Completable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.remote.models.*
+import pm.gnosis.model.Solidity
 import retrofit2.http.*
 
 
@@ -11,8 +12,8 @@ interface RelayServiceApi {
         const val BASE_URL = "https://safe-relay.dev.gnosisdev.com/api/"
     }
 
-    @POST("v1/transactions/")
-    fun execute(@Body params: ExecuteParams): Single<RelayExecution>
+    @POST("v1/safes/{address}/transactions/")
+    fun execute(@Path("address") address: String, @Body params: ExecuteParams): Single<RelayExecution>
 
     @POST("v1/transactions/estimate/")
     fun estimate(@Body params: EstimateParams): Single<RelayEstimate>

@@ -8,7 +8,6 @@ import pm.gnosis.heimdall.GnosisSafePersonalEdition
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.models.*
 import pm.gnosis.model.Solidity
-import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.*
@@ -19,7 +18,10 @@ class LocalRelayServiceApi(
     private val ethereumRepository: EthereumRepository,
     private val remoteService: RelayServiceApi
 ) : RelayServiceApi {
-    override fun execute(params: ExecuteParams): Single<RelayExecution> =
+    override fun execute(address: String, params: ExecuteParams): Single<RelayExecution> =
+        remoteService.execute(address, params)
+    /*
+    override fun execute(safe: Solidity.Address, params: ExecuteParams): Single<RelayExecution> =
         Single.fromCallable {
             val signatureBytes = StringBuilder().apply {
                 params.signatures.forEach {
@@ -42,13 +44,14 @@ class LocalRelayServiceApi(
                 Solidity.UInt256(gasPrice), Solidity.Address(BigInteger.ZERO),
                 Solidity.Bytes(signatureBytes)
             )
-            Transaction(params.safe.asEthereumAddress()!!, data = executionData)
+            Transaction(safe, data = executionData)
         }
             .flatMap(::loadExecutionParams)
             .flatMap(accountsRepository::signTransaction)
             .flatMapObservable(ethereumRepository::sendRawTransaction)
             .firstOrError()
             .map(::RelayExecution)
+            */
 
     private fun loadExecutionParams(transaction: Transaction) =
         accountsRepository.loadActiveAccount()
