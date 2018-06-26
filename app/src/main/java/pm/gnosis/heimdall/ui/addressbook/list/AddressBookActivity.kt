@@ -22,7 +22,6 @@ import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.utils.setupToolbar
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
@@ -45,9 +44,6 @@ class AddressBookActivity : BaseActivity() {
         setContentView(R.layout.layout_address_book)
         inject()
 
-        setupToolbar(layout_address_book_toolbar)
-        layout_address_book_toolbar.title = getString(R.string.address_book)
-
         val layoutManager = LinearLayoutManager(this)
         layout_address_book_list.layoutManager = layoutManager
         layout_address_book_list.adapter = adapter
@@ -67,6 +63,9 @@ class AddressBookActivity : BaseActivity() {
         disposables += adapter.clicks
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onNext = ::handleEntryClick, onError = Timber::e)
+
+        disposables += layout_address_book_entry_details_back_arrow.clicks()
+            .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
     }
 
     private fun onAddressBook(adapterData: Adapter.Data<AddressBookEntry>) {

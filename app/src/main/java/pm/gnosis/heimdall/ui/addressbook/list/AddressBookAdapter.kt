@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 @ForView
@@ -27,6 +28,7 @@ class AddressBookAdapter @Inject constructor() : Adapter<AddressBookEntry, Addre
         override fun bind(data: AddressBookEntry, payloads: List<Any>) {
             itemView.layout_address_book_entry_item_name.text = data.name
             itemView.layout_address_book_entry_icon.setAddress(data.address)
+            itemView.layout_address_book_entry_item_address.text = data.address.asEthereumAddressString()
         }
 
         override fun onClick(view: View?) {
