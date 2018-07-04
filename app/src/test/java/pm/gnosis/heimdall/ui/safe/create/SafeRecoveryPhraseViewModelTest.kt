@@ -70,7 +70,7 @@ class SafeRecoveryPhraseViewModelTest {
         given(bip39Mock.generateMnemonic(anyInt(), anyInt())).willReturn(mnemonic)
         given(encryptionManagerMock.encrypt(MockUtils.any())).willReturn(encryptedData)
 
-        viewModel.generateRecoveryPhrase().subscribe(TestObserver())
+        viewModel.generateRecoveryPhrase().subscribe()
         viewModel.loadEncryptedRecoveryPhrase().subscribe(testObserver)
 
         testObserver.assertResult(encryptedData.toString())
@@ -87,7 +87,7 @@ class SafeRecoveryPhraseViewModelTest {
         given(bip39Mock.generateMnemonic(anyInt(), anyInt())).willReturn(mnemonic)
         given(encryptionManagerMock.encrypt(MockUtils.any())).willThrow(IllegalStateException::class.java)
 
-        viewModel.generateRecoveryPhrase().subscribe(TestObserver())
+        viewModel.generateRecoveryPhrase().subscribe()
         viewModel.loadEncryptedRecoveryPhrase().subscribe(testObserver)
 
         testObserver.assertFailure(IllegalStateException::class.java)

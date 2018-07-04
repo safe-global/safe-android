@@ -128,7 +128,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         val encryptedMnemonic = "ffffff####ffffff"
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, Solidity.Address(1.toBigInteger())).subscribe(TestObserver())
+        viewModel.setup(encryptedMnemonic, Solidity.Address(1.toBigInteger())).subscribe()
         viewModel.isCorrectSequence(mnemonic.words()).subscribe(testObserver)
 
         testObserver.assertResult(DataResult(true))
@@ -142,7 +142,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         val encryptedMnemonic = "ffffff####ffffff"
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, Solidity.Address(1.toBigInteger())).subscribe(TestObserver())
+        viewModel.setup(encryptedMnemonic, Solidity.Address(1.toBigInteger())).subscribe()
         viewModel.isCorrectSequence(incorrectSequence.words()).subscribe(testObserver)
 
         testObserver.assertResult(DataResult(false))

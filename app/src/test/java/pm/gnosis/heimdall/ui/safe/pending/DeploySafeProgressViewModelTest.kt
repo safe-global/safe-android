@@ -18,6 +18,7 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.models.RelaySafeFundStatus
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
@@ -50,7 +51,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(txHash, "", safeAddress, Wei.ZERO)
+        val pendingSafe = PendingSafe(txHash, "", safeAddress, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
         given(relayServiceApiMock.safeFundStatus(MockUtils.any())).willReturn(
@@ -79,7 +80,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(txHash, "", safeAddress, Wei.ZERO)
+        val pendingSafe = PendingSafe(txHash, "", safeAddress, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         var safeDeployed = false
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
@@ -110,7 +111,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(txHash, "", safeAddress, Wei.ZERO)
+        val pendingSafe = PendingSafe(txHash, "", safeAddress, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         val exception = Exception()
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
@@ -137,7 +138,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(txHash, "", safeAddress, Wei.ZERO)
+        val pendingSafe = PendingSafe(txHash, "", safeAddress, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         val exception = Exception()
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
@@ -160,7 +161,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(txHash, "", safeAddress, Wei.ZERO)
+        val pendingSafe = PendingSafe(txHash, "", safeAddress, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         val exception = Exception()
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.error(exception))
@@ -177,7 +178,7 @@ class DeploySafeProgressViewModelTest {
     }
 
     @Test
-    fun notifySafeFundedloadPendingSafeError() {
+    fun notifySafeFundedLoadPendingSafeError() {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val exception = Exception()
