@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.data.repositories.models
 import android.content.Context
 import pm.gnosis.heimdall.R
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Wei
 import java.math.BigInteger
 
 sealed class AbstractSafe {
@@ -16,7 +15,14 @@ data class Safe(val address: Solidity.Address, val name: String? = null) : Abstr
 
 }
 
-data class PendingSafe(val hash: BigInteger, val name: String?, val address: Solidity.Address, val payment: Wei, val isFunded: Boolean = false) :
+data class PendingSafe(
+    val hash: BigInteger,
+    val name: String?,
+    val address: Solidity.Address,
+    val paymentToken: Solidity.Address,
+    val paymentAmount: BigInteger,
+    val isFunded: Boolean = false
+) :
     AbstractSafe() {
 
     override fun displayName(context: Context) = safeName(context, name)

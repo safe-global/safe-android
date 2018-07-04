@@ -156,7 +156,7 @@
     <string name="pairing_info">Please download the Gnosis Safe browser extension and scan the QR code in the interface. All your Safe transactions will need to be approved by this device and the browser extension.</string>
     <string name="new_safe">New Safe</string>
     <string name="scan_qr_code">Scan QR Code</string>
-    <string name="pending_safe_deposit_value">Send at least %1s ETH to your Safe\'s address:</string>
+    <string name="pending_safe_deposit_value">Send at least %1s to your Safe\'s address:</string>
     <string name="fingerprint_many_tries">Too many tries. Switching to password</string>
     <string name="deposit_received">Deposit received.</string>
     <string name="creating_your_new_safe">Creating your new Safe…</string>
@@ -191,4 +191,6 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="fingerprint_hint">Place your finger on the sensor to submit transaction</string>
     <string name="debug_settings">Debug Settings</string>
+    <string name="confirm_recovery_phrase">Confirm recovery phrase</string>
+    <string name="recovery_phrase">Recovery phrase</string>
 </resources>
