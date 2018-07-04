@@ -203,7 +203,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         ).willReturn(Completable.complete())
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe(TestObserver.create())
+        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe()
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
@@ -279,7 +279,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         ).willReturn(Completable.error(exception))
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe(TestObserver.create())
+        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe()
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
@@ -345,7 +345,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(deployer))
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe(TestObserver.create())
+        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe()
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
@@ -408,7 +408,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe(TestObserver.create())
+        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe()
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
@@ -462,7 +462,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         }
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe(TestObserver.create())
+        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe()
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
@@ -501,7 +501,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         }
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe(TestObserver.create())
+        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe()
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
@@ -533,7 +533,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L))).willReturn(Single.error(exception))
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe(TestObserver.create())
+        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe()
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
@@ -559,7 +559,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         given(bip39Mock.mnemonicToSeed(anyString(), MockUtils.any())).willThrow(exception)
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe(TestObserver.create())
+        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe()
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
@@ -581,7 +581,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error(exception))
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(mnemonic.toByteArray())
 
-        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe(TestObserver.create())
+        viewModel.setup(encryptedMnemonic, chromeExtensionAddress).subscribe()
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
