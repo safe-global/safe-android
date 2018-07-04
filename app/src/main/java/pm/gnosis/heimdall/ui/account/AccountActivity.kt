@@ -23,13 +23,9 @@ import pm.gnosis.heimdall.utils.format
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.common.utils.doOnNextForResult
-import pm.gnosis.svalinn.common.utils.flatMapResult
 import pm.gnosis.svalinn.common.utils.subscribeForResult
-import pm.gnosis.ticker.data.repositories.models.Currency
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.isValidEthereumAddress
-import pm.gnosis.utils.stringWithNoTrailingZeroes
-import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -87,18 +83,7 @@ class AccountActivity : ViewModelActivity<AccountContract>() {
             .observeOn(AndroidSchedulers.mainThread())
             // Update balance view
             .doOnNextForResult(onNext = ::onAccountBalance)
-            .flatMapResult(mapper = { viewModel.loadFiatConversion(it) })
-            .observeOn(AndroidSchedulers.mainThread())
-            // Update Fiat view
-            .doOnNextForResult(onNext = ::onFiat)
             .subscribeForResult(onError = ::handleError)
-    }
-
-    private fun onFiat(currency: Pair<BigDecimal, Currency>) {
-        layout_account_fiat.text = getString(
-            R.string.fiat_approximation_parentheses,
-            currency.first.stringWithNoTrailingZeroes(), currency.second.getFiatSymbol()
-        )
     }
 
     private fun accountBalance() = viewModel.getAccountBalance()

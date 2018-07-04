@@ -52,18 +52,6 @@
                         android:text="-"
                         tools:text="12 ETH" />
 
-                    <TextView
-                        android:id="@+id/layout_account_fiat"
-                        style="@style/Content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        android:gravity="center"
-                        android:paddingEnd="16dp"
-                        android:paddingStart="16dp"
-                        tools:text="(≈ $1403.234)" />
-
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"

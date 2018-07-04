@@ -25,7 +25,6 @@ import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.TxExecutorApi
 import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
-import pm.gnosis.heimdall.data.remote.impls.LocalRelayServiceApi
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39Generator
@@ -41,11 +40,6 @@ import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.FingerprintHelper
 import pm.gnosis.svalinn.security.impls.AesEncryptionManager
 import pm.gnosis.svalinn.security.impls.AndroidFingerprintHelper
-import pm.gnosis.ticker.data.db.TickerDatabase
-import pm.gnosis.ticker.data.remote.TickerAdapter
-import pm.gnosis.ticker.data.remote.TickerApi
-import pm.gnosis.ticker.data.repositories.TickerRepository
-import pm.gnosis.ticker.data.repositories.impls.DefaultTickerRepository
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -93,92 +87,84 @@ class ApplicationModule(private val application: Application) {
             .add(HexNumberAdapter())
             .add(DecimalNumberAdapter())
             .add(DefaultNumberAdapter())
-            .add(TickerAdapter())
             .add(SolidityAddressAdapter())
             .build()
     }
 
     @Provides
     @Singleton
-    fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): RetrofitEthereumRpcApi {
-        val retrofit = Retrofit.Builder()
+    fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): RetrofitEthereumRpcApi =
+        Retrofit.Builder()
             .client(client)
             .baseUrl(BuildConfig.BLOCKCHAIN_NET_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
-        return retrofit.create(RetrofitEthereumRpcApi::class.java)
-    }
+            .create(RetrofitEthereumRpcApi::class.java)
 
     @Provides
     @Singleton
-    fun providesTxExecutorApi(moshi: Moshi, client: OkHttpClient): TxExecutorApi {
-        val retrofit = Retrofit.Builder()
+    fun providesTxExecutorApi(moshi: Moshi, client: OkHttpClient): TxExecutorApi =
+        Retrofit.Builder()
             // Increase timeout since our server goes to sleeps
             .client(client.newBuilder().readTimeout(30, TimeUnit.SECONDS).build())
             .baseUrl(TxExecutorApi.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
-        return retrofit.create(TxExecutorApi::class.java)
-    }
+            .create(TxExecutorApi::class.java)
 
     @Provides
     @Singleton
-    fun providesPushServiceApi(moshi: Moshi, client: OkHttpClient): PushServiceApi {
-        val retrofit = Retrofit.Builder()
+    fun providesPushServiceApi(moshi: Moshi, client: OkHttpClient): PushServiceApi =
+        Retrofit.Builder()
             .client(client)
             .baseUrl(PushServiceApi.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
-        return retrofit.create(PushServiceApi::class.java)
-    }
+            .create(PushServiceApi::class.java)
 
     @Provides
     @Singleton
-    fun providesRelayServiceApi(
-        accountsRepository: AccountsRepository, ethereumRepository: EthereumRepository, moshi: Moshi, client: OkHttpClient
-    ): RelayServiceApi {
-        val retrofit = Retrofit.Builder()
+    fun providesRelayServiceApi(moshi: Moshi, client: OkHttpClient): RelayServiceApi =
+        Retrofit.Builder()
             .client(client)
             .baseUrl(RelayServiceApi.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
-        return LocalRelayServiceApi(accountsRepository, ethereumRepository, retrofit.create(RelayServiceApi::class.java))
-    }
+            .create(RelayServiceApi::class.java)
 
     @Provides
     @Singleton
-    fun providesVerifiedTokensServiceApi(moshi: Moshi, client: OkHttpClient): VerifiedTokensServiceApi {
-        val retrofit = Retrofit.Builder()
+    fun providesVerifiedTokensServiceApi(moshi: Moshi, client: OkHttpClient): VerifiedTokensServiceApi =
+        Retrofit.Builder()
             .client(client)
             .baseUrl(VerifiedTokensServiceApi.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
-        return retrofit.create(VerifiedTokensServiceApi::class.java)
-    }
+            .create(VerifiedTokensServiceApi::class.java)
 
     @Provides
     @Singleton
     @Named(INFURA_REST_CLIENT)
-    fun providesInfuraOkHttpClient(okHttpClient: OkHttpClient, @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>): OkHttpClient {
-        return okHttpClient.newBuilder().apply {
+    fun providesInfuraOkHttpClient(okHttpClient: OkHttpClient, @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>): OkHttpClient =
+        okHttpClient.newBuilder().apply {
             interceptors.forEach {
                 addInterceptor(it)
             }
         }.build()
-    }
 
     @Provides
     @Singleton
-    fun providesOkHttpClient(): OkHttpClient = OkHttpClient.Builder().apply {
-        connectTimeout(10, TimeUnit.SECONDS)
-        readTimeout(10, TimeUnit.SECONDS)
-        writeTimeout(10, TimeUnit.SECONDS)
-    }.build()
+    fun providesOkHttpClient(): OkHttpClient =
+        OkHttpClient.Builder().apply {
+            connectTimeout(10, TimeUnit.SECONDS)
+            readTimeout(10, TimeUnit.SECONDS)
+            writeTimeout(10, TimeUnit.SECONDS)
+        }.build()
 
     @Provides
     @Singleton
@@ -222,28 +208,6 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     fun providesWordListProvider(@ApplicationContext context: Context): WordListProvider = AndroidWordListProvider(context)
-
-    @Provides
-    @Singleton
-    fun providesTickerRepository(tickerApi: TickerApi, tickerDb: TickerDatabase): TickerRepository =
-        DefaultTickerRepository(tickerApi, tickerDb)
-
-    @Provides
-    @Singleton
-    fun providesTickerApi(moshi: Moshi, client: OkHttpClient): TickerApi {
-        val retrofit = Retrofit.Builder()
-            .client(client)
-            .baseUrl(TickerApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-            .build()
-        return retrofit.create(TickerApi::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun providesTickerDb(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, TickerDatabase::class.java, TickerDatabase.DB_NAME).build()
 
     @Provides
     @Singleton

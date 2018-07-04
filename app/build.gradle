@@ -128,9 +128,6 @@ dependencies {
     }
     implementation "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:mnemonic-android:$versions.svalinn"
-    implementation ("com.github.gnosis.svalinn-kotlin:ticker:$versions.svalinn") {
-        exclude group: "com.squareup.retrofit2", module: "converter-moshi"
-    }
     implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
 

@@ -24,7 +24,6 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.security.EncryptionManager
-import pm.gnosis.ticker.data.repositories.TickerRepository
 import javax.inject.Singleton
 
 @Singleton
@@ -48,7 +47,6 @@ interface ApplicationComponent {
     fun accountsRepository(): AccountsRepository
     fun addressBookRepository(): AddressBookRepository
     fun safeRepository(): GnosisSafeRepository
-    fun tickerRepository(): TickerRepository
     fun tokenRepository(): TokenRepository
     fun transactionInfoRepository(): TransactionInfoRepository
 

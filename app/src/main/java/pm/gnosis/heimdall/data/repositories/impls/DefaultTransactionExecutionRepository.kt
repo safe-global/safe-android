@@ -70,8 +70,8 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         val initial = StringBuilder().append(ERC191_BYTE).append(ERC191_VERSION).append(safeAddress.asEthereumAddressString().removeHexPrefix())
         return Sha3Utils.keccak(
             parts.fold(
-                initial,
-                { acc, part -> acc.append(part) }).toString().hexToByteArray()
+                initial
+            ) { acc, part -> acc.append(part) }.toString().hexToByteArray()
         )
     }
 
@@ -126,9 +126,9 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         loadSafeState(safeAddress)
             .flatMap { info ->
                 relayServiceApi.estimate(
+                    safeAddress.asEthereumAddressChecksumString(),
                     EstimateParams(
-                        safeAddress.asEthereumAddressString(),
-                        transaction.wrapped.address.asEthereumAddressString(),
+                        transaction.wrapped.address.asEthereumAddressChecksumString(),
                         transaction.wrapped.value?.value?.asDecimalString() ?: "0",
                         transaction.wrapped.data ?: "0x",
                         transaction.operation.toInt(),

@@ -28,11 +28,8 @@ import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.ticker.data.repositories.TickerRepository
-import pm.gnosis.ticker.data.repositories.models.Currency
 import retrofit2.HttpException
 import retrofit2.Response
-import java.math.BigDecimal
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -53,17 +50,11 @@ class AccountViewModelTest {
     @Mock
     private lateinit var qrCodeGeneratorMock: QrCodeGenerator
 
-    @Mock
-    private lateinit var tickerRepositoryMock: TickerRepository
-
     lateinit var viewModel: AccountViewModel
 
     @Before
     fun setup() {
-        viewModel = AccountViewModel(
-            contextMock, accountRepositoryMock, ethereumRepositoryMock,
-            qrCodeGeneratorMock, tickerRepositoryMock
-        )
+        viewModel = AccountViewModel(contextMock, accountRepositoryMock, ethereumRepositoryMock, qrCodeGeneratorMock)
         given(contextMock.getString(Mockito.anyInt())).willReturn(TEST_STRING)
     }
 
@@ -201,35 +192,6 @@ class AccountViewModelTest {
         observer.assertNoErrors().assertComplete()
             .assertValueCount(1)
             .assertValue(DataResult(balance))
-    }
-
-    @Test
-    fun loadFiatConversion() {
-        val amount = Wei(BigInteger.ZERO)
-        val testObserver = TestObserver.create<Result<Pair<BigDecimal, Currency>>>()
-        val currency = Currency("", "", "", 0, 0, BigDecimal.ZERO, Currency.FiatSymbol.USD)
-        val fiatResult = BigDecimal.ZERO to currency
-        given(tickerRepositoryMock.convertToFiat(MockUtils.any<Wei>(), MockUtils.any())).willReturn(Single.just(fiatResult))
-
-        viewModel.loadFiatConversion(amount).subscribe(testObserver)
-
-        then(tickerRepositoryMock).should().convertToFiat(amount)
-        then(tickerRepositoryMock).shouldHaveNoMoreInteractions()
-        testObserver.assertResult(DataResult(fiatResult))
-    }
-
-    @Test
-    fun loadFiatConversionError() {
-        val amount = Wei(BigInteger.ZERO)
-        val testObserver = TestObserver.create<Result<Pair<BigDecimal, Currency>>>()
-        val exception = IllegalArgumentException()
-        given(tickerRepositoryMock.convertToFiat(MockUtils.any<Wei>(), MockUtils.any())).willReturn(Single.error(exception))
-
-        viewModel.loadFiatConversion(amount).subscribe(testObserver)
-
-        then(tickerRepositoryMock).should().convertToFiat(amount)
-        then(tickerRepositoryMock).shouldHaveNoMoreInteractions()
-        testObserver.assertResult(ErrorResult(exception))
     }
 
     private fun <D> createObserver() = TestObserver.create<Result<D>>()
