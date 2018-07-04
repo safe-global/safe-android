@@ -70,17 +70,17 @@ class LocalRelayServiceApi(
                     }
             }
 
-    override fun estimate(params: EstimateParams): Single<RelayEstimate> {
+    override fun estimate(address: String, params: EstimateParams): Single<RelayEstimate> {
         return Observable.fromCallable {
             val to = params.to.asEthereumAddress()!!
             val value = Solidity.UInt256(params.value.decimalAsBigInteger())
             val data = Solidity.Bytes(params.data.hexStringToByteArrayOrNull() ?: ByteArray(0))
             val operation = Solidity.UInt8(params.operation.toBigInteger())
             val estimateData = GnosisSafePersonalEdition.RequiredTxGas.encode(to, value, data, operation)
-            Transaction(params.safe.asEthereumAddress()!!, data = estimateData)
+            Transaction(address.asEthereumAddress()!!, data = estimateData)
         }.flatMap {
             ethereumRepository.request(
-                EthCall(transaction = it, id = 2, from = params.safe.asEthereumAddress()!!)
+                EthCall(transaction = it, id = 2, from = address.asEthereumAddress()!!)
             )
         }
             .firstOrError()
