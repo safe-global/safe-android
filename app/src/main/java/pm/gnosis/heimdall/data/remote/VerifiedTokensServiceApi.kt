@@ -6,9 +6,9 @@ import retrofit2.http.GET
 
 interface VerifiedTokensServiceApi {
     companion object {
-        const val BASE_URL = "https://gist.githubusercontent.com/fmrsabino/9d42308e79daf1c014e7ac504cb449f0/raw/1c9e93a4f00cf82bb5039e0e3b344dc29ee44579/"
+        const val BASE_URL = "https://gist.githubusercontent.com/rmeissner/98911fcf74b0ea9731e2dae2441c97a4/raw/"
     }
 
-    @GET("verified_tokens_rinkeby.json")
+    @GET("verified_rinkeby_tokens.json")
     fun loadVerifiedTokenList(): Single<List<VerifiedTokenJson>>
 }

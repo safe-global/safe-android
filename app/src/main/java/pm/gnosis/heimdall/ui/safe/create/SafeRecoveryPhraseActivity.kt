@@ -10,6 +10,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_safe_recovery_phrase.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.model.Solidity
@@ -20,8 +21,13 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.words
 import timber.log.Timber
+import javax.inject.Inject
 
 class SafeRecoveryPhraseActivity : ViewModelActivity<SafeRecoveryPhraseContract>() {
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
+
     override fun screenId() = ScreenId.SAFE_RECOVERY_PHRASE
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +43,7 @@ class SafeRecoveryPhraseActivity : ViewModelActivity<SafeRecoveryPhraseContract>
 
     override fun onStart() {
         super.onStart()
+        disposables += toolbarHelper.setupShadow(layout_safe_recovery_phrase_toolbar_shadow, layout_safe_recovery_phrase_content_scroll)
         disposables += layout_safe_recovery_phrase_finish.clicks()
             .flatMapSingle {
                 viewModel.loadEncryptedRecoveryPhrase()

@@ -15,10 +15,7 @@ import pm.gnosis.heimdall.data.db.models.fromDb
 import pm.gnosis.heimdall.data.db.models.toDb
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
-import pm.gnosis.heimdall.data.repositories.models.PendingSafe
-import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.data.repositories.models.SafeInfo
-import pm.gnosis.heimdall.data.repositories.models.TransactionStatus
+import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -76,7 +73,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun savePendingSafe(transactionHash: BigInteger, name: String?, safeAddress: Solidity.Address, payment: Wei): Completable =
         Completable.fromAction {
-            safeDao.insertPendingSafe(PendingGnosisSafeDb(transactionHash, name, safeAddress, payment))
+            safeDao.insertPendingSafe(PendingGnosisSafeDb(transactionHash, name, safeAddress, ERC20Token.ETHER_TOKEN.address, payment.value))
         }.subscribeOn(Schedulers.io())
 
     override fun updatePendingSafe(pendingSafe: PendingSafe): Completable =

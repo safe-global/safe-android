@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.ui.onboarding.password.PasswordConfirmActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseActivity
+import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.create.PairingActivity
 import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
@@ -60,6 +61,7 @@ interface ViewComponent {
     fun inject(activity: ConfirmSafeRecoveryPhraseActivity)
     fun inject(activity: ConfirmTransactionActivity)
     fun inject(activity: CreateAssetTransferActivity)
+    fun inject(activity: CreateSafeIntroActivity)
     fun inject(activity: FingerprintSetupActivity)
     fun inject(activity: ManageTokensActivity)
     fun inject(activity: DebugSettingsActivity)

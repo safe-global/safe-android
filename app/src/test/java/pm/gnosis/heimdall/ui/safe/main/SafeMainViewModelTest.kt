@@ -26,6 +26,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
@@ -38,6 +39,7 @@ import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
 import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.utils.*
+import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeMainViewModelTest {
@@ -125,14 +127,14 @@ class SafeMainViewModelTest {
         safeProcessor.offer(
             listOf(
                 Safe(TEST_SAFE),
-                PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE, TEST_PAYMENT)
+                PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE,  TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
             )
         )
 
         safeSubscriber.assertValueCount(4).assertValueAt(3) {
             (it as DataResult).data.let {
                 it.entries == listOf(
-                    PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE, TEST_PAYMENT)
+                    PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE,  TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
                 )
                         && it.diff != null
                         && it.parentId == parentId
@@ -163,7 +165,7 @@ class SafeMainViewModelTest {
             Flowable.just(
                 listOf(
                     Safe(TEST_SAFE),
-                    PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE, TEST_PAYMENT)
+                    PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE,  TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
                 )
             )
         )
@@ -193,7 +195,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun loadSelectedSafePending() {
-        val pendingSafe = PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE, TEST_PAYMENT)
+        val pendingSafe = PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE,  TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         preferences.putString(KEY_SELECTED_SAFE, TEST_TX_HASH.asTransactionHash())
         given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
 
@@ -222,7 +224,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun selectSafePending() {
-        val pendingSafe = PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE, TEST_PAYMENT)
+        val pendingSafe = PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE,  TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
 
         val safeObserver = TestObserver<AbstractSafe>()
@@ -289,27 +291,27 @@ class SafeMainViewModelTest {
 
     @Test
     fun updatePendingSafeName() {
-        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)
+        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
         given(safeRepository.updatePendingSafe(MockUtils.any())).willReturn(Completable.complete())
 
         val nullObserver = TestObserver<Unit>()
         viewModel.updateSafeName(safe, null).subscribe(nullObserver)
         nullObserver.assertResult()
 
-        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, null, TEST_SAFE, Wei.ZERO))
+        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, null, TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO))
         then(safeRepository).shouldHaveNoMoreInteractions()
 
         val nameObserver = TestObserver<Unit>()
         viewModel.updateSafeName(safe, "New Name").subscribe(nameObserver)
         nameObserver.assertResult()
 
-        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, "New Name", TEST_SAFE, Wei.ZERO))
+        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, "New Name", TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO))
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun updatePendingSafeNameError() {
-        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)
+        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
         val error = NoSuchElementException()
         given(safeRepository.updatePendingSafe(MockUtils.any())).willReturn(Completable.error(error))
 
@@ -317,14 +319,14 @@ class SafeMainViewModelTest {
         viewModel.updateSafeName(safe, null).subscribe(nullObserver)
         nullObserver.assertError(error)
 
-        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, null, TEST_SAFE, Wei.ZERO))
+        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, null, TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO))
         then(safeRepository).shouldHaveNoMoreInteractions()
 
         val nameObserver = TestObserver<Unit>()
         viewModel.updateSafeName(safe, "New Name").subscribe(nameObserver)
         nameObserver.assertError(error)
 
-        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, "New Name", TEST_SAFE, Wei.ZERO))
+        then(safeRepository).should().updatePendingSafe(PendingSafe(TEST_TX_HASH, "New Name", TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO))
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
@@ -369,19 +371,19 @@ class SafeMainViewModelTest {
     @Test
     fun observePendingSafe() {
         context.mockGetString()
-        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)
+        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
         val safeProcessor = PublishProcessor.create<PendingSafe>()
         given(safeRepository.observePendingSafe(MockUtils.any())).willReturn(safeProcessor)
 
         val safeSubscriber = TestSubscriber<Pair<String, String>>()
         viewModel.observeSafe(safe).subscribe(safeSubscriber)
 
-        safeProcessor.offer(PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO))
+        safeProcessor.offer(PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO))
         safeSubscriber
             .assertValueCount(1)
             .assertValueAt(0, "Old Name" to "0x1f81...C65C7E")
 
-        safeProcessor.offer(PendingSafe(TEST_TX_HASH, null, TEST_SAFE, Wei.ZERO))
+        safeProcessor.offer(PendingSafe(TEST_TX_HASH, null, TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO))
         safeSubscriber
             .assertValueCount(2)
             .assertValueAt(1, R.string.your_safe.toString() to "0x1f81...C65C7E")
@@ -396,7 +398,7 @@ class SafeMainViewModelTest {
         given(safeRepository.observePendingSafe(MockUtils.any())).willReturn(Flowable.error(error))
 
         val safeSubscriber = TestSubscriber<Pair<String, String>>()
-        viewModel.observeSafe(PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)).subscribe(safeSubscriber)
+        viewModel.observeSafe(PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)).subscribe(safeSubscriber)
 
         safeSubscriber.assertFailure(Predicate { it == error })
 
@@ -433,7 +435,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun removePendingSafe() {
-        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)
+        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
         given(safeRepository.removePendingSafe(MockUtils.any())).willReturn(Completable.complete())
 
         val testObserver = TestObserver<Unit>()
@@ -446,7 +448,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun removePendingSafeError() {
-        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, Wei.ZERO)
+        val safe = PendingSafe(TEST_TX_HASH, "Old Name", TEST_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
         val error = NoSuchElementException()
         given(safeRepository.removePendingSafe(MockUtils.any())).willReturn(Completable.error(error))
 
@@ -462,7 +464,8 @@ class SafeMainViewModelTest {
         private val TEST_TX_HASH = "0xdae721569a948b87c269ebacaa5a4a67728095e32f9e7e4626f109f27a73b40f".hexAsBigInteger()
         private val TEST_SAFE = "0x1f81FFF89Bd57811983a35650296681f99C65C7E".asEthereumAddress()!!
         private val TEST_PENDING_SAFE = "0xC2AC20b3Bb950C087f18a458DB68271325a48132".asEthereumAddress()!!
-        private val TEST_PAYMENT = Wei.ether("0.1")
+        private val TEST_PAYMENT_TOKEN = ERC20Token.ETHER_TOKEN.address
+        private val TEST_PAYMENT_AMOUNT = Wei.ether("0.1").value
         private const val KEY_SELECTED_SAFE = "safe_main.string.selected_safe"
     }
 }

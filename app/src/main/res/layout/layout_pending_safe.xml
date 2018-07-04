@@ -98,7 +98,7 @@
                 android:gravity="center"
                 android:paddingEnd="24dp"
                 android:paddingStart="24dp"
-                android:text="@string/pending_safe_deposit_value"
+                android:text="@string/loading"
                 android:textColor="#1e435b"
                 android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"

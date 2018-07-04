@@ -29,8 +29,10 @@ class ConfirmSafeRecoveryPhraseAdapter @Inject constructor() : RecyclerView.Adap
         fun bind(data: String) {
             (itemView as TextView).text = data
             itemView.setOnClickListener {
-                items.removeAt(adapterPosition)
-                notifyItemRemoved(adapterPosition)
+                val position = adapterPosition
+                if (position < 0) return@setOnClickListener
+                items.removeAt(position)
+                notifyItemRemoved(position)
                 dataChanged.onNext(items)
             }
         }

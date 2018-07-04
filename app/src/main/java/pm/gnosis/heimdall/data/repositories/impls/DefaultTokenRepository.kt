@@ -111,10 +111,10 @@ class DefaultTokenRepository @Inject constructor(
     ): Observable<List<Pair<ERC20Token, BigInteger?>>> {
         val requests =
             erC20Tokens.mapIndexed { index, token ->
-                if (token == ETHER_TOKEN) {
-                    MappedRequest(EthBalance(ofAddress, id = index), {
+                if (token.address == ETHER_TOKEN.address) {
+                    MappedRequest(EthBalance(ofAddress, id = index)) {
                         token to it?.value
-                    })
+                    }
                 } else {
                     MappedRequest(EthCall(
                         transaction = Transaction(
@@ -122,11 +122,11 @@ class DefaultTokenRepository @Inject constructor(
                             data = ERC20Contract.BalanceOf.encode(ofAddress)
                         ),
                         id = index
-                    ), {
+                    )) {
                         token to nullOnThrow {
                             ERC20Contract.BalanceOf.decode(it!!).balance.value
                         }
-                    })
+                    }
                 }
             }.toList()
 

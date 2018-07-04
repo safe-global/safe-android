@@ -15,6 +15,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_confirm_safe_recovery_phrase.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -37,6 +38,9 @@ class ConfirmSafeRecoveryPhraseActivity : ViewModelActivity<ConfirmSafeRecoveryP
 
     // Default composite disposable gets cleared on onStop while clicks need to survive the lifetime of the activity
     private var wordClickDisposables = CompositeDisposable()
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
 
     @Inject
     lateinit var adapter: ConfirmSafeRecoveryPhraseAdapter
@@ -63,7 +67,7 @@ class ConfirmSafeRecoveryPhraseActivity : ViewModelActivity<ConfirmSafeRecoveryP
 
     override fun onStart() {
         super.onStart()
-        disposables += layout_safe_recovery_phrase_finish.clicks()
+        disposables += layout_confirm_safe_recovery_phrase_finish.clicks()
             .flatMapSingle {
                 viewModel.createSafe()
                     .doOnSubscribe {
@@ -76,6 +80,11 @@ class ConfirmSafeRecoveryPhraseActivity : ViewModelActivity<ConfirmSafeRecoveryP
 
         disposables += layout_confirm_safe_recovery_phrase_back.clicks()
             .subscribeBy(onNext = { finish() }, onError = Timber::e)
+
+        disposables += toolbarHelper.setupShadow(
+            layout_confirm_safe_recovery_phrase_toolbar_shadow,
+            layout_confirm_safe_recovery_phrase_content_scroll
+        )
     }
 
     private fun onIsCorrectSequence(isCorrectSequence: Boolean) {
@@ -88,8 +97,8 @@ class ConfirmSafeRecoveryPhraseActivity : ViewModelActivity<ConfirmSafeRecoveryP
     }
 
     private fun bottomBarEnabled(enable: Boolean) {
-        layout_safe_recovery_phrase_finish.isEnabled = enable
-        layout_safe_recovery_phrase_bottom_bar.setBackgroundColor(getColorCompat(if (enable) R.color.azure else R.color.bluey_grey))
+        layout_confirm_safe_recovery_phrase_finish.isEnabled = enable
+        layout_confirm_safe_recovery_phrase_bottom_bar.setBackgroundColor(getColorCompat(if (enable) R.color.azure else R.color.bluey_grey))
     }
 
     private fun onSafeCreated(txHash: BigInteger) {
