@@ -15,7 +15,6 @@ interface GnosisSafeRepository {
     fun observeSafes(): Flowable<List<AbstractSafe>>
     fun observeDeployedSafes(): Flowable<List<Safe>>
 
-    fun addSafe(address: Solidity.Address, name: String): Completable
     fun removeSafe(address: Solidity.Address): Completable
     fun updateSafe(safe: Safe): Completable
     fun loadSafe(address: Solidity.Address): Single<Safe>

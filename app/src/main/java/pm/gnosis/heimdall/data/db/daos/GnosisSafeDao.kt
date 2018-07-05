@@ -38,6 +38,9 @@ interface GnosisSafeDao {
     @Query("SELECT * FROM ${PendingGnosisSafeDb.TABLE_NAME} WHERE ${PendingGnosisSafeDb.COL_TX_HASH} = :hash")
     fun loadPendingSafe(hash: BigInteger): Single<PendingGnosisSafeDb>
 
+    @Query("SELECT * FROM ${PendingGnosisSafeDb.TABLE_NAME} WHERE ${PendingGnosisSafeDb.COL_TX_HASH} = :hash")
+    fun queryPendingSafe(hash: BigInteger): PendingGnosisSafeDb
+
     @Query("DELETE FROM ${PendingGnosisSafeDb.TABLE_NAME} WHERE ${PendingGnosisSafeDb.COL_TX_HASH} = :hash")
     fun removePendingSafe(hash: BigInteger)
 
@@ -48,8 +51,9 @@ interface GnosisSafeDao {
     fun updatePendingSafe(pendingSafe: PendingGnosisSafeDb)
 
     @Transaction
-    fun pendingSafeToDeployedSafe(pendingSafe: PendingSafe) {
-        removePendingSafe(pendingSafe.hash)
-        insertSafe(GnosisSafeDb(pendingSafe.address, pendingSafe.name))
+    fun pendingSafeToDeployedSafe(pendingSafeHash: BigInteger) {
+        val safe = queryPendingSafe(pendingSafeHash)
+        removePendingSafe(safe.transactionHash)
+        insertSafe(GnosisSafeDb(safe.address, safe.name))
     }
 }

@@ -116,7 +116,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_shadow_size"
         android:background="@drawable/toolbar_dropshadow"
-        app:layout_constraintTop_toBottomOf="@id/layout_manage_tokens"
+        app:layout_constraintTop_toBottomOf="@id/layout_create_safe_intro_title"
         tools:visibility="visible" />
 
 </android.support.constraint.ConstraintLayout>
