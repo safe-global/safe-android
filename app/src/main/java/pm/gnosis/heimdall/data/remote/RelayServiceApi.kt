@@ -11,11 +11,11 @@ interface RelayServiceApi {
         const val BASE_URL = "https://safe-relay.dev.gnosisdev.com/api/"
     }
 
-    @POST("v1/transactions/")
-    fun execute(@Body params: ExecuteParams): Single<RelayExecution>
+    @POST("v1/safes/{address}/transactions/")
+    fun execute(@Path("address") address: String, @Body params: ExecuteParams): Single<RelayExecution>
 
-    @POST("v1/transactions/estimate/")
-    fun estimate(@Body params: EstimateParams): Single<RelayEstimate>
+    @POST("v1/safes/{address}/transactions/estimate/")
+    fun estimate(@Path("address") address: String, @Body params: EstimateParams): Single<RelayEstimate>
 
     @POST("v1/safes/")
     fun safeCreation(@Body params: RelaySafeCreationParams): Single<RelaySafeCreation>

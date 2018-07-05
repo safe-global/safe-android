@@ -14,15 +14,13 @@ import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.ticker.data.repositories.TickerRepository
 import javax.inject.Inject
 
 class AccountViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val accountsRepository: AccountsRepository,
     private val ethereumRepository: EthereumRepository,
-    private val qrCodeGenerator: QrCodeGenerator,
-    private val tickerRepository: TickerRepository
+    private val qrCodeGenerator: QrCodeGenerator
 ) : AccountContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context)
@@ -44,6 +42,4 @@ class AccountViewModel @Inject constructor(
                     .onErrorResumeNext(Function { errorHandler.observable<Wei>(it) })
                     .mapToResult()
             }
-
-    override fun loadFiatConversion(amount: Wei) = tickerRepository.convertToFiat(amount).mapToResult()
 }

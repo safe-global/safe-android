@@ -10,14 +10,12 @@ import java.math.BigInteger
 
 @JsonClass(generateAdapter = true)
 data class ExecuteParams(
-    @Json(name = "safe")
-    val safe: String,
     @Json(name = "to")
     val to: String,
     @Json(name = "value")
     val value: String,
     @Json(name = "data")
-    val data: String,
+    val data: String?,
     @Json(name = "operation")
     val operation: Int,
     @Json(name = "signatures")
@@ -27,7 +25,9 @@ data class ExecuteParams(
     @Json(name = "dataGas")
     val dataGas: String,
     @Json(name = "gasPrice")
-    val gasPrice: String
+    val gasPrice: String,
+    @Json(name = "nonce")
+    val nonce: Long
 )
 
 @JsonClass(generateAdapter = true)
@@ -38,8 +38,6 @@ data class RelayExecution(
 
 @JsonClass(generateAdapter = true)
 data class EstimateParams(
-    @Json(name = "safe")
-    val safe: String,
     @Json(name = "to")
     val to: String,
     @Json(name = "value")

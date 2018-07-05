@@ -70,8 +70,8 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         val initial = StringBuilder().append(ERC191_BYTE).append(ERC191_VERSION).append(safeAddress.asEthereumAddressString().removeHexPrefix())
         return Sha3Utils.keccak(
             parts.fold(
-                initial,
-                { acc, part -> acc.append(part) }).toString().hexToByteArray()
+                initial
+            ) { acc, part -> acc.append(part) }.toString().hexToByteArray()
         )
     }
 
@@ -126,9 +126,9 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         loadSafeState(safeAddress)
             .flatMap { info ->
                 relayServiceApi.estimate(
+                    safeAddress.asEthereumAddressChecksumString(),
                     EstimateParams(
-                        safeAddress.asEthereumAddressString(),
-                        transaction.wrapped.address.asEthereumAddressString(),
+                        transaction.wrapped.address.asEthereumAddressChecksumString(),
                         transaction.wrapped.value?.value?.asDecimalString() ?: "0",
                         transaction.wrapped.data ?: "0x",
                         transaction.operation.toInt(),
@@ -233,8 +233,8 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         gasPrice: BigInteger
     ): Single<String> =
         loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, txGas, dataGas, gasPrice)
-            .flatMap(relayServiceApi::execute)
-            .flatMap { handleSubmittedTransaction(safeAddress, transaction, it.transactionHash, txGas, dataGas, gasPrice) }
+            .flatMap { relayServiceApi.execute(safeAddress.asEthereumAddressChecksumString(), it) }
+            .flatMap { handleSubmittedTransaction(safeAddress, transaction, it.transactionHash.addHexPrefix(), txGas, dataGas, gasPrice) }
 
     private fun loadExecutionParams(
         safeAddress: Solidity.Address,
@@ -265,15 +265,15 @@ class DefaultTransactionExecutionRepository @Inject constructor(
 
                 val tx = innerTransaction.wrapped
                 ExecuteParams(
-                    safeAddress.asEthereumAddressChecksumString(),
                     tx.address.asEthereumAddressChecksumString(),
                     tx.value?.value?.asDecimalString() ?: "0",
-                    tx.data ?: "0x",
+                    tx.data,
                     innerTransaction.operation.toInt(),
                     serviceSignatures,
                     txGas.asDecimalString(),
                     dataGas.asDecimalString(),
-                    gasPrice.asDecimalString()
+                    gasPrice.asDecimalString(),
+                    tx.nonce?.toLong() ?: 0
                 )
             }
 
@@ -314,7 +314,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             .switchMap { status ->
                 status.success?.let {
                     Observable.just(it to (status.timestamp ?: 0))
-                } ?: ethereumRepository.getTransactionReceipt(status.transactionId)
+                } ?: ethereumRepository.getTransactionReceipt(status.transactionId.addHexPrefix())
                     .flatMap { receipt ->
                         ethereumRepository.getBlockByHash(receipt.blockHash)
                             .map { receipt to (it.timestamp.toLong() * 1000) }
