@@ -5,10 +5,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import com.squareup.picasso.Picasso
 import dagger.Component
-import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.di.modules.ApplicationBindingsModule
 import pm.gnosis.heimdall.di.modules.ApplicationModule
@@ -47,6 +44,7 @@ interface ApplicationComponent {
     fun accountsRepository(): AccountsRepository
     fun addressBookRepository(): AddressBookRepository
     fun safeRepository(): GnosisSafeRepository
+    fun shortcutRepository(): ShortcutRepository
     fun tokenRepository(): TokenRepository
     fun transactionInfoRepository(): TransactionInfoRepository
 

@@ -36,7 +36,7 @@
         android:gravity="center_vertical"
         android:minHeight="@dimen/toolbar_height"
         android:paddingEnd="16dp"
-        android:text="@string/transfer"
+        android:text="@string/send"
         android:textColor="@color/dark_slate_blue"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"

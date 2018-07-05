@@ -68,6 +68,10 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindsShortcutRepository(repository: DefaultShortcutRepository): ShortcutRepository
+
+    @Binds
+    @Singleton
     abstract fun bindsTokenRepository(repository: DefaultTokenRepository): TokenRepository
 
     @Binds

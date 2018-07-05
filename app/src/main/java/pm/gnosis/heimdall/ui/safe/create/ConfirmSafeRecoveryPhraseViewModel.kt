@@ -45,12 +45,12 @@ class ConfirmSafeRecoveryPhraseViewModel @Inject constructor(
             this.mnemonic = mnemonic
             this.chromeExtensionAddress = chromeExtensionAddress
         }
-            .andThen(loadShuffledWords())
+            .andThen(loadWordsToDisplay())
             .subscribeOn(Schedulers.io())
 
-    private fun loadShuffledWords(): Single<List<String>> =
+    private fun loadWordsToDisplay(): Single<List<String>> =
         Single.fromCallable {
-            mnemonic.words().shuffled()
+            mnemonic.words().sorted()
         }.subscribeOn(Schedulers.computation())
 
     override fun isCorrectSequence(words: List<String>): Single<Result<Boolean>> =
