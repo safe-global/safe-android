@@ -21,6 +21,7 @@ class HeimdallApplication : MultiDexApplication() {
         // Init crash tracker to track unhandled exceptions
         component.crashTracker().init()
         RxJavaPlugins.setErrorHandler(Timber::e)
+        component.shortcutRepository().init()
 
         try {
             LinuxSecureRandom()

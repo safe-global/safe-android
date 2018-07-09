@@ -52,12 +52,14 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
 
         disposables += Single.fromCallable {
             var address: Solidity.Address? = null
+            @Suppress("MoveLambdaOutsideParentheses")
             handleQrCodeActivityResult(requestCode, resultCode, data, {
                 address = parseEthereumAddress(it) ?: throw IllegalArgumentException()
             })
 
             // We couldn't parse an address yet
             if (address == null) {
+                @Suppress("MoveLambdaOutsideParentheses")
                 handleAddressBookResult(requestCode, resultCode, data, {
                     address = it.address
                 })
@@ -155,11 +157,9 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
             }
             CreateAssetTransferContract.ViewUpdate.EstimateError -> disableContinue()
             is CreateAssetTransferContract.ViewUpdate.TokenInfo -> {
-                update.value.token.name?.let {
-                    layout_create_asset_transfer_title.text = getString(R.string.transfer_x, it)
-                }
+                layout_create_asset_transfer_title.text = getString(R.string.send_x, update.value.token.name)
                 layout_create_asset_transfer_safe_balance.text = update.value.displayString()
-                layout_create_asset_transfer_input_label.text = update.value.token.symbol ?: "???"
+                layout_create_asset_transfer_input_label.text = update.value.token.symbol
             }
             is CreateAssetTransferContract.ViewUpdate.InvalidInput -> {
                 layout_create_asset_transfer_input_value.setTextColor(

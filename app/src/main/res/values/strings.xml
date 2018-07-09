@@ -26,7 +26,6 @@
     <string name="submit_transaction">Submit Transaction</string>
     <string name="cancel">Cancel</string>
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
-    <string name="transfer">Transfer</string>
     <string name="transaction_details_error">Error fetching transaction details</string>
     <string name="safe_remove_success">Removed %1s from this device</string>
     <string name="change_name">Edit Safe name</string>
@@ -124,7 +123,7 @@
     <string name="confirmations_ready">confirmed by extension</string>
     <string name="submitting_transaction">Submitting transaction</string>
     <string name="rejecting_transaction">Rejecting transaction</string>
-    <string name="transfer_x">Transfer %s</string>
+    <string name="send_x">Send %s</string>
     <string name="enter_password">Enter password</string>
     <string name="use_password">Use password</string>
     <string name="place_your_finger_to_unlock">Place your finger to unlock</string>
@@ -193,4 +192,5 @@
     <string name="debug_settings">Debug Settings</string>
     <string name="confirm_recovery_phrase">Confirm recovery phrase</string>
     <string name="recovery_phrase">Recovery phrase</string>
+    <string name="send_from_x">Send from %s</string>
 </resources>

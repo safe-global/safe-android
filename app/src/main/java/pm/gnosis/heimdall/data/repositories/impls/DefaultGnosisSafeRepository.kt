@@ -66,11 +66,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
     override fun observePendingSafe(transactionHash: BigInteger): Flowable<PendingSafe> =
         safeDao.observePendingSafe(transactionHash).map { it.fromDb() }
 
-    override fun addSafe(address: Solidity.Address, name: String) =
-        Completable.fromCallable {
-            safeDao.insertSafe(GnosisSafeDb(address, name))
-        }.subscribeOn(Schedulers.io())!!
-
     override fun savePendingSafe(transactionHash: BigInteger, name: String?, safeAddress: Solidity.Address, payment: Wei): Completable =
         Completable.fromAction {
             safeDao.insertPendingSafe(PendingGnosisSafeDb(transactionHash, name, safeAddress, ERC20Token.ETHER_TOKEN.address, payment.value))
@@ -87,7 +82,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
         }.subscribeOn(Schedulers.io())!!
 
     override fun pendingSafeToDeployedSafe(pendingSafe: PendingSafe): Completable =
-        Completable.fromCallable { safeDao.pendingSafeToDeployedSafe(pendingSafe) }
+        Completable.fromCallable { safeDao.pendingSafeToDeployedSafe(pendingSafe.hash) }
             .andThen(sendSafeCreationPush(pendingSafe.address).onErrorComplete())
             .subscribeOn(Schedulers.io())
 

@@ -85,7 +85,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
 
         viewModel.setup(encryptedMnemonic, Solidity.Address(1.toBigInteger())).subscribe(testObserver)
 
-        testObserver.assertTerminated().assertNoErrors()
+        testObserver.assertResult(mnemonic.words().sorted())
         then(encryptionManagerMock).should().decrypt(capture(cryptoDataCaptor))
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         assertTrue(cryptoDataCaptor.value.data.contentEquals("ffffff".hexStringToByteArray()))
