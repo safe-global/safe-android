@@ -5,9 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:fitsSystemWindows="true"
-    app:behavior_hideable="true"
-    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+    android:fitsSystemWindows="true">
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_title"
@@ -15,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="sans-serif"
         android:text="@string/terms"
         android:textColor="@color/dark_slate_blue"
@@ -40,6 +38,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_title" />
 
+
+    <ImageView
+        android:id="@+id/bottom_sheet_terms_and_conditions_first_bullet"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/white_circle"
+        android:tint="@color/azure"
+        app:layout_constraintStart_toStartOf="@+id/bottom_sheet_terms_and_conditions_description"
+        app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_first_bullet_text" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_terms_and_conditions_first_bullet_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/terms_first_bullet"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bottom_sheet_terms_and_conditions_first_bullet"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_description" />
+
+    <ImageView
+        android:id="@+id/bottom_sheet_terms_and_conditions_second_bullet"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/white_circle"
+        android:tint="@color/azure"
+        app:layout_constraintStart_toStartOf="@+id/bottom_sheet_terms_and_conditions_first_bullet"
+        app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_second_bullet_text" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_terms_and_conditions_second_bullet_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/terms_second_bullet"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bottom_sheet_terms_and_conditions_second_bullet"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_first_bullet_text" />
+
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_reject"
         style="@style/Widget.AppCompat.Button.Borderless"
@@ -56,7 +103,7 @@
         android:theme="@style/SmallFlatButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/bottom_sheet_terms_and_conditions_agree"
-        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_description" />
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_second_bullet_text" />
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_agree"

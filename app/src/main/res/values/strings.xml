@@ -106,7 +106,7 @@
     <string name="password_validation_minimum_characters">Use a minimum of 8 characters\n</string>
     <string name="password_validation_one_number_one_letter">Password with at least 1 number and 1 letter\n</string>
     <string name="terms">Terms</string>
-    <string name="terms_info"><![CDATA[By continuing you accept and agree with the <a href="https://gnosis.pm">Terms of Service</a> and <a href="https://gnosis.pm/assets/pdf/PrivacyPolicyGnosisLtd.pdf">Privacy Policy</a>]]></string>
+    <string name="terms_info"><![CDATA[Please review our <a href="https://gnosis.pm">Terms of Use</a> and <a href="https://gnosis.pm/assets/pdf/PrivacyPolicyGnosisLtd.pdf">Privacy Policy</a>.]]></string>
     <string name="tos_link">https://gnosis.pm</string>
     <string name="privacy_link">https://gnosis.pm/assets/pdf/PrivacyPolicyGnosisLtd.pdf</string>
     <string name="no_thanks">No Thanks</string>
@@ -196,4 +196,6 @@
     <string name="new_address">New address</string>
     <string name="edit_address">Edit address</string>
     <string name="display_qr_code">Display QR code</string>
+    <string name="terms_first_bullet">We do not collect demographic data like age and gender.</string>
+    <string name="terms_second_bullet">We collect anonymized app usage data and crash reports to ensure quality of our app.</string>
 </resources>
