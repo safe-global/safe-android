@@ -37,22 +37,30 @@ class ChangePasswordViewModelTest {
     fun validatePasswordValid() {
         val observer = TestObserver<Result<Collection<PasswordValidationCondition>>>()
         viewModel.validatePassword("qwe123qwe").subscribe(observer)
-        observer.assertResult(DataResult(listOf(
-            PasswordValidationCondition.NonIdenticalCharacters(true),
-            PasswordValidationCondition.MinimumCharacters(true),
-            PasswordValidationCondition.OneNumberOneLetter(true)
-        )))
+        observer.assertResult(
+            DataResult(
+                listOf(
+                    PasswordValidationCondition.MinimumCharacters(true),
+                    PasswordValidationCondition.OneNumberOneLetter(true),
+                    PasswordValidationCondition.NonIdenticalCharacters(true)
+                )
+            )
+        )
     }
 
     @Test
     fun validatePasswordInvalid() {
         val observer = TestObserver<Result<Collection<PasswordValidationCondition>>>()
         viewModel.validatePassword("").subscribe(observer)
-        observer.assertResult(DataResult(listOf(
-            PasswordValidationCondition.NonIdenticalCharacters(false),
-            PasswordValidationCondition.MinimumCharacters(false),
-            PasswordValidationCondition.OneNumberOneLetter(false)
-        )))
+        observer.assertResult(
+            DataResult(
+                listOf(
+                    PasswordValidationCondition.MinimumCharacters(false),
+                    PasswordValidationCondition.OneNumberOneLetter(false),
+                    PasswordValidationCondition.NonIdenticalCharacters(false)
+                )
+            )
+        )
     }
 
     @Test

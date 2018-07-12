@@ -80,9 +80,9 @@ class PasswordHelperTest {
     fun emptyPassword() {
         val password = ""
         val expectedConditions = listOf(
-            PasswordValidationCondition.NonIdenticalCharacters(false),
             PasswordValidationCondition.MinimumCharacters(false),
-            PasswordValidationCondition.OneNumberOneLetter(false)
+            PasswordValidationCondition.OneNumberOneLetter(false),
+            PasswordValidationCondition.NonIdenticalCharacters(false)
         )
         testPassword(password, expectedConditions)
     }
@@ -91,9 +91,9 @@ class PasswordHelperTest {
     fun identicalCharacters() {
         val password = "aaabbb111"
         val expectedConditions = listOf(
-            PasswordValidationCondition.NonIdenticalCharacters(false),
             PasswordValidationCondition.MinimumCharacters(true),
-            PasswordValidationCondition.OneNumberOneLetter(true)
+            PasswordValidationCondition.OneNumberOneLetter(true),
+            PasswordValidationCondition.NonIdenticalCharacters(false)
         )
         testPassword(password, expectedConditions)
     }
@@ -102,9 +102,9 @@ class PasswordHelperTest {
     fun minimumCharacters() {
         val password = "acbb1"
         val expectedConditions = listOf(
-            PasswordValidationCondition.NonIdenticalCharacters(true),
             PasswordValidationCondition.MinimumCharacters(false),
-            PasswordValidationCondition.OneNumberOneLetter(true)
+            PasswordValidationCondition.OneNumberOneLetter(true),
+            PasswordValidationCondition.NonIdenticalCharacters(true)
         )
         testPassword(password, expectedConditions)
     }
@@ -113,9 +113,9 @@ class PasswordHelperTest {
     fun oneNumberOneLetter() {
         val password = "a1"
         val expectedConditions = listOf(
-            PasswordValidationCondition.NonIdenticalCharacters(true),
             PasswordValidationCondition.MinimumCharacters(false),
-            PasswordValidationCondition.OneNumberOneLetter(true)
+            PasswordValidationCondition.OneNumberOneLetter(true),
+            PasswordValidationCondition.NonIdenticalCharacters(true)
         )
         testPassword(password, expectedConditions)
     }
@@ -124,9 +124,9 @@ class PasswordHelperTest {
     fun validPassword() {
         val password = "qweasd123"
         val expectedConditions = listOf(
-            PasswordValidationCondition.NonIdenticalCharacters(true),
             PasswordValidationCondition.MinimumCharacters(true),
-            PasswordValidationCondition.OneNumberOneLetter(true)
+            PasswordValidationCondition.OneNumberOneLetter(true),
+            PasswordValidationCondition.NonIdenticalCharacters(true)
         )
         testPassword(password, expectedConditions)
     }
