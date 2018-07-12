@@ -1,10 +1,14 @@
 package pm.gnosis.heimdall.ui.addressbook
 
+import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import android.support.annotation.ColorInt
 import io.reactivex.Observable
 import io.reactivex.Single
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
@@ -18,9 +22,17 @@ import pm.gnosis.utils.trimWhitespace
 import javax.inject.Inject
 
 class AddressBookViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val addressBookRepository: AddressBookRepository,
     private val qrCodeGenerator: QrCodeGenerator
 ) : AddressBookContract() {
+
+    private val errorHandler = SimpleLocalizedException.Handler.Builder(context)
+        .add({ it is AddressAlreadyAddedException }, R.string.address_already_in_address_book)
+        .add({ it is NameIsBlankException }, R.string.name_cannot_be_blank)
+        .add({ it is InvalidAddressException }, R.string.invalid_ethereum_address)
+        .build()
+
 
     override fun observeAddressBook() = addressBookRepository
         .observeAddressBook().scanToAdapterData({ it.address })
@@ -33,33 +45,35 @@ class AddressBookViewModel @Inject constructor(
 
     override fun addAddressBookEntry(address: String, name: String, description: String) =
         Observable
-            .fromCallable { checkAddressEntryData(name, address) }
+            .fromCallable {
+                if (name.isBlank()) throw NameIsBlankException()
+                address.asEthereumAddress() ?: throw InvalidAddressException(address)
+            }
             .flatMap {
                 addressBookRepository.addAddressBookEntry(it, name.trimWhitespace(), description)
                     .andThen(Observable.just(AddressBookEntry(it, name.trimWhitespace(), description)))
                     .onErrorResumeNext { t: Throwable -> Observable.error(if (t is SQLiteConstraintException) AddressAlreadyAddedException() else t) }
             }
+            .onErrorResumeNext { t: Throwable -> errorHandler.observable(t) }
             .mapToResult()
 
     override fun updateAddressBookEntry(
-        oldAddress: Solidity.Address,
+        address: Solidity.Address,
         name: String,
-        newAddress: String,
         description: String
     ): Observable<Result<AddressBookEntry>> =
         Observable
-            .fromCallable { checkAddressEntryData(name, newAddress) }
+            .fromCallable {
+                if (name.isBlank()) throw NameIsBlankException()
+                address
+            }
             .flatMap {
-                addressBookRepository.updateAddressBookEntry(oldAddress, newAddress.asEthereumAddress()!!, name)
+                addressBookRepository.updateAddressBookEntry(it, name)
                     .andThen(Observable.just(AddressBookEntry(it, name.trimWhitespace(), description)))
                     .onErrorResumeNext { t: Throwable -> Observable.error(if (t is SQLiteConstraintException) AddressAlreadyAddedException() else t) }
             }
+            .onErrorResumeNext { t: Throwable -> errorHandler.observable(t) }
             .mapToResult()
-
-    private fun checkAddressEntryData(name: String, address: String): Solidity.Address {
-        if (name.isBlank()) throw NameIsBlankException()
-        return address.asEthereumAddress() ?: throw InvalidAddressException(address)
-    }
 
     override fun deleteAddressBookEntry(address: Solidity.Address) =
         addressBookRepository

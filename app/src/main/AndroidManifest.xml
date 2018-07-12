@@ -51,12 +51,14 @@
         <activity
             android:name=".ui.addressbook.add.AddressBookAddEntryActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/GreyBackgroundTheme" />
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.addressbook.edit.AddressBookEditEntryActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/GreyBackgroundTheme" />
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.addressbook.detail.AddressBookEntryDetailsActivity"

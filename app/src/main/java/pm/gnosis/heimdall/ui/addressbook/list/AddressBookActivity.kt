@@ -12,16 +12,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_address_book.*
-import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.utils.asEthereumAddress
@@ -29,20 +27,15 @@ import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 
-class AddressBookActivity : BaseActivity() {
+class AddressBookActivity : ViewModelActivity<AddressBookContract>() {
 
     override fun screenId() = ScreenId.ADDRESS_BOOK
-
-    @Inject
-    lateinit var viewModel: AddressBookContract
 
     @Inject
     lateinit var adapter: AddressBookAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_address_book)
-        inject()
 
         val layoutManager = LinearLayoutManager(this)
         layout_address_book_list.layoutManager = layoutManager
@@ -88,13 +81,9 @@ class AddressBookActivity : BaseActivity() {
         }
     }
 
-    private fun inject() {
-        DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this].component)
-            .viewModule(ViewModule(this))
-            .build()
-            .inject(this)
-    }
+    override fun layout() = R.layout.layout_address_book
+
+    override fun inject(component: ViewComponent) = component.inject(this)
 
     companion object {
         const val REQUEST_CODE = 0x00001337 // Only use bottom 16 bits

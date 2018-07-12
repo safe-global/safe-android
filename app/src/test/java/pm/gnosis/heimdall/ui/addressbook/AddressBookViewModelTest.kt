@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.addressbook
 
+import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import android.graphics.Bitmap
 import io.reactivex.Completable
@@ -16,6 +17,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -24,13 +26,16 @@ import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
+import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.exceptions.InvalidAddressException
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class AddressBookViewModelTest {
+    @Mock
+    private lateinit var contextMock: Context
+
     @Mock
     private lateinit var addressBookRepositoryMock: AddressBookRepository
 
@@ -41,7 +46,8 @@ class AddressBookViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = AddressBookViewModel(addressBookRepositoryMock, qrCodeGeneratorMock)
+        viewModel = AddressBookViewModel(contextMock, addressBookRepositoryMock, qrCodeGeneratorMock)
+        contextMock.mockGetString()
     }
 
     @Test
@@ -117,7 +123,7 @@ class AddressBookViewModelTest {
 
         then(addressBookRepositoryMock).shouldHaveZeroInteractions()
         assertEquals(0, testCompletable.callCount)
-        testObserver.assertValue { it is ErrorResult && it.error is InvalidAddressException }
+        testObserver.assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
     }
 
     @Test
@@ -131,7 +137,7 @@ class AddressBookViewModelTest {
 
         then(addressBookRepositoryMock).shouldHaveZeroInteractions()
         assertEquals(0, testCompletable.callCount)
-        testObserver.assertValue { it is ErrorResult && it.error is AddressBookContract.NameIsBlankException }
+        testObserver.assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
     }
 
     @Test
@@ -151,7 +157,7 @@ class AddressBookViewModelTest {
         then(addressBookRepositoryMock).should().addAddressBookEntry(Solidity.Address(BigInteger.ZERO), name, description)
         then(addressBookRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(0, testCompletable.callCount)
-        testObserver.assertValue { it is ErrorResult && it.error is AddressBookContract.AddressAlreadyAddedException }
+        testObserver.assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
     }
 
     @Test
@@ -259,29 +265,14 @@ class AddressBookViewModelTest {
         val testObserver = TestObserver<Result<AddressBookEntry>>()
         val testCompletable = TestCompletable()
         val name = "name"
-        val description = "description"
-        given(addressBookRepositoryMock.updateAddressBookEntry(MockUtils.any(), MockUtils.any(), anyString())).willReturn(testCompletable)
+        given(addressBookRepositoryMock.updateAddressBookEntry(MockUtils.any(), anyString())).willReturn(testCompletable)
 
-        viewModel.updateAddressBookEntry("0x0".asEthereumAddress()!!, name, "0x1", description).subscribe(testObserver)
+        viewModel.updateAddressBookEntry("0x0".asEthereumAddress()!!, name).subscribe(testObserver)
 
-        then(addressBookRepositoryMock).should().updateAddressBookEntry(Solidity.Address(BigInteger.ZERO), Solidity.Address(1.toBigInteger()), name)
+        then(addressBookRepositoryMock).should().updateAddressBookEntry(Solidity.Address(BigInteger.ZERO), name)
         then(addressBookRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(1, testCompletable.callCount)
-        testObserver.assertValue(DataResult(AddressBookEntry(Solidity.Address(BigInteger.ONE), name, description)))
-    }
-
-    @Test
-    fun testUpdateAddressBookEntryInvalidAddress() {
-        val testObserver = TestObserver<Result<AddressBookEntry>>()
-        val testCompletable = TestCompletable()
-        val name = "name"
-        val description = "description"
-        
-        viewModel.updateAddressBookEntry("0x0".asEthereumAddress()!!, name, "test", description).subscribe(testObserver)
-
-        then(addressBookRepositoryMock).shouldHaveZeroInteractions()
-        assertEquals(0, testCompletable.callCount)
-        testObserver.assertValue { it is ErrorResult && it.error is InvalidAddressException }
+        testObserver.assertValue(DataResult(AddressBookEntry(Solidity.Address(BigInteger.ZERO), name, "")))
     }
 
     @Test
@@ -289,32 +280,11 @@ class AddressBookViewModelTest {
         val testObserver = TestObserver<Result<AddressBookEntry>>()
         val testCompletable = TestCompletable()
         val name = "   "
-        val description = "description"
-        viewModel.updateAddressBookEntry("0x0".asEthereumAddress()!!, name, "test", description).subscribe(testObserver)
+        viewModel.updateAddressBookEntry("0x0".asEthereumAddress()!!, name).subscribe(testObserver)
 
         then(addressBookRepositoryMock).shouldHaveZeroInteractions()
         assertEquals(0, testCompletable.callCount)
-        testObserver.assertValue { it is ErrorResult && it.error is AddressBookContract.NameIsBlankException }
-    }
-
-    @Test
-    fun testUpdateAddressBookEntryDuplicate() {
-        val testObserver = TestObserver<Result<AddressBookEntry>>()
-        val testCompletable = TestCompletable()
-        val name = "name"
-        val description = "description"
-        given(addressBookRepositoryMock.updateAddressBookEntry(MockUtils.any(), MockUtils.any(), anyString())).willReturn(
-            Completable.error(
-                SQLiteConstraintException()
-            )
-        )
-
-        viewModel.updateAddressBookEntry("0x0".asEthereumAddress()!!, name, "0x1", description).subscribe(testObserver)
-
-        then(addressBookRepositoryMock).should().updateAddressBookEntry(Solidity.Address(BigInteger.ZERO), Solidity.Address(1.toBigInteger()), name)
-        then(addressBookRepositoryMock).shouldHaveNoMoreInteractions()
-        assertEquals(0, testCompletable.callCount)
-        testObserver.assertValue { it is ErrorResult && it.error is AddressBookContract.AddressAlreadyAddedException }
+        testObserver.assertValue { it is ErrorResult && it.error is SimpleLocalizedException }
     }
 
     @Test
@@ -323,18 +293,11 @@ class AddressBookViewModelTest {
         val exception = Exception()
         val testCompletable = TestCompletable()
         val name = "name"
-        val description = "description"
-        given(
-            addressBookRepositoryMock.updateAddressBookEntry(
-                MockUtils.any(),
-                MockUtils.any(),
-                anyString()
-            )
-        ).willReturn(Completable.error(exception))
+        given(addressBookRepositoryMock.updateAddressBookEntry(MockUtils.any(), anyString())).willReturn(Completable.error(exception))
 
-        viewModel.updateAddressBookEntry("0x0".asEthereumAddress()!!, name, "0x1", description).subscribe(testObserver)
+        viewModel.updateAddressBookEntry("0x0".asEthereumAddress()!!, name).subscribe(testObserver)
 
-        then(addressBookRepositoryMock).should().updateAddressBookEntry(Solidity.Address(BigInteger.ZERO), Solidity.Address(1.toBigInteger()), name)
+        then(addressBookRepositoryMock).should().updateAddressBookEntry(Solidity.Address(BigInteger.ZERO), name)
         then(addressBookRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(0, testCompletable.callCount)
         testObserver.assertValue(ErrorResult(exception))

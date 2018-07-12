@@ -12,5 +12,5 @@ interface AddressBookRepository {
     fun observeAddressBookEntry(address: Solidity.Address): Flowable<AddressBookEntry>
     fun loadAddressBookEntry(address: Solidity.Address): Single<AddressBookEntry>
     fun deleteAddressBookEntry(address: Solidity.Address): Completable
-    fun updateAddressBookEntry(address: Solidity.Address, newAddress: Solidity.Address, name: String): Completable
+    fun updateAddressBookEntry(address: Solidity.Address, name: String): Completable
 }

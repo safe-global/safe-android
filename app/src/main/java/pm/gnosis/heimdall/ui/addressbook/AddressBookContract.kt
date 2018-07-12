@@ -16,13 +16,7 @@ abstract class AddressBookContract : ViewModel() {
     abstract fun observeAddressBookEntry(address: Solidity.Address): Flowable<AddressBookEntry>
     abstract fun loadAddressBookEntry(address: Solidity.Address): Single<AddressBookEntry>
     abstract fun addAddressBookEntry(address: String, name: String, description: String = ""): Observable<Result<AddressBookEntry>>
-    abstract fun updateAddressBookEntry(
-        oldAddress: Solidity.Address,
-        name: String,
-        newAddress: String,
-        description: String = ""
-    ): Observable<Result<AddressBookEntry>>
-
+    abstract fun updateAddressBookEntry(address: Solidity.Address, name: String, description: String = ""): Observable<Result<AddressBookEntry>>
     abstract fun deleteAddressBookEntry(address: Solidity.Address): Observable<Result<Solidity.Address>>
     abstract fun generateQrCode(address: Solidity.Address, @ColorInt color: Int): Observable<Result<Bitmap>>
 

@@ -23,9 +23,6 @@ interface AddressBookDao {
     @Query("DELETE FROM ${AddressBookEntryDb.TABLE_NAME} WHERE ${AddressBookEntryDb.COL_ADDRESS} = :address")
     fun deleteAddressBookEntry(address: Solidity.Address)
 
-    @Transaction
-    fun updateAddressBookEntry(address: Solidity.Address, addressBookEntryDb: AddressBookEntryDb) {
-        deleteAddressBookEntry(address)
-        insertAddressBookEntry(addressBookEntryDb)
-    }
+    @Update
+    fun updateAddressBookEntry(addressBookEntryDb: AddressBookEntryDb)
 }

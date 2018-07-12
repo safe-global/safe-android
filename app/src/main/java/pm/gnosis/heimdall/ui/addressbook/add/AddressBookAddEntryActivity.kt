@@ -14,14 +14,13 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.heimdall.utils.parseEthereumAddress
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
-import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.exceptions.InvalidAddressException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -58,14 +57,7 @@ class AddressBookAddEntryActivity : ViewModelActivity<AddressBookContract>() {
 
     private fun onAddressBookEntryAddError(throwable: Throwable) {
         Timber.e(throwable)
-        toast(
-            when (throwable) {
-                is InvalidAddressException -> R.string.invalid_ethereum_address
-                is AddressBookContract.NameIsBlankException -> R.string.name_cannot_be_blank
-                is AddressBookContract.AddressAlreadyAddedException -> R.string.address_already_in_address_book
-                else -> R.string.unknown_error
-            }
-        )
+        errorSnackbar(layout_address_book_update_entry_coordinator, throwable)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

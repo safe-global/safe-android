@@ -45,8 +45,8 @@ class DefaultAddressBookRepository @Inject constructor(
             addressBookDao.deleteAddressBookEntry(address)
         }.subscribeOn(Schedulers.io())
 
-    override fun updateAddressBookEntry(address: Solidity.Address, newAddress: Solidity.Address, name: String): Completable =
+    override fun updateAddressBookEntry(address: Solidity.Address, name: String): Completable =
         Completable.fromCallable {
-            addressBookDao.updateAddressBookEntry(address, AddressBookEntryDb(newAddress, name, ""))
+            addressBookDao.updateAddressBookEntry(AddressBookEntryDb(address, name, ""))
         }.subscribeOn(Schedulers.io())
 }

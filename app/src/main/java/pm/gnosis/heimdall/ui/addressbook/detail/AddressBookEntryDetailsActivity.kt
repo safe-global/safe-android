@@ -76,10 +76,7 @@ class AddressBookEntryDetailsActivity : ViewModelActivity<AddressBookContract>()
         disposables += layout_address_book_entry_details_scan.clicks()
             .subscribeBy(onNext = {
                 SimpleAddressShareDialog.create(address.asEthereumAddressString()).show(supportFragmentManager, null)
-            }, onError = {
-                Timber.e(it)
-                snackbar(layout_address_book_entry_details_coordinator, R.string.error_displaying_qr_code)
-            })
+            }, onError = Timber::e)
 
         disposables += layout_address_book_entry_details_overflow.clicks()
             .subscribeBy(onNext = { popupMenu.show() }, onError = Timber::e)
