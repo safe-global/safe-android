@@ -15,7 +15,7 @@
         android:title="@string/sync_with_extension"
         app:showAsAction="never" />
     <item
-        android:id="@+id/safe_details_menu_remove"
+        android:id="@+id/address_book_entry_details_menu_delete"
         android:title="@string/remove_from_device"
         app:showAsAction="never" />
 </menu>

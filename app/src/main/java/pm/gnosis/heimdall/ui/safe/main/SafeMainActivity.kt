@@ -90,7 +90,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
             inflate(R.menu.safe_details_menu)
-            menu.findItem(R.id.safe_details_menu_remove).title = SpannableStringBuilder().appendText(
+            menu.findItem(R.id.address_book_entry_details_menu_delete).title = SpannableStringBuilder().appendText(
                 getString(R.string.remove_from_device), ForegroundColorSpan(getColorCompat(R.color.tomato))
             )
         }
@@ -299,7 +299,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         disposables += popupMenu.itemClicks()
             .subscribeBy(onNext = {
                 when (it.itemId) {
-                    R.id.safe_details_menu_remove ->
+                    R.id.address_book_entry_details_menu_delete ->
                         removeSafe(originalSafe)
                     R.id.safe_details_menu_rename ->
                         renameSafe(originalSafe, name)

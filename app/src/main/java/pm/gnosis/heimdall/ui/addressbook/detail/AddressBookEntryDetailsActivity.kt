@@ -2,46 +2,44 @@ package pm.gnosis.heimdall.ui.addressbook.detail
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
-import android.view.View
+import android.support.v7.widget.PopupMenu
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import com.jakewharton.rxbinding2.support.v7.widget.itemClicks
+import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_address_book_entry_details.*
-import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
-import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.addressbook.edit.AddressBookEditEntryActivity
+import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
-import javax.inject.Inject
 
-class AddressBookEntryDetailsActivity : BaseActivity() {
+class AddressBookEntryDetailsActivity : ViewModelActivity<AddressBookContract>() {
 
     override fun screenId() = ScreenId.ADDRESS_BOOK_ENTRY_DETAILS
 
-    @Inject
-    lateinit var viewModel: AddressBookContract
-
     lateinit var address: Solidity.Address
 
-    private val generateQrCodeSubject = PublishSubject.create<Unit>()
     private val deleteEntryClickSubject = PublishSubject.create<Unit>()
+
+    private lateinit var popupMenu: PopupMenu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        inject()
 
         intent.getStringExtra(EXTRA_ADDRESS_ENTRY).let {
             it.asEthereumAddress()?.let {
@@ -53,16 +51,11 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
             }
         }
 
-        setContentView(R.layout.layout_address_book_entry_details)
-        layout_address_book_entry_details_toolbar.inflateMenu(R.menu.address_book_entry_details_menu)
-        layout_address_book_entry_details_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
-        layout_address_book_entry_details_toolbar.setNavigationOnClickListener { onBackPressed() }
-        layout_address_book_entry_details_toolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.address_book_entry_details_menu_share -> shareExternalText(address.asEthereumAddressString(), R.string.share_address)
-                R.id.address_book_entry_details_menu_delete -> showDeleteDialog()
-            }
-            true
+        popupMenu = PopupMenu(this, layout_address_book_entry_details_overflow).apply {
+            inflate(R.menu.address_book_entry_details_menu)
+            menu.findItem(R.id.address_book_entry_details_menu_delete).title = SpannableStringBuilder().appendText(
+                getString(R.string.delete), ForegroundColorSpan(getColorCompat(R.color.tomato))
+            )
         }
     }
 
@@ -70,44 +63,41 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
         super.onStart()
         disposables += viewModel.observeAddressBookEntry(address)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onNext = ::onAddressBookEntry)
-
-        disposables += generateQrCodeSubject
-            .flatMap {
-                viewModel.generateQrCode(address, getColorCompat(R.color.window_background))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe { layout_address_book_entry_details_qr_code_loading.visibility = View.VISIBLE }
-                    .doOnTerminate { layout_address_book_entry_details_qr_code_loading.visibility = View.GONE }
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeForResult(onNext = ::onQrCodeGenerated, onError = ::onQrCodeGenerateError)
+            .subscribeBy(onNext = ::onAddressBookEntry, onError = Timber::e)
 
         disposables += deleteEntryClickSubject
             .flatMap { viewModel.deleteAddressBookEntry(address) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onAddressBookEntryDeleted, onError = ::onAddressBookEntryDeleteError)
+
+        disposables += layout_address_book_entry_details_back_arrow.clicks()
+            .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
+
+        disposables += layout_address_book_entry_details_scan.clicks()
+            .subscribeBy(onNext = {
+                SimpleAddressShareDialog.create(address.asEthereumAddressString()).show(supportFragmentManager, null)
+            }, onError = Timber::e)
+
+        disposables += layout_address_book_entry_details_overflow.clicks()
+            .subscribeBy(onNext = { popupMenu.show() }, onError = Timber::e)
+
+        disposables += popupMenu.itemClicks()
+            .subscribeBy(onNext = {
+                when (it.itemId) {
+                    R.id.address_book_entry_details_menu_delete -> showDeleteDialog()
+                }
+            }, onError = Timber::e)
+
+        disposables += layout_address_book_entry_details_edit.clicks()
+            .subscribeBy(onNext = {
+                startActivity(AddressBookEditEntryActivity.createIntent(this, address))
+            }, onError = Timber::e)
     }
 
     private fun onAddressBookEntry(entry: AddressBookEntry) {
-        generateQrCodeSubject.onNext(Unit)
+        layout_address_book_entry_details_title.text = entry.name
         layout_address_book_entry_details_name.text = entry.name
         layout_address_book_entry_details_address.text = entry.address.asEthereumAddressString()
-        layout_address_book_entry_details_description_container.visibility =
-                if (entry.description.isBlank()) View.GONE else View.VISIBLE
-        layout_address_book_entry_details_description.text = entry.description
-    }
-
-    private fun onQrCodeGenerated(bitmap: Bitmap) {
-        layout_address_book_entry_details_qr_code.visibility = View.VISIBLE
-        layout_address_book_entry_details_qr_code.setImageBitmap(bitmap)
-    }
-
-    private fun onQrCodeGenerateError(throwable: Throwable) {
-        Timber.e(throwable)
-        layout_address_book_entry_details_qr_code.visibility = View.INVISIBLE
-        snackbar(layout_address_book_entry_details_coordinator, R.string.qr_code_error,
-            duration = Snackbar.LENGTH_INDEFINITE,
-            action = R.string.retry to { _: View -> generateQrCodeSubject.onNext(Unit) })
     }
 
     private fun onAddressBookEntryDeleted(address: Solidity.Address) {
@@ -123,18 +113,14 @@ class AddressBookEntryDetailsActivity : BaseActivity() {
     private fun showDeleteDialog() {
         AlertDialog.Builder(this)
             .setMessage(getString(R.string.dialog_delete_address_entry_message))
-            .setPositiveButton(R.string.delete, { _, _ -> deleteEntryClickSubject.onNext(Unit) })
-            .setNegativeButton(R.string.cancel, { _, _ -> })
+            .setPositiveButton(R.string.delete) { _, _ -> deleteEntryClickSubject.onNext(Unit) }
+            .setNegativeButton(R.string.cancel) { _, _ -> }
             .show()
     }
 
-    private fun inject() {
-        DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this].component)
-            .viewModule(ViewModule(this))
-            .build()
-            .inject(this)
-    }
+    override fun layout() = R.layout.layout_address_book_entry_details
+
+    override fun inject(component: ViewComponent) = component.inject(this)
 
     companion object {
         private const val EXTRA_ADDRESS_ENTRY = "extra.string.address_entry"

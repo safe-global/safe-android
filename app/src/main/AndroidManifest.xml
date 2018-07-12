@@ -45,23 +45,30 @@
 
         <activity
             android:name=".ui.addressbook.list.AddressBookActivity"
-            android:theme="@style/GreyBackgroundTheme"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
 
         <activity
             android:name=".ui.addressbook.add.AddressBookAddEntryActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
-            android:screenOrientation="portrait" />
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.addressbook.edit.AddressBookEditEntryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.addressbook.detail.AddressBookEntryDetailsActivity"
-            android:theme="@style/GreyBackgroundTheme"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
 
         <activity
             android:name=".ui.account.AccountActivity"
-            android:theme="@style/GreyBackgroundTheme"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
 
         <activity
             android:name=".ui.security.unlock.UnlockActivity"
@@ -71,8 +78,8 @@
 
         <activity
             android:name=".ui.settings.general.GeneralSettingsActivity"
-            android:theme="@style/GreyBackgroundTheme"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
 
         <activity
             android:name=".ui.safe.selection.SelectSafeActivity"

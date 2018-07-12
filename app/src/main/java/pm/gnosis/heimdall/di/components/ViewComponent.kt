@@ -6,6 +6,7 @@ import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
+import pm.gnosis.heimdall.ui.addressbook.edit.AddressBookEditEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
@@ -57,6 +58,7 @@ interface ViewComponent {
     fun inject(activity: AccountActivity)
     fun inject(activity: AddressBookActivity)
     fun inject(activity: AddressBookAddEntryActivity)
+    fun inject(activity: AddressBookEditEntryActivity)
     fun inject(activity: AddressBookEntryDetailsActivity)
     fun inject(activity: ConfirmSafeRecoveryPhraseActivity)
     fun inject(activity: ConfirmTransactionActivity)

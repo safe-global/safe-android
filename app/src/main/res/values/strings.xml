@@ -193,4 +193,7 @@
     <string name="confirm_recovery_phrase">Confirm recovery phrase</string>
     <string name="recovery_phrase">Recovery phrase</string>
     <string name="send_from_x">Send from %s</string>
+    <string name="new_address">New address</string>
+    <string name="edit_address">Edit address</string>
+    <string name="display_qr_code">Display QR code</string>
 </resources>

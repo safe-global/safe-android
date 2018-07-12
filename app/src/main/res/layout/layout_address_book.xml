@@ -1,57 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_address_book_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <TextView
+            android:id="@+id/layout_address_book_empty_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/layout_address_book_toolbar">
+            android:gravity="center"
+            android:text="@string/no_entries"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
-            <TextView
-                android:id="@+id/layout_address_book_empty_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/no_entries"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/layout_address_book_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </FrameLayout>
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/layout_address_book_toolbar"
-            style="@style/Toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_height" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/layout_address_book_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_address_book_entry_details_title"
+            tools:itemCount="3"
+            tools:listitem="@layout/layout_address_book_entry_item" />
 
         <View
+            android:id="@+id/layout_address_book_entry_details_toolbar_container"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/layout_address_book_entry_details_back_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/selectable_circle_background"
+            android:padding="16dp"
+            android:tint="@color/dark_slate_blue"
+            app:layout_constraintStart_toStartOf="@+id/layout_address_book_entry_details_toolbar_container"
+            app:layout_constraintTop_toTopOf="@+id/layout_address_book_entry_details_toolbar_container"
+            app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+        <TextView
+            android:id="@+id/layout_address_book_entry_details_title"
+            style="@style/WhiteTheme.ToolbarTitle"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/toolbar_height"
+            android:gravity="center_vertical"
+            android:text="@string/address_book"
+            app:layout_constraintEnd_toStartOf="@+id/layout_address_book_add"
+            app:layout_constraintStart_toEndOf="@+id/layout_address_book_entry_details_back_arrow"
+            app:layout_constraintTop_toTopOf="@+id/layout_address_book_entry_details_toolbar_container" />
+
+        <ImageView
+            android:id="@+id/layout_address_book_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selectable_circle_background"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_address_book_entry_details_toolbar_container"
+            app:layout_constraintEnd_toEndOf="@+id/layout_address_book_entry_details_toolbar_container"
+            app:layout_constraintTop_toTopOf="@+id/layout_address_book_entry_details_toolbar_container"
+            app:srcCompat="@drawable/ic_person_add" />
+
+        <View
+            android:id="@+id/layout_address_book_entry_details_toolbar_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_shadow_size"
-            android:layout_below="@id/layout_address_book_toolbar"
-            android:background="@drawable/toolbar_dropshadow" />
-    </RelativeLayout>
+            android:background="@drawable/toolbar_dropshadow"
+            app:layout_constraintTop_toBottomOf="@+id/layout_address_book_entry_details_title" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/layout_address_book_add"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:src="@drawable/fab_add" />
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.design.widget.CoordinatorLayout>
