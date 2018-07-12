@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.ui.onboarding
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
+import android.support.design.widget.BottomSheetDialog
 import android.text.Html
 import android.text.method.LinkMovementMethod
 import com.jakewharton.rxbinding2.view.clicks
@@ -20,17 +20,21 @@ import timber.log.Timber
 class OnboardingIntroActivity : BaseActivity() {
     override fun screenId() = ScreenId.ONBOARDING_INTRO
 
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+    private lateinit var termsBottomSheetDialog: TermsBottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_onboarding_intro)
-        bottom_sheet_terms_and_conditions_description.apply {
+
+        termsBottomSheetDialog = TermsBottomSheetDialog(this).apply {
+            setContentView(layoutInflater.inflate(R.layout.bottom_sheet_terms_and_conditions, null))
+        }
+
+        termsBottomSheetDialog.bottom_sheet_terms_and_conditions_description.apply {
             text = Html.fromHtml(getString(R.string.terms_info))
             movementMethod = LinkMovementMethod.getInstance()
         }
-        bottomSheetBehavior = BottomSheetBehavior.from(layout_onboarding_intro_bottom_sheet).apply { state = BottomSheetBehavior.STATE_HIDDEN }
     }
 
     override fun onStart() {
@@ -38,21 +42,23 @@ class OnboardingIntroActivity : BaseActivity() {
         disposables += layout_onboarding_intro_get_started.clicks()
             .subscribeBy(
                 onNext = {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    termsBottomSheetDialog.show()
                 }, onError = Timber::e
             )
 
-        disposables += bottom_sheet_terms_and_conditions_agree.clicks()
+        disposables += termsBottomSheetDialog.bottom_sheet_terms_and_conditions_agree.clicks()
             .subscribeBy(onNext = {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                termsBottomSheetDialog.hide()
                 startActivity(PasswordSetupActivity.createIntent(this))
             }, onError = Timber::e)
 
-        disposables += bottom_sheet_terms_and_conditions_reject.clicks()
-            .subscribeBy(onNext = { bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN }, onError = Timber::e)
+        disposables += termsBottomSheetDialog.bottom_sheet_terms_and_conditions_reject.clicks()
+            .subscribeBy(onNext = { termsBottomSheetDialog.hide() }, onError = Timber::e)
     }
 
     companion object {
         fun createIntent(context: Context) = Intent(context, OnboardingIntroActivity::class.java)
     }
+
+    class TermsBottomSheetDialog(context: Context) : BottomSheetDialog(context)
 }

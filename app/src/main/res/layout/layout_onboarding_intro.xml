@@ -76,9 +76,4 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <include
-        android:id="@+id/layout_onboarding_intro_bottom_sheet"
-        layout="@layout/bottom_sheet_terms_and_conditions"
-        tools:visibility="gone" />
-
 </android.support.design.widget.CoordinatorLayout>
