@@ -46,6 +46,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
 
         layout_password_confirm_password.disableAccessibility()
         layout_password_confirm_password.requestFocus()
+        enableConfirm(false)
     }
 
     override fun onStart() {
@@ -69,6 +70,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
 
         disposables += layout_password_confirm_password.textChanges()
+            .skipInitialValue()
             .doOnNext { enableConfirm(false) }
             .debounce(500, TimeUnit.MILLISECONDS)
             .flatMapSingle { viewModel.isSamePassword(passwordHash, it.toString()) }
