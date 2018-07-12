@@ -92,7 +92,7 @@
     <string name="next">Next</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="confirm_password_info">Confirm the password you have entered in the previous screen</string>
-    <string name="onboarding_intro_info">Safely store Ether and ERC20 tokens with 2-factor authentication</string>
+    <string name="onboarding_intro_info">Your multi-sig wallet for securely and conveniently managing ETH &amp; ERC-20 tokens.</string>
     <string name="choose_password">Choose Password</string>
     <string name="password_doesnt_match">Password doesn\'t match</string>
     <string name="confirm">Confirm</string>
