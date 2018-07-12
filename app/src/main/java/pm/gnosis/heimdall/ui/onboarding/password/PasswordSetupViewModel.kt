@@ -27,9 +27,7 @@ class PasswordSetupViewModel @Inject constructor(
     private val bip39: Bip39
 ) : PasswordSetupContract() {
     override fun validatePassword(password: String): Single<Result<Collection<PasswordValidationCondition>>> =
-        Single.fromCallable {
-            PasswordHelper.Validator.validate(password)
-        }
+        Single.fromCallable { PasswordHelper.Validator.validate(password) }
             .mapToResult()
             .subscribeOn(Schedulers.computation())
 

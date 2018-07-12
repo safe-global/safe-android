@@ -22,13 +22,13 @@ object PasswordHelper {
 
         fun validate(password: String): Collection<PasswordValidationCondition> =
             listOf(
-                PasswordValidationCondition.NonIdenticalCharacters(!password.hasConsecutiveChars(CONSECUTIVE_CHARS) && password.isNotEmpty()),
                 PasswordValidationCondition.MinimumCharacters(password.length >= MIN_CHARS),
                 PasswordValidationCondition.OneNumberOneLetter(
                     password.matches(CONTAINS_DIGIT_REGEX) && password.matches(
                         CONTAINS_LETTER_REGEX
                     )
-                )
+                ),
+                PasswordValidationCondition.NonIdenticalCharacters(!password.hasConsecutiveChars(CONSECUTIVE_CHARS) && password.isNotEmpty())
             )
 
         private fun String.hasConsecutiveChars(consecutiveChars: Int): Boolean {
