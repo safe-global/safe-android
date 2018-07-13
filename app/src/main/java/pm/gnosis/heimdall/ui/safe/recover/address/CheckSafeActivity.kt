@@ -95,7 +95,6 @@ class CheckSafeActivity : ViewModelActivity<CheckSafeContract>() {
     }
 
     private fun handleCheckError(throwable: Throwable) {
-        Timber.e(throwable)
         handleCheckResult(false)
         (throwable as? LocalizedException)?.let {
             layout_check_safe_address_input_info.text = it.localizedMessage()

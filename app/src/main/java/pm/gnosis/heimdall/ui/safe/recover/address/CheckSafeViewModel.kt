@@ -22,6 +22,9 @@ class CheckSafeViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val safeRepository: GnosisSafeRepository
 ) : CheckSafeContract() {
+
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
+
     override fun checkSafe(address: CharSequence): Single<Result<Boolean>> =
         Single.fromCallable {
             address.toString().asEthereumAddress()?.apply {
@@ -34,7 +37,7 @@ class CheckSafeViewModel @Inject constructor(
             .onErrorResumeNext {
                 when (it) {
                     is InvalidAddressException -> Single.just(false)
-                    else -> Single.error(it)
+                    else -> errorHandler.single(it)
                 }
             }
             .mapToResult()
@@ -50,7 +53,7 @@ class CheckSafeViewModel @Inject constructor(
             .map<Solidity.Address> { throw SimpleLocalizedException(context.getString(R.string.safe_already_exists)) }
             .onErrorResumeNext {
                 when (it) {
-                    is NoSuchElementException, is EmptyResultSetException -> Single.just(address)
+                    is EmptyResultSetException -> Single.just(address)
                     else -> Single.error(it)
                 }
             }
