@@ -1,37 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     android:background="@color/white"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
         style="@style/DarkText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/setup_successful"
-        android:textSize="16sp" />
-
-    <TextView
-        style="@style/DarkText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:textColor="@color/dark_slate_blue"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_no_safes_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/layout_no_safes_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.55" />
+
+    <TextView
+        android:id="@+id/layout_no_safe_next_step"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/no_safe_yet" />
+        android:text="@string/next_step"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_no_safes_add_safe_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_no_safes_guideline"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/layout_no_safes_add_safe_button"
         style="@style/PrimaryButton.Blue.Round"
         android:layout_width="264dp"
         android:layout_height="46dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:text="@string/create_safe"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_no_safes_recover_safe"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_no_safe_next_step"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/layout_no_safes_recover_safe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/selectable_background"
+        android:fontFamily="sans-serif-medium"
+        android:padding="16dp"
+        android:text="@string/recover_a_safe"
+        android:textColor="@color/azure"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_no_safes_add_safe_button"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+</android.support.constraint.ConstraintLayout>

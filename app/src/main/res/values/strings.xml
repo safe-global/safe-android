@@ -169,7 +169,7 @@
     <string name="error_syncing">Error syncing</string>
     <string name="no_safe_added">No Safe added yet</string>
     <string name="create_safe">Create new Safe</string>
-    <string name="setup_successful">Device was setup successfully!</string>
+    <string name="setup_successful">Device setup successful!</string>
     <string name="no_safe_yet">You didn\'t create any Safes yet.</string>
     <string name="show_safe_on_etherscan">View Safe on Etherscan.io</string>
     <string name="save">Save</string>
@@ -219,4 +219,7 @@
     <string name="recovery_error">Transaction params have changed</string>
     <string name="safe_already_exists">Safe already exists</string>
     <string name="password_confirmed">Password confirmed</string>
+    <string name="next_step">Next step:</string>
+    <string name="recover_a_safe">Recover a Safe</string>
+    <string name="welcome">Welcome</string>
 </resources>
