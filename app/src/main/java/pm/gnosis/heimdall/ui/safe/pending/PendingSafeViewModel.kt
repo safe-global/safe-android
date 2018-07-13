@@ -17,6 +17,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
@@ -31,15 +32,15 @@ class PendingSafeViewModel @Inject constructor(
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
 
-    private lateinit var transactionHash: BigInteger
+    private lateinit var safeAddress: Solidity.Address
     private var pendingSafe: PendingSafe? = null
 
-    override fun setup(transactionHash: String) {
-        this.transactionHash = transactionHash.hexAsBigInteger()
+    override fun setup(safeAddress: String) {
+        this.safeAddress = safeAddress.asEthereumAddress()!!
     }
 
     override fun observeCreationInfo(): Observable<Result<CreationInfo>> =
-        gnosisSafeRepository.observePendingSafe(transactionHash).toObservable()
+        gnosisSafeRepository.observePendingSafe(safeAddress).toObservable()
             .doOnNext { this.pendingSafe = it }
             .emitAndNext(
                 emit = { DataResult(CreationInfo(it.address.asEthereumAddressChecksumString(), null, it.paymentAmount)) },
@@ -53,7 +54,7 @@ class PendingSafeViewModel @Inject constructor(
             )
 
     override fun observeHasEnoughDeployBalance(): Observable<Unit> =
-        gnosisSafeRepository.observePendingSafe(transactionHash).toObservable()
+        gnosisSafeRepository.observePendingSafe(safeAddress).toObservable()
             .switchMap { pendingSafe ->
                 // Create a fake token since only the address is necessary to load the balance
                 requestBalance(pendingSafe.address, ERC20Token(pendingSafe.paymentToken, decimals = 0, name = "", symbol = ""))
@@ -66,8 +67,6 @@ class PendingSafeViewModel @Inject constructor(
                     }
                     .flatMap { gnosisSafeRepository.updatePendingSafe(pendingSafe.copy(isFunded = true)).andThen(Observable.just(Unit)) }
             }
-
-    override fun getTransactionHash() = pendingSafe?.hash
 
     private fun requestBalance(address: Solidity.Address, paymentToken: ERC20Token) =
         tokenRepository.loadTokenBalances(address, listOf(paymentToken)).map { it.first().second ?: BigInteger.ZERO  }

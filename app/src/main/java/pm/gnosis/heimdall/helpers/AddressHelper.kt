@@ -42,6 +42,12 @@ class AddressHelper @Inject constructor(
                         .onErrorResumeNext {
                             safeRepository.loadSafe(address).map { it.displayName(nameView.context) }
                         }
+                        .onErrorResumeNext {
+                            safeRepository.loadPendingSafe(address).map { it.displayName(nameView.context) }
+                        }
+                        .onErrorResumeNext {
+                            safeRepository.loadRecoveringSafe(address).map { it.displayName(nameView.context) }
+                        }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(

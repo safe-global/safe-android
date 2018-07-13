@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.safe.create
+package pm.gnosis.heimdall.ui.safe.pairing
 
 import com.squareup.moshi.Moshi
 import io.reactivex.Single

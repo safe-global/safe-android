@@ -24,10 +24,18 @@ import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsViewModel
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainViewModel
+import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
+import pm.gnosis.heimdall.ui.safe.pairing.PairingViewModel
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressViewModel
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeContract
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeViewModel
+import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeContract
+import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeViewModel
+import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeContract
+import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeViewModel
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeViewModel
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
@@ -75,6 +83,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ChangePasswordContract::class)
     abstract fun bindsChangePasswordContract(viewModel: ChangePasswordViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CheckSafeContract::class)
+    abstract fun bindsCheckSafeContract(viewModel: CheckSafeViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -130,6 +143,16 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ReceiveTokenContract::class)
     abstract fun bindsReceiveTokenContract(viewModel: ReceiveTokenViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RecoveringSafeContract::class)
+    abstract fun bindsRecoveringSafeContract(viewModel: RecoveringSafeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RecoverInputRecoveryPhraseContract::class)
+    abstract fun bindsRecoverInputRecoveryPhraseContract(viewModel: RecoverInputRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -57,7 +57,7 @@ class SelectSafeViewModelTest {
     @Test
     fun loadSafes() {
         val testProcessor = PublishProcessor.create<List<Safe>>()
-        given(safeRepositoryMock.observeDeployedSafes()).willReturn(testProcessor)
+        given(safeRepositoryMock.observeSafes()).willReturn(testProcessor)
 
         val testObserver = TestObserver<List<Safe>>()
         viewModel.loadSafes().subscribe(testObserver)
@@ -71,14 +71,14 @@ class SelectSafeViewModelTest {
         // No new results
         testObserver.assertResult(safes)
 
-        then(safeRepositoryMock).should().observeDeployedSafes()
+        then(safeRepositoryMock).should().observeSafes()
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun loadSafesEmpty() {
         val testProcessor = PublishProcessor.create<List<Safe>>()
-        given(safeRepositoryMock.observeDeployedSafes()).willReturn(testProcessor)
+        given(safeRepositoryMock.observeSafes()).willReturn(testProcessor)
 
         val testObserver = TestObserver<List<Safe>>()
         viewModel.loadSafes().subscribe(testObserver)
@@ -87,14 +87,14 @@ class SelectSafeViewModelTest {
         testProcessor.onComplete()
         testObserver.assertFailure(NoSuchElementException::class.java)
 
-        then(safeRepositoryMock).should().observeDeployedSafes()
+        then(safeRepositoryMock).should().observeSafes()
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun loadSafesError() {
         val testProcessor = PublishProcessor.create<List<Safe>>()
-        given(safeRepositoryMock.observeDeployedSafes()).willReturn(testProcessor)
+        given(safeRepositoryMock.observeSafes()).willReturn(testProcessor)
 
         val testObserver = TestObserver<List<Safe>>()
         viewModel.loadSafes().subscribe(testObserver)
@@ -104,7 +104,7 @@ class SelectSafeViewModelTest {
         testProcessor.onError(error)
         testObserver.assertFailure(Predicate { it == error })
 
-        then(safeRepositoryMock).should().observeDeployedSafes()
+        then(safeRepositoryMock).should().observeSafes()
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
     }
 

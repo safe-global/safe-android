@@ -128,8 +128,7 @@ class CreateAssetTransferViewModelTest {
             Wei.ZERO
         )
         estimationSingleFactory.success(lowBalanceInfo)
-        // tx costs = 10 + 32k gas base costs (see contract) => 32010
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(Wei(BigInteger.valueOf(32010)), Wei.ZERO, false)))
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(Wei(BigInteger.valueOf(10)), Wei.ZERO, false)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
@@ -143,7 +142,7 @@ class CreateAssetTransferViewModelTest {
             Wei.ether("23")
         )
         estimationSingleFactory.success(validInfo)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(Wei(BigInteger.valueOf(32010)), Wei.ether("23"), true)))
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(Wei(BigInteger.valueOf(10)), Wei.ether("23"), true)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         reviewEvents.success(Unit)
@@ -236,8 +235,7 @@ class CreateAssetTransferViewModelTest {
             Wei.ZERO
         )
         estimationSingleFactory.success(lowBalanceInfo)
-        // tx costs = 10 + 32k gas base costs (see contract) => 32010
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(Wei(BigInteger.valueOf(32010)), Wei.ZERO, false)))
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(Wei(BigInteger.valueOf(10)), Wei.ZERO, false)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
@@ -251,7 +249,7 @@ class CreateAssetTransferViewModelTest {
             Wei.ether("1")
         )
         estimationSingleFactory.success(validInfo)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(Wei(BigInteger.valueOf(32010)), Wei.ether("1"), true)))
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(Wei(BigInteger.valueOf(10)), Wei.ether("1"), true)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         reviewEvents.success(Unit)

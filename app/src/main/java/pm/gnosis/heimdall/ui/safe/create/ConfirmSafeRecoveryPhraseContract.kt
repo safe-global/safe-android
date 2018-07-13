@@ -9,5 +9,5 @@ import java.math.BigInteger
 abstract class ConfirmSafeRecoveryPhraseContract : ViewModel() {
     abstract fun setup(encryptedMnemonic: String, chromeExtensionAddress: Solidity.Address): Single<List<String>>
     abstract fun isCorrectSequence(words: List<String>): Single<Result<Boolean>>
-    abstract fun createSafe(): Single<Result<BigInteger>>
+    abstract fun createSafe(): Single<Result<Solidity.Address>>
 }

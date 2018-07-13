@@ -55,6 +55,8 @@ interface TransactionExecutionRepository {
 
     fun observePublishStatus(id: String): Observable<PublishStatus>
 
+    fun observeTransactionStatus(transactionHash: BigInteger): Observable<Pair<Boolean, Long>>
+
     fun submit(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
@@ -62,7 +64,8 @@ interface TransactionExecutionRepository {
         senderIsOwner: Boolean,
         txGas: BigInteger,
         dataGas: BigInteger,
-        gasPrice: BigInteger
+        gasPrice: BigInteger,
+        addToHistory: Boolean = true
     ): Single<String>
 
     fun notifyReject(
@@ -100,6 +103,9 @@ interface TransactionExecutionRepository {
         val isOwner by lazy {
             owners.contains(sender)
         }
+
+        fun totalGas() = txGas + dataGas
+        fun gasCosts() = totalGas() * gasPrice
     }
 
     sealed class PublishStatus {
@@ -110,8 +116,16 @@ interface TransactionExecutionRepository {
     }
 
     enum class Operation {
-        CALL,
-        DELEGATE_CALL
+        CALL, DELEGATE_CALL;
+
+        companion object {
+            fun fromInt(value: Int): Operation =
+                when (value) {
+                    OPERATION_INT_CALL -> CALL
+                    OPERATION_INT_DELEGATE_CALL -> DELEGATE_CALL
+                    else -> throw IllegalArgumentException()
+                }
+        }
     }
 
     companion object {

@@ -16,13 +16,16 @@ import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.create.PairingContract
+import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
 import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeContract
+import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeContract
+import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
@@ -62,6 +65,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesChangePasswordContract(provider: ViewModelProvider) = provider[ChangePasswordContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesCheckSafeContract(provider: ViewModelProvider) = provider[CheckSafeContract::class.java]
 
     @Provides
     @ForView
@@ -106,6 +113,14 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesReceiveTokenContract(provider: ViewModelProvider) = provider[ReceiveTokenContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesRecoveringSafeContract(provider: ViewModelProvider) = provider[RecoveringSafeContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesRecoverInputRecoveryPhraseContract(provider: ViewModelProvider) = provider[RecoverInputRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView

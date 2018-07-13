@@ -151,7 +151,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
     @Test
     fun createSafe() {
         val mnemonic = "degree media athlete harvest rocket plate minute obey head toward coach senior"
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         val encryptedMnemonic = "ffffff####ffffff"
         val account = Account(Solidity.Address(10.toBigInteger()))
         val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
@@ -194,7 +194,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         }
         given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(deployer))
         given(
-            gnosisSafeRepositoryMock.savePendingSafe(
+            gnosisSafeRepositoryMock.addPendingSafe(
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -215,18 +215,18 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         then(accountsRepositoryMock).should().recover(tx.hash(), response!!.signature.toSignature())
         val txHash = tx.hash(ECDSASignature(r = response!!.signature.r, s = response!!.signature.s).apply { v = response!!.signature.v.toByte() })
             .asBigInteger()
-        then(gnosisSafeRepositoryMock).should().savePendingSafe(txHash, null, response!!.safe, response!!.payment)
+        then(gnosisSafeRepositoryMock).should().addPendingSafe(response!!.safe, txHash, null, response!!.payment)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
 
-        testObserver.assertResult(DataResult(txHash))
+        testObserver.assertResult(DataResult(safeAddress))
     }
 
     @Test
     fun createSafeSaveDbError() {
         val mnemonic = "degree media athlete harvest rocket plate minute obey head toward coach senior"
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         val encryptedMnemonic = "ffffff####ffffff"
         val account = Account(Solidity.Address(10.toBigInteger()))
         val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
@@ -270,7 +270,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         }
         given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(deployer))
         given(
-            gnosisSafeRepositoryMock.savePendingSafe(
+            gnosisSafeRepositoryMock.addPendingSafe(
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -291,7 +291,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
         then(accountsRepositoryMock).should().recover(tx.hash(), response!!.signature.toSignature())
         val txHash = tx.hash(ECDSASignature(r = response!!.signature.r, s = response!!.signature.s).apply { v = response!!.signature.v.toByte() })
             .asBigInteger()
-        then(gnosisSafeRepositoryMock).should().savePendingSafe(txHash, null, response!!.safe, response!!.payment)
+        then(gnosisSafeRepositoryMock).should().addPendingSafe(response!!.safe, txHash, null, response!!.payment)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
@@ -301,7 +301,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
     @Test
     fun createSafeAddressesNotMatching() {
         val mnemonic = "degree media athlete harvest rocket plate minute obey head toward coach senior"
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         val encryptedMnemonic = "ffffff####ffffff"
         val account = Account(Solidity.Address(10.toBigInteger()))
         val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
@@ -364,7 +364,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
     @Test
     fun createSafeAccountRecoveryError() {
         val mnemonic = "degree media athlete harvest rocket plate minute obey head toward coach senior"
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         val encryptedMnemonic = "ffffff####ffffff"
         val account = Account(Solidity.Address(10.toBigInteger()))
         val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
@@ -427,7 +427,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
     @Test
     fun createSafeDifferentS() {
         val mnemonic = "degree media athlete harvest rocket plate minute obey head toward coach senior"
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         val encryptedMnemonic = "ffffff####ffffff"
         val account = Account(Solidity.Address(10.toBigInteger()))
         val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
@@ -480,7 +480,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
     @Test
     fun createSafeApiError() {
         val mnemonic = "degree media athlete harvest rocket plate minute obey head toward coach senior"
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         val encryptedMnemonic = "ffffff####ffffff"
         val account = Account(Solidity.Address(10.toBigInteger()))
         val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
@@ -519,7 +519,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
     @Test
     fun createSafeFromMnemonicSeedError() {
         val mnemonic = "degree media athlete harvest rocket plate minute obey head toward coach senior"
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         val encryptedMnemonic = "ffffff####ffffff"
         val account = Account(Solidity.Address(10.toBigInteger()))
         val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
@@ -549,7 +549,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
     @Test
     fun createSafeMnemonicToSeedError() {
         val mnemonic = "degree media athlete harvest rocket plate minute obey head toward coach senior"
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         val encryptedMnemonic = "ffffff####ffffff"
         val account = Account(Solidity.Address(10.toBigInteger()))
         val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
@@ -573,7 +573,7 @@ class ConfirmSafeRecoveryPhraseViewModelTest {
     @Test
     fun createSafeLoadActiveAccountError() {
         val mnemonic = "degree media athlete harvest rocket plate minute obey head toward coach senior"
-        val testObserver = TestObserver.create<Result<BigInteger>>()
+        val testObserver = TestObserver.create<Result<Solidity.Address>>()
         val encryptedMnemonic = "ffffff####ffffff"
         val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
         val exception = IllegalArgumentException()

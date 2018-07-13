@@ -7,8 +7,8 @@ import java.math.BigInteger
 
 class BigIntegerConverter {
     @TypeConverter
-    fun fromHexString(hexString: String) = hexString.hexAsBigIntegerOrNull()
+    fun fromHexString(hexString: String?) = hexString?.hexAsBigIntegerOrNull()
 
     @TypeConverter
-    fun toHexString(value: BigInteger): String = value.toHexString()
+    fun toHexString(value: BigInteger?): String? = value?.toHexString()
 }

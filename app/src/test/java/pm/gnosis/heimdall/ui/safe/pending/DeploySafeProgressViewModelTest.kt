@@ -51,7 +51,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(txHash, "", safeAddress, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        val pendingSafe = PendingSafe(safeAddress, txHash, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
         given(relayServiceApiMock.safeFundStatus(MockUtils.any())).willReturn(
@@ -61,10 +61,10 @@ class DeploySafeProgressViewModelTest {
         )
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(pendingSafe)).willReturn(Completable.complete())
 
-        viewModel.setup(txHash)
+        viewModel.setup(safeAddress)
         viewModel.notifySafeFunded().subscribe(testObserver)
 
-        then(gnosisSafeRepositoryMock).should().loadPendingSafe(txHash)
+        then(gnosisSafeRepositoryMock).should().loadPendingSafe(safeAddress)
         then(relayServiceApiMock).should().notifySafeFunded(safeAddress.asEthereumAddressChecksumString())
         then(relayServiceApiMock).should().safeFundStatus(safeAddress.asEthereumAddressChecksumString())
         then(gnosisSafeRepositoryMock).should().pendingSafeToDeployedSafe(pendingSafe)
@@ -80,7 +80,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(txHash, "", safeAddress, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        val pendingSafe = PendingSafe(safeAddress, txHash, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         var safeDeployed = false
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
@@ -89,7 +89,7 @@ class DeploySafeProgressViewModelTest {
         )
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(pendingSafe)).willReturn(Completable.complete())
 
-        viewModel.setup(txHash)
+        viewModel.setup(safeAddress)
         viewModel.notifySafeFunded().subscribe(testObserver)
 
         testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
@@ -98,7 +98,7 @@ class DeploySafeProgressViewModelTest {
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS)
         testObserver.assertResult(safeAddress)
 
-        then(gnosisSafeRepositoryMock).should().loadPendingSafe(txHash)
+        then(gnosisSafeRepositoryMock).should().loadPendingSafe(safeAddress)
         then(relayServiceApiMock).should().notifySafeFunded(safeAddress.asEthereumAddressChecksumString())
         then(relayServiceApiMock).should().safeFundStatus(safeAddress.asEthereumAddressChecksumString())
         then(gnosisSafeRepositoryMock).should().pendingSafeToDeployedSafe(pendingSafe)
@@ -111,7 +111,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(txHash, "", safeAddress, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        val pendingSafe = PendingSafe(safeAddress, txHash, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         val exception = Exception()
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
@@ -120,12 +120,12 @@ class DeploySafeProgressViewModelTest {
         )
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(pendingSafe)).willReturn(Completable.error(exception))
 
-        viewModel.setup(txHash)
+        viewModel.setup(safeAddress)
         viewModel.notifySafeFunded().subscribe(testObserver)
 
         testObserver.assertError(exception)
 
-        then(gnosisSafeRepositoryMock).should().loadPendingSafe(txHash)
+        then(gnosisSafeRepositoryMock).should().loadPendingSafe(safeAddress)
         then(relayServiceApiMock).should().notifySafeFunded(safeAddress.asEthereumAddressChecksumString())
         then(relayServiceApiMock).should().safeFundStatus(safeAddress.asEthereumAddressChecksumString())
         then(gnosisSafeRepositoryMock).should().pendingSafeToDeployedSafe(pendingSafe)
@@ -138,18 +138,18 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(txHash, "", safeAddress, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        val pendingSafe = PendingSafe(safeAddress, txHash, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         val exception = Exception()
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
         given(relayServiceApiMock.safeFundStatus(MockUtils.any())).willReturn(Single.error(exception))
 
-        viewModel.setup(txHash)
+        viewModel.setup(safeAddress)
         viewModel.notifySafeFunded().subscribe(testObserver)
 
         testObserver.assertError(exception)
 
-        then(gnosisSafeRepositoryMock).should().loadPendingSafe(txHash)
+        then(gnosisSafeRepositoryMock).should().loadPendingSafe(safeAddress)
         then(relayServiceApiMock).should().notifySafeFunded(safeAddress.asEthereumAddressChecksumString())
         then(relayServiceApiMock).should().safeFundStatus(safeAddress.asEthereumAddressChecksumString())
         then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
@@ -161,17 +161,17 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(txHash, "", safeAddress, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        val pendingSafe = PendingSafe(safeAddress, txHash, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         val exception = Exception()
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.error(exception))
 
-        viewModel.setup(txHash)
+        viewModel.setup(safeAddress)
         viewModel.notifySafeFunded().subscribe(testObserver)
 
         testObserver.assertError(exception)
 
-        then(gnosisSafeRepositoryMock).should().loadPendingSafe(txHash)
+        then(gnosisSafeRepositoryMock).should().loadPendingSafe(safeAddress)
         then(relayServiceApiMock).should().notifySafeFunded(safeAddress.asEthereumAddressChecksumString())
         then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
@@ -180,24 +180,17 @@ class DeploySafeProgressViewModelTest {
     @Test
     fun notifySafeFundedLoadPendingSafeError() {
         val testObserver = TestObserver<Solidity.Address>()
-        val txHash = BigInteger.TEN
+        val safeAddress = Solidity.Address(123.toBigInteger())
         val exception = Exception()
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.error(exception))
 
-        viewModel.setup(txHash)
+        viewModel.setup(safeAddress)
         viewModel.notifySafeFunded().subscribe(testObserver)
 
         testObserver.assertError(exception)
 
-        then(gnosisSafeRepositoryMock).should().loadPendingSafe(txHash)
+        then(gnosisSafeRepositoryMock).should().loadPendingSafe(safeAddress)
         then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayServiceApiMock).shouldHaveZeroInteractions()
-    }
-
-    @Test
-    fun getTransactionHash() {
-        val txHash = BigInteger.TEN
-        viewModel.setup(txHash)
-        assertEquals(txHash, viewModel.getTransactionHash())
     }
 }

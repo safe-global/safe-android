@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.safe.create
+package pm.gnosis.heimdall.ui.safe.pairing
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Single

@@ -22,7 +22,7 @@ class SelectSafeViewModel @Inject constructor(
     private val infoRepository: TransactionInfoRepository
 ) : SelectSafeContract() {
 
-    override fun loadSafes(): Single<List<Safe>> = safeRepository.observeDeployedSafes().firstOrError()
+    override fun loadSafes(): Single<List<Safe>> = safeRepository.observeSafes().firstOrError()
 
     override fun reviewTransaction(safe: Solidity.Address?, transaction: SafeTransaction): Single<Result<Intent>> =
         infoRepository.parseTransactionData(transaction)
