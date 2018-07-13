@@ -13,6 +13,7 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
+import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
@@ -22,6 +23,8 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
@@ -37,7 +40,7 @@ class SafeMainViewModel @Inject constructor(
 
     override fun observeSafes(): Flowable<Result<Adapter.Data<AbstractSafe>>> =
         Flowable.combineLatest(
-            safeRepository.observeSafes(),
+            safeRepository.observeAllSafes(),
             safeSelectionProcessor.startWith(None),
             BiFunction { safes: List<AbstractSafe>, selection: Optional<AbstractSafe> ->
                 selection.toNullable()?.let { safes - it } ?: safes
@@ -48,14 +51,14 @@ class SafeMainViewModel @Inject constructor(
 
     override fun loadSelectedSafe(): Single<out AbstractSafe> =
         Single.fromCallable {
-            val selectedSafe = preferenceManager.prefs.getString(KEY_SELECTED_SAFE, null)?.hexAsBigInteger()
+            val selectedSafe = preferenceManager.prefs.getString(KEY_SELECTED_SAFE, null)?.asEthereumAddress()
             selectedSafe.toOptional()
         }.flatMap<AbstractSafe> {
             it.toNullable()?.let {
                 loadSafe(it)
             } ?: Single.error(NoSuchElementException())
         }.onErrorResumeNext {
-            safeRepository.observeSafes()
+            safeRepository.observeAllSafes()
                 .map {
                     it.first()
                 }
@@ -64,14 +67,14 @@ class SafeMainViewModel @Inject constructor(
             .doOnError { safeSelectionProcessor.offer(None) }
             .doOnSuccess { safeSelectionProcessor.offer(it.toOptional()) }
 
-    private fun loadSafe(addressOrHash: BigInteger): Single<AbstractSafe> =
-        Single.fromCallable { Solidity.Address(addressOrHash) }
-            .flatMap { safeRepository.loadSafe(it).map<AbstractSafe> { it } }
-            .onErrorResumeNext { safeRepository.loadPendingSafe(addressOrHash) }
+    private fun loadSafe(address: Solidity.Address): Single<AbstractSafe> =
+        safeRepository.loadSafe(address).map<AbstractSafe> { it }
+            .onErrorResumeNext { safeRepository.loadPendingSafe(address) }
+            .onErrorResumeNext { safeRepository.loadRecoveringSafe(address) }
 
-    override fun selectSafe(addressOrHash: BigInteger): Single<out AbstractSafe> =
+    override fun selectSafe(address: Solidity.Address): Single<out AbstractSafe> =
         Single.fromCallable {
-            preferenceManager.prefs.edit { putString(KEY_SELECTED_SAFE, addressOrHash.toHexString()) }
+            preferenceManager.prefs.edit { putString(KEY_SELECTED_SAFE, address.asEthereumAddressString()) }
         }.flatMap {
             loadSelectedSafe()
         }
@@ -80,7 +83,9 @@ class SafeMainViewModel @Inject constructor(
         when (safe) {
             is Safe -> safeRepository.observeSafe(safe.address)
                 .map { it.displayName(context) to it.address.shortChecksumString() }
-            is PendingSafe -> safeRepository.observePendingSafe(safe.hash)
+            is PendingSafe -> safeRepository.observePendingSafe(safe.address)
+                .map { it.displayName(context) to it.address.shortChecksumString() }
+            is RecoveringSafe -> safeRepository.observeRecoveringSafe(safe.address)
                 .map { it.displayName(context) to it.address.shortChecksumString() }
         }
 
@@ -88,12 +93,14 @@ class SafeMainViewModel @Inject constructor(
         when (safe) {
             is Safe -> safeRepository.updateSafe(safe.copy(name = name))
             is PendingSafe -> safeRepository.updatePendingSafe(safe.copy(name = name))
+            is RecoveringSafe -> safeRepository.updateRecoveringSafe(safe.copy(name = name))
         }
 
     override fun removeSafe(safe: AbstractSafe): Completable =
         when (safe) {
             is Safe -> safeRepository.removeSafe(safe.address)
-            is PendingSafe -> safeRepository.removePendingSafe(safe.hash)
+            is PendingSafe -> safeRepository.removePendingSafe(safe.address)
+            is RecoveringSafe -> safeRepository.removeRecoveringSafe(safe.address)
         }
 
     override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)

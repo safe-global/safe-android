@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a0818d68bb46a9175d5e78704918d6c3",
+    "identityHash": "d101c54ef9bd7c6e97b87f890faaeea0",
     "entities": [
       {
         "tableName": "address_book",
@@ -108,8 +108,14 @@
       },
       {
         "tableName": "gnosis_pending_safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transactionHash` TEXT NOT NULL, `name` TEXT, `address` TEXT NOT NULL, `paymentToken` TEXT NOT NULL, `paymentAmount` TEXT NOT NULL, `funded` INTEGER NOT NULL, PRIMARY KEY(`transactionHash`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `transactionHash` TEXT NOT NULL, `name` TEXT, `paymentToken` TEXT NOT NULL, `paymentAmount` TEXT NOT NULL, `funded` INTEGER NOT NULL, PRIMARY KEY(`address`))",
         "fields": [
+          {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
           {
             "fieldPath": "transactionHash",
             "columnName": "transactionHash",
@@ -121,12 +127,6 @@
             "columnName": "name",
             "affinity": "TEXT",
             "notNull": false
-          },
-          {
-            "fieldPath": "address",
-            "columnName": "address",
-            "affinity": "TEXT",
-            "notNull": true
           },
           {
             "fieldPath": "paymentToken",
@@ -149,7 +149,93 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "transactionHash"
+            "address"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "gnosis_recovering_safes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `transactionHash` TEXT, `name` TEXT, `recoverer` TEXT NOT NULL, `data` TEXT NOT NULL, `nonce` TEXT NOT NULL, `txGas` TEXT NOT NULL, `dataGas` TEXT NOT NULL, `gasToken` TEXT NOT NULL, `gasPrice` TEXT NOT NULL, `operation` INTEGER NOT NULL, `signatures` TEXT NOT NULL, PRIMARY KEY(`address`))",
+        "fields": [
+          {
+            "fieldPath": "address",
+            "columnName": "address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "transactionHash",
+            "columnName": "transactionHash",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "recoverer",
+            "columnName": "recoverer",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "data",
+            "columnName": "data",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nonce",
+            "columnName": "nonce",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "txGas",
+            "columnName": "txGas",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataGas",
+            "columnName": "dataGas",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gasToken",
+            "columnName": "gasToken",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gasPrice",
+            "columnName": "gasPrice",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "operation",
+            "columnName": "operation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "signatures",
+            "columnName": "signatures",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "address"
           ],
           "autoGenerate": false
         },
@@ -289,7 +375,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a0818d68bb46a9175d5e78704918d6c3\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d101c54ef9bd7c6e97b87f890faaeea0\")"
     ]
   }
 }

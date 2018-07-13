@@ -71,7 +71,7 @@
 
             <TextView
                 android:id="@+id/layout_pairing_scan"
-                style="@style/WhiteTheme.RoundPrimaryButton"
+                style="@style/PrimaryButton.Blue.Round"
                 android:layout_width="0dp"
                 android:layout_height="46dp"
                 android:layout_marginTop="40dp"
@@ -113,7 +113,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/toolbar_height"
         android:gravity="center_vertical"
-        android:text="@string/new_safe"
+        tools:text="@string/new_safe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/layout_create_safe_intro_back_arrow"
         app:layout_constraintTop_toTopOf="parent" />

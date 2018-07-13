@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
+import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -34,17 +35,17 @@ import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
+import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeActivity
+import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigIntegerOrNull
-import pm.gnosis.utils.toHexString
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
@@ -109,7 +110,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
     private fun setupSelectedSafe() {
-        val selectedSafe = intent?.getStringExtra(EXTRA_SELECTED_SAFE)?.hexAsBigIntegerOrNull()
+        val selectedSafe = intent?.getStringExtra(EXTRA_SELECTED_SAFE)?.asEthereumAddress()
         intent.removeExtra(EXTRA_SELECTED_SAFE)
         disposables += (selectedSafe?.let { viewModel.selectSafe(it) } ?: viewModel.loadSelectedSafe())
             .observeOn(AndroidSchedulers.mainThread())
@@ -146,6 +147,11 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             closeDrawer()
         }
 
+        layout_safe_main_recover_safe.setOnClickListener {
+            startActivity(CheckSafeActivity.createIntent(this))
+            closeDrawer()
+        }
+
         layout_safe_main_debug_settings.setOnClickListener {
             startActivity(DebugSettingsActivity.createIntent(this))
             closeDrawer()
@@ -159,8 +165,9 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             .flatMapSingle {
                 viewModel.selectSafe(
                     when (it) {
-                        is Safe -> it.address.value
-                        is PendingSafe -> it.hash
+                        is Safe -> it.address
+                        is PendingSafe -> it.address
+                        is RecoveringSafe -> it.address
                     }
                 ).mapToResult()
             }
@@ -234,6 +241,12 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                         if (safe.isFunded) DeploySafeProgressFragment.createInstance(safe) else PendingSafeFragment.createInstance(safe)
                     )
                 }
+                is RecoveringSafe -> {
+                    replace(
+                        R.id.layout_safe_main_content_frame,
+                        RecoveringSafeFragment.createInstance(safe)
+                    )
+                }
             }
         }
         updateToolbar()
@@ -260,14 +273,11 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 updateSafeInfo(safe.displayName(this) to safe.address.asEthereumAddressString())
                 observeSafeInfo(safe)
             }
+            is RecoveringSafe -> {
+                setupInProgressSafe(safe, safe.address, safe.name)
+            }
             is PendingSafe -> {
-                layout_safe_main_selected_safe_icon.visible(false)
-                layout_safe_main_selected_safe_progress.visible(true)
-                layout_safe_main_toolbar_overflow.visible(true)
-
-                setupOverflowMenu(safe.address, safe.name, safe)
-                updateSafeInfo(safe.displayName(this) to safe.address.asEthereumAddressString())
-                observeSafeInfo(safe)
+                setupInProgressSafe(safe, safe.address, safe.name)
             }
             else -> {
                 layout_safe_main_selected_safe_name.setText(R.string.no_safe_selected)
@@ -278,6 +288,16 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 layout_safe_main_toolbar_overflow.visible(false)
             }
         }
+    }
+
+    private fun setupInProgressSafe(safe: AbstractSafe, safeAddress: Solidity.Address, safeName: String?) {
+        layout_safe_main_selected_safe_icon.visible(false)
+        layout_safe_main_selected_safe_progress.visible(true)
+        layout_safe_main_toolbar_overflow.visible(true)
+
+        setupOverflowMenu(safeAddress, safeName, safe)
+        updateSafeInfo(safe.displayName(this) to safeAddress.asEthereumAddressString())
+        observeSafeInfo(safe)
     }
 
     private fun observeSafeInfo(safe: AbstractSafe) {
@@ -362,9 +382,9 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         private const val EXTRA_SELECTED_SAFE = "extra.string.selected_safe"
         private const val EXTRA_SELECTED_TAB = "extra.integer.selected_tab"
 
-        fun createIntent(context: Context, selectedSafeAddressOrHash: BigInteger? = null, selectedTab: Int = 0) =
+        fun createIntent(context: Context, selectedSafeAddress: Solidity.Address? = null, selectedTab: Int = 0) =
             Intent(context, SafeMainActivity::class.java).apply {
-                putExtra(EXTRA_SELECTED_SAFE, selectedSafeAddressOrHash?.toHexString())
+                putExtra(EXTRA_SELECTED_SAFE, selectedSafeAddress?.asEthereumAddressString())
                 putExtra(EXTRA_SELECTED_TAB, selectedTab)
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
             }

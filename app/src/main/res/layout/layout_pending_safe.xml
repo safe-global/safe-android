@@ -15,7 +15,7 @@
         android:gravity="center"
         android:paddingEnd="24dp"
         android:paddingStart="24dp"
-        android:text="Fund your new Safe"
+        android:text="@string/fund_new_safe"
         android:textColor="@color/dark_slate_blue"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +32,7 @@
         android:paddingBottom="24dp"
         android:paddingEnd="24dp"
         android:paddingStart="24dp"
-        android:text="Please send the minimum amount of ETH to create your new Safe. Exceeding funds sent will be added to your new Safe's balance."
+        android:text="@string/fund_new_safe_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_title" />
@@ -40,7 +40,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/pale_grey_four"
+        android:background="@color/pale_grey_two"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,13 +51,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="@dimen/toolbar_shadow_size"
-                android:background="@drawable/toolbar_dropshadow"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
             <TextView
                 android:id="@+id/layout_pending_safe_awaiting_deposit_label"
                 android:layout_width="0dp"
@@ -67,28 +60,12 @@
                 android:letterSpacing="0.25"
                 android:paddingEnd="24dp"
                 android:paddingStart="24dp"
-                android:text="Awaiting Deposit"
+                android:text="@string/awaiting_deposit"
                 android:textAllCaps="true"
                 android:textColor="@color/battleship_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-                android:id="@+id/layout_pending_safe_progress"
-                style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="12dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:indeterminate="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_awaiting_deposit_label"
-                app:mpb_indeterminateTint="@color/azure"
-                app:mpb_progressStyle="horizontal"
-                app:mpb_setBothDrawables="true" />
 
             <TextView
                 android:id="@+id/layout_pending_safe_amount_label"
@@ -103,7 +80,7 @@
                 android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_progress" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_awaiting_deposit_label" />
 
             <TextView
                 android:id="@+id/layout_pending_safe_address"
@@ -127,7 +104,7 @@
                 android:layout_height="36dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
-                android:text="Display QR code"
+                android:text="@string/display_qr_code"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_address" />
@@ -140,7 +117,7 @@
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
-                android:text="Share"
+                android:text="@string/share"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_qr_code_button" />
@@ -148,5 +125,13 @@
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_description" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,8 +1,8 @@
-package pm.gnosis.heimdall.ui.safe.create
+package pm.gnosis.heimdall.ui.safe.pairing
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.annotation.StringRes
 import android.support.v4.content.ContextCompat
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
@@ -12,33 +12,33 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_pairing.*
-import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.di.components.DaggerViewComponent
-import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class PairingActivity : BaseActivity() {
+abstract class PairingActivity : ViewModelActivity<PairingContract>() {
 
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
-    @Inject
-    lateinit var viewModel: PairingContract
-
     override fun screenId() = ScreenId.PAIRING
+
+    override fun inject(component: ViewComponent) = component.inject(this)
+
+    override fun layout(): Int = R.layout.layout_pairing
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        inject()
-        setContentView(R.layout.layout_pairing)
+
+        layout_pairing_title.text = getString(titleRes())
 
         layout_pairing_extension_link.apply {
             val linkDrawable = ContextCompat.getDrawable(context, R.drawable.ic_external_link)!!
@@ -78,7 +78,7 @@ class PairingActivity : BaseActivity() {
             .doFinally { onPairingLoading(false) }
             .subscribeBy(onSuccess = {
                 toast(R.string.devices_paired_successfuly)
-                startActivity(SafeRecoveryPhraseActivity.createIntent(this, it))
+                onSuccess(it)
             }, onError = {
                 snackbar(layout_pairing_coordinator, R.string.error_pairing_devices)
                 Timber.e(it)
@@ -89,14 +89,8 @@ class PairingActivity : BaseActivity() {
         layout_pairing_progress_bar.visible(isLoading)
     }
 
-    private fun inject() {
-        DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this].component)
-            .viewModule(ViewModule(this))
-            .build().inject(this)
-    }
+    @StringRes
+    abstract fun titleRes(): Int
 
-    companion object {
-        fun createIntent(context: Context) = Intent(context, PairingActivity::class.java)
-    }
+    abstract fun onSuccess(extension: Solidity.Address)
 }

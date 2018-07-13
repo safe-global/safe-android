@@ -101,8 +101,8 @@ class ConfirmSafeRecoveryPhraseActivity : ViewModelActivity<ConfirmSafeRecoveryP
         layout_confirm_safe_recovery_phrase_bottom_bar.setBackgroundColor(getColorCompat(if (enable) R.color.azure else R.color.bluey_grey))
     }
 
-    private fun onSafeCreated(txHash: BigInteger) {
-        startActivity(SafeMainActivity.createIntent(this, txHash))
+    private fun onSafeCreated(address: Solidity.Address) {
+        startActivity(SafeMainActivity.createIntent(this, address))
     }
 
     private fun onSafeCreationError(throwable: Throwable) {

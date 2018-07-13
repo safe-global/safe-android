@@ -145,8 +145,7 @@ class CreateAssetTransferViewModel @Inject constructor(
             executionRepository.loadExecuteInformation(safe, it)
         }
             .map<ViewUpdate> {
-                val totalGas = it.txGas + it.dataGas + BigInteger.valueOf(32000)
-                val estimate = Wei(totalGas * it.gasPrice)
+                val estimate = Wei(it.gasCosts())
                 val canExecute =
                     (estimate.value + (if (data.token == ERC20Token.ETHER_TOKEN.address) data.amount else BigInteger.ZERO)) <= it.balance.value
                 ViewUpdate.Estimate(estimate, it.balance, canExecute)

@@ -102,7 +102,7 @@ class SafeAdapterPendingViewHolderTest {
         itemView.mockFindViewById(R.id.layout_pending_safe_item_address, safeAddressTextView)
         itemView.mockFindViewById(R.id.layout_pending_safe_item_name, safeNameTextView)
 
-        val safe = PendingSafe(TEST_TX_HASH, "Test Safe", TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, "Test Safe", TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         viewHolder.bind(safe, emptyList())
 
         then(safeAddressTextView).should().text = null
@@ -135,7 +135,7 @@ class SafeAdapterPendingViewHolderTest {
         val addressBookSingleFactory = TestSingleFactory<AddressBookEntry>()
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(addressBookSingleFactory.get())
 
-        val safe = PendingSafe(TEST_TX_HASH, "Test Safe", TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, "Test Safe", TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         viewHolder.bind(safe, emptyList())
         viewHolder.start()
 
@@ -153,7 +153,7 @@ class SafeAdapterPendingViewHolderTest {
         val addressBookSingleFactory = TestSingleFactory<AddressBookEntry>()
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(addressBookSingleFactory.get())
 
-        val safe = PendingSafe(TEST_TX_HASH, "Test Safe", TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, "Test Safe", TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         viewHolder.bind(safe, emptyList())
         viewHolder.start()
 

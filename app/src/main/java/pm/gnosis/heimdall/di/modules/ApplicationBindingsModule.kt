@@ -9,6 +9,8 @@ import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.impl.FabricCrashTracker
 import pm.gnosis.heimdall.reporting.impl.FabricEventTracker
+import pm.gnosis.heimdall.ui.safe.mnemonic.DefaultRecoverSafeOwnersHelper
+import pm.gnosis.heimdall.ui.safe.mnemonic.RecoverSafeOwnersHelper
 import pm.gnosis.heimdall.ui.transactions.view.helpers.DefaultSubmitTransactionHelper
 import pm.gnosis.heimdall.ui.transactions.view.helpers.DefaultTransactionViewHolderBuilder
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
@@ -33,6 +35,10 @@ abstract class ApplicationBindingsModule {
     // This is unscoped so it will get recreated each time it is injected
     @Binds
     abstract fun bindsAddressStore(helper: SimpleAddressStore): AddressStore
+
+    // This is unscoped so it will get recreated each time it is injected
+    @Binds
+    abstract fun bindsRecoverSafeOwnersHelper(helper: DefaultRecoverSafeOwnersHelper): RecoverSafeOwnersHelper
 
     // This is unscoped so it will get recreated each time it is injected
     @Binds

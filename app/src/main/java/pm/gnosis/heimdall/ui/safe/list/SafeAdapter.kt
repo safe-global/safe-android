@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.layout_safe_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
+import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
@@ -29,8 +30,9 @@ class SafeAdapter @Inject constructor(
 ) : LifecycleAdapter<AbstractSafe, SafeAdapter.CastingViewHolder<out AbstractSafe>>(context) {
 
     companion object {
-        private const val TYPE_PENDING_SAFE = 0
-        private const val TYPE_SAFE = 1
+        private const val TYPE_SAFE = 0
+        private const val TYPE_PENDING_SAFE = 1
+        private const val TYPE_RECOVERING_SAFE = 2
     }
 
     val safeSelection = PublishSubject.create<AbstractSafe>()!!
@@ -44,7 +46,7 @@ class SafeAdapter @Inject constructor(
                     addressHelper
                 )
             }
-            TYPE_PENDING_SAFE -> {
+            TYPE_RECOVERING_SAFE, TYPE_PENDING_SAFE -> {
                 PendingViewHolder(
                     LayoutInflater.from(parent.context).inflate(R.layout.layout_pending_safe_item, parent, false),
                     safeSelection,
@@ -57,6 +59,7 @@ class SafeAdapter @Inject constructor(
 
     override fun getItemViewType(position: Int): Int {
         return when (items[position]) {
+            is RecoveringSafe -> TYPE_RECOVERING_SAFE
             is PendingSafe -> TYPE_PENDING_SAFE
             is Safe -> TYPE_SAFE
         }
@@ -125,16 +128,16 @@ class SafeAdapter @Inject constructor(
         itemView: View,
         private val safeSelection: Subject<AbstractSafe>,
         private val addressHelper: AddressHelper
-    ) : CastingViewHolder<PendingSafe>(PendingSafe::class.java, itemView), View.OnClickListener {
+    ) : CastingViewHolder<AbstractSafe>(AbstractSafe::class.java, itemView), View.OnClickListener {
         private val disposables = CompositeDisposable()
 
-        private var currentEntry: PendingSafe? = null
+        private var currentEntry: AbstractSafe? = null
 
         init {
             itemView.setOnClickListener(this)
         }
 
-        override fun castedBind(data: PendingSafe, payloads: List<Any>) {
+        override fun castedBind(data: AbstractSafe, payloads: List<Any>) {
             currentEntry = data
             itemView.layout_pending_safe_item_address.text = null
             itemView.layout_pending_safe_item_name.text = data.displayName(itemView.context)
@@ -144,7 +147,14 @@ class SafeAdapter @Inject constructor(
         fun start() {
             // Make sure no disposable are left over
             disposables.clear()
-            currentEntry?.address?.let {
+            currentEntry.let {
+                when (it) {
+                    is Safe -> it.address
+                    is PendingSafe -> it.address
+                    is RecoveringSafe -> it.address
+                    null -> null
+                }
+            }?.let {
                 addressHelper.populateAddressInfo(
                     itemView.layout_pending_safe_item_address,
                     itemView.layout_pending_safe_item_name,

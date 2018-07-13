@@ -16,13 +16,19 @@ import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
-import pm.gnosis.heimdall.ui.safe.create.PairingActivity
+import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
+import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeActivity
+import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseActivity
+import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFragment
+import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFundFragment
+import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafePendingFragment
+import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeSubmitFragment
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
@@ -49,6 +55,10 @@ interface ViewComponent {
 
     fun inject(fragment: DeploySafeProgressFragment)
     fun inject(fragment: PendingSafeFragment)
+    fun inject(fragment: RecoveringSafeFragment)
+    fun inject(fragment: RecoveringSafeFundFragment)
+    fun inject(fragment: RecoveringSafePendingFragment)
+    fun inject(fragment: RecoveringSafeSubmitFragment)
     fun inject(fragment: SafeDetailsFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)
@@ -60,6 +70,7 @@ interface ViewComponent {
     fun inject(activity: AddressBookAddEntryActivity)
     fun inject(activity: AddressBookEditEntryActivity)
     fun inject(activity: AddressBookEntryDetailsActivity)
+    fun inject(activity: CheckSafeActivity)
     fun inject(activity: ConfirmSafeRecoveryPhraseActivity)
     fun inject(activity: ConfirmTransactionActivity)
     fun inject(activity: CreateAssetTransferActivity)
@@ -72,6 +83,7 @@ interface ViewComponent {
     fun inject(activity: PasswordSetupActivity)
     fun inject(activity: QRCodeScanActivity)
     fun inject(activity: ReceiveTokenActivity)
+    fun inject(activity: RecoverInputRecoveryPhraseActivity)
     fun inject(activity: ReviewTransactionActivity)
     fun inject(activity: SafeMainActivity)
     fun inject(activity: SafeRecoveryPhraseActivity)

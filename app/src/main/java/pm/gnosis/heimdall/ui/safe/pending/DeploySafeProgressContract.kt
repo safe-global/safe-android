@@ -6,7 +6,6 @@ import pm.gnosis.model.Solidity
 import java.math.BigInteger
 
 abstract class DeploySafeProgressContract : ViewModel() {
-    abstract fun setup(transactionHash: BigInteger?)
+    abstract fun setup(safeAddress: Solidity.Address?)
     abstract fun notifySafeFunded(): Single<Solidity.Address>
-    abstract fun getTransactionHash(): BigInteger?
 }
