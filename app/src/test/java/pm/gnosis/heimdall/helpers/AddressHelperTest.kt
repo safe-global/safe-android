@@ -15,6 +15,10 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.PendingSafe
+import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
@@ -66,6 +70,8 @@ class AddressHelperTest {
         then(nameView).shouldHaveZeroInteractions()
 
         then(safeRepository).should().loadSafe(testAddress)
+        then(safeRepository).should().loadPendingSafe(testAddress)
+        then(safeRepository).should().loadRecoveringSafe(testAddress)
         then(safeRepository).shouldHaveNoMoreInteractions()
         then(addressBookRepository).should().loadAddressBookEntry(testAddress)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
@@ -116,6 +122,63 @@ class AddressHelperTest {
         then(addressBookRepository).should().loadAddressBookEntry(testAddress)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
         then(safeRepository).should().loadSafe(testAddress)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun testPendingSafeAddress() {
+        given(nameView.context).willReturn(mock(Context::class.java))
+        val testAddress = "0x31B98D14007bDEe637298086988A0bBd31184523".asEthereumAddress()!!
+        val safe = PendingSafe(testAddress, BigInteger.ZERO,"The mate vault!", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
+        given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
+        given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.just(safe))
+
+        helper.populateAddressInfo(addressView, nameView, imageView, testAddress)
+
+        then(imageView).should().setAddress(testAddress)
+        then(imageView).shouldHaveNoMoreInteractions()
+        then(addressView).should().text = "0x31B9...184523"
+        then(addressView).shouldHaveNoMoreInteractions()
+        then(nameView).should().text = "The mate vault!"
+        then(nameView).should().visibility = View.VISIBLE
+        then(nameView).should().context
+        then(nameView).shouldHaveNoMoreInteractions()
+
+        then(addressBookRepository).should().loadAddressBookEntry(testAddress)
+        then(addressBookRepository).shouldHaveNoMoreInteractions()
+        then(safeRepository).should().loadSafe(testAddress)
+        then(safeRepository).should().loadPendingSafe(testAddress)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun testRecoveringSafeAddress() {
+        given(nameView.context).willReturn(mock(Context::class.java))
+        val testAddress = "0x31B98D14007bDEe637298086988A0bBd31184523".asEthereumAddress()!!
+        val safe = RecoveringSafe(testAddress, BigInteger.ZERO,"The mate vault!", testAddress, "", BigInteger.ZERO, BigInteger.ZERO,
+            ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList())
+        given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
+        given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
+        given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
+        given(safeRepository.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
+
+        helper.populateAddressInfo(addressView, nameView, imageView, testAddress)
+
+        then(imageView).should().setAddress(testAddress)
+        then(imageView).shouldHaveNoMoreInteractions()
+        then(addressView).should().text = "0x31B9...184523"
+        then(addressView).shouldHaveNoMoreInteractions()
+        then(nameView).should().text = "The mate vault!"
+        then(nameView).should().visibility = View.VISIBLE
+        then(nameView).should().context
+        then(nameView).shouldHaveNoMoreInteractions()
+
+        then(addressBookRepository).should().loadAddressBookEntry(testAddress)
+        then(addressBookRepository).shouldHaveNoMoreInteractions()
+        then(safeRepository).should().loadSafe(testAddress)
+        then(safeRepository).should().loadPendingSafe(testAddress)
+        then(safeRepository).should().loadRecoveringSafe(testAddress)
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 }

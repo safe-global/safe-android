@@ -348,7 +348,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             .map { (receipt, time) ->
                 val executed = if (receipt.status == BigInteger.ZERO) false
                 else {
-                    // If we have a failure event than the transaction failed
+                    // If we have a failure event then the transaction failed
                     receipt.logs.none {
                         it.topics.getOrNull(0) == GnosisSafePersonalEdition.Events.ExecutionFailed.EVENT_ID
                     }

@@ -73,9 +73,9 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
         extensionAddress: Solidity.Address
     ): Observable<InputRecoveryPhraseContract.ViewUpdate> =
         input.phrase
-            .subscribeOn(Schedulers.computation())
             .flatMapSingle {
                 Single.fromCallable { bip39.mnemonicToSeed(bip39.validateMnemonic(it.toString())) }
+                    .subscribeOn(Schedulers.computation())
                     .flatMap {
                         Single.zip(
                             accountsRepository.accountFromMnemonicSeed(it, 0),

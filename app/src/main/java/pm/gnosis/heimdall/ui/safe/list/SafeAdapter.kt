@@ -138,9 +138,14 @@ class SafeAdapter @Inject constructor(
         }
 
         override fun castedBind(data: AbstractSafe, payloads: List<Any>) {
-            currentEntry = data
-            itemView.layout_pending_safe_item_address.text = null
-            itemView.layout_pending_safe_item_name.text = data.displayName(itemView.context)
+            currentEntry = when (data) {
+                // This layout should only be used for these types of safes
+                is PendingSafe, is RecoveringSafe -> data
+                else -> null
+            }?.apply {
+                itemView.layout_pending_safe_item_address.text = null
+                itemView.layout_pending_safe_item_name.text = data.displayName(itemView.context)
+            }
         }
 
         @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -149,10 +154,9 @@ class SafeAdapter @Inject constructor(
             disposables.clear()
             currentEntry.let {
                 when (it) {
-                    is Safe -> it.address
                     is PendingSafe -> it.address
                     is RecoveringSafe -> it.address
-                    null -> null
+                    else -> null
                 }
             }?.let {
                 addressHelper.populateAddressInfo(
