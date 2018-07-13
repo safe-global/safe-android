@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.ui.safe.recover.phrase
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.ui.safe.mnemonic.RecoverSafeOwnersHelper
+import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 

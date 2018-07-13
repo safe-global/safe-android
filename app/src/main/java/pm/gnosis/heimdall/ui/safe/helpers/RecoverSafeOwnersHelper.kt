@@ -1,5 +1,6 @@
-package pm.gnosis.heimdall.ui.safe.mnemonic
+package pm.gnosis.heimdall.ui.safe.helpers
 
+import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -13,6 +14,9 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39ValidationResult
 import pm.gnosis.model.Solidity
@@ -39,11 +43,15 @@ interface RecoverSafeOwnersHelper {
 
 @Singleton
 class DefaultRecoverSafeOwnersHelper @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val accountsRepository: AccountsRepository,
     private val bip39: Bip39,
     private val executionRepository: TransactionExecutionRepository,
     private val safeRepository: GnosisSafeRepository
 ) : RecoverSafeOwnersHelper {
+
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
+
     override fun process(
         input: InputRecoveryPhraseContract.Input,
         safeAddress: Solidity.Address,
@@ -51,7 +59,9 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
     ): Observable<InputRecoveryPhraseContract.ViewUpdate> =
         input.retry.startWith(Unit)
             .switchMap {
-                safeRepository.loadInfo(safeAddress).mapToResult()
+                safeRepository.loadInfo(safeAddress)
+                    .onErrorResumeNext { error: Throwable -> errorHandler.observable(error) }
+                    .mapToResult()
             }
             .flatMap {
                 when (it) {
@@ -104,7 +114,9 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                     is ErrorResult -> Observable.just(
                         when (it.error) {
                             is Bip39ValidationResult -> InputRecoveryPhraseContract.ViewUpdate.InvalidMnemonic
-                            is NoNeedToRecoverSafeException -> InputRecoveryPhraseContract.ViewUpdate.NoRecoveryNecessary(safeInfo.address)
+                            is NoNeedToRecoverSafeException -> InputRecoveryPhraseContract.ViewUpdate.NoRecoveryNecessary(
+                                safeInfo.address
+                            )
                             else -> InputRecoveryPhraseContract.ViewUpdate.WrongMnemonic
                         }
                     )
@@ -188,7 +200,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                     listOf(signHash(signingAccounts.first.second, hash), signHash(signingAccounts.second.second, hash))
                 )
             }
-            .onErrorReturn { InputRecoveryPhraseContract.ViewUpdate.RecoverDataError(it) }
+            .onErrorReturn { InputRecoveryPhraseContract.ViewUpdate.RecoverDataError(errorHandler.translate(it)) }
 
     private fun signHash(privKey: ByteArray, hash: ByteArray) =
         KeyPair.fromPrivate(privKey).sign(hash).let { Signature(it.r, it.s, it.v) }
