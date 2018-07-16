@@ -72,7 +72,7 @@ class RecoveringSafeViewModel @Inject constructor(
 
 
     override fun observeRecoveryInfo(address: Solidity.Address): Observable<Result<RecoveryInfo>> =
-        safeRepository.observeRecoveringSafe(address).toObservable()
+        safeRepository.loadRecoveringSafe(address)
             .map { Triple(it.address.asEthereumAddressChecksumString(), it.gasPrice * (it.dataGas + it.txGas), it.gasToken) }
             .emitAndNext(
                 emit = { (safeAddress, amount) ->
@@ -88,13 +88,14 @@ class RecoveringSafeViewModel @Inject constructor(
                     tokenRepository.loadToken(gasToken)
                         .onErrorResumeNext { errorHandler.single(it) }
                         .map { RecoveryInfo(safeAddress, it, amount) }
+                        .onErrorResumeNext { errorHandler.single(it) }
                         .toObservable()
                         .mapToResult()
                 }
             )
 
     override fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<TransactionExecutionRepository.ExecuteInformation> =
-        safeRepository.loadRecoveringSafe(address).flatMap(::requestExecuteInfo)
+        safeRepository.loadRecoveringSafe(address).flatMap(::requestExecuteInfo).onErrorResumeNext { errorHandler.single(it) }
 
     override fun submitRecovery(address: Solidity.Address): Single<Solidity.Address> =
         safeRepository.loadRecoveringSafe(address)
@@ -127,8 +128,7 @@ class RecoveringSafeViewModel @Inject constructor(
 
 
     override fun checkRecoveryFunded(address: Solidity.Address): Single<Solidity.Address> =
-        safeRepository.observeRecoveringSafe(address)
-            .firstOrError()
+        safeRepository.loadRecoveringSafe(address)
             .flatMap { safe ->
                 val gasCosts = (safe.txGas + safe.dataGas) * safe.gasPrice
                 // Create a fake token since only the address is necessary to load the balance
@@ -137,12 +137,7 @@ class RecoveringSafeViewModel @Inject constructor(
                 )
                     .map { if (it < gasCosts) throw PendingSafeViewModel.NotEnoughFundsException() }
                     .retryWhen { errors ->
-                        errors.flatMap {
-                            if (it is PendingSafeViewModel.NotEnoughFundsException)
-                                Flowable.just(it).delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS)
-                            else
-                                Flowable.error(it)
-                        }
+                        errors.delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS)
                     }
                     .map { safe.address }
             }
