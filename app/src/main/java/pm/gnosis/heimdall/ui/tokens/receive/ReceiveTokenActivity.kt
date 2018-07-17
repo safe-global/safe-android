@@ -30,7 +30,7 @@ class ReceiveTokenActivity : ViewModelActivity<ReceiveTokenContract>() {
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
-    override fun screenId() = ScreenId.RECEIVE_TOKEN
+    override fun screenId() = ScreenId.SAFE_SHARE_ADDRESS
 
     override fun layout() = R.layout.layout_receive_token
 

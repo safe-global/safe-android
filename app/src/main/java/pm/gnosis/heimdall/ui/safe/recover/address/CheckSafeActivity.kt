@@ -25,7 +25,6 @@ import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -34,7 +33,7 @@ class CheckSafeActivity : ViewModelActivity<CheckSafeContract>() {
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
-    override fun screenId() = ScreenId.CHECK_SAFE
+    override fun screenId() = ScreenId.INPUT_SAFE_ADDRESS
 
     override fun layout() = R.layout.layout_check_safe
 

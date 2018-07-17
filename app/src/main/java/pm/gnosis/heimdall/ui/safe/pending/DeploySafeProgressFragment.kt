@@ -16,20 +16,27 @@ import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.setupEtherscanTransactionUrl
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.appendText
 import pm.gnosis.svalinn.common.utils.withArgs
-import pm.gnosis.utils.*
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
+import pm.gnosis.utils.asTransactionHash
 import timber.log.Timber
 import javax.inject.Inject
 
 class DeploySafeProgressFragment : BaseFragment() {
-
     @Inject
     lateinit var viewModel: DeploySafeProgressContract
+
+    @Inject
+    lateinit var eventTracker: EventTracker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +60,8 @@ class DeploySafeProgressFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
+        eventTracker.submit(Event.ScreenView(ScreenId.NEW_SAFE_AWAIT_DEPLOYMENT))
+
         disposables += viewModel.notifySafeFunded()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = ::onDeployedSafe, onError = Timber::e)

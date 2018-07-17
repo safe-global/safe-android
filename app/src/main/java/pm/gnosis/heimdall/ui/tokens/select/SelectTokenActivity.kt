@@ -19,7 +19,7 @@ import pm.gnosis.utils.asEthereumAddressString
 
 class SelectTokenActivity : BaseActivity() {
 
-    override fun screenId() = ScreenId.SELECT_TOKEN
+    override fun screenId() = ScreenId.TRANSACTION_PICK_TOKEN
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,7 @@ class SelectTokenActivity : BaseActivity() {
             return
         }
         supportFragmentManager.transaction {
-            replace(R.id.layout_select_token_fragment, TokenBalancesFragment.createInstance(safeAddress))
+            replace(R.id.layout_select_token_fragment, TokenBalancesFragment.createInstance(safeAddress, trackingEnabled = false))
         }
     }
 

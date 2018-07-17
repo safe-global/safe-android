@@ -23,7 +23,7 @@ import javax.inject.Inject
  * Check https://github.com/walleth/walleth/tree/master/app/src/main/java/org/walleth/activities/qrscan
  */
 class QRCodeScanActivity : BaseActivity() {
-    override fun screenId() = ScreenId.QR_SCAN
+    override fun screenId() = ScreenId.QR_CODE_SCANNER
 
     @Inject
     lateinit var videographer: Videographer

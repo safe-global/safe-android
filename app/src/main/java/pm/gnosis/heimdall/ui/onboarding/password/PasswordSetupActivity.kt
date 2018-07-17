@@ -30,7 +30,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
-    override fun screenId() = ScreenId.PASSWORD_SETUP
+    override fun screenId() = ScreenId.PASSWORD
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()

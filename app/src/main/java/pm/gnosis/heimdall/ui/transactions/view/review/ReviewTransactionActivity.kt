@@ -45,7 +45,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
 
     private val unlockStatusSubject = PublishSubject.create<Unit>()
 
-    override fun screenId() = ScreenId.REVIEW_TRANSACTION
+    override fun screenId() = ScreenId.TRANSACTION_REVIEW
 
     override fun layout() = R.layout.layout_review_transaction
 

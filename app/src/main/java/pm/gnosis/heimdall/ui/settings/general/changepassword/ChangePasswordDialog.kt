@@ -6,7 +6,6 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -18,6 +17,9 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.helpers.PasswordHelper
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordContract.State.*
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
@@ -35,6 +37,9 @@ class ChangePasswordDialog : BaseDialog() {
 
     @Inject
     lateinit var viewModel: ChangePasswordContract
+
+    @Inject
+    lateinit var eventTracker: EventTracker
 
     private lateinit var dialogView: View
     private lateinit var alertDialog: AlertDialog
@@ -57,6 +62,7 @@ class ChangePasswordDialog : BaseDialog() {
 
     override fun onStart() {
         super.onStart()
+        eventTracker.submit(Event.ScreenView(ScreenId.SETTINGS_CHANGE_PASSWORD))
 
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
         disposables += confirmSubject

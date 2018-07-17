@@ -30,7 +30,7 @@ class TransactionStatusActivity : ViewModelActivity<TransactionStatusContract>()
 
     private var transactionInfoViewHolder: TransactionInfoViewHolder? = null
 
-    override fun screenId() = ScreenId.TRANSACTION_STATUS
+    override fun screenId() = ScreenId.TRANSACTION_DETAILS
 
     override fun layout() = R.layout.layout_transaction_status
 

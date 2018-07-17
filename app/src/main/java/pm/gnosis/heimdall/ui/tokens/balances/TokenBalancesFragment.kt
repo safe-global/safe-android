@@ -19,6 +19,9 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
@@ -35,10 +38,21 @@ import javax.inject.Inject
 class TokenBalancesFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: TokenBalancesContract
+
     @Inject
     lateinit var adapter: TokenBalancesAdapter
 
+    @Inject
+    lateinit var eventTracker: EventTracker
+
     private lateinit var safeAddress: Solidity.Address
+
+    private var trackingEnabled = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        trackingEnabled = arguments?.getBoolean(ARGUMENT_TRACKING_ENABLED) ?: false
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_token_balances, container, false)
@@ -61,6 +75,7 @@ class TokenBalancesFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
+        if (userVisibleHint && trackingEnabled) eventTracker.submit(Event.ScreenView(ScreenId.SAFE_ASSETS_VIEW))
 
         disposables += viewModel.observeLoadingStatus()
             .observeOn(AndroidSchedulers.mainThread())
@@ -83,6 +98,11 @@ class TokenBalancesFragment : BaseFragment() {
             }, onError = Timber::e)
     }
 
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (::eventTracker.isInitialized && userVisibleHint && trackingEnabled) eventTracker.submit(Event.ScreenView(ScreenId.SAFE_ASSETS_VIEW))
+    }
+
     private fun onTokensList(tokens: Adapter.Data<ERC20TokenWithBalance>) {
         adapter.updateData(tokens)
     }
@@ -100,8 +120,12 @@ class TokenBalancesFragment : BaseFragment() {
 
     companion object {
         private const val ARGUMENT_ADDRESS = "argument.string.address"
+        private const val ARGUMENT_TRACKING_ENABLED = "argument.boolean.tracking_enabled"
 
-        fun createInstance(address: Solidity.Address) =
-            TokenBalancesFragment().withArgs(Bundle().apply { putString(ARGUMENT_ADDRESS, address.asEthereumAddressString()) })
+        fun createInstance(address: Solidity.Address, trackingEnabled: Boolean) =
+            TokenBalancesFragment().withArgs(Bundle().apply {
+                putString(ARGUMENT_ADDRESS, address.asEthereumAddressString())
+                putBoolean(ARGUMENT_TRACKING_ENABLED, trackingEnabled)
+            })
     }
 }

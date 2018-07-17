@@ -148,7 +148,7 @@ class SafeDetailsFragment : BaseFragment() {
     private fun pagerAdapter() = FactoryPagerAdapter(childFragmentManager, FactoryPagerAdapter.Factory(items.size, {
         when (positionToId(it)) {
             R.string.tab_title_assets -> {
-                TokenBalancesFragment.createInstance(safeAddress)
+                TokenBalancesFragment.createInstance(safeAddress, trackingEnabled = true)
             }
             R.string.tab_title_transactions -> {
                 SafeTransactionsFragment.createInstance(safeAddress)

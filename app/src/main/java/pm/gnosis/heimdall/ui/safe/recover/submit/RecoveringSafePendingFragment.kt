@@ -13,6 +13,9 @@ import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
@@ -29,6 +32,9 @@ class RecoveringSafePendingFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: RecoveringSafeContract
 
+    @Inject
+    lateinit var eventTracker: EventTracker
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_recovering_safe_pending, container, false)
 
@@ -41,6 +47,8 @@ class RecoveringSafePendingFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
+        eventTracker.submit(Event.ScreenView(ScreenId.RECOVER_SAFE_AWAIT_RECOVERY))
+
         val safeAddress = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() ?: throw IllegalStateException()
         disposables += viewModel.checkRecoveryStatus(safeAddress)
             .observeOn(AndroidSchedulers.mainThread())

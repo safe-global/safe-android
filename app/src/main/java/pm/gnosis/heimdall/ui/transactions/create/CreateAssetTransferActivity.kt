@@ -41,7 +41,7 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
-    override fun screenId() = ScreenId.CREATE_ASSET_TRANSFER
+    override fun screenId() = ScreenId.TRANSACTION_ENTER_DATA
 
     override fun layout() = R.layout.layout_create_asset_transfer
 

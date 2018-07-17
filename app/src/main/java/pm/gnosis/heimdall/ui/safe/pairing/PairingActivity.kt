@@ -29,7 +29,7 @@ abstract class PairingActivity : ViewModelActivity<PairingContract>() {
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
-    override fun screenId() = ScreenId.PAIRING
+    override fun screenId() = ScreenId.CONNECT_BROWSER_EXTENSION
 
     override fun inject(component: ViewComponent) = component.inject(this)
 

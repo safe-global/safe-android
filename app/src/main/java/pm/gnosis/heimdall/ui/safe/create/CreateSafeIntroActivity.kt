@@ -11,7 +11,6 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
-import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -20,7 +19,7 @@ class CreateSafeIntroActivity : BaseActivity() {
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
-    override fun screenId() = ScreenId.CREATE_SAFE_INTRO
+    override fun screenId() = ScreenId.NEW_SAFE_START
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

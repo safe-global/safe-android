@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
@@ -80,6 +81,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         super.onCreate(savedInstanceState)
         layout_safe_main_toolbar_nav_icon.setOnClickListener {
             layout_safe_main_drawer_layout.openDrawer(Gravity.START)
+            eventTracker.submit(Event.ScreenView(ScreenId.MENU))
         }
 
         layout_safe_main_safes_list.itemAnimator = null
@@ -103,7 +105,10 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         setupSelectedSafe()
 
         disposables += layout_safe_main_toolbar_overflow.clicks()
-            .subscribeBy { popupMenu.show() }
+            .subscribeBy {
+                popupMenu.show()
+                eventTracker.submit(Event.ScreenView(ScreenId.SAFE_SETTINGS))
+            }
 
         updateToolbar()
         setupNavigation()
@@ -186,6 +191,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_navigation_safe_list.visible(visible)
         layout_safe_main_navigation_settings.visible(!visible)
         layout_safe_main_selected_safe_button.setImageResource(if (visible) R.drawable.ic_close_safe_selection else R.drawable.ic_open_safe_selection)
+        if (visible) eventTracker.submit(Event.ScreenView(ScreenId.MENU_EXPANDED))
     }
 
     private fun toggleHasSafes(hasSafes: Boolean) {
@@ -360,6 +366,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             }
         )
             .show()
+        eventTracker.submit(Event.ScreenView(ScreenId.SAFE_EDIT_NAME))
     }
 
     private fun removeSafe(safe: AbstractSafe) {
@@ -379,6 +386,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             confirmColor = R.color.tomato
         )
             .show()
+        eventTracker.submit(Event.ScreenView(ScreenId.SAFE_CONFIRM_REMOVE))
     }
 
     companion object {

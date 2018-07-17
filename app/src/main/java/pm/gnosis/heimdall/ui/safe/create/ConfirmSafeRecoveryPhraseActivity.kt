@@ -26,12 +26,11 @@ import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 
 class ConfirmSafeRecoveryPhraseActivity : ViewModelActivity<ConfirmSafeRecoveryPhraseContract>() {
-    override fun screenId() = ScreenId.CONFIRM_SAFE_RECOVERY_PHRASE
+    override fun screenId() = ScreenId.CONFIRM_RECOVERY_PHRASE
 
     // TODO Span count
     private val layoutManager = GridLayoutManager(this, 4, GridLayoutManager.VERTICAL, false)

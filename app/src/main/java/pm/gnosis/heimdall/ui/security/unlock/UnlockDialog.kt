@@ -22,6 +22,9 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.errorToast
@@ -41,6 +44,9 @@ class UnlockDialog() : BaseDialog() {
 
     @Inject
     lateinit var viewModel: UnlockContract
+
+    @Inject
+    lateinit var eventTracker: EventTracker
 
     private var fingerPrintDisposable: Disposable? = null
 
@@ -128,6 +134,12 @@ class UnlockDialog() : BaseDialog() {
             dialog_unlock_password_input.windowToken,
             0
         )
+        eventTracker.submit(
+            Event.ScreenView(
+                if (visible) ScreenId.IDENTIFICATION_KEYBOARD
+                else ScreenId.IDENTIFICATION_FINGERPRINT
+            )
+        )
     }
 
     private fun onFingerprintResult(result: FingerprintUnlockResult) {
@@ -192,7 +204,7 @@ class UnlockDialog() : BaseDialog() {
         private const val ARG_REQUEST_CODE = "arg.int.request_code"
 
         fun create(requestCode: Int = 0) =
-            UnlockDialog().apply{
+            UnlockDialog().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_REQUEST_CODE, requestCode)
                 }
