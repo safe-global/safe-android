@@ -268,6 +268,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 layout_safe_main_selected_safe_icon.visible(true)
                 layout_safe_main_selected_safe_icon.setAddress(safe.address)
                 layout_safe_main_toolbar_overflow.visible(true)
+                layout_safe_main_toolbar_icon.visible(true)
 
                 setupOverflowMenu(safe.address, safe.name, safe)
                 updateSafeInfo(safe.displayName(this) to safe.address.asEthereumAddressString())
@@ -284,7 +285,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 layout_safe_main_selected_safe_info.text = null
                 layout_safe_main_selected_safe_icon.visible(false)
                 layout_safe_main_selected_safe_progress.visible(false)
-                layout_safe_main_toolbar_title.text = getString(R.string.your_safe)
+                layout_safe_main_toolbar_title.text = getString(R.string.welcome)
+                layout_safe_main_toolbar_icon.visible(false)
                 layout_safe_main_toolbar_overflow.visible(false)
             }
         }
@@ -294,6 +296,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_selected_safe_icon.visible(false)
         layout_safe_main_selected_safe_progress.visible(true)
         layout_safe_main_toolbar_overflow.visible(true)
+        layout_safe_main_toolbar_icon.visible(true)
 
         setupOverflowMenu(safeAddress, safeName, safe)
         updateSafeInfo(safe.displayName(this) to safeAddress.asEthereumAddressString())

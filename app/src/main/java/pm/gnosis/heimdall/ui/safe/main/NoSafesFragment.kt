@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
+import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeActivity
 import timber.log.Timber
 
 
@@ -23,8 +24,10 @@ class NoSafesFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        disposables += layout_no_safes_add_safe_button.clicks().subscribeBy(onNext = {
-            startActivity(CreateSafeIntroActivity.createIntent(context!!))
-        }, onError = Timber::e)
+        disposables += layout_no_safes_add_safe_button.clicks()
+            .subscribeBy(onNext = { startActivity(CreateSafeIntroActivity.createIntent(context!!)) }, onError = Timber::e)
+
+        disposables += layout_no_safes_recover_safe.clicks()
+            .subscribeBy(onNext = { startActivity(CheckSafeActivity.createIntent(context!!)) }, onError = Timber::e)
     }
 }

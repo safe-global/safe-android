@@ -3,10 +3,6 @@ package pm.gnosis.heimdall.ui.onboarding.password
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
 import android.view.inputmethod.EditorInfo
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -22,7 +18,6 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.setColorFilterCompat
-import pm.gnosis.heimdall.utils.setCompoundDrawables
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
@@ -74,7 +69,6 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
     private fun onPasswordValidation(validationConditions: Collection<PasswordValidationCondition>) {
         val (_, validPassword) =
                 PasswordHelper.Handler.applyToView(layout_password_setup_password, layout_password_setup_validation_info, validationConditions)
-
         enableNext(validPassword)
     }
 

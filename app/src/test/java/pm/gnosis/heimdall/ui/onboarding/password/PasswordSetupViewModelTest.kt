@@ -66,9 +66,9 @@ class PasswordSetupViewModelTest {
         testObserver.assertResult(
             DataResult(
                 listOf(
-                    PasswordValidationCondition.NonIdenticalCharacters(false),
                     PasswordValidationCondition.MinimumCharacters(false),
-                    PasswordValidationCondition.OneNumberOneLetter(false)
+                    PasswordValidationCondition.OneNumberOneLetter(false),
+                    PasswordValidationCondition.NonIdenticalCharacters(false)
                 )
             )
         )
@@ -83,9 +83,9 @@ class PasswordSetupViewModelTest {
         testObserver.assertResult(
             DataResult(
                 listOf(
-                    PasswordValidationCondition.NonIdenticalCharacters(false),
                     PasswordValidationCondition.MinimumCharacters(true),
-                    PasswordValidationCondition.OneNumberOneLetter(true)
+                    PasswordValidationCondition.OneNumberOneLetter(true),
+                    PasswordValidationCondition.NonIdenticalCharacters(false)
                 )
             )
         )
@@ -100,9 +100,9 @@ class PasswordSetupViewModelTest {
         testObserver.assertResult(
             DataResult(
                 listOf(
-                    PasswordValidationCondition.NonIdenticalCharacters(true),
                     PasswordValidationCondition.MinimumCharacters(false),
-                    PasswordValidationCondition.OneNumberOneLetter(true)
+                    PasswordValidationCondition.OneNumberOneLetter(true),
+                    PasswordValidationCondition.NonIdenticalCharacters(true)
                 )
             )
         )
@@ -117,9 +117,9 @@ class PasswordSetupViewModelTest {
         testObserver.assertResult(
             DataResult(
                 listOf(
-                    PasswordValidationCondition.NonIdenticalCharacters(true),
                     PasswordValidationCondition.MinimumCharacters(false),
-                    PasswordValidationCondition.OneNumberOneLetter(true)
+                    PasswordValidationCondition.OneNumberOneLetter(true),
+                    PasswordValidationCondition.NonIdenticalCharacters(true)
                 )
             )
         )
@@ -134,9 +134,9 @@ class PasswordSetupViewModelTest {
         testObserver.assertResult(
             DataResult(
                 listOf(
-                    PasswordValidationCondition.NonIdenticalCharacters(true),
                     PasswordValidationCondition.MinimumCharacters(true),
-                    PasswordValidationCondition.OneNumberOneLetter(true)
+                    PasswordValidationCondition.OneNumberOneLetter(true),
+                    PasswordValidationCondition.NonIdenticalCharacters(true)
                 )
             )
         )

@@ -54,7 +54,7 @@
     <string name="address_hint">Enter Address</string>
     <string name="value_hint">Enter Value</string>
     <string name="select_token">Select token to send</string>
-    <string name="passwords_do_not_match">The passwords don\'t match</string>
+    <string name="passwords_do_not_match">Sorry, the password doesn\'t match</string>
     <string name="password_too_short">Password should be at least 6 characters long</string>
     <string name="password_error_saving">Something went wrong. Could not save password.</string>
     <string name="enter_master_password">Enter Master Password</string>
@@ -88,12 +88,12 @@
     <string name="this_device_address">This device address</string>
     <string name="ok">OK</string>
     <string name="setup_password">Setup Password</string>
-    <string name="setup_password_info">This password is used to unlock the Safe app and to confirm transactions. <b>Do not share this password with others!</b></string>
+    <string name="setup_password_info">Your confidential password is used to unlock the Safe and confirm transactions.</string>
     <string name="next">Next</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="confirm_password_info">Confirm the password you have entered in the previous screen</string>
-    <string name="onboarding_intro_info">Safely store Ether and ERC20 tokens with 2-factor authentication</string>
-    <string name="choose_password">Choose Password</string>
+    <string name="confirm_password_info">Please enter your password again to confirm.</string>
+    <string name="onboarding_intro_info">Your multi-sig wallet for securely and conveniently managing ETH &amp; ERC-20 tokens.</string>
+    <string name="create_password">Create Password</string>
     <string name="password_doesnt_match">Password doesn\'t match</string>
     <string name="confirm">Confirm</string>
     <string name="setup_fingerprint_place">Place your finger on the sensor to confirm your device fingerprint</string>
@@ -102,9 +102,9 @@
     <string name="setup_fingerprint">Setup Fingerprint</string>
     <string name="fingerprint_confirmed">Fingerprint confirmed!</string>
     <string name="finish">Finish</string>
-    <string name="password_validation_identical_characters">No more than 2 identical characters in a row\n</string>
+    <string name="password_validation_identical_characters">No triple characters\n</string>
     <string name="password_validation_minimum_characters">Use a minimum of 8 characters\n</string>
-    <string name="password_validation_one_number_one_letter">Password with at least 1 number and 1 letter\n</string>
+    <string name="password_validation_one_number_one_letter">At least 1 letter and 1 number\n</string>
     <string name="terms">Terms</string>
     <string name="terms_info"><![CDATA[Please review our <a href="https://gnosis.pm">Terms of Use</a> and <a href="https://gnosis.pm/assets/pdf/PrivacyPolicyGnosisLtd.pdf">Privacy Policy</a>.]]></string>
     <string name="tos_link">https://gnosis.pm</string>
@@ -169,7 +169,7 @@
     <string name="error_syncing">Error syncing</string>
     <string name="no_safe_added">No Safe added yet</string>
     <string name="create_safe">Create new Safe</string>
-    <string name="setup_successful">Device was setup successfully!</string>
+    <string name="setup_successful">Device setup successful!</string>
     <string name="no_safe_yet">You didn\'t create any Safes yet.</string>
     <string name="show_safe_on_etherscan">View Safe on Etherscan.io</string>
     <string name="save">Save</string>
@@ -218,4 +218,8 @@
     <string name="recover_safe_description">The existing Safe will be recovered and associated with this device and connected browser extension.</string>
     <string name="recovery_error">Transaction params have changed</string>
     <string name="safe_already_exists">Safe already exists</string>
+    <string name="password_confirmed">Password confirmed</string>
+    <string name="next_step">Next step:</string>
+    <string name="recover_a_safe">Recover a Safe</string>
+    <string name="welcome">Welcome</string>
 </resources>
