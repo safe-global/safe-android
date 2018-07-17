@@ -22,9 +22,7 @@ import pm.gnosis.heimdall.utils.setupEtherscanTransactionUrl
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.appendText
 import pm.gnosis.svalinn.common.utils.withArgs
-import pm.gnosis.utils.asTransactionHash
-import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.toHexString
+import pm.gnosis.utils.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -35,8 +33,7 @@ class DeploySafeProgressFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.i(arguments?.getString(EXTRA_SAFE_TX_HASH))
-        viewModel.setup(arguments?.getString(EXTRA_SAFE_TX_HASH)?.hexAsBigInteger())
+        viewModel.setup(arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -49,7 +46,7 @@ class DeploySafeProgressFragment : BaseFragment() {
             .append("\n")
             .appendText(getString(R.string.creating_your_new_safe), StyleSpan(Typeface.BOLD))
 
-        viewModel.getTransactionHash()?.toHexString()?.let {
+        arguments?.getString(EXTRA_SAFE_TX_HASH)?.let {
             layout_deploy_safe_progress_description.setupEtherscanTransactionUrl(it, R.string.deploy_safe_description)
         }
     }
@@ -62,7 +59,7 @@ class DeploySafeProgressFragment : BaseFragment() {
     }
 
     private fun onDeployedSafe(address: Solidity.Address) {
-        startActivity(SafeMainActivity.createIntent(context!!, address.value))
+        startActivity(SafeMainActivity.createIntent(context!!, address))
     }
 
     override fun inject(component: ApplicationComponent) {
@@ -73,9 +70,11 @@ class DeploySafeProgressFragment : BaseFragment() {
     }
 
     companion object {
+        private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val EXTRA_SAFE_TX_HASH = "extra.string.safe_tx_hash"
 
         fun createInstance(pendingSafe: PendingSafe) = DeploySafeProgressFragment().withArgs(Bundle().apply {
+            putString(EXTRA_SAFE_ADDRESS, pendingSafe.address.asEthereumAddressString())
             putString(EXTRA_SAFE_TX_HASH, pendingSafe.hash.asTransactionHash())
         })
     }

@@ -99,6 +99,8 @@ class GenericTransactionViewHolderTest {
     private fun setupViewMocks() {
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
         given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
+        given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
+        given(safeRepository.loadRecoveringSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
         given(layoutInflater.inflate(R.layout.layout_generic_transaction_info, containerView, true)).willReturn(viewHolderView)
         viewHolderView.mockFindViewById(R.id.layout_generic_transaction_info_value, valueView)
         viewHolderView.mockFindViewById(R.id.layout_generic_transaction_info_data, dataView)
@@ -129,7 +131,11 @@ class GenericTransactionViewHolderTest {
         then(addressBookRepository).should().loadAddressBookEntry(TEST_SAFE)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
         then(safeRepository).should().loadSafe(TEST_RECEIVER)
+        then(safeRepository).should().loadPendingSafe(TEST_RECEIVER)
+        then(safeRepository).should().loadRecoveringSafe(TEST_RECEIVER)
         then(safeRepository).should().loadSafe(TEST_SAFE)
+        then(safeRepository).should().loadPendingSafe(TEST_SAFE)
+        then(safeRepository).should().loadRecoveringSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
@@ -226,8 +232,10 @@ class GenericTransactionViewHolderTest {
         then(addressBookRepository).should().loadAddressBookEntry(TEST_SAFE)
         then(addressBookRepository).should().loadAddressBookEntry(TEST_RECEIVER)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
-        then(safeRepository).should().loadSafe(TEST_SAFE)
         then(safeRepository).should().loadSafe(TEST_RECEIVER)
+        then(safeRepository).should().loadPendingSafe(TEST_RECEIVER)
+        then(safeRepository).should().loadRecoveringSafe(TEST_RECEIVER)
+        then(safeRepository).should().loadSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
         then(layoutInflater).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.x_ether, "3.141")

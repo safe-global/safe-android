@@ -86,7 +86,7 @@ class SafeAdapterViewHolderTest {
         itemView.mockFindViewById(R.id.layout_safe_item_name, safeNameTextView)
         val safeObserver = TestObserver<AbstractSafe>()
         safeSubject.subscribe(safeObserver)
-        viewHolder.bind(PendingSafe(TEST_TX_HASH, null, TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT), emptyList())
+        viewHolder.bind(PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, null, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT), emptyList())
         viewHolder.start()
 
         then(itemView).should().setOnClickListener(viewHolder)

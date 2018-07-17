@@ -58,7 +58,7 @@ class ConfirmSafeRecoveryPhraseViewModel @Inject constructor(
             words.joinToString(" ") == mnemonic
         }.subscribeOn(Schedulers.computation()).mapToResult()
 
-    override fun createSafe(): Single<Result<BigInteger>> =
+    override fun createSafe(): Single<Result<Solidity.Address>> =
         loadSafeOwners()
             .map { RelaySafeCreationParams(owners = it, threshold = 2, s = BigInteger(252, secureRandom)) }
             .flatMap { request -> relayServiceApi.safeCreation(request).map { request to it } }
@@ -86,8 +86,8 @@ class ConfirmSafeRecoveryPhraseViewModel @Inject constructor(
             .flatMap { (response, tx) ->
                 val transactionHash =
                     tx.hash(ECDSASignature(response.signature.r, response.signature.s).apply { v = response.signature.v.toByte() }).asBigInteger()
-                gnosisSafeRepository.savePendingSafe(transactionHash, null, response.safe, response.payment)
-                    .andThen(Single.just(transactionHash))
+                gnosisSafeRepository.addPendingSafe(response.safe, transactionHash, null, response.payment)
+                    .andThen(Single.just(response.safe))
             }
             .mapToResult()
             .subscribeOn(Schedulers.io())

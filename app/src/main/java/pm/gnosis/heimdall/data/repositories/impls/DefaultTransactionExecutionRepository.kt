@@ -230,11 +230,17 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         senderIsOwner: Boolean,
         txGas: BigInteger,
         dataGas: BigInteger,
-        gasPrice: BigInteger
+        gasPrice: BigInteger,
+        addToHistory: Boolean
     ): Single<String> =
         loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, txGas, dataGas, gasPrice)
             .flatMap { relayServiceApi.execute(safeAddress.asEthereumAddressChecksumString(), it) }
-            .flatMap { handleSubmittedTransaction(safeAddress, transaction, it.transactionHash.addHexPrefix(), txGas, dataGas, gasPrice) }
+            .flatMap {
+                if (addToHistory)
+                    handleSubmittedTransaction(safeAddress, transaction, it.transactionHash.addHexPrefix(), txGas, dataGas, gasPrice)
+                else
+                    Single.just(it.transactionHash.addHexPrefix())
+            }
 
     private fun loadExecutionParams(
         safeAddress: Solidity.Address,
@@ -314,32 +320,41 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             .switchMap { status ->
                 status.success?.let {
                     Observable.just(it to (status.timestamp ?: 0))
-                } ?: ethereumRepository.getTransactionReceipt(status.transactionId.addHexPrefix())
-                    .flatMap { receipt ->
-                        ethereumRepository.getBlockByHash(receipt.blockHash)
-                            .map { receipt to (it.timestamp.toLong() * 1000) }
-                    }
-                    .retryWhen {
-                        it.delay(20, TimeUnit.SECONDS)
-                    }
-                    .map { (receipt, time) ->
-                        val executed = if (receipt.status == BigInteger.ZERO) false
-                        else {
-                            // If we have a failure event than the transaction failed
-                            receipt.logs.none {
-                                it.topics.getOrNull(0) == GnosisSafePersonalEdition.Events.ExecutionFailed.EVENT_ID
-                            }
+                } ?: observeTransactionStatus(status.transactionId.hexAsBigInteger())
+                    .map {
+                        it.apply {
+                            descriptionsDao.update(status.apply {
+                                success = first
+                                timestamp = second
+                            })
                         }
-                        descriptionsDao.update(status.apply {
-                            success = executed
-                            timestamp = time
-                        })
-                        executed to time
                     }
             }
-            .map { (success, timestamp) -> if (success) PublishStatus.Success(timestamp) else PublishStatus.Failed(timestamp) }
+            .map { (success, timestamp) ->
+                if (success) PublishStatus.Success(timestamp) else PublishStatus.Failed(timestamp)
+            }
             .startWith(PublishStatus.Pending)
             .onErrorReturnItem(PublishStatus.Unknown)
+
+    override fun observeTransactionStatus(transactionHash: BigInteger): Observable<Pair<Boolean, Long>> =
+        ethereumRepository.getTransactionReceipt(transactionHash.asTransactionHash())
+            .flatMap { receipt ->
+                ethereumRepository.getBlockByHash(receipt.blockHash)
+                    .map { receipt to (it.timestamp.toLong() * 1000) }
+            }
+            .retryWhen {
+                it.delay(20, TimeUnit.SECONDS)
+            }
+            .map { (receipt, time) ->
+                val executed = if (receipt.status == BigInteger.ZERO) false
+                else {
+                    // If we have a failure event then the transaction failed
+                    receipt.logs.none {
+                        it.topics.getOrNull(0) == GnosisSafePersonalEdition.Events.ExecutionFailed.EVENT_ID
+                    }
+                }
+                executed to time
+            }
 
     private class TransactionInfoRequest(
         val threshold: EthRequest<String>,

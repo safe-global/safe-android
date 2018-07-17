@@ -11,6 +11,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -33,7 +34,7 @@ class CreateSafeIntroActivity : BaseActivity() {
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
 
         disposables += layout_create_safe_intro_next.clicks()
-            .subscribeBy(onNext = { startActivity(PairingActivity.createIntent(this)) }, onError = Timber::e)
+            .subscribeBy(onNext = { startActivity(CreationPairingActivity.createIntent(this)) }, onError = Timber::e)
 
         disposables += toolbarHelper.setupShadow(layout_create_safe_intro_toolbar_shadow, layout_create_safe_intro_content_scroll)
     }

@@ -60,6 +60,7 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
         if (requestCode == REQUEST_CODE_VERIFY_REJECT) {
             disposables +=
                     viewModel.rejectTransaction(transaction)
+                        .observeOn(AndroidSchedulers.mainThread())
                         .doOnSubscribe {
                             infoViewHelper.toggleReadyState(false, R.string.rejecting_transaction)
                         }
@@ -178,7 +179,6 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
     private fun dataError(throwable: Throwable) {
         Timber.e(throwable)
         errorSnackbar(layout_confirm_transaction_transaction_info, throwable)
-        layout_confirm_transaction_transaction_info.visible(false)
         val errorMsgId = (throwable as? ConfirmTransactionContract.InvalidTransactionException)?.messageId ?: R.string.error_loading_transaction
         layout_confirm_transaction_loading_error_message.text = getString(errorMsgId)
         layout_confirm_transaction_loading_error_group.visible(true)

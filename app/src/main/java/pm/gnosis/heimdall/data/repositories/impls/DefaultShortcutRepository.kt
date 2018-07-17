@@ -39,7 +39,7 @@ class DefaultShortcutRepository @Inject constructor(
 
     override fun init() {
         shortcutManager()?.let {
-            safeRepository.observeDeployedSafes()
+            safeRepository.observeSafes()
                 .subscribeOn(Schedulers.io())
                 .map(::createShortcutInfo)
                 .subscribeBy(onNext = ::setupSafeShortcuts, onError = Timber::e)

@@ -231,13 +231,22 @@
                     android:text="@string/create_safe"
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_safes_list" />
 
+                <TextView
+                    android:id="@+id/layout_safe_main_recover_safe"
+                    style="@style/NavigationText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_recover_safe"
+                    android:text="@string/recover_safe"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_add_safe" />
+
                 <View
                     android:id="@+id/layout_safe_main_navigation_safe_creation_divider"
                     android:layout_width="200dp"
                     android:layout_height="@dimen/divider_width"
                     android:layout_marginTop="8dp"
                     android:background="@color/divider"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_add_safe" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_recover_safe" />
 
                 <!-- Container to hide this when not in Debug Mode (else it is controlled by ContraintGroup) -->
                 <FrameLayout
@@ -324,8 +333,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    app:constraint_referenced_ids="layout_safe_main_add_safe"
-                    tools:visibility="gone" />
+                    app:constraint_referenced_ids="layout_safe_main_add_safe,layout_safe_main_recover_safe"
+                    tools:visibility="visible" />
 
                 <android.support.constraint.Group
                     android:id="@+id/layout_safe_main_navigation_settings"

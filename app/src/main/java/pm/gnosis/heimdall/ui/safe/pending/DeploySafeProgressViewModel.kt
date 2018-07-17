@@ -15,15 +15,15 @@ class DeploySafeProgressViewModel @Inject constructor(
     private val relayServiceApi: RelayServiceApi
 ) : DeploySafeProgressContract() {
 
-    private var transactionHash: BigInteger? = null
+    private var safeAddress: Solidity.Address? = null
 
-    override fun setup(transactionHash: BigInteger?) {
-        this.transactionHash = transactionHash
+    override fun setup(safeAddress: Solidity.Address?) {
+        this.safeAddress = safeAddress
     }
 
     override fun notifySafeFunded(): Single<Solidity.Address> {
-        val txHash = transactionHash ?: return Single.error(IllegalStateException("Invalid transaction hash"))
-        return gnosisSafeRepository.loadPendingSafe(txHash)
+        val address = safeAddress ?: return Single.error(IllegalStateException("Invalid transaction hash"))
+        return gnosisSafeRepository.loadPendingSafe(address)
             .flatMap { pendingSafe ->
                 relayServiceApi.notifySafeFunded(pendingSafe.address.asEthereumAddressChecksumString())
                     .andThen(Single.just(pendingSafe))
@@ -44,8 +44,6 @@ class DeploySafeProgressViewModel @Inject constructor(
             }
             .flatMap { gnosisSafeRepository.pendingSafeToDeployedSafe(it).andThen(Single.just(it.address)) }
     }
-
-    override fun getTransactionHash(): BigInteger? = transactionHash
 
     private class SafeNotDeployedException : Exception()
 

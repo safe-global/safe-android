@@ -22,6 +22,7 @@ import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.svalinn.common.utils.shareExternalText
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.withArgs
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.asTransactionHash
 import pm.gnosis.utils.stringWithNoTrailingZeroes
@@ -39,7 +40,7 @@ class PendingSafeFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.setup(arguments?.getString(EXTRA_SAFE_TX_HASH) ?: "")
+        viewModel.setup(arguments?.getString(EXTRA_SAFE_ADDRESS) ?: "")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -70,7 +71,7 @@ class PendingSafeFragment : BaseFragment() {
     }
 
     private fun hasEnoughBalanceForDeploy() {
-        startActivity(SafeMainActivity.createIntent(context!!, viewModel.getTransactionHash()))
+        startActivity(SafeMainActivity.createIntent(context!!, arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()))
     }
 
     private fun onCreationInfo(info: PendingSafeContract.CreationInfo) {
@@ -81,12 +82,10 @@ class PendingSafeFragment : BaseFragment() {
     }
 
     companion object {
-        private const val EXTRA_SAFE_NAME = "extra.string.safe_name"
-        private const val EXTRA_SAFE_TX_HASH = "extra.string.safe_tx_hash"
+        private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
 
         fun createInstance(safe: PendingSafe) = PendingSafeFragment().withArgs(Bundle().apply {
-            putString(EXTRA_SAFE_NAME, safe.name)
-            putString(EXTRA_SAFE_TX_HASH, safe.hash.asTransactionHash())
+            putString(EXTRA_SAFE_ADDRESS, safe.address.asEthereumAddressString())
         })
     }
 }

@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.data.db.models.*
         ERC20TokenDb::class,
         GnosisSafeDb::class,
         PendingGnosisSafeDb::class,
+        RecoveringGnosisSafeDb::class,
         TransactionDescriptionDb::class,
         TransactionPublishStatusDb::class
     ], version = 1

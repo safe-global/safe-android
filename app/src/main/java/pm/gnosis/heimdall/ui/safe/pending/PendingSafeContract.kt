@@ -8,10 +8,9 @@ import pm.gnosis.svalinn.common.utils.Result
 import java.math.BigInteger
 
 abstract class PendingSafeContract : ViewModel() {
-    abstract fun setup(transactionHash: String)
+    abstract fun setup(safeAddress: String)
     abstract fun observeCreationInfo(): Observable<Result<CreationInfo>>
     abstract fun observeHasEnoughDeployBalance(): Observable<Unit>
-    abstract fun getTransactionHash(): BigInteger?
 
     data class CreationInfo(val safeAddress: String, val paymentToken: ERC20Token?, val paymentAmount: BigInteger)
 }
