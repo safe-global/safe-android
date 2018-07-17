@@ -17,10 +17,16 @@ android {
         versionName getKey("APP_VERSION_NAME", "0.4.2-alpha")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        // Contracts
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0x44e7f5855a77fe1793a96be8a1c9c3eaf47e9d09"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0x2c155fd04682979fd15c67fb65dfab9345605761"))
-        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io"))
+        // API keys
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
+        // Services
+        buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io"))
+        buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.staging.gnosisdev.com/api/"))
+        buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
+        buildConfigField javaTypes.STRING, "VERIFIED_TOKEN_SERVICE_URL", asString(getKey("VERIFIED_TOKEN_SERVICE_URL", "https://gist.githubusercontent.com/rmeissner/98911fcf74b0ea9731e2dae2441c97a4/raw/"))
 
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true

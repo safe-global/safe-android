@@ -23,7 +23,6 @@ import pm.gnosis.heimdall.data.adapters.*
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
-import pm.gnosis.heimdall.data.remote.TxExecutorApi
 import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39
@@ -104,22 +103,10 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesTxExecutorApi(moshi: Moshi, client: OkHttpClient): TxExecutorApi =
-        Retrofit.Builder()
-            // Increase timeout since our server goes to sleeps
-            .client(client.newBuilder().readTimeout(30, TimeUnit.SECONDS).build())
-            .baseUrl(TxExecutorApi.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-            .build()
-            .create(TxExecutorApi::class.java)
-
-    @Provides
-    @Singleton
     fun providesPushServiceApi(moshi: Moshi, client: OkHttpClient): PushServiceApi =
         Retrofit.Builder()
             .client(client)
-            .baseUrl(PushServiceApi.BASE_URL)
+            .baseUrl(BuildConfig.NOTIFICATION_SERVICE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
@@ -130,7 +117,7 @@ class ApplicationModule(private val application: Application) {
     fun providesRelayServiceApi(moshi: Moshi, client: OkHttpClient): RelayServiceApi =
         Retrofit.Builder()
             .client(client)
-            .baseUrl(RelayServiceApi.BASE_URL)
+            .baseUrl(BuildConfig.RELAY_SERVICE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
@@ -141,7 +128,7 @@ class ApplicationModule(private val application: Application) {
     fun providesVerifiedTokensServiceApi(moshi: Moshi, client: OkHttpClient): VerifiedTokensServiceApi =
         Retrofit.Builder()
             .client(client)
-            .baseUrl(VerifiedTokensServiceApi.BASE_URL)
+            .baseUrl(BuildConfig.VERIFIED_TOKEN_SERVICE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()

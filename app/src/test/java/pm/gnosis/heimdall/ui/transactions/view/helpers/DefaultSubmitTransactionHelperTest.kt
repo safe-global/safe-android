@@ -143,7 +143,7 @@ class DefaultSubmitTransactionHelperTest {
             .willReturn(Single.just(info))
         retryEvents.onNext(Unit)
 
-        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(Wei(BigInteger.valueOf(32010)), Wei.ether("23"))) }
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(Wei(BigInteger.valueOf(10)), Wei.ether("23"))) }
         testObserver.assertUpdates(updates)
 
         /*
@@ -407,7 +407,7 @@ class DefaultSubmitTransactionHelperTest {
         val updates = mutableListOf<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>({
             ((it as? DataResult)?.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder == transactionViewHolder
         })
-        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(Wei(BigInteger.valueOf(32010)), Wei.ether("23"))) }
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(Wei(BigInteger.valueOf(10)), Wei.ether("23"))) }
         testObserver.assertUpdates(updates)
 
         signatureSubject.onNext(emptyMap())
