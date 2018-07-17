@@ -47,6 +47,13 @@ class TokenBalancesFragment : BaseFragment() {
 
     private lateinit var safeAddress: Solidity.Address
 
+    private var trackingEnabled = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        trackingEnabled = arguments?.getBoolean(ARGUMENT_TRACKING_ENABLED) ?: false
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_token_balances, container, false)
 
@@ -68,7 +75,7 @@ class TokenBalancesFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        eventTracker.submit(Event.ScreenView(ScreenId.SAFE_ASSETS_VIEW))
+        if (userVisibleHint && trackingEnabled) eventTracker.submit(Event.ScreenView(ScreenId.SAFE_ASSETS_VIEW))
 
         disposables += viewModel.observeLoadingStatus()
             .observeOn(AndroidSchedulers.mainThread())
@@ -91,6 +98,11 @@ class TokenBalancesFragment : BaseFragment() {
             }, onError = Timber::e)
     }
 
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (::eventTracker.isInitialized && userVisibleHint && trackingEnabled) eventTracker.submit(Event.ScreenView(ScreenId.SAFE_ASSETS_VIEW))
+    }
+
     private fun onTokensList(tokens: Adapter.Data<ERC20TokenWithBalance>) {
         adapter.updateData(tokens)
     }
@@ -108,8 +120,12 @@ class TokenBalancesFragment : BaseFragment() {
 
     companion object {
         private const val ARGUMENT_ADDRESS = "argument.string.address"
+        private const val ARGUMENT_TRACKING_ENABLED = "argument.boolean.tracking_enabled"
 
-        fun createInstance(address: Solidity.Address) =
-            TokenBalancesFragment().withArgs(Bundle().apply { putString(ARGUMENT_ADDRESS, address.asEthereumAddressString()) })
+        fun createInstance(address: Solidity.Address, trackingEnabled: Boolean) =
+            TokenBalancesFragment().withArgs(Bundle().apply {
+                putString(ARGUMENT_ADDRESS, address.asEthereumAddressString())
+                putBoolean(ARGUMENT_TRACKING_ENABLED, trackingEnabled)
+            })
     }
 }

@@ -31,7 +31,7 @@ class SelectTokenActivity : BaseActivity() {
             return
         }
         supportFragmentManager.transaction {
-            replace(R.id.layout_select_token_fragment, TokenBalancesFragment.createInstance(safeAddress))
+            replace(R.id.layout_select_token_fragment, TokenBalancesFragment.createInstance(safeAddress, trackingEnabled = false))
         }
     }
 

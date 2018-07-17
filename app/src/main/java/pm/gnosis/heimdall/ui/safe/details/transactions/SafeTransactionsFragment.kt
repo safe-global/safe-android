@@ -57,7 +57,7 @@ class SafeTransactionsFragment : BaseFragment(), ScrollableContainer {
 
     override fun onStart() {
         super.onStart()
-        eventTracker.submit(Event.ScreenView(ScreenId.SAFE_TRANSACTION_LIST))
+        if (userVisibleHint) eventTracker.submit(Event.ScreenView(ScreenId.SAFE_TRANSACTION_LIST))
 
         disposables += adapter.transactionSelectionSubject
             .observeOn(AndroidSchedulers.mainThread())
@@ -78,6 +78,11 @@ class SafeTransactionsFragment : BaseFragment(), ScrollableContainer {
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(::displayTransactions, Timber::e)
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (::eventTracker.isInitialized && userVisibleHint) eventTracker.submit(Event.ScreenView(ScreenId.SAFE_TRANSACTION_LIST))
     }
 
     override fun scrollToTop() {
