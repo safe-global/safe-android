@@ -15,6 +15,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/WhiteTheme">
+
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
+
         <activity
             android:name=".ui.splash.SplashActivity"
             android:launchMode="singleTask"
@@ -112,10 +117,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 
-        <activity android:name=".ui.safe.recover.address.CheckSafeActivity"
+        <activity
+            android:name=".ui.safe.recover.address.CheckSafeActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/GreyBackgroundTheme" />
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.onboarding.fingerprint.FingerprintSetupActivity"
@@ -174,10 +180,11 @@
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name=".ui.safe.recover.phrase.RecoverInputRecoveryPhraseActivity"
+        <activity
+            android:name=".ui.safe.recover.phrase.RecoverInputRecoveryPhraseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
