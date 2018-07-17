@@ -181,7 +181,7 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
         errorSnackbar(layout_confirm_transaction_transaction_info, throwable)
         val errorMsgId = (throwable as? ConfirmTransactionContract.InvalidTransactionException)?.messageId ?: R.string.error_loading_transaction
         layout_confirm_transaction_loading_error_message.text = getString(errorMsgId)
-        layout_confirm_transaction_loading_error_group.visible(true)
+        layout_confirm_transaction_loading_error_group.visible(transactionInfoViewHolder == null)
     }
 
     companion object {

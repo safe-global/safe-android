@@ -8,10 +8,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface PushServiceApi {
-    companion object {
-        const val BASE_URL = "https://safe-notification.dev.gnosisdev.com/api/"
-    }
-
     @POST("v1/auth/")
     fun auth(@Body pushServiceAuth: PushServiceAuth): Completable
 

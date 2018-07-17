@@ -7,10 +7,6 @@ import retrofit2.http.*
 
 
 interface RelayServiceApi {
-    companion object {
-        const val BASE_URL = "https://safe-relay.dev.gnosisdev.com/api/"
-    }
-
     @POST("v1/safes/{address}/transactions/")
     fun execute(@Path("address") address: String, @Body params: ExecuteParams): Single<RelayExecution>
 

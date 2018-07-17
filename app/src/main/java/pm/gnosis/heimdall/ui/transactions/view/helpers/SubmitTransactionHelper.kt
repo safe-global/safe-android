@@ -101,9 +101,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
             emit = {
                 it.map {
                     ViewUpdate.Estimate(
-                        Wei(
-                            (it.txGas + it.dataGas + BigInteger.valueOf(32000)) * it.gasPrice
-                        ), it.balance
+                        Wei(it.gasCosts()), it.balance
                     )
                 }
             },
