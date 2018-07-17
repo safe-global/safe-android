@@ -17,6 +17,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_unlock.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
@@ -90,6 +91,12 @@ class UnlockActivity : ViewModelActivity<UnlockContract>() {
                 window.addFlags(FLAG_TRANSLUCENT_NAVIGATION)
             }
         }
+        eventTracker.submit(
+            Event.ScreenView(
+                if (visible) ScreenId.UNLOCK_KEYBOARD
+                else ScreenId.UNLOCK_FINGERPRINT
+            )
+        )
     }
 
     private fun onFingerprintResult(result: FingerprintUnlockResult) {

@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
+import pm.gnosis.heimdall.ui.safe.main.NoSafesFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
@@ -54,6 +55,7 @@ interface ViewComponent {
     // Fragments
 
     fun inject(fragment: DeploySafeProgressFragment)
+    fun inject(fragment: NoSafesFragment)
     fun inject(fragment: PendingSafeFragment)
     fun inject(fragment: RecoveringSafeFragment)
     fun inject(fragment: RecoveringSafeFundFragment)

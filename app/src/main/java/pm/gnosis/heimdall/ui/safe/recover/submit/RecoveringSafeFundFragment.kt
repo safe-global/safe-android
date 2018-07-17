@@ -13,6 +13,9 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -34,15 +37,20 @@ class RecoveringSafeFundFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: RecoveringSafeContract
 
+    @Inject
+    lateinit var eventTracker: EventTracker
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_recovering_safe_fund, container, false)
 
     override fun onStart() {
         super.onStart()
+        eventTracker.submit(Event.ScreenView(ScreenId.RECOVER_SAFE_AWAIT_FUNDS))
+
         val safeAddress = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() ?: throw IllegalStateException("No safe address provided!")
         disposables += viewModel.observeRecoveryInfo(safeAddress)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeForResult (onNext = ::onRecoveryInfo, onError = {
+            .subscribeForResult(onNext = ::onRecoveryInfo, onError = {
                 errorSnackbar(layout_recovering_safe_fund_qr_code_button, it)
             })
 

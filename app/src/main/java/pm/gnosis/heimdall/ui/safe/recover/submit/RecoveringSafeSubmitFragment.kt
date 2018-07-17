@@ -14,6 +14,9 @@ import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.helpers.AddressHelper
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
@@ -41,11 +44,16 @@ class RecoveringSafeSubmitFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: RecoveringSafeContract
 
+    @Inject
+    lateinit var eventTracker: EventTracker
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.layout_recovering_safe_submit, container, false)
 
     override fun onStart() {
         super.onStart()
+        eventTracker.submit(Event.ScreenView(ScreenId.RECOVER_SAFE_REVIEW))
+
         layout_recovering_safe_submit_button.isEnabled = false
         layout_recovering_safe_submit_button.visible(true)
         layout_recovering_safe_submit_retry.isEnabled = false

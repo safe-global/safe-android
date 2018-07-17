@@ -12,6 +12,9 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.base.ScrollableContainer
@@ -26,10 +29,15 @@ import javax.inject.Inject
 class SafeTransactionsFragment : BaseFragment(), ScrollableContainer {
     @Inject
     lateinit var viewModel: SafeTransactionsContract
+
     @Inject
     lateinit var adapter: SafeTransactionsAdapter
+
     @Inject
     lateinit var layoutManager: LinearLayoutManager
+
+    @Inject
+    lateinit var eventTracker: EventTracker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +57,8 @@ class SafeTransactionsFragment : BaseFragment(), ScrollableContainer {
 
     override fun onStart() {
         super.onStart()
+        eventTracker.submit(Event.ScreenView(ScreenId.SAFE_TRANSACTION_LIST))
+
         disposables += adapter.transactionSelectionSubject
             .observeOn(AndroidSchedulers.mainThread())
             .flatMapSingle {

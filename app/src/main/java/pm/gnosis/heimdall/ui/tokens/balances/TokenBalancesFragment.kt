@@ -19,6 +19,9 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
@@ -35,8 +38,12 @@ import javax.inject.Inject
 class TokenBalancesFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: TokenBalancesContract
+
     @Inject
     lateinit var adapter: TokenBalancesAdapter
+
+    @Inject
+    lateinit var eventTracker: EventTracker
 
     private lateinit var safeAddress: Solidity.Address
 
@@ -61,6 +68,7 @@ class TokenBalancesFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
+        eventTracker.submit(Event.ScreenView(ScreenId.SAFE_ASSETS_VIEW))
 
         disposables += viewModel.observeLoadingStatus()
             .observeOn(AndroidSchedulers.mainThread())

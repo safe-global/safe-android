@@ -8,7 +8,6 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseActivity
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.*
 
 class RecoverInputRecoveryPhraseActivity : InputRecoveryPhraseActivity<RecoverInputRecoveryPhraseContract>() {
@@ -22,7 +21,7 @@ class RecoverInputRecoveryPhraseActivity : InputRecoveryPhraseActivity<RecoverIn
         startActivity(SafeMainActivity.createIntent(this, safe))
     }
 
-    override fun screenId() = ScreenId.RECOVER_SAFE_INPUT_RECOVER_PHRASE
+    override fun screenId() = ScreenId.INPUT_RECOVERY_PHRASE
 
     override fun inject(component: ViewComponent) = component.inject(this)
 

@@ -14,6 +14,9 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.svalinn.common.utils.vibrate
@@ -25,6 +28,9 @@ import javax.inject.Inject
 class FingerprintDialog : BaseDialog() {
     @Inject
     lateinit var encryptionManager: EncryptionManager
+
+    @Inject
+    lateinit var eventTracker: EventTracker
 
     var successListener: ((Boolean) -> Unit)? = null
 
@@ -44,6 +50,8 @@ class FingerprintDialog : BaseDialog() {
 
     override fun onStart() {
         super.onStart()
+        eventTracker.submit(Event.ScreenView(ScreenId.SETTINGS_ENABLE_FINGERPRINT))
+
         disposables += dialog_fingerprint_scan_alpha_background.clicks()
             .subscribeBy {
                 dismiss()

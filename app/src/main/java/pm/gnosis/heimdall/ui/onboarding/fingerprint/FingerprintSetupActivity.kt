@@ -25,7 +25,7 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
-    override fun screenId() = ScreenId.FINGERPRINT_SETUP
+    override fun screenId() = ScreenId.FINGERPRINT
 
     override fun onStart() {
         super.onStart()

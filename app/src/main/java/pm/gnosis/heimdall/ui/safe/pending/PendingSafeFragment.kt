@@ -9,12 +9,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_pending_safe.*
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.reporting.Event
+import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -24,8 +26,6 @@ import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.asTransactionHash
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -33,6 +33,9 @@ import javax.inject.Inject
 class PendingSafeFragment : BaseFragment() {
     @Inject
     lateinit var viewModel: PendingSafeContract
+
+    @Inject
+    lateinit var eventTracker: EventTracker
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder().applicationComponent(component).viewModule(ViewModule(context!!)).build().inject(this)
@@ -48,9 +51,11 @@ class PendingSafeFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
+        eventTracker.submit(Event.ScreenView(ScreenId.NEW_SAFE_AWAIT_FUNDS))
+
         disposables += viewModel.observeCreationInfo()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeForResult (onNext = ::onCreationInfo, onError = {
+            .subscribeForResult(onNext = ::onCreationInfo, onError = {
                 errorSnackbar(layout_pending_safe_qr_code_button, it)
             })
 

@@ -28,7 +28,7 @@ class SafeRecoveryPhraseActivity : ViewModelActivity<SafeRecoveryPhraseContract>
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
-    override fun screenId() = ScreenId.SAFE_RECOVERY_PHRASE
+    override fun screenId() = ScreenId.DISPLAY_RECOVERY_PHRASE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -50,7 +50,7 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
 
     private val unlockStatusSubject = PublishSubject.create<Unit>()
 
-    override fun screenId() = ScreenId.CONFIRM_TRANSACTION
+    override fun screenId() = ScreenId.INCOMING_TRANSACTION_REVIEW
 
     override fun layout() = R.layout.layout_confirm_transaction
 

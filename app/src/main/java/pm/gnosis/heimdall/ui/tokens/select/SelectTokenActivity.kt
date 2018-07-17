@@ -19,7 +19,7 @@ import pm.gnosis.utils.asEthereumAddressString
 
 class SelectTokenActivity : BaseActivity() {
 
-    override fun screenId() = ScreenId.SELECT_TOKEN
+    override fun screenId() = ScreenId.TRANSACTION_PICK_TOKEN
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

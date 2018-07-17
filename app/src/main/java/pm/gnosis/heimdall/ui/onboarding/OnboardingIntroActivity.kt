@@ -12,13 +12,14 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.bottom_sheet_terms_and_conditions.*
 import kotlinx.android.synthetic.main.layout_onboarding_intro.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import timber.log.Timber
 
 class OnboardingIntroActivity : BaseActivity() {
-    override fun screenId() = ScreenId.ONBOARDING_INTRO
+    override fun screenId() = ScreenId.WELCOME
 
     private lateinit var termsBottomSheetDialog: TermsBottomSheetDialog
 
@@ -43,6 +44,7 @@ class OnboardingIntroActivity : BaseActivity() {
             .subscribeBy(
                 onNext = {
                     termsBottomSheetDialog.show()
+                    eventTracker.submit(Event.ScreenView(ScreenId.WELCOME_TERMS))
                 }, onError = Timber::e
             )
 
