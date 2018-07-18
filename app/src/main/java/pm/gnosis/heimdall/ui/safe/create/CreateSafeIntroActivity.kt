@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.safe.create
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -25,6 +26,8 @@ class CreateSafeIntroActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_create_safe_intro)
         viewComponent().inject(this)
+
+        layout_create_safe_intro_third_text.text = Html.fromHtml(getString(R.string.safe_intro_message_3))
     }
 
     override fun onStart() {

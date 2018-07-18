@@ -146,9 +146,9 @@
     <string name="your_safe">Your Safe</string>
     <string name="send">Send</string>
     <string name="receive">Receive</string>
-    <string name="safe_intro_message_1">I understand that my funds are held securely in my Safe. They cannot be accessed by Gnosis. My Safe is a smart contract on the Ethereum blockchain.</string>
-    <string name="safe_intro_message_2">I understand that my Safe will be connected to: \n1 - This mobile app \n2 - My browser extension \n3 - A 12 word recovery phrase</string>
-    <string name="safe_intro_message_3">I will need the recovery phrase to recover my funds in case I lose any device.</string>
+    <string name="safe_intro_message_1">Your Safe will be connected to: \n\t\t1. This mobile app.\n\t\t2. The Gnosis Safe browser extension.\n\t\t3. Its 12-word recovery phrase.</string>
+    <string name="safe_intro_message_2">Your funds are held securely in this mobile Safe and cannot be accessed by Gnosis Ltd.</string>
+    <string name="safe_intro_message_3"><![CDATA[You need this Safe’s <font color=#f02525>recovery phrase</font> to access your funds when you change or lose your phone.\n(Get ready to note it down and keep it somewhere safe.)]]></string>
     <string name="before_we_start">Before we start</string>
     <string name="i_understand">I understand!</string>
     <string name="browser_extension">Browser Extension</string>
@@ -222,4 +222,7 @@
     <string name="next_step">Next step:</string>
     <string name="recover_a_safe">Recover a Safe</string>
     <string name="welcome">Welcome</string>
+    <string name="how_this_works">How this works.</string>
+    <string name="guidelines">Guidelines</string>
+    <string name="got_it">Got it!</string>
 </resources>
