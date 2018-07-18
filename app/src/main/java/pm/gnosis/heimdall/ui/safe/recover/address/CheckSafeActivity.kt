@@ -89,7 +89,7 @@ class CheckSafeActivity : ViewModelActivity<CheckSafeContract>() {
         layout_check_safe_address_input.setCompoundDrawables(
             right = ContextCompat.getDrawable(this, if (result) R.drawable.ic_green_check else R.drawable.ic_error)
         )
-        layout_check_safe_address_input_info.text = if (result) null else getString(R.string.invalid_ethereum_address)
+        layout_check_safe_address_input_info.text = if (result) null else getString(R.string.invalid_safe_address)
         layout_check_safe_next.isEnabled = result
     }
 

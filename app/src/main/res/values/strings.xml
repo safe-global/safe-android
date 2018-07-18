@@ -229,4 +229,6 @@
     <string name="set_up_your_browser_extension">Set-up your browser extension.</string>
     <string name="pairing_info_download_text">1. Download the</string>
     <string name="gnosis_safe_browser_extension">Gnosis Safe browser extension.</string>
+    <string name="invalid_safe_address">Invalid Safe Address</string>
+    <string name="receive_funds">Receive funds</string>
 </resources>
