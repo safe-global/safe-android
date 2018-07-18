@@ -17,6 +17,8 @@ android {
         versionName getKey("APP_VERSION_NAME", "0.4.2-alpha")
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        // External Link
+        buildConfigField javaTypes.STRING, "CHROME_EXTENSION_URL", asString(getKey("CHROME_EXTENSION_URL", "https://safe.gnosis.io/#personal"))
         // Contracts
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0x44e7f5855a77fe1793a96be8a1c9c3eaf47e9d09"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0x2c155fd04682979fd15c67fb65dfab9345605761"))

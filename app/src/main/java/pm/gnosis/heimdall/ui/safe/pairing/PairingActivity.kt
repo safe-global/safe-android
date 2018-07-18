@@ -12,6 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_pairing.*
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
@@ -44,10 +45,10 @@ abstract class PairingActivity : ViewModelActivity<PairingContract>() {
             val linkDrawable = ContextCompat.getDrawable(context, R.drawable.ic_external_link)!!
             linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
             this.text = SpannableStringBuilder("")
-                .appendText(getString(R.string.share_browser_extension), URLSpan("https://gnosis.pm"))
+                .appendText(getString(R.string.share_browser_extension), URLSpan(BuildConfig.CHROME_EXTENSION_URL))
                 .append(" ")
                 .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
-            setOnClickListener { shareExternalText("https://gnosis.pm", "Browser Extension URL") }
+            setOnClickListener { shareExternalText(BuildConfig.CHROME_EXTENSION_URL, "Browser Extension URL") }
         }
     }
 
