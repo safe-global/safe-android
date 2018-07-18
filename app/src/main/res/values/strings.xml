@@ -143,7 +143,7 @@
     <string name="header_submitted">Submitted</string>
     <string name="send_token">Send token</string>
     <string name="share_qr_code_hint">This QR code can be scanned by the person who wants to send you tokens</string>
-    <string name="your_safe">Your Safe</string>
+    <string name="default_safe_name">Safe</string>
     <string name="send">Send</string>
     <string name="receive">Receive</string>
     <string name="safe_intro_message_1">Your Safe will be connected to: \n\t\t1. This mobile app.\n\t\t2. The Gnosis Safe browser extension.\n\t\t3. Its 12-word recovery phrase.</string>

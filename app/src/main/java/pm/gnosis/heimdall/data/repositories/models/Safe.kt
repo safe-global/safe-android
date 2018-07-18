@@ -52,4 +52,4 @@ data class RecoveringSafe(
 
 }
 
-private fun safeName(context: Context, name: String?): String = if (name.isNullOrBlank()) context.getString(R.string.your_safe) else name!!
+private fun safeName(context: Context, name: String?): String = if (name.isNullOrBlank()) context.getString(R.string.default_safe_name) else name!!

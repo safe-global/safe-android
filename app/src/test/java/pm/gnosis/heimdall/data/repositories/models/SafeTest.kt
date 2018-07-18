@@ -42,21 +42,21 @@ class SafeTest {
     @Test
     fun displayNameNoName() {
         context.mockGetString()
-        assertEquals(Safe(TEST_SAFE).displayName(context), R.string.your_safe.toString())
-        then(context).should().getString(R.string.your_safe)
+        assertEquals(Safe(TEST_SAFE).displayName(context), R.string.default_safe_name.toString())
+        then(context).should().getString(R.string.default_safe_name)
         then(context).shouldHaveZeroInteractions()
         assertEquals(
             PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, null, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT).displayName(context),
-            R.string.your_safe.toString()
+            R.string.default_safe_name.toString()
         )
         assertEquals(
             RecoveringSafe(
                 TEST_RECOVERING_SAFE, TEST_TX_HASH, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
                 TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
             ).displayName(context),
-            R.string.your_safe.toString()
+            R.string.default_safe_name.toString()
         )
-        then(context).should(times(3)).getString(R.string.your_safe)
+        then(context).should(times(3)).getString(R.string.default_safe_name)
         then(context).shouldHaveZeroInteractions()
     }
 

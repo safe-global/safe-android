@@ -10,7 +10,6 @@ import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
-import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class ReceiveTokenViewModel @Inject constructor(
@@ -23,7 +22,7 @@ class ReceiveTokenViewModel @Inject constructor(
             safeRepository.loadSafe(safeAddress).map {
                 ViewUpdate.Info(it.displayName(context))
             }
-                .onErrorReturn { ViewUpdate.Info(context.getString(R.string.your_safe)) }
+                .onErrorReturn { ViewUpdate.Info(context.getString(R.string.default_safe_name)) }
                 .toObservable(),
             Observable.fromCallable {
                 safeAddress.asEthereumAddressChecksumString()
