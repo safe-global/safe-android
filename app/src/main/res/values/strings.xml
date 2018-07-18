@@ -107,8 +107,8 @@
     <string name="password_validation_one_number_one_letter">At least 1 letter and 1 number\n</string>
     <string name="terms">Terms</string>
     <string name="terms_info"><![CDATA[Please review our <a href="https://safe.gnosis.io/terms">Terms of Use</a> and <a href="https://safe.gnosis.io/privacy">Privacy Policy</a>.]]></string>
-    <string name="tos_link">https://gnosis.pm</string>
-    <string name="privacy_link">https://gnosis.pm/assets/pdf/PrivacyPolicyGnosisLtd.pdf</string>
+    <string name="tos_link">https://safe.gnosis.io/terms</string>
+    <string name="privacy_link">https://safe.gnosis.io/privacy</string>
     <string name="no_thanks">No Thanks</string>
     <string name="agree">Agree</string>
     <string name="personal_edition">Personal Edition</string>
