@@ -37,14 +37,9 @@
     <string name="dialog_delete_address_entry_message">Do you want to delete this entry from the address book?</string>
     <string name="toast_delete_address_book_entry">Removed %1s from the address book</string>
     <string name="address_book">Address Book</string>
-    <string name="add_address">Add address</string>
     <string name="name_cannot_be_blank">Name cannot be blank</string>
     <string name="address_already_in_address_book">This address is already in your address book</string>
     <string name="unknown_error">Unknown error</string>
-    <string name="qr_code_error">Error generating QRCode</string>
-    <string name="description_optional">Description (optional)</string>
-    <string name="save_address">Save Address</string>
-    <string name="description">Description</string>
     <string name="retry">Retry</string>
     <string name="address_book_entry_delete_error">Error deleting entry</string>
     <string name="safe_name_hint">Safe Name</string>
@@ -68,7 +63,6 @@
     <string name="status_failed">Failed</string>
     <string name="status_success">Success</string>
     <string name="just_a_moment_ago">Just a moment ago</string>
-    <string name="fiat_approximation_parentheses">(≈ %1s%2s)</string>
     <string name="error_signature_not_owner">The signature was not created by a Safe owning device!</string>
     <string name="error_signature_already_exists">This signature has already been added!</string>
     <string name="current_password">Current password</string>
@@ -149,11 +143,7 @@
     <string name="safe_intro_message_1">Your Safe will be connected to: \n\t\t1. This mobile app.\n\t\t2. The Gnosis Safe browser extension.\n\t\t3. Its 12-word recovery phrase.</string>
     <string name="safe_intro_message_2">Your funds are held securely in this mobile Safe and cannot be accessed by Gnosis Ltd.</string>
     <string name="safe_intro_message_3"><![CDATA[You need this Safe’s <font color=#f02525>recovery phrase</font> to access your funds when you change or lose your phone.\n(Get ready to note it down and keep it somewhere safe.)]]></string>
-    <string name="before_we_start">Before we start</string>
-    <string name="i_understand">I understand!</string>
-    <string name="browser_extension">Browser Extension</string>
     <string name="pairing_info">All transactions need to be approved by both this device and the browser extension.</string>
-    <string name="new_safe">New Safe</string>
     <string name="scan_qr_code">Scan QR Code</string>
     <string name="pending_safe_deposit_value">Send at least %1s to your Safe\'s address:</string>
     <string name="fingerprint_many_tries">Too many tries. Switching to password</string>
@@ -170,7 +160,6 @@
     <string name="no_safe_added">No Safe added yet</string>
     <string name="create_safe">Create new Safe</string>
     <string name="setup_successful">Device setup successful!</string>
-    <string name="no_safe_yet">You didn\'t create any Safes yet.</string>
     <string name="show_safe_on_etherscan">View Safe on Etherscan.io</string>
     <string name="save">Save</string>
     <string name="edit_safe_name">Edit Safe name</string>
@@ -194,7 +183,6 @@
     <string name="recovery_phrase">Recovery phrase</string>
     <string name="send_from_x">Send from %s</string>
     <string name="new_address">New address</string>
-    <string name="edit_address">Edit address</string>
     <string name="terms_first_bullet">We do not collect demographic data like age and gender.</string>
     <string name="terms_second_bullet">We collect anonymized app usage data and crash reports to ensure quality of our app.</string>
     <string name="input_safe_address">Input Safe address</string>
@@ -218,7 +206,6 @@
     <string name="recover_safe_description">The existing Safe will be recovered and associated with this device and connected browser extension.</string>
     <string name="recovery_error">Transaction params have changed</string>
     <string name="safe_already_exists">Safe already exists</string>
-    <string name="password_confirmed">Password confirmed</string>
     <string name="next_step">Next step:</string>
     <string name="recover_a_safe">Recover a Safe</string>
     <string name="welcome">Welcome</string>
@@ -228,7 +215,6 @@
     <string name="connect">Connect</string>
     <string name="set_up_your_browser_extension">Set-up your browser extension.</string>
     <string name="pairing_info_download_text">1. Download the</string>
-    <string name="gnosis_safe_browser_extension">Gnosis Safe browser extension.</string>
     <string name="invalid_safe_address">Invalid Safe Address</string>
     <string name="receive_funds">Receive funds</string>
 </resources>
