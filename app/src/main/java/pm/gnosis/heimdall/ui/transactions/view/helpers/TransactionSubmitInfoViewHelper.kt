@@ -118,7 +118,7 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onNext = {
                         view.include_transaction_submit_info_confirmations_timer.text =
-                                context.getString(R.string.request_confirmation_wait_x_s, (30 - it - 1).toString().padStart(2, '0'))
+                                context.getString(R.string.request_confirmation_wait_x_s, (30 - it - 1).toString())
                     }, onComplete = {
                         view.include_transaction_submit_info_request_button.isEnabled = true
                         view.include_transaction_submit_info_confirmations_timer.text = null

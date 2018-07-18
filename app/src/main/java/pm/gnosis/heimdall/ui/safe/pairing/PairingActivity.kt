@@ -45,6 +45,8 @@ abstract class PairingActivity : ViewModelActivity<PairingContract>() {
             val linkDrawable = ContextCompat.getDrawable(context, R.drawable.ic_external_link)!!
             linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
             this.text = SpannableStringBuilder("")
+                .append(getString(R.string.pairing_info_download_text))
+                .append(" ")
                 .appendText(getString(R.string.share_browser_extension), URLSpan(BuildConfig.CHROME_EXTENSION_URL))
                 .append(" ")
                 .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))

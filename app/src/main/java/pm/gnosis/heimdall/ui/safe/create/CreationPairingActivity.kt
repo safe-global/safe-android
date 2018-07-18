@@ -7,7 +7,7 @@ import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.model.Solidity
 
 class CreationPairingActivity: PairingActivity() {
-    override fun titleRes(): Int = R.string.new_safe
+    override fun titleRes(): Int = R.string.connect
 
     override fun onSuccess(extension: Solidity.Address) {
         startActivity(SafeRecoveryPhraseActivity.createIntent(this, extension))

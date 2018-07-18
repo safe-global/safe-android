@@ -420,7 +420,7 @@ class SafeMainViewModelTest {
         safeProcessor.offer(Safe(TEST_SAFE, null))
         safeSubscriber
             .assertValueCount(2)
-            .assertValueAt(1, R.string.your_safe.toString() to "0x1f81...C65C7E")
+            .assertValueAt(1, R.string.default_safe_name.toString() to "0x1f81...C65C7E")
 
         then(safeRepository).should().observeSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
@@ -458,7 +458,7 @@ class SafeMainViewModelTest {
         safeProcessor.offer(PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, null, TEST_PAYMENT_TOKEN, BigInteger.ZERO))
         safeSubscriber
             .assertValueCount(2)
-            .assertValueAt(1, R.string.your_safe.toString() to "0xC2AC...a48132")
+            .assertValueAt(1, R.string.default_safe_name.toString() to "0xC2AC...a48132")
 
         then(safeRepository).should().observePendingSafe(TEST_PENDING_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
@@ -499,7 +499,7 @@ class SafeMainViewModelTest {
         safeProcessor.offer(safe.copy(name = null))
         safeSubscriber
             .assertValueCount(2)
-            .assertValueAt(1, R.string.your_safe.toString() to "0xb365...14244A")
+            .assertValueAt(1, R.string.default_safe_name.toString() to "0xb365...14244A")
 
         then(safeRepository).should().observeRecoveringSafe(TEST_RECOVERING_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()

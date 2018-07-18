@@ -100,7 +100,7 @@ class ReceiveTokenViewModelTest {
         testObserver.assertValues(*updates.toTypedArray())
 
         safeSingleFactory.error(NoSuchElementException())
-        updates += ReceiveTokenContract.ViewUpdate.Info(R.string.your_safe.toString())
+        updates += ReceiveTokenContract.ViewUpdate.Info(R.string.default_safe_name.toString())
         testObserver.assertValues(*updates.toTypedArray())
 
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
@@ -128,7 +128,7 @@ class ReceiveTokenViewModelTest {
 
         val testSafe = Safe(TEST_SAFE, "      ")
         safeSingleFactory.success(testSafe)
-        updates += ReceiveTokenContract.ViewUpdate.Info(R.string.your_safe.toString())
+        updates += ReceiveTokenContract.ViewUpdate.Info(R.string.default_safe_name.toString())
         testObserver.assertValues(*updates.toTypedArray())
 
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
@@ -156,7 +156,7 @@ class ReceiveTokenViewModelTest {
 
         val testSafe = Safe(TEST_SAFE, null)
         safeSingleFactory.success(testSafe)
-        updates += ReceiveTokenContract.ViewUpdate.Info(R.string.your_safe.toString())
+        updates += ReceiveTokenContract.ViewUpdate.Info(R.string.default_safe_name.toString())
         testObserver.assertValues(*updates.toTypedArray())
 
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()

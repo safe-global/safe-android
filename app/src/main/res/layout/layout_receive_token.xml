@@ -36,7 +36,7 @@
         android:gravity="center_vertical"
         android:minHeight="@dimen/toolbar_height"
         android:paddingEnd="16dp"
-        android:text="@string/receive"
+        android:text="@string/receive_funds"
         android:textColor="@color/dark_slate_blue"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -87,6 +87,8 @@
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
+                android:fontFamily="monospace"
+                android:letterSpacing="-0.04"
                 android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_chainStyle="packed"
@@ -135,7 +137,9 @@
                 android:layout_margin="16dp"
                 android:width="240dp"
                 android:gravity="center"
+                android:lineSpacingExtra="5sp"
                 android:text="@string/share_qr_code_hint"
+                android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_qr_card" />
@@ -165,7 +169,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="1dp"
                     android:layout_marginStart="8dp"
-                    android:text="@string/share_address" />
+                    android:text="@string/share" />
             </LinearLayout>
 
 
