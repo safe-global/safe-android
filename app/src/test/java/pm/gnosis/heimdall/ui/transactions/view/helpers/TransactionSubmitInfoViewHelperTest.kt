@@ -429,7 +429,7 @@ class TransactionSubmitInfoViewHelperTest {
         assertNotNull(helper.applyUpdate(data))
         (0..29).forEach {
             testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
-            val time = (30 - it - 1).toString().padStart(2, '0')
+            val time = (30 - it - 1).toString()
             then(confirmationsTimer).should().text = "${R.string.request_confirmation_wait_x_s}, $time"
             if (it < 29) {
                 // On the last run we have the onComplete interactions
