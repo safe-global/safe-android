@@ -23,7 +23,7 @@ import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.safe.main.NoSafesFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
-import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
+import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFragment
@@ -56,7 +56,7 @@ interface ViewComponent {
 
     fun inject(fragment: DeploySafeProgressFragment)
     fun inject(fragment: NoSafesFragment)
-    fun inject(fragment: PendingSafeFragment)
+    fun inject(fragment: SafeCreationFundFragment)
     fun inject(fragment: RecoveringSafeFragment)
     fun inject(fragment: RecoveringSafeFundFragment)
     fun inject(fragment: RecoveringSafePendingFragment)

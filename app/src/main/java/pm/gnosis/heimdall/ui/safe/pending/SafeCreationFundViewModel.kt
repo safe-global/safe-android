@@ -3,14 +3,11 @@ package pm.gnosis.heimdall.ui.safe.pending
 import android.content.Context
 import io.reactivex.Observable
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.ethereum.EthBalance
-import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.di.ApplicationContext
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
@@ -18,17 +15,15 @@ import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class PendingSafeViewModel @Inject constructor(
+class SafeCreationFundViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val gnosisSafeRepository: GnosisSafeRepository,
     private val tokenRepository: TokenRepository
-) : PendingSafeContract() {
+) : SafeCreationFundContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
 

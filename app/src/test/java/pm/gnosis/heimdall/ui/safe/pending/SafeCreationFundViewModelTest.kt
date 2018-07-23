@@ -7,8 +7,6 @@ import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,7 +36,7 @@ import java.util.concurrent.TimeUnit
 
 
 @RunWith(MockitoJUnitRunner::class)
-class PendingSafeViewModelTest {
+class SafeCreationFundViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -52,17 +50,17 @@ class PendingSafeViewModelTest {
     @Mock
     private lateinit var tokenRepositoryMock: TokenRepository
 
-    private lateinit var viewModel: PendingSafeViewModel
+    private lateinit var viewModel: SafeCreationFundViewModel
 
     @Before
     fun setup() {
-        viewModel = PendingSafeViewModel(contextMock, gnosisSafeRepositoryMock, tokenRepositoryMock)
+        viewModel = SafeCreationFundViewModel(contextMock, gnosisSafeRepositoryMock, tokenRepositoryMock)
     }
 
     @Test
     fun observeCreationInfo() {
         val safeAddress = "1"
-        val testObserver = TestObserver.create<Result<PendingSafeContract.CreationInfo>>()
+        val testObserver = TestObserver.create<Result<SafeCreationFundContract.CreationInfo>>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), BigInteger.ONE, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         val tokenTestSingle = TestSingleFactory<ERC20Token>()
@@ -73,7 +71,7 @@ class PendingSafeViewModelTest {
 
         testObserver.assertValues(
             DataResult(
-                PendingSafeContract.CreationInfo(
+                SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
                     null,
                     BigInteger.ONE
@@ -84,14 +82,14 @@ class PendingSafeViewModelTest {
         tokenTestSingle.success(ERC20Token.ETHER_TOKEN)
         testObserver.assertResult(
             DataResult(
-                PendingSafeContract.CreationInfo(
+                SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
                     null,
                     BigInteger.ONE
                 )
             ),
             DataResult(
-                PendingSafeContract.CreationInfo(
+                SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
                     ERC20Token.ETHER_TOKEN,
                     BigInteger.ONE
@@ -109,7 +107,7 @@ class PendingSafeViewModelTest {
     fun observeCreationInfoTokenInfoError() {
         contextMock.mockGetString()
         val safeAddress = "1"
-        val testObserver = TestObserver.create<Result<PendingSafeContract.CreationInfo>>()
+        val testObserver = TestObserver.create<Result<SafeCreationFundContract.CreationInfo>>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), BigInteger.ONE, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         val tokenTestSingle = TestSingleFactory<ERC20Token>()
@@ -120,7 +118,7 @@ class PendingSafeViewModelTest {
 
         testObserver.assertValues(
             DataResult(
-                PendingSafeContract.CreationInfo(
+                SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
                     null,
                     BigInteger.ONE
@@ -131,7 +129,7 @@ class PendingSafeViewModelTest {
         tokenTestSingle.error(UnknownHostException())
         testObserver.assertResult(
             DataResult(
-                PendingSafeContract.CreationInfo(
+                SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
                     null,
                     BigInteger.ONE
@@ -149,7 +147,7 @@ class PendingSafeViewModelTest {
     @Test
     fun observeCreationInfoDbError() {
         val safeAddress = "1"
-        val testObserver = TestObserver.create<Result<PendingSafeContract.CreationInfo>>()
+        val testObserver = TestObserver.create<Result<SafeCreationFundContract.CreationInfo>>()
         val exception = Exception()
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.error(exception))
 

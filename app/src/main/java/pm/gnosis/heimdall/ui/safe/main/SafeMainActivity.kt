@@ -35,7 +35,7 @@ import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
-import pm.gnosis.heimdall.ui.safe.pending.PendingSafeFragment
+import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
@@ -252,7 +252,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 is PendingSafe -> {
                     replace(
                         R.id.layout_safe_main_content_frame,
-                        if (safe.isFunded) DeploySafeProgressFragment.createInstance(safe) else PendingSafeFragment.createInstance(safe)
+                        if (safe.isFunded) DeploySafeProgressFragment.createInstance(safe) else SafeCreationFundFragment.createInstance(safe)
                     )
                 }
                 is RecoveringSafe -> {

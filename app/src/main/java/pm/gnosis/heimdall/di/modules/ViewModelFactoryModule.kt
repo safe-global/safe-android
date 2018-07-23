@@ -28,8 +28,8 @@ import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
 import pm.gnosis.heimdall.ui.safe.pairing.PairingViewModel
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressViewModel
-import pm.gnosis.heimdall.ui.safe.pending.PendingSafeContract
-import pm.gnosis.heimdall.ui.safe.pending.PendingSafeViewModel
+import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
+import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundViewModel
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeViewModel
 import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseContract
@@ -136,8 +136,8 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(PendingSafeContract::class)
-    abstract fun bindsPendingSafeContract(viewModel: PendingSafeViewModel): ViewModel
+    @ViewModelKey(SafeCreationFundContract::class)
+    abstract fun bindsPendingSafeContract(viewModel: SafeCreationFundViewModel): ViewModel
 
     @Binds
     @IntoMap
