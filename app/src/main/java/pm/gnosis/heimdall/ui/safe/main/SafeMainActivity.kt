@@ -42,6 +42,7 @@ import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddress
@@ -97,6 +98,13 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 getString(R.string.remove_from_device), ForegroundColorSpan(getColorCompat(R.color.tomato))
             )
         }
+
+        layout_safe_main_add_safe.setCompoundDrawableResource(left = R.drawable.ic_create_new_safe)
+        layout_safe_main_recover_safe.setCompoundDrawableResource(left = R.drawable.ic_recover_safe)
+        layout_safe_main_account.setCompoundDrawableResource(left = R.drawable.ic_settings_account)
+        layout_safe_main_tokens.setCompoundDrawableResource(left = R.drawable.ic_tokens)
+        layout_safe_main_address_book.setCompoundDrawableResource(left = R.drawable.ic_settings_address_book)
+        layout_safe_main_debug_settings.setCompoundDrawableResource(left = R.drawable.ic_settings_debug)
     }
 
     override fun onStart() {

@@ -9,6 +9,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.ForView
+import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import javax.inject.Inject
 
 
@@ -19,7 +20,9 @@ class ConfirmSafeRecoveryPhraseAdapter @Inject constructor() : RecyclerView.Adap
     private val dataChanged = PublishSubject.create<List<String>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_confirm_safe_recovery_phrase_item, parent, false))
+        ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_confirm_safe_recovery_phrase_item, parent, false)).apply {
+            (itemView as TextView).setCompoundDrawableResource(right = R.drawable.ic_cross_action)
+        }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(items[position])
 

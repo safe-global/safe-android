@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,6 +29,7 @@ class CreateSafeIntroActivity : BaseActivity() {
         viewComponent().inject(this)
 
         layout_create_safe_intro_third_text.text = Html.fromHtml(getString(R.string.safe_intro_message_3))
+        layout_create_safe_intro_next.setCompoundDrawableResource(right = R.drawable.ic_arrow_forward_24dp)
     }
 
     override fun onStart() {
