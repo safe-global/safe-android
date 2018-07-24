@@ -4,134 +4,221 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
-
-    <TextView
-        android:id="@+id/layout_pending_safe_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:paddingEnd="24dp"
-        android:paddingStart="24dp"
-        android:text="@string/fund_new_safe"
-        android:textColor="@color/dark_slate_blue"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/layout_pending_safe_description"
-        style="@style/WhiteTheme.FlatTextCenter"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:gravity="center"
-        android:paddingBottom="24dp"
-        android:paddingEnd="24dp"
-        android:paddingStart="24dp"
-        android:text="@string/fund_new_safe_hint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_title" />
+    android:layout_height="match_parent">
 
     <android.support.v4.widget.NestedScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/pale_grey_two"
+        android:id="@+id/layout_pending_safe_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_description">
+        android:paddingBottom="16dp">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/layout_pending_safe_awaiting_deposit_label"
+            <View
+                android:id="@+id/layout_pending_safe_white_container"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:gravity="center"
-                android:letterSpacing="0.25"
-                android:paddingEnd="24dp"
-                android:paddingStart="24dp"
-                android:text="@string/awaiting_deposit"
-                android:textAllCaps="true"
-                android:textColor="@color/battleship_grey"
+                android:layout_height="0dp"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_pending_safe_description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/layout_pending_safe_amount_label"
+                android:id="@+id/layout_pending_safe_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:gravity="center"
                 android:paddingEnd="24dp"
                 android:paddingStart="24dp"
-                android:text="@string/loading"
-                android:textColor="#1e435b"
-                android:textSize="13sp"
+                android:text="@string/make_your_first_deposit"
+                android:textColor="@color/dark_slate_blue"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_awaiting_deposit_label" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/layout_pending_safe_required_minimum_transfer_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"
+                android:gravity="center"
+                android:lineSpacingExtra="8sp"
+                android:paddingEnd="48dp"
+                android:paddingStart="48dp"
+                android:text="@string/required_minimum_transfer"
+                android:textColor="@color/dark_slate_blue"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_title" />
+
+            <TextView
+                android:id="@+id/layout_pending_safe_required_minimum_transfer_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/dark_slate_blue"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_required_minimum_transfer_label"
+                tools:text="0.00041 ETH" />
+
+            <TextView
+                android:id="@+id/layout_pending_safe_safe_opening_fee"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/this_is_the_safe_opening_fee"
+                android:textColor="@color/battleship_grey"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_required_minimum_transfer_value" />
+
+            <TextView
+                android:id="@+id/layout_pending_safe_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:gravity="center"
+                android:lineSpacingExtra="7sp"
+                android:paddingBottom="16dp"
+                android:paddingEnd="48dp"
+                android:paddingStart="48dp"
+                android:text="@string/layout_pending_safe_description"
+                android:textColor="@color/battleship_grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_safe_opening_fee" />
+
+            <TextView
+                android:id="@+id/layout_pending_safe_safe_address_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif"
+                android:paddingEnd="40dp"
+                android:paddingStart="40dp"
+                android:text="@string/safe_address"
+                android:textColor="@color/dark_slate_blue"
+                android:textSize="13sp"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_white_container" />
 
             <TextView
                 android:id="@+id/layout_pending_safe_address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="monospace"
-                android:gravity="center"
+                android:layout_marginTop="8dp"
+                android:fontFamily="monospace-light"
                 android:letterSpacing="-0.04"
-                android:padding="24dp"
+                android:paddingEnd="40dp"
+                android:paddingStart="40dp"
                 android:textColor="@color/battleship_grey"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_amount_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_safe_address_label"
                 tools:text="0xf1511FAB6b7347899f51f9db027A32b39caE3910" />
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/layout_pending_safe_qr_code_button"
                 style="@style/PrimaryButton.White"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
-                android:text="@string/display_qr_code"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_address" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_address">
 
-            <TextView
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/ic_qrcode_scan_azure" />
+
+                <TextView
+                    style="@style/PrimaryButton.White.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/display_qr_code"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_address" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/layout_pending_safe_share_button"
                 style="@style/PrimaryButton.White"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/share"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_qr_code_button" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_qr_code_button">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:tint="@color/azure"
+                    app:srcCompat="@drawable/ic_share_24dp" />
+
+                <TextView
+                    style="@style/PrimaryButton.White.Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/share"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_address" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="@dimen/toolbar_shadow_size"
+                android:background="@drawable/toolbar_dropshadow"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_description" />
+
 
         </android.support.constraint.ConstraintLayout>
-
     </android.support.v4.widget.NestedScrollView>
 
     <View
+        android:id="@+id/layout_pending_safe_shadow"
         android:layout_width="0dp"
         android:layout_height="@dimen/toolbar_shadow_size"
         android:background="@drawable/toolbar_dropshadow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_pending_safe_description" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
+

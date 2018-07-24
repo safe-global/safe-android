@@ -196,8 +196,6 @@
     <string name="fund_recovery">Fund the Safe recovery</string>
     <string name="fund_recovery_fees">Your Safe\'s ETH balance is: %s. Recovering your Safe requires %s in transaction fees.</string>
     <string name="awaiting_deposit">Awaiting Deposit</string>
-    <string name="fund_new_safe">Fund your new Safe</string>
-    <string name="fund_new_safe_hint">Please send the minimum amount of ETH to create your new Safe. Exceeding funds sent will be added to your new Safe\'s balance.</string>
     <string name="transaction_submitted">Transaction submitted</string>
     <string name="recovering_safe">Recovering your Safe…</string>
     <string name="review_safe_recovery">Review Safe recovery</string>
@@ -217,4 +215,9 @@
     <string name="pairing_info_download_text">1. Download the</string>
     <string name="invalid_safe_address">Invalid Safe Address</string>
     <string name="receive_funds">Receive funds</string>
+    <string name="make_your_first_deposit">Make your first deposit.</string>
+    <string name="required_minimum_transfer">Required minimum transfer:</string>
+    <string name="this_is_the_safe_opening_fee">(This is the Safe opening fee.)</string>
+    <string name="layout_pending_safe_description">Scan the QR code or share your address with the account or person sending funds below.</string>
+    <string name="safe_address">Safe Address:</string>
 </resources>
