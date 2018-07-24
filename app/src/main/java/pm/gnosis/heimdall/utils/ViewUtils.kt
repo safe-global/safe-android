@@ -2,7 +2,9 @@ package pm.gnosis.heimdall.utils
 
 import android.graphics.drawable.Drawable
 import android.support.annotation.ColorRes
+import android.support.annotation.DrawableRes
 import android.support.v4.view.ViewCompat
+import android.support.v7.content.res.AppCompatResources
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -32,3 +34,16 @@ fun TextView.setCompoundDrawables(
 ) =
     if (useIntrinsicBounds) setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom)
     else setCompoundDrawablesRelative(left, top, right, bottom)
+
+fun TextView.setCompoundDrawableResource(
+    @DrawableRes left: Int = 0,
+    @DrawableRes top: Int = 0,
+    @DrawableRes right: Int = 0,
+    @DrawableRes bottom: Int = 0,
+    useIntrinsicBounds: Boolean = true
+) {
+    setCompoundDrawables(getDrawable(left), getDrawable(top), getDrawable(right), getDrawable(bottom), useIntrinsicBounds)
+}
+
+fun View.getDrawable(@DrawableRes id: Int)
+    = if (id == 0) null else AppCompatResources.getDrawable(context, id)

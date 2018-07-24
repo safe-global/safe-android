@@ -227,18 +227,18 @@
                     style="@style/NavigationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_create_new_safe"
                     android:text="@string/create_safe"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_safes_list" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_safes_list"
+                    tools:drawableStart="@drawable/ic_create_new_safe" />
 
                 <TextView
                     android:id="@+id/layout_safe_main_recover_safe"
                     style="@style/NavigationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_recover_safe"
                     android:text="@string/recover_safe"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_add_safe" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_add_safe"
+                    tools:drawableStart="@drawable/ic_recover_safe" />
 
                 <View
                     android:id="@+id/layout_safe_main_navigation_safe_creation_divider"
@@ -253,8 +253,8 @@
                     android:id="@+id/layout_safe_main_account_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_navigation_safe_creation_divider"
                     android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_navigation_safe_creation_divider"
                     app:layout_goneMarginTop="16dp">
 
                     <TextView
@@ -262,10 +262,10 @@
                         style="@style/NavigationText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_settings_account"
                         android:text="@string/my_account"
                         android:visibility="gone"
-                        tools:visibility="visible"/>
+                        tools:drawableStart="@drawable/ic_settings_account"
+                        tools:visibility="visible" />
                 </FrameLayout>
 
                 <TextView
@@ -273,27 +273,27 @@
                     style="@style/NavigationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_tokens"
                     android:text="@string/manage_tokens"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_account_container" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_account_container"
+                    tools:drawableStart="@drawable/ic_tokens" />
 
                 <TextView
                     android:id="@+id/layout_safe_main_address_book"
                     style="@style/NavigationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_settings_address_book"
                     android:text="@string/address_book"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_tokens" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_tokens"
+                    tools:drawableStart="@drawable/ic_settings_address_book" />
 
                 <TextView
                     android:id="@+id/layout_safe_main_general_settings"
                     style="@style/NavigationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_general_settings"
                     android:text="@string/settings"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_address_book" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_address_book"
+                    tools:drawableStart="@drawable/ic_general_settings" />
 
 
                 <!-- Container to hide this when not in Debug Mode (else it is controlled by ContraintGroup) -->
@@ -308,9 +308,9 @@
                         style="@style/NavigationText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/ic_settings_debug"
                         android:text="@string/debug_settings"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        tools:drawableStart="@drawable/ic_settings_debug" />
                 </FrameLayout>
 
                 <android.support.constraint.Group

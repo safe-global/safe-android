@@ -144,7 +144,6 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:background="@drawable/selectable_background"
-        android:drawableEnd="@drawable/ic_arrow_forward_24dp"
         android:drawablePadding="8dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
@@ -155,7 +154,8 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/layout_create_safe_intro_bottom_bar"
         app:layout_constraintEnd_toEndOf="@+id/layout_create_safe_intro_bottom_bar"
-        app:layout_constraintTop_toTopOf="@+id/layout_create_safe_intro_bottom_bar" />
+        app:layout_constraintTop_toTopOf="@+id/layout_create_safe_intro_bottom_bar"
+        tools:drawableEnd="@drawable/ic_arrow_forward_24dp" />
 
     <View
         android:id="@+id/layout_create_safe_intro_toolbar_shadow"

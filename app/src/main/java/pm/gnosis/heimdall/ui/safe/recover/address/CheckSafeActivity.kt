@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.safe.recover.address
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -20,6 +21,7 @@ import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.safe.recover.extension.RecoverPairingActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.heimdall.utils.parseEthereumAddress
+import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import pm.gnosis.heimdall.utils.setCompoundDrawables
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
@@ -50,6 +52,11 @@ class CheckSafeActivity : ViewModelActivity<CheckSafeContract>() {
                     snackbar(layout_check_safe_address_input, R.string.invalid_ethereum_address)
                 }
             })
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        layout_check_safe_next.setCompoundDrawableResource(right = R.drawable.ic_arrow_forward_24dp)
     }
 
     override fun onStart() {
