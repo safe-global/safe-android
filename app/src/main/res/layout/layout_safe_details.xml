@@ -33,9 +33,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_send_azure"
                 android:gravity="center"
-                android:text="@string/send" />
+                android:text="@string/send"
+                tools:drawableStart="@drawable/ic_send_azure" />
 
             <TextView
                 android:id="@+id/layout_safe_details_receive_button"
@@ -44,9 +44,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_qrcode_scan_azure"
                 android:gravity="center"
-                android:text="@string/receive" />
+                android:text="@string/receive"
+                tools:drawableStart="@drawable/ic_qrcode_scan_azure" />
         </LinearLayout>
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar

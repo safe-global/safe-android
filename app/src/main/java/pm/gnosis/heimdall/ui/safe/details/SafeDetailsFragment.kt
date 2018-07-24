@@ -26,6 +26,7 @@ import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
 import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
+import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
@@ -54,6 +55,8 @@ class SafeDetailsFragment : BaseFragment() {
         tabToSelect = arguments?.getInt(EXTRA_SELECTED_TAB, tabToSelect) ?: tabToSelect
         arguments?.remove(EXTRA_SELECTED_TAB)
         pagerAdapter = pagerAdapter()
+        layout_safe_details_send_button.setCompoundDrawableResource(left = R.drawable.ic_send_azure)
+        layout_safe_details_receive_button.setCompoundDrawableResource(left = R.drawable.ic_qrcode_scan_azure)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =

@@ -100,9 +100,9 @@
             android:id="@+id/layout_check_safe_toolbar_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_shadow_size"
+            android:alpha="0"
             android:background="@drawable/toolbar_dropshadow"
             app:layout_constraintTop_toBottomOf="@id/layout_check_safe_title"
-            android:alpha="0"
             tools:alpha="1" />
 
         <TextView
@@ -111,12 +111,12 @@
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:drawablePadding="8dp"
-            android:drawableEnd="@drawable/ic_arrow_forward_24dp"
             android:fontFamily="sans-serif-medium"
             android:gravity="end|center_vertical"
             android:text="@string/continue_text"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:drawableEnd="@drawable/ic_arrow_forward_24dp" />
 
     </android.support.constraint.ConstraintLayout>
 

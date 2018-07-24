@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.safe.mnemonic
 
 
 import android.content.Intent
+import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -12,6 +13,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
@@ -26,6 +28,11 @@ abstract class InputRecoveryPhraseActivity<VM : InputRecoveryPhraseContract> : V
     lateinit var toolbarHelper: ToolbarHelper
 
     override fun layout() = R.layout.layout_input_recovery_phrase
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        layout_input_recovery_phrase_next.setCompoundDrawableResource(right = R.drawable.ic_arrow_forward_24dp)
+    }
 
     override fun onStart() {
         super.onStart()
