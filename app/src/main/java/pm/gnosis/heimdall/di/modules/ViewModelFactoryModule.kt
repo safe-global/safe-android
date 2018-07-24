@@ -136,11 +136,6 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SafeCreationFundContract::class)
-    abstract fun bindsPendingSafeContract(viewModel: SafeCreationFundViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(ReceiveTokenContract::class)
     abstract fun bindsReceiveTokenContract(viewModel: ReceiveTokenViewModel): ViewModel
 
@@ -158,6 +153,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ReviewTransactionContract::class)
     abstract fun bindsReviewTransactionContract(viewModel: ReviewTransactionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SafeCreationFundContract::class)
+    abstract fun bindsSafeCreationFundContract(viewModel: SafeCreationFundViewModel): ViewModel
 
     @Binds
     @IntoMap
