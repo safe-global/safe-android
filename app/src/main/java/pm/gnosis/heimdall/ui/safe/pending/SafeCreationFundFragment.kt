@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -30,12 +31,15 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class PendingSafeFragment : BaseFragment() {
+class SafeCreationFundFragment : BaseFragment() {
     @Inject
-    lateinit var viewModel: PendingSafeContract
+    lateinit var viewModel: SafeCreationFundContract
 
     @Inject
     lateinit var eventTracker: EventTracker
+
+    @Inject
+    lateinit var toolbarHelper: ToolbarHelper
 
     override fun inject(component: ApplicationComponent) {
         DaggerViewComponent.builder().applicationComponent(component).viewModule(ViewModule(context!!)).build().inject(this)
@@ -52,6 +56,8 @@ class PendingSafeFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         eventTracker.submit(Event.ScreenView(ScreenId.NEW_SAFE_AWAIT_FUNDS))
+
+        disposables += toolbarHelper.setupShadow(layout_pending_safe_shadow, layout_pending_safe_scroll_view)
 
         disposables += viewModel.observeCreationInfo()
             .observeOn(AndroidSchedulers.mainThread())
@@ -79,17 +85,15 @@ class PendingSafeFragment : BaseFragment() {
         startActivity(SafeMainActivity.createIntent(context!!, arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()))
     }
 
-    private fun onCreationInfo(info: PendingSafeContract.CreationInfo) {
+    private fun onCreationInfo(info: SafeCreationFundContract.CreationInfo) {
         layout_pending_safe_address.text = info.safeAddress
-        info.paymentToken?.let {
-            layout_pending_safe_amount_label.text = getString(R.string.pending_safe_deposit_value, it.displayString(info.paymentAmount))
-        }
+        info.paymentToken?.let { layout_pending_safe_required_minimum_transfer_value.text = it.displayString(info.paymentAmount) }
     }
 
     companion object {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
 
-        fun createInstance(safe: PendingSafe) = PendingSafeFragment().withArgs(Bundle().apply {
+        fun createInstance(safe: PendingSafe) = SafeCreationFundFragment().withArgs(Bundle().apply {
             putString(EXTRA_SAFE_ADDRESS, safe.address.asEthereumAddressString())
         })
     }

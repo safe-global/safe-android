@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.safe.recover.submit
 
 import android.content.Context
-import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -13,7 +12,7 @@ import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.heimdall.ui.safe.pending.PendingSafeViewModel
+import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundViewModel
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -135,7 +134,7 @@ class RecoveringSafeViewModel @Inject constructor(
                 requestBalance(safe.address,
                     ERC20Token(safe.gasToken, decimals = 0, name = "", symbol = "")
                 )
-                    .map { if (it < gasCosts) throw PendingSafeViewModel.NotEnoughFundsException() }
+                    .map { if (it < gasCosts) throw SafeCreationFundViewModel.NotEnoughFundsException() }
                     .retryWhen { errors ->
                         errors.delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS)
                     }

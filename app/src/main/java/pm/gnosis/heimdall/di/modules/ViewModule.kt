@@ -22,7 +22,7 @@ import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
-import pm.gnosis.heimdall.ui.safe.pending.PendingSafeContract
+import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeContract
@@ -108,10 +108,6 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesPendingSafeContract(provider: ViewModelProvider) = provider[PendingSafeContract::class.java]
-
-    @Provides
-    @ForView
     fun providesReceiveTokenContract(provider: ViewModelProvider) = provider[ReceiveTokenContract::class.java]
 
     @Provides
@@ -125,6 +121,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesReviewTransactionContract(provider: ViewModelProvider) = provider[ReviewTransactionContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesSafeCreationFundContract(provider: ViewModelProvider) = provider[SafeCreationFundContract::class.java]
 
     @Provides
     @ForView
