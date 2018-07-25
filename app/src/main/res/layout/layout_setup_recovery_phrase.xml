@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/layout_setup_recovery_phrase_scroll_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toTopOf="@+id/layout_setup_recovery_phrase_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_setup_recovery_phrase_toolbar_background">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/layout_setup_recovery_phrase_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="@string/layout_setup_recovery_phrase_title"
+                    android:textColor="@color/dark_slate_blue"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/layout_setup_recovery_phrase_tip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:text="@string/layout_setup_recovery_phrase_description"
+                    android:textColor="@color/battleship_grey"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_setup_recovery_phrase_title" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/layout_setup_recovery_phrase_recycler_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="20dp"
+                    app:layout_constraintBottom_toTopOf="@+id/layout_setup_recovery_phrase_waves"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_setup_recovery_phrase_tip"
+                    app:layout_constraintVertical_bias="0" />
+
+                <ImageView
+                    android:id="@+id/layout_setup_recovery_phrase_waves"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_bottom_waves"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <View
+            android:id="@+id/layout_setup_recovery_phrase_toolbar_background"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/layout_setup_recovery_phrase_back_button"
+            android:layout_width="@dimen/toolbar_height"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/selectable_circle_background"
+            android:padding="16dp"
+            android:tint="@color/dark_slate_blue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+        <TextView
+            android:id="@+id/layout_setup_recovery_phrase_toolbar_title"
+            style="@style/Text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/toolbar_height"
+            android:paddingEnd="16dp"
+            android:text="@string/recovery_phrase"
+            android:textColor="@color/dark_slate_blue"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/layout_setup_recovery_phrase_back_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/layout_setup_recovery_phrase_container"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/bottom_bar_height"
+            android:background="@color/azure"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/layout_setup_recovery_phrase_next"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@drawable/selectable_background"
+            android:drawableEnd="@drawable/ic_arrow_forward_24dp"
+            android:drawablePadding="12dp"
+            android:gravity="center"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="@string/i_have_a_copy"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_setup_recovery_phrase_container"
+            app:layout_constraintEnd_toEndOf="@+id/layout_setup_recovery_phrase_container"
+            app:layout_constraintTop_toTopOf="@+id/layout_setup_recovery_phrase_container" />
+
+        <View
+            android:id="@+id/layout_setup_recovery_phrase_toolbar_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_shadow_size"
+            android:background="@drawable/toolbar_dropshadow"
+            app:layout_constraintTop_toBottomOf="@id/layout_setup_recovery_phrase_toolbar_background" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.design.widget.CoordinatorLayout>

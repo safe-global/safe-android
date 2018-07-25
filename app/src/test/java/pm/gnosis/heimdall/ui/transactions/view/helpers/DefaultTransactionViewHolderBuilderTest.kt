@@ -10,11 +10,15 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.viewholders.ReplaceRecoveryPhraseViewHolder
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.utils.asEthereumAddress
@@ -67,11 +71,48 @@ class DefaultTransactionViewHolderBuilderTest {
         private val TEST_ETHER_TOKEN = Solidity.Address(BigInteger.ZERO)
         private val TEST_ETH_AMOUNT = Wei.ether("23").value
 
+        private const val REPLACE_RECOVERY_PHRASE_DATA =
+            "0x8d80ff0a" + // Multi send method
+                    "0000000000000000000000000000000000000000000000000000000000000020" +
+                    "0000000000000000000000000000000000000000000000000000000000000240" +
+                    "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                    "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    "e318b52b" + // Swap owner method
+                    "000000000000000000000000000000000000000000000000000000000000000c" + // Previous Owner
+                    "000000000000000000000000000000000000000000000000000000000000000d" + // Old Owner
+                    "000000000000000000000000000000000000000000000000000000000000000f" + // New Owner
+                    "00000000000000000000000000000000000000000000000000000000" + // Padding
+                    "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                    "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    "e318b52b" + // Swap owner method
+                    "0000000000000000000000000000000000000000000000000000000000000001" + // Previous Owner
+                    "000000000000000000000000000000000000000000000000000000000000000a" + // Old Owner
+                    "000000000000000000000000000000000000000000000000000000000000000e" + // New Owner
+                    "00000000000000000000000000000000000000000000000000000000" // Padding
+
+        private val REPLACE_RECOVERY_PHRASE_TX =
+            SafeTransaction(
+                Transaction(
+                    address = TEST_SAFE,
+                    value = Wei.ZERO,
+                    data = REPLACE_RECOVERY_PHRASE_DATA,
+                    nonce = BigInteger.ZERO
+                ), TransactionExecutionRepository.Operation.DELEGATE_CALL
+            )
+
         private val TEST_DATA = mapOf(
             TransactionData.Generic::class to
-                    TestData(TransactionData.Generic(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, null), { it is GenericTransactionViewHolder }),
+                    TestData(TransactionData.Generic(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, null)) { it is GenericTransactionViewHolder },
             TransactionData.AssetTransfer::class to
-                    TestData(TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS), { it is AssetTransferViewHolder })
+                    TestData(TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS)) { it is AssetTransferViewHolder },
+            TransactionData.ReplaceRecoveryPhrase::class to
+                    TestData(TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)) { it is ReplaceRecoveryPhraseViewHolder }
         )
     }
 }

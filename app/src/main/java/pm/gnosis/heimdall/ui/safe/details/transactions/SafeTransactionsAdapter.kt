@@ -163,6 +163,13 @@ class SafeTransactionsAdapter @Inject constructor(
 
                     loadTokenInfo(info.data.token, info.data.amount)
                 }
+                is TransactionData.ReplaceRecoveryPhrase -> {
+                    address = info.safe
+                    infoText = context.getString(R.string.replaced_recovery_phrase)
+                    valueText = "-"
+                    valueColor = R.color.dark_slate_blue
+                    iconRes = R.drawable.ic_transaction_white_24dp
+                }
             }
             itemView.layout_safe_transactions_item_type_icon.setImageResource(iconRes)
             itemView.layout_safe_transactions_item_value.text = valueText

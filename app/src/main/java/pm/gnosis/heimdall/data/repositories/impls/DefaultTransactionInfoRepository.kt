@@ -4,11 +4,13 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.GnosisSafe
+import pm.gnosis.heimdall.MultiSend
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.isSolidityMethod
@@ -59,11 +61,28 @@ class DefaultTransactionInfoRepository @Inject constructor(
                     TransactionData.AssetTransfer(ERC20Token.ETHER_TOKEN.address, tx.value?.value ?: BigInteger.ZERO, tx.address)
                 tx.value?.value ?: BigInteger.ZERO == BigInteger.ZERO && data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true -> // There should be no ether transfer with the token transfer
                     parseTokenTransfer(tx)
+                isMultiSend(transaction) && isReplaceRecoveryPhrase(transaction) -> TransactionData.ReplaceRecoveryPhrase(transaction)
                 else ->
                     TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data)
             }
         }
             .subscribeOn(Schedulers.io())
+
+    private fun isMultiSend(safeTransaction: SafeTransaction) =
+        safeTransaction.operation == TransactionExecutionRepository.Operation.DELEGATE_CALL &&
+                safeTransaction.wrapped.data != null &&
+                safeTransaction.wrapped.data!!.isSolidityMethod(MultiSend.MultiSend.METHOD_ID)
+
+    private fun isReplaceRecoveryPhrase(transaction: SafeTransaction): Boolean {
+        val payload = transaction.wrapped.data?.removeSolidityMethodPrefix(MultiSend.MultiSend.METHOD_ID) ?: return false
+        val partitions = SolidityBase.partitionData(payload)
+        if (partitions.size != 20) return false
+        if (partitions[3] != partitions[12]) return false
+
+        if (!partitions[7].startsWith(GnosisSafe.SwapOwner.METHOD_ID)) return false
+        if (!partitions[16].startsWith(GnosisSafe.SwapOwner.METHOD_ID)) return false
+        return true
+    }
 
     private fun parseTokenTransfer(transaction: Transaction): TransactionData.AssetTransfer {
         val arguments = transaction.data!!.removeSolidityMethodPrefix(ERC20Contract.Transfer.METHOD_ID)

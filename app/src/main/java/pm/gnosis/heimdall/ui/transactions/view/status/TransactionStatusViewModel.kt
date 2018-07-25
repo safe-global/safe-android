@@ -48,5 +48,6 @@ class TransactionStatusViewModel @Inject constructor(
         when (this) {
             is TransactionData.Generic -> R.string.transaction_type_generic
             is TransactionData.AssetTransfer -> R.string.transaction_type_asset_transfer
+            is TransactionData.ReplaceRecoveryPhrase -> R.string.settings_change
         }
 }

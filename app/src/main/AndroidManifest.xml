@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="pm.gnosis.heimdall">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
 
     <application
         android:name="pm.gnosis.heimdall.HeimdallApplication"
@@ -14,7 +19,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/WhiteTheme">
+        android:theme="@style/WhiteTheme"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
@@ -103,12 +109,7 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.safe.create.CreationPairingActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
-
-        <activity
-            android:name=".ui.safe.create.SafeRecoveryPhraseActivity"
+            android:name=".ui.safe.create.CreateSafePairingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 
@@ -170,11 +171,6 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.safe.create.ConfirmSafeRecoveryPhraseActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
-
-        <activity
             android:name=".ui.tokens.manage.ManageTokensActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
@@ -201,6 +197,41 @@
             android:name=".ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
+
+        <activity
+            android:name=".ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.create.CreateSafeConfirmRecoveryPhraseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.create.CreateSafeSetupRecoveryPhraseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.create.CreateSafeRecoveryPhraseIntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

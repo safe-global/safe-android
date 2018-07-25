@@ -17,10 +17,10 @@ import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupViewModel
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupViewModel
-import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseViewModel
-import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.recoveryphrase.SetupRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.recoveryphrase.SetupRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.create.CreateSafeConfirmRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.create.CreateSafeConfirmRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsViewModel
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
@@ -41,6 +41,10 @@ import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseContr
 import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressViewModel
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeViewModel
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
@@ -83,11 +87,6 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ConfirmSafeRecoveryPhraseContract::class)
-    abstract fun bindsConfirmSafeRecoveryPhraseContract(viewModel: ConfirmSafeRecoveryPhraseViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(ChangePasswordContract::class)
     abstract fun bindsChangePasswordContract(viewModel: ChangePasswordViewModel): ViewModel
 
@@ -105,6 +104,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(CreateAssetTransferContract::class)
     abstract fun bindsCreateAssetTransferContract(viewModel: CreateAssetTransferViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CreateSafeConfirmRecoveryPhraseContract::class)
+    abstract fun bindsCreateSafeConfirmRecoveryPhraseContract(viewModel: CreateSafeConfirmRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -130,6 +134,12 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ManageTokensContract::class)
     abstract fun bindsManageTokensContract(viewModel: ManageTokensViewModel): ViewModel
+
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConfirmNewRecoveryPhraseContract::class)
+    abstract fun bindsConfirmNewRecoveryPhraseContract(viewModel: ConfirmNewRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -188,18 +198,23 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SafeRecoveryPhraseContract::class)
-    abstract fun bindsSafeRecoveryPhraseContract(viewModel: SafeRecoveryPhraseViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(SafeTransactionsContract::class)
     abstract fun bindsSafeTransactionsContract(viewModel: SafeTransactionsViewModel): ViewModel
 
     @Binds
     @IntoMap
+    @ViewModelKey(ScanExtensionAddressContract::class)
+    abstract fun bindsScanExtensionAddressContract(viewModel: ScanExtensionAddressViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(SelectSafeContract::class)
     abstract fun bindsSelectSafeContract(viewModel: SelectSafeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SetupRecoveryPhraseContract::class)
+    abstract fun bindsSetupRecoveryPhraseContract(viewModel: SetupRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap

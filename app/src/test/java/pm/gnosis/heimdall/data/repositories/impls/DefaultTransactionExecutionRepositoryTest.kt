@@ -10,7 +10,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.BulkRequest
@@ -26,7 +25,6 @@ import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
-import pm.gnosis.heimdall.ui.transactions.view.helpers.DefaultSubmitTransactionHelperTest
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -37,7 +35,6 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.*
 import java.math.BigInteger
-import kotlin.concurrent.timer
 
 @RunWith(MockitoJUnitRunner::class)
 class DefaultTransactionExecutionRepositoryTest {

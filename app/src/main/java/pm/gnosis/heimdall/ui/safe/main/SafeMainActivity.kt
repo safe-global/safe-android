@@ -38,6 +38,7 @@ import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceBrowserExtensionPairingActivity
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
@@ -338,18 +339,21 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         disposables += popupMenu.itemClicks()
             .subscribeBy(onNext = {
                 when (it.itemId) {
-                    R.id.address_book_entry_details_menu_delete -> selectedSafe?.let{ safe -> removeSafe(safe) }
-                    R.id.safe_details_menu_rename -> selectedSafe?.let{ safe -> renameSafe(safe) }
+                    R.id.address_book_entry_details_menu_delete -> selectedSafe?.let { safe -> removeSafe(safe) }
+                    R.id.safe_details_menu_rename -> selectedSafe?.let { safe -> renameSafe(safe) }
                     R.id.safe_details_menu_sync -> selectedSafe?.let { safe ->
                         disposables += viewModel.syncWithChromeExtension(safe.address())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeBy(onComplete = { toast(R.string.sync_successful) },
                                 onError = { toast(R.string.error_syncing) })
                     }
-                    R.id.safe_details_menu_replace_browser_extension -> selectedSafe?.let{ safe ->
+                    R.id.safe_details_menu_replace_recovery_phrase -> selectedSafe?.let { safe ->
+                        startActivity(ScanExtensionAddressActivity.createIntent(this, safe.address()))
+                    }
+                    R.id.safe_details_menu_replace_browser_extension -> selectedSafe?.let { safe ->
                         startActivity(ReplaceBrowserExtensionPairingActivity.createIntent(this, safe.address()))
                     }
-                    R.id.safe_details_menu_show_on_etherscan -> selectedSafe?.let{ safe ->
+                    R.id.safe_details_menu_show_on_etherscan -> selectedSafe?.let { safe ->
                         openUrl(getString(R.string.etherscan_address_url, safe.address().asEthereumAddressString()))
                     }
                 }

@@ -32,4 +32,6 @@
     <dimen name="primary_button_radius">6dp</dimen>
     <dimen name="round_button_radius">23dp</dimen>
     <dimen name="safe_logo_size">72dp</dimen>
+    <dimen name="horizontal_offset">0dp</dimen>
+    <dimen name="vertical_offset">8dp</dimen>
 </resources>

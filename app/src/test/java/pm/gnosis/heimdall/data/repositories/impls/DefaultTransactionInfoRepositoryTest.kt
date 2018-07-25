@@ -34,7 +34,6 @@ import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class DefaultTransactionInfoRepositoryTest {
-
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -240,7 +239,9 @@ class DefaultTransactionInfoRepositoryTest {
                         )
                     )
                     val testObserver = TestObserver<TransactionInfo>()
+
                     repository.loadTransactionInfo(testId).subscribe(testObserver)
+
                     testObserver.assertResult(
                         TransactionInfo(
                             testId,
@@ -267,6 +268,42 @@ class DefaultTransactionInfoRepositoryTest {
         private val TEST_ETH_AMOUNT = Wei.ether("23")
         private val TEST_TOKEN_ADDRESS = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!
         private val TEST_TOKEN_AMOUNT = BigInteger("230000000000")
+
+        private const val REPLACE_RECOVERY_PHRASE_DATA =
+            "0x8d80ff0a" + // Multi send method
+                    "0000000000000000000000000000000000000000000000000000000000000020" +
+                    "0000000000000000000000000000000000000000000000000000000000000240" +
+                    "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                    "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    "e318b52b" + // Swap owner method
+                    "000000000000000000000000000000000000000000000000000000000000000c" + // Previous Owner
+                    "000000000000000000000000000000000000000000000000000000000000000d" + // Old Owner
+                    "000000000000000000000000000000000000000000000000000000000000000f" + // New Owner
+                    "00000000000000000000000000000000000000000000000000000000" + // Padding
+                    "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                    "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    "e318b52b" + // Swap owner method
+                    "0000000000000000000000000000000000000000000000000000000000000001" + // Previous Owner
+                    "000000000000000000000000000000000000000000000000000000000000000a" + // Old Owner
+                    "000000000000000000000000000000000000000000000000000000000000000e" + // New Owner
+                    "00000000000000000000000000000000000000000000000000000000" // Padding
+
+        private val REPLACE_RECOVERY_PHRASE_TX =
+            SafeTransaction(
+                Transaction(
+                    address = TEST_SAFE,
+                    value = Wei.ZERO,
+                    data = REPLACE_RECOVERY_PHRASE_DATA,
+                    nonce = BigInteger.ZERO
+                ), DELEGATE_CALL
+            )
+
         private val TEST_DATA_TRANSACTION_INFO = mapOf(
             TransactionData.AssetTransfer::class to
                     listOf(
@@ -318,6 +355,13 @@ class DefaultTransactionInfoRepositoryTest {
                                 ), DELEGATE_CALL
                             ),
                             TransactionData.Generic(TEST_ADDRESS, TEST_ETH_AMOUNT.value, "0x468721a7")
+                        )
+                    ),
+            TransactionData.ReplaceRecoveryPhrase::class to
+                    listOf(
+                        TestData(
+                            REPLACE_RECOVERY_PHRASE_TX,
+                            TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)
                         )
                     )
         )

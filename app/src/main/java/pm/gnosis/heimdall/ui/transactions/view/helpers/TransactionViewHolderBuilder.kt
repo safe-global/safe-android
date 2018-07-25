@@ -7,6 +7,7 @@ import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.viewholders.ReplaceRecoveryPhraseViewHolder
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
@@ -18,7 +19,7 @@ interface TransactionViewHolderBuilder {
 class DefaultTransactionViewHolderBuilder @Inject constructor(
     private val addressHelper: AddressHelper,
     private val tokenRepository: TokenRepository
-    ): TransactionViewHolderBuilder {
+) : TransactionViewHolderBuilder {
     override fun build(safe: Solidity.Address, transactionData: TransactionData, extraInfo: Boolean): Single<TransactionInfoViewHolder> =
         Single.fromCallable {
             when (transactionData) {
@@ -32,6 +33,8 @@ class DefaultTransactionViewHolderBuilder @Inject constructor(
                         tokenRepository,
                         extraInfo
                     )
+                is TransactionData.ReplaceRecoveryPhrase ->
+                    ReplaceRecoveryPhraseViewHolder(addressHelper, safe, transactionData.safeTransaction)
             }
         }
 }

@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.utils
 
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
@@ -45,5 +46,13 @@ fun TextView.setCompoundDrawableResource(
     setCompoundDrawables(getDrawable(left), getDrawable(top), getDrawable(right), getDrawable(bottom), useIntrinsicBounds)
 }
 
-fun View.getDrawable(@DrawableRes id: Int)
-    = if (id == 0) null else AppCompatResources.getDrawable(context, id)
+fun View.getDrawable(@DrawableRes id: Int) = if (id == 0) null else AppCompatResources.getDrawable(context, id)
+
+fun scaleBitmapToWidth(bitmap: Bitmap, targetWidth: Int): Bitmap {
+    val width = bitmap.width
+    val height = bitmap.height
+
+    val scaleFactor = targetWidth.toFloat() / width.toFloat()
+    val newHeight = (height * scaleFactor).toInt()
+    return Bitmap.createScaledBitmap(bitmap, targetWidth, newHeight, true)
+}

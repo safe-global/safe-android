@@ -7,6 +7,10 @@
         android:title="@string/change_name"
         app:showAsAction="never" />
     <item
+        android:id="@+id/safe_details_menu_replace_recovery_phrase"
+        android:title="@string/replace_recovery_phrase"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/safe_details_menu_replace_browser_extension"
         android:title="@string/replace_browser_extension"
         app:showAsAction="never" />

@@ -17,9 +17,11 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.helpers.TransactionViewHolderBuilder
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -159,6 +161,16 @@ class TransactionStatusViewModelTest {
         testObserve(TEST_GAS_TOKEN.address, ErrorResult(NoSuchElementException()), transactionData, R.string.transaction_type_generic)
     }
 
+    @Test
+    fun observeReplaceRecoveryPhrase() {
+        val transactionData = TransactionData.ReplaceRecoveryPhrase(
+            SafeTransaction(
+                Transaction(address = TEST_SAFE),
+                operation = TransactionExecutionRepository.Operation.DELEGATE_CALL
+            )
+        )
+        testObserve(ERC20Token.ETHER_TOKEN.address, DataResult(ERC20Token.ETHER_TOKEN), transactionData, R.string.settings_change)
+    }
 
     @Test
     fun observerStatus() {
