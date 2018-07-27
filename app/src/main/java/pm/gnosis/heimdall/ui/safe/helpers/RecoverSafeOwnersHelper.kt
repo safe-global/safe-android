@@ -110,7 +110,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
             }
             .flatMap {
                 when (it) {
-                // If errors are thrown while parsing the mnemonic or building the data, we should map them here
+                    // If errors are thrown while parsing the mnemonic or building the data, we should map them here
                     is ErrorResult -> Observable.just(
                         when (it.error) {
                             is Bip39ValidationResult -> InputRecoveryPhraseContract.ViewUpdate.InvalidMnemonic
@@ -120,7 +120,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                             else -> InputRecoveryPhraseContract.ViewUpdate.WrongMnemonic
                         }
                     )
-                // We successfully parsed the mnemonic and build the data, now we can show the create button and if pressed pull the data
+                    // We successfully parsed the mnemonic and build the data, now we can show the create button and if pressed pull the data
                     is DataResult -> {
                         val (transaction, signingAccounts) = it.data
                         input.create
@@ -191,7 +191,13 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
     private fun prepareTransaction(safeInfo: SafeInfo, transaction: SafeTransaction, signingAccounts: SigningAccounts) =
         executionRepository.loadExecuteInformation(safeInfo.address, transaction)
             .flatMap { executionInfo ->
-                executionRepository.calculateHash(safeInfo.address, executionInfo.transaction, executionInfo.txGas, executionInfo.dataGas, executionInfo.gasPrice)
+                executionRepository.calculateHash(
+                    safeInfo.address,
+                    executionInfo.transaction,
+                    executionInfo.txGas,
+                    executionInfo.dataGas,
+                    executionInfo.gasPrice
+                )
                     .map { it to executionInfo }
             }
             .map<InputRecoveryPhraseContract.ViewUpdate> { (hash, executionInfo) ->
@@ -205,7 +211,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
     private fun signHash(privKey: ByteArray, hash: ByteArray) =
         KeyPair.fromPrivate(privKey).sign(hash).let { Signature(it.r, it.s, it.v) }
 
-    data class NoNeedToRecoverSafeException(val safeAddress: Solidity.Address): IllegalStateException("Safe is already in expected state!")
+    data class NoNeedToRecoverSafeException(val safeAddress: Solidity.Address) : IllegalStateException("Safe is already in expected state!")
 
     companion object {
         private val SENTINEL = "0x01".asEthereumAddress()!!

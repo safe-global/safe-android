@@ -73,6 +73,8 @@ android {
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
             minifyEnabled false
+            buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.dev.gnosisdev.com/api/"))
+            buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.dev.gnosisdev.com/api/"))
         }
 
         internal {

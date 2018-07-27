@@ -24,8 +24,10 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
+import pm.gnosis.heimdall.ui.safe.recover.ReplaceBrowserExtensionActivity
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseActivity
+import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFundFragment
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafePendingFragment
@@ -86,6 +88,8 @@ interface ViewComponent {
     fun inject(activity: QRCodeScanActivity)
     fun inject(activity: ReceiveTokenActivity)
     fun inject(activity: RecoverInputRecoveryPhraseActivity)
+    fun inject(activity: ReplaceBrowserExtensionActivity)
+    fun inject(activity: ReplaceBrowserExtensionRecoveryPhraseActivity)
     fun inject(activity: ReviewTransactionActivity)
     fun inject(activity: SafeMainActivity)
     fun inject(activity: SafeRecoveryPhraseActivity)

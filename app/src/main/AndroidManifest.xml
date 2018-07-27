@@ -186,6 +186,22 @@
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".ui.safe.recover.extension.ReplaceBrowserExtensionPairingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.recover.ReplaceBrowserExtensionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
+
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

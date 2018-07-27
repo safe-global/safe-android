@@ -17,7 +17,10 @@ import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupViewModel
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupViewModel
-import pm.gnosis.heimdall.ui.safe.create.*
+import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsViewModel
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
@@ -30,10 +33,14 @@ import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressViewModel
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundViewModel
+import pm.gnosis.heimdall.ui.safe.recover.ReplaceBrowserExtensionContract
+import pm.gnosis.heimdall.ui.safe.recover.ReplaceBrowserExtensionViewModel
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeViewModel
 import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeViewModel
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
@@ -148,6 +155,16 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(RecoverInputRecoveryPhraseContract::class)
     abstract fun bindsRecoverInputRecoveryPhraseContract(viewModel: RecoverInputRecoveryPhraseViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ReplaceBrowserExtensionContract::class)
+    abstract fun bindsReplaceBrowserExtensionContract(viewModel: ReplaceBrowserExtensionViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ReplaceBrowserExtensionRecoveryPhraseContract::class)
+    abstract fun bindsReplaceBrowserExtensionRecoveryPhraseContract(viewModel: ReplaceBrowserExtensionRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap

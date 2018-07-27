@@ -107,18 +107,18 @@ abstract class InputRecoveryPhraseActivity<VM : InputRecoveryPhraseContract> : V
                 noRecoveryNecessary(update.safeAddress)
             }
             is InputRecoveryPhraseContract.ViewUpdate.RecoverData -> {
-                onSuccess(update.executionInfo.transaction.wrapped.address)
+                onSuccess(update)
             }
         }
     }
 
     abstract fun noRecoveryNecessary(safe: Solidity.Address)
 
-    abstract fun onSuccess(safe: Solidity.Address)
+    abstract fun onSuccess(recoverData: InputRecoveryPhraseContract.ViewUpdate.RecoverData)
 
     companion object {
-        private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
-        private const val EXTRA_EXTENSION_ADDRESS = "extra.string.extension_address"
+        const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
+        const val EXTRA_EXTENSION_ADDRESS = "extra.string.extension_address"
         fun addExtras(intent: Intent, safeAddress: Solidity.Address, extensionAddress: Solidity.Address) = intent.apply {
             putExtra(EXTRA_SAFE_ADDRESS, safeAddress.asEthereumAddressString())
             putExtra(EXTRA_EXTENSION_ADDRESS, extensionAddress.asEthereumAddressString())

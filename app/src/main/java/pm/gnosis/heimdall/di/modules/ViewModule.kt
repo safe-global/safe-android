@@ -16,15 +16,17 @@ import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
 import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
+import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
+import pm.gnosis.heimdall.ui.safe.recover.ReplaceBrowserExtensionContract
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
@@ -117,6 +119,15 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesRecoverInputRecoveryPhraseContract(provider: ViewModelProvider) = provider[RecoverInputRecoveryPhraseContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesReplaceBrowserExtensionContract(provider: ViewModelProvider) = provider[ReplaceBrowserExtensionContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesReplaceBrowserExtensionRecoveryPhraseContract(provider: ViewModelProvider) =
+        provider[ReplaceBrowserExtensionRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView

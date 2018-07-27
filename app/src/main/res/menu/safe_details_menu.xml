@@ -7,6 +7,10 @@
         android:title="@string/change_name"
         app:showAsAction="never" />
     <item
+        android:id="@+id/safe_details_menu_replace_browser_extension"
+        android:title="@string/replace_browser_extension"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/safe_details_menu_show_on_etherscan"
         android:title="@string/show_safe_on_etherscan"
         app:showAsAction="never" />
