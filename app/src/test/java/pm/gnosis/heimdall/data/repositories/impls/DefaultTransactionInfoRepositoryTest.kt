@@ -306,7 +306,7 @@ class DefaultTransactionInfoRepositoryTest {
                                 ), CALL
                             ),
                             TransactionData.Generic(
-                                TEST_ADDRESS,
+                                TEST_TOKEN_ADDRESS,
                                 TEST_ETH_AMOUNT.value,
                                 ERC20Contract.Transfer.encode(TEST_ADDRESS, Solidity.UInt256(TEST_TOKEN_AMOUNT))
                             )
