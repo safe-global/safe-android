@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
 import io.reactivex.schedulers.Schedulers
+import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import pm.gnosis.ethereum.EthereumRepository
@@ -151,6 +152,13 @@ class ApplicationModule(private val application: Application) {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)
+            certificatePinner(
+                CertificatePinner.Builder().apply {
+                    BuildConfig.PINNED_URLS.split(",").forEach {
+                        add(it, BuildConfig.PINNED_ROOT_CERTIFICATE_HASH)
+                    }
+                }.build()
+            )
         }.build()
 
     @Provides

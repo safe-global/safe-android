@@ -26,9 +26,12 @@ android {
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
         // Services
         buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://rinkeby.infura.io"))
-        buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.staging.gnosisdev.com/api/"))
-        buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
+        buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.dev.gnosisdev.com/api/"))
+        buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.dev.gnosisdev.com/api/"))
         buildConfigField javaTypes.STRING, "VERIFIED_TOKEN_SERVICE_URL", asString(getKey("VERIFIED_TOKEN_SERVICE_URL", "https://gist.githubusercontent.com/rmeissner/98911fcf74b0ea9731e2dae2441c97a4/raw/"))
+        // Certificates
+        buildConfigField javaTypes.STRING, "PINNED_URLS", asString(getKey("PINNED_URLS", "*.staging.gnosisdev.com,*.dev.gnosisdev.com,*.gnosisdev.pm,*.gnosis.pm"))
+        buildConfigField javaTypes.STRING, "PINNED_ROOT_CERTIFICATE_HASH", asString(getKey("ROOT_CERTIFICATE_HASH", "sha256/KwccWaCgrnaw6tsrrSO61FgLacNgG2MMLq8GE6+oP5I="))
 
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true

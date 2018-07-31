@@ -72,6 +72,7 @@ abstract class BaseActivity : AppCompatActivity() {
     private fun handleCheckError(throwable: Throwable) {
         Timber.d(throwable)
         // Show blocker screen. No auth -> no app usage
+        checkSecurity(false)
     }
 
     protected fun viewComponent(): ViewComponent =

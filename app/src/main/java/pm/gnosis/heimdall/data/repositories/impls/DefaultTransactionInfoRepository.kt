@@ -57,7 +57,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
             when {
                 data.isNullOrBlank() -> // If we have no data we default to ether transfer
                     TransactionData.AssetTransfer(ERC20Token.ETHER_TOKEN.address, tx.value?.value ?: BigInteger.ZERO, tx.address)
-                data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true ->
+                tx.value?.value ?: BigInteger.ZERO == BigInteger.ZERO || data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true -> // There should be no ether transfer with the token transfer
                     parseTokenTransfer(tx)
                 else ->
                     TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data)

@@ -55,8 +55,8 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:paddingBottom="12dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp">
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/layout_transaction_status_info_data_container"
@@ -76,113 +76,109 @@
             </android.support.constraint.ConstraintLayout>
 
             <View
-                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_info_data_container"
                 android:id="@+id/layout_transaction_status_info_divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/divider_width"
-                android:background="@color/divider" />
+                android:background="@color/divider"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_info_data_container" />
 
             <TextView
                 android:id="@+id/layout_transaction_status_type_label"
-                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_info_divider"
                 style="@style/DarkText"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Type" />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/type"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_info_divider" />
 
             <TextView
                 android:id="@+id/layout_transaction_status_type_value"
-                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_type_label"
                 style="@style/NormalText"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_type_label"
                 tools:text="Contract interaction" />
 
             <TextView
                 android:id="@+id/layout_transaction_status_submitted_label"
-                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_type_value"
                 style="@style/DarkText"
-                android:layout_marginTop="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Submitted" />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Submitted"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_type_value" />
 
             <TextView
                 android:id="@+id/layout_transaction_status_submitted_value"
-                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_submitted_label"
                 style="@style/NormalText"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="May 6, 2018 - 3:34PM (2 months ago)"
-                />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_submitted_label"
+                tools:text="May 6, 2018 - 3:34PM (2 months ago)" />
 
             <TextView
                 android:id="@+id/layout_transaction_status_status_label"
-                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_submitted_value"
                 style="@style/DarkText"
-                android:layout_marginTop="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Status" />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Status"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_submitted_value" />
 
             <TextView
                 android:id="@+id/layout_transaction_status_status_value"
-                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_status_label"
                 style="@style/NormalText"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Pending"
-                />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_status_label"
+                tools:text="Pending" />
 
             <TextView
                 android:id="@+id/layout_transaction_status_fee_label"
-                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_status_value"
                 style="@style/DarkText"
-                android:layout_marginTop="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Transaction fee" />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Transaction fee"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_status_value" />
 
             <TextView
                 android:id="@+id/layout_transaction_status_fee_value"
-                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_fee_label"
                 style="@style/NormalText"
-                android:textColor="@color/tomato"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="-0.00034 ETH"
-                />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:textColor="@color/tomato"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_fee_label"
+                tools:text="-0.00034 ETH" />
 
             <TextView
                 android:id="@+id/layout_transaction_status_etherscan_link"
-                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_fee_value"
                 style="@style/NormalText"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="View on Etherscan.io"
-                />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_fee_value"
+                tools:text="View on Etherscan.io" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
 
