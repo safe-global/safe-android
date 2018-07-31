@@ -300,6 +300,20 @@ class DefaultTransactionInfoRepositoryTest {
                         TestData(
                             SafeTransaction(
                                 Transaction(
+                                    TEST_TOKEN_ADDRESS,
+                                    value = TEST_ETH_AMOUNT,
+                                    data = ERC20Contract.Transfer.encode(TEST_ADDRESS, Solidity.UInt256(TEST_TOKEN_AMOUNT))
+                                ), CALL
+                            ),
+                            TransactionData.Generic(
+                                TEST_ADDRESS,
+                                TEST_ETH_AMOUNT.value,
+                                ERC20Contract.Transfer.encode(TEST_ADDRESS, Solidity.UInt256(TEST_TOKEN_AMOUNT))
+                            )
+                        ),
+                        TestData(
+                            SafeTransaction(
+                                Transaction(
                                     TEST_ADDRESS, value = TEST_ETH_AMOUNT, data = "0x468721a7", nonce = BigInteger.valueOf(23)
                                 ), DELEGATE_CALL
                             ),
