@@ -55,8 +55,6 @@ class SafeDetailsFragment : BaseFragment() {
         tabToSelect = arguments?.getInt(EXTRA_SELECTED_TAB, tabToSelect) ?: tabToSelect
         arguments?.remove(EXTRA_SELECTED_TAB)
         pagerAdapter = pagerAdapter()
-        layout_safe_details_send_button.setCompoundDrawableResource(left = R.drawable.ic_send_azure)
-        layout_safe_details_receive_button.setCompoundDrawableResource(left = R.drawable.ic_qrcode_scan_azure)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -68,6 +66,8 @@ class SafeDetailsFragment : BaseFragment() {
         safeName = arguments?.getString(EXTRA_SAFE_NAME)
         viewModel.setup(safeAddress, safeName)
 
+        layout_safe_details_send_button.setCompoundDrawableResource(left = R.drawable.ic_send_azure)
+        layout_safe_details_receive_button.setCompoundDrawableResource(left = R.drawable.ic_qrcode_scan_azure)
         layout_safe_details_viewpager.adapter = pagerAdapter
         layout_safe_details_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {

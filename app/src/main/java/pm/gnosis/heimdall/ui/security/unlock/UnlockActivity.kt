@@ -164,11 +164,9 @@ class UnlockActivity : ViewModelActivity<UnlockContract>() {
         private const val EXTRA_CLOSE_APP = "extra.boolean.close_app"
         private const val EXTRA_CONFIRM_CREDENTIALS = "extra.boolean.confirm_credentials"
 
-        fun createIntent(context: Context) = Intent(context, UnlockActivity::class.java).noHistory()
-
-        fun createConfirmIntent(context: Context) = createIntent(context).apply {
-            putExtra(EXTRA_CONFIRM_CREDENTIALS, true)
-        }
+        fun createIntent(context: Context) = Intent(context, UnlockActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .noHistory()
 
         private fun createIntentToCloseApp(context: Context): Intent {
             val intent = Intent(context, UnlockActivity::class.java)
