@@ -104,6 +104,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_account.setCompoundDrawableResource(left = R.drawable.ic_settings_account)
         layout_safe_main_tokens.setCompoundDrawableResource(left = R.drawable.ic_tokens)
         layout_safe_main_address_book.setCompoundDrawableResource(left = R.drawable.ic_settings_address_book)
+        layout_safe_main_general_settings.setCompoundDrawableResource(left = R.drawable.ic_general_settings)
         layout_safe_main_debug_settings.setCompoundDrawableResource(left = R.drawable.ic_settings_debug)
     }
 
