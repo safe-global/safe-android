@@ -16,7 +16,6 @@ import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.services.HeimdallFirebaseService
-import pm.gnosis.heimdall.services.HeimdallInstanceIdService
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
@@ -60,5 +59,4 @@ interface ApplicationComponent {
     fun inject(activity: BaseActivity)
 
     fun inject(service: HeimdallFirebaseService)
-    fun inject(service: HeimdallInstanceIdService)
 }
