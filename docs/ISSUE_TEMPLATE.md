@@ -4,8 +4,8 @@
 
 ### Steps to reproduce the behavior
 
-### Additional Information
+### Additional information
 
 - Device:
-- OS version:
-- App version:
+- Android OS version:
+- Safe app version:
