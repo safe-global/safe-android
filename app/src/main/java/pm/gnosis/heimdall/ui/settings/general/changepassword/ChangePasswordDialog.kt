@@ -6,11 +6,13 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.dialog_change_password.*
 import kotlinx.android.synthetic.main.dialog_change_password.view.*
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
@@ -60,10 +62,16 @@ class ChangePasswordDialog : BaseDialog() {
         return alertDialog
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
     override fun onStart() {
         super.onStart()
         eventTracker.submit(Event.ScreenView(ScreenId.SETTINGS_CHANGE_PASSWORD))
 
+        alertDialog.dialog_change_password_current.requestFocus()
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
         disposables += confirmSubject
             .doOnNext {
@@ -123,6 +131,7 @@ class ChangePasswordDialog : BaseDialog() {
             ENTER_NEW_PASSWORD -> {
                 dialogView.dialog_change_password_current_input_group.visible(false)
                 dialogView.dialog_change_password_new_input_group.visible(true)
+                dialogView.dialog_change_password_new.requestFocus()
             }
             PASSWORD_CHANGED -> dismiss()
         }
