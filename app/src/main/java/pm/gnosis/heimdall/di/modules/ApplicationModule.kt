@@ -154,8 +154,10 @@ class ApplicationModule(private val application: Application) {
             writeTimeout(10, TimeUnit.SECONDS)
             certificatePinner(
                 CertificatePinner.Builder().apply {
-                    BuildConfig.PINNED_URLS.split(",").forEach {
-                        add(it, BuildConfig.PINNED_ROOT_CERTIFICATE_HASH)
+                    BuildConfig.PINNED_URLS.split(",").forEach { pinnedUrl ->
+                        BuildConfig.PINNED_ROOT_CERTIFICATE_HASHES.split(",").forEach { hash ->
+                            add(pinnedUrl, hash)
+                        }
                     }
                 }.build()
             )

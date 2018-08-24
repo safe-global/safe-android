@@ -31,7 +31,12 @@ android {
         buildConfigField javaTypes.STRING, "VERIFIED_TOKEN_SERVICE_URL", asString(getKey("VERIFIED_TOKEN_SERVICE_URL", "https://gist.githubusercontent.com/rmeissner/98911fcf74b0ea9731e2dae2441c97a4/raw/"))
         // Certificates
         buildConfigField javaTypes.STRING, "PINNED_URLS", asString(getKey("PINNED_URLS", "*.staging.gnosisdev.com,*.dev.gnosisdev.com,*.gnosisdev.pm,*.gnosis.pm"))
-        buildConfigField javaTypes.STRING, "PINNED_ROOT_CERTIFICATE_HASH", asString(getKey("ROOT_CERTIFICATE_HASH", "sha256/KwccWaCgrnaw6tsrrSO61FgLacNgG2MMLq8GE6+oP5I="))
+        buildConfigField javaTypes.STRING, "PINNED_ROOT_CERTIFICATE_HASHES", asString(getKey("ROOT_CERTIFICATE_HASH",
+                "sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=," +
+                        "sha256/f0KW/FtqTjs108NpYj42SrGvOB2PpxIVM8nWxjPqJGE=," +
+                        "sha256/NqvDJlas/GRcYbcWE8S/IceH9cq77kg0jVhZeAPXq8k=," +
+                        "sha256/9+ze1cZgR9KO1kZrVDxA4HQ6voHRCSVNz4RdTCx4U8U=," +
+                        "sha256/KwccWaCgrnaw6tsrrSO61FgLacNgG2MMLq8GE6+oP5I="))
 
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
@@ -135,7 +140,7 @@ dependencies {
     implementation "com.github.gnosis.svalinn-kotlin:crypto:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:ethereum:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:ethereum-rpc:$versions.svalinn"
-    implementation ("com.github.gnosis.svalinn-kotlin:ethereum-rpc-retrofit:$versions.svalinn") {
+    implementation("com.github.gnosis.svalinn-kotlin:ethereum-rpc-retrofit:$versions.svalinn") {
         exclude group: "com.squareup.retrofit2", module: "converter-moshi"
     }
     implementation "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
@@ -194,7 +199,7 @@ dependencies {
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
-    implementation ("com.squareup.retrofit2:converter-moshi:$versions.retrofit") {
+    implementation("com.squareup.retrofit2:converter-moshi:$versions.retrofit") {
         exclude group: "com.squareup.moshi", module: "moshi"
     }
     implementation "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"

@@ -31,7 +31,7 @@ interface PushServiceRepository {
     fun calculateRejectionHash(transactionHash: ByteArray): Single<ByteArray>
 
     sealed class TransactionResponse {
-        data class Confirmed(val signature: Signature): TransactionResponse()
-        data class Rejected(val signature: Signature): TransactionResponse()
+        data class Confirmed(val signature: Signature) : TransactionResponse()
+        data class Rejected(val signature: Signature) : TransactionResponse()
     }
 }

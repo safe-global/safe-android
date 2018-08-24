@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.iid.InstanceIdResult
 import com.squareup.moshi.Moshi
 import io.reactivex.*
 import io.reactivex.rxkotlin.subscribeBy
@@ -54,11 +55,11 @@ class DefaultPushServiceRepository @Inject constructor(
     */
     override fun syncAuthentication(forced: Boolean) {
         accountsRepository.loadActiveAccount()
-            .map { account ->
-                val currentToken = FirebaseInstanceId.getInstance().token ?: throw IllegalStateException("Firebase token is null")
+            .flatMap { account -> FirebaseInstanceIdSingle().create().map { account to it.token } }
+            .map { (account, token) ->
                 val lastSyncedData = preferencesManager.prefs.getString(LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY, "")
-                val currentData = bundleAccountWithPushToken(account, currentToken)
-                (lastSyncedData != currentData) to (account to currentToken)
+                val currentData = bundleAccountWithPushToken(account, token)
+                (lastSyncedData != currentData) to (account to token)
             }
             .flatMapCompletable { (needsSync, accountTokenPair) ->
                 if (needsSync || forced) syncAuthentication(accountTokenPair.first, accountTokenPair.second)
@@ -67,6 +68,15 @@ class DefaultPushServiceRepository @Inject constructor(
             .subscribeBy(onComplete = { Timber.d("GnosisSafePushServiceRepository: successful sync") }, onError = Timber::e)
     }
 
+    private class FirebaseInstanceIdSingle : SingleOnSubscribe<InstanceIdResult> {
+        override fun subscribe(emitter: SingleEmitter<InstanceIdResult>) {
+            FirebaseInstanceId.getInstance().instanceId
+                .addOnSuccessListener { emitter.onSuccess(it) }
+                .addOnFailureListener { emitter.onError(it) }
+        }
+
+        fun create(): Single<InstanceIdResult> = Single.create(this)
+    }
 
     private fun syncAuthentication(account: Account, pushToken: String) =
         accountsRepository.sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$pushToken".toByteArray()))
