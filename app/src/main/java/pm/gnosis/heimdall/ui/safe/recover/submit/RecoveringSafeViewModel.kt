@@ -22,6 +22,7 @@ import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.utils.asTransactionHash
 import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
@@ -94,7 +95,22 @@ class RecoveringSafeViewModel @Inject constructor(
             )
 
     override fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<TransactionExecutionRepository.ExecuteInformation> =
-        safeRepository.loadRecoveringSafe(address).flatMap(::requestExecuteInfo).onErrorResumeNext { errorHandler.single(it) }
+        safeRepository.loadRecoveringSafe(address)
+            .flatMap { safe ->
+                executionRepository.loadSafeExecuteState(address)
+                    .map { TransactionExecutionRepository.ExecuteInformation(
+                        safe.transactionHash!!.asTransactionHash(),
+                        buildSafeTransaction(safe),
+                        it.sender,
+                        it.requiredConfirmation,
+                        it.owners,
+                        safe.gasPrice,
+                        safe.txGas,
+                        safe.dataGas,
+                        it.balance
+                    ) }
+            }
+            .onErrorResumeNext { errorHandler.single(it) }
 
     override fun submitRecovery(address: Solidity.Address): Single<Solidity.Address> =
         safeRepository.loadRecoveringSafe(address)
