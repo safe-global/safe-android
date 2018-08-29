@@ -13,7 +13,7 @@ class ReplaceBrowserExtensionPairingActivity : PairingActivity() {
     override fun titleRes() = R.string.replace_browser_extension
 
     override fun onSuccess(extension: Solidity.Address) {
-        val safeAddress = intent.getStringExtra(ReplaceBrowserExtensionPairingActivity.EXTRA_SAFE_ADDRESS).asEthereumAddress()!!
+        val safeAddress = intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!!
         startActivity(ReplaceBrowserExtensionRecoveryPhraseActivity.createIntent(this, safeAddress, extension))
     }
 

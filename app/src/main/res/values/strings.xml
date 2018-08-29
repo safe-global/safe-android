@@ -224,4 +224,5 @@
     <string name="replace_browser_extension">Replace browser extension</string>
     <string name="no_recovery_necessary">There were no configuration changes to this safe. No recovery is necessary</string>
     <string name="replace_browser_extension_transaction_info">The existing browser extension connection will be replaced with the new browser extension.</string>
+    <string name="error_retrieving_safe_balance">Error retrieving safe balance</string>
 </resources>
