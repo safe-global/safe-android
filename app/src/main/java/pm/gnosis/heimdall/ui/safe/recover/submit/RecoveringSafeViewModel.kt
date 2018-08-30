@@ -22,8 +22,10 @@ import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.asTransactionHash
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -97,18 +99,24 @@ class RecoveringSafeViewModel @Inject constructor(
     override fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<TransactionExecutionRepository.ExecuteInformation> =
         safeRepository.loadRecoveringSafe(address)
             .flatMap { safe ->
-                executionRepository.loadSafeExecuteState(address)
-                    .map { TransactionExecutionRepository.ExecuteInformation(
-                        safe.transactionHash!!.asTransactionHash(),
-                        buildSafeTransaction(safe),
-                        it.sender,
-                        it.requiredConfirmation,
-                        it.owners,
-                        safe.gasPrice,
-                        safe.txGas,
-                        safe.dataGas,
-                        it.balance
-                    ) }
+                val tx = buildSafeTransaction(safe)
+                executionRepository.calculateHash(address, tx, safe.gasPrice, safe.txGas, safe.dataGas)
+                    .flatMap { hash ->
+                        executionRepository.loadSafeExecuteState(address)
+                            .map {
+                                TransactionExecutionRepository.ExecuteInformation(
+                                    hash.toHexString().addHexPrefix(),
+                                    tx,
+                                    it.sender,
+                                    it.requiredConfirmation,
+                                    it.owners,
+                                    safe.gasPrice,
+                                    safe.txGas,
+                                    safe.dataGas,
+                                    it.balance
+                                )
+                            }
+                    }
             }
             .onErrorResumeNext { errorHandler.single(it) }
 
@@ -147,7 +155,8 @@ class RecoveringSafeViewModel @Inject constructor(
             .flatMap { safe ->
                 val gasCosts = (safe.txGas + safe.dataGas) * safe.gasPrice
                 // Create a fake token since only the address is necessary to load the balance
-                requestBalance(safe.address,
+                requestBalance(
+                    safe.address,
                     ERC20Token(safe.gasToken, decimals = 0, name = "", symbol = "")
                 )
                     .map { if (it < gasCosts) throw SafeCreationFundViewModel.NotEnoughFundsException() }
