@@ -57,7 +57,7 @@ class ReplaceBrowserExtensionViewModel @Inject constructor(
     override fun getMaxTransactionFee() = ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, (txGas + dataGas) * gasPrice)
 
     override fun observeSafeBalance(): Observable<Result<ERC20TokenWithBalance>> =
-        Observable.interval(5, TimeUnit.SECONDS)
+        Observable.interval(0, SAFE_BALANCE_REQUEST_INTERVAL, SAFE_BALANCE_REQUEST_TIME_UNIT)
             .concatMap { _ ->
                 tokenRepository.loadTokenBalances(safeTransaction.wrapped.address, listOf(ERC20Token.ETHER_TOKEN))
                     .map { tokenBalances ->
@@ -106,4 +106,9 @@ class ReplaceBrowserExtensionViewModel @Inject constructor(
             // TODO: For correctness this should be done when the transaction is mined
             .flatMapCompletable { pushServiceRepository.propagateSafeCreation(safeTransaction.wrapped.address, setOf(newChromeExtension)) }
             .mapToResult()
+
+    companion object {
+        private const val SAFE_BALANCE_REQUEST_INTERVAL = 5L
+        private val SAFE_BALANCE_REQUEST_TIME_UNIT = TimeUnit.SECONDS
+    }
 }
