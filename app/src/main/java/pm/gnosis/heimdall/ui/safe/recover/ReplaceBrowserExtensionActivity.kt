@@ -73,7 +73,7 @@ class ReplaceBrowserExtensionActivity : ViewModelActivity<ReplaceBrowserExtensio
 
         disposables += viewModel.observeSafeBalance()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onNext = ::onSafeBalance, onError = ::onSafeBalanceError)
+            .subscribeForResult(onNext = ::onSafeBalance, onError = ::onSafeBalanceError)
 
         disposables += layout_replace_browser_extension_submit.clicks()
             .flatMapSingle { _ ->
@@ -92,13 +92,16 @@ class ReplaceBrowserExtensionActivity : ViewModelActivity<ReplaceBrowserExtensio
     }
 
     private fun onSafeBalance(safeBalance: ERC20TokenWithBalance) {
-        layout_replace_browser_extension_submit.isEnabled = safeBalance.balance!! >= viewModel.getMaxTransactionFee().balance!! &&
+        val maxTxFee = viewModel.getMaxTransactionFee().balance
+        layout_replace_browser_extension_submit.isEnabled =
+                safeBalance.balance != null && maxTxFee != null &&
+                safeBalance.balance >= maxTxFee &&
                 !submissionInProgress
         layout_replace_browser_extension_safe_balance.text = safeBalance.displayString()
     }
 
     private fun onSafeBalanceError(throwable: Throwable) {
-        Timber.e(throwable)
+        if (throwable !is ReplaceBrowserExtensionContract.NoTokenBalanceException) Timber.e(throwable)
         layout_replace_browser_extension_safe_balance.text = getString(R.string.error_retrieving_safe_balance)
         layout_replace_browser_extension_submit.isEnabled = false
     }

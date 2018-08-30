@@ -23,9 +23,11 @@ abstract class ReplaceBrowserExtensionContract : ViewModel() {
         txHash: ByteArray
     )
 
-    abstract fun observeSafeBalance(): Observable<ERC20TokenWithBalance>
+    abstract fun observeSafeBalance(): Observable<Result<ERC20TokenWithBalance>>
     abstract fun submitTransaction(): Single<Result<Unit>>
     abstract fun getMaxTransactionFee(): ERC20TokenWithBalance
     abstract fun getSafeTransaction(): SafeTransaction
     abstract fun loadSafe(): Single<Safe>
+
+    class NoTokenBalanceException() : Exception()
 }

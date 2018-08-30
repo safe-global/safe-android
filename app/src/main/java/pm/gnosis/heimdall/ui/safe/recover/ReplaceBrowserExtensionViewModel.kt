@@ -12,6 +12,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
@@ -55,16 +56,16 @@ class ReplaceBrowserExtensionViewModel @Inject constructor(
 
     override fun getMaxTransactionFee() = ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, (txGas + dataGas) * gasPrice)
 
-    override fun observeSafeBalance(): Observable<ERC20TokenWithBalance> =
+    override fun observeSafeBalance(): Observable<Result<ERC20TokenWithBalance>> =
         Observable.interval(5, TimeUnit.SECONDS)
             .concatMap { _ ->
                 tokenRepository.loadTokenBalances(safeTransaction.wrapped.address, listOf(ERC20Token.ETHER_TOKEN))
                     .map { tokenBalances ->
-                        if (tokenBalances.size != 1) throw IllegalStateException("Should have a token balance")
+                        if (tokenBalances.size != 1) throw NoTokenBalanceException()
                         tokenBalances[0].let { ERC20TokenWithBalance(it.first, it.second) }
                     }
+                    .mapToResult()
             }
-            .retry()
 
     override fun getSafeTransaction() = safeTransaction
 
