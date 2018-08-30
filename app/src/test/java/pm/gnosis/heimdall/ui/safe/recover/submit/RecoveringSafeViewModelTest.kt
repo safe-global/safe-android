@@ -38,6 +38,7 @@ import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.hexStringToByteArray
 import java.math.BigInteger
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -504,16 +505,24 @@ class RecoveringSafeViewModelTest {
             TEST_SAFE, null, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
             BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
         )
+        given(execRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
+            .willReturn(Single.just(TEST_TX_HASH.hexStringToByteArray()))
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
-        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.error(UnknownHostException()))
+        given(execRepoMock.loadSafeExecuteState(MockUtils.any())).willReturn(Single.error(UnknownHostException()))
 
         val observer = TestObserver<TransactionExecutionRepository.ExecuteInformation>()
         viewModel.loadRecoveryExecuteInfo(TEST_SAFE).subscribe(observer)
         observer.assertFailure(Predicate { it == SimpleLocalizedException(R.string.error_check_internet_connection.toString()) })
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        val recoverTx = SafeTransaction(Transaction(TEST_SAFE, data = "", nonce = BigInteger.ZERO), TransactionExecutionRepository.Operation.CALL)
-        then(execRepoMock).should().loadExecuteInformation(TEST_SAFE, recoverTx)
+        val recoverTx = SafeTransaction(
+            Transaction(
+                TEST_SAFE, data = "", nonce =
+                BigInteger.ZERO
+            ), TransactionExecutionRepository.Operation.CALL
+        )
+        then(execRepoMock).should().calculateHash(TEST_SAFE, recoverTx, safe.txGas, safe.dataGas, safe.gasPrice)
+        then(execRepoMock).should().loadSafeExecuteState(TEST_SAFE)
         then(execRepoMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.error_check_internet_connection)
         then(contextMock).shouldHaveZeroInteractions()
@@ -530,19 +539,32 @@ class RecoveringSafeViewModelTest {
             TEST_SAFE, null, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
             BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
         )
+        given(execRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
+            .willReturn(Single.just(TEST_TX_HASH.hexStringToByteArray()))
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
-        val recoverTx = SafeTransaction(Transaction(TEST_SAFE, data = "", nonce = BigInteger.ZERO), TransactionExecutionRepository.Operation.CALL)
+        val recoverTx = SafeTransaction(Transaction(safe.address, data = safe.data, nonce = safe.nonce), TransactionExecutionRepository.Operation.CALL)
         val info = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, Wei.ZERO
+            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), safe.gasPrice, safe.txGas, safe.dataGas, Wei.ZERO
         )
-        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
+        given(execRepoMock.loadSafeExecuteState(MockUtils.any())).willReturn(
+            Single.just(
+                TransactionExecutionRepository.SafeExecuteState(
+                    info.sender,
+                    info.requiredConfirmation,
+                    info.owners,
+                    recoverTx.wrapped.nonce!!,
+                    info.balance
+                )
+            )
+        )
 
         val observer = TestObserver<TransactionExecutionRepository.ExecuteInformation>()
         viewModel.loadRecoveryExecuteInfo(TEST_SAFE).subscribe(observer)
         observer.assertResult(info)
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(execRepoMock).should().loadExecuteInformation(TEST_SAFE, recoverTx)
+        then(execRepoMock).should().calculateHash(TEST_SAFE, recoverTx, safe.txGas, safe.dataGas, safe.gasPrice)
+        then(execRepoMock).should().loadSafeExecuteState(TEST_SAFE)
         then(execRepoMock).shouldHaveNoMoreInteractions()
         // No error message mapping
         then(contextMock).shouldHaveZeroInteractions()

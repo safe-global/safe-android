@@ -38,8 +38,10 @@ import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.ZxingQrCodeGenerator
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.FingerprintHelper
+import pm.gnosis.svalinn.security.KeyStorage
 import pm.gnosis.svalinn.security.impls.AesEncryptionManager
 import pm.gnosis.svalinn.security.impls.AndroidFingerprintHelper
+import pm.gnosis.svalinn.security.impls.AndroidKeyStorage
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -185,12 +187,19 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
+    fun providesKeyStorage(@ApplicationContext context: Context): KeyStorage =
+        AndroidKeyStorage(context)
+
+    @Provides
+    @Singleton
     fun providesEncryptionManager(
         application: Application,
         preferencesManager: PreferencesManager,
-        fingerprintHelper: FingerprintHelper
+        fingerprintHelper: FingerprintHelper,
+        keyStorage: KeyStorage
     ): EncryptionManager =
-        AesEncryptionManager(application, preferencesManager, fingerprintHelper)
+        // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
+        AesEncryptionManager(application, preferencesManager, fingerprintHelper, keyStorage, 4096)
 
     @Provides
     @Singleton
