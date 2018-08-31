@@ -31,6 +31,7 @@ import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.utils.asEthereumAddress
 import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
@@ -117,6 +118,8 @@ class ReplaceBrowserExtensionViewModelTest {
         then(tokenRepositoryMock).should(times(3)).loadTokenBalances(safeAddress, token)
         testObserver.assertValueAt(2, DataResult(tokenBalance))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+
+        testObserver.assertValueCount(3)
     }
 
     @Test
@@ -195,18 +198,9 @@ class ReplaceBrowserExtensionViewModelTest {
             )
         ).willReturn(Single.just(TX_HASH))
 
-        given(
-            accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())
-        ).willAnswer { invocationOnMock ->
-            Single.fromCallable {
-                val signature = invocationOnMock.arguments[1] as Signature
-                when (signature) {
-                    SIGNATURE_1 -> 10.toBigInteger().let { Solidity.Address(it) }
-                    SIGNATURE_2 -> 20.toBigInteger().let { Solidity.Address(it) }
-                    else -> throw IllegalStateException()
-                }
-            }
-        }
+
+        given(accountsRepositoryMock.recover(TX_HASH, SIGNATURE_1)).willReturn(Single.just("0x0a".asEthereumAddress()))
+        given(accountsRepositoryMock.recover(TX_HASH, SIGNATURE_2)).willReturn(Single.just("0x14".asEthereumAddress()))
 
         given(
             transactionExecutionRepositoryMock.submit(
@@ -263,18 +257,8 @@ class ReplaceBrowserExtensionViewModelTest {
             )
         ).willReturn(Single.just(TX_HASH))
 
-        given(
-            accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())
-        ).willAnswer { invocationOnMock ->
-            Single.fromCallable {
-                val signature = invocationOnMock.arguments[1] as Signature
-                when (signature) {
-                    SIGNATURE_1 -> 10.toBigInteger().let { Solidity.Address(it) }
-                    SIGNATURE_2 -> 20.toBigInteger().let { Solidity.Address(it) }
-                    else -> throw IllegalStateException()
-                }
-            }
-        }
+        given(accountsRepositoryMock.recover(TX_HASH, SIGNATURE_1)).willReturn(Single.just("0x0a".asEthereumAddress()))
+        given(accountsRepositoryMock.recover(TX_HASH, SIGNATURE_2)).willReturn(Single.just("0x14".asEthereumAddress()))
 
         given(
             transactionExecutionRepositoryMock.submit(
@@ -313,7 +297,7 @@ class ReplaceBrowserExtensionViewModelTest {
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
 
-        testObserver.assertValue { it is ErrorResult && it.error == exception }
+        testObserver.assertResult(DataResult(Unit))
     }
 
     @Test
@@ -331,18 +315,8 @@ class ReplaceBrowserExtensionViewModelTest {
             )
         ).willReturn(Single.just(TX_HASH))
 
-        given(
-            accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())
-        ).willAnswer { invocationOnMock ->
-            Single.fromCallable {
-                val signature = invocationOnMock.arguments[1] as Signature
-                when (signature) {
-                    SIGNATURE_1 -> 10.toBigInteger().let { Solidity.Address(it) }
-                    SIGNATURE_2 -> 20.toBigInteger().let { Solidity.Address(it) }
-                    else -> throw IllegalStateException()
-                }
-            }
-        }
+        given(accountsRepositoryMock.recover(TX_HASH, SIGNATURE_1)).willReturn(Single.just("0x0a".asEthereumAddress()))
+        given(accountsRepositoryMock.recover(TX_HASH, SIGNATURE_2)).willReturn(Single.just("0x14".asEthereumAddress()))
 
         given(
             transactionExecutionRepositoryMock.submit(
@@ -395,19 +369,9 @@ class ReplaceBrowserExtensionViewModelTest {
                 MockUtils.any()
             )
         ).willReturn(Single.just(TX_HASH))
-
-        given(
-            accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())
-        ).willAnswer { invocationOnMock ->
-            Single.fromCallable {
-                val signature = invocationOnMock.arguments[1] as Signature
-                when (signature) {
-                    SIGNATURE_1 -> 10.toBigInteger().let { Solidity.Address(it) }
-                    SIGNATURE_2 -> throw exception
-                    else -> throw IllegalStateException()
-                }
-            }
-        }
+        
+        given(accountsRepositoryMock.recover(TX_HASH, SIGNATURE_1)).willReturn(Single.just("0x0a".asEthereumAddress()))
+        given(accountsRepositoryMock.recover(TX_HASH, SIGNATURE_2)).willReturn(Single.error(exception))
 
         viewModel.setup(SAFE_TRANSACTION, SIGNATURE_1, SIGNATURE_2, TX_GAS, DATA_GAS, GAS_PRICE, NEW_CHROME_EXTENSION_ADDRESS, TX_HASH)
         viewModel.submitTransaction().subscribe(testObserver)

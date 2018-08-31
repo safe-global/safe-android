@@ -104,7 +104,9 @@ class ReplaceBrowserExtensionViewModel @Inject constructor(
                 )
             }
             // TODO: For correctness this should be done when the transaction is mined
-            .flatMapCompletable { pushServiceRepository.propagateSafeCreation(safeTransaction.wrapped.address, setOf(newChromeExtension)) }
+            .flatMapCompletable {
+                pushServiceRepository.propagateSafeCreation(safeTransaction.wrapped.address, setOf(newChromeExtension)).onErrorComplete()
+            }
             .mapToResult()
 
     companion object {
