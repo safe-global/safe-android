@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/layout_replace_browser_extension_info_safe_image"
+        android:layout_width="@dimen/info_blockies"
+        android:layout_height="@dimen/info_blockies"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@drawable/circle_settings" />
+
+    <TextView
+        android:id="@+id/layout_replace_browser_extension_info_safe_name"
+        style="@style/DarkText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/layout_replace_browser_extension_info_safe_address"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_replace_browser_extension_info_safe_image"
+        app:layout_constraintTop_toTopOf="@+id/layout_replace_browser_extension_info_safe_image"
+        tools:text="My Safe" />
+
+    <TextView
+        android:id="@+id/layout_replace_browser_extension_info_safe_address"
+        style="@style/LightText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_replace_browser_extension_info_safe_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_replace_browser_extension_info_safe_image"
+        app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_info_safe_name"
+        tools:text="0xf151...aE3910" />
+
+    <TextView
+        android:id="@+id/layout_replace_browser_extension_info_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:text="@string/replace_browser_extension"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_info_safe_address" />
+
+    <android.support.constraint.Barrier
+        android:id="@+id/layout_replace_browser_extension_info_content_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="layout_replace_browser_extension_info_action" />
+
+    <ImageView
+        android:id="@+id/layout_replace_browser_extension_info_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9dp"
+        android:src="@drawable/ic_tx_arrow_down"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_replace_browser_extension_info_divider"
+        app:layout_constraintEnd_toStartOf="@+id/layout_replace_browser_extension_info_divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/layout_replace_browser_extension_info_divider" />
+
+    <View
+        android:id="@+id/layout_replace_browser_extension_info_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:background="@color/divider"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_replace_browser_extension_info_action"
+        app:layout_constraintEnd_toStartOf="@+id/layout_replace_browser_extension_info_action"
+        app:layout_constraintStart_toEndOf="@+id/layout_replace_browser_extension_info_arrow"
+        app:layout_constraintTop_toTopOf="@+id/layout_replace_browser_extension_info_action" />
+
+
+    <android.support.constraint.Barrier
+        android:id="@+id/layout_replace_browser_extension_info_description_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="layout_replace_browser_extension_info_action,layout_replace_browser_extension_info_divider,layout_replace_browser_extension_info_arrow" />
+
+    <TextView
+        android:id="@+id/layout_replace_browser_extension_info_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:lineSpacingExtra="3sp"
+        android:text="@string/replace_browser_extension_transaction_info"
+        android:textColor="@color/battleship_grey"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_info_description_barrier" />
+</android.support.constraint.ConstraintLayout>

@@ -11,10 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/layout_input_recovery_phrase_content_scroll"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/layout_input_recovery_phrase_next"
             app:layout_constraintEnd_toEndOf="parent"
@@ -122,7 +121,7 @@
         <TextView
             android:id="@+id/layout_input_recovery_phrase_next"
             style="@style/PrimaryButton.Blue.FullWidth"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="46dp"
             android:drawablePadding="8dp"
             android:enabled="false"
@@ -131,6 +130,8 @@
             android:text="@string/continue_text"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:drawableEnd="@drawable/ic_arrow_forward_24dp" />
 
     </android.support.constraint.ConstraintLayout>

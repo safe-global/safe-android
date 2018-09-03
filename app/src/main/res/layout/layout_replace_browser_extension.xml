@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_replace_browser_extension_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/layout_replace_browser_extension_submit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_toolbar_background">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include
+                    android:id="@+id/layout_replace_browser_extension_info"
+                    layout="@layout/layout_replace_browser_extension_info"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintBottom_toTopOf="@+id/layout_replace_browser_extension_divider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/layout_replace_browser_extension_divider"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/divider_width"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/divider"
+                    app:layout_constraintBottom_toTopOf="@+id/layout_replace_browser_extension_safe_balance_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_info" />
+
+                <TextView
+                    android:id="@+id/layout_replace_browser_extension_safe_balance_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/safe_balance"
+                    android:textColor="@color/battleship_grey"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_divider" />
+
+                <TextView
+                    android:id="@+id/layout_replace_browser_extension_safe_balance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:gravity="end"
+                    android:text="-"
+                    android:textColor="@color/battleship_grey"
+                    android:textSize="13sp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/layout_replace_browser_extension_safe_balance_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_replace_browser_extension_safe_balance_label"
+                    tools:text="94.32234 ETH" />
+
+                <android.support.constraint.Barrier
+                    android:id="@+id/layout_replace_browser_extension_info_balance_barrier"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="layout_replace_browser_extension_safe_balance_label,layout_replace_browser_extension_safe_balance"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/layout_replace_browser_extension_max_transaction_fee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/estimated_transaction_fee"
+                    android:textColor="@color/battleship_grey"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="@+id/layout_replace_browser_extension_safe_balance_label"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_info_balance_barrier" />
+
+                <TextView
+                    android:id="@+id/layout_replace_browser_extension_fee"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:gravity="end"
+                    android:textColor="@color/tomato"
+                    android:textSize="13sp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/layout_replace_browser_extension_max_transaction_fee"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_replace_browser_extension_max_transaction_fee"
+                    tools:text="-0.00001 ETH" />
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <View
+            android:id="@+id/layout_replace_browser_extension_toolbar_background"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/layout_replace_browser_extension_back_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@drawable/selectable_circle_background"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_replace_browser_extension_toolbar_background"
+            app:layout_constraintStart_toStartOf="@+id/layout_replace_browser_extension_toolbar_background"
+            app:layout_constraintTop_toTopOf="@+id/layout_replace_browser_extension_toolbar_background"
+            app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center_vertical"
+            android:text="@string/review_transaction"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_replace_browser_extension_toolbar_background"
+            app:layout_constraintEnd_toEndOf="@+id/layout_replace_browser_extension_toolbar_background"
+            app:layout_constraintStart_toEndOf="@+id/layout_replace_browser_extension_back_arrow"
+            app:layout_constraintTop_toTopOf="@+id/layout_replace_browser_extension_toolbar_background" />
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/layout_replace_browser_extension_progress"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_toolbar_background"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_useIntrinsicPadding="false"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/layout_replace_browser_extension_submit"
+            style="@style/PrimaryButton.Blue.FullWidth"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/primary_button_height"
+            android:enabled="false"
+            android:text="@string/submit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:enabled="true" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/toolbar_shadow_size"
+            android:background="@drawable/toolbar_dropshadow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_toolbar_background" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.design.widget.CoordinatorLayout>
