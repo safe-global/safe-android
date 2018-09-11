@@ -57,7 +57,7 @@ class UnlockDialog() : BaseDialog() {
         super.onCreate(savedInstanceState)
 
         DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[context!!].component)
+            .applicationComponent(HeimdallApplication[context!!])
             .viewModule(ViewModule(context!!))
             .build().inject(this)
     }

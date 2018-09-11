@@ -18,7 +18,7 @@ class HeimdallFirebaseService : FirebaseMessagingService() {
 
     override fun onCreate() {
         super.onCreate()
-        HeimdallApplication[this].component.inject(this)
+        HeimdallApplication[this].inject(this)
     }
 
     override fun onDestroy() {
