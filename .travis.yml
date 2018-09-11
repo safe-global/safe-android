@@ -19,6 +19,8 @@ android:
 
     - extra-android-m2repository
 
+    - sys-img-armeabi-v7a-android-22
+
 cache:
   directories:
     - $HOME/.gradle/caches/
@@ -40,17 +42,11 @@ before_install:
   - echo "8933bad161af4178b1185d1a37fbf41ea5269c55" >> "$ANDROID_HOME/licenses/android-sdk-license"
   - echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> "$ANDROID_HOME/licenses/android-sdk-license"
 
-  # Install the rest of tools (e.g., avdmanager)
-  - sdkmanager tools
-  # Install the system image
-  - sdkmanager "system-images;android-26;default;armeabi-v7a"
-  # Create and start emulator for the script. Meant to race the install task.
-  - echo no | avdmanager create avd --force -n test -k "system-images;android-26;default;armeabi-v7a"
-  - $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window &
-
 before_script:
+  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
-  - adb shell input keyevent 82
+  - adb shell input keyevent 82 &
 
 script:
   - . ./ci/prepare_env.sh
