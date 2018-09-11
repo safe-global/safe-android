@@ -1,7 +1,7 @@
 package pm.gnosis.tests
 
-import org.mockito.BDDMockito
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.mock
 import org.mockito.Mockito
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.reporting.EventTracker
@@ -10,9 +10,9 @@ import pm.gnosis.svalinn.security.EncryptionManager
 
 abstract class BaseUiTest {
 
-    protected val eventTrackerMock = BDDMockito.mock(EventTracker::class.java)
+    protected val eventTrackerMock = mock(EventTracker::class.java)
 
-    protected val encryptionManagerMock = BDDMockito.mock(EncryptionManager::class.java)
+    protected val encryptionManagerMock = mock(EncryptionManager::class.java)
 
     protected fun setupBaseInjects(): ApplicationComponent =
         TestApplication.mockComponent().apply {

@@ -22,8 +22,6 @@ open class TestApplication : MultiDexApplication(), ComponentProvider {
     override fun onCreate() {
         super.onCreate()
 
-        Timber.d("######## BlaBla")
-
         try {
             LinuxSecureRandom()
         } catch (e: Exception) {

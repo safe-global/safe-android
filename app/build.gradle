@@ -16,6 +16,7 @@ android {
         versionCode getInt("APP_VERSION_CODE", 703)
         versionName getKey("APP_VERSION_NAME", "0.4.2-alpha")
         testInstrumentationRunner "pm.gnosis.tests.MockTestRunner"
+        multiDexKeepProguard file('multidex-rules.pro')
 
         // External Link
         buildConfigField javaTypes.STRING, "CHROME_EXTENSION_URL", asString(getKey("CHROME_EXTENSION_URL", "https://safe.gnosis.io/#personal"))
