@@ -8,5 +8,6 @@ abstract class SplashContract : ViewModel() {
 }
 
 sealed class ViewAction
-class StartMain : ViewAction()
-class StartPasswordSetup : ViewAction()
+object StartMain : ViewAction()
+object StartPasswordSetup : ViewAction()
+object StartUnlock : ViewAction()

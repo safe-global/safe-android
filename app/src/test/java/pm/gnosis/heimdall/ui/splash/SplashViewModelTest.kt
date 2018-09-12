@@ -31,26 +31,42 @@ class SplashViewModelTest {
     @Mock
     private lateinit var encryptionManagerMock: EncryptionManager
 
-    @Mock
-    private lateinit var tokenRepositoryMock: TokenRepository
-
     private lateinit var viewModel: SplashViewModel
 
     @Before
     fun setup() {
-        viewModel = SplashViewModel(accountsRepositoryMock, encryptionManagerMock, tokenRepositoryMock)
+        viewModel = SplashViewModel(accountsRepositoryMock, encryptionManagerMock)
     }
 
     @Test
-    fun initialSetupTokenSetupErrorWithAccount() {
+    fun initialSetupWithPasswordAndAccountLocked() {
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
+        given(encryptionManagerMock.unlocked()).willReturn(Single.just(false))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(Solidity.Address(BigInteger.ONE))))
         val observer = TestObserver.create<ViewAction>()
 
         viewModel.initialSetup().subscribe(observer)
 
-        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
+        then(encryptionManagerMock).should().unlocked()
+        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
+        then(accountsRepositoryMock).should().loadActiveAccount()
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        observer.assertNoErrors().assertTerminated()
+            .assertValueCount(1).assertValue { it is StartUnlock }
+    }
+
+    @Test
+    fun initialSetupWithPasswordAndAccountUnlocked() {
+        given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
+        given(encryptionManagerMock.unlocked()).willReturn(Single.just(true))
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(Solidity.Address(BigInteger.ONE))))
+        val observer = TestObserver.create<ViewAction>()
+
+        viewModel.initialSetup().subscribe(observer)
+
+        then(encryptionManagerMock).should().initialized()
+        then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -59,14 +75,13 @@ class SplashViewModelTest {
     }
 
     @Test
-    fun initialSetupTokenSetupErrorNoAccountNoSuchElement() {
+    fun initialSetupNoAccount() {
         val observerNoSuchElement = TestObserver.create<ViewAction>()
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(NoSuchElementException()))
 
         viewModel.initialSetup().subscribe(observerNoSuchElement)
 
-        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).should().loadActiveAccount()
@@ -76,14 +91,13 @@ class SplashViewModelTest {
     }
 
     @Test
-    fun initialSetupTokenSetupErrorNoAccountEmptyResultSet() {
+    fun initialSetupNoAccountEmptyResultSet() {
         val observerEmptyResult = TestObserver.create<ViewAction>()
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(EmptyResultSetException("")))
 
         viewModel.initialSetup().subscribe(observerEmptyResult)
 
-        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).should().loadActiveAccount()
@@ -93,32 +107,34 @@ class SplashViewModelTest {
     }
 
     @Test
-    fun initialSetupTokenSetupErrorAccountError() {
+    fun initialSetupAccountErrorLocked() {
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(IllegalStateException()))
+        given(encryptionManagerMock.unlocked()).willReturn(Single.just(false))
         val observer = TestObserver.create<ViewAction>()
 
         viewModel.initialSetup().subscribe(observer)
 
-        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
+        then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertTerminated()
-            .assertValueCount(1).assertValue { it is StartMain }
+            .assertValueCount(1).assertValue { it is StartUnlock }
     }
 
     @Test
-    fun initialSetupTokenSetupCompletedWithAccount() {
+    fun initialSetupAccountErrorUnlocked() {
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(Solidity.Address(BigInteger.ONE))))
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(IllegalStateException()))
+        given(encryptionManagerMock.unlocked()).willReturn(Single.just(true))
         val observer = TestObserver.create<ViewAction>()
 
         viewModel.initialSetup().subscribe(observer)
 
-        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
+        then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -127,53 +143,34 @@ class SplashViewModelTest {
     }
 
     @Test
-    fun initialSetupTokenSetupCompletedNoAccountNoSuchElement() {
+    fun initialSetupAccountsErrorUnlockError() {
         val observerNoSuchElement = TestObserver.create<ViewAction>()
         given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(NoSuchElementException()))
+        given(encryptionManagerMock.unlocked()).willReturn(Single.error(IllegalStateException()))
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(IllegalStateException()))
 
         viewModel.initialSetup().subscribe(observerNoSuchElement)
 
-        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
+        then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).should().loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         observerNoSuchElement.assertNoErrors().assertTerminated()
-            .assertValueCount(1).assertValue { it is StartPasswordSetup }
+            .assertValueCount(1).assertValue { it is StartUnlock }
     }
 
     @Test
-    fun initialSetupTokenSetupCompletedNoAccountEmptyResultSet() {
-        val observerEmptyResult = TestObserver.create<ViewAction>()
-        given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(EmptyResultSetException("")))
-
-        viewModel.initialSetup().subscribe(observerEmptyResult)
-
-        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
-        then(encryptionManagerMock).should().initialized()
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).should().loadActiveAccount()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-        observerEmptyResult.assertNoErrors().assertTerminated()
-            .assertValueCount(1).assertValue { it is StartPasswordSetup }
-    }
-
-    @Test
-    fun initialSetupTokenSetupCompletedAccountError() {
-        given(encryptionManagerMock.initialized()).willReturn(Single.just(true))
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error<Account>(IllegalStateException()))
+    fun initialSetupNotInitialized() {
+        given(encryptionManagerMock.initialized()).willReturn(Single.just(false))
         val observer = TestObserver.create<ViewAction>()
 
         viewModel.initialSetup().subscribe(observer)
 
-        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(encryptionManagerMock).should().initialized()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).should().loadActiveAccount()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         observer.assertNoErrors().assertTerminated()
-            .assertValueCount(1).assertValue { it is StartMain }
+            .assertValueCount(1).assertValue { it is StartPasswordSetup }
     }
 }

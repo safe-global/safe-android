@@ -10,8 +10,7 @@ import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
     private val accountsRepository: AccountsRepository,
-    private val encryptionManager: EncryptionManager,
-    private val tokenRepository: TokenRepository
+    private val encryptionManager: EncryptionManager
 ) : SplashContract() {
     companion object {
         const val LAUNCH_DELAY = 500L
@@ -21,7 +20,7 @@ class SplashViewModel @Inject constructor(
         return encryptionManager.initialized()
             .flatMap { isEncryptionInitialized ->
                 if (isEncryptionInitialized) checkAccount()
-                else Single.just(StartPasswordSetup())
+                else Single.just(StartPasswordSetup)
             }
             // We need a short delay to avoid weird flickering
             .delay(LAUNCH_DELAY, TimeUnit.MILLISECONDS)
@@ -29,13 +28,20 @@ class SplashViewModel @Inject constructor(
 
     private fun checkAccount(): Single<ViewAction> =
         accountsRepository.loadActiveAccount()
-            .map { StartMain() as ViewAction }
-            .onErrorReturn {
+            .flatMap { checkUnlocked() }
+            .onErrorResumeNext {
                 when (it) {
                     is EmptyResultSetException, is NoSuchElementException ->
-                        StartPasswordSetup()
+                        Single.just(StartPasswordSetup)
                     else ->
-                        StartMain()
+                        checkUnlocked()
                 }
             }
+
+    private fun checkUnlocked(): Single<ViewAction> =
+            encryptionManager.unlocked()
+                .map {
+                    if (it) StartMain else StartUnlock
+                }
+                .onErrorReturnItem(StartUnlock)
 }
