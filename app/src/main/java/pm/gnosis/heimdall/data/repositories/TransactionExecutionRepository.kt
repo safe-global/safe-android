@@ -116,13 +116,14 @@ interface TransactionExecutionRepository {
     }
 
     enum class Operation {
-        CALL, DELEGATE_CALL;
+        CALL, DELEGATE_CALL, CREATE;
 
         companion object {
             fun fromInt(value: Int): Operation =
                 when (value) {
                     OPERATION_INT_CALL -> CALL
                     OPERATION_INT_DELEGATE_CALL -> DELEGATE_CALL
+                    OPERATION_INT_CREATE -> CREATE
                     else -> throw IllegalArgumentException()
                 }
         }
@@ -131,6 +132,7 @@ interface TransactionExecutionRepository {
     companion object {
         const val OPERATION_INT_CALL = 0
         const val OPERATION_INT_DELEGATE_CALL = 1
+        const val OPERATION_INT_CREATE = 2
     }
 }
 
@@ -138,4 +140,5 @@ fun TransactionExecutionRepository.Operation.toInt() =
     when (this) {
         TransactionExecutionRepository.Operation.CALL -> TransactionExecutionRepository.OPERATION_INT_CALL
         TransactionExecutionRepository.Operation.DELEGATE_CALL -> TransactionExecutionRepository.OPERATION_INT_DELEGATE_CALL
+        TransactionExecutionRepository.Operation.CREATE -> TransactionExecutionRepository.OPERATION_INT_CREATE
     }

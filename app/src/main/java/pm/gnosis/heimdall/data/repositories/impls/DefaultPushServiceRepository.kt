@@ -154,6 +154,7 @@ class DefaultPushServiceRepository @Inject constructor(
                 dataGas = dataGas.asDecimalString(),
                 gasPrice = gasPrice.asDecimalString(),
                 gasToken = "0",
+                refundReceiver = "0",
                 nonce = transaction.wrapped.nonce?.asDecimalString() ?: "0"
             )
         }

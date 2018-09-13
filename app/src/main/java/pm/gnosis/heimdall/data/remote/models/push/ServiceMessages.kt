@@ -22,6 +22,7 @@ sealed class ServiceMessage {
         @Json(name = "dataGas") val dataGas: String,
         @Json(name = "gasPrice") val gasPrice: String,
         @Json(name = "gasToken") val gasToken: String,
+        @Json(name = "refundReceiver") val refundReceiver: String,
         @Json(name = "nonce") val nonce: String,
         @Json(name = "type") val type: String = "requestConfirmation" // Workaround since moshi is not parsing parent or non-constructor fields
     ) : ServiceMessage()

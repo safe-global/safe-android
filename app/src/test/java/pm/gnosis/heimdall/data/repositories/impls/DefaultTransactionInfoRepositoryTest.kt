@@ -11,7 +11,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.ERC20Contract
-import pm.gnosis.heimdall.GnosisSafePersonalEdition
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
@@ -62,7 +62,7 @@ class DefaultTransactionInfoRepositoryTest {
                                 SafeTransaction(
                                     Transaction(
                                         address = "0x0".asEthereumAddress()!!,
-                                        data = GnosisSafePersonalEdition.ChangeThreshold.encode(Solidity.UInt8(BigInteger.ONE))
+                                        data = GnosisSafe.ChangeThreshold.encode(Solidity.UInt256(BigInteger.ONE))
                                     ), CALL
                                 )
                             )
@@ -73,7 +73,7 @@ class DefaultTransactionInfoRepositoryTest {
                                 SafeTransaction(
                                     Transaction(
                                         address = "0x0".asEthereumAddress()!!,
-                                        data = GnosisSafePersonalEdition.ChangeMasterCopy.encode("0x1".asEthereumAddress()!!)
+                                        data = GnosisSafe.ChangeMasterCopy.encode("0x1".asEthereumAddress()!!)
                                     ), CALL
                                 )
                             )
@@ -84,16 +84,16 @@ class DefaultTransactionInfoRepositoryTest {
                                 SafeTransaction(
                                     Transaction(
                                         address = "0x0".asEthereumAddress()!!,
-                                        data = GnosisSafePersonalEdition.AddOwnerWithThreshold.encode(
+                                        data = GnosisSafe.AddOwnerWithThreshold.encode(
                                             "0x1".asEthereumAddress()!!,
-                                            Solidity.UInt8(BigInteger.ZERO)
+                                            Solidity.UInt256(BigInteger.ZERO)
                                         )
                                     ), CALL
                                 ),
                                 SafeTransaction(
                                     Transaction(
                                         address = "0x0".asEthereumAddress()!!,
-                                        data = GnosisSafePersonalEdition.SwapOwner.encode(
+                                        data = GnosisSafe.SwapOwner.encode(
                                             "0x1".asEthereumAddress()!!,
                                             "0x2".asEthereumAddress()!!,
                                             "0x3".asEthereumAddress()!!
@@ -103,10 +103,10 @@ class DefaultTransactionInfoRepositoryTest {
                                 SafeTransaction(
                                     Transaction(
                                         address = "0x0".asEthereumAddress()!!,
-                                        data = GnosisSafePersonalEdition.RemoveOwner.encode(
+                                        data = GnosisSafe.RemoveOwner.encode(
                                             "0x1".asEthereumAddress()!!,
                                             "0x2".asEthereumAddress()!!,
-                                            Solidity.UInt8(BigInteger.ZERO)
+                                            Solidity.UInt256(BigInteger.ZERO)
                                         )
                                     ), CALL
                                 )
@@ -118,7 +118,7 @@ class DefaultTransactionInfoRepositoryTest {
                                 SafeTransaction(
                                     Transaction(
                                         address = "0x0".asEthereumAddress()!!,
-                                        data = GnosisSafePersonalEdition.EnableModule.encode(
+                                        data = GnosisSafe.EnableModule.encode(
                                             "0x1".asEthereumAddress()!!
                                         )
                                     ), CALL
@@ -126,7 +126,7 @@ class DefaultTransactionInfoRepositoryTest {
                                 SafeTransaction(
                                     Transaction(
                                         address = "0x0".asEthereumAddress()!!,
-                                        data = GnosisSafePersonalEdition.DisableModule.encode(
+                                        data = GnosisSafe.DisableModule.encode(
                                             "0x1".asEthereumAddress()!!,
                                             "0x2".asEthereumAddress()!!
                                         )
