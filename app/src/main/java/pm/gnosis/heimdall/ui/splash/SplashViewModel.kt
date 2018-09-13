@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.ui.splash
 
 import android.arch.persistence.room.EmptyResultSetException
 import io.reactivex.Single
-import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.security.EncryptionManager
 import java.util.concurrent.TimeUnit
