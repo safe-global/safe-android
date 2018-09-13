@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.onboarding.OnboardingIntroActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
+import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.svalinn.common.utils.startActivity
 import timber.log.Timber
 import javax.inject.Inject
@@ -43,12 +44,17 @@ class SplashActivity : BaseActivity() {
     private fun handleAction(action: ViewAction) {
         when (action) {
             is StartMain -> startMain()
+            is StartUnlock -> startUnlock()
             is StartPasswordSetup -> startPasswordSetup()
         }
     }
 
     private fun startMain() {
         startActivity(SafeMainActivity.createIntent(this).apply { addFlags(FLAG_ACTIVITY_NO_ANIMATION) }, clearStack = true)
+    }
+
+    private fun startUnlock() {
+        startActivity(UnlockActivity.createIntent(this))
     }
 
     private fun startPasswordSetup() {
