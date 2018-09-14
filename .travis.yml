@@ -1,5 +1,4 @@
 language: android
-os: osx
 
 env:
   global:
