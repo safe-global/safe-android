@@ -50,7 +50,7 @@ before_install:
   - sdkmanager "system-images;android-21;google_apis;armeabi-v7a"
   # Create and start emulator for the script. Meant to race the install task.
   - echo no | avdmanager create avd --force -n test -k "system-images;android-21;google_apis;armeabi-v7a"
-  - $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window &
+  - $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -no-skin -no-boot-anim &
 
 script:
   - . ./ci/prepare_env.sh
