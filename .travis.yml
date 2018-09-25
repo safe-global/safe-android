@@ -4,7 +4,6 @@ sudo: false
 
 env:
   global:
-    - ADB_INSTALL_TIMEOUT=8
     - secure: "jjkUBOfMEs4AA/F/4NlQj0G67t3WW98NP6RQ27rNSlfE0kyrWnVGNkNZAOauavJ/0JMB1ErmYEi5fGm+9GbXm+CWleUNEmUxHlhubwVtFk8sj5SbOs0xp9fpxk65sLif0zRT3d/3eol1zofpoXASB0WtmrNr4mbMXVSA5JXyM2goqD2Qk2ABk/leE+hxODLAkUhc9roCYslst7IhtZcU55kwx25w0LOaXwtSJfrt51l2OtLv1edcifSSU7JUJRlirvUAX7cpvn/8Jb0lgNzuoXFSsrMja9uXyHJxRa5fNGNM5SgLuZC6jw7FBuEKj2sGUL1OdrOXDi8qZoEOtEvMNTe+qORr+He3Ecq8Bg3ZAF0ZisJ6YETT/Kr7ixySHdsK+xqTvB2yx0QQbPcrACSbqtBiOigyVYaWOz0WFMbnF5aIkGBwUusPPWYmQCn28nSPkvAQsrOyGWBPvnU7zZCFbDaQTVb66TKtM2FT5c3XbsVKuwbJG1K+HdnFfoz+ZxK8En40718+ghRK06mij4iSMnSBqZ8g3cTZXZ6tDE7qpzDFXynIThZE2RtKhGwuC4Cpjl/cZauN0sdBn1FfXtCA8nF04oICltNz0bz+rZjgLAeknIx32P2q4f+g5F1kObBECjfum6StZ9JkdJiTb93bAbqtSDgScexTuAV4cs9KtmE="
     - secure: "P1ckY6Qafvzvilw0ORiHzmzdDfw+wFxg4PW6/0+kKuaVoM9dbYQuVP5zNHOQXJCAJXAU79mLAePenrv5b65p9UJSNnjJz3yjAj5rKcF+Ynu3qhxSNp4BRQF+KpXBrr1Hz5yHGxA5P9p7Yk11TstU9l2vvQO4TRJYq33gqUfr66wFJRQpT6TMzdrgXn55YX+2/aQM/9dEhDDA3PMnn1haHseMb9wiyrQ9aYYcbcptXNoZnf4i0uzFvuZFLtSxkk/32PPT0r7rZN5jiZd0WmEgZ8cg+BqItNMGOvFxa9U1+NtP6aOMv8fvJTYQAsWj+vtKaNCIcLrr+njKPxAJ4TomwN6CBJgaFGxH+xtGlQw/HtLxrKCWCPEJpZdCGb6iR2x/cS6Juhm7CnrrLDXC68x7aSkaiGQQPqu2cYtahEm3niuBbfYSubVqPqNcQQxcpjftXemlUszlWBSRmkJL7DvUI74djaICz8L6UCNzl4eRsGPztejtp3OJS3/IHYVK0udyKCJfGbyDWFRCiPCkkfhHeJarea/2zzlMCnYx3ZgAiyMD3H6vfmC7S5YdA0Y8KKDQYycQ5+VHq02LoFjycT7k/zvUmidB0umqNfgd2qK4Dz41BU6fjjB/1N3qP3MGlRS8Mg0a68j3hOihbZw21rIqfvIVFeq8BO2Yyd7ferThbvg="
 
@@ -21,8 +20,6 @@ android:
     - android-27
 
     - extra-android-m2repository
-
-    - sys-img-armeabi-v7a-android-21
 
 cache:
   directories:
@@ -44,13 +41,6 @@ before_install:
   - mkdir "$ANDROID_HOME/licenses" || true
   - echo "8933bad161af4178b1185d1a37fbf41ea5269c55" >> "$ANDROID_HOME/licenses/android-sdk-license"
   - echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> "$ANDROID_HOME/licenses/android-sdk-license"
-  # Install the rest of tools (e.g., avdmanager)
-  - sdkmanager tools
-  # Install the system image
-  - sdkmanager "system-images;android-21;google_apis;armeabi-v7a"
-  # Create and start emulator for the script. Meant to race the install task.
-  - echo no | avdmanager create avd --force -n test -k "system-images;android-21;google_apis;armeabi-v7a"
-  - $ANDROID_HOME/emulator/emulator -avd test -no-audio -no-window -no-skin -no-boot-anim &
 
 script:
   - . ./ci/prepare_env.sh
