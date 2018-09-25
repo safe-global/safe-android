@@ -1,8 +1,8 @@
-package pm.gnosis.heimdall
+package pm.gnosis.tests
 
-import android.content.Context
 import android.support.multidex.MultiDexApplication
-import io.reactivex.plugins.RxJavaPlugins
+import android.support.test.InstrumentationRegistry
+import org.mockito.Mockito
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
 import pm.gnosis.heimdall.di.ComponentProvider
@@ -12,19 +12,15 @@ import pm.gnosis.heimdall.di.modules.ApplicationModule
 import timber.log.Timber
 import java.security.Security
 
-class HeimdallApplication : MultiDexApplication(), ComponentProvider {
-    private val component: ApplicationComponent = DaggerApplicationComponent.builder()
+open class TestApplication : MultiDexApplication(), ComponentProvider {
+
+    private var component: ApplicationComponent = DaggerApplicationComponent.builder()
         .applicationModule(ApplicationModule(this)).build()
 
     override fun get(): ApplicationComponent = component
 
     override fun onCreate() {
         super.onCreate()
-
-        // Init crash tracker to track unhandled exceptions
-        component.crashTracker().init()
-        RxJavaPlugins.setErrorHandler(Timber::e)
-        component.shortcutRepository().init()
 
         try {
             LinuxSecureRandom()
@@ -35,8 +31,10 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
     }
 
     companion object Companion {
-        operator fun get(context: Context): ApplicationComponent {
-            return (context.applicationContext as ComponentProvider).get()
-        }
+        fun mockComponent(): ApplicationComponent =
+            (InstrumentationRegistry.getInstrumentation().targetContext.applicationContext as TestApplication).run {
+                component = Mockito.mock(ApplicationComponent::class.java)
+                component
+            }
     }
 }
