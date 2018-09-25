@@ -72,7 +72,7 @@ class SplashActivityTest: BaseUiTest() {
         given(safeMainContract.loadSelectedSafe()).willReturn(Single.error(NotImplementedError()))
         given(safeMainContract.observeSafes()).willReturn(Flowable.error(NotImplementedError()))
 
-        given(splashContract.initialSetup()).willReturn(Single.just(StartMain()))
+        given(splashContract.initialSetup()).willReturn(Single.just(StartMain))
         activityRule.launchActivity(null)
         // Wait for activity to start
         Thread.sleep(500)
@@ -81,7 +81,7 @@ class SplashActivityTest: BaseUiTest() {
 
     @Test
     fun startPasswordSetup() {
-        given(splashContract.initialSetup()).willReturn(Single.just(StartPasswordSetup()))
+        given(splashContract.initialSetup()).willReturn(Single.just(StartPasswordSetup))
         activityRule.launchActivity(null)
         // Wait for activity to start
         Thread.sleep(500)
