@@ -48,7 +48,7 @@ class SplashActivityTest: BaseUiTest() {
     fun setup() {
         Intents.init()
         val comp = setupBaseInjects()
-        given(comp.addressHelper()).willReturn(AddressHelper(addressBookRepoMock, safeRepoMock))
+        given(comp.addressHelper()).willReturn(AddressHelper(addressBookRepoMock))
         given(comp.viewModelFactory()).willReturn(object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 return when (modelClass) {

@@ -97,7 +97,7 @@ class CheckSafeViewModelTest {
         contextMock.mockGetString()
         given(safeRepoMock.loadSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
         given(safeRepoMock.loadPendingSafe(MockUtils.any())).willReturn(
-            Single.just(PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, null, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT))
+            Single.just(PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT))
         )
 
         val observer = TestObserver<Result<Boolean>>()
@@ -115,7 +115,7 @@ class CheckSafeViewModelTest {
         given(safeRepoMock.loadSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
         given(safeRepoMock.loadPendingSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(
-            Single.just(RecoveringSafe(TEST_RECOVERING_SAFE, TEST_TX_HASH, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
+            Single.just(RecoveringSafe(TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
                 TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()))
         )
 

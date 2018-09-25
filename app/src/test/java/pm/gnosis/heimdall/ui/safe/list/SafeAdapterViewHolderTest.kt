@@ -18,7 +18,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
@@ -48,9 +47,6 @@ class SafeAdapterViewHolderTest {
     private lateinit var addressBookRepository: AddressBookRepository
 
     @Mock
-    private lateinit var safeRepository: GnosisSafeRepository
-
-    @Mock
     private lateinit var itemView: View
 
     @Mock
@@ -70,13 +66,11 @@ class SafeAdapterViewHolderTest {
 
     @Before
     fun setUp() {
-        given(itemView.context).willReturn(context)
-
         given(itemView.setOnClickListener(MockUtils.any())).will {
             rxClickListener = it.arguments.first() as View.OnClickListener
             Unit
         }
-        addressHelper = AddressHelper(addressBookRepository, safeRepository)
+        addressHelper = AddressHelper(addressBookRepository)
         viewHolder = SafeAdapter.ViewHolder(itemView, safeSubject, addressHelper)
     }
 
@@ -86,7 +80,7 @@ class SafeAdapterViewHolderTest {
         itemView.mockFindViewById(R.id.layout_safe_item_name, safeNameTextView)
         val safeObserver = TestObserver<AbstractSafe>()
         safeSubject.subscribe(safeObserver)
-        viewHolder.bind(PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, null, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT), emptyList())
+        viewHolder.bind(PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT), emptyList())
         viewHolder.start()
 
         then(itemView).should().setOnClickListener(viewHolder)
@@ -108,13 +102,13 @@ class SafeAdapterViewHolderTest {
         itemView.mockFindViewById(R.id.layout_safe_item_name, safeNameTextView)
         itemView.mockFindViewById(R.id.layout_safe_item_image, safeImageView)
 
-        val safe = Safe(TEST_SAFE, "Test Safe")
+        val safe = Safe(TEST_SAFE)
         viewHolder.bind(safe, emptyList())
 
         then(safeAddressTextView).should().text = null
         then(safeAddressTextView).shouldHaveNoMoreInteractions()
 
-        then(safeNameTextView).should().text = "Test Safe"
+        then(safeNameTextView).should().text = null
         then(safeNameTextView).shouldHaveNoMoreInteractions()
 
         viewHolder.start()
@@ -145,7 +139,7 @@ class SafeAdapterViewHolderTest {
         val addressBookSingleFactory = TestSingleFactory<AddressBookEntry>()
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(addressBookSingleFactory.get())
 
-        val safe = Safe(TEST_SAFE, "Test Safe")
+        val safe = Safe(TEST_SAFE)
         viewHolder.bind(safe, emptyList())
         viewHolder.start()
 
@@ -164,7 +158,7 @@ class SafeAdapterViewHolderTest {
         val addressBookSingleFactory = TestSingleFactory<AddressBookEntry>()
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(addressBookSingleFactory.get())
 
-        val safe = Safe(TEST_SAFE, "Test Safe")
+        val safe = Safe(TEST_SAFE)
         viewHolder.bind(safe, emptyList())
         viewHolder.start()
 

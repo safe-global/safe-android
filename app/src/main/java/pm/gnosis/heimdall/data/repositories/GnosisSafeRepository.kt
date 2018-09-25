@@ -6,7 +6,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger

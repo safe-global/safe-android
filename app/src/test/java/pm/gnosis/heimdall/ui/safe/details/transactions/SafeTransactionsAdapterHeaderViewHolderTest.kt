@@ -89,7 +89,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
     fun setUp() {
         RxJavaPlugins.setComputationSchedulerHandler { _ -> computationScheduler }
         given(itemView.context).willReturn(context)
-        addressHelper = AddressHelper(addressBookRepository, safeRepository)
+        addressHelper = AddressHelper(addressBookRepository)
         viewHolder = SafeTransactionsAdapter.TransactionViewHolder(
             addressHelper,
             viewModel,

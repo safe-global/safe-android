@@ -6,10 +6,7 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.RecoveringGnosisSafeDb
-import pm.gnosis.heimdall.data.repositories.models.PendingSafe
-import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.model.Solidity
-import java.math.BigInteger
 
 @Dao
 interface GnosisSafeDao {
@@ -82,13 +79,13 @@ interface GnosisSafeDao {
     fun pendingSafeToDeployedSafe(safeAddress: Solidity.Address) {
         val safe = queryPendingSafe(safeAddress)
         removePendingSafe(safe.address)
-        insertSafe(GnosisSafeDb(safe.address, safe.name))
+        insertSafe(GnosisSafeDb(safe.address))
     }
 
     @Transaction
     fun recoveringSafeToDeployedSafe(safeAddress: Solidity.Address) {
         val safe = queryRecoveringSafe(safeAddress)
         removeRecoveringSafe(safe.address)
-        insertSafe(GnosisSafeDb(safe.address, safe.name))
+        insertSafe(GnosisSafeDb(safe.address))
     }
 }

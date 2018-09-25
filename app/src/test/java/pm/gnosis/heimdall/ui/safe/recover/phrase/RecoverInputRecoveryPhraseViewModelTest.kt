@@ -16,10 +16,10 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.Input
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.ViewUpdate
-import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature

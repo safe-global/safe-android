@@ -8,7 +8,6 @@ import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
-import java.math.BigInteger
 
 abstract class SafeMainContract : ViewModel() {
     abstract fun loadSelectedSafe(): Single<out AbstractSafe>

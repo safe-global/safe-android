@@ -4,7 +4,6 @@ import android.arch.persistence.room.EmptyResultSetException
 import android.content.Context
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe

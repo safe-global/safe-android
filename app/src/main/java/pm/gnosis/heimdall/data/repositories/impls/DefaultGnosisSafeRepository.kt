@@ -23,7 +23,6 @@ import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
 import javax.inject.Inject
@@ -119,7 +118,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun addSafe(address: Solidity.Address, name: String?) =
         Completable.fromCallable {
-            safeDao.insertSafe(GnosisSafeDb(address, name))
+            safeDao.insertSafe(GnosisSafeDb(address))
         }.subscribeOn(Schedulers.io())!!
 
     override fun removeSafe(address: Solidity.Address) =
@@ -147,7 +146,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun addPendingSafe(address: Solidity.Address, transactionHash: BigInteger, name: String?, payment: Wei): Completable =
         Completable.fromAction {
-            safeDao.insertPendingSafe(PendingGnosisSafeDb(address, transactionHash, name, ERC20Token.ETHER_TOKEN.address, payment.value))
+            safeDao.insertPendingSafe(PendingGnosisSafeDb(address, transactionHash, ERC20Token.ETHER_TOKEN.address, payment.value))
         }.subscribeOn(Schedulers.io())
 
     override fun updatePendingSafe(pendingSafe: PendingSafe): Completable =
@@ -188,7 +187,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 RecoveringSafe(
                     safeAddress,
                     transactionHash,
-                    name,
                     executeInfo.transaction.wrapped.address,
                     executeInfo.transaction.wrapped.data!!,
                     executeInfo.txGas,

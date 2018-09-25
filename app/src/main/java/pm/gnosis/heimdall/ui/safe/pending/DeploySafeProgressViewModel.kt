@@ -6,7 +6,6 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.model.Solidity
-import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

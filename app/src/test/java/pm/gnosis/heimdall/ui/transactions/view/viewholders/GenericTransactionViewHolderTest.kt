@@ -18,12 +18,11 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
-import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.builder.GenericTransactionBuilder
+import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asEthereumAddress
@@ -36,9 +35,6 @@ class GenericTransactionViewHolderTest {
 
     @Mock
     private lateinit var addressBookRepository: AddressBookRepository
-
-    @Mock
-    private lateinit var safeRepository: GnosisSafeRepository
 
     @Mock
     private lateinit var layoutInflater: LayoutInflater
@@ -82,7 +78,7 @@ class GenericTransactionViewHolderTest {
 
     @Before
     fun setUp() {
-        addressHelper = AddressHelper(addressBookRepository, safeRepository)
+        addressHelper = AddressHelper(addressBookRepository)
     }
 
     @Test
@@ -92,15 +88,11 @@ class GenericTransactionViewHolderTest {
         viewHolder.start()
         then(contextMock).shouldHaveZeroInteractions()
         then(addressBookRepository).shouldHaveZeroInteractions()
-        then(safeRepository).shouldHaveZeroInteractions()
         then(layoutInflater).shouldHaveZeroInteractions()
     }
 
     private fun setupViewMocks() {
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
-        given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
-        given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
-        given(safeRepository.loadRecoveringSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
         given(layoutInflater.inflate(R.layout.layout_generic_transaction_info, containerView, true)).willReturn(viewHolderView)
         viewHolderView.mockFindViewById(R.id.layout_generic_transaction_info_value, valueView)
         viewHolderView.mockFindViewById(R.id.layout_generic_transaction_info_data, dataView)
@@ -130,13 +122,6 @@ class GenericTransactionViewHolderTest {
         then(addressBookRepository).should().loadAddressBookEntry(TEST_RECEIVER)
         then(addressBookRepository).should().loadAddressBookEntry(TEST_SAFE)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
-        then(safeRepository).should().loadSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadPendingSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadRecoveringSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadSafe(TEST_SAFE)
-        then(safeRepository).should().loadPendingSafe(TEST_SAFE)
-        then(safeRepository).should().loadRecoveringSafe(TEST_SAFE)
-        then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -193,8 +178,8 @@ class GenericTransactionViewHolderTest {
         given(viewHolderView.context).willReturn(contextMock)
         contextMock.mockGetStringWithArgs()
         setupViewMocks()
-        val safeObservable = TestSingleFactory<Safe>()
-        given(safeRepository.loadSafe(TEST_SAFE)).willReturn(safeObservable.get())
+        val infoObservable = TestSingleFactory<AddressBookEntry>()
+        given(addressBookRepository.loadAddressBookEntry(TEST_SAFE)).willReturn(infoObservable.get())
 
         val data = TransactionData.Generic(TEST_RECEIVER, TEST_VALUE, TEST_DATA)
         viewHolder = GenericTransactionViewHolder(TEST_SAFE, data, addressHelper)
@@ -203,10 +188,10 @@ class GenericTransactionViewHolderTest {
         then(layoutInflater).should().inflate(R.layout.layout_generic_transaction_info, containerView, true)
 
         viewHolder.start()
-        safeObservable.assertAllSubscribed()
+        infoObservable.assertAllSubscribed()
 
         viewHolder.stop()
-        safeObservable.assertAllCanceled()
+        infoObservable.assertAllCanceled()
     }
 
     @Test
@@ -214,8 +199,8 @@ class GenericTransactionViewHolderTest {
         given(viewHolderView.context).willReturn(contextMock)
         contextMock.mockGetStringWithArgs()
         setupViewMocks()
-        val safeObservable = TestSingleFactory<Safe>()
-        given(safeRepository.loadSafe(TEST_SAFE)).willReturn(safeObservable.get())
+        val infoObservable = TestSingleFactory<AddressBookEntry>()
+        given(addressBookRepository.loadAddressBookEntry(TEST_SAFE)).willReturn(infoObservable.get())
 
         val data = TransactionData.Generic(TEST_RECEIVER, TEST_VALUE, TEST_DATA)
         viewHolder = GenericTransactionViewHolder(TEST_SAFE, data, addressHelper)
@@ -224,19 +209,14 @@ class GenericTransactionViewHolderTest {
         then(layoutInflater).should().inflate(R.layout.layout_generic_transaction_info, containerView, true)
 
         viewHolder.start()
-        safeObservable.assertAllSubscribed()
+        infoObservable.assertAllSubscribed()
 
         viewHolder.detach()
-        safeObservable.assertAllCanceled()
+        infoObservable.assertAllCanceled()
 
         then(addressBookRepository).should().loadAddressBookEntry(TEST_SAFE)
         then(addressBookRepository).should().loadAddressBookEntry(TEST_RECEIVER)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
-        then(safeRepository).should().loadSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadPendingSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadRecoveringSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadSafe(TEST_SAFE)
-        then(safeRepository).shouldHaveNoMoreInteractions()
         then(layoutInflater).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.x_ether, "3.141")
         then(contextMock).should().getString(R.string.x_data_bytes, 26)
@@ -246,7 +226,6 @@ class GenericTransactionViewHolderTest {
         viewHolder.start()
         then(contextMock).shouldHaveZeroInteractions()
         then(addressBookRepository).shouldHaveZeroInteractions()
-        then(safeRepository).shouldHaveZeroInteractions()
         then(layoutInflater).shouldHaveZeroInteractions()
     }
 

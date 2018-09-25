@@ -21,7 +21,7 @@ class SafeDetailsViewModel @Inject constructor(
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
 
-    override fun setup(address: Solidity.Address, name: String?) {
+    override fun setup(address: Solidity.Address) {
         this.address = address
     }
 
