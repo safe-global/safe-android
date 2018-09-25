@@ -15,7 +15,7 @@ android {
         applicationId "pm.gnosis.heimdall"
         versionCode getInt("APP_VERSION_CODE", 703)
         versionName getKey("APP_VERSION_NAME", "0.4.2-alpha")
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "pm.gnosis.tests.MockTestRunner"
 
         // External Link
         buildConfigField javaTypes.STRING, "CHROME_EXTENSION_URL", asString(getKey("CHROME_EXTENSION_URL", "https://safe.gnosis.io/#personal"))
@@ -70,6 +70,7 @@ android {
 
     buildTypes {
         debug {
+            testCoverageEnabled true
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
             minifyEnabled false
@@ -242,6 +243,10 @@ dependencies {
     testImplementation "com.github.gnosis.svalinn-kotlin:utils-testing:$versions.svalinn"
     testImplementation "org.mockito:mockito-core:$versions.mockito"
     testImplementation "org.mockito:mockito-inline:$versions.mockito"
+
+    // UI tests
+    androidTestImplementation "org.mockito:mockito-android:$versions.mockito"
+    androidTestImplementation("com.android.support.test.espresso:espresso-intents:$versions.espresso")
     androidTestImplementation("com.android.support.test.espresso:espresso-core:$versions.espresso", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })

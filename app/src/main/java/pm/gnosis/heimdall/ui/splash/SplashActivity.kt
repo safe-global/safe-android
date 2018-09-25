@@ -24,7 +24,7 @@ class SplashActivity : BaseActivity() {
     override fun screenId() = ScreenId.SPLASH
 
     @Inject
-    lateinit var viewModel: SplashViewModel
+    lateinit var viewModel: SplashContract
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
@@ -68,7 +68,7 @@ class SplashActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this].component)
+            .applicationComponent(HeimdallApplication[this])
             .viewModule(ViewModule(this))
             .build().inject(this)
     }

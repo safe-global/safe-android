@@ -11,7 +11,7 @@ abstract class BaseFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        inject(HeimdallApplication[context!!].component)
+        inject(HeimdallApplication[context!!])
     }
 
     override fun onStop() {

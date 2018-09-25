@@ -51,7 +51,7 @@ class SelectSafeActivity : BaseActivity() {
 
     private fun inject() {
         DaggerViewComponent.builder()
-            .applicationComponent(HeimdallApplication[this].component)
+            .applicationComponent(HeimdallApplication[this])
             .viewModule(ViewModule(this))
             .build().inject(this)
     }

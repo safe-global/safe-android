@@ -148,7 +148,7 @@ class ChangePasswordDialog : BaseDialog() {
     private fun inject() {
         DaggerViewComponent.builder()
             .viewModule(ViewModule(context!!))
-            .applicationComponent(HeimdallApplication[context!!].component)
+            .applicationComponent(HeimdallApplication[context!!])
             .build()
             .inject(this)
     }
