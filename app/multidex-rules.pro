@@ -1,3 +1,0 @@
--keep class android.support.test.** { *; }
--keep class org.mockito.** { *; }
--keep class net.bytebuddy.** { *; }
