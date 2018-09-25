@@ -29,6 +29,7 @@ import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.*
 import java.math.BigInteger
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,6 +44,8 @@ class DefaultTransactionExecutionRepository @Inject constructor(
 ) : TransactionExecutionRepository {
 
     private val descriptionsDao = appDb.descriptionsDao()
+
+    private val nonceCache = ConcurrentHashMap<Solidity.Address, BigInteger>()
 
     override fun calculateHash(
         safeAddress: Solidity.Address, transaction: SafeTransaction,
@@ -102,11 +105,16 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         }.subscribeOn(Schedulers.computation())
             .flatMap { ethereumRepository.request(it).singleOrError() }
 
+    private fun checkNonce(safeAddress: Solidity.Address, contractNonce: BigInteger): BigInteger {
+        val cachedNonce = nonceCache[safeAddress]
+        return if (cachedNonce != null && cachedNonce >= contractNonce) cachedNonce + BigInteger.ONE else contractNonce
+    }
+
     override fun loadSafeExecuteState(safeAddress: Solidity.Address): Single<TransactionExecutionRepository.SafeExecuteState> =
         loadSafeState(safeAddress)
             .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
             .map { (info, sender) ->
-                val nonce = GnosisSafePersonalEdition.Nonce.decode(info.nonce.result()!!).param0.value
+                val nonce = checkNonce(safeAddress, GnosisSafePersonalEdition.Nonce.decode(info.nonce.result()!!).param0.value)
                 val threshold = GnosisSafePersonalEdition.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
                 val owners = GnosisSafePersonalEdition.GetOwners.decode(info.owners.result()!!).param0.items
                 val safeBalance = info.balance.result()!!
@@ -139,7 +147,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
             .flatMap { (infoWithEstimate, sender) ->
                 val (info, estimate) = infoWithEstimate
-                val nonce = GnosisSafePersonalEdition.Nonce.decode(info.nonce.result()!!).param0.value
+                val nonce = checkNonce(safeAddress, GnosisSafePersonalEdition.Nonce.decode(info.nonce.result()!!).param0.value)
                 val threshold = GnosisSafePersonalEdition.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
                 val owners = GnosisSafePersonalEdition.GetOwners.decode(info.owners.result()!!).param0.items
                 val updatedTransaction = transaction.copy(wrapped = transaction.wrapped.updateTransactionWithStatus(nonce))
@@ -236,6 +244,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, txGas, dataGas, gasPrice)
             .flatMap { relayServiceApi.execute(safeAddress.asEthereumAddressChecksumString(), it) }
             .flatMap {
+                transaction.wrapped.nonce?.let { nonceCache[safeAddress] = it }
                 if (addToHistory)
                     handleSubmittedTransaction(safeAddress, transaction, it.transactionHash.addHexPrefix(), txGas, dataGas, gasPrice)
                 else
@@ -251,15 +260,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         dataGas: BigInteger,
         gasPrice: BigInteger
     ): Single<ExecuteParams> =
-        accountsRepository.loadActiveAccount()
-            .flatMap { account ->
-                if (senderIsOwner)
-                    calculateHash(safeAddress, innerTransaction, txGas, dataGas, gasPrice)
-                        .flatMap { accountsRepository.sign(it) }
-                        .map { signatures.plus(account.address to it) }
-                else
-                    Single.just(signatures)
-            }
+        loadSignatures(safeAddress, innerTransaction, signatures, senderIsOwner, txGas, dataGas, gasPrice)
             .map { finalSignatures ->
                 val sortedAddresses = finalSignatures.keys.map { it.value }.sorted()
                 val serviceSignatures = mutableListOf<ServiceSignature>()
@@ -282,6 +283,25 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                     tx.nonce?.toLong() ?: 0
                 )
             }
+
+    private fun loadSignatures(
+        safeAddress: Solidity.Address,
+        innerTransaction: SafeTransaction,
+        signatures: Map<Solidity.Address, Signature>,
+        senderIsOwner: Boolean,
+        txGas: BigInteger,
+        dataGas: BigInteger,
+        gasPrice: BigInteger
+    ): Single<Map<Solidity.Address, Signature>> =
+        // If owner is signature we need to sign the hash and add the signature to the map
+        if (senderIsOwner)
+            accountsRepository.loadActiveAccount()
+                .flatMap { account ->
+                    calculateHash(safeAddress, innerTransaction, txGas, dataGas, gasPrice)
+                        .flatMap { accountsRepository.sign(it) }
+                        .map { signatures.plus(account.address to it) }
+                }
+        else Single.just(signatures)
 
     private fun handleSubmittedTransaction(
         safeAddress: Solidity.Address,
@@ -306,8 +326,8 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                     dataGas,
                     ERC20Token.ETHER_TOKEN.address,
                     gasPrice,
-                    tx.nonce
-                            ?: DEFAULT_NONCE, System.currentTimeMillis(),
+                    tx.nonce ?: DEFAULT_NONCE,
+                    System.currentTimeMillis(),
                     it.toHexString()
                 )
                 descriptionsDao.insert(transactionObject, TransactionPublishStatusDb(transactionUuid, txChainHash, null, null))
