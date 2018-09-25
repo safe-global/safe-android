@@ -1,10 +1,10 @@
 ext {
     versions = [
             // Plug-Ins
-            android_tools         : '3.1.4',
+            android_tools         : '3.2.0',
             fabric                : '1.+',
-            google_services       : '3.3.0',
-            kotlin                : '1.2.61',
+            google_services       : '4.1.0',
+            kotlin                : '1.2.71',
             jacoco                : '0.7.9',
 
             // Runtime dependencies
@@ -36,7 +36,7 @@ ext {
             rxjava                : '2.2.1',
             rxkotlin              : '2.3.0',
             spongycastle          : '1.58.0.0',
-            svalinn               : 'v0.6.0',
+            svalinn               : 'v0.6.2',
             timber                : '4.7.1',
             zxing                 : '3.3.1',
 
