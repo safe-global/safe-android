@@ -11,6 +11,9 @@ import pm.gnosis.model.Solidity
 @Dao
 interface GnosisSafeDao {
 
+    @Query("SELECT SUM(c) FROM (SELECT COUNT(*) as c FROM ${GnosisSafeDb.TABLE_NAME} UNION ALL SELECT COUNT(*) as c FROM ${PendingGnosisSafeDb.TABLE_NAME} UNION ALL SELECT COUNT(*) as c FROM ${RecoveringGnosisSafeDb.TABLE_NAME})")
+    fun loadTotalSafeCount(): Single<Long>
+
     // Deployed Safes
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSafe(safe: GnosisSafeDb)
