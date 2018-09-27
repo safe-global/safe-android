@@ -126,7 +126,7 @@ class ReceiveTokenViewModelTest {
         testObserver.assertValues(*updates.toTypedArray())
 
         safeSingleFactory.success(AddressBookEntry(TEST_SAFE, "      ", ""))
-        updates += ReceiveTokenContract.ViewUpdate.Info(R.string.default_safe_name.toString())
+        updates += ReceiveTokenContract.ViewUpdate.Info("      ")
         testObserver.assertValues(*updates.toTypedArray())
 
         then(addressBookRepository).shouldHaveNoMoreInteractions()

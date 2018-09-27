@@ -22,6 +22,11 @@ interface GnosisSafeRepository {
      */
     fun checkSafe(address: Solidity.Address): Observable<Boolean>
 
+    /**
+     * Loads an abstract Safe (could be any type of Safe)
+     */
+    fun loadAbstractSafe(address: Solidity.Address): Single<AbstractSafe>
+
     // Deployed Safes
     fun observeSafes(): Flowable<List<Safe>>
     fun observeSafe(address: Solidity.Address): Flowable<Safe>

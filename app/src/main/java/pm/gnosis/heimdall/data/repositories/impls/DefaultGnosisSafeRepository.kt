@@ -101,6 +101,15 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 }
             }
 
+    override fun loadAbstractSafe(address: Solidity.Address): Single<AbstractSafe> =
+        loadSafe(address).map { it as AbstractSafe }
+            .onErrorResumeNext {
+                loadPendingSafe(address)
+            }
+            .onErrorResumeNext {
+                loadRecoveringSafe(address)
+            }
+
     /*
      * Deployed Safes
      */

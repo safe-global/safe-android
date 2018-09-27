@@ -42,13 +42,7 @@ class CheckSafeViewModel @Inject constructor(
             .mapToResult()
 
     private fun checkSafeExists(address: Solidity.Address) =
-        safeRepository.loadSafe(address).map { it as AbstractSafe }
-            .onErrorResumeNext {
-                safeRepository.loadPendingSafe(address)
-            }
-            .onErrorResumeNext {
-                safeRepository.loadRecoveringSafe(address)
-            }
+        safeRepository.loadAbstractSafe(address)
             .map<Solidity.Address> { throw SimpleLocalizedException(context.getString(R.string.safe_already_exists)) }
             .onErrorResumeNext {
                 when (it) {

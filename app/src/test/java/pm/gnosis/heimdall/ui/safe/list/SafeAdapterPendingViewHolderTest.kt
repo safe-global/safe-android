@@ -62,8 +62,6 @@ class SafeAdapterPendingViewHolderTest {
 
     @Before
     fun setUp() {
-        given(itemView.context).willReturn(context)
-
         given(itemView.setOnClickListener(MockUtils.any())).will {
             rxClickListener = it.arguments.first() as View.OnClickListener
             Unit
@@ -101,7 +99,7 @@ class SafeAdapterPendingViewHolderTest {
         then(safeAddressTextView).should().text = null
         then(safeAddressTextView).shouldHaveNoMoreInteractions()
 
-        then(safeNameTextView).should().text = "Test Safe"
+        then(safeNameTextView).should().text = null
         then(safeNameTextView).shouldHaveNoMoreInteractions()
 
         viewHolder.start()

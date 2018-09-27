@@ -225,4 +225,5 @@
     <string name="no_recovery_necessary">There were no configuration changes to this safe. No recovery is necessary</string>
     <string name="replace_browser_extension_transaction_info">The existing browser extension connection will be replaced with the new browser extension.</string>
     <string name="error_retrieving_safe_balance">Error retrieving safe balance</string>
+    <string name="cannot_delete_safe_from_address_book">It is not possible to delete an active Safe from the address book.</string>
 </resources>
