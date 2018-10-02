@@ -1,31 +1,43 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
+import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.ethereum.BulkRequest
+import pm.gnosis.ethereum.EthRequest
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
+import pm.gnosis.heimdall.data.remote.models.ExecuteParams
+import pm.gnosis.heimdall.data.remote.models.RelayExecution
+import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.ui.transactions.view.helpers.DefaultSubmitTransactionHelperTest
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.accounts.base.models.Account
+import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.toHexString
+import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.utils.*
 import java.math.BigInteger
+import kotlin.concurrent.timer
 
 @RunWith(MockitoJUnitRunner::class)
 class GnosisSafeTransactionRepositoryTest {
@@ -133,5 +145,92 @@ class GnosisSafeTransactionRepositoryTest {
             TransactionExecutionRepository.Operation.DELEGATE_CALL,
             "c93063108c748057a30815731a7e0777acd4df20d189c22088d01571c21f7e32"
         )
+    }
+
+    @Test
+    fun submitTransactionNotOwner() {
+        given(relayServiceApiMock.execute(MockUtils.any(), MockUtils.any())).willReturn(Single.just(RelayExecution(SERVICE_TX_HASH)))
+        val tx = SafeTransaction(Transaction(TEST_ADDRESS, TEST_ETH_AMOUNT, nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)
+        val observer = TestObserver<String>()
+        repository.submit(TEST_SAFE, tx, mapOf(TEST_OWNER to TEST_SIGNATURE), false, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, false)
+            .subscribe(observer)
+        observer.assertResult(TEST_TX_HASH)
+        then(relayServiceApiMock).should().execute(
+            TEST_SAFE.asEthereumAddressChecksumString(),
+            ExecuteParams(
+                TEST_ADDRESS.asEthereumAddressChecksumString(),
+                TEST_ETH_AMOUNT.value.asDecimalString(),
+                null,
+                0,
+                listOf(ServiceSignature(BigInteger.TEN, BigInteger.TEN, 27)),
+                "0",
+                "0",
+                "0",
+                10
+            )
+        )
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+        then(accountRepositoryMock).shouldHaveZeroInteractions()
+
+        // Check that nonce was cached
+        given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_OWNER)))
+        var remoteNonceString = "9".padStart(64, '0').addHexPrefix()
+        given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).willAnswer {
+            (it.arguments.first() as BulkRequest).let { bulk ->
+                (bulk.requests[0] as EthRequest<String>).response = EthRequest.Response.Success("2".padStart(64, '0').addHexPrefix())
+                (bulk.requests[1] as EthRequest<String>).response = EthRequest.Response.Success(remoteNonceString)
+                (bulk.requests[2] as EthRequest<String>).response =
+                        EthRequest.Response.Success("20".padStart(64, '0').padEnd(128, '0').addHexPrefix())
+                (bulk.requests[3] as EthRequest<Wei>).response = EthRequest.Response.Success(Wei.ether("0"))
+                Observable.just(bulk)
+            }
+        }
+
+        // Cached nonce should be used if it is higher
+        val observeCached = TestObserver<TransactionExecutionRepository.SafeExecuteState>()
+        repository.loadSafeExecuteState(TEST_SAFE).subscribe(observeCached)
+        observeCached.assertResult(
+            TransactionExecutionRepository.SafeExecuteState(
+                TEST_OWNER,
+                2,
+                emptyList(),
+                BigInteger.valueOf(11), // nonce used with submit + 1
+                Wei.ether("0")
+            )
+        )
+        then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
+        then(accountRepositoryMock).should().loadActiveAccount()
+
+        // Remote nonce should be used if it is higher
+        remoteNonceString = "1a".padStart(64, '0').addHexPrefix()
+        val observeRemote = TestObserver<TransactionExecutionRepository.SafeExecuteState>()
+        repository.loadSafeExecuteState(TEST_SAFE).subscribe(observeRemote)
+        observeRemote.assertResult(
+            TransactionExecutionRepository.SafeExecuteState(
+                TEST_OWNER,
+                2,
+                emptyList(),
+                BigInteger.valueOf(26), // nonce used with submit + 1
+                Wei.ether("0")
+            )
+        )
+        then(ethereumRepositoryMock).should(times(2)).request(MockUtils.any<BulkRequest>())
+        then(accountRepositoryMock).should(times(2)).loadActiveAccount()
+
+        then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
+        then(accountRepositoryMock).shouldHaveNoMoreInteractions()
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+        then(descriptionsDaoMock).shouldHaveZeroInteractions()
+        then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
+    }
+
+    companion object {
+        private const val SERVICE_TX_HASH = "dae721569a948b87c269ebacaa5a4a67728095e32f9e7e4626f109f27a73b40f"
+        private val TEST_TX_HASH = SERVICE_TX_HASH.addHexPrefix()
+        private val TEST_SAFE = "0xA7e15e2e76Ab469F8681b576cFF168F37Aa246EC".asEthereumAddress()!!
+        private val TEST_ADDRESS = "0xc257274276a4e539741ca11b590b9447b26a8051".asEthereumAddress()!!
+        private val TEST_OWNER = Solidity.Address(BigInteger.valueOf(5))
+        private val TEST_SIGNATURE = Signature(BigInteger.TEN, BigInteger.TEN, 27)
+        private val TEST_ETH_AMOUNT = Wei.ether("23")
     }
 }
