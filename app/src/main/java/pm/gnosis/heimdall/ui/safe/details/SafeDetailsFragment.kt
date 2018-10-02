@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jakewharton.rxbinding2.view.clicks
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_safe_details.*
@@ -31,7 +30,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import timber.log.Timber
 import javax.inject.Inject
 
 class SafeDetailsFragment : BaseFragment() {
@@ -47,7 +45,6 @@ class SafeDetailsFragment : BaseFragment() {
     private lateinit var pagerAdapter: FactoryPagerAdapter
 
     private lateinit var safeAddress: Solidity.Address
-    private var safeName: String? = null
     private var tabToSelect: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,8 +60,7 @@ class SafeDetailsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         safeAddress = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
-        safeName = arguments?.getString(EXTRA_SAFE_NAME)
-        viewModel.setup(safeAddress, safeName)
+        viewModel.setup(safeAddress)
 
         layout_safe_details_send_button.setCompoundDrawableResource(left = R.drawable.ic_send_azure)
         layout_safe_details_receive_button.setCompoundDrawableResource(left = R.drawable.ic_qrcode_scan_azure)
@@ -111,12 +107,6 @@ class SafeDetailsFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        disposables += viewModel.observeSafe()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onNext = {
-                safeName = it.name
-            }, onError = Timber::e)
-
         disposables += layout_safe_details_send_button.clicks()
             .subscribeBy { startActivity(SelectTokenActivity.createIntent(context!!, safeAddress)) }
 
@@ -171,14 +161,12 @@ class SafeDetailsFragment : BaseFragment() {
     }
 
     companion object {
-        private const val EXTRA_SAFE_NAME = "extra.string.safe_name"
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val EXTRA_SELECTED_TAB = "extra.int.selected_tab"
 
         fun createInstance(safe: Safe, @StringRes selectedTab: Int = 0) =
             SafeDetailsFragment().withArgs(
                 Bundle().apply {
-                    putString(EXTRA_SAFE_NAME, safe.name)
                     putString(EXTRA_SAFE_ADDRESS, safe.address.asEthereumAddressString())
                     putInt(EXTRA_SELECTED_TAB, selectedTab)
                 }

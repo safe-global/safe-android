@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d101c54ef9bd7c6e97b87f890faaeea0",
+    "identityHash": "46412781f23c9bc9bd1005b92422fba1",
     "entities": [
       {
         "tableName": "address_book",
@@ -82,19 +82,13 @@
       },
       {
         "tableName": "gnosis_safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `name` TEXT, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "address",
             "columnName": "address",
             "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
           }
         ],
         "primaryKey": {
@@ -108,7 +102,7 @@
       },
       {
         "tableName": "gnosis_pending_safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `transactionHash` TEXT NOT NULL, `name` TEXT, `paymentToken` TEXT NOT NULL, `paymentAmount` TEXT NOT NULL, `funded` INTEGER NOT NULL, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `transactionHash` TEXT NOT NULL, `paymentToken` TEXT NOT NULL, `paymentAmount` TEXT NOT NULL, `funded` INTEGER NOT NULL, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "address",
@@ -121,12 +115,6 @@
             "columnName": "transactionHash",
             "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "paymentToken",
@@ -158,7 +146,7 @@
       },
       {
         "tableName": "gnosis_recovering_safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `transactionHash` TEXT, `name` TEXT, `recoverer` TEXT NOT NULL, `data` TEXT NOT NULL, `nonce` TEXT NOT NULL, `txGas` TEXT NOT NULL, `dataGas` TEXT NOT NULL, `gasToken` TEXT NOT NULL, `gasPrice` TEXT NOT NULL, `operation` INTEGER NOT NULL, `signatures` TEXT NOT NULL, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `transactionHash` TEXT, `recoverer` TEXT NOT NULL, `data` TEXT NOT NULL, `nonce` TEXT NOT NULL, `txGas` TEXT NOT NULL, `dataGas` TEXT NOT NULL, `gasToken` TEXT NOT NULL, `gasPrice` TEXT NOT NULL, `operation` INTEGER NOT NULL, `signatures` TEXT NOT NULL, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "address",
@@ -169,12 +157,6 @@
           {
             "fieldPath": "transactionHash",
             "columnName": "transactionHash",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -375,7 +357,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d101c54ef9bd7c6e97b87f890faaeea0\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"46412781f23c9bc9bd1005b92422fba1\")"
     ]
   }
 }

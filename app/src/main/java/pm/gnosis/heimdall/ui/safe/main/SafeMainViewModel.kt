@@ -10,6 +10,8 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.processors.BehaviorProcessor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
@@ -25,13 +27,11 @@ import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.toHexString
-import java.math.BigInteger
 import javax.inject.Inject
 
 class SafeMainViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val addressBookRepository: AddressBookRepository,
     private val preferenceManager: PreferencesManager,
     private val safeRepository: GnosisSafeRepository
 ) : SafeMainContract() {
@@ -80,21 +80,11 @@ class SafeMainViewModel @Inject constructor(
         }
 
     override fun observeSafe(safe: AbstractSafe): Flowable<Pair<String, String>> =
-        when (safe) {
-            is Safe -> safeRepository.observeSafe(safe.address)
-                .map { it.displayName(context) to it.address.shortChecksumString() }
-            is PendingSafe -> safeRepository.observePendingSafe(safe.address)
-                .map { it.displayName(context) to it.address.shortChecksumString() }
-            is RecoveringSafe -> safeRepository.observeRecoveringSafe(safe.address)
-                .map { it.displayName(context) to it.address.shortChecksumString() }
-        }
+        addressBookRepository.observeAddressBookEntry(safe.address())
+            .map { it.name to it.address.shortChecksumString() }
 
     override fun updateSafeName(safe: AbstractSafe, name: String?): Completable =
-        when (safe) {
-            is Safe -> safeRepository.updateSafe(safe.copy(name = name))
-            is PendingSafe -> safeRepository.updatePendingSafe(safe.copy(name = name))
-            is RecoveringSafe -> safeRepository.updateRecoveringSafe(safe.copy(name = name))
-        }
+        addressBookRepository.updateAddressBookEntry(safe.address(), name ?: context.getString(R.string.default_safe_name))
 
     override fun removeSafe(safe: AbstractSafe): Completable =
         when (safe) {

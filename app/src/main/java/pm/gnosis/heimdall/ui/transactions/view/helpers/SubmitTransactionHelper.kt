@@ -23,7 +23,6 @@ import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 interface SubmitTransactionHelper {

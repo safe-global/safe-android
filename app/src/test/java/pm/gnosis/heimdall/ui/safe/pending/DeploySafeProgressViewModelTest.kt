@@ -5,7 +5,6 @@ import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -21,7 +20,6 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import java.math.BigInteger
@@ -51,7 +49,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(safeAddress, txHash, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        val pendingSafe = PendingSafe(safeAddress, txHash, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
         given(relayServiceApiMock.safeFundStatus(MockUtils.any())).willReturn(
@@ -80,7 +78,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(safeAddress, txHash, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        val pendingSafe = PendingSafe(safeAddress, txHash, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         var safeDeployed = false
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
@@ -111,7 +109,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(safeAddress, txHash, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        val pendingSafe = PendingSafe(safeAddress, txHash, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         val exception = Exception()
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
@@ -138,7 +136,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(safeAddress, txHash, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        val pendingSafe = PendingSafe(safeAddress, txHash, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         val exception = Exception()
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
@@ -161,7 +159,7 @@ class DeploySafeProgressViewModelTest {
         val testObserver = TestObserver<Solidity.Address>()
         val txHash = BigInteger.TEN
         val safeAddress = Solidity.Address(123.toBigInteger())
-        val pendingSafe = PendingSafe(safeAddress, txHash, "", ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
+        val pendingSafe = PendingSafe(safeAddress, txHash, ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO)
         val exception = Exception()
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.error(exception))

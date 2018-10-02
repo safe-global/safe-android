@@ -4,7 +4,6 @@ import android.arch.persistence.room.EmptyResultSetException
 import android.content.Context
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
@@ -43,13 +42,7 @@ class CheckSafeViewModel @Inject constructor(
             .mapToResult()
 
     private fun checkSafeExists(address: Solidity.Address) =
-        safeRepository.loadSafe(address).map { it as AbstractSafe }
-            .onErrorResumeNext {
-                safeRepository.loadPendingSafe(address)
-            }
-            .onErrorResumeNext {
-                safeRepository.loadRecoveringSafe(address)
-            }
+        safeRepository.loadAbstractSafe(address)
             .map<Solidity.Address> { throw SimpleLocalizedException(context.getString(R.string.safe_already_exists)) }
             .onErrorResumeNext {
                 when (it) {

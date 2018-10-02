@@ -9,11 +9,16 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Icon
 import android.os.Build
+import com.gojuno.koptional.None
+import com.gojuno.koptional.toOptional
+import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.blockies.Blockies
 import pm.gnosis.blockies.BlockiesPainter
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.ShortcutRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
@@ -27,6 +32,7 @@ import javax.inject.Inject
 
 class DefaultShortcutRepository @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val addressBookRepository: AddressBookRepository,
     private val safeRepository: GnosisSafeRepository
 ) : ShortcutRepository {
 
@@ -41,24 +47,31 @@ class DefaultShortcutRepository @Inject constructor(
         shortcutManager()?.let {
             safeRepository.observeSafes()
                 .subscribeOn(Schedulers.io())
-                .map(::createShortcutInfo)
+                .flatMapSingle(::createShortcutInfo)
                 .subscribeBy(onNext = ::setupSafeShortcuts, onError = Timber::e)
         }
     }
 
     @TargetApi(Build.VERSION_CODES.N_MR1)
-    private fun createShortcutInfo(safes: List<Safe>): List<ShortcutInfo> =
+    private fun createShortcutInfo(safes: List<Safe>): Single<List<ShortcutInfo>> =
     // This should only be done if we can use the shortcut manager
-        shortcutManager()?.let {
-            safes.map {
-                ShortcutInfo.Builder(context, it.address.asEthereumAddressString())
-                    .setShortLabel(context.getString(R.string.send_from_x, it.displayName(context)))
-                    .setLongLabel(context.getString(R.string.send_from_x, it.displayName(context)))
-                    .setIcon(Icon.createWithBitmap(blockiesBitmap(it.address)))
-                    .setIntent(SelectTokenActivity.createIntent(context, it.address).prepare())
-                    .build()
-            }
-        } ?: emptyList()
+        Observable.merge(safes.map { safe ->
+            addressBookRepository.loadAddressBookEntry(safe.address)
+                .map { it.toOptional() }
+                .onErrorReturnItem(None)
+                .flatMapObservable { info ->
+                    info.toNullable()?.let {
+                        Observable.just(
+                            ShortcutInfo.Builder(context, it.address.asEthereumAddressString())
+                                .setShortLabel(context.getString(R.string.send_from_x, it.name))
+                                .setLongLabel(context.getString(R.string.send_from_x, it.name))
+                                .setIcon(Icon.createWithBitmap(blockiesBitmap(it.address)))
+                                .setIntent(SelectTokenActivity.createIntent(context, it.address).prepare())
+                                .build()
+                        )
+                    } ?: Observable.empty<ShortcutInfo>()
+                }
+        }).toList()
 
     private fun blockiesBitmap(address: Solidity.Address) =
         Bitmap.createBitmap(iconDimension.toInt(), iconDimension.toInt(), Bitmap.Config.ARGB_8888).apply {

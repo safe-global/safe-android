@@ -1,13 +1,18 @@
 package pm.gnosis.heimdall.ui.addressbook
 
+import android.arch.persistence.room.EmptyResultSetException
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import android.support.annotation.ColorInt
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity
@@ -24,6 +29,7 @@ import javax.inject.Inject
 class AddressBookViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addressBookRepository: AddressBookRepository,
+    private val safeRepository: GnosisSafeRepository,
     private val qrCodeGenerator: QrCodeGenerator
 ) : AddressBookContract() {
 
@@ -76,10 +82,23 @@ class AddressBookViewModel @Inject constructor(
             .mapToResult()
 
     override fun deleteAddressBookEntry(address: Solidity.Address) =
-        addressBookRepository
-            .deleteAddressBookEntry(address)
+        checkDeletion(address)
+            .andThen(addressBookRepository.deleteAddressBookEntry(address))
             .andThen(Observable.just(address))
             .mapToResult()
+
+    private fun checkDeletion(address: Solidity.Address): Completable =
+        safeRepository.loadAbstractSafe(address)
+            // We have a Safe for that address ... we should not delete this address
+            .map<Unit> { throw SimpleLocalizedException(context.getString(R.string.cannot_delete_safe_from_address_book)) }
+            // If no Safe was found we can delete the address else propagate the error
+            .onErrorResumeNext {
+                when (it) {
+                    is EmptyResultSetException -> Single.just(Unit)
+                    else -> Single.error(it)
+                }
+            }
+            .ignoreElement()
 
     override fun generateQrCode(address: Solidity.Address, @ColorInt color: Int) =
         Observable

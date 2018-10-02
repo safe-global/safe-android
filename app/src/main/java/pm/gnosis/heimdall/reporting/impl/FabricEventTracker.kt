@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.reporting.impl
 
 import android.app.Activity
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.ContentViewEvent

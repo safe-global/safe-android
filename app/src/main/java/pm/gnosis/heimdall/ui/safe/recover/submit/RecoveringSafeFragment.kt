@@ -15,7 +15,10 @@ import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.svalinn.common.utils.snackbar
+import pm.gnosis.svalinn.common.utils.transaction
+import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
@@ -73,11 +76,9 @@ class RecoveringSafeFragment : BaseFragment() {
 
     companion object {
         private const val FRAGMENT_TAG = "tag.fragment.recovering_safe_child"
-        private const val EXTRA_SAFE_NAME = "extra.string.safe_name"
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
 
         fun createInstance(safe: RecoveringSafe) = RecoveringSafeFragment().withArgs(Bundle().apply {
-            putString(EXTRA_SAFE_NAME, safe.name)
             putString(EXTRA_SAFE_ADDRESS, safe.address.asEthereumAddressString())
         })
     }

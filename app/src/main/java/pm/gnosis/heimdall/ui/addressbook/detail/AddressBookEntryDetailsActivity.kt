@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.edit.AddressBookEditEntryActivity
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.svalinn.common.utils.*
@@ -107,7 +108,7 @@ class AddressBookEntryDetailsActivity : ViewModelActivity<AddressBookContract>()
 
     private fun onAddressBookEntryDeleteError(throwable: Throwable) {
         Timber.e(throwable)
-        snackbar(layout_address_book_entry_details_coordinator, R.string.address_book_entry_delete_error)
+        errorSnackbar(layout_address_book_entry_details_coordinator, throwable, defaultErrorMsg = R.string.address_book_entry_delete_error)
     }
 
     private fun showDeleteDialog() {

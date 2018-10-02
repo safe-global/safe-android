@@ -14,13 +14,14 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
+import pm.gnosis.heimdall.data.repositories.TransactionData
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -45,9 +46,6 @@ class DefaultSubmitTransactionHelperTest {
 
     @Mock
     private lateinit var addressBookRepository: AddressBookRepository
-
-    @Mock
-    private lateinit var safeRepository: GnosisSafeRepository
 
     @Mock
     private lateinit var signaturePushRepository: PushServiceRepository
@@ -77,7 +75,7 @@ class DefaultSubmitTransactionHelperTest {
             .willReturn(Single.just(TEST_TRANSACTION))
         given(transactionViewHolderBuilder.build(MockUtils.any(), MockUtils.any(), anyBoolean()))
             .willReturn(Single.just(transactionViewHolder))
-        addressHelper = AddressHelper(addressBookRepository, safeRepository)
+        addressHelper = AddressHelper(addressBookRepository)
         submitTransactionHelper =
                 DefaultSubmitTransactionHelper(relayRepositoryMock, signaturePushRepository, signatureStore, transactionViewHolderBuilder)
     }

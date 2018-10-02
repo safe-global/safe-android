@@ -68,7 +68,7 @@ class SelectSafeActivity : BaseActivity() {
                 val safe = nullOnThrow { adapter.getItem(layout_select_safe_spinner.selectedItemPosition) }
                 viewModel.reviewTransaction(safe?.address, transaction!!)
             }
-            .subscribeForResult(::startActivity, { errorSnackbar(layout_select_safe_review_button, it) })
+            .subscribeForResult(::startActivity) { errorSnackbar(layout_select_safe_review_button, it) }
     }
 
     private fun setSpinnerData(data: List<Safe>) {
@@ -78,8 +78,8 @@ class SelectSafeActivity : BaseActivity() {
     }
 
     private class SafesSpinnerAdapter(context: Context) : SimpleSpinnerAdapter<Safe>(context) {
-        override fun title(item: Safe) =
-            item.name
+        override fun title(item: Safe): String? =
+            null // TODO: fix if this activity is used again
 
         override fun subTitle(item: Safe) =
             item.address.asEthereumAddressString()

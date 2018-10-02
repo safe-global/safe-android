@@ -1,29 +1,30 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.Single
+import android.content.Context
+import io.reactivex.*
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.BuildConfig
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.GnosisSafePersonalEdition.*
 import pm.gnosis.heimdall.Proxy
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.*
+import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.*
+import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
 import javax.inject.Inject
@@ -31,8 +32,10 @@ import javax.inject.Singleton
 
 @Singleton
 class DefaultGnosisSafeRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
     gnosisAuthenticatorDb: ApplicationDb,
     private val accountsRepository: AccountsRepository,
+    private val addressBookRepository: AddressBookRepository,
     private val ethereumRepository: EthereumRepository,
     private val pushServiceRepository: PushServiceRepository
 ) : GnosisSafeRepository {
@@ -98,6 +101,15 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 }
             }
 
+    override fun loadAbstractSafe(address: Solidity.Address): Single<AbstractSafe> =
+        loadSafe(address).map { it as AbstractSafe }
+            .onErrorResumeNext {
+                loadPendingSafe(address)
+            }
+            .onErrorResumeNext {
+                loadRecoveringSafe(address)
+            }
+
     /*
      * Deployed Safes
      */
@@ -117,10 +129,11 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .map { it.fromDb() }
 
-    override fun addSafe(address: Solidity.Address, name: String?) =
+    override fun addSafe(address: Solidity.Address, name: String?): Completable =
         Completable.fromCallable {
-            safeDao.insertSafe(GnosisSafeDb(address, name))
+            safeDao.insertSafe(GnosisSafeDb(address))
         }.subscribeOn(Schedulers.io())!!
+            .andThen(addSafeName(address, name))
 
     override fun removeSafe(address: Solidity.Address) =
         Completable.fromCallable {
@@ -147,8 +160,10 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun addPendingSafe(address: Solidity.Address, transactionHash: BigInteger, name: String?, payment: Wei): Completable =
         Completable.fromAction {
-            safeDao.insertPendingSafe(PendingGnosisSafeDb(address, transactionHash, name, ERC20Token.ETHER_TOKEN.address, payment.value))
-        }.subscribeOn(Schedulers.io())
+            safeDao.insertPendingSafe(PendingGnosisSafeDb(address, transactionHash, ERC20Token.ETHER_TOKEN.address, payment.value))
+        }
+            .subscribeOn(Schedulers.io())
+            .andThen(addSafeName(address, name))
 
     override fun updatePendingSafe(pendingSafe: PendingSafe): Completable =
         Completable.fromCallable {
@@ -188,7 +203,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 RecoveringSafe(
                     safeAddress,
                     transactionHash,
-                    name,
                     executeInfo.transaction.wrapped.address,
                     executeInfo.transaction.wrapped.data!!,
                     executeInfo.txGas,
@@ -200,7 +214,9 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     signatures
                 ).toDb()
             )
-        }.subscribeOn(Schedulers.io())
+        }
+            .subscribeOn(Schedulers.io())
+            .andThen(addSafeName(safeAddress, name))
 
     override fun updateRecoveringSafe(recoveringSafe: RecoveringSafe): Completable =
         Completable.fromCallable {
@@ -216,6 +232,25 @@ class DefaultGnosisSafeRepository @Inject constructor(
     /*
      * Safe creation
      */
+
+    private fun addSafeName(safeAddress: Solidity.Address, name: String?): Completable =
+        getSafeName(safeAddress, name)
+            .flatMapCompletable { addressBookRepository.addAddressBookEntry(safeAddress, it, "") }
+
+    private fun getSafeName(safeAddress: Solidity.Address, name: String?): Single<String> =
+        if (name.isNullOrBlank())
+            safeDao.loadTotalSafeCount()
+                .subscribeOn(Schedulers.io())
+                .map { safeCount ->
+                    StringBuilder(context.getString(R.string.default_safe_name)).apply {
+                        if (safeCount > 1) {
+                            append(safeAddress.asEthereumAddressChecksumString().let { " ${it.subSequence(it.length - 4, it.length)}" })
+                        }
+                    }.toString()
+                }
+        else
+            Single.just(name!!)
+
 
     override fun pendingSafeToDeployedSafe(pendingSafe: PendingSafe): Completable =
         Completable.fromCallable { safeDao.pendingSafeToDeployedSafe(pendingSafe.address) }

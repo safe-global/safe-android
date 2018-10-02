@@ -9,7 +9,6 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
@@ -18,8 +17,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AddressHelper @Inject constructor(
-    private val addressBookRepository: AddressBookRepository,
-    private val safeRepository: GnosisSafeRepository
+    private val addressBookRepository: AddressBookRepository
 ) {
     fun populateAddressInfo(
         addressView: TextView,
@@ -39,15 +37,6 @@ class AddressHelper @Inject constructor(
                 }
                 .flatMap {
                     addressBookRepository.loadAddressBookEntry(address).map { it.name }
-                        .onErrorResumeNext {
-                            safeRepository.loadSafe(address).map { it.displayName(nameView.context) }
-                        }
-                        .onErrorResumeNext {
-                            safeRepository.loadPendingSafe(address).map { it.displayName(nameView.context) }
-                        }
-                        .onErrorResumeNext {
-                            safeRepository.loadRecoveringSafe(address).map { it.displayName(nameView.context) }
-                        }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(

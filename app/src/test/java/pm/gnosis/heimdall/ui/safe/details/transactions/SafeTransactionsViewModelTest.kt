@@ -32,7 +32,6 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
-import java.util.concurrent.TimeoutException
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeTransactionsViewModelTest {
