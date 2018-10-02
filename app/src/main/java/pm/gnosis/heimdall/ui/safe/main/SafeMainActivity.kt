@@ -63,6 +63,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     private var selectedSafe: AbstractSafe? = null
 
+    private var selectedSafeName: String? = null
+
     private var screenActive: Boolean = false
 
     override fun screenId() = ScreenId.SAFE_MAIN
@@ -122,6 +124,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         updateToolbar()
         setupNavigation()
+        setupOverflowMenu()
     }
 
     private fun setupSelectedSafe() {
@@ -276,8 +279,13 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
     private fun updateToolbar() {
-        popupMenu.setOnMenuItemClickListener(null)
+        updateOverflowMenu()
         val safe = selectedSafe
+
+        safe?.let {
+            updateSafeInfo("" to safe.address().asEthereumAddressString())
+            observeSafeInfo(safe)
+        }
         when (safe) {
             is Safe -> {
                 layout_safe_main_selected_safe_progress.visible(false)
@@ -285,16 +293,12 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 layout_safe_main_selected_safe_icon.setAddress(safe.address)
                 layout_safe_main_toolbar_overflow.visible(true)
                 layout_safe_main_toolbar_icon.visible(true)
-
-                setupOverflowMenu(safe.address, safe.name, safe)
-                updateSafeInfo(safe.displayName(this) to safe.address.asEthereumAddressString())
-                observeSafeInfo(safe)
             }
             is RecoveringSafe -> {
-                setupInProgressSafe(safe, safe.address, safe.name)
+                setupInProgressSafe()
             }
             is PendingSafe -> {
-                setupInProgressSafe(safe, safe.address, safe.name)
+                setupInProgressSafe()
             }
             else -> {
                 layout_safe_main_selected_safe_name.setText(R.string.no_safe_selected)
@@ -308,15 +312,11 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
     }
 
-    private fun setupInProgressSafe(safe: AbstractSafe, safeAddress: Solidity.Address, safeName: String?) {
+    private fun setupInProgressSafe() {
         layout_safe_main_selected_safe_icon.visible(false)
         layout_safe_main_selected_safe_progress.visible(true)
         layout_safe_main_toolbar_overflow.visible(true)
         layout_safe_main_toolbar_icon.visible(true)
-
-        setupOverflowMenu(safeAddress, safeName, safe)
-        updateSafeInfo(safe.displayName(this) to safeAddress.asEthereumAddressString())
-        observeSafeInfo(safe)
     }
 
     private fun observeSafeInfo(safe: AbstractSafe) {
@@ -327,40 +327,45 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     private fun updateSafeInfo(info: Pair<String, String>) {
         val (name, address) = info
+        selectedSafeName = name
         layout_safe_main_selected_safe_info.text = address
         layout_safe_main_selected_safe_name.text = name
         layout_safe_main_toolbar_title.text = name
     }
 
-    private fun setupOverflowMenu(address: Solidity.Address, name: String?, originalSafe: AbstractSafe) {
-        val extendedMenu = originalSafe is Safe
-        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = extendedMenu
+    private fun setupOverflowMenu() {
+        updateOverflowMenu()
         disposables += popupMenu.itemClicks()
             .subscribeBy(onNext = {
                 when (it.itemId) {
-                    R.id.address_book_entry_details_menu_delete ->
-                        removeSafe(originalSafe)
-                    R.id.safe_details_menu_rename ->
-                        renameSafe(originalSafe, name)
-                    R.id.safe_details_menu_sync -> {
-                        disposables += viewModel.syncWithChromeExtension(address)
+                    R.id.address_book_entry_details_menu_delete -> selectedSafe?.let{ safe -> removeSafe(safe) }
+                    R.id.safe_details_menu_rename -> selectedSafe?.let{ safe -> renameSafe(safe) }
+                    R.id.safe_details_menu_sync -> selectedSafe?.let { safe ->
+                        disposables += viewModel.syncWithChromeExtension(safe.address())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeBy(onComplete = { toast(R.string.sync_successful) },
                                 onError = { toast(R.string.error_syncing) })
                     }
-                    R.id.safe_details_menu_replace_browser_extension -> {
-                        startActivity(ReplaceBrowserExtensionPairingActivity.createIntent(this, address))
+                    R.id.safe_details_menu_replace_browser_extension -> selectedSafe?.let{ safe ->
+                        startActivity(ReplaceBrowserExtensionPairingActivity.createIntent(this, safe.address()))
                     }
-                    R.id.safe_details_menu_show_on_etherscan -> {
-                        openUrl(getString(R.string.etherscan_address_url, address.asEthereumAddressString()))
+                    R.id.safe_details_menu_show_on_etherscan -> selectedSafe?.let{ safe ->
+                        openUrl(getString(R.string.etherscan_address_url, safe.address().asEthereumAddressString()))
                     }
                 }
             }, onError = Timber::e)
     }
 
-    private fun renameSafe(safe: AbstractSafe, default: String?) {
+    private fun updateOverflowMenu() {
+        layout_safe_main_toolbar_overflow.visible(selectedSafe != null)
+        val extendedMenu = selectedSafe is Safe
+        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = extendedMenu
+    }
+
+    private fun renameSafe(safe: AbstractSafe) {
         val alertContent = layoutInflater.inflate(R.layout.dialog_content_edit_name, null)
             .apply {
+                val default = selectedSafeName ?: getString(R.string.default_safe_name)
                 dialog_content_edit_name_input.apply {
                     setText(default)
                     setSelection(default?.length ?: 0)
@@ -383,14 +388,15 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
     private fun removeSafe(safe: AbstractSafe) {
+        val safeName = selectedSafeName ?: getString(R.string.default_safe_name)
         val alertContent = layoutInflater.inflate(R.layout.dialog_content_remove_safe, null)
         CustomAlertDialogBuilder.build(
-            this, getString(R.string.remove_safe_title, safe.displayName(this)), alertContent, R.string.remove, { dialog ->
+            this, getString(R.string.remove_safe_title, safeName), alertContent, R.string.remove, { dialog ->
                 disposables += viewModel.removeSafe(safe)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         startActivity(SafeMainActivity.createIntent(this))
-                        snackbar(layout_safe_main_toolbar_title, getString(R.string.safe_remove_success, safe.displayName(this)))
+                        snackbar(layout_safe_main_toolbar_title, getString(R.string.safe_remove_success, safeName))
                     }, {
                         errorSnackbar(layout_safe_main_toolbar_title, it)
                     })

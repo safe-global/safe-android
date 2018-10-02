@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions.view.helpers
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.PorterDuff
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.Group
@@ -19,8 +18,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock

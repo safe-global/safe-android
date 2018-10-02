@@ -19,7 +19,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -42,9 +41,6 @@ class AssetTransferViewHolderTest {
 
     @Mock
     private lateinit var addressBookRepository: AddressBookRepository
-
-    @Mock
-    private lateinit var safeRepository: GnosisSafeRepository
 
     @Mock
     private lateinit var tokenRepositoryMock: TokenRepository
@@ -91,7 +87,7 @@ class AssetTransferViewHolderTest {
 
     @Before
     fun setUp() {
-        addressHelper = AddressHelper(addressBookRepository, safeRepository)
+        addressHelper = AddressHelper(addressBookRepository)
     }
 
     @Test
@@ -103,7 +99,6 @@ class AssetTransferViewHolderTest {
         viewHolder.start()
         then(contextMock).shouldHaveZeroInteractions()
         then(addressBookRepository).shouldHaveZeroInteractions()
-        then(safeRepository).shouldHaveZeroInteractions()
         then(tokenRepositoryMock).shouldHaveZeroInteractions()
         then(layoutInflater).shouldHaveZeroInteractions()
     }
@@ -111,9 +106,6 @@ class AssetTransferViewHolderTest {
     private fun setupViewMocks(balancesObservable: Observable<List<Pair<ERC20Token, BigInteger?>>>) {
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(balancesObservable)
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
-        given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
-        given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
-        given(safeRepository.loadRecoveringSafe(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
         given(layoutInflater.inflate(R.layout.layout_asset_transfer_info, containerView, true)).willReturn(viewHolderView)
         viewHolderView.mockFindViewById(R.id.layout_asset_transfer_info_value, valueView)
         viewHolderView.mockFindViewById(R.id.layout_asset_transfer_info_fiat, fiatView)
@@ -144,13 +136,6 @@ class AssetTransferViewHolderTest {
         then(addressBookRepository).should().loadAddressBookEntry(TEST_RECEIVER)
         then(addressBookRepository).should().loadAddressBookEntry(TEST_SAFE)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
-        then(safeRepository).should().loadSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadPendingSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadRecoveringSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadSafe(TEST_SAFE)
-        then(safeRepository).should().loadPendingSafe(TEST_SAFE)
-        then(safeRepository).should().loadRecoveringSafe(TEST_SAFE)
-        then(safeRepository).shouldHaveNoMoreInteractions()
     }
 
     private fun testEtherToken(showExtraInfo: Boolean) {
@@ -348,13 +333,6 @@ class AssetTransferViewHolderTest {
         then(addressBookRepository).should().loadAddressBookEntry(TEST_SAFE)
         then(addressBookRepository).should().loadAddressBookEntry(TEST_RECEIVER)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
-        then(safeRepository).should().loadSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadPendingSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadRecoveringSafe(TEST_RECEIVER)
-        then(safeRepository).should().loadSafe(TEST_SAFE)
-        then(safeRepository).should().loadPendingSafe(TEST_SAFE)
-        then(safeRepository).should().loadRecoveringSafe(TEST_SAFE)
-        then(safeRepository).shouldHaveNoMoreInteractions()
         then(tokenRepositoryMock).should().loadToken(TEST_TOKEN)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(layoutInflater).shouldHaveNoMoreInteractions()
@@ -363,7 +341,6 @@ class AssetTransferViewHolderTest {
         viewHolder.start()
         then(contextMock).shouldHaveZeroInteractions()
         then(addressBookRepository).shouldHaveZeroInteractions()
-        then(safeRepository).shouldHaveZeroInteractions()
         then(tokenRepositoryMock).shouldHaveZeroInteractions()
         then(layoutInflater).shouldHaveZeroInteractions()
     }

@@ -8,33 +8,28 @@ import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
 
 sealed class AbstractSafe {
-    abstract fun displayName(context: Context): String
+    abstract fun address(): Solidity.Address
 }
 
-data class Safe(val address: Solidity.Address, val name: String? = null) : AbstractSafe() {
-
-    override fun displayName(context: Context) = safeName(context, name)
-
+data class Safe(val address: Solidity.Address) : AbstractSafe() {
+    override fun address() = address
 }
 
 data class PendingSafe(
     val address: Solidity.Address,
     val hash: BigInteger,
-    val name: String?,
     val paymentToken: Solidity.Address,
     val paymentAmount: BigInteger,
     val isFunded: Boolean = false
-) :
-    AbstractSafe() {
+) : AbstractSafe() {
 
-    override fun displayName(context: Context) = safeName(context, name)
+    override fun address() = address
 
 }
 
 data class RecoveringSafe(
     val address: Solidity.Address,
     val transactionHash: BigInteger?,
-    val name: String?,
     // This is the address that performs the recovery (e.g. the safe, multisend or a module)
     val recoverer: Solidity.Address,
     val data: String,
@@ -45,10 +40,9 @@ data class RecoveringSafe(
     val nonce: BigInteger,
     val operation: TransactionExecutionRepository.Operation,
     val signatures: List<Signature>
-) :
-    AbstractSafe() {
+) : AbstractSafe() {
 
-    override fun displayName(context: Context) = safeName(context, name)
+    override fun address() = address
 
 }
 

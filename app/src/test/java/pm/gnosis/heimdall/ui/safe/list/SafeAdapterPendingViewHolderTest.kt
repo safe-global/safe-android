@@ -15,10 +15,8 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.helpers.AddressHelper
@@ -48,9 +46,6 @@ class SafeAdapterPendingViewHolderTest {
     private lateinit var addressBookRepository: AddressBookRepository
 
     @Mock
-    private lateinit var safeRepository: GnosisSafeRepository
-
-    @Mock
     private lateinit var itemView: View
 
     @Mock
@@ -67,13 +62,11 @@ class SafeAdapterPendingViewHolderTest {
 
     @Before
     fun setUp() {
-        given(itemView.context).willReturn(context)
-
         given(itemView.setOnClickListener(MockUtils.any())).will {
             rxClickListener = it.arguments.first() as View.OnClickListener
             Unit
         }
-        addressHelper = AddressHelper(addressBookRepository, safeRepository)
+        addressHelper = AddressHelper(addressBookRepository)
         viewHolder = SafeAdapter.PendingViewHolder(itemView, safeSubject, addressHelper)
     }
 
@@ -81,7 +74,7 @@ class SafeAdapterPendingViewHolderTest {
     fun bindWrongType() {
         val safeObserver = TestObserver<AbstractSafe>()
         safeSubject.subscribe(safeObserver)
-        viewHolder.bind(Safe(TEST_SAFE, "Test Safe"), emptyList())
+        viewHolder.bind(Safe(TEST_SAFE), emptyList())
         viewHolder.start()
         
         then(itemView).should().setOnClickListener(viewHolder)
@@ -106,7 +99,7 @@ class SafeAdapterPendingViewHolderTest {
         then(safeAddressTextView).should().text = null
         then(safeAddressTextView).shouldHaveNoMoreInteractions()
 
-        then(safeNameTextView).should().text = "Test Safe"
+        then(safeNameTextView).should().text = null
         then(safeNameTextView).shouldHaveNoMoreInteractions()
 
         viewHolder.start()
@@ -128,14 +121,14 @@ class SafeAdapterPendingViewHolderTest {
 
     @Test
     fun bindPendingSafeAndSelect() {
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, "Test Safe", TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         bindSafeAndSelect(safe, TEST_PENDING_SAFE, "0xC2AC...a48132")
     }
 
     @Test
     fun bindRecoveringSafeAndSelect() {
         val safe = RecoveringSafe(
-            TEST_RECOVERING_SAFE, BigInteger.ZERO,"Test Safe", TEST_RECOVERING_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
+            TEST_RECOVERING_SAFE, BigInteger.ZERO, TEST_RECOVERING_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
             ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList())
         bindSafeAndSelect(safe, TEST_RECOVERING_SAFE, "0xb365...14244A")
     }
@@ -147,7 +140,7 @@ class SafeAdapterPendingViewHolderTest {
         val addressBookSingleFactory = TestSingleFactory<AddressBookEntry>()
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(addressBookSingleFactory.get())
 
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, "Test Safe", TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         viewHolder.bind(safe, emptyList())
         viewHolder.start()
 
@@ -165,7 +158,7 @@ class SafeAdapterPendingViewHolderTest {
         val addressBookSingleFactory = TestSingleFactory<AddressBookEntry>()
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(addressBookSingleFactory.get())
 
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, "Test Safe", TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         viewHolder.bind(safe, emptyList())
         viewHolder.start()
 

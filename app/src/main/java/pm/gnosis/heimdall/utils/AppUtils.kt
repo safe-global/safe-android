@@ -30,8 +30,13 @@ import pm.gnosis.svalinn.utils.ethereum.erc67Uri
 import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 
-fun errorSnackbar(view: View, throwable: Throwable, duration: Int = Snackbar.LENGTH_LONG) {
-    val message = (throwable as? LocalizedException)?.localizedMessage() ?: view.context.getString(R.string.error_try_again)
+fun errorSnackbar(
+    view: View,
+    throwable: Throwable,
+    duration: Int = Snackbar.LENGTH_LONG,
+    @StringRes defaultErrorMsg: Int = R.string.error_try_again
+) {
+    val message = (throwable as? LocalizedException)?.localizedMessage() ?: view.context.getString(defaultErrorMsg)
     snackbar(view, message, duration)
 }
 

@@ -7,7 +7,6 @@ import android.text.SpannableStringBuilder
 import android.widget.EditText
 import android.widget.TextView
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*

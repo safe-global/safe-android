@@ -44,7 +44,6 @@ class SafeDetailsViewModelTest {
     private lateinit var viewModel: SafeDetailsViewModel
 
     private var testAddress = Solidity.Address(BigInteger.ZERO)
-    private var testName = "testName"
 
     @Before
     fun setup() {
@@ -55,7 +54,7 @@ class SafeDetailsViewModelTest {
     fun testSetup() {
         given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.just(Safe(testAddress)))
 
-        viewModel.setup(testAddress, testName)
+        viewModel.setup(testAddress)
         viewModel.observeSafe().subscribe(TestSubscriber())
 
         then(safeRepository).should().observeSafe(testAddress)
@@ -66,7 +65,7 @@ class SafeDetailsViewModelTest {
         val testSubscriber = TestSubscriber<Safe>()
         val safe = Safe(testAddress)
         given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.just(safe))
-        viewModel.setup(testAddress, testName)
+        viewModel.setup(testAddress)
 
         viewModel.observeSafe().subscribe(testSubscriber)
 
@@ -78,7 +77,7 @@ class SafeDetailsViewModelTest {
         val testSubscriber = TestSubscriber<Safe>()
         val exception = Exception()
         given(safeRepository.observeSafe(MockUtils.any())).willReturn(Flowable.error(exception))
-        viewModel.setup(testAddress, testName)
+        viewModel.setup(testAddress)
 
         viewModel.observeSafe().subscribe(testSubscriber)
 

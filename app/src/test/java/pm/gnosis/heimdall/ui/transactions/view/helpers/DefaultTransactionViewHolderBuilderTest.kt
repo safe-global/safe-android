@@ -8,7 +8,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.helpers.AddressHelper
@@ -28,9 +27,6 @@ class DefaultTransactionViewHolderBuilderTest {
     private lateinit var addressBookRepository: AddressBookRepository
 
     @Mock
-    private lateinit var safeRepository: GnosisSafeRepository
-
-    @Mock
     private lateinit var tokenRepository: TokenRepository
 
     private lateinit var addressHelper: AddressHelper
@@ -43,7 +39,7 @@ class DefaultTransactionViewHolderBuilderTest {
 
     @Before
     fun setUp() {
-        addressHelper = AddressHelper(addressBookRepository, safeRepository)
+        addressHelper = AddressHelper(addressBookRepository)
         builder = DefaultTransactionViewHolderBuilder(addressHelper, tokenRepository)
     }
 
