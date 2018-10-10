@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.heimdall.ERC20Contract
-import pm.gnosis.heimdall.GnosisSafePersonalEdition
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.repositories.*
@@ -31,19 +31,19 @@ class DefaultTransactionInfoRepository @Inject constructor(
             when {
                 transaction.operation == TransactionExecutionRepository.Operation.DELEGATE_CALL ->
                     throw RestrictedTransactionException.DelegateCall
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.AddOwnerWithThreshold.METHOD_ID) == true ->
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.AddOwnerWithThreshold.METHOD_ID) == true ->
                     throw RestrictedTransactionException.ModifyOwners
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.RemoveOwner.METHOD_ID) == true ->
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.RemoveOwner.METHOD_ID) == true ->
                     throw RestrictedTransactionException.ModifyOwners
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.SwapOwner.METHOD_ID) == true ->
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.SwapOwner.METHOD_ID) == true ->
                     throw RestrictedTransactionException.ModifyOwners
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.EnableModule.METHOD_ID) == true ->
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.EnableModule.METHOD_ID) == true ->
                     throw RestrictedTransactionException.ModifyModules
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.DisableModule.METHOD_ID) == true ->
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.DisableModule.METHOD_ID) == true ->
                     throw RestrictedTransactionException.ModifyModules
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.ChangeThreshold.METHOD_ID) == true ->
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.ChangeThreshold.METHOD_ID) == true ->
                     throw RestrictedTransactionException.ChangeThreshold
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafePersonalEdition.ChangeMasterCopy.METHOD_ID) == true ->
+                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.ChangeMasterCopy.METHOD_ID) == true ->
                     throw RestrictedTransactionException.ChangeMasterCopy
             }
             transaction

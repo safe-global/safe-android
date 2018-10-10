@@ -55,5 +55,6 @@ freeline.py
 freeline/
 freeline_project_description.json
 
+secrets.tar
 project_keys
 .DS_STORE

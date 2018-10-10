@@ -40,7 +40,7 @@ import java.math.BigInteger
 import kotlin.concurrent.timer
 
 @RunWith(MockitoJUnitRunner::class)
-class GnosisSafeTransactionRepositoryTest {
+class DefaultTransactionExecutionRepositoryTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -98,13 +98,40 @@ class GnosisSafeTransactionRepositoryTest {
 
     @Test
     fun calculateHash() {
+        // Shared test cases: https://github.com/gnosis/gnosis-py/blob/master/gnosis/safe/tests/test_safe_service.py
+        verifyHash(
+            "0x692a70d2e424a56d2c6c27aa97d1a86395877b3a".hexAsBigInteger(),
+            Transaction(
+                "0x5AC255889882aaB35A2aa939679E3F3d4Cea221E".asEthereumAddress()!!,
+                data = "0x00",
+                value = Wei(BigInteger.valueOf(5000000)),
+                nonce = BigInteger.valueOf(67)
+            ),
+            BigInteger("50000"), BigInteger("100"), BigInteger("10000"), BigInteger.ZERO,
+            TransactionExecutionRepository.Operation.CALL,
+            "c9d69a2350aede7978fdee58e702647e4bbdc82168577aa4a43b66ad815c6d1a"
+        )
+
+        verifyHash(
+            "0x692a70d2e424a56d2c6c27aa97d1a86395877b3a".hexAsBigInteger(),
+            Transaction(
+                "0x0".asEthereumAddress()!!,
+                value = Wei(BigInteger.valueOf(80000000)),
+                data = "0x562944",
+                nonce = BigInteger.valueOf(257000)
+            ),
+            BigInteger("54522"), BigInteger("773"), BigInteger("22000000"), BigInteger.ZERO,
+            TransactionExecutionRepository.Operation.CREATE,
+            "8ca8db91d72b379193f6e229eb2dff0d0621b6ef452d90638ee3206e9b7349b3"
+        )
+
         // Empty wrapped
         verifyHash(
             "0xbbf289d846208c16edc8474705c748aff07732db".hexAsBigInteger(),
             Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.ZERO),
-            BigInteger("100000"), BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO,
+            BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO,
             TransactionExecutionRepository.Operation.CALL,
-            "975734ee1e75ec3300bbb8bad5f79597a30f8b61fac48350822cf60492386f7f"
+            "1863bbed0d8fdd3c5b132495bac41db35cf3a6190ccd02cd511199b9476d269e"
         )
 
         // Ether transfer
@@ -117,7 +144,7 @@ class GnosisSafeTransactionRepositoryTest {
             ),
             BigInteger("4200000"), BigInteger("13337"), BigInteger("20000000000"), BigInteger.ZERO,
             TransactionExecutionRepository.Operation.CALL,
-            "7e4cb4cd190aedb510e8c4d366a87a8ee948921796ea7d720c74db3fc4be4db3"
+            "30ae451e4e933a6e7703221298a2baf5292b3a954b67e0ddef997b1754920db0"
         )
 
         // Token transfer
@@ -134,7 +161,7 @@ class GnosisSafeTransactionRepositoryTest {
             BigInteger("230000"), BigInteger("7331"), BigInteger("100"),
             "0xbbf289d846208c16edc8474705c748aff07732db".asEthereumAddress()!!.value,
             TransactionExecutionRepository.Operation.CALL,
-            "1297208903774650b1a7fa09a60ffd69b4a253a010df54d201c0f500a4f80c46"
+            "d3bfdcdd807f4db717646a35f333ed90cab0f94f31a0d428f688429c41039fe4"
         )
 
         // Token transfer as delegate call
@@ -143,7 +170,7 @@ class GnosisSafeTransactionRepositoryTest {
             BigInteger("230000"), BigInteger("7331"), BigInteger("100"),
             "0xbbf289d846208c16edc8474705c748aff07732db".asEthereumAddress()!!.value,
             TransactionExecutionRepository.Operation.DELEGATE_CALL,
-            "c93063108c748057a30815731a7e0777acd4df20d189c22088d01571c21f7e32"
+            "e0c6798c794ee4f3a346f98b5be5225aec4b159e586271004b0a7b34653b0657"
         )
     }
 

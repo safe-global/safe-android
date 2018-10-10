@@ -8,7 +8,7 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.heimdall.BuildConfig
-import pm.gnosis.heimdall.GnosisSafePersonalEdition
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.MultiSend
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
@@ -159,7 +159,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
         val payloads = newAddresses.map {
             val nextAddressToReplace = addressesToReplace.removeAt(addressesToReplace.size - 1)
             val pointerAddress = nullOnThrow { safeInfo.owners[safeInfo.owners.indexOf(nextAddressToReplace) - 1] } ?: SENTINEL
-            val payload = GnosisSafePersonalEdition.SwapOwner.encode(pointerAddress, nextAddressToReplace, it)
+            val payload = GnosisSafe.SwapOwner.encode(pointerAddress, nextAddressToReplace, it)
             payload
         }
 

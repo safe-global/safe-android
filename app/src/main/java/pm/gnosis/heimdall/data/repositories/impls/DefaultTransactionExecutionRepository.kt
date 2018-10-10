@@ -7,7 +7,7 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
-import pm.gnosis.heimdall.GnosisSafePersonalEdition
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
@@ -53,29 +53,51 @@ class DefaultTransactionExecutionRepository @Inject constructor(
     ): Single<ByteArray> =
         Single.fromCallable {
             val tx = transaction.wrapped
-            val to = tx.address.asEthereumAddressString().removeHexPrefix()
+            val to = tx.address.value.paddedHexString()
             val value = tx.value?.value.paddedHexString()
-            val data = tx.data?.removeHexPrefix() ?: ""
-            val operationString = transaction.operation.toInt().toBigInteger().paddedHexString(2)
+            val data = Sha3Utils.keccak(tx.data?.hexToByteArray() ?: ByteArray(0)).toHex().padStart(64, '0')
+            val operationString = transaction.operation.toInt().toBigInteger().paddedHexString()
             val gasPriceString = gasPrice.paddedHexString()
             val txGasString = txGas.paddedHexString()
             val dataGasString = dataGas.paddedHexString()
-            val gasTokenString = gasToken.asEthereumAddressString().removeHexPrefix()
+            val gasTokenString = gasToken.value.paddedHexString()
+            val refundReceiverString = BigInteger.ZERO.paddedHexString()
             val nonce = (tx.nonce ?: DEFAULT_NONCE).paddedHexString()
-            hash(safeAddress, to, value, data, operationString, txGasString, dataGasString, gasPriceString, gasTokenString, nonce)
+            hash(
+                safeAddress,
+                to,
+                value,
+                data,
+                operationString,
+                txGasString,
+                dataGasString,
+                gasPriceString,
+                gasTokenString,
+                refundReceiverString,
+                nonce
+            )
         }.subscribeOn(Schedulers.computation())
 
     private fun BigInteger?.paddedHexString(padding: Int = 64): String {
         return (this?.toString(16) ?: "").padStart(padding, '0')
     }
 
+    private fun domainHash(safeAddress: Solidity.Address) =
+        Sha3Utils.keccak(
+            ("0x035aff83d86937d35b32e04f0ddc6ff469290eef2f1b692d8a815c89404d4749" +
+                    safeAddress.value.paddedHexString()).hexToByteArray()
+        ).toHex()
+
+    private fun valuesHash(parts: Array<out String>) =
+        parts.fold(StringBuilder().append("0x14d461bc7412367e924637b363c7bf29b8f47e2f84869f4426e5633d8af47b20")) {
+                acc, part -> acc.append(part)
+        }.toString().run {
+            Sha3Utils.keccak(hexToByteArray()).toHex()
+        }
+
     private fun hash(safeAddress: Solidity.Address, vararg parts: String): ByteArray {
-        val initial = StringBuilder().append(ERC191_BYTE).append(ERC191_VERSION).append(safeAddress.asEthereumAddressString().removeHexPrefix())
-        return Sha3Utils.keccak(
-            parts.fold(
-                initial
-            ) { acc, part -> acc.append(part) }.toString().hexToByteArray()
-        )
+        val initial = StringBuilder().append(ERC191_BYTE).append(ERC191_VERSION).append(domainHash(safeAddress)).append(valuesHash(parts))
+        return Sha3Utils.keccak(initial.toString().hexToByteArray())
     }
 
     private fun loadSafeState(safeAddress: Solidity.Address) =
@@ -83,17 +105,17 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             TransactionInfoRequest(
                 EthCall(
                     transaction = Transaction(
-                        safeAddress, data = GnosisSafePersonalEdition.GetThreshold.encode()
+                        safeAddress, data = GnosisSafe.GetThreshold.encode()
                     ), id = 0
                 ),
                 EthCall(
                     transaction = Transaction(
-                        safeAddress, data = GnosisSafePersonalEdition.Nonce.encode()
+                        safeAddress, data = GnosisSafe.Nonce.encode()
                     ), id = 1
                 ),
                 EthCall(
                     transaction = Transaction(
-                        safeAddress, data = GnosisSafePersonalEdition.GetOwners.encode()
+                        safeAddress, data = GnosisSafe.GetOwners.encode()
                     ), id = 2
                 ),
                 EthBalance(
@@ -114,9 +136,9 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         loadSafeState(safeAddress)
             .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
             .map { (info, sender) ->
-                val nonce = checkNonce(safeAddress, GnosisSafePersonalEdition.Nonce.decode(info.nonce.result()!!).param0.value)
-                val threshold = GnosisSafePersonalEdition.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
-                val owners = GnosisSafePersonalEdition.GetOwners.decode(info.owners.result()!!).param0.items
+                val nonce = checkNonce(safeAddress, GnosisSafe.Nonce.decode(info.nonce.result()!!).param0.value)
+                val threshold = GnosisSafe.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
+                val owners = GnosisSafe.GetOwners.decode(info.owners.result()!!).param0.items
                 val safeBalance = info.balance.result()!!
                 TransactionExecutionRepository.SafeExecuteState(
                     sender,
@@ -140,16 +162,16 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                         transaction.wrapped.value?.value?.asDecimalString() ?: "0",
                         transaction.wrapped.data ?: "0x",
                         transaction.operation.toInt(),
-                        GnosisSafePersonalEdition.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
+                        GnosisSafe.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
                     )
                 ).map { info to it }
             }
             .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
             .flatMap { (infoWithEstimate, sender) ->
                 val (info, estimate) = infoWithEstimate
-                val nonce = checkNonce(safeAddress, GnosisSafePersonalEdition.Nonce.decode(info.nonce.result()!!).param0.value)
-                val threshold = GnosisSafePersonalEdition.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
-                val owners = GnosisSafePersonalEdition.GetOwners.decode(info.owners.result()!!).param0.items
+                val nonce = checkNonce(safeAddress, GnosisSafe.Nonce.decode(info.nonce.result()!!).param0.value)
+                val threshold = GnosisSafe.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
+                val owners = GnosisSafe.GetOwners.decode(info.owners.result()!!).param0.items
                 val updatedTransaction = transaction.copy(wrapped = transaction.wrapped.updateTransactionWithStatus(nonce))
                 val txGas = estimate.safeTxGas.decimalAsBigInteger()
                 val dataGas = estimate.dataGas.decimalAsBigInteger()
@@ -370,7 +392,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 else {
                     // If we have a failure event then the transaction failed
                     receipt.logs.none {
-                        it.topics.getOrNull(0) == GnosisSafePersonalEdition.Events.ExecutionFailed.EVENT_ID
+                        it.topics.getOrNull(0) == GnosisSafe.Events.ExecutionFailed.EVENT_ID
                     }
                 }
                 executed to time
@@ -385,7 +407,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
 
     companion object {
         private const val ERC191_BYTE = "19"
-        private const val ERC191_VERSION = "00"
+        private const val ERC191_VERSION = "01"
         private val DEFAULT_NONCE = BigInteger.ZERO
     }
 }
