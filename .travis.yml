@@ -55,7 +55,7 @@ deploy:
   provider: releases
   api_key: "${GITHUB_API_KEY}"
   file_glob: true
-  file: app/build/outputs/apk/*/*-dev.apk
+  file: app/build/outputs/apk/*/*-rinkeby.apk
   skip_cleanup: true
   on:
     tags: true
