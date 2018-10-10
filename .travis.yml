@@ -49,7 +49,7 @@ after_success:
   - bash <(curl -s https://codecov.io/bash) -f '*TestCoverage.xml'
 
 before_deploy:
-  - ./ci/build_dev_version.sh
+  - ./ci/build_rinkeby_version.sh
 
 deploy:
   provider: releases

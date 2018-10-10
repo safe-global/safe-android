@@ -68,6 +68,6 @@ Also always add newlines at the end of files. This can be enforced by Android St
 Travis is used for continuous integration. It requires the `google-services.json` and `debug-upload.jks`. These need to be encrypted into a single file using the travis cli.
 
 ```
-tar cvf secrets.tar gnosis-upload.jks app/google-services.json app/src/dev/google-services.json
+tar cvf secrets.tar gnosis-upload.jks app/google-services.json app/src/rinkeby/google-services.json
 travis encrypt-file secrets.tar
 ```

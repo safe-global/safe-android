@@ -2,4 +2,4 @@
 # fail if any commands fails
 set -e
 
-./gradlew clean assembleDev  --stacktrace
+./gradlew clean assembleRinkeby  --stacktrace
