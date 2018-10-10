@@ -79,8 +79,7 @@ android {
         }
 
         internal {
-            // We use the dev suffix to enable payment
-            applicationIdSuffix ".dev"
+            applicationIdSuffix ".internal"
             versionNameSuffix "-internal"
             debuggable true
             minifyEnabled false
@@ -89,9 +88,9 @@ android {
             buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
         }
 
-        dev {
+        rinkeby {
             applicationIdSuffix ".dev"
-            versionNameSuffix "-dev"
+            versionNameSuffix "-rinkeby"
             minifyEnabled true
             signingConfig signingConfigs.release
         }
