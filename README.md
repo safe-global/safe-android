@@ -61,3 +61,13 @@ You can contribute to this repo by creating a Pull Request or an issue. Please f
 Make sure that you apply the [Kotlin coding conventions](https://kotlinlang.org/docs/reference/coding-conventions.html) and use the [style schema](heimdall-style.xml) in this repo with Android Studio.
 
 Also always add newlines at the end of files. This can be enforced by Android Studio. For this enable `Editor -> General -> Ensure line feed … (Under the “Others” section)`.
+
+
+### CI setup
+
+Travis is used for continuous integration. It requires the `google-services.json` and `debug-upload.jks`. These need to be encrypted into a single file using the travis cli.
+
+```
+tar cvf secrets.tar gnosis-upload.jks app/google-services.json app/src/dev/google-services.json
+travis encrypt-file secrets.tar
+```
