@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ic_outlined_word_first"
+    android:gravity="center"
+    android:letterSpacing="0.04"
+    android:padding="16dp"
+    android:textColor="@color/word_recovery_phrase"
+    android:textSize="16sp"
+    android:textStyle="bold"
+    tools:text="Word" />

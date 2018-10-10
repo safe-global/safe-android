@@ -15,8 +15,9 @@ import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
-import pm.gnosis.heimdall.ui.safe.create.ConfirmSafeRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.create.SafeRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.recoveryphrase.ConfirmRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.recoveryphrase.SetupRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.create.CreateSafeConfirmRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
@@ -27,6 +28,8 @@ import pm.gnosis.heimdall.ui.safe.recover.ReplaceBrowserExtensionContract
 import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
@@ -62,7 +65,7 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesConfirmSafeRecoveryPhraseContract(provider: ViewModelProvider) = provider[ConfirmSafeRecoveryPhraseContract::class.java]
+    fun providesConfirmSafeRecoveryPhraseContract(provider: ViewModelProvider) = provider[ConfirmRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView
@@ -79,6 +82,11 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesCreateAssetTransferContract(provider: ViewModelProvider) = provider[CreateAssetTransferContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesCreateSafeConfirmSetupRecoveryPhraseContract(provider: ViewModelProvider) =
+        provider[CreateSafeConfirmRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView
@@ -99,6 +107,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesManageTokensContract(provider: ViewModelProvider) = provider[ManageTokensContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesNewConfirmRecoveryPhraseContract(provider: ViewModelProvider) = provider[ConfirmNewRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView
@@ -147,15 +159,19 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
-    fun providesSafeRecoveryPhraseContract(provider: ViewModelProvider) = provider[SafeRecoveryPhraseContract::class.java]
-
-    @Provides
-    @ForView
     fun providesSafeTransactionsContract(provider: ViewModelProvider) = provider[SafeTransactionsContract::class.java]
 
     @Provides
     @ForView
+    fun providesScanExtensionAddressContract(provider: ViewModelProvider) = provider[ScanExtensionAddressContract::class.java]
+
+    @Provides
+    @ForView
     fun providesSelectSafeContract(provider: ViewModelProvider) = provider[SelectSafeContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesSetupRecoveryPhraseContract(provider: ViewModelProvider) = provider[SetupRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView

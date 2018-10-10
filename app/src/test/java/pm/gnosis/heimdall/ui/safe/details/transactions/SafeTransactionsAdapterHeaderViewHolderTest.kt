@@ -23,8 +23,11 @@ import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
+import pm.gnosis.models.Transaction
 import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
@@ -405,6 +408,97 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(viewModel).should().observeTransactionStatus("id_1")
         then(viewModel).should().loadTransactionInfo("id_1")
         then(viewModel).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun testBindTransactionEntryReplaceRecoveryPhrase() {
+        context.mockGetString()
+        context.mockGetColor()
+        itemView.mockFindViewById(R.id.layout_safe_transactions_item_timestamp, timestampTextView)
+        itemView.mockFindViewById(R.id.layout_safe_transactions_item_target_label, targetTextView)
+        itemView.mockFindViewById(R.id.layout_safe_transactions_item_type_icon, typeIconImageView)
+        itemView.mockFindViewById(R.id.layout_safe_transactions_item_value, valueTextView)
+        itemView.mockFindViewById(R.id.layout_safe_transactions_item_info, infoTextView)
+        itemView.mockFindViewById(R.id.layout_safe_transactions_item_target_image, targetImageView)
+
+        given(viewModel.loadTransactionInfo(anyString())).willReturn(
+            Single.just(
+                TransactionInfo(
+                    "id_1",
+                    "chain_hash",
+                    TEST_SAFE,
+                    TransactionData.ReplaceRecoveryPhrase(
+                        SafeTransaction(
+                            Transaction(
+                                address = Solidity.Address(100.toBigInteger())
+                            ), operation = TransactionExecutionRepository.Operation.DELEGATE_CALL
+                        )
+                    ),
+                    TEST_TIMESTAMP,
+                    TEST_GAS_LIMIT,
+                    TEST_GAS_PRICE,
+                    ERC20Token.ETHER_TOKEN.address
+                )
+            )
+        )
+        given(viewModel.observeTransactionStatus(anyString())).willReturn(Observable.empty())
+        given(addressBookRepository.loadAddressBookEntry(MockUtils.any()))
+            .willReturn(Single.just(AddressBookEntry(TEST_SAFE, "Test Safe", "")))
+
+        viewHolder.bind(SafeTransactionsContract.AdapterEntry.Transaction("id_1"), emptyList())
+
+        then(timestampTextView).should().text = R.string.loading.toString()
+        then(timestampTextView).shouldHaveNoMoreInteractions()
+        then(targetTextView).shouldHaveZeroInteractions()
+
+        var rxClickListener: View.OnClickListener? = null
+        given(itemView.setOnClickListener(MockUtils.any())).will {
+            rxClickListener = it.arguments.first() as View.OnClickListener
+            Unit
+        }
+
+        viewHolder.start()
+
+        assertNotNull(rxClickListener)
+
+        then(typeIconImageView).should().setImageResource(R.drawable.ic_transaction_white_24dp)
+        then(typeIconImageView).shouldHaveNoMoreInteractions()
+
+        then(valueTextView).should().text = "-"
+        then(valueTextView).should().setTextColor(R.color.dark_slate_blue)
+        then(valueTextView).shouldHaveNoMoreInteractions()
+
+        then(infoTextView).should().text = R.string.replaced_recovery_phrase.toString()
+        then(infoTextView).should().visibility = View.VISIBLE
+        then(infoTextView).shouldHaveNoMoreInteractions()
+
+        then(targetImageView).should().setAddress(TEST_SAFE)
+        then(targetImageView).shouldHaveNoMoreInteractions()
+
+        then(targetTextView).should().setTextColor(R.color.dark_slate_blue)
+        then(targetTextView).shouldHaveNoMoreInteractions()
+
+        then(timestampTextView).should().text = R.string.just_a_moment_ago.toString()
+        then(timestampTextView).shouldHaveNoMoreInteractions()
+
+        computationScheduler.advanceTimeBy(66, TimeUnit.SECONDS)
+
+        then(timestampTextView).should(times(2)).text = R.string.just_a_moment_ago.toString()
+        then(timestampTextView).shouldHaveNoMoreInteractions()
+
+        then(targetTextView).should().text = "0xA7e1...a246EC"
+        then(targetTextView).should().text = "Test Safe"
+        then(targetTextView).should().visibility = View.VISIBLE
+        then(targetTextView).shouldHaveNoMoreInteractions()
+
+        then(viewModel).should().observeTransactionStatus("id_1")
+        then(viewModel).should().loadTransactionInfo("id_1")
+        then(viewModel).shouldHaveNoMoreInteractions()
+
+        then(transactionSubject).shouldHaveZeroInteractions()
+        rxClickListener!!.onClick(itemView)
+        then(transactionSubject).should().onNext("id_1")
+        then(transactionSubject).shouldHaveNoMoreInteractions()
     }
 
     @Test

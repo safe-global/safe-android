@@ -18,11 +18,11 @@ interface TransactionInfoRepository {
 }
 
 sealed class RestrictedTransactionException : IllegalArgumentException() {
-    object DelegateCall: RestrictedTransactionException()
-    object ModifyOwners: RestrictedTransactionException()
-    object ModifyModules: RestrictedTransactionException()
-    object ChangeThreshold: RestrictedTransactionException()
-    object ChangeMasterCopy: RestrictedTransactionException()
+    object DelegateCall : RestrictedTransactionException()
+    object ModifyOwners : RestrictedTransactionException()
+    object ModifyModules : RestrictedTransactionException()
+    object ChangeThreshold : RestrictedTransactionException()
+    object ChangeMasterCopy : RestrictedTransactionException()
 }
 
 data class TransactionInfo(
@@ -39,11 +39,10 @@ sealed class TransactionData : Parcelable {
     @Parcelize
     @TypeParceler<Solidity.Address?, OptionalSolidityAddressParceler>
     data class RecoverSafe(val appAddress: Solidity.Address?, val extensionAddress: Solidity.Address?): TransactionData()
-
+    */
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
-    data class ReplaceRecoveryPhrase(val primaryKeyAddress: Solidity.Address, val secondaryKeyAddress: Solidity.Address): TransactionData()
-    */
+    data class ReplaceRecoveryPhrase(val safeTransaction: SafeTransaction) : TransactionData()
 
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
@@ -59,6 +58,7 @@ sealed class TransactionData : Parcelable {
         when (this) {
             is Generic -> TYPE_GENERIC
             is AssetTransfer -> TYPE_ASSET_TRANSFER
+            is ReplaceRecoveryPhrase -> TYPE_REPLACE_RECOVERY_PHRASE
         }
 
     companion object {
@@ -67,12 +67,14 @@ sealed class TransactionData : Parcelable {
 
         private const val TYPE_GENERIC = 0
         private const val TYPE_ASSET_TRANSFER = 1
+        private const val TYPE_REPLACE_RECOVERY_PHRASE = 2
 
         fun fromBundle(bundle: Bundle): TransactionData? =
             bundle.run {
                 when (getInt(TransactionData.EXTRA_DATA_TYPE, 0)) {
                     TransactionData.TYPE_GENERIC -> getParcelable<TransactionData.Generic>(TransactionData.EXTRA_DATA)
                     TransactionData.TYPE_ASSET_TRANSFER -> getParcelable<TransactionData.AssetTransfer>(TransactionData.EXTRA_DATA)
+                    TransactionData.TYPE_REPLACE_RECOVERY_PHRASE -> getParcelable<TransactionData.ReplaceRecoveryPhrase>(TransactionData.EXTRA_DATA)
                     else -> throw IllegalArgumentException("Unknown transaction data type")
                 }
             }

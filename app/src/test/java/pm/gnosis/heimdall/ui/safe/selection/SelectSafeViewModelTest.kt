@@ -25,6 +25,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -116,7 +117,8 @@ class SelectSafeViewModelTest {
         contextMock.mockGetString()
         given(infoRepositoryMock.parseTransactionData(MockUtils.any())).willReturn(
             Single.just(
-                TransactionData.AssetTransfer(Solidity.Address(BigInteger.ZERO), BigInteger.TEN, Solidity.Address(BigInteger.ONE)))
+                TransactionData.AssetTransfer(Solidity.Address(BigInteger.ZERO), BigInteger.TEN, Solidity.Address(BigInteger.ONE))
+            )
         )
 
         val testObserver = TestObserver<Result<Intent>>()
@@ -165,9 +167,46 @@ class SelectSafeViewModelTest {
     companion object {
         private val TEST_SAFE = Solidity.Address(BigInteger.ONE)
         private val TEST_TRANSACTION = SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionExecutionRepository.Operation.CALL)
+
+        private const val REPLACE_RECOVERY_PHRASE_DATA =
+            "0x8d80ff0a" + // Multi send method
+                    "0000000000000000000000000000000000000000000000000000000000000020" +
+                    "0000000000000000000000000000000000000000000000000000000000000240" +
+                    "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                    "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    "e318b52b" + // Swap owner method
+                    "000000000000000000000000000000000000000000000000000000000000000c" + // Previous Owner
+                    "000000000000000000000000000000000000000000000000000000000000000d" + // Old Owner
+                    "000000000000000000000000000000000000000000000000000000000000000f" + // New Owner
+                    "00000000000000000000000000000000000000000000000000000000" + // Padding
+                    "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                    "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    "e318b52b" + // Swap owner method
+                    "0000000000000000000000000000000000000000000000000000000000000001" + // Previous Owner
+                    "000000000000000000000000000000000000000000000000000000000000000a" + // Old Owner
+                    "000000000000000000000000000000000000000000000000000000000000000e" + // New Owner
+                    "00000000000000000000000000000000000000000000000000000000" // Padding
+
+        private val REPLACE_RECOVERY_PHRASE_TX =
+            SafeTransaction(
+                Transaction(
+                    address = TEST_SAFE,
+                    value = Wei.ZERO,
+                    data = REPLACE_RECOVERY_PHRASE_DATA,
+                    nonce = BigInteger.ZERO
+                ), TransactionExecutionRepository.Operation.DELEGATE_CALL
+            )
+
         private val TEST_DATA = mapOf(
             TransactionData.Generic::class to TransactionData.Generic(TEST_SAFE, BigInteger.ONE, null),
-            TransactionData.AssetTransfer::class to TransactionData.AssetTransfer(TEST_SAFE, BigInteger.ONE, Solidity.Address(BigInteger.TEN))
+            TransactionData.AssetTransfer::class to TransactionData.AssetTransfer(TEST_SAFE, BigInteger.ONE, Solidity.Address(BigInteger.TEN)),
+            TransactionData.ReplaceRecoveryPhrase::class to TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)
         )
     }
 }
