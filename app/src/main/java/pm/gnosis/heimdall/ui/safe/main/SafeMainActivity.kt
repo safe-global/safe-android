@@ -364,6 +364,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_toolbar_overflow.visible(selectedSafe != null)
         val extendedMenu = selectedSafe is Safe
         popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = extendedMenu
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = extendedMenu
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = extendedMenu
     }
 
     private fun renameSafe(safe: AbstractSafe) {
