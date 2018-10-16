@@ -27,16 +27,24 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
     private val gnosisSafeRepository: GnosisSafeRepository
 ) : CreateSafeConfirmRecoveryPhraseContract() {
 
-    private lateinit var browserExtensionAddress: Solidity.Address
+    private var browserExtensionAddress: Solidity.Address? = null
     private val secureRandom = SecureRandom()
 
-    override fun setup(browserExtensionAddress: Solidity.Address) {
+    private val threshold get() = browserExtensionAddress?.let { 2 } ?: 1
+
+    override fun setup(browserExtensionAddress: Solidity.Address?) {
         this.browserExtensionAddress = browserExtensionAddress
     }
 
     override fun createSafe(): Single<Solidity.Address> =
         loadSafeOwners()
-            .map { RelaySafeCreationParams(owners = it, threshold = 2, s = BigInteger(252, secureRandom)) }
+            .map {
+                RelaySafeCreationParams(
+                    owners = it,
+                    threshold = threshold,
+                    s = BigInteger(252, secureRandom)
+                )
+            }
             .flatMap { request -> relayServiceApi.safeCreation(request).map { request to it } }
             // Check returned s parameter
             .map { (request, response) ->
@@ -88,7 +96,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
                     accountsRepository.accountFromMnemonicSeed(mnemonicSeed, 0).map { it.first },
                     accountsRepository.accountFromMnemonicSeed(mnemonicSeed, 1).map { it.first },
                     BiFunction<Solidity.Address, Solidity.Address, List<Solidity.Address>> { recoveryAccount1, recoveryAccount2 ->
-                        listOf(
+                        listOfNotNull(
                             deviceAddress,
                             browserExtensionAddress,
                             recoveryAccount1,

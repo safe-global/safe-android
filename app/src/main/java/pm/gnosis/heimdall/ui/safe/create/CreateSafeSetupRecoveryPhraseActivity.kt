@@ -13,25 +13,21 @@ class CreateSafeSetupRecoveryPhraseActivity : SetupRecoveryPhraseActivity<SetupR
     override fun inject(component: ViewComponent) = component.inject(this)
 
     override fun onConfirmedRecoveryPhrase(recoveryPhrase: String) {
-        intent.getStringExtra(EXTRA_BROWSER_EXTENSION_ADDRESS)?.asEthereumAddress()?.let { browserExtensionAddress ->
-            startActivity(
-                CreateSafeConfirmRecoveryPhraseActivity.createIntent(
-                    this,
-                    recoveryPhrase,
-                    browserExtensionAddress
-                )
+        startActivity(
+            CreateSafeConfirmRecoveryPhraseActivity.createIntent(
+                context = this,
+                recoveryPhrase = recoveryPhrase,
+                browserExtensionAddress = intent.getStringExtra(EXTRA_BROWSER_EXTENSION_ADDRESS)?.let { it.asEthereumAddress()!! }
             )
-        } ?: run {
-            finish(); return
-        }
+        )
     }
 
     companion object {
         const val EXTRA_BROWSER_EXTENSION_ADDRESS = "extra.string.browser_extension_address"
 
-        fun createIntent(context: Context, browserExtensionAddress: Solidity.Address) =
+        fun createIntent(context: Context, browserExtensionAddress: Solidity.Address?) =
             Intent(context, CreateSafeSetupRecoveryPhraseActivity::class.java).apply {
-                putExtra(EXTRA_BROWSER_EXTENSION_ADDRESS, browserExtensionAddress.asEthereumAddressString())
+                putExtra(EXTRA_BROWSER_EXTENSION_ADDRESS, browserExtensionAddress?.asEthereumAddressString())
             }
     }
 }

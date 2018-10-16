@@ -19,7 +19,7 @@ import timber.log.Timber
 class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<CreateSafeConfirmRecoveryPhraseContract>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        intent.getStringExtra(EXTRA_BROWSER_EXTENSION_ADDRESS).asEthereumAddress()?.let { viewModel.setup(it) } ?: run { finish(); return }
+        intent.getStringExtra(EXTRA_BROWSER_EXTENSION_ADDRESS)?.asEthereumAddress()?.let { viewModel.setup(it) }
     }
 
     override fun isRecoveryPhraseConfirmed() {
@@ -44,10 +44,10 @@ class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<Cr
     companion object {
         private const val EXTRA_BROWSER_EXTENSION_ADDRESS = "extra.string.browser_extension_address"
 
-        fun createIntent(context: Context, recoveryPhrase: String, chromeExtensionAddress: Solidity.Address) =
+        fun createIntent(context: Context, recoveryPhrase: String, browserExtensionAddress: Solidity.Address?) =
             Intent(context, CreateSafeConfirmRecoveryPhraseActivity::class.java).apply {
                 putExtra(EXTRA_RECOVERY_PHRASE, recoveryPhrase)
-                putExtra(EXTRA_BROWSER_EXTENSION_ADDRESS, chromeExtensionAddress.asEthereumAddressString())
+                putExtra(EXTRA_BROWSER_EXTENSION_ADDRESS, browserExtensionAddress?.asEthereumAddressString())
             }
     }
 }
