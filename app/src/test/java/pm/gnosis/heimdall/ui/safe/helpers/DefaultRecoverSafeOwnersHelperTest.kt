@@ -907,24 +907,103 @@ class DefaultRecoverSafeOwnersHelperTest {
     }
 
     @Test
-    fun buildRecoverTransactionInvalidSwap() {
-        val ownerA = Solidity.Address(10.toBigInteger())
-        val ownerB = Solidity.Address(11.toBigInteger())
-        val ownerC = Solidity.Address(12.toBigInteger())
+    fun buildRecoverTransactionAddOwners() {
+        // Current
+        val ownerB = Solidity.Address(11.toBigInteger()) // Keep
+        val ownerC = Solidity.Address(12.toBigInteger()) // Keep
         val ownerD = Solidity.Address(13.toBigInteger())
+        // New
         val ownerE = Solidity.Address(14.toBigInteger())
         val ownerF = Solidity.Address(15.toBigInteger())
 
+        val safeInfo = createSafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerB, ownerC, ownerD), false, emptyList())
+
+        // We should go from 3 to 4 owners and the threshold should be 2 in the end
+        val expectedSafeTransaction = SafeTransaction(
+            Transaction(
+                BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!,
+                data = "0x8d80ff0a" + // Multi send method
+                        "0000000000000000000000000000000000000000000000000000000000000020" +
+                        "0000000000000000000000000000000000000000000000000000000000000220" +
+                        "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                        "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                        "0000000000000000000000000000000000000000000000000000000000000000" +
+                        "0000000000000000000000000000000000000000000000000000000000000080" +
+                        "0000000000000000000000000000000000000000000000000000000000000064" +
+                        "e318b52b" + // Swap owner method
+                        "000000000000000000000000000000000000000000000000000000000000000c" + // Previous Owner
+                        "000000000000000000000000000000000000000000000000000000000000000d" + // Old Owner
+                        "000000000000000000000000000000000000000000000000000000000000000f" + // New Owner
+                        "00000000000000000000000000000000000000000000000000000000" + // Padding
+                        "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                        "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                        "0000000000000000000000000000000000000000000000000000000000000000" +
+                        "0000000000000000000000000000000000000000000000000000000000000080" +
+                        "0000000000000000000000000000000000000000000000000000000000000044" +
+                        "0d582f13" + // Add owner method
+                        "000000000000000000000000000000000000000000000000000000000000000e" + // New Owner
+                        "0000000000000000000000000000000000000000000000000000000000000002" + // New threshold
+                        "00000000000000000000000000000000000000000000000000000000" // Padding
+            ), operation = TransactionExecutionRepository.Operation.DELEGATE_CALL
+        )
+        assertEquals(
+            expectedSafeTransaction,
+            helper.buildRecoverTransaction(
+                safeInfo,
+                addressesToKeep = setOf(ownerB, ownerC),
+                addressesToSwapIn = setOf(ownerE, ownerF)
+            )
+        )
+    }
+
+    @Test
+    fun buildRecoverTransactionRemoveOwners() {
+        // Current
+        val ownerA = Solidity.Address(10.toBigInteger())
+        val ownerB = Solidity.Address(11.toBigInteger())
+        val ownerC = Solidity.Address(12.toBigInteger()) // Keep
+        val ownerD = Solidity.Address(13.toBigInteger()) // Keep
+        // New
+        val ownerE = Solidity.Address(14.toBigInteger())
+
         val safeInfo = createSafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerB, ownerC, ownerD), false, emptyList())
 
-        Asserts.assertThrow(
-            test = {
-                helper.buildRecoverTransaction(
-                    safeInfo,
-                    addressesToKeep = setOf(ownerA, ownerB, ownerC),
-                    addressesToSwapIn = setOf(ownerE, ownerF)
-                )
-            }, throwablePredicate = { it is java.lang.IllegalStateException && it.message == "Couldn't add all addresses" }
+        // We should go from 4 to 3 owners and the threshold should be 1 in the end
+        val expectedSafeTransaction = SafeTransaction(
+            Transaction(
+                BuildConfig.MULTI_SEND_ADDRESS.asEthereumAddress()!!,
+                data = "0x8d80ff0a" + // Multi send method
+                        "0000000000000000000000000000000000000000000000000000000000000020" +
+                        "0000000000000000000000000000000000000000000000000000000000000240" +
+                        "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                        "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                        "0000000000000000000000000000000000000000000000000000000000000000" +
+                        "0000000000000000000000000000000000000000000000000000000000000080" +
+                        "0000000000000000000000000000000000000000000000000000000000000064" +
+                        "e318b52b" + // Swap owner method
+                        "000000000000000000000000000000000000000000000000000000000000000a" + // Previous Owner
+                        "000000000000000000000000000000000000000000000000000000000000000b" + // Old Owner
+                        "000000000000000000000000000000000000000000000000000000000000000e" + // New Owner
+                        "00000000000000000000000000000000000000000000000000000000" + // Padding
+                        "0000000000000000000000000000000000000000000000000000000000000000" + // Operation
+                        "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" + // Safe address
+                        "0000000000000000000000000000000000000000000000000000000000000000" +
+                        "0000000000000000000000000000000000000000000000000000000000000080" +
+                        "0000000000000000000000000000000000000000000000000000000000000064" +
+                        "f8dc5dd9" + // Remove owner method
+                        "0000000000000000000000000000000000000000000000000000000000000001" + // Previous Owner
+                        "000000000000000000000000000000000000000000000000000000000000000a" + // Old Owner
+                        "0000000000000000000000000000000000000000000000000000000000000001" + // New threshold
+                        "00000000000000000000000000000000000000000000000000000000" // Padding
+            ), operation = TransactionExecutionRepository.Operation.DELEGATE_CALL
+        )
+        assertEquals(
+            expectedSafeTransaction,
+            helper.buildRecoverTransaction(
+                safeInfo,
+                addressesToKeep = setOf(ownerC, ownerD),
+                addressesToSwapIn = setOf(ownerE)
+            )
         )
     }
 
