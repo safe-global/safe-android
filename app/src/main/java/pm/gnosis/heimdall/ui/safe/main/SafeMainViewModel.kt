@@ -93,6 +93,12 @@ class SafeMainViewModel @Inject constructor(
             is RecoveringSafe -> safeRepository.removeRecoveringSafe(safe.address)
         }
 
+    override fun isConnectedToBrowserExtension(safe: Safe): Single<Result<Boolean>> =
+        safeRepository.loadInfo(safe.address).firstOrError()
+            .map { it.owners.size > 3 }
+            .mapToResult()
+
+
     override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)
 
     private fun Solidity.Address.shortChecksumString() =

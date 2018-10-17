@@ -48,6 +48,10 @@ sealed class TransactionData : Parcelable {
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class AssetTransfer(val token: Solidity.Address, val amount: BigInteger, val receiver: Solidity.Address) : TransactionData()
 
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
+    data class ConnectExtension(val extension: Solidity.Address) : TransactionData()
+
     fun addToBundle(bundle: Bundle) =
         bundle.let {
             it.putInt(EXTRA_DATA_TYPE, getType())
@@ -59,6 +63,7 @@ sealed class TransactionData : Parcelable {
             is Generic -> TYPE_GENERIC
             is AssetTransfer -> TYPE_ASSET_TRANSFER
             is ReplaceRecoveryPhrase -> TYPE_REPLACE_RECOVERY_PHRASE
+            is ConnectExtension -> TYPE_CONNECT_EXTENSION
         }
 
     companion object {
@@ -68,6 +73,7 @@ sealed class TransactionData : Parcelable {
         private const val TYPE_GENERIC = 0
         private const val TYPE_ASSET_TRANSFER = 1
         private const val TYPE_REPLACE_RECOVERY_PHRASE = 2
+        private const val TYPE_CONNECT_EXTENSION = 3
 
         fun fromBundle(bundle: Bundle): TransactionData? =
             bundle.run {
@@ -75,6 +81,7 @@ sealed class TransactionData : Parcelable {
                     TransactionData.TYPE_GENERIC -> getParcelable<TransactionData.Generic>(TransactionData.EXTRA_DATA)
                     TransactionData.TYPE_ASSET_TRANSFER -> getParcelable<TransactionData.AssetTransfer>(TransactionData.EXTRA_DATA)
                     TransactionData.TYPE_REPLACE_RECOVERY_PHRASE -> getParcelable<TransactionData.ReplaceRecoveryPhrase>(TransactionData.EXTRA_DATA)
+                    TransactionData.TYPE_CONNECT_EXTENSION -> getParcelable<TransactionData.ConnectExtension>(TransactionData.EXTRA_DATA)
                     else -> throw IllegalArgumentException("Unknown transaction data type")
                 }
             }

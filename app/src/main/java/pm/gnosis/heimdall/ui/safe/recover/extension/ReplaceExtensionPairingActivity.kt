@@ -16,6 +16,8 @@ class ReplaceExtensionPairingActivity : PairingActivity() {
         startActivity(ReplaceExtensionRecoveryPhraseActivity.createIntent(this, safeAddress, extension))
     }
 
+    override fun shouldShowSkip() = false
+
     companion object {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
 

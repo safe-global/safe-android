@@ -15,6 +15,7 @@ import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.dialog_content_edit_name.view.*
 import kotlinx.android.synthetic.main.layout_safe_main.*
 import pm.gnosis.heimdall.BuildConfig
@@ -31,6 +32,7 @@ import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
+import pm.gnosis.heimdall.ui.safe.connect.ConnectExtensionActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
@@ -68,6 +70,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     private var screenActive: Boolean = false
 
+    private val safeSubject = PublishSubject.create<Safe>()
+
     override fun screenId() = ScreenId.SAFE_MAIN
 
     override fun layout() = R.layout.layout_safe_main
@@ -98,7 +102,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
             inflate(R.menu.safe_details_menu)
-            menu.findItem(R.id.address_book_entry_details_menu_delete).title = SpannableStringBuilder().appendText(
+            menu.findItem(R.id.safe_details_menu_delete).title = SpannableStringBuilder().appendText(
                 getString(R.string.remove_from_device), ForegroundColorSpan(getColorCompat(R.color.tomato))
             )
         }
@@ -122,6 +126,12 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 popupMenu.show()
                 eventTracker.submit(Event.ScreenView(ScreenId.SAFE_SETTINGS))
             }
+
+        disposables += safeSubject
+            // TODO: Should we retry this?
+            .switchMapSingle { viewModel.isConnectedToBrowserExtension(it) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::isConnectedToBrowserExtension, onError = ::isConnectedToBrowserExtensionError)
 
         updateToolbar()
         setupNavigation()
@@ -253,6 +263,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 is Safe -> {
                     val selectedTab = intent.getIntExtra(EXTRA_SELECTED_TAB, 0)
                     intent.removeExtra(EXTRA_SELECTED_TAB)
+                    safeSubject.onNext(safe)
                     replace(R.id.layout_safe_main_content_frame, SafeDetailsFragment.createInstance(safe, selectedTab))
                 }
                 is PendingSafe -> {
@@ -339,7 +350,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         disposables += popupMenu.itemClicks()
             .subscribeBy(onNext = {
                 when (it.itemId) {
-                    R.id.address_book_entry_details_menu_delete -> selectedSafe?.let { safe -> removeSafe(safe) }
+                    R.id.safe_details_menu_delete -> selectedSafe?.let { safe -> removeSafe(safe) }
                     R.id.safe_details_menu_rename -> selectedSafe?.let { safe -> renameSafe(safe) }
                     R.id.safe_details_menu_sync -> selectedSafe?.let { safe ->
                         disposables += viewModel.syncWithChromeExtension(safe.address())
@@ -356,16 +367,26 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     R.id.safe_details_menu_show_on_etherscan -> selectedSafe?.let { safe ->
                         openUrl(getString(R.string.etherscan_address_url, safe.address().asEthereumAddressString()))
                     }
+                    R.id.safe_details_menu_connect -> selectedSafe?.let { safe ->
+                        startActivity(ConnectExtensionActivity.createIntent(this, safe.address()))
+                    }
                 }
             }, onError = Timber::e)
     }
 
     private fun updateOverflowMenu() {
         layout_safe_main_toolbar_overflow.visible(selectedSafe != null)
-        val extendedMenu = selectedSafe is Safe
-        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = extendedMenu
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = extendedMenu
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = extendedMenu
+    }
+
+    private fun isConnectedToBrowserExtension(isConnected: Boolean) {
+        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = isConnected
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = isConnected
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = isConnected
+        popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = !isConnected
+    }
+
+    private fun isConnectedToBrowserExtensionError(throwable: Throwable) {
+        Timber.e(throwable)
     }
 
     private fun renameSafe(safe: AbstractSafe) {

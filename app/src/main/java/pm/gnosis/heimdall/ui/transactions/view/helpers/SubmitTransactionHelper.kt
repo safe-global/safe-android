@@ -91,20 +91,20 @@ class DefaultSubmitTransactionHelper @Inject constructor(
         viewHolder: TransactionInfoViewHolder,
         initialSignatures: Map<Solidity.Address, Signature>?
     ) =
-        viewHolder.loadTransaction().flatMapObservable { tx ->
-            events.retry
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .startWith(Unit)
-                .switchMapSingle { executionInfo(tx).mapToResult() }
-        }.emitAndNext(
-            emit = {
-                it.map {
-                    ViewUpdate.Estimate(
-                        Wei(it.gasCosts()), it.balance
-                    )
-                }
-            },
-            next = { confirmations(events, it, initialSignatures) })
+        events.retry
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .startWith(Unit)
+            .switchMapSingle { viewHolder.loadTransaction() }
+            .switchMapSingle { tx -> executionInfo(tx).mapToResult() }
+            .emitAndNext(
+                emit = {
+                    it.map {
+                        ViewUpdate.Estimate(
+                            Wei(it.gasCosts()), it.balance
+                        )
+                    }
+                },
+                next = { confirmations(events, it, initialSignatures) })
 
     private fun confirmations(
         events: Events,

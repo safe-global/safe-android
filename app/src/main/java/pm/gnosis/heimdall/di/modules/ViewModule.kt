@@ -24,12 +24,12 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitContract
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
-import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract

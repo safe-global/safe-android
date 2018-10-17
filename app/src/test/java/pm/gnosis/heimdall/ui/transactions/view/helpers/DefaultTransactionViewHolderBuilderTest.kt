@@ -7,14 +7,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TransactionData
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.viewholders.ConnectExtensionViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.ReplaceRecoveryPhraseViewHolder
 import pm.gnosis.model.Solidity
@@ -31,6 +29,9 @@ class DefaultTransactionViewHolderBuilderTest {
     private lateinit var addressBookRepository: AddressBookRepository
 
     @Mock
+    private lateinit var gnosisSafeRepositoryMock: GnosisSafeRepository
+
+    @Mock
     private lateinit var tokenRepository: TokenRepository
 
     private lateinit var addressHelper: AddressHelper
@@ -44,7 +45,7 @@ class DefaultTransactionViewHolderBuilderTest {
     @Before
     fun setUp() {
         addressHelper = AddressHelper(addressBookRepository)
-        builder = DefaultTransactionViewHolderBuilder(addressHelper, tokenRepository)
+        builder = DefaultTransactionViewHolderBuilder(addressHelper, gnosisSafeRepositoryMock, tokenRepository)
     }
 
     @Test
@@ -112,7 +113,9 @@ class DefaultTransactionViewHolderBuilderTest {
             TransactionData.AssetTransfer::class to
                     TestData(TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS)) { it is AssetTransferViewHolder },
             TransactionData.ReplaceRecoveryPhrase::class to
-                    TestData(TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)) { it is ReplaceRecoveryPhraseViewHolder }
+                    TestData(TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)) { it is ReplaceRecoveryPhraseViewHolder },
+            TransactionData.ConnectExtension::class to
+                    TestData(TransactionData.ConnectExtension(TEST_ADDRESS)) { it is ConnectExtensionViewHolder }
         )
     }
 }

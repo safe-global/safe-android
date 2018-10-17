@@ -26,7 +26,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 abstract class PairingActivity : ViewModelActivity<PairingContract>() {
-
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
@@ -40,6 +39,7 @@ abstract class PairingActivity : ViewModelActivity<PairingContract>() {
         super.onCreate(savedInstanceState)
 
         layout_pairing_title.text = getString(titleRes())
+        layout_pairing_skip.visible(shouldShowSkip())
 
         layout_pairing_extension_link.apply {
             val linkDrawable = ContextCompat.getDrawable(context, R.drawable.ic_external_link)!!
@@ -96,4 +96,6 @@ abstract class PairingActivity : ViewModelActivity<PairingContract>() {
     abstract fun titleRes(): Int
 
     abstract fun onSuccess(extension: Solidity.Address)
+
+    abstract fun shouldShowSkip(): Boolean
 }

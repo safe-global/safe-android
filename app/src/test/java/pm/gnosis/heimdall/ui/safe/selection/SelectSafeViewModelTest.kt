@@ -32,6 +32,7 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 import java.util.*
 
@@ -150,7 +151,7 @@ class SelectSafeViewModelTest {
         val testObserver = TestObserver<Result<Intent>>()
         viewModel.reviewTransaction(TEST_SAFE, TEST_TRANSACTION).subscribe(testObserver)
 
-        testObserver.assertValue({ it is DataResult }).assertComplete()
+        testObserver.assertValue { it is DataResult }.assertComplete()
 
         then(infoRepositoryMock).should().parseTransactionData(TEST_TRANSACTION)
         then(infoRepositoryMock).shouldHaveNoMoreInteractions()
@@ -166,6 +167,7 @@ class SelectSafeViewModelTest {
 
     companion object {
         private val TEST_SAFE = Solidity.Address(BigInteger.ONE)
+        private val TEST_ADDRESS = "0x42".asEthereumAddress()!!
         private val TEST_TRANSACTION = SafeTransaction(Transaction(Solidity.Address(BigInteger.TEN)), TransactionExecutionRepository.Operation.CALL)
 
         private const val REPLACE_RECOVERY_PHRASE_DATA =
@@ -206,7 +208,8 @@ class SelectSafeViewModelTest {
         private val TEST_DATA = mapOf(
             TransactionData.Generic::class to TransactionData.Generic(TEST_SAFE, BigInteger.ONE, null),
             TransactionData.AssetTransfer::class to TransactionData.AssetTransfer(TEST_SAFE, BigInteger.ONE, Solidity.Address(BigInteger.TEN)),
-            TransactionData.ReplaceRecoveryPhrase::class to TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)
+            TransactionData.ReplaceRecoveryPhrase::class to TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX),
+            TransactionData.ConnectExtension::class to TransactionData.ConnectExtension(TEST_ADDRESS)
         )
     }
 }

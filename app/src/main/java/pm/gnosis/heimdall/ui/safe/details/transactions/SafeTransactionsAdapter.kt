@@ -166,13 +166,21 @@ class SafeTransactionsAdapter @Inject constructor(
                 is TransactionData.ReplaceRecoveryPhrase -> {
                     address = info.safe
                     infoText = context.getString(R.string.replaced_recovery_phrase)
-                    valueText = "-"
+                    valueText = null
+                    valueColor = R.color.dark_slate_blue
+                    iconRes = R.drawable.ic_transaction_white_24dp
+                }
+                is TransactionData.ConnectExtension -> {
+                    address = info.safe
+                    infoText = "Connected extension"
+                    valueText = null
                     valueColor = R.color.dark_slate_blue
                     iconRes = R.drawable.ic_transaction_white_24dp
                 }
             }
             itemView.layout_safe_transactions_item_type_icon.setImageResource(iconRes)
             itemView.layout_safe_transactions_item_value.text = valueText
+            itemView.layout_safe_transactions_item_value.visible(valueText != null)
             itemView.layout_safe_transactions_item_value.setTextColor(context.getColorCompat(valueColor))
 
             itemView.layout_safe_transactions_item_info.visible(infoText != null)

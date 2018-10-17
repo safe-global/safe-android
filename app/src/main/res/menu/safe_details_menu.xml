@@ -7,12 +7,19 @@
         android:title="@string/change_name"
         app:showAsAction="never" />
     <item
+        android:id="@+id/safe_details_menu_connect"
+        android:title="Connect browser extension"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/safe_details_menu_replace_recovery_phrase"
         android:title="@string/replace_recovery_phrase"
+        android:visible="false"
         app:showAsAction="never" />
     <item
         android:id="@+id/safe_details_menu_replace_browser_extension"
         android:title="@string/replace_browser_extension"
+        android:visible="false"
         app:showAsAction="never" />
     <item
         android:id="@+id/safe_details_menu_show_on_etherscan"
@@ -21,9 +28,10 @@
     <item
         android:id="@+id/safe_details_menu_sync"
         android:title="@string/sync_with_extension"
+        android:visible="false"
         app:showAsAction="never" />
     <item
-        android:id="@+id/address_book_entry_details_menu_delete"
+        android:id="@+id/safe_details_menu_delete"
         android:title="@string/remove_from_device"
         app:showAsAction="never" />
 </menu>

@@ -1,11 +1,13 @@
 package pm.gnosis.heimdall.ui.transactions.view.helpers
 
 import io.reactivex.Single
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.viewholders.ConnectExtensionViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.viewholders.ReplaceRecoveryPhraseViewHolder
 import pm.gnosis.model.Solidity
@@ -18,6 +20,7 @@ interface TransactionViewHolderBuilder {
 
 class DefaultTransactionViewHolderBuilder @Inject constructor(
     private val addressHelper: AddressHelper,
+    private val safeRepository: GnosisSafeRepository,
     private val tokenRepository: TokenRepository
 ) : TransactionViewHolderBuilder {
     override fun build(safe: Solidity.Address, transactionData: TransactionData, extraInfo: Boolean): Single<TransactionInfoViewHolder> =
@@ -35,6 +38,13 @@ class DefaultTransactionViewHolderBuilder @Inject constructor(
                     )
                 is TransactionData.ReplaceRecoveryPhrase ->
                     ReplaceRecoveryPhraseViewHolder(addressHelper, safe, transactionData.safeTransaction)
+                is TransactionData.ConnectExtension ->
+                    ConnectExtensionViewHolder(
+                        addressHelper = addressHelper,
+                        extension = transactionData.extension,
+                        safe = safe,
+                        safeRepository = safeRepository
+                    )
             }
         }
 }
