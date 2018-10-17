@@ -25,12 +25,12 @@ class RecoverSafeRecoveryPhraseViewModel @Inject constructor(
                             it.signatures
                         )
                             .andThen(Single.just<ViewUpdate>(it))
-                            .onErrorReturn { ViewUpdate.RecoverDataError(it) }
+                            .onErrorReturn(ViewUpdate::RecoverDataError)
                     }
                     is ViewUpdate.NoRecoveryNecessary -> {
                         safeRepository.addSafe(safeAddress)
                             .andThen(Single.just<ViewUpdate>(it))
-                            .onErrorReturn { ViewUpdate.RecoverDataError(it) }
+                            .onErrorReturn(ViewUpdate::RecoverDataError)
                     }
                     else -> Single.just(it)
                 }

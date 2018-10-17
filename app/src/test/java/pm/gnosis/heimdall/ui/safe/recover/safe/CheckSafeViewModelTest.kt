@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract.CheckResult
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -47,27 +48,27 @@ class CheckSafeViewModelTest {
 
     @Test
     fun checkSafeAddressEmpty() {
-        val observer = TestObserver<Result<Boolean>>()
+        val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("").subscribe(observer)
-        observer.assertResult(DataResult(false))
+        observer.assertResult(DataResult(CheckResult.INVALID_SAFE))
 
         then(safeRepoMock).shouldHaveZeroInteractions()
     }
 
     @Test
     fun checkSafeAddressInvalid() {
-        val observer = TestObserver<Result<Boolean>>()
+        val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("InvalidAddress").subscribe(observer)
-        observer.assertResult(DataResult(false))
+        observer.assertResult(DataResult(CheckResult.INVALID_SAFE))
 
         then(safeRepoMock).shouldHaveZeroInteractions()
     }
 
     @Test
     fun checkSafeTooShort() {
-        val observer = TestObserver<Result<Boolean>>()
+        val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("C2AC20b3Bb950C087f18a458DB68271325a48132").subscribe(observer)
-        observer.assertResult(DataResult(false))
+        observer.assertResult(DataResult(CheckResult.INVALID_SAFE))
 
         then(safeRepoMock).shouldHaveZeroInteractions()
     }
@@ -77,7 +78,7 @@ class CheckSafeViewModelTest {
         contextMock.mockGetString()
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.just(Safe(TEST_SAFE)))
 
-        val observer = TestObserver<Result<Boolean>>()
+        val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0x1f81FFF89Bd57811983a35650296681f99C65C7e").subscribe(observer)
         observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.safe_already_exists.toString())))
 
@@ -91,7 +92,7 @@ class CheckSafeViewModelTest {
         val error = IllegalStateException()
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(error))
 
-        val observer = TestObserver<Result<Boolean>>()
+        val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0xb36574155395D41b92664e7A215103262a14244A").subscribe(observer)
         observer.assertResult(ErrorResult(error))
 
@@ -105,7 +106,7 @@ class CheckSafeViewModelTest {
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
         given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.error(UnknownHostException()))
 
-        val observer = TestObserver<Result<Boolean>>()
+        val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0x1f81fff89Bd57811983a35650296681f99C65C7E").subscribe(observer)
         observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.error_check_internet_connection.toString())))
 
@@ -118,11 +119,11 @@ class CheckSafeViewModelTest {
     fun checkSafeInvalidSafe() {
         contextMock.mockGetString()
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
-        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false))
+        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
 
-        val observer = TestObserver<Result<Boolean>>()
+        val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0x1f81fff89Bd57811983a35650296681f99C65C7E").subscribe(observer)
-        observer.assertResult(DataResult(false))
+        observer.assertResult(DataResult(CheckResult.INVALID_SAFE))
 
         then(safeRepoMock).should().loadAbstractSafe(TEST_SAFE)
         then(safeRepoMock).should().checkSafe(TEST_SAFE)
@@ -130,14 +131,29 @@ class CheckSafeViewModelTest {
     }
 
     @Test
-    fun checkSafeValidSafe() {
+    fun checkSafeValidSafeWithExtension() {
         contextMock.mockGetString()
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
-        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(true))
+        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(true to true))
 
-        val observer = TestObserver<Result<Boolean>>()
+        val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0x1f81fff89Bd57811983a35650296681f99C65C7E").subscribe(observer)
-        observer.assertResult(DataResult(true))
+        observer.assertResult(DataResult(CheckResult.VALID_SAFE_WITH_EXTENSION))
+
+        then(safeRepoMock).should().loadAbstractSafe(TEST_SAFE)
+        then(safeRepoMock).should().checkSafe(TEST_SAFE)
+        then(safeRepoMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun checkSafeValidSafeWithoutExtension() {
+        contextMock.mockGetString()
+        given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
+        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(true to false))
+
+        val observer = TestObserver<Result<CheckResult>>()
+        viewModel.checkSafe("0x1f81fff89Bd57811983a35650296681f99C65C7E").subscribe(observer)
+        observer.assertResult(DataResult(CheckResult.VALID_SAFE_WITHOUT_EXTENSION))
 
         then(safeRepoMock).should().loadAbstractSafe(TEST_SAFE)
         then(safeRepoMock).should().checkSafe(TEST_SAFE)

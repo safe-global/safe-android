@@ -32,10 +32,10 @@ class ConfirmNewRecoveryPhraseViewModel @Inject constructor(
             safeRepository.loadInfo(safeAddress).firstOrError(),
             accountsRepository.loadActiveAccount().map { it.address },
             getAddressesFromRecoveryPhrase(),
-            Function3 { safeInfo: SafeInfo, appAccount: Solidity.Address, recoveryPhraseAddresses: List<Solidity.Address> ->
+            Function3 { safeInfo: SafeInfo, appAccount: Solidity.Address, recoveryPhraseAddresses: Set<Solidity.Address> ->
                 recoverSafeOwnersHelper.buildRecoverTransaction(
                     safeInfo = safeInfo,
-                    addressesToKeep = listOf(appAccount, browserExtensionAddress),
+                    addressesToKeep = setOf(appAccount, browserExtensionAddress),
                     addressesToSwapIn = recoveryPhraseAddresses
                 )
             }
@@ -52,7 +52,7 @@ class ConfirmNewRecoveryPhraseViewModel @Inject constructor(
                     accountsRepository.accountFromMnemonicSeed(seed, accountIndex = 0).map { it.first },
                     accountsRepository.accountFromMnemonicSeed(seed, accountIndex = 1).map { it.first },
                     BiFunction { recoveryAccount1: Solidity.Address, recoveryAccount2: Solidity.Address ->
-                        listOf(
+                        setOf(
                             recoveryAccount1,
                             recoveryAccount2
                         )

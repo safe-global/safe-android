@@ -15,9 +15,10 @@ import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
 import pm.gnosis.model.Solidity
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import java.lang.IllegalStateException
 
 @RunWith(MockitoJUnitRunner::class)
-class ReplaceBrowserExtensionRecoveryPhraseViewModelTest {
+class ReplaceExtensionRecoveryPhraseViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -55,6 +56,27 @@ class ReplaceBrowserExtensionRecoveryPhraseViewModelTest {
         then(recoverSafeOwnersHelperMock).should().process(input, safeAddress, extensionAddress)
         then(recoverSafeOwnersHelperMock).shouldHaveNoMoreInteractions()
         testObserver.assertResult(viewUpdate)
+    }
+
+    @Test
+    fun processNoExtension() {
+        val testObserver = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
+        val input = InputRecoveryPhraseContract.Input(
+            phrase = Observable.just(""),
+            retry = Observable.just(Unit),
+            create = Observable.just(Unit)
+        )
+        val safeAddress = 35.toBigInteger().let { Solidity.Address(it) }
+
+        viewModel.process(input, safeAddress, null).subscribe(testObserver)
+
+        then(recoverSafeOwnersHelperMock).shouldHaveNoMoreInteractions()
+        testObserver
+            .assertValueCount(1)
+            .assertValueAt(0) {
+                it is InputRecoveryPhraseContract.ViewUpdate.RecoverDataError &&
+                        it.error is IllegalStateException
+            }
     }
 
     @Test

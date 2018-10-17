@@ -35,7 +35,7 @@ import pm.gnosis.utils.asEthereumAddress
 import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
-class ReplaceBrowserExtensionViewModelTest {
+class ReplaceExtensionViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()

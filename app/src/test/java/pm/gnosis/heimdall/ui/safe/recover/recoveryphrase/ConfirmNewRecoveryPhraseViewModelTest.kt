@@ -79,8 +79,8 @@ class ConfirmNewRecoveryPhraseViewModelTest {
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(recoverSafeOwnersHelperMock).should().buildRecoverTransaction(
             safeInfo = SAFE_INFO,
-            addressesToKeep = listOf(PHONE_ADDRESS, BROWSER_EXTENSION_ADDRESS),
-            addressesToSwapIn = listOf(RECOVERY_ADDRESS_0, RECOVERY_ADDRESS_1)
+            addressesToKeep = setOf(PHONE_ADDRESS, BROWSER_EXTENSION_ADDRESS),
+            addressesToSwapIn = setOf(RECOVERY_ADDRESS_0, RECOVERY_ADDRESS_1)
         )
         then(recoverSafeOwnersHelperMock).shouldHaveNoMoreInteractions()
 
@@ -187,8 +187,8 @@ class ConfirmNewRecoveryPhraseViewModelTest {
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(recoverSafeOwnersHelperMock).should().buildRecoverTransaction(
             safeInfo = SAFE_INFO,
-            addressesToKeep = listOf(PHONE_ADDRESS, BROWSER_EXTENSION_ADDRESS),
-            addressesToSwapIn = listOf(RECOVERY_ADDRESS_0, RECOVERY_ADDRESS_1)
+            addressesToKeep = setOf(PHONE_ADDRESS, BROWSER_EXTENSION_ADDRESS),
+            addressesToSwapIn = setOf(RECOVERY_ADDRESS_0, RECOVERY_ADDRESS_1)
         )
         then(recoverSafeOwnersHelperMock).shouldHaveNoMoreInteractions()
 

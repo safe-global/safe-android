@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.Input
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.ViewUpdate
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
@@ -50,8 +51,7 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         viewModel = RecoverSafeRecoveryPhraseViewModel(helperMock, safeRepoMock)
     }
 
-    @Test
-    fun process() {
+    private fun process(extension: Solidity.Address?) {
         val helperSubject = PublishSubject.create<InputRecoveryPhraseContract.ViewUpdate>()
         given(helperMock.process(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(helperSubject)
 
@@ -59,7 +59,7 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         val input = Input(Observable.empty(), Observable.empty(), Observable.empty())
         viewModel.process(input,
             TEST_SAFE,
-            TEST_EXTENSION
+            extension
         ).subscribe(observer)
 
         var tests = 0
@@ -79,7 +79,7 @@ class RecoverSafeRecoveryPhraseViewModelTest {
             TEST_TX_HASH.asTransactionHash(), SafeTransaction(Transaction(
                 TEST_SAFE
             ), TransactionExecutionRepository.Operation.CALL),
-            TEST_EXTENSION, 2, emptyList(), BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
+            TEST_SAFE, 2, emptyList(), BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
         )
         val signatures = listOf(Signature(BigInteger.TEN, BigInteger.TEN, 27))
 
@@ -119,10 +119,20 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         observer.assertValueCount(tests).assertNoErrors().assertNotComplete()
         then(helperMock).should().process(input,
             TEST_SAFE,
-            TEST_EXTENSION
+            extension
         )
         then(helperMock).shouldHaveNoMoreInteractions()
 
+    }
+
+    @Test
+    fun processWithExtension() {
+        process(TEST_EXTENSION)
+    }
+
+    @Test
+    fun processWithoutExtension() {
+        process(null)
     }
 
     companion object {

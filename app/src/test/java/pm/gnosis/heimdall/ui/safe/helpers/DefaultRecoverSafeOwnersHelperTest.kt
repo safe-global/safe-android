@@ -185,8 +185,10 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(executionRepoMock).shouldHaveZeroInteractions()
     }
 
-    @Test
-    fun processInvalidOwnerCount() {
+    private fun testProcessInvalidOwnerCount(
+        extension: Solidity.Address?,
+        owners: List<Solidity.Address>
+    ) {
         val phraseSubject = PublishSubject.create<CharSequence>()
         val retrySubject = PublishSubject.create<Unit>()
         val createSubject = PublishSubject.create<Unit>()
@@ -195,7 +197,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, owners, false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -206,7 +208,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_EXTENSION).subscribe(observer)
+        helper.process(input, TEST_SAFE, extension).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.WrongMnemonic)
@@ -220,6 +222,16 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
+    }
+
+    @Test
+    fun processInvalidOwnerCountWithExtension() {
+        testProcessInvalidOwnerCount(TEST_EXTENSION, listOf(TEST_APP, TEST_RECOVER_1, TEST_RECOVER_2))
+    }
+
+    @Test
+    fun processInvalidOwnerCountWithoutExtension() {
+        testProcessInvalidOwnerCount(null, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2))
     }
 
     @Test
@@ -335,8 +347,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(executionRepoMock).shouldHaveZeroInteractions()
     }
 
-    @Test
-    fun processNothingToRecover() {
+    private fun testProcessNothingToRecover(extension: Solidity.Address?) {
         val phraseSubject = PublishSubject.create<CharSequence>()
         val retrySubject = PublishSubject.create<Unit>()
         val createSubject = PublishSubject.create<Unit>()
@@ -345,7 +356,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOfNotNull(TEST_APP, extension, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -357,7 +368,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_APP)))
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_EXTENSION).subscribe(observer)
+        helper.process(input, TEST_SAFE, extension).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.NoRecoveryNecessary(TEST_SAFE))
@@ -374,9 +385,20 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(executionRepoMock).shouldHaveZeroInteractions()
     }
 
+    @Test
+    fun processNothingToRecoverWithExtension() {
+        testProcessNothingToRecover(TEST_EXTENSION)
+    }
+
+    @Test
+    fun processNothingToRecoverWithoutExtension() {
+        testProcessNothingToRecover(null)
+    }
+
     private fun testRecoverPayload(
-        app: Solidity.Address, extension: Solidity.Address, recoverer: Solidity.Address,
-        operation: TransactionExecutionRepository.Operation, data: String
+        app: Solidity.Address, extension: Solidity.Address?, recoverer: Solidity.Address,
+        operation: TransactionExecutionRepository.Operation, data: String,
+        owners: List<Solidity.Address> = listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2)
     ) {
         val phraseSubject = PublishSubject.create<CharSequence>()
         val retrySubject = PublishSubject.create<Unit>()
@@ -386,7 +408,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, owners, false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -401,7 +423,7 @@ class DefaultRecoverSafeOwnersHelperTest {
                 val tx = it.arguments[1] as SafeTransaction
                 Single.just(
                     TransactionExecutionRepository.ExecuteInformation(
-                        TEST_HASH.toHex(), tx, TEST_SAFE, 2, TEST_OWNERS, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
+                        TEST_HASH.toHex(), tx, TEST_SAFE, 2, owners, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
                     )
                 )
             }
@@ -414,7 +436,6 @@ class DefaultRecoverSafeOwnersHelperTest {
         phraseSubject.onNext("this is not a valid mnemonic!")
         createSubject.onNext(Unit)
         observer
-            .assertValueCount(3)
             .assertValueAt(0, ViewUpdate.InputMnemonic)
             .assertValueAt(1, ViewUpdate.ValidMnemonic)
             .assertValueAt(2) {
@@ -427,6 +448,7 @@ class DefaultRecoverSafeOwnersHelperTest {
                         it.executionInfo.transaction.wrapped.nonce == null && // Nonce was not set in this test
                         it.executionInfo.transaction.wrapped.data == data
             }
+            .assertValueCount(3)
 
         then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
         then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
@@ -451,6 +473,18 @@ class DefaultRecoverSafeOwnersHelperTest {
             TEST_SAFE,
             TransactionExecutionRepository.Operation.CALL,
             "0xe318b52b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000071de9579cd3857ce70058a1ce19e3d8894f65ab900000000000000000000000031b98d14007bdee637298086988a0bbd31184523"
+        )
+    }
+
+    @Test
+    fun processReplaceAppWithoutExtension() {
+        testRecoverPayload(
+            TEST_NEW_APP,
+            null,
+            TEST_SAFE,
+            TransactionExecutionRepository.Operation.CALL,
+            "0xe318b52b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000071de9579cd3857ce70058a1ce19e3d8894f65ab900000000000000000000000031b98d14007bdee637298086988a0bbd31184523",
+            listOf(TEST_APP, TEST_RECOVER_1, TEST_RECOVER_2)
         )
     }
 
@@ -612,7 +646,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         )
         assertEquals(
             expectedSafeTransaction,
-            helper.buildRecoverTransaction(safeInfo, addressesToKeep = listOf(ownerA), addressesToSwapIn = listOf(ownerD, ownerC))
+            helper.buildRecoverTransaction(safeInfo, addressesToKeep = setOf(ownerA), addressesToSwapIn = setOf(ownerD, ownerC))
         )
     }
 
@@ -658,7 +692,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         )
         assertEquals(
             expectedSafeTransaction,
-            helper.buildRecoverTransaction(safeInfo, addressesToKeep = listOf(ownerA, ownerB), addressesToSwapIn = listOf(ownerE, ownerF))
+            helper.buildRecoverTransaction(safeInfo, addressesToKeep = setOf(ownerA, ownerB), addressesToSwapIn = setOf(ownerE, ownerF))
         )
     }
 
@@ -703,7 +737,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         )
         assertEquals(
             expectedSafeTransaction,
-            helper.buildRecoverTransaction(safeInfo, addressesToKeep = listOf(ownerC, ownerD), addressesToSwapIn = listOf(ownerE, ownerF))
+            helper.buildRecoverTransaction(safeInfo, addressesToKeep = setOf(ownerC, ownerD), addressesToSwapIn = setOf(ownerE, ownerF))
         )
     }
 
@@ -748,7 +782,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         )
         assertEquals(
             expectedSafeTransaction,
-            helper.buildRecoverTransaction(safeInfo, addressesToKeep = listOf(ownerB, ownerC), addressesToSwapIn = listOf(ownerE, ownerF))
+            helper.buildRecoverTransaction(safeInfo, addressesToKeep = setOf(ownerB, ownerC), addressesToSwapIn = setOf(ownerE, ownerF))
         )
     }
 
@@ -765,7 +799,11 @@ class DefaultRecoverSafeOwnersHelperTest {
 
         Asserts.assertThrow(
             test = {
-                helper.buildRecoverTransaction(safeInfo, addressesToKeep = listOf(ownerA, ownerB, ownerC), addressesToSwapIn = listOf(ownerE, ownerF))
+                helper.buildRecoverTransaction(
+                    safeInfo,
+                    addressesToKeep = setOf(ownerA, ownerB, ownerC),
+                    addressesToSwapIn = setOf(ownerE, ownerF)
+                )
             }, throwablePredicate = { it is java.lang.IllegalStateException && it.message == "Couldn't add all addresses" }
         )
     }
