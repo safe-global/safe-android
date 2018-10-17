@@ -375,6 +375,77 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
     }
 
     @Test
+    fun createSafeWithoutBrowserExtension() {
+        val testObserver = TestObserver.create<Solidity.Address>()
+        val account = Account(Solidity.Address(10.toBigInteger()))
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val safeAddress = "E7B3104C02D70B5E79716FF8683614777DD09D9".asEthereumAddress()!!
+        val deployer = Solidity.Address(1234.toBigInteger())
+        val mnemonicSeed = byteArrayOf(0)
+        var s: BigInteger = BigInteger.ZERO
+        val tx = Transaction(
+            address = Solidity.Address(BigInteger.ZERO),
+            gas = BigInteger.TEN,
+            gasPrice = BigInteger.TEN,
+            data = "0x00",
+            nonce = BigInteger.ZERO
+        )
+        var response: RelaySafeCreation? = null
+
+        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
+        given(bip39Mock.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(mnemonicSeed)
+        given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L))).willReturn(Single.just(mnemonicAddress0 to mnemonicSeed))
+        given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L))).willReturn(Single.just(mnemonicAddress1 to mnemonicSeed))
+        given(relayServiceApiMock.safeCreation(MockUtils.any())).willAnswer {
+            val request = it.arguments.first() as RelaySafeCreationParams
+            s = request.s
+            response = RelaySafeCreation(
+                ServiceSignature(r = BigInteger.ZERO, s = request.s, v = 27),
+                RelaySafeCreationTx(
+                    from = Solidity.Address(1234.toBigInteger()),
+                    value = Wei.ZERO,
+                    data = "0x00",
+                    gas = BigInteger.TEN,
+                    gasPrice = BigInteger.TEN,
+                    nonce = BigInteger.ZERO
+                ),
+                safeAddress,
+                payment = Wei.ZERO
+            )
+            Single.just(response!!)
+        }
+        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(deployer))
+        given(
+            gnosisSafeRepositoryMock.addPendingSafe(
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any()
+            )
+        ).willReturn(Completable.complete())
+
+        viewModel.setup(null)
+        viewModel.createSafe().subscribe(testObserver)
+
+        then(accountsRepositoryMock).should().loadActiveAccount()
+        then(bip39Mock).should().mnemonicToSeed(RECOVERY_PHRASE)
+        then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 0L)
+        then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 1L)
+        then(relayServiceApiMock).should()
+            .safeCreation(RelaySafeCreationParams(listOf(account.address, mnemonicAddress0, mnemonicAddress1), 1, s))
+        then(accountsRepositoryMock).should().recover(tx.hash(), response!!.signature.toSignature())
+        val txHash = tx.hash(ECDSASignature(r = response!!.signature.r, s = response!!.signature.s).apply { v = response!!.signature.v.toByte() })
+            .asBigInteger()
+        then(gnosisSafeRepositoryMock).should().addPendingSafe(response!!.safe, txHash, null, response!!.payment)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(bip39Mock).shouldHaveNoMoreInteractions()
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+
+        testObserver.assertResult(safeAddress)
+    }
+
+    @Test
     fun createSafeApiError() {
         val testObserver = TestObserver.create<Solidity.Address>()
         val account = Account(Solidity.Address(10.toBigInteger()))
@@ -412,7 +483,6 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
 
     @Test
     fun createSafeFromMnemonicSeedError() {
-        val recoveryPhrase = "degree media athlete harvest rocket plate minute obey head toward coach senior"
         val testObserver = TestObserver.create<Solidity.Address>()
         val account = Account(Solidity.Address(10.toBigInteger()))
         val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
@@ -426,12 +496,12 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L))).willReturn(Single.error(exception))
 
         // Setup parent class
-        viewModel.setup(recoveryPhrase)
+        viewModel.setup(RECOVERY_PHRASE)
         viewModel.setup(chromeExtensionAddress)
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
-        then(bip39Mock).should().mnemonicToSeed(recoveryPhrase)
+        then(bip39Mock).should().mnemonicToSeed(RECOVERY_PHRASE)
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 0L)
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 1L)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -442,7 +512,6 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
 
     @Test
     fun createSafeMnemonicToSeedError() {
-        val recoveryPhrase = "degree media athlete harvest rocket plate minute obey head toward coach senior"
         val testObserver = TestObserver.create<Solidity.Address>()
         val account = Account(Solidity.Address(10.toBigInteger()))
         val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
@@ -452,12 +521,12 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         given(bip39Mock.mnemonicToSeed(anyString(), MockUtils.any())).willThrow(exception)
 
         // Setup parent class
-        viewModel.setup(recoveryPhrase)
+        viewModel.setup(RECOVERY_PHRASE)
         viewModel.setup(chromeExtensionAddress)
         viewModel.createSafe().subscribe(testObserver)
 
         then(accountsRepositoryMock).should().loadActiveAccount()
-        then(bip39Mock).should().mnemonicToSeed(recoveryPhrase)
+        then(bip39Mock).should().mnemonicToSeed(RECOVERY_PHRASE)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(relayServiceApiMock).shouldHaveZeroInteractions()
@@ -466,7 +535,6 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
 
     @Test
     fun createSafeLoadActiveAccountError() {
-        val recoveryPhrase = "degree media athlete harvest rocket plate minute obey head toward coach senior"
         val testObserver = TestObserver.create<Solidity.Address>()
         val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
         val exception = IllegalArgumentException()
@@ -474,7 +542,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.error(exception))
 
         // Setup parent class
-        viewModel.setup(recoveryPhrase)
+        viewModel.setup(RECOVERY_PHRASE)
         viewModel.setup(chromeExtensionAddress)
         viewModel.createSafe().subscribe(testObserver)
 

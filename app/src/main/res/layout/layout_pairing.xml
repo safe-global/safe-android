@@ -21,8 +21,8 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingEnd="32dp"
-            android:paddingStart="32dp">
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp">
 
             <TextView
                 android:id="@+id/layout_pairing_browser_extension_label"
@@ -94,10 +94,24 @@
         style="@style/PrimaryButton.Blue.Round"
         android:layout_width="0dp"
         android:layout_height="46dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/scan_qr_code"
+        app:layout_constraintBottom_toTopOf="@+id/layout_pairing_skip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/layout_pairing_skip"
+        style="@style/PrimaryButton.White.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/selectable_background"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/skip"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -106,8 +120,8 @@
         android:id="@+id/layout_pairing_progress_bar"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/layout_pairing_scan"
         app:layout_constraintEnd_toEndOf="parent"
