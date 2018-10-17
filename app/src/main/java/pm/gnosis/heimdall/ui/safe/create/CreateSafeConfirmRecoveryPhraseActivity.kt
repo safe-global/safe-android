@@ -19,7 +19,7 @@ import timber.log.Timber
 class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<CreateSafeConfirmRecoveryPhraseContract>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        intent.getStringExtra(EXTRA_BROWSER_EXTENSION_ADDRESS)?.asEthereumAddress()?.let { viewModel.setup(it) }
+        viewModel.setup(intent.getStringExtra(EXTRA_BROWSER_EXTENSION_ADDRESS)?.asEthereumAddress()!!)
     }
 
     override fun isRecoveryPhraseConfirmed() {
