@@ -25,17 +25,18 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
-import pm.gnosis.heimdall.ui.safe.recover.ReplaceBrowserExtensionActivity
-import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeActivity
-import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseActivity
-import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseActivity
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseActivity
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseActivity
-import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFragment
-import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFundFragment
-import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafePendingFragment
-import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeSubmitFragment
+import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
+import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFundFragment
+import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafePendingFragment
+import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeSubmitFragment
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
@@ -95,10 +96,11 @@ interface ViewComponent {
     fun inject(activity: SetupNewRecoveryPhraseActivity)
     fun inject(activity: ConfirmNewRecoveryPhraseActivity)
     fun inject(activity: ReceiveTokenActivity)
-    fun inject(activity: RecoverInputRecoveryPhraseActivity)
+    fun inject(activity: RecoverSafeIntroActivity)
+    fun inject(activity: RecoverSafeRecoveryPhraseActivity)
     fun inject(activity: RecoveryPhraseIntroActivity)
-    fun inject(activity: ReplaceBrowserExtensionActivity)
-    fun inject(activity: ReplaceBrowserExtensionRecoveryPhraseActivity)
+    fun inject(activity: ReplaceExtensionSubmitActivity)
+    fun inject(activity: ReplaceExtensionRecoveryPhraseActivity)
     fun inject(activity: ReviewTransactionActivity)
     fun inject(activity: SafeMainActivity)
     fun inject(activity: GeneralSettingsActivity)

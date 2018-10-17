@@ -17,7 +17,7 @@ import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
-import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
 import timber.log.Timber
 import javax.inject.Inject
 

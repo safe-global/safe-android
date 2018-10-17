@@ -37,7 +37,7 @@ import javax.inject.Singleton
 private typealias SigningAccounts = Pair<Pair<Solidity.Address, ByteArray>, Pair<Solidity.Address, ByteArray>>
 
 interface RecoverSafeOwnersHelper {
-    fun process(input: InputRecoveryPhraseContract.Input, safeAddress: Solidity.Address, extensionAddress: Solidity.Address):
+    fun process(input: InputRecoveryPhraseContract.Input, safeAddress: Solidity.Address, extensionAddress: Solidity.Address?):
             Observable<InputRecoveryPhraseContract.ViewUpdate>
 
     /**
@@ -67,7 +67,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
     override fun process(
         input: InputRecoveryPhraseContract.Input,
         safeAddress: Solidity.Address,
-        extensionAddress: Solidity.Address
+        extensionAddress: Solidity.Address?
     ): Observable<InputRecoveryPhraseContract.ViewUpdate> =
         input.retry.startWith(Unit)
             .switchMap {
@@ -92,7 +92,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
     private fun processRecoveryPhrase(
         input: InputRecoveryPhraseContract.Input,
         safeInfo: SafeInfo,
-        extensionAddress: Solidity.Address
+        extensionAddress: Solidity.Address?
     ): Observable<InputRecoveryPhraseContract.ViewUpdate> =
         input.phrase
             .flatMapSingle {
@@ -116,7 +116,11 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                     }
                     .flatMap { signingAccounts -> accountsRepository.loadActiveAccount().map { it to signingAccounts } }
                     .map { (appAccount, signingAccounts) ->
-                        buildRecoverTransaction(safeInfo, signingAccounts, appAccount.address, extensionAddress) to signingAccounts
+                        buildRecoverTransaction(
+                            safeInfo,
+                            addressesToKeep = listOf(signingAccounts.first.first, signingAccounts.second.first),
+                            addressesToSwapIn = listOfNotNull(appAccount.address, extensionAddress)
+                        ) to signingAccounts
                     }
                     .mapToResult()
             }
@@ -143,40 +147,6 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                     }
                 }
             }
-
-    private fun buildRecoverTransaction(
-        safeInfo: SafeInfo,
-        signingAccounts: SigningAccounts,
-        appAddress: Solidity.Address,
-        extensionAddress: Solidity.Address
-    ): SafeTransaction {
-        val newAddresses = mutableListOf<Solidity.Address>()
-        val addressesToReplace = safeInfo.owners.toMutableList().apply {
-            // We should not remove the recovery phrase addresses and they need to be present
-            if (!remove(signingAccounts.first.first)) throw IllegalStateException()
-            if (!remove(signingAccounts.second.first)) throw IllegalStateException()
-
-            // If the extension address is not present we should add it
-            if (!remove(extensionAddress)) newAddresses.add(extensionAddress)
-            // If the app address is not present we should add it
-            if (!remove(appAddress)) newAddresses.add(appAddress)
-        }
-
-        // We have no new addresses, nothing to do here
-        if (newAddresses.isEmpty()) throw NoNeedToRecoverSafeException(safeInfo.address)
-        // We should have enough addresses that can be replaced
-        if (addressesToReplace.size < newAddresses.size) throw IllegalStateException()
-
-        // We start replacing in reverse order, to avoid having conflicts when combining the transactions via multisend
-        val payloads = newAddresses.map {
-            val nextAddressToReplace = addressesToReplace.removeAt(addressesToReplace.size - 1)
-            val pointerAddress = nullOnThrow { safeInfo.owners[safeInfo.owners.indexOf(nextAddressToReplace) - 1] } ?: SENTINEL
-            val payload = GnosisSafe.SwapOwner.encode(pointerAddress, nextAddressToReplace, it)
-            payload
-        }
-
-        return buildTransaction(safeInfo, payloads)
-    }
 
     override fun buildRecoverTransaction(
         safeInfo: SafeInfo,
