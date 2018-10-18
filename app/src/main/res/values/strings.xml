@@ -114,7 +114,7 @@
     <string name="unknown_token">Unknown Token</string>
     <string name="continue_text">Continue</string>
     <string name="awaiting_confirmations">awaiting confirmation</string>
-    <string name="confirmations_ready">confirmed by extension</string>
+    <string name="confirmations_ready">transaction confirmed</string>
     <string name="submitting_transaction">Submitting transaction</string>
     <string name="rejecting_transaction">Rejecting transaction</string>
     <string name="send_x">Send %s</string>
