@@ -38,9 +38,9 @@ import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
-import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionPairingActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
@@ -127,6 +127,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 eventTracker.submit(Event.ScreenView(ScreenId.SAFE_SETTINGS))
             }
 
+        // Hide menu options until we get the correct state of the safe
+        hideMenuOptions()
         disposables += safeSubject
             // TODO: Should we retry this?
             .switchMapSingle { viewModel.isConnectedToBrowserExtension(it) }
@@ -376,6 +378,13 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     private fun updateOverflowMenu() {
         layout_safe_main_toolbar_overflow.visible(selectedSafe != null)
+    }
+
+    private fun hideMenuOptions() {
+        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = false
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = false
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = false
+        popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = false
     }
 
     private fun isConnectedToBrowserExtension(isConnected: Boolean) {
