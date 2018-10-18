@@ -232,7 +232,10 @@
             android:name=".ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
-        <activity android:name=".ui.safe.recover.safe.RecoverSafeIntroActivity" />
+
+        <activity android:name=".ui.safe.recover.safe.RecoverSafeIntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

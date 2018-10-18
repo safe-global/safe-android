@@ -95,8 +95,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
     override fun checkSafe(address: Solidity.Address): Observable<Pair<Boolean, Boolean>> =
         ethereumRepository.request(
             CheckSafeRequest(
-                EthCall(transaction = Transaction(address = address, data = Proxy.Implementation.encode()), id = 0),
-                EthCall(transaction = Transaction(address = address, data = GetThreshold.encode()), id = 1)
+                masterCopy = EthCall(transaction = Transaction(address = address, data = Proxy.Implementation.encode()), id = 0),
+                threshold = EthCall(transaction = Transaction(address = address, data = GetThreshold.encode()), id = 1)
             )
         )
             .map {

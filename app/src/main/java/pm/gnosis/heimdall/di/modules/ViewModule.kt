@@ -126,20 +126,20 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
+    fun providesReplaceExtensionContract(provider: ViewModelProvider) = provider[ReplaceExtensionSubmitContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesReplaceExtensionRecoveryPhraseContract(provider: ViewModelProvider) =
+        provider[ReplaceExtensionRecoveryPhraseContract::class.java]
+
+    @Provides
+    @ForView
     fun providesRecoveringSafeContract(provider: ViewModelProvider) = provider[RecoveringSafeContract::class.java]
 
     @Provides
     @ForView
-    fun providesRecoverInputRecoveryPhraseContract(provider: ViewModelProvider) = provider[RecoverSafeRecoveryPhraseContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesReplaceBrowserExtensionContract(provider: ViewModelProvider) = provider[ReplaceExtensionSubmitContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesReplaceBrowserExtensionRecoveryPhraseContract(provider: ViewModelProvider) =
-        provider[ReplaceExtensionRecoveryPhraseContract::class.java]
+    fun providesRecoverSafeRecoveryPhraseContract(provider: ViewModelProvider) = provider[RecoverSafeRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView

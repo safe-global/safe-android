@@ -32,10 +32,10 @@ class CheckSafeViewModel @Inject constructor(
             .subscribeOn(Schedulers.computation())
             .flatMap(::checkSafeExists)
             .flatMap { safeRepository.checkSafe(it).firstOrError() }
-            .map {
+            .map { (isSafe, isExtensionConnected) ->
                 when {
-                    !it.first -> CheckResult.INVALID_SAFE
-                    !it.second -> CheckResult.VALID_SAFE_WITHOUT_EXTENSION
+                    !isSafe -> CheckResult.INVALID_SAFE
+                    !isExtensionConnected -> CheckResult.VALID_SAFE_WITHOUT_EXTENSION
                     else -> CheckResult.VALID_SAFE_WITH_EXTENSION
                 }
             }
