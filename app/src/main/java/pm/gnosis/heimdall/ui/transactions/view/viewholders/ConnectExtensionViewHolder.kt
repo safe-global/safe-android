@@ -62,7 +62,13 @@ class ConnectExtensionViewHolder(
         view = inflater.inflate(R.layout.layout_connect_extension_transaction_info, root, true)
     }
 
-    override fun detach() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun stop() {
         disposables.clear()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    override fun detach() {
+        view = null
     }
 }
