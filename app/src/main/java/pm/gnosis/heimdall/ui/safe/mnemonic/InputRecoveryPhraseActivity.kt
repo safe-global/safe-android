@@ -61,7 +61,7 @@ abstract class InputRecoveryPhraseActivity<VM : InputRecoveryPhraseContract> : V
                     }
             ),
             intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!!,
-            intent.getStringExtra(EXTRA_EXTENSION_ADDRESS).asEthereumAddress()!!
+            intent.getStringExtra(EXTRA_EXTENSION_ADDRESS)?.run{ asEthereumAddress()!! }
         )
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onNext = ::updateView, onError = Timber::e)
@@ -119,9 +119,9 @@ abstract class InputRecoveryPhraseActivity<VM : InputRecoveryPhraseContract> : V
     companion object {
         const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         const val EXTRA_EXTENSION_ADDRESS = "extra.string.extension_address"
-        fun addExtras(intent: Intent, safeAddress: Solidity.Address, extensionAddress: Solidity.Address) = intent.apply {
+        fun addExtras(intent: Intent, safeAddress: Solidity.Address, extensionAddress: Solidity.Address?) = intent.apply {
             putExtra(EXTRA_SAFE_ADDRESS, safeAddress.asEthereumAddressString())
-            putExtra(EXTRA_EXTENSION_ADDRESS, extensionAddress.asEthereumAddressString())
+            putExtra(EXTRA_EXTENSION_ADDRESS, extensionAddress?.asEthereumAddressString())
         }
     }
 }

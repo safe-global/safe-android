@@ -24,13 +24,13 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
-import pm.gnosis.heimdall.ui.safe.recover.ReplaceBrowserExtensionContract
-import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeContract
-import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitContract
+import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract
+import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeContract
+import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
@@ -126,20 +126,20 @@ class ViewModule(val context: Context) {
 
     @Provides
     @ForView
+    fun providesReplaceExtensionContract(provider: ViewModelProvider) = provider[ReplaceExtensionSubmitContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesReplaceExtensionRecoveryPhraseContract(provider: ViewModelProvider) =
+        provider[ReplaceExtensionRecoveryPhraseContract::class.java]
+
+    @Provides
+    @ForView
     fun providesRecoveringSafeContract(provider: ViewModelProvider) = provider[RecoveringSafeContract::class.java]
 
     @Provides
     @ForView
-    fun providesRecoverInputRecoveryPhraseContract(provider: ViewModelProvider) = provider[RecoverInputRecoveryPhraseContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesReplaceBrowserExtensionContract(provider: ViewModelProvider) = provider[ReplaceBrowserExtensionContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesReplaceBrowserExtensionRecoveryPhraseContract(provider: ViewModelProvider) =
-        provider[ReplaceBrowserExtensionRecoveryPhraseContract::class.java]
+    fun providesRecoverSafeRecoveryPhraseContract(provider: ViewModelProvider) = provider[RecoverSafeRecoveryPhraseContract::class.java]
 
     @Provides
     @ForView

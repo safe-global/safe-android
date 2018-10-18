@@ -114,12 +114,12 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.safe.recover.extension.RecoverPairingActivity"
+            android:name=".ui.safe.recover.safe.RecoverSafePairingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.safe.recover.address.CheckSafeActivity"
+            android:name=".ui.safe.recover.safe.CheckSafeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
@@ -177,24 +177,24 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.safe.recover.phrase.RecoverInputRecoveryPhraseActivity"
+            android:name=".ui.safe.recover.safe.RecoverSafeRecoveryPhraseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.safe.recover.extension.ReplaceBrowserExtensionPairingActivity"
+            android:name=".ui.safe.recover.extension.ReplaceExtensionPairingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.safe.recover.ReplaceBrowserExtensionActivity"
+            android:name=".ui.safe.recover.extension.ReplaceExtensionSubmitActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseActivity"
+            android:name=".ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
@@ -230,6 +230,10 @@
 
         <activity
             android:name=".ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity android:name=".ui.safe.recover.safe.RecoverSafeIntroActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 

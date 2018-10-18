@@ -92,12 +92,20 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 SafeInfo(address, balance, threshold, owners, isOwner, modules)
             }
 
-    override fun checkSafe(address: Solidity.Address): Observable<Boolean> =
-        ethereumRepository.request(EthCall(transaction = Transaction(address = address, data = Proxy.Implementation.encode())))
+    override fun checkSafe(address: Solidity.Address): Observable<Pair<Boolean, Boolean>> =
+        ethereumRepository.request(
+            CheckSafeRequest(
+                masterCopy = EthCall(transaction = Transaction(address = address, data = Proxy.Implementation.encode()), id = 0),
+                threshold = EthCall(transaction = Transaction(address = address, data = GetThreshold.encode()), id = 1)
+            )
+        )
             .map {
-                it.result().let {
+                it.masterCopy.result().let {
                     !it?.removeHexPrefix().isNullOrBlank() &&
                             Proxy.Implementation.decode(it!!).param0 == BuildConfig.SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()
+                } to it.threshold.result().let{
+                    !it?.removeHexPrefix().isNullOrBlank() &&
+                            GetThreshold.decode(it!!).param0.value > NO_EXTENSION_THRESHOLD
                 }
             }
 
@@ -292,4 +300,13 @@ class DefaultGnosisSafeRepository @Inject constructor(
         val isOwner: EthRequest<String>,
         val modules: EthRequest<String>
     ) : BulkRequest(balance, threshold, owners, isOwner, modules)
+
+    private class CheckSafeRequest(
+        val masterCopy: EthRequest<String>,
+        val threshold: EthRequest<String>
+    ) : BulkRequest(masterCopy, threshold)
+
+    companion object {
+        private val NO_EXTENSION_THRESHOLD = 3.toBigInteger()
+    }
 }

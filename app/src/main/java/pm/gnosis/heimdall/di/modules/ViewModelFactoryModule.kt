@@ -33,20 +33,20 @@ import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressViewModel
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundViewModel
-import pm.gnosis.heimdall.ui.safe.recover.ReplaceBrowserExtensionContract
-import pm.gnosis.heimdall.ui.safe.recover.ReplaceBrowserExtensionViewModel
-import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeContract
-import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeViewModel
-import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.phrase.RecoverInputRecoveryPhraseViewModel
-import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.phrase.ReplaceBrowserExtensionRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitViewModel
+import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract
+import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeViewModel
+import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressViewModel
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseViewModel
-import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeContract
-import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeViewModel
+import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
+import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeViewModel
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.safe.selection.SelectSafeViewModel
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
@@ -163,18 +163,18 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(RecoverInputRecoveryPhraseContract::class)
-    abstract fun bindsRecoverInputRecoveryPhraseContract(viewModel: RecoverInputRecoveryPhraseViewModel): ViewModel
+    @ViewModelKey(RecoverSafeRecoveryPhraseContract::class)
+    abstract fun bindsRecoverInputRecoveryPhraseContract(viewModel: RecoverSafeRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(ReplaceBrowserExtensionContract::class)
-    abstract fun bindsReplaceBrowserExtensionContract(viewModel: ReplaceBrowserExtensionViewModel): ViewModel
+    @ViewModelKey(ReplaceExtensionSubmitContract::class)
+    abstract fun bindsReplaceBrowserExtensionContract(viewModel: ReplaceExtensionSubmitViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(ReplaceBrowserExtensionRecoveryPhraseContract::class)
-    abstract fun bindsReplaceBrowserExtensionRecoveryPhraseContract(viewModel: ReplaceBrowserExtensionRecoveryPhraseViewModel): ViewModel
+    @ViewModelKey(ReplaceExtensionRecoveryPhraseContract::class)
+    abstract fun bindsReplaceBrowserExtensionRecoveryPhraseContract(viewModel: ReplaceExtensionRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap

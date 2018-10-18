@@ -36,10 +36,10 @@ import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
-import pm.gnosis.heimdall.ui.safe.recover.address.CheckSafeActivity
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceBrowserExtensionPairingActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionPairingActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
-import pm.gnosis.heimdall.ui.safe.recover.submit.RecoveringSafeFragment
+import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
@@ -351,7 +351,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                         startActivity(ScanExtensionAddressActivity.createIntent(this, safe.address()))
                     }
                     R.id.safe_details_menu_replace_browser_extension -> selectedSafe?.let { safe ->
-                        startActivity(ReplaceBrowserExtensionPairingActivity.createIntent(this, safe.address()))
+                        startActivity(ReplaceExtensionPairingActivity.createIntent(this, safe.address()))
                     }
                     R.id.safe_details_menu_show_on_etherscan -> selectedSafe?.let { safe ->
                         openUrl(getString(R.string.etherscan_address_url, safe.address().asEthereumAddressString()))
