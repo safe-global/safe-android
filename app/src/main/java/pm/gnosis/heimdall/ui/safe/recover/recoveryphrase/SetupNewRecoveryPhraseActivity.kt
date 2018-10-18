@@ -13,12 +13,12 @@ import pm.gnosis.utils.nullOnThrow
 
 class SetupNewRecoveryPhraseActivity : SetupRecoveryPhraseActivity<SetupRecoveryPhraseContract>() {
     private lateinit var safeAddress: Solidity.Address
-    private lateinit var browserAddress: Solidity.Address
+    private var browserAddress: Solidity.Address? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         safeAddress = nullOnThrow { intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!! } ?: run { finish(); return }
-        browserAddress = nullOnThrow { intent.getStringExtra(EXTRA_BROWSER_ADDRESS).asEthereumAddress()!! } ?: run { finish(); return }
+        intent.getStringExtra(EXTRA_BROWSER_ADDRESS)?.let { browserAddress = it.asEthereumAddress()!! }
     }
 
     override fun onConfirmedRecoveryPhrase(recoveryPhrase: String) {
@@ -31,10 +31,10 @@ class SetupNewRecoveryPhraseActivity : SetupRecoveryPhraseActivity<SetupRecovery
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val EXTRA_BROWSER_ADDRESS = "extra.string.browser_address"
 
-        fun createIntent(context: Context, safeAddress: Solidity.Address, browserAddress: Solidity.Address) =
+        fun createIntent(context: Context, safeAddress: Solidity.Address, browserAddress: Solidity.Address?) =
             Intent(context, SetupNewRecoveryPhraseActivity::class.java).apply {
                 putExtra(EXTRA_SAFE_ADDRESS, safeAddress.asEthereumAddressString())
-                putExtra(EXTRA_BROWSER_ADDRESS, browserAddress.asEthereumAddressString())
+                putExtra(EXTRA_BROWSER_ADDRESS, browserAddress?.asEthereumAddressString())
             }
     }
 }

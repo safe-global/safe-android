@@ -1,16 +1,19 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
-import io.reactivex.*
+import io.reactivex.Completable
+import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.BuildConfig
-import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.GnosisSafe.*
 import pm.gnosis.heimdall.Proxy
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.*
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
@@ -103,7 +106,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 it.masterCopy.result().let {
                     !it?.removeHexPrefix().isNullOrBlank() &&
                             Proxy.Implementation.decode(it!!).param0 == BuildConfig.SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()
-                } to it.threshold.result().let{
+                } to it.threshold.result().let {
                     !it?.removeHexPrefix().isNullOrBlank() &&
                             GetThreshold.decode(it!!).param0.value > NO_EXTENSION_THRESHOLD
                 }
@@ -307,6 +310,6 @@ class DefaultGnosisSafeRepository @Inject constructor(
     ) : BulkRequest(masterCopy, threshold)
 
     companion object {
-        private val NO_EXTENSION_THRESHOLD = 3.toBigInteger()
+        private val NO_EXTENSION_THRESHOLD = BigInteger.ONE
     }
 }

@@ -15,6 +15,7 @@ import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.dialog_content_edit_name.view.*
 import kotlinx.android.synthetic.main.layout_safe_main.*
@@ -40,6 +41,7 @@ import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionPairingActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
@@ -70,7 +72,9 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     private var screenActive: Boolean = false
 
-    private val safeSubject = PublishSubject.create<Safe>()
+    private val safeSubject = BehaviorSubject.create<Safe>()
+
+    private var isConnectedToExtension: Boolean = false
 
     override fun screenId() = ScreenId.SAFE_MAIN
 
@@ -260,6 +264,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             selectTab()
             return
         }
+        hideMenuOptions()
         supportFragmentManager.transaction {
             when (safe) {
                 is Safe -> {
@@ -361,7 +366,13 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                                 onError = { toast(R.string.error_syncing) })
                     }
                     R.id.safe_details_menu_replace_recovery_phrase -> selectedSafe?.let { safe ->
-                        startActivity(ScanExtensionAddressActivity.createIntent(this, safe.address()))
+                        startActivity(
+                            if (isConnectedToExtension) {
+                                ScanExtensionAddressActivity.createIntent(this, safe.address())
+                            } else {
+                                SetupNewRecoveryPhraseIntroActivity.createIntent(this, browserExtensionAddress = null, safeAddress = safe.address())
+                            }
+                        )
                     }
                     R.id.safe_details_menu_replace_browser_extension -> selectedSafe?.let { safe ->
                         startActivity(ReplaceExtensionPairingActivity.createIntent(this, safe.address()))
@@ -388,8 +399,9 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     }
 
     private fun isConnectedToBrowserExtension(isConnected: Boolean) {
+        isConnectedToExtension = isConnected
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = selectedSafe is Safe
         popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = isConnected
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = isConnected
         popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = isConnected
         popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = !isConnected
     }
