@@ -16,7 +16,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.dialog_content_edit_name.view.*
 import kotlinx.android.synthetic.main.layout_safe_main.*
 import pm.gnosis.heimdall.BuildConfig
@@ -72,7 +71,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     private var screenActive: Boolean = false
 
-    private val safeSubject = BehaviorSubject.create<Safe>()
+    private val safeSubject = BehaviorSubject.create<AbstractSafe>()
 
     private var isConnectedToExtension: Boolean = false
 
@@ -265,12 +264,12 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             return
         }
         hideMenuOptions()
+        safeSubject.onNext(safe)
         supportFragmentManager.transaction {
             when (safe) {
                 is Safe -> {
                     val selectedTab = intent.getIntExtra(EXTRA_SELECTED_TAB, 0)
                     intent.removeExtra(EXTRA_SELECTED_TAB)
-                    safeSubject.onNext(safe)
                     replace(R.id.layout_safe_main_content_frame, SafeDetailsFragment.createInstance(safe, selectedTab))
                 }
                 is PendingSafe -> {
@@ -389,21 +388,20 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
     private fun updateOverflowMenu() {
         layout_safe_main_toolbar_overflow.visible(selectedSafe != null)
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = selectedSafe is Safe
     }
 
     private fun hideMenuOptions() {
         popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = false
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = false
         popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = false
         popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = false
     }
 
     private fun isConnectedToBrowserExtension(isConnected: Boolean) {
         isConnectedToExtension = isConnected
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = selectedSafe is Safe
-        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = isConnected
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = isConnected
-        popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = !isConnected
+        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = isConnected && selectedSafe is Safe
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = isConnected && selectedSafe is Safe
+        popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = !isConnected && selectedSafe is Safe
     }
 
     private fun isConnectedToBrowserExtensionError(throwable: Throwable) {

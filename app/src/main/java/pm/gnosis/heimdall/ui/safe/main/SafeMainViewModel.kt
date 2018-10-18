@@ -91,10 +91,14 @@ class SafeMainViewModel @Inject constructor(
             is RecoveringSafe -> safeRepository.removeRecoveringSafe(safe.address)
         }
 
-    override fun isConnectedToBrowserExtension(safe: Safe): Single<Result<Boolean>> =
-        safeRepository.checkSafe(safe.address).firstOrError()
-            .map { (isSafe, isExtensionConnected) -> isSafe && isExtensionConnected }
-            .mapToResult()
+    override fun isConnectedToBrowserExtension(safe: AbstractSafe): Single<Result<Boolean>> =
+        if (safe is Safe)
+            safeRepository.checkSafe(safe.address).firstOrError()
+                .map { (isSafe, isExtensionConnected) -> isSafe && isExtensionConnected }
+                .mapToResult()
+        else Single.just(false).mapToResult()
+
+
 
     override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)
 

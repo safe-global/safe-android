@@ -18,5 +18,5 @@ abstract class SafeMainContract : ViewModel() {
     abstract fun updateSafeName(safe: AbstractSafe, name: String?): Completable
     abstract fun observeSafe(safe: AbstractSafe): Flowable<Pair<String, String>>
     abstract fun removeSafe(safe: AbstractSafe): Completable
-    abstract fun isConnectedToBrowserExtension(safe: Safe): Single<Result<Boolean>>
+    abstract fun isConnectedToBrowserExtension(safe: AbstractSafe): Single<Result<Boolean>>
 }

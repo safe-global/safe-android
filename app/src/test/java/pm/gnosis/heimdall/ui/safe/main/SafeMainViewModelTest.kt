@@ -683,6 +683,31 @@ class SafeMainViewModelTest {
     }
 
     @Test
+    fun isConnectedToBrowserExtensionIsPendingSafe() {
+        val testObserver = TestObserver.create<Result<Boolean>>()
+        val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+
+        viewModel.isConnectedToBrowserExtension(pendingSafe).subscribe(testObserver)
+
+        then(safeRepository).shouldHaveZeroInteractions()
+        testObserver.assertResult(DataResult(false))
+    }
+
+    @Test
+    fun isConnectedToBrowserExtensionIsRecoveringSafe() {
+        val testObserver = TestObserver.create<Result<Boolean>>()
+        val recoveringSafe = RecoveringSafe(
+            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
+            TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        )
+
+        viewModel.isConnectedToBrowserExtension(recoveringSafe).subscribe(testObserver)
+
+        then(safeRepository).shouldHaveZeroInteractions()
+        testObserver.assertResult(DataResult(false))
+    }
+
+    @Test
     fun isConnectedToBrowserExtensionError() {
         val testObserver = TestObserver.create<Result<Boolean>>()
         val exception = IllegalStateException()
