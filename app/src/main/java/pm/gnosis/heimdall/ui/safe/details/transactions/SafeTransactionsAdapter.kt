@@ -172,7 +172,7 @@ class SafeTransactionsAdapter @Inject constructor(
                 }
                 is TransactionData.ConnectExtension -> {
                     address = info.safe
-                    infoText = "Connected extension"
+                    infoText = context.getString(R.string.connected_extension)
                     valueText = null
                     valueColor = R.color.dark_slate_blue
                     iconRes = R.drawable.ic_transaction_white_24dp

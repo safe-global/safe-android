@@ -253,4 +253,7 @@
     <string name="recover_safe_fee_explainer">Recovering a Safe requires a transaction which needs to be paid with ETH. This will be either funded with the ETH balance of the Safe you\'re recovering or you\'ll be asked to send the minimum amount of ETH to cover for the transaction cost.</string>
     <string name="recover_safe_info_explainer">Please keep your Safe\'s address and recovery phrase ready, consisting of 12 unique words.</string>
     <string name="start_recovery">Start recovery</string>
+    <string name="connected_extension">Connected extension</string>
+    <string name="connect_browser_extension">Connect browser extension</string>
+    <string name="connect_extension_description">This transaction will connect this safe with the browser extension. Future transactions require confirmation from both devices.</string>
 </resources>

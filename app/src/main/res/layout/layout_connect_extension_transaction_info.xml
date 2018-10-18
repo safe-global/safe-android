@@ -64,8 +64,8 @@
         android:id="@+id/layout_replace_recovery_phrase_transaction_divider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:background="@color/divider"
         app:layout_constraintBottom_toBottomOf="@+id/layout_replace_recovery_phrase_transaction_arrow"
         app:layout_constraintEnd_toStartOf="@+id/layout_connect_extension_transaction_info_value"
@@ -81,7 +81,7 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:maxLines="1"
-        android:text="Connect browser extension"
+        android:text="@string/connect_browser_extension"
         android:textColor="@color/dark_slate_blue"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="@+id/layout_replace_recovery_phrase_transaction_divider"
@@ -102,11 +102,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:lineSpacingExtra="3sp"
-        android:text="This transaction will connect this safe with the browser extension. Future transactions require confirmation from both devices."
+        android:text="@string/connect_extension_description"
         android:textColor="@color/battleship_grey"
         android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_replace_recovery_phrase_transaction_bottom_barrier" />
-
 </merge>

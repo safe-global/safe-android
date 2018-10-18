@@ -26,8 +26,7 @@
         app:layout_constraintBottom_toTopOf="@+id/layout_safe_transactions_item_info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/layout_safe_transactions_item_target_image"
-        tools:text="- 300 ETH"
-        tools:visibility="gone" />
+        tools:text="- 300 ETH" />
 
     <TextView
         android:id="@+id/layout_safe_transactions_item_info"
@@ -85,8 +84,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="middle"
-        android:paddingEnd="16dp"
         android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:singleLine="true"
         android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/layout_safe_transactions_item_timestamp"
@@ -100,8 +99,8 @@
         style="@style/NormalText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingEnd="16dp"
         android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@id/layout_safe_transactions_item_target_image"
         app:layout_constraintEnd_toStartOf="@+id/layout_safe_transactions_item_content_barrier"
@@ -123,10 +122,10 @@
         android:layout_height="2dp"
         android:layout_marginTop="16dp"
         android:background="@color/pale_grey"
-        app:mpb_setBothDrawables="true"
+        app:layout_constraintTop_toBottomOf="@+id/layout_safe_transactions_item_progress_barrier"
         app:mpb_progressStyle="horizontal"
-        app:mpb_useIntrinsicPadding="false"
         app:mpb_progressTint="@color/azure"
+        app:mpb_setBothDrawables="true"
         app:mpb_showProgressBackground="false"
-        app:layout_constraintTop_toBottomOf="@+id/layout_safe_transactions_item_progress_barrier" />
+        app:mpb_useIntrinsicPadding="false" />
 </android.support.constraint.ConstraintLayout>

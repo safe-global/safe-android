@@ -59,9 +59,7 @@ class SafeMainViewModel @Inject constructor(
             } ?: Single.error(NoSuchElementException())
         }.onErrorResumeNext {
             safeRepository.observeAllSafes()
-                .map {
-                    it.first()
-                }
+                .map { safes -> safes.first() }
                 .firstOrError()
         }
             .doOnError { safeSelectionProcessor.offer(None) }
@@ -94,10 +92,9 @@ class SafeMainViewModel @Inject constructor(
         }
 
     override fun isConnectedToBrowserExtension(safe: Safe): Single<Result<Boolean>> =
-        safeRepository.loadInfo(safe.address).firstOrError()
-            .map { it.owners.size > 3 }
+        safeRepository.checkSafe(safe.address).firstOrError()
+            .map { (isSafe, isExtensionConnected) -> isSafe && isExtensionConnected }
             .mapToResult()
-
 
     override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)
 

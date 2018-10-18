@@ -28,7 +28,6 @@ class CreateSafePairingActivity : PairingActivity() {
         startActivity(CreateSafeRecoveryPhraseIntroActivity.createIntent(this, extension))
     }
 
-
     override fun shouldShowSkip() = true
 
     companion object {
