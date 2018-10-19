@@ -6,7 +6,9 @@ adb -e emu kill || true
 set -e
 
 EMULATOR=`which emulator`
+echo "Emulator: $EMULATOR"
 EMULATOR_PATH=`dirname $EMULATOR`
+echo "Emulator Path: $EMULATOR_PATH"
 
 cd $EMULATOR_PATH
 
