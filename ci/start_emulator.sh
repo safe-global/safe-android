@@ -2,10 +2,10 @@
 # kill emulators that are potentially still running
 echo "Stop running emulators"
 adb -e emu kill || true
-echo "Stop running emulators -----"
 # fail if any commands fails
 set -e
 
+echo "Setup env variables"
 EMULATOR=`which emulator`
 echo "Emulator: $EMULATOR"
 EMULATOR_PATH=`dirname $EMULATOR`
