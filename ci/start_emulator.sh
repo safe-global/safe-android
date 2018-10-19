@@ -1,5 +1,6 @@
 #!/bin/bash
 # kill emulators that are potentially still running
+echo "Stop running emulators"
 adb -e emu kill || true
 # fail if any commands fails
 set -e
