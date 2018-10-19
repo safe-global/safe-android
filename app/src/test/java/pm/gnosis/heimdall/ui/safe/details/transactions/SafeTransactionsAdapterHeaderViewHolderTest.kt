@@ -10,8 +10,8 @@ import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import junit.framework.Assert.assertNotNull
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -151,6 +151,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
 
         then(valueTextView).should().text = null
         then(valueTextView).should().text = valueText
+        then(valueTextView).should().visibility = View.GONE
         then(valueTextView).should().setTextColor(R.color.tomato)
         then(valueTextView).shouldHaveNoMoreInteractions()
 
@@ -247,6 +248,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(typeIconImageView).shouldHaveNoMoreInteractions()
 
         then(valueTextView).should().text = "- ${R.string.x_ether}, 0.1"
+        then(valueTextView).should().visibility = View.VISIBLE
         then(valueTextView).should().setTextColor(R.color.tomato)
         then(valueTextView).shouldHaveNoMoreInteractions()
 
@@ -464,7 +466,8 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(typeIconImageView).should().setImageResource(R.drawable.ic_transaction_white_24dp)
         then(typeIconImageView).shouldHaveNoMoreInteractions()
 
-        then(valueTextView).should().text = "-"
+        then(valueTextView).should().text = null
+        then(valueTextView).should().visibility = View.GONE
         then(valueTextView).should().setTextColor(R.color.dark_slate_blue)
         then(valueTextView).shouldHaveNoMoreInteractions()
 

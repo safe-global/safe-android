@@ -5,7 +5,7 @@
     package="pm.gnosis.heimdall">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -233,7 +233,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 
-        <activity android:name=".ui.safe.recover.safe.RecoverSafeIntroActivity"
+        <activity
+            android:name=".ui.safe.recover.safe.RecoverSafeIntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.connect.ConnectExtensionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 

@@ -173,6 +173,12 @@ class TransactionStatusViewModelTest {
     }
 
     @Test
+    fun observeConnectExtension() {
+        val transactionData = TransactionData.ConnectExtension("0x42".asEthereumAddress()!!)
+        testObserve(ERC20Token.ETHER_TOKEN.address, DataResult(ERC20Token.ETHER_TOKEN), transactionData, R.string.settings_change)
+    }
+
+    @Test
     fun observerStatus() {
         val statusObservable = Observable.just<TransactionExecutionRepository.PublishStatus>(TransactionExecutionRepository.PublishStatus.Pending)
         given(executionRepositoryMock.observePublishStatus(anyString())).willReturn(statusObservable)

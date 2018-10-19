@@ -15,6 +15,7 @@ import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.dialog_content_edit_name.view.*
 import kotlinx.android.synthetic.main.layout_safe_main.*
 import pm.gnosis.heimdall.BuildConfig
@@ -31,14 +32,16 @@ import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
+import pm.gnosis.heimdall.ui.safe.connect.ConnectExtensionActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
-import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionPairingActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
+import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
@@ -67,6 +70,10 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     private var selectedSafeName: String? = null
 
     private var screenActive: Boolean = false
+
+    private val safeSubject = BehaviorSubject.create<AbstractSafe>()
+
+    private var isConnectedToExtension: Boolean = false
 
     override fun screenId() = ScreenId.SAFE_MAIN
 
@@ -98,7 +105,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
             inflate(R.menu.safe_details_menu)
-            menu.findItem(R.id.address_book_entry_details_menu_delete).title = SpannableStringBuilder().appendText(
+            menu.findItem(R.id.safe_details_menu_delete).title = SpannableStringBuilder().appendText(
                 getString(R.string.remove_from_device), ForegroundColorSpan(getColorCompat(R.color.tomato))
             )
         }
@@ -122,6 +129,14 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 popupMenu.show()
                 eventTracker.submit(Event.ScreenView(ScreenId.SAFE_SETTINGS))
             }
+
+        // Hide menu options until we get the correct state of the safe
+        hideMenuOptions()
+        disposables += safeSubject
+            // TODO: Should we retry this?
+            .switchMapSingle { viewModel.isConnectedToBrowserExtension(it) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::isConnectedToBrowserExtension, onError = ::isConnectedToBrowserExtensionError)
 
         updateToolbar()
         setupNavigation()
@@ -248,6 +263,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             selectTab()
             return
         }
+        hideMenuOptions()
+        safeSubject.onNext(safe)
         supportFragmentManager.transaction {
             when (safe) {
                 is Safe -> {
@@ -339,7 +356,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         disposables += popupMenu.itemClicks()
             .subscribeBy(onNext = {
                 when (it.itemId) {
-                    R.id.address_book_entry_details_menu_delete -> selectedSafe?.let { safe -> removeSafe(safe) }
+                    R.id.safe_details_menu_delete -> selectedSafe?.let { safe -> removeSafe(safe) }
                     R.id.safe_details_menu_rename -> selectedSafe?.let { safe -> renameSafe(safe) }
                     R.id.safe_details_menu_sync -> selectedSafe?.let { safe ->
                         disposables += viewModel.syncWithChromeExtension(safe.address())
@@ -348,7 +365,13 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                                 onError = { toast(R.string.error_syncing) })
                     }
                     R.id.safe_details_menu_replace_recovery_phrase -> selectedSafe?.let { safe ->
-                        startActivity(ScanExtensionAddressActivity.createIntent(this, safe.address()))
+                        startActivity(
+                            if (isConnectedToExtension) {
+                                ScanExtensionAddressActivity.createIntent(this, safe.address())
+                            } else {
+                                SetupNewRecoveryPhraseIntroActivity.createIntent(this, browserExtensionAddress = null, safeAddress = safe.address())
+                            }
+                        )
                     }
                     R.id.safe_details_menu_replace_browser_extension -> selectedSafe?.let { safe ->
                         startActivity(ReplaceExtensionPairingActivity.createIntent(this, safe.address()))
@@ -356,16 +379,33 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     R.id.safe_details_menu_show_on_etherscan -> selectedSafe?.let { safe ->
                         openUrl(getString(R.string.etherscan_address_url, safe.address().asEthereumAddressString()))
                     }
+                    R.id.safe_details_menu_connect -> selectedSafe?.let { safe ->
+                        startActivity(ConnectExtensionActivity.createIntent(this, safe.address()))
+                    }
                 }
             }, onError = Timber::e)
     }
 
     private fun updateOverflowMenu() {
         layout_safe_main_toolbar_overflow.visible(selectedSafe != null)
-        val extendedMenu = selectedSafe is Safe
-        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = extendedMenu
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = extendedMenu
-        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = extendedMenu
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = selectedSafe is Safe
+    }
+
+    private fun hideMenuOptions() {
+        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = false
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = false
+        popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = false
+    }
+
+    private fun isConnectedToBrowserExtension(isConnected: Boolean) {
+        isConnectedToExtension = isConnected
+        popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = isConnected && selectedSafe is Safe
+        popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = isConnected && selectedSafe is Safe
+        popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = !isConnected && selectedSafe is Safe
+    }
+
+    private fun isConnectedToBrowserExtensionError(throwable: Throwable) {
+        Timber.e(throwable)
     }
 
     private fun renameSafe(safe: AbstractSafe) {

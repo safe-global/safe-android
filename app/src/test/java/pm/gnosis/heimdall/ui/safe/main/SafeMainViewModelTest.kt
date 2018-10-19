@@ -5,6 +5,7 @@ import android.arch.persistence.room.EmptyResultSetException
 import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
@@ -34,6 +35,7 @@ import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
@@ -642,6 +644,80 @@ class SafeMainViewModelTest {
 
         then(safeRepository).should().removeRecoveringSafe(TEST_RECOVERING_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun isConnectedToBrowserExtension() {
+        val testObserver = TestObserver.create<Result<Boolean>>()
+        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(true to true))
+
+        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+
+        then(safeRepository).should().checkSafe(TEST_SAFE)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(DataResult(true))
+    }
+
+    @Test
+    fun isNotConnectedToBrowserExtension() {
+        val testObserver = TestObserver.create<Result<Boolean>>()
+        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(true to false))
+
+        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+
+        then(safeRepository).should().checkSafe(TEST_SAFE)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(DataResult(false))
+    }
+
+    @Test
+    fun isConnectedToBrowserExtensionIsNotSafe() {
+        val testObserver = TestObserver.create<Result<Boolean>>()
+        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
+
+        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+
+        then(safeRepository).should().checkSafe(TEST_SAFE)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(DataResult(false))
+    }
+
+    @Test
+    fun isConnectedToBrowserExtensionIsPendingSafe() {
+        val testObserver = TestObserver.create<Result<Boolean>>()
+        val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+
+        viewModel.isConnectedToBrowserExtension(pendingSafe).subscribe(testObserver)
+
+        then(safeRepository).shouldHaveZeroInteractions()
+        testObserver.assertResult(DataResult(false))
+    }
+
+    @Test
+    fun isConnectedToBrowserExtensionIsRecoveringSafe() {
+        val testObserver = TestObserver.create<Result<Boolean>>()
+        val recoveringSafe = RecoveringSafe(
+            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
+            TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        )
+
+        viewModel.isConnectedToBrowserExtension(recoveringSafe).subscribe(testObserver)
+
+        then(safeRepository).shouldHaveZeroInteractions()
+        testObserver.assertResult(DataResult(false))
+    }
+
+    @Test
+    fun isConnectedToBrowserExtensionError() {
+        val testObserver = TestObserver.create<Result<Boolean>>()
+        val exception = IllegalStateException()
+        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.error(exception))
+
+        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+
+        then(safeRepository).should().checkSafe(TEST_SAFE)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(ErrorResult(exception))
     }
 
     companion object {

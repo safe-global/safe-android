@@ -20,9 +20,9 @@ class ConfirmNewRecoveryPhraseViewModel @Inject constructor(
     private val recoverSafeOwnersHelper: RecoverSafeOwnersHelper
 ) : ConfirmNewRecoveryPhraseContract() {
     private lateinit var safeAddress: Solidity.Address
-    private lateinit var browserExtensionAddress: Solidity.Address
+    private var browserExtensionAddress: Solidity.Address? = null
 
-    override fun setup(safeAddress: Solidity.Address, browserExtensionAddress: Solidity.Address) {
+    override fun setup(safeAddress: Solidity.Address, browserExtensionAddress: Solidity.Address?) {
         this.safeAddress = safeAddress
         this.browserExtensionAddress = browserExtensionAddress
     }
@@ -35,7 +35,7 @@ class ConfirmNewRecoveryPhraseViewModel @Inject constructor(
             Function3 { safeInfo: SafeInfo, appAccount: Solidity.Address, recoveryPhraseAddresses: Set<Solidity.Address> ->
                 recoverSafeOwnersHelper.buildRecoverTransaction(
                     safeInfo = safeInfo,
-                    addressesToKeep = setOf(appAccount, browserExtensionAddress),
+                    addressesToKeep = listOfNotNull(appAccount, browserExtensionAddress).toSet(),
                     addressesToSwapIn = recoveryPhraseAddresses
                 )
             }

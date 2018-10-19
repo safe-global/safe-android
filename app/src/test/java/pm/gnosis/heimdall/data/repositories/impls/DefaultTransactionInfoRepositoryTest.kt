@@ -16,14 +16,11 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.db.models.TransactionPublishStatusDb
-import pm.gnosis.heimdall.data.repositories.RestrictedTransactionException
-import pm.gnosis.heimdall.data.repositories.TransactionData
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.CALL
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.DELEGATE_CALL
-import pm.gnosis.heimdall.data.repositories.TransactionInfo
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
-import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -44,7 +41,7 @@ class DefaultTransactionInfoRepositoryTest {
     @Mock
     lateinit var descriptionsDaoMock: DescriptionsDao
 
-    lateinit var repository: DefaultTransactionInfoRepository
+    private lateinit var repository: DefaultTransactionInfoRepository
 
     @Before
     fun setUp() {
@@ -154,12 +151,12 @@ class DefaultTransactionInfoRepositoryTest {
                             )
                     )
         )
-        RestrictedTransactionException::class.nestedClasses.forEach {
-            val (expected, tests) = testData[it] ?: throw IllegalStateException("Missing tests for ${it.simpleName}")
-            if (tests.isEmpty()) throw IllegalStateException("Missing tests for ${it.simpleName}")
-            tests.forEach {
+        RestrictedTransactionException::class.nestedClasses.forEach { nestedClass ->
+            val (expected, tests) = testData[nestedClass] ?: throw IllegalStateException("Missing tests for ${nestedClass.simpleName}")
+            if (tests.isEmpty()) throw IllegalStateException("Missing tests for ${nestedClass.simpleName}")
+            tests.forEach { safeTransaction ->
                 val testObserver = TestObserver<SafeTransaction>()
-                repository.checkRestrictedTransaction(it).subscribe(testObserver)
+                repository.checkRestrictedTransaction(safeTransaction).subscribe(testObserver)
                 testObserver.assertFailure(Predicate { it == expected })
             }
         }
@@ -362,6 +359,16 @@ class DefaultTransactionInfoRepositoryTest {
                         TestData(
                             REPLACE_RECOVERY_PHRASE_TX,
                             TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)
+                        )
+                    ),
+            TransactionData.ConnectExtension::class to
+                    listOf(
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    TEST_SAFE, data = GnosisSafe.AddOwnerWithThreshold.encode(TEST_ADDRESS, Solidity.UInt256(2.toBigInteger()))
+                                ), operation = TransactionExecutionRepository.Operation.CALL
+                            ), expected = TransactionData.ConnectExtension(TEST_ADDRESS)
                         )
                     )
         )

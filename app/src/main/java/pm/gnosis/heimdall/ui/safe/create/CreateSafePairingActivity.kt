@@ -8,6 +8,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_pairing.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
+import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
 import pm.gnosis.model.Solidity
 import timber.log.Timber
 
@@ -26,6 +27,8 @@ class CreateSafePairingActivity : PairingActivity() {
     override fun onSuccess(extension: Solidity.Address) {
         startActivity(CreateSafeRecoveryPhraseIntroActivity.createIntent(this, extension))
     }
+
+    override fun shouldShowSkip() = true
 
     companion object {
         fun createIntent(context: Context) = Intent(context, CreateSafePairingActivity::class.java)
