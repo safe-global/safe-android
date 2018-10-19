@@ -1,0 +1,8 @@
+steps:
+  - label: ':hammer: Setup'
+    command: 'ci/prepare_env_buildkite.sh'
+
+  - wait
+
+  - label: ':the_horns: Tests'
+    command: 'ci/run_ui_tests.sh'
