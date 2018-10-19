@@ -9,4 +9,5 @@ EMULATOR_PATH=`dirname $EMULATOR`
 
 cd $EMULATOR_PATH
 
+echo "Start emulator"
 emulator @`emulator -list-avds | head -1` -no-window &
