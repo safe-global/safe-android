@@ -5,6 +5,7 @@ adb -e emu kill || true
 # fail if any commands fails
 set -e
 
+which emulator
 echo "Setup env variables"
 EMULATOR=`which emulator`
 echo "Emulator: $EMULATOR"
