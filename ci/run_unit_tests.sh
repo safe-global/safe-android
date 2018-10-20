@@ -3,3 +3,5 @@
 set -e
 
 ./gradlew clean assembleDebug createDebugTestCoverage --stacktrace
+
+adb logcat -d
