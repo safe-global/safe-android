@@ -16,4 +16,4 @@ echo "Emulator Path: $EMULATOR_PATH"
 cd $EMULATOR_PATH
 
 echo "Start emulator"
-emulator @`emulator -list-avds | head -1` -no-window &
+emulator @`emulator -list-avds | head -1` -wipe-data -no-window -noaudio -no-snapshot-load -verbose &
