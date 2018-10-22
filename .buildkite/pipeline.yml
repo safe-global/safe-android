@@ -1,0 +1,4 @@
+steps:
+
+  - label: ':the_horns: UI Tests'
+    command: 'ci/run_ui_tests.sh'

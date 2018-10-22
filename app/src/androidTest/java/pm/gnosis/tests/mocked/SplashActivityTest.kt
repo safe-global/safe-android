@@ -17,7 +17,6 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.mock
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.onboarding.OnboardingIntroActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -35,8 +34,6 @@ class SplashActivityTest: BaseUiTest() {
     val activityRule = ActivityTestRule(SplashActivity::class.java, true, false)
 
     private val addressBookRepoMock = mock(AddressBookRepository::class.java)
-
-    private val safeRepoMock = mock(GnosisSafeRepository::class.java)
 
     // ViewModel mocks
 
