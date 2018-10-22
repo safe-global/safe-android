@@ -149,8 +149,7 @@
     </style>
 
     <!-- End: Button styles -->
-
-
+    
     <!-- Start: Text styles -->
 
     <style name="Text" parent="TextAppearance.AppCompat">
