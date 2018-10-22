@@ -234,7 +234,6 @@
         <b>2.</b> Open the side menu and click on \"Replace recovery phrase\"\n
         <b>3.</b> Scan the generated QR code by clicking the button below
     </string>
-    <string name="browser_extension_not_owner">Browser extension is not a signer of this Safe</string>
     <string name="confirm_recovery_phrase_incorrect_sequence">Invalid recovery phrase. Please input the correct sequence.</string>
     <string name="confirm_recovery_phrase_title">Do you have it?</string>
     <string name="confirm_recovery_phrase_description">Tap the missing words in order.</string>
