@@ -35,11 +35,6 @@ sealed class TransactionData : Parcelable {
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class Generic(val to: Solidity.Address, val value: BigInteger, val data: String?) : TransactionData()
 
-    /* Not used yet, they break the tests right now!
-    @Parcelize
-    @TypeParceler<Solidity.Address?, OptionalSolidityAddressParceler>
-    data class RecoverSafe(val appAddress: Solidity.Address?, val extensionAddress: Solidity.Address?): TransactionData()
-    */
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
     data class ReplaceRecoveryPhrase(val safeTransaction: SafeTransaction) : TransactionData()
