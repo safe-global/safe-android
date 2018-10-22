@@ -6,6 +6,7 @@ import android.content.Context
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsClient
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
+import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.moshi.Moshi
 import com.squareup.picasso.Picasso
 import dagger.Module
@@ -198,7 +199,7 @@ class ApplicationModule(private val application: Application) {
         fingerprintHelper: FingerprintHelper,
         keyStorage: KeyStorage
     ): EncryptionManager =
-        // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
+    // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
         AesEncryptionManager(application, preferencesManager, fingerprintHelper, keyStorage, 4096)
 
     @Provides
@@ -222,4 +223,8 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesPicasso(): Picasso = Picasso.get()
+
+    @Provides
+    @Singleton
+    fun providesFirebaseInstanceId() = FirebaseInstanceId.getInstance()
 }

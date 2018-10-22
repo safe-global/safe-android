@@ -38,14 +38,15 @@ import javax.inject.Inject
 class DefaultPushServiceRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val accountsRepository: AccountsRepository,
-    private val notificationManager: LocalNotificationManager,
+    private val firebaseInstanceId: FirebaseInstanceId,
+    private val localNotificationManager: LocalNotificationManager,
     private val moshi: Moshi,
     private val preferencesManager: PreferencesManager,
     private val pushServiceApi: PushServiceApi
 ) : PushServiceRepository {
 
-
     private val observedTransaction = HashMap<BigInteger, ReceiveSignatureObservable>()
+
 
     /*
     * Situations where a sync might be needed:
@@ -54,7 +55,7 @@ class DefaultPushServiceRepository @Inject constructor(
     *
     * Warning: This call might fail if the device is not unlocked (no access to ethereum account)
     */
-    @SuppressLint("CheckResult")
+    @SuppressLint("CheckResult") // We start this task in the context of the application. We don't keep track of the result.
     override fun syncAuthentication(forced: Boolean) {
         accountsRepository.loadActiveAccount()
             .flatMap { account -> FirebaseInstanceIdSingle().create().map { account to it.token } }
@@ -70,9 +71,9 @@ class DefaultPushServiceRepository @Inject constructor(
             .subscribeBy(onComplete = { Timber.d("GnosisSafePushServiceRepository: successful sync") }, onError = Timber::e)
     }
 
-    private class FirebaseInstanceIdSingle : SingleOnSubscribe<InstanceIdResult> {
+    private inner class FirebaseInstanceIdSingle : SingleOnSubscribe<InstanceIdResult> {
         override fun subscribe(emitter: SingleEmitter<InstanceIdResult>) {
-            FirebaseInstanceId.getInstance().instanceId
+            firebaseInstanceId.instanceId
                 .addOnSuccessListener { emitter.onSuccess(it) }
                 .addOnFailureListener { emitter.onError(it) }
         }
@@ -224,7 +225,7 @@ class DefaultPushServiceRepository @Inject constructor(
                 operationalGas = operationalGas.decimalAsBigInteger(), dataGas = dataGas.decimalAsBigInteger(), txGas = txGas.decimalAsBigInteger(),
                 gasToken = gasToken.asEthereumAddress()!!, gasPrice = gasPrice.decimalAsBigInteger()
             )
-            notificationManager.show(
+            localNotificationManager.show(
                 hash.hashCode(),
                 context.getString(R.string.sign_transaction_request_title),
                 context.getString(R.string.sign_transaction_request_message),
@@ -265,7 +266,6 @@ class DefaultPushServiceRepository @Inject constructor(
         fun publish(signature: TransactionResponse) {
             emitters.forEach { it.onNext(signature) }
         }
-
     }
 
     companion object {
