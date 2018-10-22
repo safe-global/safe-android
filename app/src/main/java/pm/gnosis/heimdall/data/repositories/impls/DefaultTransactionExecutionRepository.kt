@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.TransactionSubmittedCallback
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
@@ -30,6 +31,7 @@ import pm.gnosis.utils.*
 import java.math.BigInteger
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArraySet
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -45,7 +47,14 @@ class DefaultTransactionExecutionRepository @Inject constructor(
 
     private val descriptionsDao = appDb.descriptionsDao()
 
+    private val transactionSubmittedCallbacks = CopyOnWriteArraySet<TransactionSubmittedCallback>()
     private val nonceCache = ConcurrentHashMap<Solidity.Address, BigInteger>()
+
+    override fun addTransactionSubmittedCallback(callback: TransactionSubmittedCallback): Boolean =
+        transactionSubmittedCallbacks.add(callback)
+
+    override fun removeTransactionSubmittedCallback(callback: TransactionSubmittedCallback): Boolean =
+        transactionSubmittedCallbacks.remove(callback)
 
     override fun calculateHash(
         safeAddress: Solidity.Address, transaction: SafeTransaction,
@@ -267,11 +276,19 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             .flatMap { relayServiceApi.execute(safeAddress.asEthereumAddressChecksumString(), it) }
             .flatMap {
                 transaction.wrapped.nonce?.let { nonceCache[safeAddress] = it }
+                broadcastTransactionSubmitted(safeAddress, transaction, it.transactionHash)
                 if (addToHistory)
                     handleSubmittedTransaction(safeAddress, transaction, it.transactionHash.addHexPrefix(), txGas, dataGas, gasPrice)
                 else
                     Single.just(it.transactionHash.addHexPrefix())
             }
+
+    private fun broadcastTransactionSubmitted(
+        safeAddress: Solidity.Address,
+        transaction: SafeTransaction,
+        chainHash: String) {
+        transactionSubmittedCallbacks.forEach { it.onTransactionSubmitted(safeAddress, transaction, chainHash) }
+    }
 
     private fun loadExecutionParams(
         safeAddress: Solidity.Address,

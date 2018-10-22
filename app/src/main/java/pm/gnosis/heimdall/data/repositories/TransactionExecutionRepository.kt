@@ -11,6 +11,11 @@ import java.math.BigInteger
 
 
 interface TransactionExecutionRepository {
+
+    fun addTransactionSubmittedCallback(callback: TransactionSubmittedCallback): Boolean
+
+    fun removeTransactionSubmittedCallback(callback: TransactionSubmittedCallback): Boolean
+
     fun calculateHash(
         safeAddress: Solidity.Address, transaction: SafeTransaction,
         txGas: BigInteger, dataGas: BigInteger, gasPrice: BigInteger, gasToken: Solidity.Address = Solidity.Address(BigInteger.ZERO)
@@ -113,6 +118,10 @@ interface TransactionExecutionRepository {
         object Pending: PublishStatus()
         data class Failed(val timestamp: Long): PublishStatus()
         data class Success(val timestamp: Long): PublishStatus()
+    }
+
+    interface TransactionSubmittedCallback {
+        fun onTransactionSubmitted(safeAddress: Solidity.Address, transaction: SafeTransaction, chainHash: String)
     }
 
     enum class Operation {

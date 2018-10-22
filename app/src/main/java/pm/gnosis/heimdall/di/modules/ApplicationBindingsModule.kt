@@ -56,6 +56,10 @@ abstract class ApplicationBindingsModule {
     @Singleton
     abstract fun bindsLocalNotificationManager(manager: AndroidLocalNotificationManager): LocalNotificationManager
 
+    @Binds
+    @Singleton
+    abstract fun bindsTransactionTriggerManager(manager: DefaultTransactionTriggerManager): TransactionTriggerManager
+
     /*
         Repositories
      */
