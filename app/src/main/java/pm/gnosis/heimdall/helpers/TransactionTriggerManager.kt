@@ -37,7 +37,6 @@ class DefaultTransactionTriggerManager @Inject constructor(
 
 }
 
-
 interface TransactionTriggerManager {
     fun init()
 }
