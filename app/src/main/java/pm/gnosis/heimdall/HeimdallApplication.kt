@@ -25,6 +25,7 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
         component.crashTracker().init()
         RxJavaPlugins.setErrorHandler(Timber::e)
         component.shortcutRepository().init()
+        component.transactionTriggerManager().init()
 
         try {
             LinuxSecureRandom()

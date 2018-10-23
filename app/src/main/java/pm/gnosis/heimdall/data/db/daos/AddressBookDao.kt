@@ -8,7 +8,7 @@ import pm.gnosis.model.Solidity
 
 @Dao
 interface AddressBookDao {
-    @Insert(onConflict = OnConflictStrategy.FAIL)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAddressBookEntry(addressBookEntryDb: AddressBookEntryDb)
 
     @Query("SELECT * FROM ${AddressBookEntryDb.TABLE_NAME} ORDER BY ${AddressBookEntryDb.COL_NAME}")

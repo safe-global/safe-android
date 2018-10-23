@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.di.modules.InterceptorsModule
 import pm.gnosis.heimdall.di.modules.ViewModelFactoryModule
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.ToolbarHelper
+import pm.gnosis.heimdall.helpers.TransactionTriggerManager
 import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.services.HeimdallFirebaseService
@@ -50,6 +51,7 @@ interface ApplicationComponent {
     fun viewModelFactory(): ViewModelProvider.Factory
 
     fun encryptionManager(): EncryptionManager
+    fun transactionTriggerManager(): TransactionTriggerManager
     fun qrCodeGenerator(): QrCodeGenerator
     fun addressHelper(): AddressHelper
     fun toolbarHelper(): ToolbarHelper
