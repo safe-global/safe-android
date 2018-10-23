@@ -8,7 +8,6 @@
     <string name="name">Name</string>
     <string name="address">Address</string>
     <string name="select_safe">Select Safe</string>
-    <string name="empty_safe_transactions_title">¯\\_(ツ)_/¯</string>
     <string name="empty_safe_transactions_message">No transactions yet</string>
     <string name="remove">Remove</string>
     <string name="no_account_available">No account available. Please restart the app!</string>
@@ -20,9 +19,6 @@
     <string name="address_clipboard_success">Address copied to clipboard</string>
     <string name="share_address">Share address</string>
     <string name="x_data_bytes">%x bytes included</string>
-    <string name="x_ether">%s ETH</string>
-    <string name="x_wei">%s Wei</string>
-    <string name="x_gwei">%s GWei</string>
     <string name="submit_transaction">Submit Transaction</string>
     <string name="cancel">Cancel</string>
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
@@ -73,7 +69,6 @@
     <string name="sign_transaction_request_title">Sign request</string>
     <string name="transaction_details">Transaction details</string>
     <string name="view_transaction_on">View transaction on</string>
-    <string name="etherscan_io">Etherscan.io</string>
     <string name="no_safe_selected">No Safe selected</string>
     <string name="no_safe_selected_error">Please select a Safe to proceed!</string>
     <string name="channel_signing_request_name">Signing Requests</string>
@@ -101,8 +96,6 @@
     <string name="password_validation_one_number_one_letter">At least 1 letter and 1 number\n</string>
     <string name="terms">Terms</string>
     <string name="terms_info"><![CDATA[Please review our <a href="https://safe.gnosis.io/terms">Terms of Use</a> and <a href="https://safe.gnosis.io/privacy">Privacy Policy</a>.]]></string>
-    <string name="tos_link">https://safe.gnosis.io/terms</string>
-    <string name="privacy_link">https://safe.gnosis.io/privacy</string>
     <string name="no_thanks">No Thanks</string>
     <string name="agree">Agree</string>
     <string name="personal_edition">Personal Edition</string>
