@@ -58,9 +58,6 @@ class AssetTransferViewHolderTest {
     private lateinit var valueView: TextView
 
     @Mock
-    private lateinit var fiatView: TextView
-
-    @Mock
     private lateinit var safeAddressView: TextView
 
     @Mock
@@ -108,7 +105,6 @@ class AssetTransferViewHolderTest {
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(Single.error(NoSuchElementException()))
         given(layoutInflater.inflate(R.layout.layout_asset_transfer_info, containerView, true)).willReturn(viewHolderView)
         viewHolderView.mockFindViewById(R.id.layout_asset_transfer_info_value, valueView)
-        viewHolderView.mockFindViewById(R.id.layout_asset_transfer_info_fiat, fiatView)
         viewHolderView.mockFindViewById(R.id.layout_asset_transfer_info_safe_address, safeAddressView)
         viewHolderView.mockFindViewById(R.id.layout_asset_transfer_info_safe_name, safeNameView)
         viewHolderView.mockFindViewById(R.id.layout_asset_transfer_info_safe_image, safeImageView)
@@ -153,8 +149,6 @@ class AssetTransferViewHolderTest {
         viewHolder.start()
         then(valueView).should().text = "~"
         then(valueView).shouldHaveNoMoreInteractions()
-        then(fiatView).should().text = "~ $"
-        then(fiatView).shouldHaveNoMoreInteractions()
 
         tokenSingle.success(ERC20Token.ETHER_TOKEN)
         then(valueView).should().text = "0.4 ETH"
@@ -205,8 +199,6 @@ class AssetTransferViewHolderTest {
         viewHolder.start()
         then(valueView).should().text = "~"
         then(valueView).shouldHaveNoMoreInteractions()
-        then(fiatView).should().text = "~ $"
-        then(valueView).shouldHaveNoMoreInteractions()
 
         tokenSingle.success(erc20Token)
         then(valueView).should().text = "4000000000000000 TT"
@@ -240,8 +232,6 @@ class AssetTransferViewHolderTest {
     }
 
     private fun testUnknownToken(showExtraInfo: Boolean) {
-        contextMock.mockGetString()
-        given(viewHolderView.context).willReturn(contextMock)
         setupViewMocks(Observable.just(listOf()))
         val tokenInfoSingle = TestSingleFactory<ERC20Token>()
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenInfoSingle.get())
@@ -255,21 +245,14 @@ class AssetTransferViewHolderTest {
         viewHolder.start()
         then(valueView).should().text = "~"
         then(valueView).shouldHaveNoMoreInteractions()
-        then(fiatView).should().text = "~ $"
-        then(fiatView).shouldHaveNoMoreInteractions()
 
         tokenInfoSingle.error(TimeoutException())
 
-        then(fiatView).should().text = R.string.unknown_token.toString()
-        then(fiatView).shouldHaveNoMoreInteractions()
         then(valueView).should().text = "400000000000000000"
         then(valueView).shouldHaveNoMoreInteractions()
 
         // Check view interaction
         assertAddressHelperInteractions()
-
-        then(contextMock).should().getString(R.string.unknown_token)
-        then(contextMock).shouldHaveZeroInteractions()
 
         // Check repository interaction
         if (showExtraInfo) {
