@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name" translatable="false">Gnosis Safe</string>
     <string name="currency_eth" translatable="false">ETH</string>
     <string name="currency_gwei" translatable="false">GWei</string>
     <string name="currency_wei" translatable="false">Wei</string>
     <string name="etherscan_transaction_url" translatable="false">https://rinkeby.etherscan.io/tx/%s</string>
     <string name="etherscan_address_url" translatable="false">https://rinkeby.etherscan.io/address/%s</string>
     <string name="empty_safe_transactions_title" translatable="false">¯\\_(ツ)_/¯</string>
-    <string name="etherscan_io" translatable="false">Etherscan.io</string>
     <string name="tos_link" translatable="false">https://safe.gnosis.io/terms</string>
     <string name="privacy_link" translatable="false">https://safe.gnosis.io/privacy</string>
     <string name="x_ether" translatable="false">%s ETH</string>

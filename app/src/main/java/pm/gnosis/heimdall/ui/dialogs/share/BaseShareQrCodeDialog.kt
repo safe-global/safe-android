@@ -114,11 +114,7 @@ abstract class BaseShareQrCodeDialog : BaseDialog() {
     }
 
     private fun copyDataToClipboard() {
-        nullOnThrow { data() }?.let {
-            context?.copyToClipboard(shareTitle(), it, {
-                onCopiedToClipboard()
-            })
-        }
+        nullOnThrow { data() }?.let { context?.copyToClipboard(shareTitle(), it) { onCopiedToClipboard() } }
     }
 
     protected open fun onCopiedToClipboard() {}
@@ -126,8 +122,4 @@ abstract class BaseShareQrCodeDialog : BaseDialog() {
     protected abstract fun inject()
 
     protected abstract fun dataSourceObservable(): Observable<Pair<String?, String?>>
-
-    companion object {
-        internal const val ADDRESS_EXTRA = "extra.string.address"
-    }
 }

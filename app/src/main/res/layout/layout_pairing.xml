@@ -70,14 +70,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_pairing_info"
-                tools:text="Share browser extension download link" />
+                tools:text="1. Share browser extension download link." />
 
             <TextView
                 android:id="@+id/layout_pairing_second_bullet_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:lineSpacingExtra="12sp"
-                android:text="2. Scan the QR code in the interface"
+                android:text="@string/pairing_second_step"
                 android:textColor="@color/battleship_grey"
                 android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="parent"

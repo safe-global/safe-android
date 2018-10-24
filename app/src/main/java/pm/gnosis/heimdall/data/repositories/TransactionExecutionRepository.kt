@@ -88,11 +88,7 @@ interface TransactionExecutionRepository {
         val owners: List<Solidity.Address>,
         val nonce: BigInteger,
         val balance: Wei
-    ) {
-        val isOwner by lazy {
-            owners.contains(sender)
-        }
-    }
+    )
 
     data class ExecuteInformation(
         val transactionHash: String,
@@ -115,10 +111,10 @@ interface TransactionExecutionRepository {
     }
 
     sealed class PublishStatus {
-        object Unknown: PublishStatus()
-        object Pending: PublishStatus()
-        data class Failed(val timestamp: Long): PublishStatus()
-        data class Success(val timestamp: Long): PublishStatus()
+        object Unknown : PublishStatus()
+        object Pending : PublishStatus()
+        data class Failed(val timestamp: Long) : PublishStatus()
+        data class Success(val timestamp: Long) : PublishStatus()
     }
 
     interface TransactionSubmittedCallback {

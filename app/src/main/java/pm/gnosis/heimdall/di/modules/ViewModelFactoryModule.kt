@@ -47,8 +47,6 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeViewModel
-import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
-import pm.gnosis.heimdall.ui.safe.selection.SelectSafeViewModel
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockViewModel
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
@@ -205,11 +203,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ScanExtensionAddressContract::class)
     abstract fun bindsScanExtensionAddressContract(viewModel: ScanExtensionAddressViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(SelectSafeContract::class)
-    abstract fun bindsSelectSafeContract(viewModel: SelectSafeViewModel): ViewModel
 
     @Binds
     @IntoMap

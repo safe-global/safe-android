@@ -31,7 +31,6 @@ import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressCon
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
-import pm.gnosis.heimdall.ui.safe.selection.SelectSafeContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordContract
@@ -164,10 +163,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesScanExtensionAddressContract(provider: ViewModelProvider) = provider[ScanExtensionAddressContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesSelectSafeContract(provider: ViewModelProvider) = provider[SelectSafeContract::class.java]
 
     @Provides
     @ForView

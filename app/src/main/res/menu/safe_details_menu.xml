@@ -4,11 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/safe_details_menu_rename"
-        android:title="@string/change_name"
+        android:title="@string/edit_safe_name"
         app:showAsAction="never" />
     <item
         android:id="@+id/safe_details_menu_connect"
-        android:title="Connect browser extension"
+        android:title="@string/connect_browser_extension"
         android:visible="false"
         app:showAsAction="never" />
     <item
