@@ -419,7 +419,7 @@ class RecoveringSafeViewModelTest {
         contextMock.mockGetString()
         val safe = testRecoveringSafe(
             TEST_SAFE, TEST_HASH, TEST_SAFE,
-            txGas = BigInteger.TEN, dataGas = BigInteger.valueOf(100), signatureGas = BigInteger.ONE,
+            txGas = BigInteger.TEN, dataGas = BigInteger.valueOf(100), operationalGas = BigInteger.ONE,
             gasPrice = BigInteger.TEN, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
@@ -535,7 +535,7 @@ class RecoveringSafeViewModelTest {
         val recoverTx =
             SafeTransaction(Transaction(safe.address, data = safe.data, nonce = safe.nonce), TransactionExecutionRepository.Operation.CALL)
         val info = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), safe.gasPrice, safe.txGas, safe.dataGas, safe.signatureGas, Wei.ZERO
+            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), safe.gasPrice, safe.txGas, safe.dataGas, safe.operationalGas, Wei.ZERO
         )
         given(execRepoMock.loadSafeExecuteState(MockUtils.any())).willReturn(
             Single.just(

@@ -29,7 +29,7 @@ class ConfirmTransactionViewModel @Inject constructor(
 
     private lateinit var hash: String
 
-    private lateinit var signatureGas: BigInteger
+    private lateinit var operationalGas: BigInteger
 
     private lateinit var dataGas: BigInteger
 
@@ -48,7 +48,7 @@ class ConfirmTransactionViewModel @Inject constructor(
     override fun setup(
         safe: Solidity.Address,
         hash: String,
-        signatureGas: BigInteger,
+        operationalGas: BigInteger,
         dataGas: BigInteger,
         txGas: BigInteger,
         gasToken: Solidity.Address,
@@ -58,7 +58,7 @@ class ConfirmTransactionViewModel @Inject constructor(
     ) {
         this.safe = safe
         this.hash = hash
-        this.signatureGas = signatureGas
+        this.operationalGas = operationalGas
         this.dataGas = dataGas
         this.txGas = txGas
         this.gasToken = gasToken
@@ -82,7 +82,7 @@ class ConfirmTransactionViewModel @Inject constructor(
             .map {
                 TransactionExecutionRepository.ExecuteInformation(
                     hash, updatedTransaction, it.sender, it.requiredConfirmation, it.owners,
-                    gasPrice, txGas, dataGas, signatureGas, it.balance
+                    gasPrice, txGas, dataGas, operationalGas, it.balance
                 )
             }
     }

@@ -61,7 +61,7 @@ class ConfirmTransactionViewModelTest {
         }
         viewModel.setup(
             TEST_SAFE, TEST_TRANSACTION_HASH,
-            TEST_SIGNATURE_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
+            TEST_OPERATIONAL_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
             TEST_NONCE, TEST_SIGNATURE
         )
 
@@ -97,7 +97,7 @@ class ConfirmTransactionViewModelTest {
         validHashObserver.assertValues(
             TransactionExecutionRepository.ExecuteInformation(
                 TEST_TRANSACTION_HASH, updatedTransaction, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
-                TEST_GAS_PRICE, TEST_TX_GAS, TEST_DATA_GAS, TEST_SIGNATURE_GAS, Wei.ether("23")
+                TEST_GAS_PRICE, TEST_TX_GAS, TEST_DATA_GAS, TEST_OPERATIONAL_GAS, Wei.ether("23")
             )
         ).assertNoErrors().assertComplete()
         then(relayRepositoryMock).should(times(2))
@@ -112,7 +112,7 @@ class ConfirmTransactionViewModelTest {
         cachedHashObserver.assertValues(
             TransactionExecutionRepository.ExecuteInformation(
                 TEST_TRANSACTION_HASH, updatedTransaction, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
-                TEST_GAS_PRICE, TEST_TX_GAS, TEST_DATA_GAS, TEST_SIGNATURE_GAS, Wei.ether("23")
+                TEST_GAS_PRICE, TEST_TX_GAS, TEST_DATA_GAS, TEST_OPERATIONAL_GAS, Wei.ether("23")
             )
         ).assertNoErrors().assertComplete()
         then(relayRepositoryMock).should(times(3))
@@ -143,7 +143,7 @@ class ConfirmTransactionViewModelTest {
 
         viewModel.setup(
             TEST_SAFE, TEST_TRANSACTION_HASH,
-            TEST_SIGNATURE_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
+            TEST_OPERATIONAL_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
             TEST_NONCE, TEST_SIGNATURE
         )
         viewModel.observe(events, TEST_TRANSACTION).subscribe(observer)
@@ -174,7 +174,7 @@ class ConfirmTransactionViewModelTest {
 
         viewModel.setup(
             TEST_SAFE, TEST_TRANSACTION_HASH,
-            TEST_SIGNATURE_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
+            TEST_OPERATIONAL_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
             TEST_NONCE, TEST_SIGNATURE
         )
         viewModel.observe(events, TEST_TRANSACTION).subscribe(observer)
@@ -227,7 +227,7 @@ class ConfirmTransactionViewModelTest {
 
         viewModel.setup(
             TEST_SAFE, TEST_TRANSACTION_HASH,
-            TEST_SIGNATURE_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
+            TEST_OPERATIONAL_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
             TEST_NONCE, TEST_SIGNATURE
         )
         viewModel.observe(events, TEST_TRANSACTION).subscribe(observer)
@@ -266,7 +266,7 @@ class ConfirmTransactionViewModelTest {
 
         viewModel.setup(
             TEST_SAFE, TEST_TRANSACTION_HASH,
-            TEST_SIGNATURE_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
+            TEST_OPERATIONAL_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
             TEST_NONCE, TEST_SIGNATURE
         )
         viewModel.observe(events, TEST_TRANSACTION).subscribe(observer)
@@ -288,7 +288,7 @@ class ConfirmTransactionViewModelTest {
     fun rejectTransaction() {
         viewModel.setup(
             TEST_SAFE, TEST_TRANSACTION_HASH,
-            TEST_SIGNATURE_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
+            TEST_OPERATIONAL_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
             TEST_NONCE, TEST_SIGNATURE
         )
 
@@ -328,7 +328,7 @@ class ConfirmTransactionViewModelTest {
             SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO)), TransactionExecutionRepository.Operation.CALL)
         private val TEST_SIGNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13)).map { Solidity.Address(it) }
         private val TEST_OWNERS = TEST_SIGNERS + Solidity.Address(BigInteger.valueOf(5))
-        private val TEST_SIGNATURE_GAS = BigInteger.valueOf(12345)
+        private val TEST_OPERATIONAL_GAS = BigInteger.valueOf(12345)
         private val TEST_DATA_GAS = BigInteger.valueOf(1234)
         private val TEST_TX_GAS = BigInteger.valueOf(4321)
         private val TEST_GAS_TOKEN = "0x0".asEthereumAddress()!!

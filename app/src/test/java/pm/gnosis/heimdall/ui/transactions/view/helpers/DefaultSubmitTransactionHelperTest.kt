@@ -184,7 +184,7 @@ class DefaultSubmitTransactionHelperTest {
                 info.transaction,
                 info.txGas,
                 info.dataGas,
-                info.signatureGas,
+                info.operationalGas,
                 info.gasPrice,
                 setOf(TEST_OWNERS[0], TEST_OWNERS[1])
             )
@@ -220,7 +220,7 @@ class DefaultSubmitTransactionHelperTest {
                 info.transaction,
                 info.txGas,
                 info.dataGas,
-                info.signatureGas,
+                info.operationalGas,
                 info.gasPrice,
                 setOf(TEST_OWNERS[1])
             )
