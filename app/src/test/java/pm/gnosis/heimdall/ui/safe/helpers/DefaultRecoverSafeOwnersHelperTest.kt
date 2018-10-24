@@ -423,7 +423,7 @@ class DefaultRecoverSafeOwnersHelperTest {
                 val tx = it.arguments[1] as SafeTransaction
                 Single.just(
                     TransactionExecutionRepository.ExecuteInformation(
-                        TEST_HASH.toHex(), tx, TEST_SAFE, 2, owners, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
+                        TEST_HASH.toHex(), tx, TEST_SAFE, 2, owners, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
                     )
                 )
             }
@@ -597,7 +597,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
         val execInfo = TransactionExecutionRepository.ExecuteInformation(
             TEST_HASH.toHex(), SafeTransaction(Transaction(TEST_SAFE), TransactionExecutionRepository.Operation.CALL), TEST_SAFE, 2, TEST_OWNERS,
-            BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
+            BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
         )
         given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.just(execInfo))
         val error = IllegalStateException()

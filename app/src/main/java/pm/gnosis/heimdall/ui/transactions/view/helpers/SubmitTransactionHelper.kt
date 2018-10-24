@@ -173,6 +173,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                                 params.transaction,
                                 params.txGas,
                                 params.dataGas,
+                                params.signatureGas,
                                 params.gasPrice,
                                 targets.toSet()
                             )

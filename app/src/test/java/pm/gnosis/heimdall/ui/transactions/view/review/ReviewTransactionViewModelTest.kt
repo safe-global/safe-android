@@ -58,7 +58,7 @@ class ReviewTransactionViewModelTest {
         val info = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH,
             TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size - 1,
-            TEST_OWNERS, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO,
+            TEST_OWNERS, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23")
         )
         given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))

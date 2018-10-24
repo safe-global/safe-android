@@ -57,8 +57,12 @@ data class RelayEstimate(
     val safeTxGas: String,
     @Json(name = "dataGas")
     val dataGas: String,
+    @Json(name = "signatureGas")
+    val signatureGas: String,
     @Json(name = "gasPrice")
-    val gasPrice: String
+    val gasPrice: String,
+    @Json(name = "lastUsedNonce")
+    val lastUsedNonce: String?
 )
 
 @JsonClass(generateAdapter = true)

@@ -17,6 +17,7 @@ abstract class ConfirmTransactionContract : ViewModel() {
     abstract fun setup(
         safe: Solidity.Address,
         hash: String,
+        signatureGas: BigInteger,
         dataGas: BigInteger,
         txGas: BigInteger,
         gasToken: Solidity.Address,

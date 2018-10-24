@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "46412781f23c9bc9bd1005b92422fba1",
+    "identityHash": "ac28b41e7de51d01156ef36e0cdb6032",
     "entities": [
       {
         "tableName": "address_book",
@@ -146,7 +146,7 @@
       },
       {
         "tableName": "gnosis_recovering_safes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `transactionHash` TEXT, `recoverer` TEXT NOT NULL, `data` TEXT NOT NULL, `nonce` TEXT NOT NULL, `txGas` TEXT NOT NULL, `dataGas` TEXT NOT NULL, `gasToken` TEXT NOT NULL, `gasPrice` TEXT NOT NULL, `operation` INTEGER NOT NULL, `signatures` TEXT NOT NULL, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `transactionHash` TEXT, `recoverer` TEXT NOT NULL, `data` TEXT NOT NULL, `nonce` TEXT NOT NULL, `txGas` TEXT NOT NULL, `dataGas` TEXT NOT NULL, `signatureGas` TEXT NOT NULL, `gasToken` TEXT NOT NULL, `gasPrice` TEXT NOT NULL, `operation` INTEGER NOT NULL, `signatures` TEXT NOT NULL, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "address",
@@ -187,6 +187,12 @@
           {
             "fieldPath": "dataGas",
             "columnName": "dataGas",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "signatureGas",
+            "columnName": "signatureGas",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -357,7 +363,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"46412781f23c9bc9bd1005b92422fba1\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ac28b41e7de51d01156ef36e0cdb6032\")"
     ]
   }
 }

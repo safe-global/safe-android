@@ -20,6 +20,7 @@ sealed class ServiceMessage {
         @Json(name = "operation") val operation: String,
         @Json(name = "txGas") val txGas: String,
         @Json(name = "dataGas") val dataGas: String,
+        @Json(name = "signatureGas") val signatureGas: String,
         @Json(name = "gasPrice") val gasPrice: String,
         @Json(name = "gasToken") val gasToken: String,
         @Json(name = "refundReceiver") val refundReceiver: String,

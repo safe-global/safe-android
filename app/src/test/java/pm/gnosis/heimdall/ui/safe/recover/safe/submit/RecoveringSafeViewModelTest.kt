@@ -35,6 +35,7 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.tests.utils.testRecoveringSafe
 import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
@@ -94,9 +95,8 @@ class RecoveringSafeViewModelTest {
     @Test
     fun checkSafeStatePending() {
         // transactionHash != null -> submitted
-        val safe = RecoveringSafe(
-            TEST_SAFE, TEST_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, TEST_HASH, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
 
@@ -117,14 +117,13 @@ class RecoveringSafeViewModelTest {
     @Test
     fun checkSafeStateCreated() {
         // transactionHash == null -> not submitted yet
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         val recoverTx = SafeTransaction(Transaction(TEST_SAFE, data = "", nonce = BigInteger.ZERO), TransactionExecutionRepository.Operation.CALL)
         val info = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, Wei.ZERO
+            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), BigInteger.TEN, BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, Wei.ZERO
         )
         given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
 
@@ -146,14 +145,14 @@ class RecoveringSafeViewModelTest {
     @Test
     fun checkSafeStateFunded() {
         // transactionHash == null -> not submitted yet
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         val recoverTx = SafeTransaction(Transaction(TEST_SAFE, data = "", nonce = BigInteger.ZERO), TransactionExecutionRepository.Operation.CALL)
         val info = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, Wei.ether("1")
+            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP),
+            BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO, Wei.ether("1")
         )
         given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
 
@@ -175,15 +174,14 @@ class RecoveringSafeViewModelTest {
     @Test
     fun checkSafeStateTxErrorNonce() {
         // transactionHash == null -> not submitted yet
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         // Nonce changed
         val recoverTx = SafeTransaction(Transaction(TEST_SAFE, data = "", nonce = BigInteger.ONE), TransactionExecutionRepository.Operation.CALL)
         val info = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, Wei.ether("1")
+            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), BigInteger.TEN, BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, Wei.ether("1")
         )
         given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
 
@@ -205,9 +203,8 @@ class RecoveringSafeViewModelTest {
     @Test
     fun checkSafeStateTxErrorValue() {
         // transactionHash == null -> not submitted yet
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         // Value not null
@@ -216,7 +213,7 @@ class RecoveringSafeViewModelTest {
             TransactionExecutionRepository.Operation.CALL
         )
         val info = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, Wei.ether("1")
+            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO, Wei.ether("1")
         )
         given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
 
@@ -239,9 +236,8 @@ class RecoveringSafeViewModelTest {
     fun checkSafeStateNetworkError() {
         contextMock.mockGetString()
         // transactionHash == null -> not submitted yet
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.error(UnknownHostException()))
@@ -283,9 +279,8 @@ class RecoveringSafeViewModelTest {
 
     @Test
     fun checkRecoveryStatusNoTxHash() {
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
 
@@ -306,9 +301,8 @@ class RecoveringSafeViewModelTest {
     @Test
     fun checkRecoveryStatusNetworkError() {
         contextMock.mockGetString()
-        val safe = RecoveringSafe(
-            TEST_SAFE, TEST_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, TEST_HASH, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(execRepoMock.observeTransactionStatus(MockUtils.any())).willReturn(Observable.error(UnknownHostException()))
@@ -330,9 +324,8 @@ class RecoveringSafeViewModelTest {
 
     @Test
     fun checkRecoveryStatusTxFailed() {
-        val safe = RecoveringSafe(
-            TEST_SAFE, TEST_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, TEST_HASH, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(execRepoMock.observeTransactionStatus(MockUtils.any())).willReturn(Observable.just(false to System.currentTimeMillis()))
@@ -354,9 +347,8 @@ class RecoveringSafeViewModelTest {
 
     @Test
     fun checkRecoveryStatusToDeployedSafeError() {
-        val safe = RecoveringSafe(
-            TEST_SAFE, TEST_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, TEST_HASH, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(execRepoMock.observeTransactionStatus(MockUtils.any())).willReturn(Observable.just(true to System.currentTimeMillis()))
@@ -380,9 +372,8 @@ class RecoveringSafeViewModelTest {
 
     @Test
     fun checkRecoveryStatus() {
-        val safe = RecoveringSafe(
-            TEST_SAFE, TEST_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, TEST_HASH, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(execRepoMock.observeTransactionStatus(MockUtils.any())).willReturn(Observable.just(true to System.currentTimeMillis()))
@@ -426,9 +417,10 @@ class RecoveringSafeViewModelTest {
     @Test
     fun observeRecoveryInfoTokenError() {
         contextMock.mockGetString()
-        val safe = RecoveringSafe(
-            TEST_SAFE, TEST_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.TEN, TEST_TOKEN, BigInteger.TEN,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, TEST_HASH, TEST_SAFE,
+            txGas = BigInteger.TEN, dataGas = BigInteger.valueOf(100), signatureGas = BigInteger.ONE,
+            gasPrice = BigInteger.TEN, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.error(UnknownHostException()))
@@ -436,7 +428,7 @@ class RecoveringSafeViewModelTest {
         val observer = TestObserver<Result<RecoveringSafeContract.RecoveryInfo>>()
         viewModel.observeRecoveryInfo(TEST_SAFE).subscribe(observer)
         observer.assertResult(
-            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, null, BigInteger.valueOf(100))),
+            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, null, BigInteger.valueOf(1110))),
             ErrorResult(SimpleLocalizedException(R.string.error_check_internet_connection.toString()))
         )
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
@@ -453,9 +445,9 @@ class RecoveringSafeViewModelTest {
 
     @Test
     fun observeRecoveryInfo() {
-        val safe = RecoveringSafe(
-            TEST_SAFE, TEST_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.TEN, TEST_TOKEN, BigInteger.TEN,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, TEST_HASH, TEST_SAFE,
+            txGas = BigInteger.ONE, dataGas = BigInteger.TEN, gasPrice = BigInteger.TEN, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
@@ -463,8 +455,8 @@ class RecoveringSafeViewModelTest {
         val observer = TestObserver<Result<RecoveringSafeContract.RecoveryInfo>>()
         viewModel.observeRecoveryInfo(TEST_SAFE).subscribe(observer)
         observer.assertResult(
-            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, null, BigInteger.valueOf(100))),
-            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, ERC20Token.ETHER_TOKEN, BigInteger.valueOf(100)))
+            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, null, BigInteger.valueOf(110))),
+            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, ERC20Token.ETHER_TOKEN, BigInteger.valueOf(110)))
         )
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
@@ -501,9 +493,8 @@ class RecoveringSafeViewModelTest {
     fun loadRecoveryExecuteInfoNetworkError() {
         contextMock.mockGetString()
         // transactionHash == null -> not submitted yet
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(execRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(TEST_TX_HASH.hexStringToByteArray()))
@@ -535,16 +526,16 @@ class RecoveringSafeViewModelTest {
     @Test
     fun loadRecoveryExecuteInfo() {
         // transactionHash == null -> not submitted yet
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, TEST_TOKEN, BigInteger.ZERO,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(execRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(TEST_TX_HASH.hexStringToByteArray()))
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
-        val recoverTx = SafeTransaction(Transaction(safe.address, data = safe.data, nonce = safe.nonce), TransactionExecutionRepository.Operation.CALL)
+        val recoverTx =
+            SafeTransaction(Transaction(safe.address, data = safe.data, nonce = safe.nonce), TransactionExecutionRepository.Operation.CALL)
         val info = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), safe.gasPrice, safe.txGas, safe.dataGas, Wei.ZERO
+            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), safe.gasPrice, safe.txGas, safe.dataGas, safe.signatureGas, Wei.ZERO
         )
         given(execRepoMock.loadSafeExecuteState(MockUtils.any())).willReturn(
             Single.just(
@@ -595,9 +586,9 @@ class RecoveringSafeViewModelTest {
 
     @Test
     fun submitRecoveryHashError() {
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ONE, TEST_TOKEN, BigInteger.TEN,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE,
+            txGas = BigInteger.ZERO, dataGas = BigInteger.ONE, gasPrice = BigInteger.TEN, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         val error = IllegalArgumentException()
@@ -624,9 +615,10 @@ class RecoveringSafeViewModelTest {
     fun submitRecoveryRecoverError() {
         val signature1 = Signature(BigInteger.valueOf(11), BigInteger.valueOf(5), 27)
         val signature2 = Signature(BigInteger.valueOf(19), BigInteger.valueOf(89), 28)
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ONE, TEST_TOKEN, BigInteger.TEN,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, listOf(signature1, signature2)
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE,
+            txGas = BigInteger.ZERO, dataGas = BigInteger.ONE, gasPrice = BigInteger.TEN, gasToken = TEST_TOKEN,
+            signatures = listOf(signature1, signature2)
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(execRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
@@ -658,9 +650,10 @@ class RecoveringSafeViewModelTest {
         contextMock.mockGetString()
         val signature1 = Signature(BigInteger.valueOf(11), BigInteger.valueOf(5), 27)
         val signature2 = Signature(BigInteger.valueOf(19), BigInteger.valueOf(89), 28)
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ONE, TEST_TOKEN, BigInteger.TEN,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, listOf(signature1, signature2)
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE,
+            txGas = BigInteger.ZERO, dataGas = BigInteger.ONE, gasPrice = BigInteger.TEN, gasToken = TEST_TOKEN,
+            signatures = listOf(signature1, signature2)
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(execRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
@@ -700,9 +693,10 @@ class RecoveringSafeViewModelTest {
     fun submitRecoveryUpdateInfoError() {
         val signature1 = Signature(BigInteger.valueOf(11), BigInteger.valueOf(5), 27)
         val signature2 = Signature(BigInteger.valueOf(19), BigInteger.valueOf(89), 28)
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ONE, TEST_TOKEN, BigInteger.TEN,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, listOf(signature1, signature2)
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE,
+            txGas = BigInteger.ZERO, dataGas = BigInteger.ONE, gasPrice = BigInteger.TEN, gasToken = TEST_TOKEN,
+            signatures = listOf(signature1, signature2)
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(execRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
@@ -745,9 +739,10 @@ class RecoveringSafeViewModelTest {
     fun submitRecovery() {
         val signature1 = Signature(BigInteger.valueOf(11), BigInteger.valueOf(5), 27)
         val signature2 = Signature(BigInteger.valueOf(19), BigInteger.valueOf(89), 28)
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ONE, TEST_TOKEN, BigInteger.TEN,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, listOf(signature1, signature2)
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE,
+            txGas = BigInteger.ZERO, dataGas = BigInteger.ONE, gasPrice = BigInteger.TEN, gasToken = TEST_TOKEN,
+            signatures = listOf(signature1, signature2)
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(execRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
@@ -810,9 +805,9 @@ class RecoveringSafeViewModelTest {
         RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
 
         var returnedBalance: BigInteger? = null
-        val safe = RecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ONE, TEST_TOKEN, BigInteger.TEN,
-            BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE,
+            txGas = BigInteger.ZERO, dataGas = BigInteger.ONE, gasPrice = BigInteger.TEN, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(tokenRepoMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(Observable.fromCallable {

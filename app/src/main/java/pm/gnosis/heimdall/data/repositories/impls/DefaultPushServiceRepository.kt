@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.InstanceIdResult
@@ -53,6 +54,7 @@ class DefaultPushServiceRepository @Inject constructor(
     *
     * Warning: This call might fail if the device is not unlocked (no access to ethereum account)
     */
+    @SuppressLint("CheckResult")
     override fun syncAuthentication(forced: Boolean) {
         accountsRepository.loadActiveAccount()
             .flatMap { account -> FirebaseInstanceIdSingle().create().map { account to it.token } }
@@ -139,6 +141,7 @@ class DefaultPushServiceRepository @Inject constructor(
         transaction: SafeTransaction,
         txGas: BigInteger,
         dataGas: BigInteger,
+        signatureGas: BigInteger,
         gasPrice: BigInteger,
         targets: Set<Solidity.Address>
     ): Completable =
@@ -152,6 +155,7 @@ class DefaultPushServiceRepository @Inject constructor(
                 operation = transaction.operation.toInt().toString(),
                 txGas = txGas.asDecimalString(),
                 dataGas = dataGas.asDecimalString(),
+                signatureGas = signatureGas.asDecimalString(),
                 gasPrice = gasPrice.asDecimalString(),
                 gasToken = "0",
                 refundReceiver = "0",
@@ -217,7 +221,8 @@ class DefaultPushServiceRepository @Inject constructor(
             val signature = Signature(r.decimalAsBigInteger(), s.decimalAsBigInteger(), v.toInt().toByte())
             val intent = ConfirmTransactionActivity.createIntent(
                 context, signature, safe.asEthereumAddress()!!, safeTransaction, hash,
-                dataGas.decimalAsBigInteger(), txGas.decimalAsBigInteger(), gasToken.asEthereumAddress()!!, gasPrice.decimalAsBigInteger()
+                signatureGas.decimalAsBigInteger(), dataGas.decimalAsBigInteger(), txGas.decimalAsBigInteger(),
+                gasToken.asEthereumAddress()!!, gasPrice.decimalAsBigInteger()
             )
             notificationManager.show(
                 hash.hashCode(),
@@ -234,11 +239,11 @@ class DefaultPushServiceRepository @Inject constructor(
         }
 
     override fun observe(hash: String): Observable<TransactionResponse> =
-        observedTransaction.getOrPut(hash.hexAsBigInteger(), {
-            ReceiveSignatureObservable({
+        observedTransaction.getOrPut(hash.hexAsBigInteger()) {
+            ReceiveSignatureObservable {
                 observedTransaction.remove(hash.hexAsBigInteger())
-            })
-        }).observe()
+            }
+        }.observe()
 
     private class ReceiveSignatureObservable(
         private val releaseCallback: (ReceiveSignatureObservable) -> Unit

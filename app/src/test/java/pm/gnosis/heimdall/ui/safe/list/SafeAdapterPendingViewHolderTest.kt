@@ -128,7 +128,7 @@ class SafeAdapterPendingViewHolderTest {
     @Test
     fun bindRecoveringSafeAndSelect() {
         val safe = RecoveringSafe(
-            TEST_RECOVERING_SAFE, BigInteger.ZERO, TEST_RECOVERING_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
+            TEST_RECOVERING_SAFE, BigInteger.ZERO, TEST_RECOVERING_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO,
             ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList())
         bindSafeAndSelect(safe, TEST_RECOVERING_SAFE, "0xb365...14244A")
     }
