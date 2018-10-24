@@ -26,19 +26,18 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitActivity
-import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
-import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseActivity
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFundFragment
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafePendingFragment
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeSubmitFragment
-import pm.gnosis.heimdall.ui.safe.selection.SelectSafeActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
@@ -106,7 +105,6 @@ interface ViewComponent {
     fun inject(activity: ReviewTransactionActivity)
     fun inject(activity: SafeMainActivity)
     fun inject(activity: GeneralSettingsActivity)
-    fun inject(activity: SelectSafeActivity)
     fun inject(activity: SelectTokenActivity)
     fun inject(activity: SplashActivity)
     fun inject(activity: TransactionStatusActivity)

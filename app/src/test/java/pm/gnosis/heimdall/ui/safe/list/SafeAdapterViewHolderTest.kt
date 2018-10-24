@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.safe.list
 
-import android.content.Context
 import android.view.View
 import android.widget.TextView
 import io.reactivex.Single
@@ -39,9 +38,6 @@ class SafeAdapterViewHolderTest {
     val rule = ImmediateSchedulersRule()
 
     private val safeSubject = PublishSubject.create<AbstractSafe>()
-
-    @Mock
-    private lateinit var context: Context
 
     @Mock
     private lateinit var addressBookRepository: AddressBookRepository

@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.safe.list
 
-import android.content.Context
 import android.view.View
 import android.widget.TextView
 import io.reactivex.Single
@@ -40,9 +39,6 @@ class SafeAdapterPendingViewHolderTest {
     private val safeSubject = PublishSubject.create<AbstractSafe>()
 
     @Mock
-    private lateinit var context: Context
-
-    @Mock
     private lateinit var addressBookRepository: AddressBookRepository
 
     @Mock
@@ -76,7 +72,7 @@ class SafeAdapterPendingViewHolderTest {
         safeSubject.subscribe(safeObserver)
         viewHolder.bind(Safe(TEST_SAFE), emptyList())
         viewHolder.start()
-        
+
         then(itemView).should().setOnClickListener(viewHolder)
         then(itemView).shouldHaveZeroInteractions()
 
@@ -129,7 +125,8 @@ class SafeAdapterPendingViewHolderTest {
     fun bindRecoveringSafeAndSelect() {
         val safe = RecoveringSafe(
             TEST_RECOVERING_SAFE, BigInteger.ZERO, TEST_RECOVERING_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO,
-            ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList())
+            ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        )
         bindSafeAndSelect(safe, TEST_RECOVERING_SAFE, "0xb365...14244A")
     }
 

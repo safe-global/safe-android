@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v4.content.ContextCompat
+import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
 import android.text.style.URLSpan
@@ -44,10 +45,7 @@ abstract class PairingActivity : ViewModelActivity<PairingContract>() {
         layout_pairing_extension_link.apply {
             val linkDrawable = ContextCompat.getDrawable(context, R.drawable.ic_external_link)!!
             linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
-            this.text = SpannableStringBuilder("")
-                .append(getString(R.string.pairing_info_download_text))
-                .append(" ")
-                .appendText(getString(R.string.share_browser_extension), URLSpan(BuildConfig.CHROME_EXTENSION_URL))
+            this.text = SpannableStringBuilder(Html.fromHtml(getString(R.string.pairing_first_step)))
                 .append(" ")
                 .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
             setOnClickListener { shareExternalText(BuildConfig.CHROME_EXTENSION_URL, "Browser Extension URL") }

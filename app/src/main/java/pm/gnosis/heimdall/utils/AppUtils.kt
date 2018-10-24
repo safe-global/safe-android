@@ -3,15 +3,13 @@ package pm.gnosis.heimdall.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.support.v7.widget.Toolbar
+import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
-import android.text.style.URLSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -20,15 +18,12 @@ import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.models.AddressBookEntry
-import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.appendText
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
-import pm.gnosis.svalinn.utils.ethereum.erc67Uri
 import pm.gnosis.utils.asEthereumAddress
-import timber.log.Timber
 
 fun errorSnackbar(
     view: View,
@@ -103,59 +98,8 @@ fun TextView.setupEtherscanAddressUrl(address: String, text: String) {
 private fun TextView.setupEtherscanLink(url: String, text: String) {
     val linkDrawable = ContextCompat.getDrawable(this.context, R.drawable.ic_external_link)!!
     linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
-    this.text = SpannableStringBuilder()
-        .appendText("$text ${context.getString(R.string.etherscan_io)}", URLSpan(url))
+    this.text = SpannableStringBuilder(Html.fromHtml(text))
         .append(" ")
         .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
     setOnClickListener { this.context.openUrl(url) }
 }
-
-fun Activity.setupToolbar(
-    toolbar: Toolbar,
-    @DrawableRes icon: Int = R.drawable.ic_arrow_back_24dp,
-    clickListener: (View) -> Unit = { onBackPressed() }
-) {
-    toolbar.setNavigationIcon(icon)
-    toolbar.setNavigationOnClickListener(clickListener)
-}
-
-fun Activity.startActivityWithTransaction(transaction: Transaction, onActivityNotFound: () -> Unit = {}) {
-    val intent = Intent(Intent.ACTION_VIEW, transaction.erc67Uri())
-    val resolvedActivity = intent.resolveActivity(packageManager)
-    if (resolvedActivity != null) {
-        Timber.d(resolvedActivity.className)
-        startActivityForResult(intent, EXTERNAL_WALLET_REQUEST)
-    } else {
-        onActivityNotFound()
-    }
-}
-
-fun Fragment.startActivityWithTransaction(transaction: Transaction, onActivityNotFound: () -> Unit = {}) {
-    val intent = Intent(Intent.ACTION_VIEW, transaction.erc67Uri())
-    val activity = activity ?: return
-    val resolvedActivity = intent.resolveActivity(activity.packageManager)
-    if (resolvedActivity != null) {
-        Timber.d(resolvedActivity.className)
-        startActivityForResult(intent, EXTERNAL_WALLET_REQUEST)
-    } else {
-        onActivityNotFound()
-    }
-}
-
-fun handleTransactionHashResult(
-    requestCode: Int, resultCode: Int, data: Intent?,
-    onTransactionHash: (String) -> Unit, onCancelledResult: (() -> Unit)? = null
-): Boolean {
-    if (requestCode == EXTERNAL_WALLET_REQUEST) {
-        if (resultCode == Activity.RESULT_OK && data != null && data.hasExtra(TRANSACTION_EXTRA)) {
-            onTransactionHash(data.getStringExtra(TRANSACTION_EXTRA))
-        } else if (resultCode == Activity.RESULT_CANCELED) {
-            onCancelledResult?.invoke()
-        }
-        return true
-    }
-    return false
-}
-
-const val EXTERNAL_WALLET_REQUEST = 0x1010
-private const val TRANSACTION_EXTRA = "extra.string.txhash"

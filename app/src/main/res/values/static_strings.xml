@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name" translatable="false">Gnosis Safe</string>
     <string name="currency_eth" translatable="false">ETH</string>
     <string name="currency_gwei" translatable="false">GWei</string>
     <string name="currency_wei" translatable="false">Wei</string>
