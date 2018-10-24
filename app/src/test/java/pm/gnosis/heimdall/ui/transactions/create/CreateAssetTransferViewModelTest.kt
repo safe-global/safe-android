@@ -125,6 +125,7 @@ class CreateAssetTransferViewModelTest {
             BigInteger.ONE,
             BigInteger.TEN,
             BigInteger.ZERO,
+            BigInteger.ZERO,
             Wei.ZERO
         )
         estimationSingleFactory.success(lowBalanceInfo)
@@ -138,7 +139,8 @@ class CreateAssetTransferViewModelTest {
 
         // Estimate
         val validInfo = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO,
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS,
+            BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23")
         )
         estimationSingleFactory.success(validInfo)
@@ -232,6 +234,7 @@ class CreateAssetTransferViewModelTest {
             BigInteger.ONE,
             BigInteger.TEN,
             BigInteger.ZERO,
+            BigInteger.ZERO,
             Wei.ZERO
         )
         estimationSingleFactory.success(lowBalanceInfo)
@@ -245,7 +248,8 @@ class CreateAssetTransferViewModelTest {
 
         // Estimate, balance too low
         val validInfo = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO,
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS,
+            BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("1")
         )
         estimationSingleFactory.success(validInfo)

@@ -178,12 +178,17 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
             .flatMap { (infoWithEstimate, sender) ->
                 val (info, estimate) = infoWithEstimate
-                val nonce = checkNonce(safeAddress, GnosisSafe.Nonce.decode(info.nonce.result()!!).param0.value)
+                // We have 3 nonce sources: RPC endpoint, Estimate endpoint, local nonce cache ... we take the maximum of all
+                val rpcNonce = GnosisSafe.Nonce.decode(info.nonce.result()!!).param0.value
+                val estimateNonce = estimate.lastUsedNonce?.decimalAsBigInteger()?.let { it + BigInteger.ONE } ?: BigInteger.ZERO
+                val nonce = checkNonce(safeAddress, if (rpcNonce > estimateNonce) rpcNonce else estimateNonce)
+
                 val threshold = GnosisSafe.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
                 val owners = GnosisSafe.GetOwners.decode(info.owners.result()!!).param0.items
                 val updatedTransaction = transaction.copy(wrapped = transaction.wrapped.updateTransactionWithStatus(nonce))
                 val txGas = estimate.safeTxGas.decimalAsBigInteger()
                 val dataGas = estimate.dataGas.decimalAsBigInteger()
+                val signatureGas = estimate.signatureGas.decimalAsBigInteger()
                 val gasPrice = estimate.gasPrice.decimalAsBigInteger()
                 val safeBalance = info.balance.result()!!
                 calculateHash(safeAddress, updatedTransaction, txGas, dataGas, gasPrice).map {
@@ -196,6 +201,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                         gasPrice,
                         txGas,
                         dataGas,
+                        signatureGas,
                         safeBalance
                     )
                 }

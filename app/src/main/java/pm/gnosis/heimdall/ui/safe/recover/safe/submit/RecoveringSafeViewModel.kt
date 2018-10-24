@@ -74,7 +74,7 @@ class RecoveringSafeViewModel @Inject constructor(
 
     override fun observeRecoveryInfo(address: Solidity.Address): Observable<Result<RecoveryInfo>> =
         safeRepository.loadRecoveringSafe(address)
-            .map { Triple(it.address.asEthereumAddressChecksumString(), it.gasPrice * (it.dataGas + it.txGas), it.gasToken) }
+            .map { Triple(it.address.asEthereumAddressChecksumString(), it.gasPrice * (it.dataGas + it.txGas + it.signatureGas), it.gasToken) }
             .emitAndNext(
                 emit = { (safeAddress, amount) ->
                     DataResult(
@@ -112,6 +112,7 @@ class RecoveringSafeViewModel @Inject constructor(
                                     safe.gasPrice,
                                     safe.txGas,
                                     safe.dataGas,
+                                    safe.signatureGas,
                                     it.balance
                                 )
                             }

@@ -83,6 +83,9 @@ data class RecoveringGnosisSafeDb(
     @ColumnInfo(name = COL_DATA_GAS)
     var dataGas: BigInteger,
 
+    @ColumnInfo(name = COL_SIGNATURE_GAS)
+    var signatureGas: BigInteger,
+
     @ColumnInfo(name = COL_GAS_TOKEN)
     var gasToken: Solidity.Address,
 
@@ -103,6 +106,7 @@ data class RecoveringGnosisSafeDb(
         const val COL_DATA = "data"
         const val COL_TX_GAS = "txGas"
         const val COL_DATA_GAS = "dataGas"
+        const val COL_SIGNATURE_GAS = "signatureGas"
         const val COL_GAS_TOKEN = "gasToken"
         const val COL_GAS_PRICE = "gasPrice"
         const val COL_NONCE = "nonce"
@@ -120,6 +124,7 @@ fun RecoveringSafe.toDb() =
         nonce,
         txGas,
         dataGas,
+        signatureGas,
         gasToken,
         gasPrice,
         operation.toInt(),
@@ -133,6 +138,7 @@ fun RecoveringGnosisSafeDb.fromDb() =
         data,
         txGas,
         dataGas,
+        signatureGas,
         gasToken,
         gasPrice,
         nonce,

@@ -218,6 +218,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     executeInfo.transaction.wrapped.data!!,
                     executeInfo.txGas,
                     executeInfo.dataGas,
+                    executeInfo.signatureGas,
                     ERC20Token.ETHER_TOKEN.address,
                     executeInfo.gasPrice,
                     executeInfo.transaction.wrapped.nonce!!,

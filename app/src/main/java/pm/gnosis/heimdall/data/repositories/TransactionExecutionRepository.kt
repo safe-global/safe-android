@@ -103,13 +103,14 @@ interface TransactionExecutionRepository {
         val gasPrice: BigInteger,
         val txGas: BigInteger,
         val dataGas: BigInteger,
+        val signatureGas: BigInteger,
         val balance: Wei
     ) {
         val isOwner by lazy {
             owners.contains(sender)
         }
 
-        fun totalGas() = txGas + dataGas
+        fun totalGas() = signatureGas + txGas + dataGas
         fun gasCosts() = totalGas() * gasPrice
     }
 

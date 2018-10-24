@@ -79,7 +79,7 @@ class RecoverSafeRecoveryPhraseViewModelTest {
             TEST_TX_HASH.asTransactionHash(), SafeTransaction(Transaction(
                 TEST_SAFE
             ), TransactionExecutionRepository.Operation.CALL),
-            TEST_SAFE, 2, emptyList(), BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
+            TEST_SAFE, 2, emptyList(), BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
         )
         val signatures = listOf(Signature(BigInteger.TEN, BigInteger.TEN, 27))
 

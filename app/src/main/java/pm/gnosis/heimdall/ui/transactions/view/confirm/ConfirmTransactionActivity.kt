@@ -78,13 +78,17 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
 
         val safeAddress = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()
         val hash = intent.getStringExtra(EXTRA_TRANSACTION_HASH)
+        val signatureGas = intent.getStringExtra(EXTRA_SIGNATURE_GAS)?.hexAsBigIntegerOrNull()
         val dataGas = intent.getStringExtra(EXTRA_DATA_GAS)?.hexAsBigIntegerOrNull()
         val txGas = intent.getStringExtra(EXTRA_TX_GAS)?.hexAsBigIntegerOrNull()
         val gasToken = intent.getStringExtra(EXTRA_GAS_TOKEN)?.asEthereumAddress()
         val gasPrice = intent.getStringExtra(EXTRA_GAS_PRICE)?.hexAsBigIntegerOrNull()
         val signature = intent.getStringExtra(EXTRA_SIGNATURE)?.let { nullOnThrow { Signature.from(it) } }
 
-        if (safeAddress == null || hash == null || dataGas == null || txGas == null || gasToken == null || gasPrice == null || signature == null) {
+        if (
+            safeAddress == null || hash == null || signature == null ||
+            signatureGas == null || dataGas == null || txGas == null || gasToken == null || gasPrice == null
+        ) {
             finish()
             return
         }
@@ -95,7 +99,7 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
             return
         }
 
-        viewModel.setup(safeAddress, hash, dataGas, txGas, gasToken, gasPrice, transaction.wrapped.nonce, signature)
+        viewModel.setup(safeAddress, hash, signatureGas, dataGas, txGas, gasToken, gasPrice, transaction.wrapped.nonce, signature)
         infoViewHelper.bind(layout_confirm_transaction_transaction_info)
     }
 
@@ -190,19 +194,21 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"
         private const val EXTRA_TRANSACTION_HASH = "extra.string.transaction_hash"
+        private const val EXTRA_SIGNATURE_GAS = "extra.string.signature_gas"
         private const val EXTRA_DATA_GAS = "extra.string.data_gas"
         private const val EXTRA_TX_GAS = "extra.string.tx_gas"
         private const val EXTRA_GAS_TOKEN = "extra.string.gas_token"
         private const val EXTRA_GAS_PRICE = "extra.string.gas_price"
         fun createIntent(
             context: Context, signature: Signature, safe: Solidity.Address, transaction: SafeTransaction, hash: String,
-            dataGas: BigInteger, txGas: BigInteger, gasToken: Solidity.Address, gasPrice: BigInteger
+            dataGas: BigInteger, signatureGas: BigInteger, txGas: BigInteger, gasToken: Solidity.Address, gasPrice: BigInteger
         ) =
             Intent(context, ConfirmTransactionActivity::class.java).apply {
                 putExtra(EXTRA_SAFE_ADDRESS, safe.value.toHexString())
                 putExtra(EXTRA_SIGNATURE, signature.toString())
                 putExtra(EXTRA_TRANSACTION, transaction)
                 putExtra(EXTRA_TRANSACTION_HASH, hash)
+                putExtra(EXTRA_SIGNATURE_GAS, signatureGas.toHexString())
                 putExtra(EXTRA_DATA_GAS, dataGas.toHexString())
                 putExtra(EXTRA_TX_GAS, txGas.toHexString())
                 putExtra(EXTRA_GAS_TOKEN, gasToken.value.toHexString())

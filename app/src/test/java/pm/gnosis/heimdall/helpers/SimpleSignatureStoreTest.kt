@@ -48,13 +48,15 @@ class SimpleSignatureStoreTest {
         signaturesObserver.assertValuesOnly(emptyMap())
 
         // It should not be possible to add a signature if we have no information about the safe
-        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_not_owner)), {
+        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_not_owner))) {
             store.add(TEST_OWNERS[0] to TEST_SIGNATURE)
-        })
+        }
 
         val mappedObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val info = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, Wei.ZERO
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS,
+            BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
+            Wei.ZERO
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, info, null).subscribe(mappedObserver)
@@ -67,14 +69,14 @@ class SimpleSignatureStoreTest {
         )
 
         // It should not be possible to add a signature if he is not an owner
-        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_not_owner)), {
+        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_not_owner))) {
             store.add(Solidity.Address(BigInteger.valueOf(8754)) to TEST_SIGNATURE)
-        })
+        }
 
         // It should not be possible to add the signature of the sender
-        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_already_exists)), {
+        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_already_exists))) {
             store.add(TEST_OWNERS[2] to TEST_SIGNATURE)
-        })
+        }
 
         store.add(TEST_OWNERS[0] to TEST_SIGNATURE)
         // Signature added, changes should be propagated
@@ -124,7 +126,7 @@ class SimpleSignatureStoreTest {
         val updateOwnersObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val updateOwnersInfo = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
-            TEST_OWNERS_2, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, Wei.ZERO
+            TEST_OWNERS_2, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, updateOwnersInfo, null).subscribe(updateOwnersObserver)
@@ -151,7 +153,7 @@ class SimpleSignatureStoreTest {
         val updateHashObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val updateHashInfo = TransactionExecutionRepository.ExecuteInformation(
             "some_new_hash", TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
-            TEST_OWNERS_2, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, Wei.ZERO
+            TEST_OWNERS_2, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, updateHashInfo, mapOf(TEST_OWNERS_2[1] to TEST_SIGNATURE)).subscribe(updateHashObserver)

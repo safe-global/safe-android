@@ -134,7 +134,7 @@ class DefaultSubmitTransactionHelperTest {
         val info = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH,
             TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size - 1,
-            TEST_OWNERS, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO,
+            TEST_OWNERS, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23")
         )
         given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
@@ -167,6 +167,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 anySet()
             )
         )
@@ -183,6 +184,7 @@ class DefaultSubmitTransactionHelperTest {
                 info.transaction,
                 info.txGas,
                 info.dataGas,
+                info.signatureGas,
                 info.gasPrice,
                 setOf(TEST_OWNERS[0], TEST_OWNERS[1])
             )
@@ -197,6 +199,7 @@ class DefaultSubmitTransactionHelperTest {
         given(
             signaturePushRepository.requestConfirmations(
                 anyString(),
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -217,6 +220,7 @@ class DefaultSubmitTransactionHelperTest {
                 info.transaction,
                 info.txGas,
                 info.dataGas,
+                info.signatureGas,
                 info.gasPrice,
                 setOf(TEST_OWNERS[1])
             )
@@ -393,7 +397,7 @@ class DefaultSubmitTransactionHelperTest {
         val info = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH,
             TEST_TRANSACTION, TEST_OWNERS[0], 1,
-            TEST_OWNERS.subList(0, 1), BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO,
+            TEST_OWNERS.subList(0, 1), BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23")
         )
         given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))

@@ -37,10 +37,7 @@ import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.tests.utils.TestPreferences
-import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
@@ -258,9 +255,8 @@ class SafeMainViewModelTest {
 
     @Test
     fun selectSafeRecovering() {
-        val recoveringSafe = RecoveringSafe(
-            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
-            TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val recoveringSafe = testRecoveringSafe(
+            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, gasToken = TEST_PAYMENT_TOKEN
         )
         given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
         given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
@@ -384,9 +380,8 @@ class SafeMainViewModelTest {
     @Test
     fun updateRecoveringSafeName() {
         context.mockGetString()
-        val safe = RecoveringSafe(
-            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
-            TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, gasToken = TEST_PAYMENT_TOKEN
         )
         given(addressBookRepository.updateAddressBookEntry(MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
 
@@ -409,9 +404,8 @@ class SafeMainViewModelTest {
     @Test
     fun updateRecoveringSafeNameError() {
         context.mockGetString()
-        val safe = RecoveringSafe(
-            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
-            TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, gasToken = TEST_PAYMENT_TOKEN
         )
         val error = NoSuchElementException()
         given(addressBookRepository.updateAddressBookEntry(MockUtils.any(), MockUtils.any())).willReturn(Completable.error(error))
@@ -515,9 +509,8 @@ class SafeMainViewModelTest {
     @Test
     fun observeRecoveringSafe() {
         context.mockGetString()
-        val safe = RecoveringSafe(
-            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
-            TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, gasToken = TEST_PAYMENT_TOKEN
         )
         val infoProcessor = PublishProcessor.create<AddressBookEntry>()
         given(addressBookRepository.observeAddressBookEntry(MockUtils.any())).willReturn(infoProcessor)
@@ -542,9 +535,8 @@ class SafeMainViewModelTest {
 
     @Test
     fun observeRecoveringSafeError() {
-        val safe = RecoveringSafe(
-            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
-            TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, gasToken = TEST_PAYMENT_TOKEN
         )
         val error = NoSuchElementException()
         given(addressBookRepository.observeAddressBookEntry(MockUtils.any())).willReturn(Flowable.error(error))
@@ -615,9 +607,8 @@ class SafeMainViewModelTest {
 
     @Test
     fun removeRecoveringSafe() {
-        val safe = RecoveringSafe(
-            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
-            TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, gasToken = TEST_PAYMENT_TOKEN
         )
         given(safeRepository.removeRecoveringSafe(MockUtils.any())).willReturn(Completable.complete())
 
@@ -631,9 +622,8 @@ class SafeMainViewModelTest {
 
     @Test
     fun removeRecoveringSafeError() {
-        val safe = RecoveringSafe(
-            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
-            TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val safe = testRecoveringSafe(
+            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, gasToken = TEST_PAYMENT_TOKEN
         )
         val error = NoSuchElementException()
         given(safeRepository.removeRecoveringSafe(MockUtils.any())).willReturn(Completable.error(error))
@@ -696,9 +686,8 @@ class SafeMainViewModelTest {
     @Test
     fun isConnectedToBrowserExtensionIsRecoveringSafe() {
         val testObserver = TestObserver.create<Result<Boolean>>()
-        val recoveringSafe = RecoveringSafe(
-            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, "", BigInteger.ZERO, BigInteger.ZERO,
-            TEST_PAYMENT_TOKEN, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
+        val recoveringSafe = testRecoveringSafe(
+            TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, gasToken = TEST_PAYMENT_TOKEN
         )
 
         viewModel.isConnectedToBrowserExtension(recoveringSafe).subscribe(testObserver)
