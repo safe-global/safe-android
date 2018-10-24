@@ -188,7 +188,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 val updatedTransaction = transaction.copy(wrapped = transaction.wrapped.updateTransactionWithStatus(nonce))
                 val txGas = estimate.safeTxGas.decimalAsBigInteger()
                 val dataGas = estimate.dataGas.decimalAsBigInteger()
-                val signatureGas = estimate.signatureGas.decimalAsBigInteger()
+                val operationalGas = estimate.operationalGas.decimalAsBigInteger()
                 val gasPrice = estimate.gasPrice.decimalAsBigInteger()
                 val safeBalance = info.balance.result()!!
                 calculateHash(safeAddress, updatedTransaction, txGas, dataGas, gasPrice).map {
@@ -201,7 +201,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                         gasPrice,
                         txGas,
                         dataGas,
-                        signatureGas,
+                        operationalGas,
                         safeBalance
                     )
                 }

@@ -23,7 +23,7 @@ interface PushServiceRepository {
         transaction: SafeTransaction,
         txGas: BigInteger,
         dataGas: BigInteger,
-        signatureGas: BigInteger,
+        operationalGas: BigInteger,
         gasPrice: BigInteger,
         targets: Set<Solidity.Address>
     ): Completable

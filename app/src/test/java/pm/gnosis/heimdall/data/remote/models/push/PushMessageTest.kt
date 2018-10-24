@@ -37,7 +37,7 @@ class PushMessageTest {
         private const val TEST_TX_DATA = "tx-data"
         private const val TEST_TX_OPERATION = "tx-operation"
         private const val TEST_TX_GAS = "tx-gas"
-        private const val TEST_SIGNATURE_GAS = "signature-gas"
+        private const val TEST_OPERATIONAL_GAS = "operational-gas"
         private const val TEST_DATA_GAS = "gasfordata"
         private const val TEST_GAS_PRICE = "thegasprice"
         private const val TEST_GAS_TOKEN = "somegastoken"
@@ -79,7 +79,7 @@ class PushMessageTest {
                             "operation" to TEST_TX_OPERATION,
                             "txGas" to TEST_TX_GAS,
                             "dataGas" to TEST_DATA_GAS,
-                            "signatureGas" to TEST_SIGNATURE_GAS,
+                            "operationalGas" to TEST_OPERATIONAL_GAS,
                             "gasPrice" to TEST_GAS_PRICE,
                             "gasToken" to TEST_GAS_TOKEN,
                             "nonce" to TEST_NONCE,
@@ -96,7 +96,7 @@ class PushMessageTest {
                             TEST_TX_OPERATION,
                             TEST_TX_GAS,
                             TEST_DATA_GAS,
-                            TEST_SIGNATURE_GAS,
+                            TEST_OPERATIONAL_GAS,
                             TEST_GAS_PRICE,
                             TEST_GAS_TOKEN,
                             TEST_NONCE,
