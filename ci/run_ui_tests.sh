@@ -19,6 +19,6 @@ set -e
 adb shell am start -n pm.gnosis.heimdall.debug/pm.gnosis.heimdall.ui.splash.SplashActivity
 
 echo "Execute UI tests"
-./gradlew createDebugConnectedTestCoverage --stacktrace
+./gradlew createDebugTestCoverage --stacktrace
 
 bash <(curl -s https://codecov.io/bash) -f '*TestCoverage.xml'
