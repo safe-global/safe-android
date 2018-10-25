@@ -2,48 +2,31 @@ package pm.gnosis.tests.mocked
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import android.support.test.espresso.Espresso
 import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.action.ViewActions
-import android.support.test.espresso.action.ViewActions.*
-import android.support.test.espresso.assertion.ViewAssertions
-import android.support.test.espresso.assertion.ViewAssertions.*
+import android.support.test.espresso.action.ViewActions.click
+import android.support.test.espresso.assertion.ViewAssertions.doesNotExist
+import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.Intents
-import android.support.test.espresso.intent.matcher.IntentMatchers
-import android.support.test.espresso.intent.matcher.IntentMatchers.*
-import android.support.test.espresso.matcher.ViewMatchers
+import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
-import io.reactivex.Flowable
-import io.reactivex.Single
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.allOf
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito
 import org.mockito.BDDMockito.*
-import org.mockito.Mockito.mock
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.onboarding.OnboardingIntroActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
-import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
-import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
-import pm.gnosis.heimdall.ui.splash.SplashActivity
-import pm.gnosis.heimdall.ui.splash.SplashContract
-import pm.gnosis.heimdall.ui.splash.StartMain
 import pm.gnosis.tests.BaseUiTest
 import pm.gnosis.tests.utils.UIMockUtils
-import pm.gnosis.tests.utils.newPasswordContractMock
 
 @RunWith(AndroidJUnit4::class)
 class OnboardingActivityTest: BaseUiTest() {
@@ -53,7 +36,7 @@ class OnboardingActivityTest: BaseUiTest() {
 
     // ViewModel mocks
 
-    private val passwordSetupContract = newPasswordContractMock()
+    private val passwordSetupContract = mock(PasswordSetupContract::class.java)
 
     @Before
     fun setup() {
@@ -88,7 +71,7 @@ class OnboardingActivityTest: BaseUiTest() {
     }
 
     @Test
-    fun startOnboardingIntroInitialState() {
+    fun initialState() {
         val activity = activityRule.launchActivity(null)
 
         onView(withId(R.id.layout_onboarding_intro_logo)).check(matches(isCompletelyDisplayed()))
@@ -97,6 +80,7 @@ class OnboardingActivityTest: BaseUiTest() {
         onView(withText(R.string.personal_edition)).check(matches(isCompletelyDisplayed()))
         checkBottomSheet(false)
 
+        then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Check tracking
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.WELCOME))
         then(eventTrackerMock).should().setCurrentScreenId(activity, ScreenId.WELCOME)
@@ -106,7 +90,7 @@ class OnboardingActivityTest: BaseUiTest() {
     }
 
     @Test
-    fun startOnboardingIntroDeclineTerms() {
+    fun declineTerms() {
         val activity = activityRule.launchActivity(null)
 
         onView(withId(R.id.layout_onboarding_intro_get_started)).check(matches(isCompletelyDisplayed()))
@@ -116,6 +100,7 @@ class OnboardingActivityTest: BaseUiTest() {
         onView(withId(R.id.bottom_sheet_terms_and_conditions_reject)).perform(click())
         checkBottomSheet(false)
 
+        then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Check tracking
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.WELCOME))
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.WELCOME_TERMS))
@@ -126,7 +111,7 @@ class OnboardingActivityTest: BaseUiTest() {
     }
 
     @Test
-    fun startOnboardingIntroAcceptsTerms() {
+    fun acceptsTerms() {
         val activity = activityRule.launchActivity(null)
 
         onView(withId(R.id.layout_onboarding_intro_get_started)).check(matches(isCompletelyDisplayed()))
@@ -136,6 +121,7 @@ class OnboardingActivityTest: BaseUiTest() {
         onView(withId(R.id.bottom_sheet_terms_and_conditions_agree)).perform(click())
         checkBottomSheet(false)
 
+        then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Check tracking
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.WELCOME))
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.WELCOME_TERMS))
