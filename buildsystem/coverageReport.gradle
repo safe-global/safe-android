@@ -22,37 +22,37 @@ if (android.hasProperty('libraryVariants')) {
 if (variants != null) {
     variants.all { variant ->
         def variantName = variant.name.capitalize()
-        task("create${variantName}TestCoverage", type: JacocoReport, dependsOn: "test${variantName}UnitTest") {
+        def fileFilter = [
+                '**/*Test*.*',
+                '**/AutoValue_*.*',
+                '**/*JavascriptBridge.class',
+                '**/R.class',
+                '**/R$*.class',
+                '**/Manifest*.*',
+                'android/**/*.*',
+                '**/BuildConfig.*',
+                '**/*$ViewBinder*.*',
+                '**/*$ViewInjector*.*',
+                '**/*$InjectAdapter.class',
+                '**/*$ModuleAdapter.class',
+                '**/*$ViewInjector*.class',
+                '**/*_*MembersInjector*.class',
+                '**/Dagger*Component*.class', // covers component implementations
+                '**/Dagger*Component*$Builder.class', // covers component builders
+                '**/*_*Factory*.class',
+                '**/*_*Impl*.class',
+        ]
+        def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/${variant.name}", excludes: fileFilter)
+        def kotlinTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variant.name}", excludes: fileFilter)
+        def mainSrc = "${project.projectDir}/src/main/java"
+        task("create${variantName}TestCoverage", type: JacocoReport, dependsOn: ["test${variantName}UnitTest", "connected${variantName}AndroidTest"]) {
             group = "Reporting"
-            description = "Generate Jacoco coverage reports after running tests."
+            description = "Generate Jacoco coverage reports after running UI and Unit tests."
             reports {
                 csv.enabled = false
                 xml.enabled = true
                 html.enabled = true
             }
-            def fileFilter = [
-                    '**/*Test*.*',
-                    '**/AutoValue_*.*',
-                    '**/*JavascriptBridge.class',
-                    '**/R.class',
-                    '**/R$*.class',
-                    '**/Manifest*.*',
-                    'android/**/*.*',
-                    '**/BuildConfig.*',
-                    '**/*$ViewBinder*.*',
-                    '**/*$ViewInjector*.*',
-                    '**/*$InjectAdapter.class',
-                    '**/*$ModuleAdapter.class',
-                    '**/*$ViewInjector*.class',
-                    '**/*_*MembersInjector*.class',
-                    '**/Dagger*Component*.class', // covers component implementations
-                    '**/Dagger*Component*$Builder.class', // covers component builders
-                    '**/*_*Factory*.class',
-                    '**/*_*Impl*.class',
-            ]
-            def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/${variant.name}", excludes: fileFilter)
-            def kotlinTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variant.name}", excludes: fileFilter)
-            def mainSrc = "${project.projectDir}/src/main/java"
 
             sourceDirectories = files([mainSrc])
             classDirectories = files([debugTree], [kotlinTree])

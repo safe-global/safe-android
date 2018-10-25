@@ -45,9 +45,6 @@ script:
   - ./ci/run_unit_tests.sh
   - ./ci/release_internal_beta.sh
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash) -f '*TestCoverage.xml'
-
 before_deploy:
   - ./ci/build_rinkeby_version.sh
 
