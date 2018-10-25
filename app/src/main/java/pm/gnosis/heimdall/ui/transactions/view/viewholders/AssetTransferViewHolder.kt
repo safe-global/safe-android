@@ -49,7 +49,6 @@ class AssetTransferViewHolder(
     fun start() {
         val view = view ?: return
         view.layout_asset_transfer_info_value.text = "~"
-        view.layout_asset_transfer_info_fiat.text = "~ $"
 
         setupSafeInfo()
         setupToInfo()
@@ -69,7 +68,6 @@ class AssetTransferViewHolder(
                 onError = {
                     view?.apply {
                         layout_asset_transfer_info_value.text = data.amount.asDecimalString()
-                        layout_asset_transfer_info_fiat.text = context.getString(R.string.unknown_token)
                         loadSafeTokenBalance()
                     }
                 }
