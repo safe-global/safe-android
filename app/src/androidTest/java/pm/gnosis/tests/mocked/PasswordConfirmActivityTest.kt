@@ -217,7 +217,7 @@ class PasswordConfirmActivityTest : BaseUiTest() {
 
         onView(withId(R.id.layout_password_confirm_confirm)).perform(ViewActions.click())
         // Error: show snackbar
-        onView(withText(context.getString(R.string.password_doesnt_match))).check(matches(isDisplayed()))
+        onView(allOf(isDisplayed(), withText(context.getString(R.string.passwords_do_not_match)))).check(matches(isDisplayed()))
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Contract interaction

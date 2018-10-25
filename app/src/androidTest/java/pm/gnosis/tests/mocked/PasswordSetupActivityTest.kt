@@ -74,7 +74,7 @@ class PasswordSetupActivityTest : BaseUiTest() {
         // Bottom Bar
         onView(withId(R.id.layout_password_setup_next)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
         onView(withId(R.id.layout_password_setup_bottom_container)).check(matches(isCompletelyDisplayed()))
-        onView(withId(R.id.layout_password_confirm_next_arrow)).check(matches(isCompletelyDisplayed()))
+        onView(withId(R.id.layout_password_setup_next_arrow)).check(matches(isCompletelyDisplayed()))
         onView(withId(R.id.layout_password_setup_next_text)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.next))))
 
         // Title
