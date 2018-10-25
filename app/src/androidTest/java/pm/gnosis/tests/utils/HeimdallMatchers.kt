@@ -16,9 +16,12 @@ private class ExactIntentMatcher internal constructor(private val expectedIntent
         if (intent.action != expectedIntent.action) return false
         if (intent.data != expectedIntent.data) return false
         // TODO add all attributes
-        val bundle = intent.extras!!
-        val expectedBundle = expectedIntent.extras!!
-        return bundle.isSupersetBundle(expectedBundle) && expectedBundle.isSupersetBundle(bundle)
+        val bundle = intent.extras
+        val expectedBundle = expectedIntent.extras
+        if (bundle != null && expectedBundle != null) {
+            return bundle.isSupersetBundle(expectedBundle) && expectedBundle.isSupersetBundle(bundle)
+        }
+        return bundle == expectedBundle
     }
 
     override fun describeTo(description: Description) {

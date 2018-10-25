@@ -1,5 +1,7 @@
 package pm.gnosis.tests
 
+import android.content.Context
+import android.support.test.InstrumentationRegistry
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.mock
 import pm.gnosis.heimdall.di.components.ApplicationComponent
@@ -9,6 +11,9 @@ import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.tests.utils.UIMockUtils
 
 abstract class BaseUiTest {
+
+    protected val context: Context
+        get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     protected val eventTrackerMock = mock(EventTracker::class.java)!!
 
