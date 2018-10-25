@@ -141,7 +141,7 @@ class DefaultPushServiceRepository @Inject constructor(
         transaction: SafeTransaction,
         txGas: BigInteger,
         dataGas: BigInteger,
-        signatureGas: BigInteger,
+        operationalGas: BigInteger,
         gasPrice: BigInteger,
         targets: Set<Solidity.Address>
     ): Completable =
@@ -155,7 +155,7 @@ class DefaultPushServiceRepository @Inject constructor(
                 operation = transaction.operation.toInt().toString(),
                 txGas = txGas.asDecimalString(),
                 dataGas = dataGas.asDecimalString(),
-                signatureGas = signatureGas.asDecimalString(),
+                operationalGas = operationalGas.asDecimalString(),
                 gasPrice = gasPrice.asDecimalString(),
                 gasToken = "0",
                 refundReceiver = "0",
@@ -221,7 +221,7 @@ class DefaultPushServiceRepository @Inject constructor(
             val signature = Signature(r.decimalAsBigInteger(), s.decimalAsBigInteger(), v.toInt().toByte())
             val intent = ConfirmTransactionActivity.createIntent(
                 context, signature, safe.asEthereumAddress()!!, safeTransaction, hash,
-                signatureGas.decimalAsBigInteger(), dataGas.decimalAsBigInteger(), txGas.decimalAsBigInteger(),
+                operationalGas.decimalAsBigInteger(), dataGas.decimalAsBigInteger(), txGas.decimalAsBigInteger(),
                 gasToken.asEthereumAddress()!!, gasPrice.decimalAsBigInteger()
             )
             notificationManager.show(

@@ -35,7 +35,7 @@ data class RecoveringSafe(
     val data: String,
     val txGas: BigInteger,
     val dataGas: BigInteger,
-    val signatureGas: BigInteger,
+    val operationalGas: BigInteger,
     val gasToken: Solidity.Address,
     val gasPrice: BigInteger,
     val nonce: BigInteger,
