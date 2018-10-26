@@ -65,7 +65,7 @@
     <string name="sign_transaction_request_title">Sign request</string>
     <string name="transaction_details">Transaction details</string>
     <string name="view_transaction_on">
-        <![CDATA[<font color=#27a0ff>View on Etherscan.io</font>]]>
+        <![CDATA[<font color=#27a0ff>View transaction on Etherscan.io</font>]]>
     </string>
     <string name="no_safe_selected">No Safe selected</string>
     <string name="channel_signing_request_name">Signing Requests</string>
