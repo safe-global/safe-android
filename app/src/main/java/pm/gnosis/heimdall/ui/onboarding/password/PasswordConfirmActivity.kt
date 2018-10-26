@@ -60,7 +60,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
             .flatMapSingle {
                 viewModel.createAccount(passwordHash, layout_password_confirm_password.text.toString())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe { onCreateAccountLoading(true) }
+                    .doOnSubscribe { _ -> onCreateAccountLoading(true) }
                     .doFinally { onCreateAccountLoading(false) }
             }
             .observeOn(AndroidSchedulers.mainThread())

@@ -59,7 +59,7 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
 
     private fun onFingerprintUnrecoverableError(throwable: Throwable) {
         Timber.e(throwable)
-        (throwable as? AuthenticationError)?.errString ?: getString(R.string.unknown_error).let { toast(it) }
+        toast(((throwable as? AuthenticationError)?.errString ?: getString(R.string.unknown_error)))
         startActivity(SafeMainActivity.createIntent(this), true)
     }
 

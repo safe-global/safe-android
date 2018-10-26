@@ -41,7 +41,7 @@ ext {
             zxing                 : '3.3.1',
 
             // Test dependencies
-            espresso              : '3.0.0',
+            espresso              : '3.0.1',
             junit                 : '4.12',
             mockito               : '2.18.3',
     ]

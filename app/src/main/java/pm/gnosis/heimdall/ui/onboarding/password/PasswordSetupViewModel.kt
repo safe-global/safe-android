@@ -41,7 +41,7 @@ class PasswordSetupViewModel @Inject constructor(
 
     override fun createAccount(passwordHash: ByteArray, repeat: String) =
         Single.fromCallable {
-            if (!isEqualPassword(passwordHash, repeat)) throw PasswordInvalidException(PasswordsNotEqual())
+            if (!isEqualPassword(passwordHash, repeat)) throw PasswordInvalidException(PasswordsNotEqual)
             repeat.toByteArray()
         }.flatMap {
             encryptionManager.setupPassword(it)

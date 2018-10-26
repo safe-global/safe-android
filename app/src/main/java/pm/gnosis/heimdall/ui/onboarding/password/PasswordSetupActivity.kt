@@ -76,7 +76,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
         layout_password_setup_next.isEnabled = enable
         layout_password_setup_bottom_container.setBackgroundColor(getColorCompat(if (enable) R.color.azure else R.color.pale_grey))
         layout_password_setup_next_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.bluey_grey))
-        layout_password_confirm_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.bluey_grey)
+        layout_password_setup_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.bluey_grey)
     }
 
     override fun layout() = R.layout.layout_password_setup
