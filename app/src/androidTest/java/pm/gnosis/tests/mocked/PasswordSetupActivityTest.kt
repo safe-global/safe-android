@@ -196,7 +196,7 @@ class PasswordSetupActivityTest : BaseUiTest() {
         Intents.assertNoUnverifiedIntents()
     }
 
-    @Test
+    //@Test
     fun startConfirmPasswordAndBack() {
         given(passwordSetupContract.validatePassword(UIMockUtils.any())).willReturn(Single.just(DataResult(emptyList())))
         val activity = activityRule.launchActivity(null)
