@@ -88,7 +88,7 @@
     <string name="setup_fingerprint">Fingerabdruck einrichten</string>
     <string name="fingerprint_confirmed">Fingerabdruck bestätigt!</string>
     <string name="finish">Fertig</string>
-    <string name="password_validation_identical_characters">Keine 3-fachen Zeichen</string>
+    <string name="password_validation_identical_characters">Keine 3-fachen Zeichen\n</string>
     <string name="password_validation_minimum_characters">Benutze mind. 8 Zeichen.\n</string>
     <string name="password_validation_one_number_one_letter">Mind. 1 Buchstabe und 1 Zahl\n</string>
     <string name="terms">Nutzungsbedingungen</string>
