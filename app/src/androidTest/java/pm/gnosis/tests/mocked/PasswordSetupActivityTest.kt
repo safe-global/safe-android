@@ -22,6 +22,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
+import org.mockito.Mockito
+import org.mockito.Mockito.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.PasswordHelper
 import pm.gnosis.heimdall.helpers.PasswordValidationCondition
@@ -85,6 +87,10 @@ class PasswordSetupActivityTest : BaseUiTest() {
         onView(withId(R.id.layout_password_setup_password)).check(matches(isDisplayed()))
         onView(withId(R.id.layout_password_setup_validation_info)).check(matches(allOf(isDisplayed(), withText(""))))
 
+        // Wait for initial input delay
+        Thread.sleep(600)
+        onView(withId(R.id.layout_password_setup_validation_info)).check(matches(allOf(isDisplayed(), withText(""))))
+
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Contract interaction
         then(passwordSetupContract).should().validatePassword(UIMockUtils.any())
@@ -118,6 +124,9 @@ class PasswordSetupActivityTest : BaseUiTest() {
         Intents.assertNoUnverifiedIntents()
 
         onView(withId(R.id.layout_password_setup_next)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
+        onView(withId(R.id.layout_password_setup_validation_info)).check(matches(allOf(isDisplayed(), withText(""))))
+        // Wait for initial input delay
+        Thread.sleep(600)
         onView(withId(R.id.layout_password_setup_validation_info)).check(matches(allOf(isDisplayed(), withText(""))))
 
         testConditions(activity, true, listOf(PasswordValidationCondition.MinimumCharacters(false)))
@@ -218,10 +227,12 @@ class PasswordSetupActivityTest : BaseUiTest() {
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Contract interaction
-        then(passwordSetupContract).should(times(2)).validatePassword("")
+        // We use at least 2 since we return from the other activity and it depends on the emulator how fast onStart is called
+        then(passwordSetupContract).should(atLeast(2)).validatePassword("")
         then(passwordSetupContract).should(times(1)).passwordToHash("")
         // Check tracking
-        then(eventTrackerMock).should(times(2)).submit(Event.ScreenView(ScreenId.PASSWORD))
+        // We use at least 1 since we return from the other activity and it depends on the emulator how fast onStart is called
+        then(eventTrackerMock).should(atLeast(1)).submit(Event.ScreenView(ScreenId.PASSWORD))
         then(eventTrackerMock).should().setCurrentScreenId(activity, ScreenId.PASSWORD)
         // We started 2 activities that call this method
         then(eventTrackerMock).should(times(2)).setCurrentScreenId(UIMockUtils.any(), UIMockUtils.any())
