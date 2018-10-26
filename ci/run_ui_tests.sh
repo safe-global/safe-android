@@ -6,6 +6,11 @@ set -e
 
 ./ci/wait_for_emulator.sh
 
+# Disable animations on emulator
+adb shell settings put global window_animation_scale 0
+adb shell settings put global transition_animation_scale 0
+adb shell settings put global animator_duration_scale 0
+
 # Buildkite uses a clean state for each step (for concurrency)
 ./ci/prepare_env_buildkite.sh
 
