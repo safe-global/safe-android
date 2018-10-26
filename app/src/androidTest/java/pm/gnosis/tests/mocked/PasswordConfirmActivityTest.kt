@@ -15,7 +15,6 @@ import io.reactivex.Single
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.After
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -83,25 +82,6 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         onView(withId(R.id.layout_password_confirm_password)).check(matches(isDisplayed()))
         onView(withId(R.id.layout_password_confirm_info)).check(matches(not(isDisplayed())))
         onView(withId(R.id.layout_password_confirm_progress)).check(matches(not(isDisplayed())))
-
-        then(encryptionManagerMock).shouldHaveZeroInteractions()
-        // Contract interaction
-        then(passwordSetupContract).shouldHaveZeroInteractions()
-        // Check tracking
-        then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.PASSWORD_CONFIRM))
-        then(eventTrackerMock).should().setCurrentScreenId(activity, ScreenId.PASSWORD_CONFIRM)
-        then(eventTrackerMock).shouldHaveNoMoreInteractions()
-        Intents.assertNoUnverifiedIntents()
-    }
-
-    @Test
-    fun backPressed() {
-        val activity = activityRule.launchActivity(PasswordConfirmActivity.createIntent(context, "01020304".hexToByteArray()))
-        Intents.intended(hasComponent(PasswordConfirmActivity::class.java.name))
-        Intents.assertNoUnverifiedIntents()
-
-        onView(withId(R.id.layout_password_confirm_back)).perform(ViewActions.click())
-        assertTrue("Activity should finish", activity.isFinishing)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Contract interaction

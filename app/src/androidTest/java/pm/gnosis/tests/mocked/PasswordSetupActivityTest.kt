@@ -6,6 +6,7 @@ import android.content.Context
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.action.ViewActions.typeText
+import android.support.test.espresso.assertion.ViewAssertions.doesNotExist
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.Intents
 import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
@@ -150,9 +151,11 @@ class PasswordSetupActivityTest : BaseUiTest() {
     }
 
     @Test
-    fun startConfirmPasswordsHashError() {
+    fun startConfirmPasswords() {
         given(passwordSetupContract.validatePassword(UIMockUtils.any())).willReturn(Single.just(DataResult(emptyList())))
         val activity = activityRule.launchActivity(null)
+        Intents.intended(hasComponent(PasswordSetupActivity::class.java.name))
+        Intents.assertNoUnverifiedIntents()
 
         // Wait for input delay
         Thread.sleep(600)
@@ -161,7 +164,6 @@ class PasswordSetupActivityTest : BaseUiTest() {
 
         given(passwordSetupContract.passwordToHash(UIMockUtils.any())).willReturn(Single.just(ErrorResult(IllegalStateException())))
         onView(withId(R.id.layout_password_setup_next)).perform(click())
-        Intents.intended(hasComponent(PasswordSetupActivity::class.java.name))
         Intents.assertNoUnverifiedIntents()
 
         given(passwordSetupContract.passwordToHash(UIMockUtils.any())).willReturn(Single.just(DataResult("01020304".hexToByteArray())))
@@ -179,6 +181,48 @@ class PasswordSetupActivityTest : BaseUiTest() {
         then(eventTrackerMock).should().setCurrentScreenId(activity, ScreenId.PASSWORD)
         // We started the confirm password screen
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.PASSWORD_CONFIRM))
+        // We started 2 activities that call this method
+        then(eventTrackerMock).should(times(2)).setCurrentScreenId(UIMockUtils.any(), UIMockUtils.any())
+        then(eventTrackerMock).shouldHaveNoMoreInteractions()
+        Intents.assertNoUnverifiedIntents()
+    }
+
+    @Test
+    fun startConfirmPasswordAndBack() {
+        given(passwordSetupContract.validatePassword(UIMockUtils.any())).willReturn(Single.just(DataResult(emptyList())))
+        val activity = activityRule.launchActivity(null)
+        Intents.intended(hasComponent(PasswordSetupActivity::class.java.name))
+        Intents.assertNoUnverifiedIntents()
+
+        then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.PASSWORD))
+
+        // Wait for input delay
+        Thread.sleep(600)
+        onView(withId(R.id.layout_password_setup_next)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
+        onView(withId(R.id.layout_password_setup_validation_info)).check(matches(allOf(isDisplayed(), withText(""))))
+
+        given(passwordSetupContract.passwordToHash(UIMockUtils.any())).willReturn(Single.just(DataResult("01020304".hexToByteArray())))
+        onView(withId(R.id.layout_password_setup_next)).perform(click())
+        Intents.intended(matchesIntentExactly(PasswordConfirmActivity.createIntent(activity, "01020304".hexToByteArray())))
+        Intents.assertNoUnverifiedIntents()
+
+        // We started the confirm password screen
+        then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.PASSWORD_CONFIRM))
+
+        onView(withId(R.id.layout_password_confirm_text)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.confirm))))
+        onView(withId(R.id.layout_password_setup_title)).check(doesNotExist())
+        onView(withId(R.id.layout_password_confirm_back)).perform(click())
+
+        onView(withId(R.id.layout_password_setup_title)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.create_password))))
+        onView(withId(R.id.layout_password_confirm_text)).check(doesNotExist())
+
+        then(encryptionManagerMock).shouldHaveZeroInteractions()
+        // Contract interaction
+        then(passwordSetupContract).should(times(2)).validatePassword("")
+        then(passwordSetupContract).should(times(1)).passwordToHash("")
+        // Check tracking
+        then(eventTrackerMock).should(times(2)).submit(Event.ScreenView(ScreenId.PASSWORD))
+        then(eventTrackerMock).should().setCurrentScreenId(activity, ScreenId.PASSWORD)
         // We started 2 activities that call this method
         then(eventTrackerMock).should(times(2)).setCurrentScreenId(UIMockUtils.any(), UIMockUtils.any())
         then(eventTrackerMock).shouldHaveNoMoreInteractions()

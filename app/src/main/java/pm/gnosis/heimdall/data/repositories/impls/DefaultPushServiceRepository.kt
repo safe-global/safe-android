@@ -220,9 +220,9 @@ class DefaultPushServiceRepository @Inject constructor(
             val safeTransaction = SafeTransaction(transaction, TransactionExecutionRepository.Operation.values()[operation.toInt()])
             val signature = Signature(r.decimalAsBigInteger(), s.decimalAsBigInteger(), v.toInt().toByte())
             val intent = ConfirmTransactionActivity.createIntent(
-                context, signature, safe.asEthereumAddress()!!, safeTransaction, hash,
-                operationalGas.decimalAsBigInteger(), dataGas.decimalAsBigInteger(), txGas.decimalAsBigInteger(),
-                gasToken.asEthereumAddress()!!, gasPrice.decimalAsBigInteger()
+                context, signature = signature, safe = safe.asEthereumAddress()!!, transaction = safeTransaction, hash = hash,
+                operationalGas = operationalGas.decimalAsBigInteger(), dataGas = dataGas.decimalAsBigInteger(), txGas = txGas.decimalAsBigInteger(),
+                gasToken = gasToken.asEthereumAddress()!!, gasPrice = gasPrice.decimalAsBigInteger()
             )
             notificationManager.show(
                 hash.hashCode(),

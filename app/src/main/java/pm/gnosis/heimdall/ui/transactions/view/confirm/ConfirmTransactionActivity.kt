@@ -201,7 +201,7 @@ class ConfirmTransactionActivity : ViewModelActivity<ConfirmTransactionContract>
         private const val EXTRA_GAS_PRICE = "extra.string.gas_price"
         fun createIntent(
             context: Context, signature: Signature, safe: Solidity.Address, transaction: SafeTransaction, hash: String,
-            dataGas: BigInteger, operationalGas: BigInteger, txGas: BigInteger, gasToken: Solidity.Address, gasPrice: BigInteger
+            operationalGas: BigInteger, dataGas: BigInteger, txGas: BigInteger, gasToken: Solidity.Address, gasPrice: BigInteger
         ) =
             Intent(context, ConfirmTransactionActivity::class.java).apply {
                 putExtra(EXTRA_SAFE_ADDRESS, safe.value.toHexString())
