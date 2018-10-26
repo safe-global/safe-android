@@ -125,7 +125,6 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         // Contract interaction
         then(fingerprintSetupContract).should().observeFingerprintForSetup()
-        then(fingerprintSetupContract).shouldHaveNoMoreInteractions()
         // Check tracking
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.FINGERPRINT))
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.SAFE_MAIN))
@@ -159,7 +158,6 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         // Contract interaction
         then(fingerprintSetupContract).should().observeFingerprintForSetup()
-        then(fingerprintSetupContract).shouldHaveNoMoreInteractions()
         // Check tracking
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.FINGERPRINT))
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.SAFE_MAIN))
@@ -214,7 +212,6 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         // Contract interaction
         then(fingerprintSetupContract).should().observeFingerprintForSetup()
-        then(fingerprintSetupContract).shouldHaveNoMoreInteractions()
         // Check tracking
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.FINGERPRINT))
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.SAFE_MAIN))
