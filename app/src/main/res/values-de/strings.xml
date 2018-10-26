@@ -20,14 +20,14 @@
     <string name="cancel">Abbrechen</string>
     <string name="invalid_ethereum_address">Ungültige Ethereumadresse</string>
     <string name="transaction_details_error">Fehler beim Laden der Transaktionsdetails</string>
-    <string name="safe_remove_success">%1s wurde von diesem Gerät entfernt.</string>
+    <string name="safe_remove_success">%s wurde von diesem Gerät entfernt.</string>
     <string name="loading">Wird geladen …</string>
     <string name="remove_from_device">Vom Gerät entfernen</string>
     <string name="settings">Einstellungen</string>
     <string name="no_entries">Keine Einträge</string>
     <string name="delete">Löschen</string>
     <string name="dialog_delete_address_entry_message">Möchtest du diesen Eintrag aus dem Adressbuch löschen?</string>
-    <string name="toast_delete_address_book_entry">%1s aus dem Adressbuch entfernt</string>
+    <string name="toast_delete_address_book_entry">%s aus dem Adressbuch entfernt</string>
     <string name="address_book">Adressbuch</string>
     <string name="name_cannot_be_blank">Name darf nicht leer sein</string>
     <string name="address_already_in_address_book">Diese Adresse befindet sich bereits in deinem Adressbuch</string>
@@ -139,7 +139,7 @@
     </string>
     <string name="pairing_info">Alle Transaktionen müssen sowohl von diesem Gerät als auch von der Browser Extension bestätigt werden.</string>
     <string name="scan_qr_code">QR-Code scannen</string>
-    <string name="pending_safe_deposit_value">Sende mindestens %1s an die Safe-Addresse:</string>
+    <string name="pending_safe_deposit_value">Sende mindestens %s an die Safe-Addresse:</string>
     <string name="fingerprint_many_tries">Zu viele Versuche. Umschalten auf Passwort</string>
     <string name="deposit_received">Einzahlung empfangen.</string>
     <string name="creating_your_new_safe">Erstelle deinen neuen Safe...</string>
