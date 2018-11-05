@@ -230,11 +230,11 @@
     <string name="replace_recovery_phrase">Replace recovery phrase</string>
     <string name="scan_your_browser_extension">Scan your browser extension</string>
     <string name="replace_recovery_phrase_description">
-        In order to replace the recovery phrase for this Safe please do the following:
+        In order to replace the recovery phrase for this Safe please do the following:\n\n
         <b>1.</b>
-        Open the browser extension and select the Safe which recovery phrase you want to replace
+        Open the browser extension and select the Safe which recovery phrase you want to replace\n
         <b>2.</b>
-        Open the side menu and click on \"Replace recovery phrase\"
+        Open the side menu and click on \"Replace recovery phrase\"\n
         <b>3.</b>
         Scan the generated QR code by clicking the button below
     </string>
@@ -242,9 +242,8 @@
     <string name="confirm_recovery_phrase_title">Do you have it?</string>
     <string name="confirm_recovery_phrase_description">Tap the missing words in order.</string>
     <string name="layout_recovery_phrase_intro_title">Stay secure with a recovery phrase.</string>
-    <string name="layout_recovery_phrase_intro_description">If you ever need to recover your Safe on a new phone, use the phrase on the next screen.
-(Plus the Safe address we’ll give you.)
-
+    <string name="layout_recovery_phrase_intro_description">If you ever need to recover your Safe on a new phone, use the phrase on the next screen.\n
+(Plus the Safe address we’ll give you.)\n\n
 Without it, you won’t be able to recover your Safe and money.</string>
     <string name="get_my_recovery_phrase">Get my recovery phrase</string>
     <string name="layout_replace_recovery_phrase_transaction_info_description">The old recovery phrase will become invalid and will be replaced by the new one.</string>
