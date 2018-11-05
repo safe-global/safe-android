@@ -138,7 +138,7 @@
 \t\t3. Its 12-word recovery phrase.</string>
     <string name="safe_intro_message_2">Your funds are held securely in this mobile Safe and cannot be accessed by Gnosis Ltd.</string>
     <string name="safe_intro_message_3">
-        <![CDATA[You need this Safe’s <font color=#f02525>recovery phrase</font> to access your funds when you change or lose your phone.
+        <![CDATA[You need this Safe’s <font color=#f02525>recovery phrase</font> to access your funds when you change or lose your phone.\n
 (Get ready to note it down and keep it somewhere safe.)]]>
     </string>
     <string name="pairing_info">All transactions need to be approved by both this device and the browser extension.</string>
