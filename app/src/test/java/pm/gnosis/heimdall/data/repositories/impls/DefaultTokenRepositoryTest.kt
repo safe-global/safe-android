@@ -26,7 +26,9 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
-import pm.gnosis.heimdall.data.remote.models.tokens.VerifiedTokenJson
+import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfo
+import pm.gnosis.heimdall.data.remote.models.tokens.VerifiedToken
+import pm.gnosis.heimdall.data.remote.models.tokens.VerifiedTokenResult
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.model.Solidity
@@ -509,14 +511,17 @@ class DefaultTokenRepositoryTest {
     @Test
     fun loadVerifiedTokens() {
         val testObserver = TestObserver<List<ERC20Token>>()
-        val verifiedToken = VerifiedTokenJson(
-            address = Solidity.Address(BigInteger.ZERO),
-            name = "Test Token",
-            symbol = "TST",
-            decimals = 18,
-            logoUrl = ""
+        val verifiedToken = VerifiedToken(
+            TokenInfo(
+                address = Solidity.Address(BigInteger.ZERO),
+                name = "Test Token",
+                symbol = "TST",
+                decimals = 18,
+                logoUrl = ""
+            ),
+            false
         )
-        val verifiedTokensList = listOf(verifiedToken)
+        val verifiedTokensList = VerifiedTokenResult(listOf(verifiedToken))
         given(verifiedTokensServiceApiMock.loadVerifiedTokenList()).willReturn(Single.just(verifiedTokensList))
 
         repository.loadVerifiedTokens().subscribe(testObserver)

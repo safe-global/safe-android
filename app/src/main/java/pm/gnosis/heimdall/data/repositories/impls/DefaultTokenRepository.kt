@@ -67,7 +67,7 @@ class DefaultTokenRepository @Inject constructor(
         }.subscribeOn(Schedulers.io())
 
     override fun loadVerifiedTokens(): Single<List<ERC20Token>> =
-        verifiedTokensServiceApi.loadVerifiedTokenList().map { it.map { it.fromNetwork() } }
+        verifiedTokensServiceApi.loadVerifiedTokenList().map { it.results.map { it.fromNetwork() } }
 
     private fun loadTokenFromChain(contractAddress: Solidity.Address): Observable<ERC20Token> {
         val bulk = TokenInfoRequest(

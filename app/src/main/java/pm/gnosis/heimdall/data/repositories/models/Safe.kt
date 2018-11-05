@@ -1,7 +1,5 @@
 package pm.gnosis.heimdall.data.repositories.models
 
-import android.content.Context
-import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
