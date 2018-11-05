@@ -197,7 +197,7 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         // Check and dismiss snackbar
         onView(allOf(isDisplayed(), withText(context.getString(R.string.fingerprint_not_recognized)))).perform(ViewActions.swipeRight())
         // Wait for snackbar to disappear
-        Thread.sleep(100)
+        Thread.sleep(200)
 
         // Fingerprint setup
         fingerprintSubject.onNext(true)
