@@ -7,6 +7,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
@@ -23,6 +24,7 @@ import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 interface SubmitTransactionHelper {
@@ -42,7 +44,7 @@ interface SubmitTransactionHelper {
 
     sealed class ViewUpdate {
         data class TransactionInfo(val viewHolder: TransactionInfoViewHolder) : ViewUpdate()
-        data class Estimate(val fees: Wei, val balance: Wei) : ViewUpdate()
+        data class Estimate(val fees: BigInteger, val balance: BigInteger, val token: Solidity.Address) : ViewUpdate()
         object EstimateError : ViewUpdate()
         data class Confirmations(val isReady: Boolean) : ViewUpdate()
         object ConfirmationsRequested : ViewUpdate()
@@ -100,7 +102,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                 emit = {
                     it.map {
                         ViewUpdate.Estimate(
-                            Wei(it.gasCosts()), it.balance
+                            it.gasCosts(), it.balance, it.gasToken
                         )
                     }
                 },

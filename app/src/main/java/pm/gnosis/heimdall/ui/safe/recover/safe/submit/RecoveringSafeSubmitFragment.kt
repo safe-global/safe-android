@@ -76,7 +76,7 @@ class RecoveringSafeSubmitFragment : BaseFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = {
                 layout_recovering_safe_submit_data_balance_value.text =
-                        context!!.getString(R.string.x_ether, it.balance.toEther().stringWithNoTrailingZeroes())
+                        context!!.getString(R.string.x_ether, Wei(it.balance).toEther().stringWithNoTrailingZeroes())
                 layout_recovering_safe_submit_data_fees_value.text =
                         "- ${context!!.getString(R.string.x_ether, Wei(it.gasCosts()).toEther().stringWithNoTrailingZeroes())}"
                 layout_recovering_safe_submit_button.visible(true)

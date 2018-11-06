@@ -82,13 +82,13 @@ class ConfirmTransactionViewModel @Inject constructor(
             .map {
                 TransactionExecutionRepository.ExecuteInformation(
                     hash, updatedTransaction, it.sender, it.requiredConfirmation, it.owners,
-                    gasPrice, txGas, dataGas, operationalGas, it.balance
+                    gasToken, gasPrice, txGas, dataGas, operationalGas, it.balance
                 )
             }
     }
 
     private fun loadState(hash: String) =
-        cache[hash]?.let { Single.just(it) } ?: executionRepository.loadSafeExecuteState(safe)
+        cache[hash]?.let { Single.just(it) } ?: executionRepository.loadSafeExecuteState(safe, gasToken)
             .doOnSuccess {
                 cache[hash] = it
             }

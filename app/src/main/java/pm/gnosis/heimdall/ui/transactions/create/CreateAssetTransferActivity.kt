@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract.ViewUpdate
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.toast
@@ -145,9 +146,9 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
         when (update) {
             is CreateAssetTransferContract.ViewUpdate.Estimate -> {
                 layout_create_asset_transfer_balance_value.text =
-                        getString(R.string.x_ether, update.balance.toEther().stringWithNoTrailingZeroes())
+                        getString(R.string.x_ether, Wei(update.balance).toEther().stringWithNoTrailingZeroes())
                 layout_create_asset_transfer_fees_value.text =
-                        "- ${getString(R.string.x_ether, update.estimate.toEther().stringWithNoTrailingZeroes())}"
+                        "- ${getString(R.string.x_ether, Wei(update.estimate).toEther().stringWithNoTrailingZeroes())}"
                 layout_create_asset_transfer_continue_button.visible(update.canExecute)
                 if (!update.canExecute) layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.tomato))
                 else {

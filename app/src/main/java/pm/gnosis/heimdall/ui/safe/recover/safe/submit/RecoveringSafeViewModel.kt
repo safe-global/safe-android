@@ -49,7 +49,7 @@ class RecoveringSafeViewModel @Inject constructor(
                         when {
                             safe.nonce != it.transaction.wrapped.nonce ||
                                     it.transaction.wrapped.value ?: Wei.ZERO != Wei.ZERO -> safe to RecoveryState.ERROR
-                            it.balance.value < it.gasCosts() -> safe to RecoveryState.CREATED
+                            it.balance < it.gasCosts() -> safe to RecoveryState.CREATED
                             else -> safe to RecoveryState.FUNDED
                         }
                     }
@@ -101,7 +101,7 @@ class RecoveringSafeViewModel @Inject constructor(
                 val tx = buildSafeTransaction(safe)
                 executionRepository.calculateHash(address, tx, safe.gasPrice, safe.txGas, safe.dataGas)
                     .flatMap { hash ->
-                        executionRepository.loadSafeExecuteState(address)
+                        executionRepository.loadSafeExecuteState(address, safe.gasToken)
                             .map {
                                 TransactionExecutionRepository.ExecuteInformation(
                                     hash.toHexString().addHexPrefix(),
@@ -109,6 +109,7 @@ class RecoveringSafeViewModel @Inject constructor(
                                     it.sender,
                                     it.requiredConfirmation,
                                     it.owners,
+                                    safe.gasToken,
                                     safe.gasPrice,
                                     safe.txGas,
                                     safe.dataGas,
@@ -173,6 +174,7 @@ class RecoveringSafeViewModel @Inject constructor(
     private fun requestExecuteInfo(safe: RecoveringSafe) =
         executionRepository.loadExecuteInformation(
             safe.address,
+            safe.gasToken,
             buildSafeTransaction(safe)
         )
 

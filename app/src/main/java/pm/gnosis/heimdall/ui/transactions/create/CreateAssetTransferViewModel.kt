@@ -142,13 +142,13 @@ class CreateAssetTransferViewModel @Inject constructor(
         Observable.fromCallable {
             AssetTransferTransactionBuilder.build(data)
         }.flatMapSingle {
-            executionRepository.loadExecuteInformation(safe, it)
+            executionRepository.loadExecuteInformation(safe, ERC20Token.ETHER_TOKEN.address, it)
         }
             .map<ViewUpdate> {
-                val estimate = Wei(it.gasCosts())
+                val estimate = it.gasCosts()
                 val canExecute =
-                    (estimate.value + (if (data.token == ERC20Token.ETHER_TOKEN.address) data.amount else BigInteger.ZERO)) <= it.balance.value
-                ViewUpdate.Estimate(estimate, it.balance, canExecute)
+                    (estimate + (if (data.token == it.gasToken) data.amount else BigInteger.ZERO)) <= it.balance
+                ViewUpdate.Estimate(estimate, it.balance, it.gasToken, canExecute)
             }
             .onErrorReturn {
                 Timber.e(it)

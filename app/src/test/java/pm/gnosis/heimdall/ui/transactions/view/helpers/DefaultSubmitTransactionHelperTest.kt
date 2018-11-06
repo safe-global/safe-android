@@ -84,7 +84,7 @@ class DefaultSubmitTransactionHelperTest {
     fun testFlow() {
         val error = TimeoutException()
         val estimationSingleFactory = TestSingleFactory<TransactionExecutionRepository.ExecuteInformation>()
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(estimationSingleFactory.get())
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(estimationSingleFactory.get())
         val signatureSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
         given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
         val signatureSingleFactory = TestSingleFactory<Map<Solidity.Address, Signature>>()
@@ -133,15 +133,17 @@ class DefaultSubmitTransactionHelperTest {
         // Estimate, balance too low
         val info = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH,
-            TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size - 1,
-            TEST_OWNERS, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
-            Wei.ether("23")
+            TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
+            TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
+            Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
         retryEvents.onNext(Unit)
 
-        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(Wei(BigInteger.valueOf(10)), Wei.ether("23"))) }
+        updates += {
+            it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(BigInteger.valueOf(10), Wei.ether("23").value, TEST_ETHER_TOKEN))
+        }
         testObserver.assertUpdates(updates)
 
         /*
@@ -396,11 +398,11 @@ class DefaultSubmitTransactionHelperTest {
 
         val info = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH,
-            TEST_TRANSACTION, TEST_OWNERS[0], 1,
-            TEST_OWNERS.subList(0, 1), BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
-            Wei.ether("23")
+            TEST_TRANSACTION, TEST_OWNERS[0], 1, TEST_OWNERS.subList(0, 1),
+            TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
+            Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
 
         submitTransactionHelper.observe(events, TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS))
@@ -409,7 +411,9 @@ class DefaultSubmitTransactionHelperTest {
         val updates = mutableListOf<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>({
             ((it as? DataResult)?.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder == transactionViewHolder
         })
-        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(Wei(BigInteger.valueOf(10)), Wei.ether("23"))) }
+        updates += {
+            it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("23").value, TEST_ETHER_TOKEN))
+        }
         testObserver.assertUpdates(updates)
 
         signatureSubject.onNext(emptyMap())
@@ -418,7 +422,7 @@ class DefaultSubmitTransactionHelperTest {
     }
 
     private fun loadExecutionInfo(transaction: SafeTransaction) =
-        relayRepositoryMock.loadExecuteInformation(TEST_SAFE, transaction)
+        relayRepositoryMock.loadExecuteInformation(TEST_SAFE, TEST_ETHER_TOKEN, transaction)
 
     private fun TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>.assertUpdates(updates: List<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>): TestObserver<Result<SubmitTransactionHelper.ViewUpdate>> {
         System.out.println("Updated: ${values()}")

@@ -15,6 +15,7 @@ import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
@@ -79,7 +80,7 @@ class RecoverSafeRecoveryPhraseViewModelTest {
             TEST_TX_HASH.asTransactionHash(), SafeTransaction(Transaction(
                 TEST_SAFE
             ), TransactionExecutionRepository.Operation.CALL),
-            TEST_SAFE, 2, emptyList(), BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
+            TEST_SAFE, 2, emptyList(), TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO
         )
         val signatures = listOf(Signature(BigInteger.TEN, BigInteger.TEN, 27))
 
@@ -144,6 +145,7 @@ class RecoverSafeRecoveryPhraseViewModelTest {
             ViewUpdate.ValidMnemonic::class to ViewUpdate.ValidMnemonic,
             ViewUpdate.RecoverDataError::class to ViewUpdate.RecoverDataError(IllegalStateException())
         )
+        private val TEST_GAS_TOKEN = ERC20Token.ETHER_TOKEN.address
         private val TEST_SAFE = "0x1f81FFF89Bd57811983a35650296681f99C65C7E".asEthereumAddress()!!
         private val TEST_EXTENSION = "0xC2AC20b3Bb950C087f18a458DB68271325a48132".asEthereumAddress()!!
         private val TEST_TX_HASH = "0xdae721569a948b87c269ebacaa5a4a67728095e32f9e7e4626f109f27a73b40f".hexAsBigInteger()

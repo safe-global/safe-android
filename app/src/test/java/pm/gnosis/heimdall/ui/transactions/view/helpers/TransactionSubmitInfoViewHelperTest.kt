@@ -28,6 +28,8 @@ import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.*
 import pm.gnosis.tests.utils.Asserts.assertThrow
+import pm.gnosis.utils.asEthereumAddress
+import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
@@ -70,7 +72,7 @@ class TransactionSubmitInfoViewHelperTest {
         then(requestButton).should().isEnabled = false
         then(requestButton).shouldHaveNoMoreInteractions()
 
-        then(confirmationsTimer).should().text = "${R.string.request_confirmation_wait_x_s.toString()}, 30"
+        then(confirmationsTimer).should().text = "${R.string.request_confirmation_wait_x_s}, 30"
         then(confirmationsTimer).shouldHaveNoMoreInteractions()
     }
 
@@ -293,7 +295,7 @@ class TransactionSubmitInfoViewHelperTest {
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_value, dataFees)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
 
-        val data = SubmitTransactionHelper.ViewUpdate.Estimate(Wei.ether("0.1"), Wei.ether("1"))
+        val data = SubmitTransactionHelper.ViewUpdate.Estimate(Wei.ether("0.1").value, Wei.ether("1").value, TEST_GAS_TOKEN)
         helper.bind(containerView)
         assertNull(helper.applyUpdate(data))
 
@@ -325,7 +327,7 @@ class TransactionSubmitInfoViewHelperTest {
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_value, dataFees)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
 
-        val data = SubmitTransactionHelper.ViewUpdate.Estimate(Wei.ether("0.1"), Wei.ZERO)
+        val data = SubmitTransactionHelper.ViewUpdate.Estimate(Wei.ether("0.1").value, BigInteger.ZERO, TEST_GAS_TOKEN)
         helper.bind(containerView)
         assertNull(helper.applyUpdate(data))
 
@@ -455,4 +457,8 @@ class TransactionSubmitInfoViewHelperTest {
 
     data class ReadyStateMocks(val confirmationProgress: MaterialProgressBar, val confirmationStatus: TextView)
     data class RejectionStateMocks(val confirmationProgress: MaterialProgressBar, val confirmationsImage: ImageView, val confirmationsInfo: TextView)
+
+    companion object {
+        val TEST_GAS_TOKEN = "0x0".asEthereumAddress()!!
+    }
 }

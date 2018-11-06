@@ -21,6 +21,7 @@ import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.getTestString
 import pm.gnosis.tests.utils.mockGetStringWithArgs
+import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -55,8 +56,8 @@ class SimpleSignatureStoreTest {
         val mappedObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val info = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS,
-            BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
-            Wei.ZERO
+            TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
+            BigInteger.ZERO
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, info, null).subscribe(mappedObserver)
@@ -90,9 +91,9 @@ class SimpleSignatureStoreTest {
         )
 
         // It should not be possible to add the same signature again
-        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_already_exists)), {
+        assertError(SimpleLocalizedException(contextMock.getTestString(R.string.error_signature_already_exists))) {
             store.add(TEST_OWNERS[0] to TEST_SIGNATURE)
-        })
+        }
 
         store.add(TEST_OWNERS[1] to TEST_SIGNATURE)
         // Signature added, changes should be propagated
@@ -126,7 +127,7 @@ class SimpleSignatureStoreTest {
         val updateOwnersObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val updateOwnersInfo = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
-            TEST_OWNERS_2, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
+            TEST_OWNERS_2, TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, updateOwnersInfo, null).subscribe(updateOwnersObserver)
@@ -153,7 +154,7 @@ class SimpleSignatureStoreTest {
         val updateHashObserver = TestObserver<Map<Solidity.Address, Signature>>()
         val updateHashInfo = TransactionExecutionRepository.ExecuteInformation(
             "some_new_hash", TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS_2.size,
-            TEST_OWNERS_2, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
+            TEST_OWNERS_2, TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO
         )
         // Set store info an observe it
         store.flatMapInfo(TEST_SAFE, updateHashInfo, mapOf(TEST_OWNERS_2[1] to TEST_SIGNATURE)).subscribe(updateHashObserver)
@@ -196,6 +197,7 @@ class SimpleSignatureStoreTest {
 
     companion object {
         private const val TEST_TRANSACTION_HASH = "SomeHash"
+        private val TEST_GAS_TOKEN = "0x0".asEthereumAddress()!!
         private val TEST_SIGNATURE = Signature(BigInteger.valueOf(987), BigInteger.valueOf(678), 27)
         private val TEST_SAFE = Solidity.Address(BigInteger.ZERO)
         private val TEST_TRANSACTION = SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)

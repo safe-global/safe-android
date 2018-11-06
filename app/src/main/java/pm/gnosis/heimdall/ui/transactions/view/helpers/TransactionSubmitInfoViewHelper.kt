@@ -13,6 +13,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.include_transaction_submit_info.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.stringWithNoTrailingZeroes
@@ -96,13 +97,13 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
     fun applyUpdate(update: SubmitTransactionHelper.ViewUpdate): Disposable? {
         when (update) {
             is SubmitTransactionHelper.ViewUpdate.Estimate -> {
-                val balanceColor = context.getColorCompat(if (update.balance.value < update.fees.value) R.color.tomato else R.color.battleship_grey)
+                val balanceColor = context.getColorCompat(if (update.balance < update.fees) R.color.tomato else R.color.battleship_grey)
                 view.include_transaction_submit_info_data_balance_label.setTextColor(balanceColor)
                 view.include_transaction_submit_info_data_balance_value.setTextColor(balanceColor)
                 view.include_transaction_submit_info_data_balance_value.text =
-                        context.getString(R.string.x_ether, update.balance.toEther().stringWithNoTrailingZeroes())
+                        context.getString(R.string.x_ether, Wei(update.balance).toEther().stringWithNoTrailingZeroes())
                 view.include_transaction_submit_info_data_fees_value.text =
-                        "- ${context.getString(R.string.x_ether, update.fees.toEther().stringWithNoTrailingZeroes())}"
+                        "- ${context.getString(R.string.x_ether, Wei(update.fees).toEther().stringWithNoTrailingZeroes())}"
                 view.include_transaction_submit_info_confirmations_group.visible(true)
             }
             is SubmitTransactionHelper.ViewUpdate.EstimateError -> {

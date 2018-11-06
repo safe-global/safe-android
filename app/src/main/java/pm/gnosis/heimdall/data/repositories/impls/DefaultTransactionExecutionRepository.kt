@@ -7,6 +7,7 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
+import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
@@ -98,8 +99,8 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         ).toHex()
 
     private fun valuesHash(parts: Array<out String>) =
-        parts.fold(StringBuilder().append("0x14d461bc7412367e924637b363c7bf29b8f47e2f84869f4426e5633d8af47b20")) {
-                acc, part -> acc.append(part)
+        parts.fold(StringBuilder().append("0x14d461bc7412367e924637b363c7bf29b8f47e2f84869f4426e5633d8af47b20")) { acc, part ->
+            acc.append(part)
         }.toString().run {
             Sha3Utils.keccak(hexToByteArray()).toHex()
         }
@@ -109,46 +110,63 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         return Sha3Utils.keccak(initial.toString().hexToByteArray())
     }
 
-    private fun loadSafeState(safeAddress: Solidity.Address) =
+    private fun loadSafeState(safeAddress: Solidity.Address, paymentToken: Solidity.Address) =
         Single.fromCallable {
             TransactionInfoRequest(
                 EthCall(
                     transaction = Transaction(
                         safeAddress, data = GnosisSafe.GetThreshold.encode()
                     ), id = 0
-                ),
+                ).toMappedRequest(),
                 EthCall(
                     transaction = Transaction(
                         safeAddress, data = GnosisSafe.Nonce.encode()
                     ), id = 1
-                ),
+                ).toMappedRequest(),
                 EthCall(
                     transaction = Transaction(
                         safeAddress, data = GnosisSafe.GetOwners.encode()
                     ), id = 2
-                ),
-                EthBalance(
-                    address = safeAddress,
-                    id = 3
-                )
+                ).toMappedRequest(),
+                balanceRequest(safeAddress, paymentToken, 3)
             )
 
         }.subscribeOn(Schedulers.computation())
             .flatMap { ethereumRepository.request(it).singleOrError() }
+
+    private fun balanceRequest(safe: Solidity.Address, token: Solidity.Address, index: Int) =
+        if (token == ERC20Token.ETHER_TOKEN.address) {
+            MappedRequest(EthBalance(safe, id = index)) {
+                it?.value
+            }
+        } else {
+            MappedRequest(
+                EthCall(
+                    transaction = Transaction(
+                        token,
+                        data = ERC20Contract.BalanceOf.encode(safe)
+                    ),
+                    id = index
+                )
+            ) { ERC20Contract.BalanceOf.decode(it!!).balance.value }
+        }
 
     private fun checkNonce(safeAddress: Solidity.Address, contractNonce: BigInteger): BigInteger {
         val cachedNonce = nonceCache[safeAddress]
         return if (cachedNonce != null && cachedNonce >= contractNonce) cachedNonce + BigInteger.ONE else contractNonce
     }
 
-    override fun loadSafeExecuteState(safeAddress: Solidity.Address): Single<TransactionExecutionRepository.SafeExecuteState> =
-        loadSafeState(safeAddress)
+    override fun loadSafeExecuteState(
+        safeAddress: Solidity.Address,
+        paymentToken: Solidity.Address
+    ): Single<TransactionExecutionRepository.SafeExecuteState> =
+        loadSafeState(safeAddress, paymentToken)
             .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
             .map { (info, sender) ->
-                val nonce = checkNonce(safeAddress, GnosisSafe.Nonce.decode(info.nonce.result()!!).param0.value)
-                val threshold = GnosisSafe.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
-                val owners = GnosisSafe.GetOwners.decode(info.owners.result()!!).param0.items
-                val safeBalance = info.balance.result()!!
+                val nonce = checkNonce(safeAddress, GnosisSafe.Nonce.decode(info.nonce.mapped()!!).param0.value)
+                val threshold = GnosisSafe.GetThreshold.decode(info.threshold.mapped()!!).param0.value.toInt()
+                val owners = GnosisSafe.GetOwners.decode(info.owners.mapped()!!).param0.items
+                val safeBalance = info.balance.mapped()!!
                 TransactionExecutionRepository.SafeExecuteState(
                     sender,
                     threshold,
@@ -160,9 +178,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
 
     override fun loadExecuteInformation(
         safeAddress: Solidity.Address,
+        paymentToken: Solidity.Address,
         transaction: SafeTransaction
     ): Single<TransactionExecutionRepository.ExecuteInformation> =
-        loadSafeState(safeAddress)
+        loadSafeState(safeAddress, paymentToken)
             .flatMap { info ->
                 relayServiceApi.estimate(
                     safeAddress.asEthereumAddressChecksumString(),
@@ -171,7 +190,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                         transaction.wrapped.value?.value?.asDecimalString() ?: "0",
                         transaction.wrapped.data ?: "0x",
                         transaction.operation.toInt(),
-                        GnosisSafe.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
+                        GnosisSafe.GetThreshold.decode(info.threshold.mapped()!!).param0.value.toInt()
                     )
                 ).map { info to it }
             }
@@ -179,18 +198,18 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             .flatMap { (infoWithEstimate, sender) ->
                 val (info, estimate) = infoWithEstimate
                 // We have 3 nonce sources: RPC endpoint, Estimate endpoint, local nonce cache ... we take the maximum of all
-                val rpcNonce = GnosisSafe.Nonce.decode(info.nonce.result()!!).param0.value
+                val rpcNonce = GnosisSafe.Nonce.decode(info.nonce.mapped()!!).param0.value
                 val estimateNonce = estimate.lastUsedNonce?.decimalAsBigInteger()?.let { it + BigInteger.ONE } ?: BigInteger.ZERO
                 val nonce = checkNonce(safeAddress, if (rpcNonce > estimateNonce) rpcNonce else estimateNonce)
 
-                val threshold = GnosisSafe.GetThreshold.decode(info.threshold.result()!!).param0.value.toInt()
-                val owners = GnosisSafe.GetOwners.decode(info.owners.result()!!).param0.items
+                val threshold = GnosisSafe.GetThreshold.decode(info.threshold.mapped()!!).param0.value.toInt()
+                val owners = GnosisSafe.GetOwners.decode(info.owners.mapped()!!).param0.items
                 val updatedTransaction = transaction.copy(wrapped = transaction.wrapped.updateTransactionWithStatus(nonce))
                 val txGas = estimate.safeTxGas.decimalAsBigInteger()
                 val dataGas = estimate.dataGas.decimalAsBigInteger()
                 val operationalGas = estimate.operationalGas.decimalAsBigInteger()
                 val gasPrice = estimate.gasPrice.decimalAsBigInteger()
-                val safeBalance = info.balance.result()!!
+                val safeBalance = info.balance.mapped()!!
                 calculateHash(safeAddress, updatedTransaction, txGas, dataGas, gasPrice).map {
                     TransactionExecutionRepository.ExecuteInformation(
                         it.toHexString().addHexPrefix(),
@@ -198,6 +217,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                         sender,
                         threshold,
                         owners,
+                        paymentToken,
                         gasPrice,
                         txGas,
                         dataGas,
@@ -292,7 +312,8 @@ class DefaultTransactionExecutionRepository @Inject constructor(
     private fun broadcastTransactionSubmitted(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
-        chainHash: String) {
+        chainHash: String
+    ) {
         transactionSubmittedCallbacks.forEach { it.onTransactionSubmitted(safeAddress, transaction, chainHash) }
     }
 
@@ -338,7 +359,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         dataGas: BigInteger,
         gasPrice: BigInteger
     ): Single<Map<Solidity.Address, Signature>> =
-        // If owner is signature we need to sign the hash and add the signature to the map
+    // If owner is signature we need to sign the hash and add the signature to the map
         if (senderIsOwner)
             accountsRepository.loadActiveAccount()
                 .flatMap { account ->
@@ -422,11 +443,13 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             }
 
     private class TransactionInfoRequest(
-        val threshold: EthRequest<String>,
-        val nonce: EthRequest<String>,
-        val owners: EthRequest<String>,
-        val balance: EthRequest<Wei>
-    ) : BulkRequest(threshold, nonce, owners, balance)
+        val threshold: MappedRequest<String, String?>,
+        val nonce: MappedRequest<String, String?>,
+        val owners: MappedRequest<String, String?>,
+        val balance: MappedRequest<out Any, BigInteger?>
+    ) : MappingBulkRequest<Any?>(threshold, nonce, owners, balance)
+
+    private fun EthRequest<String>.toMappedRequest() = MappedRequest(this) { it }
 
     companion object {
         private const val ERC191_BYTE = "19"
