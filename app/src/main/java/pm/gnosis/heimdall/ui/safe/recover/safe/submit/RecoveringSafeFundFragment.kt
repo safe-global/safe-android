@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
+import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.EventTracker
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -32,7 +33,10 @@ import javax.inject.Inject
 class RecoveringSafeFundFragment : BaseFragment() {
 
     override fun inject(component: ApplicationComponent) =
-        DaggerViewComponent.builder().applicationComponent(component).build().inject(this)
+        DaggerViewComponent.builder()
+            .viewModule(ViewModule(context!!))
+            .applicationComponent(component)
+            .build().inject(this)
 
     @Inject
     lateinit var viewModel: RecoveringSafeContract
