@@ -22,6 +22,10 @@ android {
         // Contracts
         buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0x2727D69C0BD14B1dDd28371B8D97e808aDc1C2f7"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0x2c155fd04682979fd15c67fb65dfab9345605761"))
+        // Safe creation params
+        buildConfigField javaTypes.INT, "PROXY_INIT_DATA_LENGTH", getKey("PROXY_INIT_DATA_LENGTH", "3006")
+        buildConfigField javaTypes.STRING, "PROXY_INIT_DATA_HASH", asString(getKey("PROXY_INIT_DATA_HASH", "edf1810f1a9b5415ef81722254f125afaa5165f526077a7d7da91687cdfbc98b"))
+        buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xd9e09beaEb338d81a7c5688358df0071d4988115"))
         // API keys
         buildConfigField javaTypes.STRING, "INFURA_API_KEY", asString(getKey("INFURA_API_KEY", ""))
         // Services
@@ -77,6 +81,7 @@ android {
             minifyEnabled false
             buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
+            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
         }
 
         internal {
@@ -87,6 +92,7 @@ android {
             signingConfig signingConfigs.debug
             buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.staging.gnosisdev.com/api/"))
             buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
+            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
         }
 
         rinkeby {
@@ -106,6 +112,7 @@ android {
             buildConfigField javaTypes.STRING, "VERIFIED_TOKEN_SERVICE_ENDPOINT", asString(getKey("VERIFIED_TOKEN_SERVICE_ENDPOINT", "tokens.json"))
             buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2"))
             buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0x5bb83eC2a142e733ff921EeB84b379C6C3193FEB"))
+            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0x07F455F30e862E13E3E3D960762cB11c4F744d52"))
         }
     }
 
