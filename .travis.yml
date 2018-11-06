@@ -43,16 +43,19 @@ before_install:
 script:
   - . ./ci/prepare_env_travis.sh
   - ./ci/run_unit_tests.sh
-  - ./ci/release_internal_beta.sh
+  - ./ci/upload_crashlytic_versions.sh
 
 before_deploy:
   - ./ci/build_rinkeby_version.sh
+  - ./ci/build_release_version.sh
 
 deploy:
   provider: releases
   api_key: "${GITHUB_API_KEY}"
   file_glob: true
-  file: app/build/outputs/apk/*/*-rinkeby.apk
+  file:
+    - app/build/outputs/apk/*/*-rinkeby.apk
+    - app/build/outputs/apk/*/*-release.apk
   skip_cleanup: true
   on:
     tags: true
