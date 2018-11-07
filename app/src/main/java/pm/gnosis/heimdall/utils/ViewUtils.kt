@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import android.support.v4.view.ViewCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.content.res.AppCompatResources
 import android.view.View
 import android.widget.ImageView
@@ -56,3 +57,5 @@ fun scaleBitmapToWidth(bitmap: Bitmap, targetWidth: Int): Bitmap {
     val newHeight = (height * scaleFactor).toInt()
     return Bitmap.createScaledBitmap(bitmap, targetWidth, newHeight, true)
 }
+
+fun SwipeRefreshLayout.postIsRefreshing(refreshing: Boolean) = post { isRefreshing = refreshing }

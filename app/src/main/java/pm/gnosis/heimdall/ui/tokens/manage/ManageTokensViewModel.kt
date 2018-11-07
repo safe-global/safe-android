@@ -41,14 +41,12 @@ class ManageTokensViewModel @Inject constructor(
     }
 
     private fun loadData(verifiedTokens: List<ERC20TokenEnabled>, enabledTokens: List<ERC20TokenEnabled>): List<ERC20TokenEnabled> {
-        val map = verifiedTokens.associateByTo(mutableMapOf(), { it.erc20Token.address })
+        val map = verifiedTokens.associateByTo(mutableMapOf()) { it.erc20Token.address }
         enabledTokens.forEach { map[it.erc20Token.address] = it }
         return map.values.toList()
     }
 
-    override fun enableToken(erC20Token: ERC20Token) =
-        tokenRepository.enableToken(erC20Token).mapToResult()
+    override fun enableToken(erC20Token: ERC20Token) = tokenRepository.enableToken(erC20Token).mapToResult()
 
-    override fun disableToken(tokenAddress: Solidity.Address) =
-        tokenRepository.disableToken(tokenAddress).mapToResult()
+    override fun disableToken(tokenAddress: Solidity.Address) = tokenRepository.disableToken(tokenAddress).mapToResult()
 }

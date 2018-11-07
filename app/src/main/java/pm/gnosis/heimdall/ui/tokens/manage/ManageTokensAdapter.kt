@@ -48,6 +48,7 @@ class ManageTokensAdapter @Inject constructor(
             disposables.clear()
             current?.let {
                 disposables += itemView.layout_manage_tokens_switch.checkedChanges()
+                    .skipInitialValue()
                     .switchMapSingle { enabled ->
                         if (enabled) viewModel.enableToken(it.erc20Token)
                         else viewModel.disableToken(it.erc20Token.address)
@@ -59,6 +60,12 @@ class ManageTokensAdapter @Inject constructor(
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
         fun stop() {
             disposables.clear()
+        }
+
+        override fun unbind() {
+            super.unbind()
+            stop()
+            current = null
         }
     }
 }
