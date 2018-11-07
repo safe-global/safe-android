@@ -24,6 +24,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.models.Wei
 import pm.gnosis.tests.utils.*
@@ -283,66 +284,111 @@ class TransactionSubmitInfoViewHelperTest {
 
     @Test
     fun applyUpdateEstimate() {
-        contextMock.mockGetStringWithArgs()
         contextMock.mockGetColor()
 
         val dataBalance = mock(TextView::class.java)
         val dataBalanceLabel = mock(TextView::class.java)
         val dataFees = mock(TextView::class.java)
         val confirmationsGroup = mock(Group::class.java)
+        val retryButton = mock(TextView::class.java)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_balance_value, dataBalance)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_balance_label, dataBalanceLabel)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_value, dataFees)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_retry_button, retryButton)
 
-        val data = SubmitTransactionHelper.ViewUpdate.Estimate(Wei.ether("0.1").value, Wei.ether("1").value, TEST_GAS_TOKEN)
+        val data = SubmitTransactionHelper.ViewUpdate.Estimate(Wei.ether("0.1").value, Wei.ether("1").value, ERC20Token.ETHER_TOKEN, true)
         helper.bind(containerView)
         assertNull(helper.applyUpdate(data))
 
-        then(dataBalance).should().text = "${R.string.x_ether}, 1"
+        then(dataBalance).should().text = "1 ETH"
         then(dataBalance).should().setTextColor(R.color.battleship_grey)
         then(dataBalance).shouldHaveNoMoreInteractions()
 
         then(dataBalanceLabel).should().setTextColor(R.color.battleship_grey)
         then(dataBalanceLabel).shouldHaveNoMoreInteractions()
 
-        then(dataFees).should().text = "- ${R.string.x_ether}, 0.1"
+        then(dataFees).should().text = "- 0.1 ETH"
         then(dataFees).shouldHaveNoMoreInteractions()
 
         then(confirmationsGroup).should().visibility = View.VISIBLE
         then(confirmationsGroup).shouldHaveNoMoreInteractions()
+
+        then(retryButton).should().visibility = View.GONE
+        then(retryButton).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun applyUpdateEstimateNotEnoughFunds() {
-        contextMock.mockGetStringWithArgs()
         contextMock.mockGetColor()
 
         val dataBalance = mock(TextView::class.java)
         val dataBalanceLabel = mock(TextView::class.java)
         val dataFees = mock(TextView::class.java)
         val confirmationsGroup = mock(Group::class.java)
+        val retryButton = mock(TextView::class.java)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_balance_value, dataBalance)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_balance_label, dataBalanceLabel)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_value, dataFees)
         containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_retry_button, retryButton)
 
-        val data = SubmitTransactionHelper.ViewUpdate.Estimate(Wei.ether("0.1").value, BigInteger.ZERO, TEST_GAS_TOKEN)
+        val data = SubmitTransactionHelper.ViewUpdate.Estimate(Wei.ether("0.1").value, BigInteger.ZERO, ERC20Token.ETHER_TOKEN, false)
         helper.bind(containerView)
         assertNull(helper.applyUpdate(data))
 
-        then(dataBalance).should().text = "${R.string.x_ether}, 0"
+        then(dataBalance).should().text = "0 ETH"
         then(dataBalance).should().setTextColor(R.color.tomato)
         then(dataBalance).shouldHaveNoMoreInteractions()
 
         then(dataBalanceLabel).should().setTextColor(R.color.tomato)
         then(dataBalanceLabel).shouldHaveNoMoreInteractions()
 
-        then(dataFees).should().text = "- ${R.string.x_ether}, 0.1"
+        then(dataFees).should().text = "- 0.1 ETH"
+        then(dataFees).shouldHaveNoMoreInteractions()
+
+        then(confirmationsGroup).should().visibility = View.GONE
+        then(confirmationsGroup).shouldHaveNoMoreInteractions()
+
+        then(retryButton).should().visibility = View.VISIBLE
+        then(retryButton).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun applyUpdateEstimateGasToken() {
+        contextMock.mockGetColor()
+
+        val dataBalance = mock(TextView::class.java)
+        val dataBalanceLabel = mock(TextView::class.java)
+        val dataFees = mock(TextView::class.java)
+        val confirmationsGroup = mock(Group::class.java)
+        val retryButton = mock(TextView::class.java)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_data_balance_value, dataBalance)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_data_balance_label, dataBalanceLabel)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_data_fees_value, dataFees)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_confirmations_group, confirmationsGroup)
+        containerView.mockFindViewById(R.id.include_transaction_submit_info_retry_button, retryButton)
+
+        val testGasToken = ERC20Token("0x1337".asEthereumAddress()!!, "Gas Token", "GT", 0)
+        val data = SubmitTransactionHelper.ViewUpdate.Estimate(BigInteger.ONE, BigInteger.TEN, testGasToken, true)
+        helper.bind(containerView)
+        assertNull(helper.applyUpdate(data))
+
+        then(dataBalance).should().text = "10 GT"
+        then(dataBalance).should().setTextColor(R.color.battleship_grey)
+        then(dataBalance).shouldHaveNoMoreInteractions()
+
+        then(dataBalanceLabel).should().setTextColor(R.color.battleship_grey)
+        then(dataBalanceLabel).shouldHaveNoMoreInteractions()
+
+        then(dataFees).should().text = "- 1 GT"
         then(dataFees).shouldHaveNoMoreInteractions()
 
         then(confirmationsGroup).should().visibility = View.VISIBLE
         then(confirmationsGroup).shouldHaveNoMoreInteractions()
+
+        then(retryButton).should().visibility = View.GONE
+        then(retryButton).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -457,8 +503,4 @@ class TransactionSubmitInfoViewHelperTest {
 
     data class ReadyStateMocks(val confirmationProgress: MaterialProgressBar, val confirmationStatus: TextView)
     data class RejectionStateMocks(val confirmationProgress: MaterialProgressBar, val confirmationsImage: ImageView, val confirmationsInfo: TextView)
-
-    companion object {
-        val TEST_GAS_TOKEN = "0x0".asEthereumAddress()!!
-    }
 }
