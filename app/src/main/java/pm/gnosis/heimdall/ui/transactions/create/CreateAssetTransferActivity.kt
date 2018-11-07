@@ -145,10 +145,8 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     private fun applyUpdate(update: ViewUpdate) {
         when (update) {
             is CreateAssetTransferContract.ViewUpdate.Estimate -> {
-                layout_create_asset_transfer_balance_value.text =
-                        getString(R.string.x_ether, Wei(update.balance).toEther().stringWithNoTrailingZeroes())
-                layout_create_asset_transfer_fees_value.text =
-                        "- ${getString(R.string.x_ether, Wei(update.estimate).toEther().stringWithNoTrailingZeroes())}"
+                layout_create_asset_transfer_balance_value.text = update.gasToken.displayString(update.balance)
+                layout_create_asset_transfer_fees_value.text = "- ${update.gasToken.displayString(update.estimate)}"
                 layout_create_asset_transfer_continue_button.visible(update.canExecute)
                 if (!update.canExecute) layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.tomato))
                 else {

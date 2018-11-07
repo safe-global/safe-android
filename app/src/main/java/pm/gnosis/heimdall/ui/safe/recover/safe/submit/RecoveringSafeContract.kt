@@ -19,7 +19,7 @@ abstract class RecoveringSafeContract : ViewModel() {
 
     abstract fun observeRecoveryInfo(address: Solidity.Address): Observable<Result<RecoveryInfo>>
 
-    abstract fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<TransactionExecutionRepository.ExecuteInformation>
+    abstract fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<RecoveryExecuteInfo>
 
     abstract fun submitRecovery(address: Solidity.Address): Single<Solidity.Address>
 
@@ -31,5 +31,6 @@ abstract class RecoveringSafeContract : ViewModel() {
     }
 
     data class RecoveryInfo(val safeAddress: String, val paymentToken: ERC20Token?, val paymentAmount: BigInteger)
+    data class RecoveryExecuteInfo(val balance: BigInteger, val paymentAmount: BigInteger, val paymentToken: ERC20Token, val canSubmit: Boolean)
 
 }

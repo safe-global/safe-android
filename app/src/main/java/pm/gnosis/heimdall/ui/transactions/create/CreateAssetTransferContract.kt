@@ -21,7 +21,7 @@ abstract class CreateAssetTransferContract : ViewModel() {
     data class Input(val amount: String, val address: String)
 
     sealed class ViewUpdate {
-        data class Estimate(val estimate: BigInteger, val balance: BigInteger, val gasToken: Solidity.Address, val canExecute: Boolean) : ViewUpdate()
+        data class Estimate(val estimate: BigInteger, val balance: BigInteger, val gasToken: ERC20Token, val canExecute: Boolean) : ViewUpdate()
         object EstimateError : ViewUpdate()
         data class TokenInfo(val value: ERC20TokenWithBalance) : ViewUpdate()
         data class InvalidInput(val amount: Boolean, val address: Boolean) : ViewUpdate()

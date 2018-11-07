@@ -130,7 +130,7 @@ class CreateAssetTransferViewModelTest {
             BigInteger.ZERO
         )
         estimationSingleFactory.success(lowBalanceInfo)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, TEST_ETHER_TOKEN, false)))
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, ERC20Token.ETHER_TOKEN, false)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
@@ -145,7 +145,7 @@ class CreateAssetTransferViewModelTest {
             Wei.ether("23").value
         )
         estimationSingleFactory.success(validInfo)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("23").value, TEST_ETHER_TOKEN, true)))
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("23").value, ERC20Token.ETHER_TOKEN, true)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         reviewEvents.success(Unit)
@@ -240,7 +240,7 @@ class CreateAssetTransferViewModelTest {
             BigInteger.ZERO
         )
         estimationSingleFactory.success(lowBalanceInfo)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, TEST_ETHER_TOKEN, false)))
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, ERC20Token.ETHER_TOKEN, false)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
@@ -255,7 +255,7 @@ class CreateAssetTransferViewModelTest {
             Wei.ether("1").value
         )
         estimationSingleFactory.success(validInfo)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("1").value, TEST_ETHER_TOKEN, true)))
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("1").value, ERC20Token.ETHER_TOKEN, true)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         reviewEvents.success(Unit)

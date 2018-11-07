@@ -141,14 +141,14 @@ class CreateAssetTransferViewModel @Inject constructor(
     private fun estimate(safe: Solidity.Address, data: TransactionData.AssetTransfer) =
         Observable.fromCallable {
             AssetTransferTransactionBuilder.build(data)
-        }.flatMapSingle {
-            executionRepository.loadExecuteInformation(safe, ERC20Token.ETHER_TOKEN.address, it)
         }
-            .map<ViewUpdate> {
-                val estimate = it.gasCosts()
+            .flatMapSingle { executionRepository.loadExecuteInformation(safe, ERC20Token.ETHER_TOKEN.address, it) }
+            .flatMapSingle { execInfo -> tokenRepository.loadToken(execInfo.gasToken).map { token -> execInfo to token } }
+            .map<ViewUpdate> { (execInfo, token) ->
+                val estimate = execInfo.gasCosts()
                 val canExecute =
-                    (estimate + (if (data.token == it.gasToken) data.amount else BigInteger.ZERO)) <= it.balance
-                ViewUpdate.Estimate(estimate, it.balance, it.gasToken, canExecute)
+                    (estimate + (if (data.token == token.address) data.amount else BigInteger.ZERO)) <= execInfo.balance
+                ViewUpdate.Estimate(estimate, execInfo.balance, token, canExecute)
             }
             .onErrorReturn {
                 Timber.e(it)

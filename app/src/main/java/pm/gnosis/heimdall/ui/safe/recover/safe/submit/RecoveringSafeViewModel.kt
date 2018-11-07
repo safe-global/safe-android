@@ -87,7 +87,6 @@ class RecoveringSafeViewModel @Inject constructor(
                 },
                 next = { (safeAddress, amount, gasToken) ->
                     tokenRepository.loadToken(gasToken)
-                        .onErrorResumeNext { errorHandler.single(it) }
                         .map { RecoveryInfo(safeAddress, it, amount) }
                         .onErrorResumeNext { errorHandler.single(it) }
                         .toObservable()
@@ -95,26 +94,19 @@ class RecoveringSafeViewModel @Inject constructor(
                 }
             )
 
-    override fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<TransactionExecutionRepository.ExecuteInformation> =
+    override fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<RecoveryExecuteInfo> =
         safeRepository.loadRecoveringSafe(address)
             .flatMap { safe ->
-                val tx = buildSafeTransaction(safe)
-                executionRepository.calculateHash(address, tx, safe.gasPrice, safe.txGas, safe.dataGas)
-                    .flatMap { hash ->
+                tokenRepository.loadToken(safe.gasToken)
+                    .flatMap { token ->
                         executionRepository.loadSafeExecuteState(address, safe.gasToken)
                             .map {
-                                TransactionExecutionRepository.ExecuteInformation(
-                                    hash.toHexString().addHexPrefix(),
-                                    tx,
-                                    it.sender,
-                                    it.requiredConfirmation,
-                                    it.owners,
-                                    safe.gasToken,
-                                    safe.gasPrice,
-                                    safe.txGas,
-                                    safe.dataGas,
-                                    safe.operationalGas,
-                                    it.balance
+                                val paymentAmount = safe.gasPrice * (safe.operationalGas + safe.txGas + safe.dataGas)
+                                RecoveryExecuteInfo(
+                                    it.balance,
+                                    paymentAmount,
+                                    token,
+                                    it.balance >= paymentAmount
                                 )
                             }
                     }

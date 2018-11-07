@@ -479,7 +479,7 @@ class RecoveringSafeViewModelTest {
         val error = IllegalArgumentException()
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.error(error))
 
-        val observer = TestObserver<TransactionExecutionRepository.ExecuteInformation>()
+        val observer = TestObserver<RecoveringSafeContract.RecoveryExecuteInfo>()
         viewModel.loadRecoveryExecuteInfo(TEST_SAFE).subscribe(observer)
         observer.assertFailure(Predicate { it == error })
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
@@ -494,37 +494,57 @@ class RecoveringSafeViewModelTest {
     }
 
     @Test
+    fun loadRecoveryExecuteInfoTokenNetworkError() {
+        contextMock.mockGetString()
+        // transactionHash == null -> not submitted yet
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
+        )
+        given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.error(UnknownHostException()))
+        given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
+
+        val observer = TestObserver<RecoveringSafeContract.RecoveryExecuteInfo>()
+        viewModel.loadRecoveryExecuteInfo(TEST_SAFE).subscribe(observer)
+        observer.assertFailure(Predicate { it == SimpleLocalizedException(R.string.error_check_internet_connection.toString()) })
+        then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
+        then(safeRepoMock).shouldHaveNoMoreInteractions()
+        then(contextMock).should().getString(R.string.error_check_internet_connection)
+        then(contextMock).shouldHaveZeroInteractions()
+        // Load the payment token info
+        then(tokenRepoMock).should().loadToken(TEST_TOKEN)
+        then(tokenRepoMock).shouldHaveNoMoreInteractions()
+
+        // Repos are not related to this method
+        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(execRepoMock).shouldHaveZeroInteractions()
+    }
+
+    @Test
     fun loadRecoveryExecuteInfoNetworkError() {
         contextMock.mockGetString()
         // transactionHash == null -> not submitted yet
         val safe = testRecoveringSafe(
             TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
-        given(execRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
-            .willReturn(Single.just(TEST_TX_HASH.hexStringToByteArray()))
+        given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(execRepoMock.loadSafeExecuteState(MockUtils.any(), MockUtils.any())).willReturn(Single.error(UnknownHostException()))
 
-        val observer = TestObserver<TransactionExecutionRepository.ExecuteInformation>()
+        val observer = TestObserver<RecoveringSafeContract.RecoveryExecuteInfo>()
         viewModel.loadRecoveryExecuteInfo(TEST_SAFE).subscribe(observer)
         observer.assertFailure(Predicate { it == SimpleLocalizedException(R.string.error_check_internet_connection.toString()) })
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        val recoverTx = SafeTransaction(
-            Transaction(
-                TEST_SAFE, data = "", nonce =
-                BigInteger.ZERO
-            ), TransactionExecutionRepository.Operation.CALL
-        )
-        then(execRepoMock).should().calculateHash(TEST_SAFE, recoverTx, safe.txGas, safe.dataGas, safe.gasPrice)
         then(execRepoMock).should().loadSafeExecuteState(TEST_SAFE, TEST_TOKEN)
         then(execRepoMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.error_check_internet_connection)
         then(contextMock).shouldHaveZeroInteractions()
+        // Load the payment token info
+        then(tokenRepoMock).should().loadToken(TEST_TOKEN)
+        then(tokenRepoMock).shouldHaveNoMoreInteractions()
 
         // Repos are not related to this method
         then(accountsRepoMock).shouldHaveZeroInteractions()
-        then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -533,41 +553,41 @@ class RecoveringSafeViewModelTest {
         val safe = testRecoveringSafe(
             TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
-        given(execRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
-            .willReturn(Single.just(TEST_TX_HASH.hexStringToByteArray()))
+        given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
-        val recoverTx =
-            SafeTransaction(Transaction(safe.address, data = safe.data, nonce = safe.nonce), TransactionExecutionRepository.Operation.CALL)
-        val info = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP),
-            safe.gasToken, safe.gasPrice, safe.txGas, safe.dataGas, safe.operationalGas, BigInteger.ZERO
+        val info = RecoveringSafeContract.RecoveryExecuteInfo(
+            BigInteger.TEN,
+            safe.gasPrice * (safe.operationalGas + safe.txGas + safe.dataGas),
+            ERC20Token.ETHER_TOKEN,
+            true
         )
         given(execRepoMock.loadSafeExecuteState(MockUtils.any(), MockUtils.any())).willReturn(
             Single.just(
                 TransactionExecutionRepository.SafeExecuteState(
-                    info.sender,
-                    info.requiredConfirmation,
-                    info.owners,
-                    recoverTx.wrapped.nonce!!,
+                    TEST_APP,
+                    2,
+                    listOf(TEST_APP),
+                    safe.nonce,
                     info.balance
                 )
             )
         )
 
-        val observer = TestObserver<TransactionExecutionRepository.ExecuteInformation>()
+        val observer = TestObserver<RecoveringSafeContract.RecoveryExecuteInfo>()
         viewModel.loadRecoveryExecuteInfo(TEST_SAFE).subscribe(observer)
         observer.assertResult(info)
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(execRepoMock).should().calculateHash(TEST_SAFE, recoverTx, safe.txGas, safe.dataGas, safe.gasPrice)
         then(execRepoMock).should().loadSafeExecuteState(TEST_SAFE, TEST_TOKEN)
         then(execRepoMock).shouldHaveNoMoreInteractions()
+        // Load the payment token info
+        then(tokenRepoMock).should().loadToken(TEST_TOKEN)
+        then(tokenRepoMock).shouldHaveNoMoreInteractions()
         // No error message mapping
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
         then(accountsRepoMock).shouldHaveZeroInteractions()
-        then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
     @Test

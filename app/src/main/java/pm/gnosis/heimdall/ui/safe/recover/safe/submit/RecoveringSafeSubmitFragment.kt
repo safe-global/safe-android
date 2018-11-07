@@ -71,17 +71,17 @@ class RecoveringSafeSubmitFragment : BaseFragment() {
             .doOnNext {
                 layout_recovering_safe_submit_retry.isEnabled = false
                 layout_recovering_safe_submit_button.isEnabled = false
+
             }
             .switchMapSingle { viewModel.loadRecoveryExecuteInfo(safeAddress).mapToResult() }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = {
-                layout_recovering_safe_submit_data_balance_value.text =
-                        context!!.getString(R.string.x_ether, Wei(it.balance).toEther().stringWithNoTrailingZeroes())
-                layout_recovering_safe_submit_data_fees_value.text =
-                        "- ${context!!.getString(R.string.x_ether, Wei(it.gasCosts()).toEther().stringWithNoTrailingZeroes())}"
-                layout_recovering_safe_submit_button.visible(true)
-                layout_recovering_safe_submit_button.isEnabled = true
-                layout_recovering_safe_submit_retry.visible(false)
+                layout_recovering_safe_submit_data_balance_value.text = it.paymentToken.displayString(it.balance)
+                layout_recovering_safe_submit_data_fees_value.text = it.paymentToken.displayString(it.paymentAmount)
+                layout_recovering_safe_submit_button.visible(it.canSubmit)
+                layout_recovering_safe_submit_button.isEnabled = it.canSubmit
+                layout_recovering_safe_submit_retry.visible(!it.canSubmit)
+                layout_recovering_safe_submit_retry.isEnabled = !it.canSubmit
             }, onError = {
                 errorSnackbar(layout_recovering_safe_submit_button, it)
                 layout_recovering_safe_submit_button.visible(false)
