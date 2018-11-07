@@ -11,6 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
@@ -153,7 +154,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValueCount(10)
         testObserver.assertValueAt(9) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
-        then(tokenRepositoryMock).should().loadToken(TEST_ETHER_TOKEN)
+        then(tokenRepositoryMock).should(times(3)).loadToken(TEST_ETHER_TOKEN)
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
@@ -240,6 +241,7 @@ class CreateAssetTransferViewModelTest {
             BigInteger.ZERO
         )
         estimationSingleFactory.success(lowBalanceInfo)
+        tokenSingleFactory.success(ERC20Token.ETHER_TOKEN)
         updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, ERC20Token.ETHER_TOKEN, false)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -248,13 +250,14 @@ class CreateAssetTransferViewModelTest {
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
-        // Estimate, balance too low
+        // Estimate, enough balance
         val validInfo = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS,
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("1").value
         )
         estimationSingleFactory.success(validInfo)
+        tokenSingleFactory.success(ERC20Token.ETHER_TOKEN)
         updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("1").value, ERC20Token.ETHER_TOKEN, true)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -264,6 +267,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValueAt(9) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
         then(tokenRepositoryMock).should().loadToken(TEST_TOKEN_ADDRESS)
+        then(tokenRepositoryMock).should(times(2)).loadToken(ERC20Token.ETHER_TOKEN.address)
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(TEST_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
