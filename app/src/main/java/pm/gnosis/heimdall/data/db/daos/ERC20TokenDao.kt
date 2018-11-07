@@ -11,8 +11,7 @@ import pm.gnosis.model.Solidity
 
 @Dao
 interface ERC20TokenDao {
-
-    @Insert(onConflict = OnConflictStrategy.FAIL)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertERC20Token(erC20Token: ERC20TokenDb)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

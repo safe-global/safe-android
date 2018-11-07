@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.postIsRefreshing
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -40,7 +41,7 @@ class ManageTokensActivity : ViewModelActivity<ManageTokensContract>() {
         disposables += layout_manage_tokens_back_arrow.clicks()
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
 
-        layout_manage_tokens_swipe_refresh.isRefreshing = true
+        layout_manage_tokens_swipe_refresh.postIsRefreshing(true)
         disposables += layout_manage_tokens_swipe_refresh.refreshes()
             .startWith(Unit)
             .compose(viewModel.observeVerifiedTokens())
@@ -48,10 +49,11 @@ class ManageTokensActivity : ViewModelActivity<ManageTokensContract>() {
             .subscribeBy(
                 onNext = {
                     adapter.updateData(it)
-                    layout_manage_tokens_swipe_refresh.isRefreshing = false
+                    layout_manage_tokens_swipe_refresh.postIsRefreshing(false)
                 },
                 onError = {
                     Timber.e(it)
+                    layout_manage_tokens_swipe_refresh.postIsRefreshing(false)
                     errorSnackbar(layout_manage_tokens_coordinator, it)
                 })
 

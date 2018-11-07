@@ -56,7 +56,7 @@ class SafeCreationFundViewModel @Inject constructor(
                     .map { if (it < pendingSafe.paymentAmount) throw NotEnoughFundsException() }
                     .retryWhen { errors ->
                         errors.flatMap {
-                                if (it is NotEnoughFundsException) Observable.just(it).delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS)
+                            if (it is NotEnoughFundsException) Observable.just(it).delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS)
                             else Observable.error(it)
                         }
                     }
@@ -64,7 +64,7 @@ class SafeCreationFundViewModel @Inject constructor(
             }
 
     private fun requestBalance(address: Solidity.Address, paymentToken: ERC20Token) =
-        tokenRepository.loadTokenBalances(address, listOf(paymentToken)).map { it.first().second ?: BigInteger.ZERO  }
+        tokenRepository.loadTokenBalances(address, listOf(paymentToken)).map { it.first().second ?: BigInteger.ZERO }
 
     companion object {
         private const val BALANCE_REQUEST_INTERVAL_SECONDS = 10L
