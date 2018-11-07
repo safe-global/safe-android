@@ -10,9 +10,7 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.di.ApplicationContext
-import pm.gnosis.heimdall.ui.exceptions.LocalizedException
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity

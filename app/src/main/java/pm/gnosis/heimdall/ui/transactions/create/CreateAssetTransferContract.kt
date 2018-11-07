@@ -7,7 +7,6 @@ import io.reactivex.ObservableTransformer
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.Result
 import java.math.BigInteger
 

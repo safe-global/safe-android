@@ -25,7 +25,6 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.*

@@ -13,10 +13,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.include_transaction_submit_info.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

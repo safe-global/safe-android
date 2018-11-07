@@ -1,15 +1,12 @@
 package pm.gnosis.heimdall.ui.safe.recover.recoveryphrase
 
 import android.content.Context
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import io.reactivex.Single
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.remote.models.AddressSignedPayload
-import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException

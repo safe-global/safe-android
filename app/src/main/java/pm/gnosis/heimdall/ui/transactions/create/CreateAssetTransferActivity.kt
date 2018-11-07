@@ -24,14 +24,12 @@ import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract.ViewUpdate
 import pm.gnosis.heimdall.utils.*
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import javax.inject.Inject
 
 class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContract>() {

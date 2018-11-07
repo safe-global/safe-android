@@ -8,7 +8,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_pairing.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
-import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
 import pm.gnosis.model.Solidity
 import timber.log.Timber
 

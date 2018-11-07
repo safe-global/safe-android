@@ -18,7 +18,6 @@ import pm.gnosis.heimdall.ui.transactions.builder.AssetTransferTransactionBuilde
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
@@ -142,13 +141,16 @@ class CreateAssetTransferViewModel @Inject constructor(
         Observable.fromCallable {
             AssetTransferTransactionBuilder.build(data)
         }
-            .flatMapSingle { executionRepository.loadExecuteInformation(safe, ERC20Token.ETHER_TOKEN.address, it) }
-            .flatMapSingle { execInfo -> tokenRepository.loadToken(execInfo.gasToken).map { token -> execInfo to token } }
-            .map<ViewUpdate> { (execInfo, token) ->
-                val estimate = execInfo.gasCosts()
-                val canExecute =
-                    (estimate + (if (data.token == token.address) data.amount else BigInteger.ZERO)) <= execInfo.balance
-                ViewUpdate.Estimate(estimate, execInfo.balance, token, canExecute)
+            .flatMapSingle<ViewUpdate> {
+                val tokenAddress = ERC20Token.ETHER_TOKEN.address
+                executionRepository.loadExecuteInformation(safe, tokenAddress, it)
+                    .zipWith(tokenRepository.loadToken(tokenAddress),
+                        BiFunction { execInfo: TransactionExecutionRepository.ExecuteInformation, token: ERC20Token ->
+                            val estimate = execInfo.gasCosts()
+                            val canExecute =
+                                (estimate + (if (data.token == token.address) data.amount else BigInteger.ZERO)) <= execInfo.balance
+                            ViewUpdate.Estimate(estimate, execInfo.balance, token, canExecute)
+                        })
             }
             .onErrorReturn {
                 Timber.e(it)

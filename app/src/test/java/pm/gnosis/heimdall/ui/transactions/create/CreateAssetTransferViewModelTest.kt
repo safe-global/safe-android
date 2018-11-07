@@ -154,7 +154,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValueCount(10)
         testObserver.assertValueAt(9) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
-        then(tokenRepositoryMock).should(times(3)).loadToken(TEST_ETHER_TOKEN)
+        then(tokenRepositoryMock).should(times(4)).loadToken(TEST_ETHER_TOKEN)
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
@@ -267,7 +267,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValueAt(9) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
         then(tokenRepositoryMock).should().loadToken(TEST_TOKEN_ADDRESS)
-        then(tokenRepositoryMock).should(times(2)).loadToken(ERC20Token.ETHER_TOKEN.address)
+        then(tokenRepositoryMock).should(times(3)).loadToken(ERC20Token.ETHER_TOKEN.address)
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(TEST_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())

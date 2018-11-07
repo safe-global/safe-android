@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.safe.recover.safe.submit
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.model.Solidity

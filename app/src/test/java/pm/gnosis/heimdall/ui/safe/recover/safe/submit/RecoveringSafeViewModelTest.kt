@@ -32,14 +32,10 @@ import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.tests.utils.mockGetString
-import pm.gnosis.tests.utils.testRecoveringSafe
+import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.hexStringToByteArray
 import java.math.BigInteger
 import java.net.ConnectException
 import java.net.UnknownHostException
@@ -502,12 +498,19 @@ class RecoveringSafeViewModelTest {
         )
         given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.error(UnknownHostException()))
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
+        val execInfoSingleFactory = TestSingleFactory<TransactionExecutionRepository.SafeExecuteState>()
+        given(execRepoMock.loadSafeExecuteState(MockUtils.any(), MockUtils.any())).willReturn(execInfoSingleFactory.get())
 
         val observer = TestObserver<RecoveringSafeContract.RecoveryExecuteInfo>()
         viewModel.loadRecoveryExecuteInfo(TEST_SAFE).subscribe(observer)
+
         observer.assertFailure(Predicate { it == SimpleLocalizedException(R.string.error_check_internet_connection.toString()) })
+        execInfoSingleFactory.assertAllCanceled()
+
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
+        then(execRepoMock).should().loadSafeExecuteState(TEST_SAFE, TEST_TOKEN)
+        then(execRepoMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.error_check_internet_connection)
         then(contextMock).shouldHaveZeroInteractions()
         // Load the payment token info
@@ -516,7 +519,6 @@ class RecoveringSafeViewModelTest {
 
         // Repos are not related to this method
         then(accountsRepoMock).shouldHaveZeroInteractions()
-        then(execRepoMock).shouldHaveZeroInteractions()
     }
 
     @Test

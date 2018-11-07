@@ -20,14 +20,12 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import javax.inject.Inject
 
 class RecoveringSafeSubmitFragment : BaseFragment() {

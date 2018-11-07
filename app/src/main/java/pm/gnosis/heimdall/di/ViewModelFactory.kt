@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.di
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import java.lang.RuntimeException
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton

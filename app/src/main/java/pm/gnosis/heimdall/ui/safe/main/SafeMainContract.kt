@@ -5,7 +5,6 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
-import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result

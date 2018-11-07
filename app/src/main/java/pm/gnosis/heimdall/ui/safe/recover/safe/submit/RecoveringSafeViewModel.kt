@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.safe.recover.safe.submit
 import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -22,9 +23,7 @@ import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -97,19 +96,18 @@ class RecoveringSafeViewModel @Inject constructor(
     override fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<RecoveryExecuteInfo> =
         safeRepository.loadRecoveringSafe(address)
             .flatMap { safe ->
-                tokenRepository.loadToken(safe.gasToken)
-                    .flatMap { token ->
-                        executionRepository.loadSafeExecuteState(address, safe.gasToken)
-                            .map {
-                                val paymentAmount = safe.gasPrice * (safe.operationalGas + safe.txGas + safe.dataGas)
-                                RecoveryExecuteInfo(
-                                    it.balance,
-                                    paymentAmount,
-                                    token,
-                                    it.balance >= paymentAmount
-                                )
-                            }
-                    }
+                executionRepository.loadSafeExecuteState(address, safe.gasToken)
+                    .zipWith(tokenRepository.loadToken(safe.gasToken),
+                        BiFunction { execState: TransactionExecutionRepository.SafeExecuteState, token: ERC20Token ->
+                            val paymentAmount = safe.gasPrice * (safe.operationalGas + safe.txGas + safe.dataGas)
+                            RecoveryExecuteInfo(
+                                execState.balance,
+                                paymentAmount,
+                                token,
+                                execState.balance >= paymentAmount
+                            )
+                        }
+                    )
             }
             .onErrorResumeNext { errorHandler.single(it) }
 

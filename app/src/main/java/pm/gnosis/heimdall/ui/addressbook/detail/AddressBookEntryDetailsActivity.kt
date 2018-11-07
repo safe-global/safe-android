@@ -24,7 +24,10 @@ import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
-import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.svalinn.common.utils.appendText
+import pm.gnosis.svalinn.common.utils.getColorCompat
+import pm.gnosis.svalinn.common.utils.subscribeForResult
+import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
