@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.safe.recover.safe.submit
 import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -22,9 +23,7 @@ import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -49,7 +48,7 @@ class RecoveringSafeViewModel @Inject constructor(
                         when {
                             safe.nonce != it.transaction.wrapped.nonce ||
                                     it.transaction.wrapped.value ?: Wei.ZERO != Wei.ZERO -> safe to RecoveryState.ERROR
-                            it.balance.value < it.gasCosts() -> safe to RecoveryState.CREATED
+                            it.balance < it.gasCosts() -> safe to RecoveryState.CREATED
                             else -> safe to RecoveryState.FUNDED
                         }
                     }
@@ -87,7 +86,6 @@ class RecoveringSafeViewModel @Inject constructor(
                 },
                 next = { (safeAddress, amount, gasToken) ->
                     tokenRepository.loadToken(gasToken)
-                        .onErrorResumeNext { errorHandler.single(it) }
                         .map { RecoveryInfo(safeAddress, it, amount) }
                         .onErrorResumeNext { errorHandler.single(it) }
                         .toObservable()
@@ -95,28 +93,21 @@ class RecoveringSafeViewModel @Inject constructor(
                 }
             )
 
-    override fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<TransactionExecutionRepository.ExecuteInformation> =
+    override fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<RecoveryExecuteInfo> =
         safeRepository.loadRecoveringSafe(address)
             .flatMap { safe ->
-                val tx = buildSafeTransaction(safe)
-                executionRepository.calculateHash(address, tx, safe.gasPrice, safe.txGas, safe.dataGas)
-                    .flatMap { hash ->
-                        executionRepository.loadSafeExecuteState(address)
-                            .map {
-                                TransactionExecutionRepository.ExecuteInformation(
-                                    hash.toHexString().addHexPrefix(),
-                                    tx,
-                                    it.sender,
-                                    it.requiredConfirmation,
-                                    it.owners,
-                                    safe.gasPrice,
-                                    safe.txGas,
-                                    safe.dataGas,
-                                    safe.operationalGas,
-                                    it.balance
-                                )
-                            }
-                    }
+                executionRepository.loadSafeExecuteState(address, safe.gasToken)
+                    .zipWith(tokenRepository.loadToken(safe.gasToken),
+                        BiFunction { execState: TransactionExecutionRepository.SafeExecuteState, token: ERC20Token ->
+                            val paymentAmount = safe.gasPrice * (safe.operationalGas + safe.txGas + safe.dataGas)
+                            RecoveryExecuteInfo(
+                                execState.balance,
+                                paymentAmount,
+                                token,
+                                execState.balance >= paymentAmount
+                            )
+                        }
+                    )
             }
             .onErrorResumeNext { errorHandler.single(it) }
 
@@ -173,6 +164,7 @@ class RecoveringSafeViewModel @Inject constructor(
     private fun requestExecuteInfo(safe: RecoveringSafe) =
         executionRepository.loadExecuteInformation(
             safe.address,
+            safe.gasToken,
             buildSafeTransaction(safe)
         )
 

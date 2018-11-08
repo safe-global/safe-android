@@ -20,14 +20,12 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import javax.inject.Inject
 
 class RecoveringSafeSubmitFragment : BaseFragment() {
@@ -71,17 +69,17 @@ class RecoveringSafeSubmitFragment : BaseFragment() {
             .doOnNext {
                 layout_recovering_safe_submit_retry.isEnabled = false
                 layout_recovering_safe_submit_button.isEnabled = false
+
             }
             .switchMapSingle { viewModel.loadRecoveryExecuteInfo(safeAddress).mapToResult() }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = {
-                layout_recovering_safe_submit_data_balance_value.text =
-                        context!!.getString(R.string.x_ether, it.balance.toEther().stringWithNoTrailingZeroes())
-                layout_recovering_safe_submit_data_fees_value.text =
-                        "- ${context!!.getString(R.string.x_ether, Wei(it.gasCosts()).toEther().stringWithNoTrailingZeroes())}"
-                layout_recovering_safe_submit_button.visible(true)
-                layout_recovering_safe_submit_button.isEnabled = true
-                layout_recovering_safe_submit_retry.visible(false)
+                layout_recovering_safe_submit_data_balance_value.text = it.paymentToken.displayString(it.balance)
+                layout_recovering_safe_submit_data_fees_value.text = it.paymentToken.displayString(it.paymentAmount)
+                layout_recovering_safe_submit_button.visible(it.canSubmit)
+                layout_recovering_safe_submit_button.isEnabled = it.canSubmit
+                layout_recovering_safe_submit_retry.visible(!it.canSubmit)
+                layout_recovering_safe_submit_retry.isEnabled = !it.canSubmit
             }, onError = {
                 errorSnackbar(layout_recovering_safe_submit_button, it)
                 layout_recovering_safe_submit_button.visible(false)

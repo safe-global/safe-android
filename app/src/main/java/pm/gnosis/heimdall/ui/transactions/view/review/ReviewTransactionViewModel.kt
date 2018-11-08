@@ -4,6 +4,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events
@@ -32,7 +33,7 @@ class ReviewTransactionViewModel @Inject constructor(
 
     private fun txParams(transaction: SafeTransaction): Single<TransactionExecutionRepository.ExecuteInformation> {
         return cachedState[transaction]?.let { Single.just(it) }
-                ?: executionRepository.loadExecuteInformation(safe, transaction)
+                ?: executionRepository.loadExecuteInformation(safe, ERC20Token.ETHER_TOKEN.address, transaction)
                     .doOnSuccess { cachedState[transaction] = it }
     }
 

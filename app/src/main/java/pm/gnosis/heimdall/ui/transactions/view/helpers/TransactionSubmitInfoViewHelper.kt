@@ -15,7 +15,6 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -96,14 +95,13 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
     fun applyUpdate(update: SubmitTransactionHelper.ViewUpdate): Disposable? {
         when (update) {
             is SubmitTransactionHelper.ViewUpdate.Estimate -> {
-                val balanceColor = context.getColorCompat(if (update.balance.value < update.fees.value) R.color.tomato else R.color.battleship_grey)
+                val balanceColor = context.getColorCompat(if (update.canSubmit) R.color.battleship_grey else R.color.tomato)
                 view.include_transaction_submit_info_data_balance_label.setTextColor(balanceColor)
                 view.include_transaction_submit_info_data_balance_value.setTextColor(balanceColor)
-                view.include_transaction_submit_info_data_balance_value.text =
-                        context.getString(R.string.x_ether, update.balance.toEther().stringWithNoTrailingZeroes())
-                view.include_transaction_submit_info_data_fees_value.text =
-                        "- ${context.getString(R.string.x_ether, update.fees.toEther().stringWithNoTrailingZeroes())}"
-                view.include_transaction_submit_info_confirmations_group.visible(true)
+                view.include_transaction_submit_info_data_balance_value.text = update.token.displayString(update.balance)
+                view.include_transaction_submit_info_data_fees_value.text = "- ${update.token.displayString(update.fees)}"
+                view.include_transaction_submit_info_confirmations_group.visible(update.canSubmit)
+                view.include_transaction_submit_info_retry_button.visible(!update.canSubmit)
             }
             is SubmitTransactionHelper.ViewUpdate.EstimateError -> {
                 view.include_transaction_submit_info_confirmation_progress.visible(false)

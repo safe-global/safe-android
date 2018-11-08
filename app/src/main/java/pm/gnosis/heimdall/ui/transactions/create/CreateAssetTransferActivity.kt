@@ -30,7 +30,6 @@ import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.stringWithNoTrailingZeroes
 import javax.inject.Inject
 
 class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContract>() {
@@ -144,10 +143,8 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     private fun applyUpdate(update: ViewUpdate) {
         when (update) {
             is CreateAssetTransferContract.ViewUpdate.Estimate -> {
-                layout_create_asset_transfer_balance_value.text =
-                        getString(R.string.x_ether, update.balance.toEther().stringWithNoTrailingZeroes())
-                layout_create_asset_transfer_fees_value.text =
-                        "- ${getString(R.string.x_ether, update.estimate.toEther().stringWithNoTrailingZeroes())}"
+                layout_create_asset_transfer_balance_value.text = update.gasToken.displayString(update.balance)
+                layout_create_asset_transfer_fees_value.text = "- ${update.gasToken.displayString(update.estimate)}"
                 layout_create_asset_transfer_continue_button.visible(update.canExecute)
                 if (!update.canExecute) layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.tomato))
                 else {

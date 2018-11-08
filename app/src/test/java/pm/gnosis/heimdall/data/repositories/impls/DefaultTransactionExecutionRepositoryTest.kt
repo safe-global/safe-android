@@ -212,14 +212,14 @@ class DefaultTransactionExecutionRepositoryTest {
 
         // Cached nonce should be used if it is higher
         val observeCached = TestObserver<TransactionExecutionRepository.SafeExecuteState>()
-        repository.loadSafeExecuteState(TEST_SAFE).subscribe(observeCached)
+        repository.loadSafeExecuteState(TEST_SAFE, TEST_PAYMENT_TOKEN).subscribe(observeCached)
         observeCached.assertResult(
             TransactionExecutionRepository.SafeExecuteState(
                 TEST_OWNER,
                 2,
                 emptyList(),
                 BigInteger.valueOf(11), // nonce used with submit + 1
-                Wei.ether("0")
+                BigInteger.ZERO
             )
         )
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
@@ -228,14 +228,14 @@ class DefaultTransactionExecutionRepositoryTest {
         // Remote nonce should be used if it is higher
         remoteNonceString = "1a".padStart(64, '0').addHexPrefix()
         val observeRemote = TestObserver<TransactionExecutionRepository.SafeExecuteState>()
-        repository.loadSafeExecuteState(TEST_SAFE).subscribe(observeRemote)
+        repository.loadSafeExecuteState(TEST_SAFE, TEST_PAYMENT_TOKEN).subscribe(observeRemote)
         observeRemote.assertResult(
             TransactionExecutionRepository.SafeExecuteState(
                 TEST_OWNER,
                 2,
                 emptyList(),
                 BigInteger.valueOf(26), // nonce used with submit + 1
-                Wei.ether("0")
+                BigInteger.ZERO
             )
         )
         then(ethereumRepositoryMock).should(times(2)).request(MockUtils.any<BulkRequest>())
@@ -256,5 +256,6 @@ class DefaultTransactionExecutionRepositoryTest {
         private val TEST_OWNER = Solidity.Address(BigInteger.valueOf(5))
         private val TEST_SIGNATURE = Signature(BigInteger.TEN, BigInteger.TEN, 27)
         private val TEST_ETH_AMOUNT = Wei.ether("23")
+        private val TEST_PAYMENT_TOKEN = "0x0".asEthereumAddress()!!
     }
 }

@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.safe.recover.safe.submit
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.model.Solidity
@@ -19,7 +18,7 @@ abstract class RecoveringSafeContract : ViewModel() {
 
     abstract fun observeRecoveryInfo(address: Solidity.Address): Observable<Result<RecoveryInfo>>
 
-    abstract fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<TransactionExecutionRepository.ExecuteInformation>
+    abstract fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<RecoveryExecuteInfo>
 
     abstract fun submitRecovery(address: Solidity.Address): Single<Solidity.Address>
 
@@ -31,5 +30,6 @@ abstract class RecoveringSafeContract : ViewModel() {
     }
 
     data class RecoveryInfo(val safeAddress: String, val paymentToken: ERC20Token?, val paymentAmount: BigInteger)
+    data class RecoveryExecuteInfo(val balance: BigInteger, val paymentAmount: BigInteger, val paymentToken: ERC20Token, val canSubmit: Boolean)
 
 }

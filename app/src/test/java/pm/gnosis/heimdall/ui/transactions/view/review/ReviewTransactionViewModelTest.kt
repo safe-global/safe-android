@@ -57,13 +57,13 @@ class ReviewTransactionViewModelTest {
 
         val info = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH,
-            TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size - 1,
-            TEST_OWNERS, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
-            Wei.ether("23")
+            TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
+            TEST_GAS_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
+            Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
         executionInfo!!.invoke(TEST_TRANSACTION).subscribe()
-        then(relayRepositoryMock).should().loadExecuteInformation(TEST_SAFE, TEST_TRANSACTION)
+        then(relayRepositoryMock).should().loadExecuteInformation(TEST_SAFE, TEST_GAS_TOKEN, TEST_TRANSACTION)
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
         // Used cached
         executionInfo!!.invoke(TEST_TRANSACTION).subscribe()
@@ -89,5 +89,6 @@ class ReviewTransactionViewModelTest {
             SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)
         private val TEST_SIGNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13)).map { Solidity.Address(it) }
         private val TEST_OWNERS = TEST_SIGNERS + Solidity.Address(BigInteger.valueOf(5))
+        private val TEST_GAS_TOKEN = "0x0".asEthereumAddress()!!
     }
 }

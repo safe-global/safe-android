@@ -7,7 +7,6 @@ import android.support.v4.content.ContextCompat
 import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
-import android.text.style.URLSpan
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign

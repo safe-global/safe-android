@@ -70,9 +70,9 @@ class ConfirmTransactionViewModelTest {
 
         val info = TransactionExecutionRepository.SafeExecuteState(
             TEST_OWNERS[2], TEST_OWNERS.size - 1,
-            TEST_OWNERS, BigInteger.ONE, Wei.ether("23")
+            TEST_OWNERS, BigInteger.ONE, Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadSafeExecuteState(MockUtils.any())).willReturn(Single.just(info))
+        given(relayRepositoryMock.loadSafeExecuteState(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
 
         val updatedTransaction = TEST_TRANSACTION.copy(wrapped = TEST_TRANSACTION.wrapped.copy(nonce = TEST_NONCE))
 
@@ -97,12 +97,12 @@ class ConfirmTransactionViewModelTest {
         validHashObserver.assertValues(
             TransactionExecutionRepository.ExecuteInformation(
                 TEST_TRANSACTION_HASH, updatedTransaction, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
-                TEST_GAS_PRICE, TEST_TX_GAS, TEST_DATA_GAS, TEST_OPERATIONAL_GAS, Wei.ether("23")
+                TEST_GAS_TOKEN, TEST_GAS_PRICE, TEST_TX_GAS, TEST_DATA_GAS, TEST_OPERATIONAL_GAS, Wei.ether("23").value
             )
         ).assertNoErrors().assertComplete()
         then(relayRepositoryMock).should(times(2))
             .calculateHash(TEST_SAFE, updatedTransaction, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN)
-        then(relayRepositoryMock).should().loadSafeExecuteState(TEST_SAFE)
+        then(relayRepositoryMock).should().loadSafeExecuteState(TEST_SAFE, TEST_GAS_TOKEN)
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Used cached
@@ -112,7 +112,7 @@ class ConfirmTransactionViewModelTest {
         cachedHashObserver.assertValues(
             TransactionExecutionRepository.ExecuteInformation(
                 TEST_TRANSACTION_HASH, updatedTransaction, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
-                TEST_GAS_PRICE, TEST_TX_GAS, TEST_DATA_GAS, TEST_OPERATIONAL_GAS, Wei.ether("23")
+                TEST_GAS_TOKEN, TEST_GAS_PRICE, TEST_TX_GAS, TEST_DATA_GAS, TEST_OPERATIONAL_GAS, Wei.ether("23").value
             )
         ).assertNoErrors().assertComplete()
         then(relayRepositoryMock).should(times(3))
@@ -294,9 +294,9 @@ class ConfirmTransactionViewModelTest {
 
         val info = TransactionExecutionRepository.SafeExecuteState(
             TEST_OWNERS[2], TEST_OWNERS.size - 1,
-            TEST_OWNERS, BigInteger.ONE, Wei.ether("23")
+            TEST_OWNERS, BigInteger.ONE, Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadSafeExecuteState(MockUtils.any())).willReturn(Single.just(info))
+        given(relayRepositoryMock.loadSafeExecuteState(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
         given(relayRepositoryMock.notifyReject(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Completable.complete())
 
@@ -304,7 +304,7 @@ class ConfirmTransactionViewModelTest {
         viewModel.rejectTransaction(TEST_TRANSACTION).subscribe(rejectObserver)
         rejectObserver.assertNoErrors().assertComplete()
 
-        then(relayRepositoryMock).should().loadSafeExecuteState(TEST_SAFE)
+        then(relayRepositoryMock).should().loadSafeExecuteState(TEST_SAFE, TEST_GAS_TOKEN)
         then(relayRepositoryMock).should().notifyReject(
             TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE,
             (TEST_OWNERS - TEST_OWNERS[2]).toSet()

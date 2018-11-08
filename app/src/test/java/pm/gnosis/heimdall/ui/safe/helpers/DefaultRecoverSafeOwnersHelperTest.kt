@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -418,12 +419,13 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
         given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(app)))
-        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any()))
+        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willAnswer {
-                val tx = it.arguments[1] as SafeTransaction
+                val tx = it.arguments[2] as SafeTransaction
                 Single.just(
                     TransactionExecutionRepository.ExecuteInformation(
-                        TEST_HASH.toHex(), tx, TEST_SAFE, 2, owners, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
+                        TEST_HASH.toHex(), tx, TEST_SAFE, 2, owners,
+                        TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO
                     )
                 )
             }
@@ -459,7 +461,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any())
+        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).should()
             .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
@@ -549,7 +551,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
         given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
-        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.error(UnknownHostException()))
+        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.error(UnknownHostException()))
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
         helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION).subscribe(observer)
@@ -571,7 +573,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any())
+        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
     }
 
@@ -597,9 +599,9 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
         val execInfo = TransactionExecutionRepository.ExecuteInformation(
             TEST_HASH.toHex(), SafeTransaction(Transaction(TEST_SAFE), TransactionExecutionRepository.Operation.CALL), TEST_SAFE, 2, TEST_OWNERS,
-            BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, Wei.ZERO
+            TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO
         )
-        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any())).willReturn(Single.just(execInfo))
+        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(execInfo))
         val error = IllegalStateException()
         given(executionRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.error(error))
@@ -620,7 +622,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any())
+        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).should()
             .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
@@ -811,6 +813,7 @@ class DefaultRecoverSafeOwnersHelperTest {
     companion object {
         private val TEST_SEED = "Better Safe Than Sorry".toByteArray()
         private val TEST_HASH = Sha3Utils.keccak(TEST_SEED)
+        private val TEST_GAS_TOKEN = ERC20Token.ETHER_TOKEN.address
         private val TEST_SAFE = "0x1f81FFF89Bd57811983a35650296681f99C65C7E".asEthereumAddress()!!
         private val TEST_APP = "0x71De9579cD3857ce70058a1ce19e3d8894f65Ab9".asEthereumAddress()!!
         private val TEST_NEW_APP = "0x31B98D14007bDEe637298086988A0bBd31184523".asEthereumAddress()!!

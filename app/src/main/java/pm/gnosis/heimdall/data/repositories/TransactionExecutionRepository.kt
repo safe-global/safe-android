@@ -5,7 +5,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
 
@@ -21,8 +20,8 @@ interface TransactionExecutionRepository {
         txGas: BigInteger, dataGas: BigInteger, gasPrice: BigInteger, gasToken: Solidity.Address = Solidity.Address(BigInteger.ZERO)
     ): Single<ByteArray>
 
-    fun loadSafeExecuteState(safeAddress: Solidity.Address): Single<SafeExecuteState>
-    fun loadExecuteInformation(safeAddress: Solidity.Address, transaction: SafeTransaction): Single<ExecuteInformation>
+    fun loadSafeExecuteState(safeAddress: Solidity.Address, paymentToken: Solidity.Address): Single<SafeExecuteState>
+    fun loadExecuteInformation(safeAddress: Solidity.Address, paymentToken: Solidity.Address, transaction: SafeTransaction): Single<ExecuteInformation>
 
     fun signConfirmation(
         safeAddress: Solidity.Address,
@@ -87,7 +86,7 @@ interface TransactionExecutionRepository {
         val requiredConfirmation: Int,
         val owners: List<Solidity.Address>,
         val nonce: BigInteger,
-        val balance: Wei
+        val balance: BigInteger
     )
 
     data class ExecuteInformation(
@@ -96,11 +95,12 @@ interface TransactionExecutionRepository {
         val sender: Solidity.Address,
         val requiredConfirmation: Int,
         val owners: List<Solidity.Address>,
+        val gasToken: Solidity.Address,
         val gasPrice: BigInteger,
         val txGas: BigInteger,
         val dataGas: BigInteger,
         val operationalGas: BigInteger,
-        val balance: Wei
+        val balance: BigInteger
     ) {
         val isOwner by lazy {
             owners.contains(sender)

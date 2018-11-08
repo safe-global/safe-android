@@ -4,9 +4,12 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
+import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
@@ -14,15 +17,17 @@ import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.E
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.ViewUpdate
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.addHexPrefix
+import pm.gnosis.utils.isSolidityMethod
+import pm.gnosis.utils.removeSolidityMethodPrefix
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
+import java.math.BigInteger
 import javax.inject.Inject
 
 interface SubmitTransactionHelper {
@@ -42,7 +47,7 @@ interface SubmitTransactionHelper {
 
     sealed class ViewUpdate {
         data class TransactionInfo(val viewHolder: TransactionInfoViewHolder) : ViewUpdate()
-        data class Estimate(val fees: Wei, val balance: Wei) : ViewUpdate()
+        data class Estimate(val fees: BigInteger, val balance: BigInteger, val token: ERC20Token, val canSubmit: Boolean) : ViewUpdate()
         object EstimateError : ViewUpdate()
         data class Confirmations(val isReady: Boolean) : ViewUpdate()
         object ConfirmationsRequested : ViewUpdate()
@@ -56,6 +61,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
     private val executionRepository: TransactionExecutionRepository,
     private val signaturePushRepository: PushServiceRepository,
     private val signatureStore: SignatureStore,
+    private val tokenRepository: TokenRepository,
     private val transactionViewHolderBuilder: TransactionViewHolderBuilder
 ) : SubmitTransactionHelper {
 
@@ -96,27 +102,50 @@ class DefaultSubmitTransactionHelper @Inject constructor(
             .startWith(Unit)
             .switchMapSingle { viewHolder.loadTransaction() }
             .switchMapSingle { tx -> executionInfo(tx).mapToResult() }
+            .switchMapSingle {
+                it.mapSingle({ execInfo ->
+                    tokenRepository.loadToken(execInfo.gasToken).map { token -> execInfo to token }.mapToResult()
+                })
+            }
+            .map { it.map { (execInfo, token) ->
+                val gasCosts = execInfo.gasCosts()
+                // If we transfer our payment token we should add this to the required funds
+                val requiredFunds = gasCosts +  when (execInfo.gasToken) {
+                    ERC20Token.ETHER_TOKEN.address -> (execInfo.transaction.wrapped.value?.value ?: BigInteger.ZERO)
+                    execInfo.transaction.wrapped.address -> {
+                        if (execInfo.transaction.wrapped.data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true) {
+                            val argData = execInfo.transaction.wrapped.data!!.removeSolidityMethodPrefix(ERC20Contract.Transfer.METHOD_ID)
+                            ERC20Contract.Transfer.decodeArguments(argData)._value.value
+                        } else {
+                            BigInteger.ZERO
+                        }
+                    }
+                    else -> BigInteger.ZERO
+                }
+                Triple(execInfo, token, execInfo.balance >= requiredFunds)
+            } }
             .emitAndNext(
                 emit = {
-                    it.map {
-                        ViewUpdate.Estimate(
-                            Wei(it.gasCosts()), it.balance
-                        )
-                    }
+                    it.map { (execInfo, token, canSubmit) -> ViewUpdate.Estimate(execInfo.gasCosts(), execInfo.balance, token, canSubmit) }
                 },
                 next = { confirmations(events, it, initialSignatures) })
 
     private fun confirmations(
         events: Events,
-        params: Result<TransactionExecutionRepository.ExecuteInformation>,
+        params: Result<Triple<TransactionExecutionRepository.ExecuteInformation, ERC20Token, Boolean>>,
         initialSignatures: Map<Solidity.Address, Signature>?
     ) =
-        (params as? DataResult)?.data?.let {
-            // Once we have the execution information we can setup everything related to requesting and receiving confirmation
-            Observable.merge(
-                observeConfirmationStore(events, it, initialSignatures),
-                observeIncomingConfirmations(it)
-            )
+        (params as? DataResult)?.data?.let { (execInfo, _, canSubmit) ->
+            if (canSubmit) {
+                // Once we have the execution information we can setup everything related to requesting and receiving confirmation
+                Observable.merge(
+                    observeConfirmationStore(events, execInfo, initialSignatures),
+                    observeIncomingConfirmations(execInfo)
+                )
+            } else {
+                // We cannot submit don't do anything
+                Observable.empty()
+            }
         } ?: Observable.just<Result<ViewUpdate>>(
             DataResult(ViewUpdate.EstimateError)
         )
