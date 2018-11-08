@@ -99,12 +99,12 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/scan_qr_code"
-        app:layout_constraintBottom_toTopOf="@+id/layout_pairing_skip"
+        app:layout_constraintBottom_toTopOf="@+id/layout_pairing_later"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/layout_pairing_skip"
+        android:id="@+id/layout_pairing_later"
         style="@style/PrimaryButton.White.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
         android:background="@drawable/selectable_background"
         android:gravity="center"
         android:padding="8dp"
-        android:text="@string/skip"
+        android:text="@string/later"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
