@@ -46,8 +46,7 @@ script:
   - ./ci/upload_crashlytic_versions.sh
 
 before_deploy:
-  - ./ci/build_rinkeby_version.sh
-  - ./ci/build_release_version.sh
+  - ./ci/build_production_versions.sh
 
 deploy:
   provider: releases
