@@ -91,6 +91,7 @@ class RecoveringSafeViewModel @Inject constructor(
 
     private fun observeTokenRecoveryInfo(safeAddress: String, requiredFunds: BigInteger, gasTokenAddress: Solidity.Address) =
         tokenRepository.loadToken(gasTokenAddress)
+            .onErrorResumeNext { error: Throwable -> errorHandler.single(error) }
             .emitAndNext(
                 emit = {
                     RecoveryInfo(safeAddress, ERC20TokenWithBalance(it, null), requiredFunds)
@@ -104,7 +105,6 @@ class RecoveringSafeViewModel @Inject constructor(
                         }
                 }
             )
-            .onErrorResumeNext { error: Throwable -> errorHandler.observable(error) }
             .mapToResult()
 
     override fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<RecoveryExecuteInfo> =
