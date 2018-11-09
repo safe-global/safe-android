@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -451,12 +452,23 @@ class RecoveringSafeViewModelTest {
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        given(tokenRepoMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
+            .willReturn(Observable.just(listOf(ERC20Token.ETHER_TOKEN to BigInteger.TEN)))
 
         val observer = TestObserver<Result<RecoveringSafeContract.RecoveryInfo>>()
         viewModel.observeRecoveryInfo(TEST_SAFE).subscribe(observer)
         observer.assertResult(
             DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, null, BigInteger.valueOf(110))),
-            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, ERC20Token.ETHER_TOKEN, BigInteger.valueOf(110)))
+            DataResult(
+                RecoveringSafeContract.RecoveryInfo(
+                    TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null), BigInteger.valueOf(110)
+                )
+            ),
+            DataResult(
+                RecoveringSafeContract.RecoveryInfo(
+                    TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, BigInteger.TEN), BigInteger.valueOf(110)
+                )
+            )
         )
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
