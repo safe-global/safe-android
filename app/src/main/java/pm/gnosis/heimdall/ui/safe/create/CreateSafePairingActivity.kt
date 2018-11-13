@@ -16,7 +16,7 @@ class CreateSafePairingActivity : PairingActivity() {
 
     override fun onStart() {
         super.onStart()
-        disposables += layout_pairing_skip.clicks()
+        disposables += layout_pairing_later.clicks()
             .subscribeBy(
                 onNext = { startActivity(CreateSafeRecoveryPhraseIntroActivity.createIntent(this, browserExtensionAddress = null)) },
                 onError = Timber::e
@@ -27,7 +27,7 @@ class CreateSafePairingActivity : PairingActivity() {
         startActivity(CreateSafeRecoveryPhraseIntroActivity.createIntent(this, extension))
     }
 
-    override fun shouldShowSkip() = true
+    override fun shouldShowLaterOption() = true
 
     companion object {
         fun createIntent(context: Context) = Intent(context, CreateSafePairingActivity::class.java)
