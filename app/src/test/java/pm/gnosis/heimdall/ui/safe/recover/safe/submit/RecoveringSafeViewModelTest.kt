@@ -14,6 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.R
@@ -21,6 +22,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -445,22 +447,59 @@ class RecoveringSafeViewModelTest {
 
     @Test
     fun observeRecoveryInfo() {
+        val testScheduler = TestScheduler()
+        RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
         val safe = testRecoveringSafe(
             TEST_SAFE, TEST_HASH, TEST_SAFE,
             txGas = BigInteger.ONE, dataGas = BigInteger.TEN, gasPrice = BigInteger.TEN, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        var response: BigInteger? = BigInteger.ONE
+        given(tokenRepoMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
+            .willReturn(Observable.fromCallable {
+                response?.let { listOf(ERC20Token.ETHER_TOKEN to it) } ?: throw UnknownHostException()
+            })
 
         val observer = TestObserver<Result<RecoveringSafeContract.RecoveryInfo>>()
-        viewModel.observeRecoveryInfo(TEST_SAFE).subscribe(observer)
-        observer.assertResult(
+        val expectedValues = mutableListOf(
             DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, null, BigInteger.valueOf(110))),
-            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, ERC20Token.ETHER_TOKEN, BigInteger.valueOf(110)))
+            DataResult(
+                RecoveringSafeContract.RecoveryInfo(
+                    TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null), BigInteger.valueOf(110)
+                )
+            ),
+            DataResult(
+                RecoveringSafeContract.RecoveryInfo(
+                    TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, BigInteger.ONE), BigInteger.valueOf(110)
+                )
+            )
         )
+
+        viewModel.observeRecoveryInfo(TEST_SAFE).subscribe(observer)
+        observer.assertValueSequenceOnly(expectedValues)
+
+        // Test repeat after value
+        response = null
+        testScheduler.advanceTimeBy(10, TimeUnit.SECONDS)
+
+        observer.assertValueSequenceOnly(expectedValues)
+
+        // Test retry after errors
+        response = BigInteger.TEN
+        testScheduler.advanceTimeBy(10, TimeUnit.SECONDS)
+
+        expectedValues += DataResult(
+            RecoveringSafeContract.RecoveryInfo(
+                TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, BigInteger.TEN), BigInteger.valueOf(110)
+            )
+        )
+        observer.assertValueSequenceOnly(expectedValues)
+
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(tokenRepoMock).should().loadToken(TEST_TOKEN)
+        then(tokenRepoMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
         then(tokenRepoMock).shouldHaveNoMoreInteractions()
         // No error message mapping
         then(contextMock).shouldHaveZeroInteractions()

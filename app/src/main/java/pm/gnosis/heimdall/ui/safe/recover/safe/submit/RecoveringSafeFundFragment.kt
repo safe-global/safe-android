@@ -51,6 +51,7 @@ class RecoveringSafeFundFragment : BaseFragment() {
         super.onStart()
         eventTracker.submit(Event.ScreenView(ScreenId.RECOVER_SAFE_AWAIT_FUNDS))
 
+        layout_recovering_safe_fund_description.text = getString(R.string.fund_recovery_fees, "-", "-")
         val safeAddress = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() ?: throw IllegalStateException("No safe address provided!")
         disposables += viewModel.observeRecoveryInfo(safeAddress)
             .observeOn(AndroidSchedulers.mainThread())
@@ -81,7 +82,9 @@ class RecoveringSafeFundFragment : BaseFragment() {
     private fun onRecoveryInfo(info: RecoveringSafeContract.RecoveryInfo) {
         layout_recovering_safe_fund_address.text = info.safeAddress
         info.paymentToken?.let {
-            layout_recovering_safe_fund_amount_label.text = getString(R.string.pending_safe_deposit_value, it.displayString(info.paymentAmount))
+            val requiredFundsString = it.token.displayString(info.paymentAmount)
+            layout_recovering_safe_fund_amount_label.text = getString(R.string.pending_safe_deposit_value, requiredFundsString)
+            layout_recovering_safe_fund_description.text = getString(R.string.fund_recovery_fees, it.displayString(), requiredFundsString)
         }
     }
 
