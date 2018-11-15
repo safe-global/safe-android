@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
@@ -29,7 +30,7 @@ abstract class RecoveringSafeContract : ViewModel() {
         PENDING, // Transaction has been submitted
     }
 
-    data class RecoveryInfo(val safeAddress: String, val paymentToken: ERC20Token?, val paymentAmount: BigInteger)
+    data class RecoveryInfo(val safeAddress: String, val paymentToken: ERC20TokenWithBalance?, val paymentAmount: BigInteger)
     data class RecoveryExecuteInfo(val balance: BigInteger, val paymentAmount: BigInteger, val paymentToken: ERC20Token, val canSubmit: Boolean)
 
 }

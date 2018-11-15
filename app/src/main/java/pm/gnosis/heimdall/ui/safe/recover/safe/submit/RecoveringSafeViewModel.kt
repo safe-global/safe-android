@@ -9,6 +9,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
@@ -23,6 +24,7 @@ import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
@@ -73,25 +75,37 @@ class RecoveringSafeViewModel @Inject constructor(
 
     override fun observeRecoveryInfo(address: Solidity.Address): Observable<Result<RecoveryInfo>> =
         safeRepository.loadRecoveringSafe(address)
-            .map { Triple(it.address.asEthereumAddressChecksumString(), it.gasPrice * (it.dataGas + it.txGas + it.operationalGas), it.gasToken) }
+            .map { Triple(it.address.asEthereumAddressChecksumString(), it.requiredFunds(), it.gasToken) }
             .emitAndNext(
-                emit = { (safeAddress, amount) ->
+                emit = { (safeAddress, requiredFunds) ->
                     DataResult(
                         RecoveryInfo(
                             safeAddress,
                             null,
-                            amount
+                            requiredFunds
                         )
                     )
                 },
-                next = { (safeAddress, amount, gasToken) ->
-                    tokenRepository.loadToken(gasToken)
-                        .map { RecoveryInfo(safeAddress, it, amount) }
-                        .onErrorResumeNext { errorHandler.single(it) }
-                        .toObservable()
-                        .mapToResult()
+                next = { (safeAddress, requiredFunds, gasToken) -> observeTokenRecoveryInfo(safeAddress, requiredFunds, gasToken) }
+            )
+
+    private fun observeTokenRecoveryInfo(safeAddress: String, requiredFunds: BigInteger, gasTokenAddress: Solidity.Address) =
+        tokenRepository.loadToken(gasTokenAddress)
+            .onErrorResumeNext { error: Throwable -> errorHandler.single(error) }
+            .emitAndNext(
+                emit = {
+                    RecoveryInfo(safeAddress, ERC20TokenWithBalance(it, null), requiredFunds)
+                },
+                next = { token ->
+                    tokenRepository.loadTokenBalances(safeAddress.asEthereumAddress()!!, listOf(token))
+                        .repeatWhen { it.delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS) }
+                        .retryWhen { it.delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS) }
+                        .map {
+                            RecoveryInfo(safeAddress, it.first().let { (token, balance) -> ERC20TokenWithBalance(token, balance) }, requiredFunds)
+                        }
                 }
             )
+            .mapToResult()
 
     override fun loadRecoveryExecuteInfo(address: Solidity.Address): Single<RecoveryExecuteInfo> =
         safeRepository.loadRecoveringSafe(address)
@@ -99,7 +113,7 @@ class RecoveringSafeViewModel @Inject constructor(
                 executionRepository.loadSafeExecuteState(address, safe.gasToken)
                     .zipWith(tokenRepository.loadToken(safe.gasToken),
                         BiFunction { execState: TransactionExecutionRepository.SafeExecuteState, token: ERC20Token ->
-                            val paymentAmount = safe.gasPrice * (safe.operationalGas + safe.txGas + safe.dataGas)
+                            val paymentAmount = safe.requiredFunds()
                             RecoveryExecuteInfo(
                                 execState.balance,
                                 paymentAmount,
@@ -144,7 +158,7 @@ class RecoveringSafeViewModel @Inject constructor(
     override fun checkRecoveryFunded(address: Solidity.Address): Single<Solidity.Address> =
         safeRepository.loadRecoveringSafe(address)
             .flatMap { safe ->
-                val gasCosts = (safe.txGas + safe.dataGas) * safe.gasPrice
+                val gasCosts = safe.requiredFunds()
                 // Create a fake token since only the address is necessary to load the balance
                 requestBalance(
                     safe.address,
@@ -173,6 +187,9 @@ class RecoveringSafeViewModel @Inject constructor(
             Transaction(safe.recoverer, data = safe.data, nonce = safe.nonce),
             safe.operation
         )
+
+    private fun RecoveringSafe.requiredFunds() =
+        (txGas + dataGas + operationalGas) * gasPrice
 
     companion object {
         private const val BALANCE_REQUEST_INTERVAL_SECONDS = 10L
