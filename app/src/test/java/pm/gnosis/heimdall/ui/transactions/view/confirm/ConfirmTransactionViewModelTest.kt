@@ -198,7 +198,7 @@ class ConfirmTransactionViewModelTest {
                     ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_delegatecall)),
             RestrictedTransactionException.ModifyOwners::class to
                     (RestrictedTransactionException.ModifyOwners to
-                    ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_owners)),
+                    ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_signers)),
             RestrictedTransactionException.ModifyModules::class to
                     (RestrictedTransactionException.ModifyModules to
                     ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_modules)),

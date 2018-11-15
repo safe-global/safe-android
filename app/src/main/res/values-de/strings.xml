@@ -115,7 +115,7 @@
     <string name="place_your_finger_to_unlock">Platziere deinen Finger zum Entsperren.</string>
     <string name="reject">Ablehnen</string>
     <string name="restricted_transaction_delegatecall">Delegate calls sind nicht erlaubt</string>
-    <string name="restricted_transaction_modify_owners">Es ist nicht erlaubt die Owner des Safes zu ändern</string>
+    <string name="restricted_transaction_modify_signers">Es ist nicht erlaubt die Schlüssel des Safes zu ändern</string>
     <string name="restricted_transaction_modify_modules">Es ist nicht erlaubt, die Module des Safe zu ändern</string>
     <string name="restricted_transaction_change_threshold">Es ist nicht erlaubt, die Threshold des Safes zu ändern</string>
     <string name="restricted_transaction_modify_proxy">Es ist nicht erlaubt, den Proxy des Safe zu ändern</string>
@@ -262,4 +262,5 @@
     <string name="submitted">Abgesendet</string>
     <string name="status">Status</string>
     <string name="transaction_fee">Transaktionsgebühr</string>
+    <string name="later">Später</string>
 </resources>

@@ -16,7 +16,7 @@ class RecoverSafePairingActivity : PairingActivity() {
         startActivity(RecoverSafeRecoveryPhraseActivity.createIntent(this, safeAddress, extension))
     }
 
-    override fun shouldShowSkip() = false
+    override fun shouldShowLaterOption() = false
 
     companion object {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
