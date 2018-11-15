@@ -88,9 +88,9 @@
     <string name="setup_fingerprint">지문 설정하기</string>
     <string name="fingerprint_confirmed">지문이 확인되었습니다!</string>
     <string name="finish">완료</string>
-    <string name="password_validation_identical_characters">같은 글자를 연속 3회 입력하지 마세요</string>
-    <string name="password_validation_minimum_characters">최소 8글자를 입력하세요</string>
-    <string name="password_validation_one_number_one_letter">최소 1개 글자와 숫자를 포함해야 합니다</string>
+    <string name="password_validation_identical_characters">같은 글자를 연속 3회 입력하지 마세요\n</string>
+    <string name="password_validation_minimum_characters">최소 8글자를 입력하세요\n</string>
+    <string name="password_validation_one_number_one_letter">최소 1개 글자와 숫자를 포함해야 합니다\n</string>
     <string name="terms">약관</string>
     <string name="terms_info">
         <![CDATA[<a href=\"https://safe.gnosis.io/terms\">이용 약관</a>과 <a href=\"https://safe.gnosis.io/privacy\">프라이버시 정책</a>을 검토해주세요.]]>
@@ -114,7 +114,7 @@
     <string name="use_password">비밀번호 사용</string>
     <string name="place_your_finger_to_unlock">잠금 해제를 위해 손가락을 올려주세요</string>
     <string name="reject">거부</string>
-    <string name="restricted_transaction_delegatecall">calls를 위임하는 것은 허용되지 않습니다</string>
+    <string name="restricted_transaction_delegatecall">Delegate calls는 허용되지 않습니다</string>
     <string name="restricted_transaction_modify_signers">Safe의 서명자는 수정할 수 없습니다</string>
     <string name="restricted_transaction_modify_modules">Safe의 모듈은 수정할 수 없습니다</string>
     <string name="restricted_transaction_change_threshold">Safe의 임계값은 변경할 수 없습니다.</string>
@@ -239,7 +239,7 @@
         그리고 아래 버튼을 눌러 생성된 QR 코드를 스캔합니다
     </string>
     <string name="confirm_recovery_phrase_incorrect_sequence">유효하지 않은 복구 문장입니다. 올바른 순서대로 입력해주세요.</string>
-    <string name="confirm_recovery_phrase_title">올바르게 맞춰주세요!</string>
+    <string name="confirm_recovery_phrase_title">올바른 문구를 각 칸에 입력하세요!</string>
     <string name="confirm_recovery_phrase_description">빠져있는 단어를 순서대로 눌러주세요.</string>
     <string name="layout_recovery_phrase_intro_title">복구문장을 통해 안전하게 보관하세요.</string>
     <string name="layout_recovery_phrase_intro_description">만약 신규 휴대전화에서 Safe를 복구해야할 경우, 다음 화면에 나오는 문장을 사용하세요.\n
