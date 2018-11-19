@@ -92,10 +92,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
-        <activity
-            android:name=".ui.safe.selection.SelectSafeActivity"
-            android:screenOrientation="portrait" />
-
         <activity android:name=".ui.qrscan.QRCodeScanActivity" />
 
         <activity

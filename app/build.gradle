@@ -184,7 +184,6 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$versions.android_support"
     implementation "com.android.support:design:$versions.android_support"
     implementation "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
-    implementation "com.android.billingclient:billing:$versions.billing"
 
     // Rx
     implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
