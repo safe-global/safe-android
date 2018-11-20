@@ -61,7 +61,7 @@ class AssetTransferViewHolder(
             .subscribeBy(
                 onSuccess = {
                     view?.apply {
-                        layout_asset_transfer_info_value.text = it.displayString(data.amount)
+                        layout_asset_transfer_info_value.text = it.displayString(data.amount, it.decimals)
                         loadSafeTokenBalance(it)
                     }
                 },
