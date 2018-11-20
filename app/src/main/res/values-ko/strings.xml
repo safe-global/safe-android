@@ -37,12 +37,12 @@
     <string name="safe_name_hint">Safe 명칭</string>
     <string name="estimated_transaction_fee">예상 거래 수수료</string>
     <string name="manage_tokens">토큰 관리</string>
-    <string name="scan_or_tap_to_copy">복사를 위해 스캔하거나 탭하십시오</string>
+    <string name="scan_or_tap_to_copy">스캔하거나 복사를 위해 탭하십시오</string>
     <string name="address_hint">보낼 지갑 주소 입력하기</string>
     <string name="value_hint">보낼 값 입력</string>
     <string name="select_token">보낼 토큰 선택</string>
     <string name="passwords_do_not_match">비밀번호가 일치하지 않습니다</string>
-    <string name="password_too_short">비밀번호는 최소 8개 글자 이상이어야 합니다</string>
+    <string name="password_too_short">비밀번호는 최소 8개 문자 이상이어야 합니다</string>
     <string name="password_error_saving">오류 발생으로 비밀번호 저장 불가합니다.</string>
     <string name="enter_master_password">마스터 비밀번호 입력</string>
     <string name="review_transaction">거래 확인</string>
@@ -74,10 +74,10 @@
     <string name="this_device_address">이 기기의 주소</string>
     <string name="ok">OK</string>
     <string name="setup_password">비밀번호 설정</string>
-    <string name="setup_password_info">귀하의 비밀번호가 Safe 잠금해제와 거래 확인에 사용되었습니다.</string>
+    <string name="setup_password_info">귀하의 비밀번호는 Safe 잠금해제와 거래확인에 사용됩니다.</string>
     <string name="next">다음</string>
     <string name="confirm_password">비밀번호 확인</string>
-    <string name="confirm_password_info">확인을 위햐 비밀번호를 재입력해주세요</string>
+    <string name="confirm_password_info">확인을 위해 비밀번호를 재입력해주세요</string>
     <string name="onboarding_intro_info">이더리움 및 ERC-20 토큰을 관리하기 편리하고 안전한 멀티시그 월렛입니다.</string>
     <string name="create_password">신규 비밀번호 생성</string>
     <string name="password_doesnt_match">비밀번호가 일치하지 않습니다</string>
@@ -88,12 +88,12 @@
     <string name="setup_fingerprint">지문 설정하기</string>
     <string name="fingerprint_confirmed">지문이 확인되었습니다!</string>
     <string name="finish">완료</string>
-    <string name="password_validation_identical_characters">같은 글자를 연속 3회 입력하지 마세요\n</string>
-    <string name="password_validation_minimum_characters">최소 8글자를 입력하세요\n</string>
-    <string name="password_validation_one_number_one_letter">최소 1개 글자와 숫자를 포함해야 합니다\n</string>
+    <string name="password_validation_identical_characters">같은 문자를 연속 3회 입력하지 마세요\n</string>
+    <string name="password_validation_minimum_characters">최소 8개 문자를 입력하세요\n</string>
+    <string name="password_validation_one_number_one_letter">최소 1개 문자와 숫자를 포함해야 합니다\n</string>
     <string name="terms">약관</string>
     <string name="terms_info">
-        <![CDATA[<a href=\"https://safe.gnosis.io/terms\">이용 약관</a>과 <a href=\"https://safe.gnosis.io/privacy\">프라이버시 정책</a>을 검토해주세요.]]>
+        <![CDATA[<a href=\"https://safe.gnosis.io/terms\">이용 약관</a>과 <a href=\"https://safe.gnosis.io/privacy\">개인정보처리정책</a>을 검토해주세요.]]>
     </string>
     <string name="no_thanks">아니오</string>
     <string name="agree">동의합니다</string>
@@ -123,7 +123,7 @@
     <string name="transaction_type_generic">스마트 컨트랙트 상호작용</string>
     <string name="transaction_type_asset_transfer">발신 거래</string>
     <string name="header_pending">처리 중</string>
-    <string name="header_today">당일</string>
+    <string name="header_today">오늘</string>
     <string name="header_yesterday">1일 전</string>
     <string name="header_older">이전</string>
     <string name="header_submitted">제출 시점</string>
@@ -138,7 +138,7 @@
 \t\t3. 12단어 복구 문장</string>
     <string name="safe_intro_message_2">귀하의 자금은 이 모바일 Safe에 안전하게 보관되어 있으며 Gnosis Ltd.사는 이에 접근할 수 없습니다.</string>
     <string name="safe_intro_message_3">
-        <![CDATA[휴대폰을 변경 또는 분실의 경우, Safe <font color=#f02525>복구 문장</font>이 있어야 Safe 내 자금에 액세스하실 수 있습니다.
+        <![CDATA[휴대폰을 변경 또는 분실할 경우, Safe <font color=#f02525>복구 문장</font>이 있어야 Safe 내 자금에 액세스하실 수 있습니다.
 (복구 문장은 별도로 기록해놓으시고 안전한 곳에 보관하세요.)]]>
     </string>
     <string name="pairing_info">모든 거래는 본 장치와 브라우저 확장 프로그램에서 승인되어야 합니다.</string>
@@ -177,7 +177,7 @@
     <string name="device_password">기기 비밀번호</string>
     <string name="terms_of_service">이용 약관</string>
     <string name="open_in_browser">브라우저에서 열기</string>
-    <string name="privacy_policy">프라이버시 정책</string>
+    <string name="privacy_policy">개인정보처리정책</string>
     <string name="fingerprint_hint">거래 제출을 위해 손가락을 센서 위에 올려주세요</string>
     <string name="debug_settings">디버그 설정</string>
     <string name="confirm_recovery_phrase">복구 문장 확인</string>
@@ -248,8 +248,8 @@
     <string name="get_my_recovery_phrase">나만의 복구문장 받기</string>
     <string name="layout_replace_recovery_phrase_transaction_info_description">이전 복구 문장은 무효화되고 신규 문장으로 대체됩니다.</string>
     <string name="layout_setup_recovery_phrase_title">귀하의 복구 문장입니다</string>
-    <string name="layout_setup_recovery_phrase_description">팁: 기록하여 안전하게 보관하십시오</string>
-    <string name="i_have_a_copy">위 사항을 복사했습니다.</string>
+    <string name="layout_setup_recovery_phrase_description">조언: 안전한 곳에 적어서 보관하세요.</string>
+    <string name="i_have_a_copy">위 사항을 옮겨 적었습니다.</string>
     <string name="replaced_recovery_phrase">대체된 복구 문장</string>
     <string name="confirm_new_recovery_phrase_error">거래 생성에 오류가 발생하였으니, 다시 시도해주세요.</string>
     <string name="scan_extension_invalid_format">QR 코드 형식이 유효하지 않습니다. 브라우저 확장 프로그램에서 생성된 QR 코드를 스캔해주세요.</string>
@@ -264,7 +264,7 @@
     <string name="pairing_first_step">
         <![CDATA[1. <font color=#27a0ff>Gnosis Safe 브라우저 확장 프로그램</font>을 다운로드하세요.]]>
     </string>
-    <string name="pairing_second_step">2. 브라우저 확장 프로그램에 QR 코드를 스캔하시오.</string>
+    <string name="pairing_second_step">2. 브라우저 확장 프로그램에 QR 코드를 스캔하세요.</string>
     <string name="submitted">제출 시점</string>
     <string name="status">상태</string>
     <string name="transaction_fee">거래 수수료</string>
