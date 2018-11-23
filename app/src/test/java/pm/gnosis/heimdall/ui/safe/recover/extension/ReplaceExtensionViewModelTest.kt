@@ -80,7 +80,7 @@ class ReplaceExtensionViewModelTest {
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
-        val maxTransactionFee = viewModel.getMaxTransactionFee().balance!!
+        val maxTransactionFee = viewModel.loadFeeInfo().balance!!
         assertEquals(11000000.toBigInteger(), maxTransactionFee)
     }
 
@@ -117,7 +117,7 @@ class ReplaceExtensionViewModelTest {
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
-        viewModel.observeSafeBalance().subscribe(testObserver)
+        viewModel.observeSubmitStatus().subscribe(testObserver)
 
         // First successful emission
         testScheduler.advanceTimeBy(0, TimeUnit.SECONDS)
@@ -167,7 +167,7 @@ class ReplaceExtensionViewModelTest {
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
-        viewModel.observeSafeBalance().subscribe(testObserver)
+        viewModel.observeSubmitStatus().subscribe(testObserver)
 
         testScheduler.advanceTimeBy(0, TimeUnit.SECONDS)
         testObserver.assertValue(ErrorResult(exception))

@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.data.remote.models.RelayExecution
 import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -176,7 +177,8 @@ class DefaultTransactionExecutionRepositoryTest {
         given(relayServiceApiMock.execute(MockUtils.any(), MockUtils.any())).willReturn(Single.just(RelayExecution(SERVICE_TX_HASH)))
         val tx = SafeTransaction(Transaction(TEST_ADDRESS, TEST_ETH_AMOUNT, nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)
         val observer = TestObserver<String>()
-        repository.submit(TEST_SAFE, tx, mapOf(TEST_OWNER to TEST_SIGNATURE), false, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, false)
+        repository.submit(TEST_SAFE, tx, mapOf(TEST_OWNER to TEST_SIGNATURE), false, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO,
+            ERC20Token.ETHER_TOKEN.address, false)
             .subscribe(observer)
         observer.assertResult(TEST_TX_HASH)
         then(relayServiceApiMock).should().execute(
@@ -190,6 +192,7 @@ class DefaultTransactionExecutionRepositoryTest {
                 "0",
                 "0",
                 "0",
+                ERC20Token.ETHER_TOKEN.address.asEthereumAddressChecksumString(),
                 10
             )
         )

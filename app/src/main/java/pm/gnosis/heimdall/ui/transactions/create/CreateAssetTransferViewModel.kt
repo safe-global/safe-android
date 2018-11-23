@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.transactions.builder.AssetTransferTransactionBuilder
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
@@ -138,12 +139,10 @@ class CreateAssetTransferViewModel @Inject constructor(
     }
 
     private fun estimate(safe: Solidity.Address, data: TransactionData.AssetTransfer) =
-        Observable.fromCallable {
-            AssetTransferTransactionBuilder.build(data)
-        }
-            .flatMapSingle<ViewUpdate> {
-                val tokenAddress = ERC20Token.ETHER_TOKEN.address
-                executionRepository.loadExecuteInformation(safe, tokenAddress, it)
+        tokenRepository.loadPaymentToken().map { it to AssetTransferTransactionBuilder.build(data) }
+            .flatMap<ViewUpdate> { (gasToken, transaction) ->
+                val tokenAddress = gasToken.address
+                executionRepository.loadExecuteInformation(safe, tokenAddress, transaction)
                     .zipWith(tokenRepository.loadToken(tokenAddress),
                         BiFunction { execInfo: TransactionExecutionRepository.ExecuteInformation, token: ERC20Token ->
                             val estimate = execInfo.gasCosts()
@@ -152,6 +151,7 @@ class CreateAssetTransferViewModel @Inject constructor(
                             ViewUpdate.Estimate(estimate, execInfo.balance, token, canExecute)
                         })
             }
+            .toObservable()
             .onErrorReturn {
                 Timber.e(it)
                 ViewUpdate.EstimateError

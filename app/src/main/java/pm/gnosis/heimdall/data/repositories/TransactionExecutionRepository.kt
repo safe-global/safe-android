@@ -17,7 +17,7 @@ interface TransactionExecutionRepository {
 
     fun calculateHash(
         safeAddress: Solidity.Address, transaction: SafeTransaction,
-        txGas: BigInteger, dataGas: BigInteger, gasPrice: BigInteger, gasToken: Solidity.Address = Solidity.Address(BigInteger.ZERO)
+        txGas: BigInteger, dataGas: BigInteger, gasPrice: BigInteger, gasToken: Solidity.Address
     ): Single<ByteArray>
 
     fun loadSafeExecuteState(safeAddress: Solidity.Address, paymentToken: Solidity.Address): Single<SafeExecuteState>
@@ -28,7 +28,8 @@ interface TransactionExecutionRepository {
         transaction: SafeTransaction,
         txGas: BigInteger,
         dataGas: BigInteger,
-        gasPrice: BigInteger
+        gasPrice: BigInteger,
+        gasToken: Solidity.Address
     ): Single<Signature>
 
     fun signRejection(
@@ -36,7 +37,8 @@ interface TransactionExecutionRepository {
         transaction: SafeTransaction,
         txGas: BigInteger,
         dataGas: BigInteger,
-        gasPrice: BigInteger
+        gasPrice: BigInteger,
+        gasToken: Solidity.Address
     ): Single<Signature>
 
     fun checkConfirmation(
@@ -45,6 +47,7 @@ interface TransactionExecutionRepository {
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         signature: Signature
     ): Single<Pair<Solidity.Address, Signature>>
 
@@ -54,6 +57,7 @@ interface TransactionExecutionRepository {
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         signature: Signature
     ): Single<Pair<Solidity.Address, Signature>>
 
@@ -69,6 +73,7 @@ interface TransactionExecutionRepository {
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         addToHistory: Boolean = true
     ): Single<String>
 
@@ -78,6 +83,7 @@ interface TransactionExecutionRepository {
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         targets: Set<Solidity.Address>
     ): Completable
 

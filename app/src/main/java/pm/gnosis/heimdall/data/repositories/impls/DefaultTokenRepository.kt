@@ -18,10 +18,7 @@ import pm.gnosis.heimdall.data.repositories.models.toDb
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.ERC20
-import pm.gnosis.utils.hexAsBigIntegerOrNull
-import pm.gnosis.utils.hexStringToByteArrayOrNull
-import pm.gnosis.utils.nullOnThrow
-import pm.gnosis.utils.utf8String
+import pm.gnosis.utils.*
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,6 +29,17 @@ class DefaultTokenRepository @Inject constructor(
     private val ethereumRepository: EthereumRepository,
     private val verifiedTokensServiceApi: VerifiedTokensServiceApi
 ) : TokenRepository {
+
+    private val paymentToken = ERC20Token(
+        //"0xc68d02df5d27cE6ecCe4E8843e907De281dcfe5a".asEthereumAddress()!!, "Gnosis", "GNO", 18
+        "0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d".asEthereumAddress()!!, "Love", "<3", 6
+    )
+
+    private val hardcodedTokens = mapOf(
+        ETHER_TOKEN.address to ETHER_TOKEN,
+        paymentToken.address to paymentToken
+    )
+
     private val erc20TokenDao = appDb.erc20TokenDao()
 
     override fun observeEnabledTokens(): Flowable<List<ERC20Token>> =
@@ -50,11 +58,11 @@ class DefaultTokenRepository @Inject constructor(
             .map { it.map { it.fromDb() } }
 
     override fun loadToken(address: Solidity.Address): Single<ERC20Token> =
-        if (address == ETHER_TOKEN.address) Single.just(ETHER_TOKEN)
-        else erc20TokenDao.loadToken(address)
-            .map { it.fromDb() }
-            .subscribeOn(Schedulers.io())
-            .onErrorResumeNext { loadTokenFromChain(address).firstOrError() }
+        hardcodedTokens[address]?.let { Single.just(it) }
+            ?: erc20TokenDao.loadToken(address)
+                .map { it.fromDb() }
+                .subscribeOn(Schedulers.io())
+                .onErrorResumeNext { loadTokenFromChain(address).firstOrError() }
 
     override fun enableToken(token: ERC20Token): Completable =
         Completable.fromCallable {
@@ -94,13 +102,13 @@ class DefaultTokenRepository @Inject constructor(
             .map {
                 val name =
                     it.name.result()?.hexStringToByteArrayOrNull()?.utf8String()?.trim()
-                            ?: throw IllegalArgumentException()
+                        ?: throw IllegalArgumentException()
                 val symbol =
                     it.symbol.result()?.hexStringToByteArrayOrNull()?.utf8String()?.trim()
-                            ?: throw IllegalArgumentException()
+                        ?: throw IllegalArgumentException()
                 val decimals =
                     it.decimals.result()?.hexAsBigIntegerOrNull()?.toInt()
-                            ?: throw IllegalArgumentException()
+                        ?: throw IllegalArgumentException()
                 ERC20Token(contractAddress, name, symbol, decimals, "")
             }
     }
@@ -116,13 +124,15 @@ class DefaultTokenRepository @Inject constructor(
                         token to it?.value
                     }
                 } else {
-                    MappedRequest(EthCall(
-                        transaction = Transaction(
-                            token.address,
-                            data = ERC20Contract.BalanceOf.encode(ofAddress)
-                        ),
-                        id = index
-                    )) {
+                    MappedRequest(
+                        EthCall(
+                            transaction = Transaction(
+                                token.address,
+                                data = ERC20Contract.BalanceOf.encode(ofAddress)
+                            ),
+                            id = index
+                        )
+                    ) {
                         token to nullOnThrow {
                             ERC20Contract.BalanceOf.decode(it!!).balance.value
                         }
@@ -132,6 +142,8 @@ class DefaultTokenRepository @Inject constructor(
 
         return ethereumRepository.request(MappingBulkRequest(requests)).map { it.mapped() }
     }
+
+    override fun loadPaymentToken(): Single<ERC20Token> = Single.just(paymentToken)
 
     private class TokenInfoRequest(
         val name: EthRequest<String>,

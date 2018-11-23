@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.transactions.view.review
 
 import io.reactivex.Observable
 import io.reactivex.Single
+import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 class ReviewTransactionViewModel @Inject constructor(
     private val submitTransactionHelper: SubmitTransactionHelper,
-    private val executionRepository: TransactionExecutionRepository
+    private val executionRepository: TransactionExecutionRepository,
+    private val tokenRepository: TokenRepository
 ) : ReviewTransactionContract() {
 
     private lateinit var safe: Solidity.Address
@@ -33,8 +35,9 @@ class ReviewTransactionViewModel @Inject constructor(
 
     private fun txParams(transaction: SafeTransaction): Single<TransactionExecutionRepository.ExecuteInformation> {
         return cachedState[transaction]?.let { Single.just(it) }
-                ?: executionRepository.loadExecuteInformation(safe, ERC20Token.ETHER_TOKEN.address, transaction)
-                    .doOnSuccess { cachedState[transaction] = it }
+            ?: tokenRepository.loadPaymentToken()
+                .flatMap { executionRepository.loadExecuteInformation(safe, it.address, transaction) }
+                .doOnSuccess { cachedState[transaction] = it }
     }
 
     override fun observe(events: Events, transactionData: TransactionData): Observable<Result<ViewUpdate>> =

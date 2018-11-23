@@ -26,7 +26,9 @@ class ReplaceExtensionRecoveryPhraseActivity : InputRecoveryPhraseActivity<Repla
                 signature2 = recoverData.signatures[1],
                 txGas = recoverData.executionInfo.txGas,
                 dataGas = recoverData.executionInfo.dataGas,
+                operationalGas = recoverData.executionInfo.operationalGas,
                 gasPrice = recoverData.executionInfo.gasPrice,
+                gasToken = recoverData.executionInfo.gasToken,
                 chromeExtensionAddress = intent.getStringExtra(EXTRA_EXTENSION_ADDRESS).asEthereumAddress()!!,
                 txHash = recoverData.executionInfo.transactionHash
             )
