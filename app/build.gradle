@@ -20,8 +20,12 @@ android {
         // External Link
         buildConfigField javaTypes.STRING, "CHROME_EXTENSION_URL", asString(getKey("CHROME_EXTENSION_URL", "https://safe.gnosis.io/#personal"))
         // Contracts
-        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0x2727D69C0BD14B1dDd28371B8D97e808aDc1C2f7"))
-        buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0x2c155fd04682979fd15c67fb65dfab9345605761"))
+        buildConfigField javaTypes.STRING, "SUPPORTED_SAFE_MASTER_COPY_ADDRESSES", asString(getKey("SUPPORTED_SAFE_MASTER_COPY_ADDRESSES",
+                "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2," + // Version 0.2.0-alpha (Mainnet)
+                        "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af" // Version 0.1.0 (All networks)
+        ))
+        buildConfigField javaTypes.STRING, "CURRENT_SAFE_MASTER_COPY_ADDRESS", asString(getKey("CURRENT_SAFE_MASTER_COPY_ADDRESS", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af"))
+        buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))
         // Safe creation params
         buildConfigField javaTypes.INT, "PROXY_INIT_DATA_LENGTH", getKey("PROXY_INIT_DATA_LENGTH", "3006")
         buildConfigField javaTypes.STRING, "PROXY_INIT_DATA_HASH", asString(getKey("PROXY_INIT_DATA_HASH", "edf1810f1a9b5415ef81722254f125afaa5165f526077a7d7da91687cdfbc98b"))
@@ -110,8 +114,6 @@ android {
             buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.gnosis.pm/api/"))
             buildConfigField javaTypes.STRING, "VERIFIED_TOKEN_SERVICE_URL", asString(getKey("VERIFIED_TOKEN_SERVICE_URL", "https://raw.githubusercontent.com/rmeissner/crypto_resources/master/tokens/mainnet/"))
             buildConfigField javaTypes.STRING, "VERIFIED_TOKEN_SERVICE_ENDPOINT", asString(getKey("VERIFIED_TOKEN_SERVICE_ENDPOINT", "tokens.json"))
-            buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_ADDRESS", asString(getKey("SAFE_MASTER_COPY_ADDRESS", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2"))
-            buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0x5bb83eC2a142e733ff921EeB84b379C6C3193FEB"))
             buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0x07F455F30e862E13E3E3D960762cB11c4F744d52"))
         }
     }

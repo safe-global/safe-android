@@ -105,7 +105,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .map {
                 it.masterCopy.result().let {
                     !it?.removeHexPrefix().isNullOrBlank() &&
-                            Proxy.Implementation.decode(it!!).param0 == BuildConfig.SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()
+                            SUPPORTED_SAFE_MASTER_COPIES.contains(Proxy.Implementation.decode(it!!).param0)
                 } to it.threshold.result().let {
                     !it?.removeHexPrefix().isNullOrBlank() &&
                             GetThreshold.decode(it!!).param0.value > NO_EXTENSION_THRESHOLD
@@ -311,6 +311,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
     ) : BulkRequest(masterCopy, threshold)
 
     companion object {
+        private val SUPPORTED_SAFE_MASTER_COPIES = BuildConfig.SUPPORTED_SAFE_MASTER_COPY_ADDRESSES.split(",").map { it.asEthereumAddress()!! }
         private val NO_EXTENSION_THRESHOLD = BigInteger.ONE
     }
 }
