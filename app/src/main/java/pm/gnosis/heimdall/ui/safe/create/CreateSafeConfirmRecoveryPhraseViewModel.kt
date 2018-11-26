@@ -148,7 +148,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
     companion object {
         private const val SOLIDITY_SWARM_INFO_LENGTH = 86
         private val MAX_GAS_PRICE = "200000000000".toBigInteger() // 200 GWei
-        private val MATER_COPY_ADDRESS = BuildConfig.SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
+        private val MATER_COPY_ADDRESS = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
         private val FUNDER_ADDRESS = BuildConfig.SAFE_CREATION_FUNDER.asEthereumAddress()!!
     }
 }

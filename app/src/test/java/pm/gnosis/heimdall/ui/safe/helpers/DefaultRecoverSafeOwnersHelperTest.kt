@@ -441,6 +441,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             .assertValueAt(0, ViewUpdate.InputMnemonic)
             .assertValueAt(1, ViewUpdate.ValidMnemonic)
             .assertValueAt(2) {
+                println(it)
                 it is ViewUpdate.RecoverData &&
                         it.signatures.size == 2 &&
                         it.executionInfo.transactionHash == TEST_HASH.toHex() &&
@@ -506,7 +507,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         testRecoverPayload(
             TEST_NEW_APP,
             TEST_NEW_EXTENSION,
-            "0x2c155fd04682979fd15c67fb65dfab9345605761".asEthereumAddress()!!,
+            "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!, // MultiSend address
             TransactionExecutionRepository.Operation.DELEGATE_CALL,
             "0x8d80ff0a" +
                     "0000000000000000000000000000000000000000000000000000000000000020" +
