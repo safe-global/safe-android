@@ -64,9 +64,7 @@
     <string name="sign_transaction_request_message">거래 서명 요청이 왔습니다</string>
     <string name="sign_transaction_request_title">사인 요청</string>
     <string name="transaction_details">상세 거래 내역</string>
-    <string name="view_transaction_on">
-        <![CDATA[<font color=#27a0ff>etherscan.io에서 거래 보기</font>]]>
-    </string>
+    <string name="view_transaction_on"><![CDATA[<font color=#27a0ff>etherscan.io에서 거래 보기</font>]]></string>
     <string name="no_safe_selected">아무 Safe도 선택되지 않았습니다</string>
     <string name="channel_signing_request_name">서명 요청</string>
     <string name="channel_signing_request_description">거래 서명 요청</string>
@@ -92,9 +90,7 @@
     <string name="password_validation_minimum_characters">최소 8개 문자를 입력하세요\n</string>
     <string name="password_validation_one_number_one_letter">최소 1개 문자와 숫자를 포함해야 합니다\n</string>
     <string name="terms">약관</string>
-    <string name="terms_info">
-        <![CDATA[<a href=\"https://safe.gnosis.io/terms\">이용 약관</a>과 <a href=\"https://safe.gnosis.io/privacy\">개인정보처리정책</a>을 검토해주세요.]]>
-    </string>
+    <string name="terms_info"><![CDATA[<a href=\"https://safe.gnosis.io/terms\">이용 약관</a>과 <a href=\"https://safe.gnosis.io/privacy\">개인정보처리정책</a>을 검토해주세요.]]></string>
     <string name="no_thanks">아니오</string>
     <string name="agree">동의합니다</string>
     <string name="personal_edition">개인용</string>
@@ -137,19 +133,15 @@
 \t\t2. Gnosis Safe 브라우저 확장 프로그램\n 
 \t\t3. 12단어 복구 문장</string>
     <string name="safe_intro_message_2">귀하의 자금은 이 모바일 Safe에 안전하게 보관되어 있으며 Gnosis Ltd.사는 이에 접근할 수 없습니다.</string>
-    <string name="safe_intro_message_3">
-        <![CDATA[휴대폰을 변경 또는 분실할 경우, Safe <font color=#f02525>복구 문장</font>이 있어야 Safe 내 자금에 액세스하실 수 있습니다.
-(복구 문장은 별도로 기록해놓으시고 안전한 곳에 보관하세요.)]]>
-    </string>
+    <string name="safe_intro_message_3"><![CDATA[휴대폰을 변경 또는 분실할 경우, Safe <font color=#f02525>복구 문장</font>이 있어야 Safe 내 자금에 액세스하실 수 있습니다.
+(복구 문장은 별도로 기록해놓으시고 안전한 곳에 보관하세요.)]]></string>
     <string name="pairing_info">모든 거래는 본 장치와 브라우저 확장 프로그램에서 승인되어야 합니다.</string>
     <string name="scan_qr_code">QR 코드 스캔하기</string>
     <string name="pending_safe_deposit_value">귀하의 Safe 주소로 최소 %s만큼 보내주세요</string>
     <string name="fingerprint_many_tries">지문 인증 실패로 암호 입력으로 전환합니다.</string>
     <string name="deposit_received">예치금 입금 완료.</string>
     <string name="creating_your_new_safe">신규 Safe 생성</string>
-    <string name="deploy_safe_description">
-        <![CDATA[이 과정은 수 분이 소요될 수 있습니다. <font color=#27a0ff>etherscan.io</font>에서 진행상황을 확인하세요.]]>
-    </string>
+    <string name="deploy_safe_description"><![CDATA[이 과정은 수 분이 소요될 수 있습니다. <font color=#27a0ff>etherscan.io</font>에서 진행상황을 확인하세요.]]></string>
     <string name="devices_paired_successfuly">기기가 페어링되었습니다</string>
     <string name="error_pairing_devices">기기 페어링 오류</string>
     <string name="mnemonic_error_invalid">오류 (무효 복구 키)</string>
@@ -166,9 +158,7 @@
     <string name="remove_safe_title">정말로 Safe \'%s\'을 제거하기 원하십니까?</string>
     <string name="remove_safe_notice_1">Safe를 제거할 경우, 기기에서 앱은 제거되지만 Safe 자체와 Safe 내 자금은 유실되지 않습니다.</string>
     <string name="remove_safe_notice_2">기기에 재설치 혹은 기타 기기에 설치하는 경우, 복구 문장이 필요합니다.</string>
-    <string name="missing_token_manage">
-        <![CDATA[찾는 토큰이 없으신가요?<font color=#28b2fa><u>토큰 목록을 관리하세요</u></font>]]>
-    </string>
+    <string name="missing_token_manage"><![CDATA[찾는 토큰이 없으신가요?<font color=#28b2fa><u>토큰 목록을 관리하세요</u></font>]]></string>
     <string name="manage_tokens_description">귀하의 Safe에서 사용할 토큰을 선택해주세요</string>
     <string name="general_settings">일반 세팅</string>
     <string name="disabled">비활성화</string>
@@ -229,15 +219,10 @@
     <string name="settings_change">설정 변경</string>
     <string name="replace_recovery_phrase">복구 문장 대체하기</string>
     <string name="scan_your_browser_extension">브라우저 확장 프로그램에 스캔하기</string>
-    <string name="replace_recovery_phrase_description">
-        Safe 복구문장을 바꾸기 위해서는 아래 단계를 따라주세요:\n\n
-        <b>1.</b>
-        브라우저 확장 프로그램을 열고 복구문장을 교체하고자 하는 Safe를 선택합니다\n
-        <b>2.</b>
-        사이드 메뉴를 열고 \"복구 문장 교체\"를 클릭해주세요\n
-        <b>3.</b>
-        그리고 아래 버튼을 눌러 생성된 QR 코드를 스캔합니다
-    </string>
+    <string name="replace_recovery_phrase_description">Safe 복구문장을 바꾸기 위해서는 아래 단계를 따라주세요:\n\n
+        <b>1.</b> 브라우저 확장 프로그램을 열고 복구문장을 교체하고자 하는 Safe를 선택합니다\n
+        <b>2.</b> 사이드 메뉴를 열고 \"복구 문장 교체\"를 클릭해주세요\n
+        <b>3.</b> 그리고 아래 버튼을 눌러 생성된 QR 코드를 스캔합니다</string>
     <string name="confirm_recovery_phrase_incorrect_sequence">유효하지 않은 복구 문장입니다. 올바른 순서대로 입력해주세요.</string>
     <string name="confirm_recovery_phrase_title">올바른 문구를 각 칸에 입력하세요!</string>
     <string name="confirm_recovery_phrase_description">빠져있는 단어를 순서대로 눌러주세요.</string>
@@ -261,9 +246,7 @@
     <string name="connected_extension">연결된 확장 프로그램</string>
     <string name="connect_browser_extension">브라우저 확장 프로그램에 연결하기</string>
     <string name="connect_extension_description">이 거래는 Safe와 브라우저 확장 프로그램을 연결시키며, 추후 거래는 두 장치의 확인을 필요로 합니다.</string>
-    <string name="pairing_first_step">
-        <![CDATA[1. <font color=#27a0ff>Gnosis Safe 브라우저 확장 프로그램</font>을 다운로드하세요.]]>
-    </string>
+    <string name="pairing_first_step"><![CDATA[1. <font color=#27a0ff>Gnosis Safe 브라우저 확장 프로그램</font>을 다운로드하세요.]]></string>
     <string name="pairing_second_step">2. 브라우저 확장 프로그램에 QR 코드를 스캔하세요.</string>
     <string name="submitted">제출 시점</string>
     <string name="status">상태</string>

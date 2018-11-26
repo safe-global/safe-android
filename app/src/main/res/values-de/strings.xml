@@ -64,9 +64,7 @@
     <string name="sign_transaction_request_message">Du wurdest aufgefordert, eine Transaktion zu signieren</string>
     <string name="sign_transaction_request_title">Signierungsanfrage</string>
     <string name="transaction_details">Transaktionsdetails</string>
-    <string name="view_transaction_on">
-        <![CDATA[<font color=#27a0ff>Transaktion auf Etherscan.io anzeigen</font>]]>
-    </string>
+    <string name="view_transaction_on"><![CDATA[<font color=#27a0ff>Transaktion auf Etherscan.io anzeigen</font>]]></string>
     <string name="no_safe_selected">Kein Safe ausgewählt</string>
     <string name="channel_signing_request_name">Signierungsanfragen</string>
     <string name="channel_signing_request_description">Anfragen zum Signieren von Transaktionen.</string>
@@ -92,9 +90,7 @@
     <string name="password_validation_minimum_characters">Benutze mind. 8 Zeichen.\n</string>
     <string name="password_validation_one_number_one_letter">Mind. 1 Buchstabe und 1 Zahl\n</string>
     <string name="terms">Nutzungsbedingungen</string>
-    <string name="terms_info">
-        <![CDATA[Bitte lies unsere <a href=\"https://safe.gnosis.io/terms\">AGBs</a> und <a href=\"https://safe.gnosis.io/privacy\">Datenschutzbestimmungen</a>.]]>
-    </string>
+    <string name="terms_info"><![CDATA[Bitte lies unsere <a href=\"https://safe.gnosis.io/terms\">AGBs</a> und <a href=\"https://safe.gnosis.io/privacy\">Datenschutzbestimmungen</a>.]]></string>
     <string name="no_thanks">Nein Danke</string>
     <string name="agree">Ich stimme zu</string>
     <string name="personal_edition">Personal Edition</string>
@@ -134,18 +130,14 @@
     <string name="receive">Empfangen</string>
     <string name="safe_intro_message_1">Ihr Safe wird verknüpft mit: \n \t \t 1. Dieser mobilen App. \n\t\t2. Der Gnosis Safe Browser Extension. \n\t\t3. Dem 12-Wörter-Sicherungsschlüssel.</string>
     <string name="safe_intro_message_2">Ihr Geld wird sicher in diesem mobilen Safe aufbewahrt. Gnosis Ltd. kann nicht darauf zugreifen.</string>
-    <string name="safe_intro_message_3">
-        <![CDATA[Du brauchst den <font color=#f02525>Sicherungsschlüssel</font> dieses Safes, um auf dein Guthaben zuzugreifen, wenn du dein Telefon wechselst oder verlierst.\n(Mach dich bereit, ihn aufzuschreiben und an einem sicheren Ort aufzubewahren.)]]>
-    </string>
+    <string name="safe_intro_message_3"><![CDATA[Du brauchst den <font color=#f02525>Sicherungsschlüssel</font> dieses Safes, um auf dein Guthaben zuzugreifen, wenn du dein Telefon wechselst oder verlierst.\n(Mach dich bereit, ihn aufzuschreiben und an einem sicheren Ort aufzubewahren.)]]></string>
     <string name="pairing_info">Alle Transaktionen müssen sowohl von diesem Gerät als auch von der Browser Extension bestätigt werden.</string>
     <string name="scan_qr_code">QR-Code scannen</string>
     <string name="pending_safe_deposit_value">Sende mindestens %s an die Safe-Addresse:</string>
     <string name="fingerprint_many_tries">Zu viele Versuche. Umschalten auf Passwort</string>
     <string name="deposit_received">Einzahlung empfangen.</string>
     <string name="creating_your_new_safe">Erstelle deinen neuen Safe...</string>
-    <string name="deploy_safe_description">
-        <![CDATA[Dieser Vorgang kann einige Minuten dauern. Verfolge den Fortschritt auf <font color=#27a0ff>Etherscan.io</font>]]>
-    </string>
+    <string name="deploy_safe_description"><![CDATA[Dieser Vorgang kann einige Minuten dauern. Verfolge den Fortschritt auf <font color=#27a0ff>Etherscan.io</font>]]></string>
     <string name="devices_paired_successfuly">Geräte erfolgreich gekoppelt</string>
     <string name="error_pairing_devices">Fehler beim Koppeln der Geräte</string>
     <string name="mnemonic_error_invalid">Fehler (Ungültiger Sicherungsschlüssel)</string>
@@ -162,9 +154,7 @@
     <string name="remove_safe_title">Möchtest du deinen Safe \'%s \' wirklich entfernen?</string>
     <string name="remove_safe_notice_1">Durch entfernen des Safes, bleibt dieser immer noch bestehen und das Guthaben geht nicht verloren. Du entfernst ihn auschließlich von diesem Gerät.</string>
     <string name="remove_safe_notice_2">Um ihn auf diesem oder einem anderen Gerät hinzuzufügen, brauchst du den Sicherungsschlüssel.</string>
-    <string name="missing_token_manage">
-        <![CDATA[Ein Token fehlt? <font color=#28b2fa> <u> Verwalten die Token-Liste </u> </font>]]>
-    </string>
+    <string name="missing_token_manage"><![CDATA[Ein Token fehlt? <font color=#28b2fa> <u> Verwalten die Token-Liste </u> </font>]]></string>
     <string name="manage_tokens_description">Wähle Token für ALLE Safes aus</string>
     <string name="general_settings">Allgemeine Einstellungen</string>
     <string name="disabled">Deaktiviert</string>
@@ -225,15 +215,11 @@
     <string name="settings_change">Einstellung ändern</string>
     <string name="replace_recovery_phrase">Ersetze Sicherungsschlüssel</string>
     <string name="scan_your_browser_extension">Scanne deine Browser Extension</string>
-    <string name="replace_recovery_phrase_description">
-        Um den Sicherungsschlüssel für diesen Safe zu ersetzen, mache bitte folgendes:\n \n
-        <b>1.</b>
-        Öffnen die Browser Extension und wähle den Safe dessen Sicherungsschlüssel du ersetzen willst.\n
-        <b>2.</b>
-        Öffne das Seitenmenü und klicke Sie auf \"Ersetze Sicherungsschlüssel\" \n
-        <b>3.</b>
-        Scanne den generierten QR-Code, indem du den Button unten klickst
-    </string>
+    <string name="replace_recovery_phrase_description">Um den Sicherungsschlüssel für diesen Safe zu ersetzen, mache bitte folgendes:\n \n 
+ <b> 1. </b> Öffnen die Browser Extension und wähle den Safe dessen Sicherungsschlüssel du ersetzen willst.\n 
+ <b> 2. </b> Öffne das Seitenmenü und klicke Sie auf \"Ersetze Sicherungsschlüssel\" \n 
+ <b> 3. </b> Scanne den generierten QR-Code, indem du den Button unten klickst 
+</string>
     <string name="confirm_recovery_phrase_incorrect_sequence">Ungültiger Sicherrungsschlüssel. Bitte gib die richtige Reihenfolge an.</string>
     <string name="confirm_recovery_phrase_title">Hast du alles?</string>
     <string name="confirm_recovery_phrase_description">Tippe die fehlenden Wörter der Reihe nach an.</string>
@@ -255,9 +241,7 @@
     <string name="connected_extension">Verbundene Extension</string>
     <string name="connect_browser_extension">Verbinde Browser Extension</string>
     <string name="connect_extension_description">Diese Transaktion verbindet diesen Safe mit der Browser Extension. Zukünftige Transaktionen müssen mit beiden Geräten bestätigt werden.</string>
-    <string name="pairing_first_step">
-        <![CDATA[1. Lade die <font color=#27a0ff>Gnosis Safe Browser Extension</font> herunter.]]>
-    </string>
+    <string name="pairing_first_step"><![CDATA[1. Lade die <font color=#27a0ff>Gnosis Safe Browser Extension</font> herunter.]]></string>
     <string name="pairing_second_step">2. Scanne den QR-Code in der Browser Extension.</string>
     <string name="submitted">Abgesendet</string>
     <string name="status">Status</string>
