@@ -64,9 +64,7 @@
     <string name="sign_transaction_request_message">You have been requested to sign a transaction</string>
     <string name="sign_transaction_request_title">Sign request</string>
     <string name="transaction_details">Transaction details</string>
-    <string name="view_transaction_on">
-        <![CDATA[<font color=#27a0ff>View transaction on Etherscan.io</font>]]>
-    </string>
+    <string name="view_transaction_on"><![CDATA[<font color=#27a0ff>View transaction on Etherscan.io</font>]]></string>
     <string name="no_safe_selected">No Safe selected</string>
     <string name="channel_signing_request_name">Signing Requests</string>
     <string name="channel_signing_request_description">Requests to sign transactions.</string>
@@ -92,9 +90,7 @@
     <string name="password_validation_minimum_characters">Use a minimum of 8 characters\n</string>
     <string name="password_validation_one_number_one_letter">At least 1 letter and 1 number\n</string>
     <string name="terms">Terms</string>
-    <string name="terms_info">
-        <![CDATA[Please review our <a href=\"https://safe.gnosis.io/terms\">Terms of Use</a> and <a href=\"https://safe.gnosis.io/privacy\">Privacy Policy</a>.]]>
-    </string>
+    <string name="terms_info"><![CDATA[Please review our <a href=\"https://safe.gnosis.io/terms\">Terms of Use</a> and <a href=\"https://safe.gnosis.io/privacy\">Privacy Policy</a>.]]></string>
     <string name="no_thanks">No Thanks</string>
     <string name="agree">Agree</string>
     <string name="personal_edition">Personal Edition</string>
@@ -132,24 +128,20 @@
     <string name="default_safe_name">Safe</string>
     <string name="send">Send</string>
     <string name="receive">Receive</string>
-    <string name="safe_intro_message_1">Your Safe will be connected to:\n
-\t\t1. This mobile app.\n
-\t\t2. The Gnosis Safe browser extension.\n
+    <string name="safe_intro_message_1">Your Safe will be connected to:\n 
+\t\t1. This mobile app.\n 
+\t\t2. The Gnosis Safe browser extension.\n 
 \t\t3. Its 12-word recovery phrase.</string>
     <string name="safe_intro_message_2">Your funds are held securely in this mobile Safe and cannot be accessed by Gnosis Ltd.</string>
-    <string name="safe_intro_message_3">
-        <![CDATA[You need this Safe’s <font color=#f02525>recovery phrase</font> to access your funds when you change or lose your phone.\n
-(Get ready to note it down and keep it somewhere safe.)]]>
-    </string>
+    <string name="safe_intro_message_3"><![CDATA[You need this Safe’s <font color=#f02525>recovery phrase</font> to access your funds when you change or lose your phone.\n
+(Get ready to note it down and keep it somewhere safe.)]]></string>
     <string name="pairing_info">All transactions need to be approved by both this device and the browser extension.</string>
     <string name="scan_qr_code">Scan QR Code</string>
     <string name="pending_safe_deposit_value">Send at least %s to your Safe\'s address:</string>
     <string name="fingerprint_many_tries">Too many tries. Switching to password</string>
     <string name="deposit_received">Deposit received.</string>
     <string name="creating_your_new_safe">Creating your new Safe…</string>
-    <string name="deploy_safe_description">
-        <![CDATA[This process should take a couple of minutes. Follow progress on <font color=#27a0ff>Etherscan.io</font>]]>
-    </string>
+    <string name="deploy_safe_description"><![CDATA[This process should take a couple of minutes. Follow progress on <font color=#27a0ff>Etherscan.io</font>]]></string>
     <string name="devices_paired_successfuly">Devices paired successfully</string>
     <string name="error_pairing_devices">Error pairing devices</string>
     <string name="mnemonic_error_invalid">Error (Invalid recovery key)</string>
@@ -166,9 +158,7 @@
     <string name="remove_safe_title">Are you sure you want to remove your Safe \'%s\'?</string>
     <string name="remove_safe_notice_1">By removing this Safe, the Safe remains existing and your funds will not be lost. You simply remove it from this device.</string>
     <string name="remove_safe_notice_2">To add it again to this or any other device, you will need your recovery phrase.</string>
-    <string name="missing_token_manage">
-        <![CDATA[Missing a token? <font color=#28b2fa><u>Manage your token list</u></font>]]>
-    </string>
+    <string name="missing_token_manage"><![CDATA[Missing a token? <font color=#28b2fa><u>Manage your token list</u></font>]]></string>
     <string name="manage_tokens_description">Select token(s) to use with ALL your Safes</string>
     <string name="general_settings">General settings</string>
     <string name="disabled">Disabled</string>
@@ -190,7 +180,7 @@
     <string name="display_qr_code">Display QR Code</string>
     <string name="share">Share</string>
     <string name="safe_address_hint">Safe address</string>
-    <string name="recovery_phrase_hint">12 words phrase</string>
+    <string name="recovery_phrase_hint">12-word phrase</string>
     <string name="incorrect_recovery_phrase">Incorrect recovery phrase for provided Safe address</string>
     <string name="input_recovery_phrase">Input recovery phrase</string>
     <string name="recover_safe">Recover Safe</string>
@@ -229,15 +219,10 @@
     <string name="settings_change">Settings change</string>
     <string name="replace_recovery_phrase">Replace recovery phrase</string>
     <string name="scan_your_browser_extension">Scan your browser extension</string>
-    <string name="replace_recovery_phrase_description">
-        In order to replace the recovery phrase for this Safe please do the following:\n\n
-        <b>1.</b>
-        Open the browser extension and select the Safe which recovery phrase you want to replace\n
-        <b>2.</b>
-        Open the side menu and click on \"Replace recovery phrase\"\n
-        <b>3.</b>
-        Scan the generated QR code by clicking the button below
-    </string>
+    <string name="replace_recovery_phrase_description">In order to replace the recovery phrase for this Safe please do the following:\n\n
+        <b>1.</b> Open the browser extension and select the Safe which recovery phrase you want to replace\n
+        <b>2.</b> Open the side menu and click on \"Replace recovery phrase\"\n
+        <b>3.</b> Scan the generated QR code by clicking the button below</string>
     <string name="confirm_recovery_phrase_incorrect_sequence">Invalid recovery phrase. Please input the correct sequence.</string>
     <string name="confirm_recovery_phrase_title">Do you have it?</string>
     <string name="confirm_recovery_phrase_description">Tap the missing words in order.</string>
@@ -261,9 +246,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="connected_extension">Connected extension</string>
     <string name="connect_browser_extension">Connect browser extension</string>
     <string name="connect_extension_description">This transaction will connect this Safe with the browser extension. Future transactions require confirmation from both devices.</string>
-    <string name="pairing_first_step">
-        <![CDATA[1. Download the <font color=#27a0ff>Gnosis Safe browser extension</font>.]]>
-    </string>
+    <string name="pairing_first_step"><![CDATA[1. Download the <font color=#27a0ff>Gnosis Safe browser extension</font>.]]></string>
     <string name="pairing_second_step">2. Scan the QR code in the browser extension.</string>
     <string name="submitted">Submitted</string>
     <string name="status">Status</string>
