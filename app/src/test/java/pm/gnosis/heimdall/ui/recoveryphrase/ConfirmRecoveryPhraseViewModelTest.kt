@@ -57,7 +57,6 @@ class ConfirmRecoveryPhraseViewModelTest {
         viewModel.setup(RECOVERY_PHRASE)
         viewModel.loadRandomPositions().subscribe(testObserver)
 
-        println("loadRandomPositions() = ${testObserver.values().first()}")
         testObserver.assertNoErrors()
             // The amount of returned indexes should be the same as the number defined in the contract
             .assertValue { randomPositions -> randomPositions.size == ConfirmRecoveryPhraseContract.SELECTABLE_WORDS }

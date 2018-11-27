@@ -84,7 +84,8 @@ data class RelaySafeCreation(
     @Json(name = "tx") val tx: RelaySafeCreationTx,
     @Json(name = "safe") val safe: Solidity.Address,
     @Json(name = "payment") @field:DecimalNumber val payment: BigInteger,
-    @Json(name = "paymentToken") val paymentToken: Solidity.Address?
+    @Json(name = "paymentToken") val paymentToken: Solidity.Address?,
+    @Json(name = "funder") val funder: Solidity.Address?
 )
 
 @JsonClass(generateAdapter = true)

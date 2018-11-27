@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.safe.recover.extension
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler
@@ -32,6 +33,7 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
+import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
@@ -70,18 +72,47 @@ class ReplaceExtensionViewModelTest {
 
     @Test
     fun getMaxTransactionFee() {
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(GAS_TOKEN))
         viewModel.setup(
             SAFE_TRANSACTION,
             SIGNATURE_1,
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
-        val maxTransactionFee = viewModel.loadFeeInfo().balance!!
-        assertEquals(11000000.toBigInteger(), maxTransactionFee)
+        val testObserver = TestObserver<ERC20TokenWithBalance>()
+        viewModel.loadFeeInfo().subscribe(testObserver)
+        testObserver.assertValue { it.balance == 18000000.toBigInteger() && it.token == GAS_TOKEN }
+        then(tokenRepositoryMock).should().loadToken(GAS_TOKEN.address)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun getMaxTransactionFeeError() {
+        val error = IllegalStateException()
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.error(error))
+        viewModel.setup(
+            SAFE_TRANSACTION,
+            SIGNATURE_1,
+            SIGNATURE_2,
+            TX_GAS,
+            DATA_GAS,
+            OPERATIONAL_GAS,
+            GAS_PRICE,
+            GAS_TOKEN.address,
+            NEW_CHROME_EXTENSION_ADDRESS,
+            TX_HASH
+        )
+        val testObserver = TestObserver<ERC20TokenWithBalance>()
+        viewModel.loadFeeInfo().subscribe(testObserver)
+        testObserver.assertFailure(Predicate { it == error })
+        then(tokenRepositoryMock).should().loadToken(GAS_TOKEN.address)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -89,12 +120,12 @@ class ReplaceExtensionViewModelTest {
         val testScheduler = TestScheduler()
         RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
 
-        val testObserver = TestObserver.create<Result<ERC20TokenWithBalance>>()
+        val testObserver = TestObserver.create<Result<ReplaceExtensionSubmitContract.SubmitStatus>>()
         val safeAddress = SAFE_TRANSACTION.wrapped.address
-        val token = listOf(ERC20Token.ETHER_TOKEN)
-        val tokenBalance = ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, 10.toBigInteger())
-        var shouldErrorOnFetchingBalance = false
+        val token = listOf(GAS_TOKEN)
+        var balanceToReturn: BigInteger? = BigInteger.ZERO
 
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(GAS_TOKEN))
         given(
             tokenRepositoryMock.loadTokenBalances(
                 safeAddress,
@@ -102,8 +133,8 @@ class ReplaceExtensionViewModelTest {
             )
         ).willAnswer {
             Observable.fromCallable {
-                if (shouldErrorOnFetchingBalance) emptyList()
-                else listOf(ERC20Token.ETHER_TOKEN to 10.toBigInteger())
+                if (balanceToReturn == null) emptyList()
+                else listOf(GAS_TOKEN to balanceToReturn)
             }
         }
 
@@ -113,31 +144,67 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
         viewModel.observeSubmitStatus().subscribe(testObserver)
+        then(tokenRepositoryMock).should().loadToken(GAS_TOKEN.address)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // First successful emission
         testScheduler.advanceTimeBy(0, TimeUnit.SECONDS)
         then(tokenRepositoryMock).should().loadTokenBalances(safeAddress, token)
-        testObserver.assertValueAt(0, DataResult(tokenBalance))
+        testObserver.assertValueAt(
+            0, DataResult(ReplaceExtensionSubmitContract.SubmitStatus(ERC20TokenWithBalance(GAS_TOKEN, BigInteger.ZERO), false))
+        )
 
         // Second emission with error
-        shouldErrorOnFetchingBalance = true
+        balanceToReturn = null
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS)
         then(tokenRepositoryMock).should(times(2)).loadTokenBalances(safeAddress, token)
         testObserver.assertValueAt(1) { it is ErrorResult && it.error is ReplaceExtensionSubmitContract.NoTokenBalanceException }
 
         // Third successful emission
-        shouldErrorOnFetchingBalance = false
+        balanceToReturn = 18000000.toBigInteger()
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS)
         then(tokenRepositoryMock).should(times(3)).loadTokenBalances(safeAddress, token)
-        testObserver.assertValueAt(2, DataResult(tokenBalance))
+        testObserver.assertValueAt(
+            2, DataResult(ReplaceExtensionSubmitContract.SubmitStatus(ERC20TokenWithBalance(GAS_TOKEN, 18000000.toBigInteger()), true))
+        )
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         testObserver.assertValueCount(3)
+    }
+
+    @Test
+    fun observeSafeBalancePaymentTokenError() {
+        val testScheduler = TestScheduler()
+        RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
+
+        val testObserver = TestObserver.create<Result<ReplaceExtensionSubmitContract.SubmitStatus>>()
+        val exception = Exception()
+
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.error(exception))
+
+        viewModel.setup(
+            SAFE_TRANSACTION,
+            SIGNATURE_1,
+            SIGNATURE_2,
+            TX_GAS,
+            DATA_GAS,
+            OPERATIONAL_GAS,
+            GAS_PRICE,
+            GAS_TOKEN.address,
+            NEW_CHROME_EXTENSION_ADDRESS,
+            TX_HASH
+        )
+        viewModel.observeSubmitStatus().subscribe(testObserver)
+        testObserver.assertFailure(Predicate { it == exception })
+        then(tokenRepositoryMock).should().loadToken(GAS_TOKEN.address)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -145,11 +212,12 @@ class ReplaceExtensionViewModelTest {
         val testScheduler = TestScheduler()
         RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
 
-        val testObserver = TestObserver.create<Result<ERC20TokenWithBalance>>()
+        val testObserver = TestObserver.create<Result<ReplaceExtensionSubmitContract.SubmitStatus>>()
         val safeAddress = SAFE_TRANSACTION.wrapped.address
-        val token = listOf(ERC20Token.ETHER_TOKEN)
+        val token = listOf(GAS_TOKEN)
         val exception = Exception()
 
+        given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(GAS_TOKEN))
         given(
             tokenRepositoryMock.loadTokenBalances(
                 safeAddress,
@@ -163,7 +231,9 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
@@ -173,6 +243,7 @@ class ReplaceExtensionViewModelTest {
         testObserver.assertValue(ErrorResult(exception))
             .assertNoErrors()
             .assertNotTerminated()
+        then(tokenRepositoryMock).should().loadToken(GAS_TOKEN.address)
         then(tokenRepositoryMock).should().loadTokenBalances(safeAddress, token)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
@@ -185,7 +256,9 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
@@ -204,7 +277,9 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
@@ -227,7 +302,9 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
@@ -253,14 +330,18 @@ class ReplaceExtensionViewModelTest {
         ).willReturn(Single.just(TX_HASH))
 
 
-        given(accountsRepositoryMock.recover(
-            TX_HASH,
-            SIGNATURE_1
-        )).willReturn(Single.just("0x0a".asEthereumAddress()))
-        given(accountsRepositoryMock.recover(
-            TX_HASH,
-            SIGNATURE_2
-        )).willReturn(Single.just("0x14".asEthereumAddress()))
+        given(
+            accountsRepositoryMock.recover(
+                TX_HASH,
+                SIGNATURE_1
+            )
+        ).willReturn(Single.just("0x0a".asEthereumAddress()))
+        given(
+            accountsRepositoryMock.recover(
+                TX_HASH,
+                SIGNATURE_2
+            )
+        ).willReturn(Single.just("0x14".asEthereumAddress()))
 
         given(
             transactionExecutionRepositoryMock.submit(
@@ -268,6 +349,7 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 anyBoolean(),
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -283,7 +365,9 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
@@ -295,7 +379,8 @@ class ReplaceExtensionViewModelTest {
                 SAFE_TRANSACTION,
                 TX_GAS,
                 DATA_GAS,
-                GAS_PRICE
+                GAS_PRICE,
+                GAS_TOKEN.address
             )
         then(accountsRepositoryMock).should().recover(
             TX_HASH,
@@ -313,12 +398,14 @@ class ReplaceExtensionViewModelTest {
             TX_GAS,
             DATA_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             true
         )
         then(pushServiceRepositoryMock).should().propagateSafeCreation(
             SAFE_TRANSACTION.wrapped.address, setOf(
                 NEW_CHROME_EXTENSION_ADDRESS
-            ))
+            )
+        )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
@@ -341,14 +428,18 @@ class ReplaceExtensionViewModelTest {
             )
         ).willReturn(Single.just(TX_HASH))
 
-        given(accountsRepositoryMock.recover(
-            TX_HASH,
-            SIGNATURE_1
-        )).willReturn(Single.just("0x0a".asEthereumAddress()))
-        given(accountsRepositoryMock.recover(
-            TX_HASH,
-            SIGNATURE_2
-        )).willReturn(Single.just("0x14".asEthereumAddress()))
+        given(
+            accountsRepositoryMock.recover(
+                TX_HASH,
+                SIGNATURE_1
+            )
+        ).willReturn(Single.just("0x0a".asEthereumAddress()))
+        given(
+            accountsRepositoryMock.recover(
+                TX_HASH,
+                SIGNATURE_2
+            )
+        ).willReturn(Single.just("0x14".asEthereumAddress()))
 
         given(
             transactionExecutionRepositoryMock.submit(
@@ -356,6 +447,7 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 anyBoolean(),
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -371,7 +463,9 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
@@ -383,7 +477,8 @@ class ReplaceExtensionViewModelTest {
                 SAFE_TRANSACTION,
                 TX_GAS,
                 DATA_GAS,
-                GAS_PRICE
+                GAS_PRICE,
+                GAS_TOKEN.address
             )
         then(accountsRepositoryMock).should().recover(
             TX_HASH,
@@ -401,12 +496,14 @@ class ReplaceExtensionViewModelTest {
             TX_GAS,
             DATA_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             true
         )
         then(pushServiceRepositoryMock).should().propagateSafeCreation(
             SAFE_TRANSACTION.wrapped.address, setOf(
                 NEW_CHROME_EXTENSION_ADDRESS
-            ))
+            )
+        )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
@@ -429,14 +526,18 @@ class ReplaceExtensionViewModelTest {
             )
         ).willReturn(Single.just(TX_HASH))
 
-        given(accountsRepositoryMock.recover(
-            TX_HASH,
-            SIGNATURE_1
-        )).willReturn(Single.just("0x0a".asEthereumAddress()))
-        given(accountsRepositoryMock.recover(
-            TX_HASH,
-            SIGNATURE_2
-        )).willReturn(Single.just("0x14".asEthereumAddress()))
+        given(
+            accountsRepositoryMock.recover(
+                TX_HASH,
+                SIGNATURE_1
+            )
+        ).willReturn(Single.just("0x0a".asEthereumAddress()))
+        given(
+            accountsRepositoryMock.recover(
+                TX_HASH,
+                SIGNATURE_2
+            )
+        ).willReturn(Single.just("0x14".asEthereumAddress()))
 
         given(
             transactionExecutionRepositoryMock.submit(
@@ -444,6 +545,7 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 anyBoolean(),
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -457,7 +559,9 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
@@ -469,7 +573,8 @@ class ReplaceExtensionViewModelTest {
                 SAFE_TRANSACTION,
                 TX_GAS,
                 DATA_GAS,
-                GAS_PRICE
+                GAS_PRICE,
+                GAS_TOKEN.address
             )
         then(accountsRepositoryMock).should().recover(
             TX_HASH,
@@ -487,6 +592,7 @@ class ReplaceExtensionViewModelTest {
             TX_GAS,
             DATA_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             true
         )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
@@ -510,15 +616,19 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any()
             )
         ).willReturn(Single.just(TX_HASH))
-        
-        given(accountsRepositoryMock.recover(
-            TX_HASH,
-            SIGNATURE_1
-        )).willReturn(Single.just("0x0a".asEthereumAddress()))
-        given(accountsRepositoryMock.recover(
-            TX_HASH,
-            SIGNATURE_2
-        )).willReturn(Single.error(exception))
+
+        given(
+            accountsRepositoryMock.recover(
+                TX_HASH,
+                SIGNATURE_1
+            )
+        ).willReturn(Single.just("0x0a".asEthereumAddress()))
+        given(
+            accountsRepositoryMock.recover(
+                TX_HASH,
+                SIGNATURE_2
+            )
+        ).willReturn(Single.error(exception))
 
         viewModel.setup(
             SAFE_TRANSACTION,
@@ -526,7 +636,9 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
@@ -538,7 +650,8 @@ class ReplaceExtensionViewModelTest {
                 SAFE_TRANSACTION,
                 TX_GAS,
                 DATA_GAS,
-                GAS_PRICE
+                GAS_PRICE,
+                GAS_TOKEN.address
             )
         then(accountsRepositoryMock).should().recover(
             TX_HASH,
@@ -575,7 +688,9 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
@@ -587,7 +702,8 @@ class ReplaceExtensionViewModelTest {
                 SAFE_TRANSACTION,
                 TX_GAS,
                 DATA_GAS,
-                GAS_PRICE
+                GAS_PRICE,
+                GAS_TOKEN.address
             )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveZeroInteractions()
@@ -617,7 +733,9 @@ class ReplaceExtensionViewModelTest {
             SIGNATURE_2,
             TX_GAS,
             DATA_GAS,
+            OPERATIONAL_GAS,
             GAS_PRICE,
+            GAS_TOKEN.address,
             NEW_CHROME_EXTENSION_ADDRESS,
             TX_HASH
         )
@@ -629,7 +747,8 @@ class ReplaceExtensionViewModelTest {
                 SAFE_TRANSACTION,
                 TX_GAS,
                 DATA_GAS,
-                GAS_PRICE
+                GAS_PRICE,
+                GAS_TOKEN.address
             )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveZeroInteractions()
@@ -650,7 +769,9 @@ class ReplaceExtensionViewModelTest {
         private val SIGNATURE_2 = Signature(r = 356.toBigInteger(), s = 357.toBigInteger(), v = 27)
         private val TX_GAS = 5000.toBigInteger()
         private val DATA_GAS = 6000.toBigInteger()
+        private val OPERATIONAL_GAS = 7000.toBigInteger()
         private val GAS_PRICE = 1000.toBigInteger()
+        private val GAS_TOKEN = ERC20Token("0x1337".asEthereumAddress()!!, "Golden Wishing Spheres", "DBZ", 7)
         private val NEW_CHROME_EXTENSION_ADDRESS = 42.toBigInteger().let { Solidity.Address(it) }
         private val TX_HASH = byteArrayOf(0, 1, 2, 3, 4, 5)
     }

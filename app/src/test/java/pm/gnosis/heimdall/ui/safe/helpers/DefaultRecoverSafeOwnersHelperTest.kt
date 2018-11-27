@@ -19,6 +19,7 @@ import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
@@ -64,11 +65,14 @@ class DefaultRecoverSafeOwnersHelperTest {
     @Mock
     private lateinit var safeRepoMock: GnosisSafeRepository
 
+    @Mock
+    private lateinit var tokenRepositoryMock: TokenRepository
+
     private lateinit var helper: DefaultRecoverSafeOwnersHelper
 
     @Before
     fun setUp() {
-        helper = DefaultRecoverSafeOwnersHelper(contextMock, accountsRepoMock, bip39Mock, executionRepoMock, safeRepoMock)
+        helper = DefaultRecoverSafeOwnersHelper(contextMock, accountsRepoMock, bip39Mock, executionRepoMock, safeRepoMock, tokenRepositoryMock)
     }
 
     @Test
@@ -95,6 +99,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -118,6 +123,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -151,6 +157,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should(times(2)).loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -184,6 +191,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
     }
 
     private fun testProcessInvalidOwnerCount(
@@ -223,6 +231,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -270,6 +279,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -307,6 +317,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -346,6 +357,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
     }
 
     private fun testProcessNothingToRecover(extension: Solidity.Address?) {
@@ -384,6 +396,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -406,6 +419,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         val createSubject = PublishSubject.create<Unit>()
         val input = Input(phraseSubject, retrySubject, createSubject)
 
+        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
@@ -441,7 +455,6 @@ class DefaultRecoverSafeOwnersHelperTest {
             .assertValueAt(0, ViewUpdate.InputMnemonic)
             .assertValueAt(1, ViewUpdate.ValidMnemonic)
             .assertValueAt(2) {
-                println(it)
                 it is ViewUpdate.RecoverData &&
                         it.signatures.size == 2 &&
                         it.executionInfo.transactionHash == TEST_HASH.toHex() &&
@@ -466,6 +479,9 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(executionRepoMock).should()
             .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+
     }
 
     @Test
@@ -532,6 +548,54 @@ class DefaultRecoverSafeOwnersHelperTest {
     }
 
     @Test
+    fun processLoadPaymentTokenError() {
+        contextMock.mockGetString()
+        val phraseSubject = PublishSubject.create<CharSequence>()
+        val retrySubject = PublishSubject.create<Unit>()
+        val createSubject = PublishSubject.create<Unit>()
+        val input = Input(phraseSubject, retrySubject, createSubject)
+
+        given(safeRepoMock.loadInfo(MockUtils.any()))
+            .willReturn(
+                Observable.just(
+                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                )
+            )
+        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
+        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
+        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
+            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
+        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
+            .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
+        given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
+        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.error(NotImplementedError()))
+
+        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
+        helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION).subscribe(observer)
+
+        phraseSubject.onNext("this is not a valid mnemonic!")
+        createSubject.onNext(Unit)
+        observer.assertValues(
+            ViewUpdate.InputMnemonic,
+            ViewUpdate.ValidMnemonic,
+            ViewUpdate.RecoverDataError(SimpleLocalizedException(R.string.error_check_internet_connection.toString()))
+        )
+
+        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
+        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
+        then(bip39Mock).shouldHaveNoMoreInteractions()
+        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
+        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
+        then(accountsRepoMock).should().loadActiveAccount()
+        then(accountsRepoMock).shouldHaveNoMoreInteractions()
+        then(safeRepoMock).should().loadInfo(TEST_SAFE)
+        then(safeRepoMock).shouldHaveNoMoreInteractions()
+        then(executionRepoMock).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
     fun processExecuteInfoError() {
         contextMock.mockGetString()
         val phraseSubject = PublishSubject.create<CharSequence>()
@@ -552,6 +616,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
         given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
+        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.error(UnknownHostException()))
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
@@ -576,6 +641,8 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -602,6 +669,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             TEST_HASH.toHex(), SafeTransaction(Transaction(TEST_SAFE), TransactionExecutionRepository.Operation.CALL), TEST_SAFE, 2, TEST_OWNERS,
             TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO
         )
+        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(execInfo))
         val error = IllegalStateException()
         given(executionRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
@@ -627,6 +695,8 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(executionRepoMock).should()
             .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test

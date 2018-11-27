@@ -101,9 +101,12 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             data = Solidity.Bytes(byteArrayOf())
         ) + "0000000000000000000000000000000000000000000000000000000000000000"
         val paymentToken = response.paymentToken ?: ERC20Token.ETHER_TOKEN.address
+        if (request.paymentToken != paymentToken)
+            throw IllegalStateException("Unexpected payment token returned")
+        val funderAddress = response.funder ?: FUNDER_ADDRESS
         val expectedConstructor = SolidityBase.encodeTuple(listOf(
             MATER_COPY_ADDRESS, Solidity.Bytes(safeSetup.hexToByteArray()),
-            FUNDER_ADDRESS, paymentToken, Solidity.UInt256(response.payment)
+            funderAddress, paymentToken, Solidity.UInt256(response.payment)
         ))
         val responseData = response.tx.data.removeHexPrefix()
         val contractData = responseData.removeSuffix(expectedConstructor)

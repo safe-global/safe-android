@@ -10,8 +10,10 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
 import pm.gnosis.model.Solidity
@@ -36,11 +38,14 @@ class ReviewTransactionViewModelTest {
     @Mock
     private lateinit var submitTransactionHelper: SubmitTransactionHelper
 
+    @Mock
+    private lateinit var tokenRepositoryMock: TokenRepository
+
     private lateinit var viewModel: ReviewTransactionViewModel
 
     @Before
     fun setUp() {
-        viewModel = ReviewTransactionViewModel(submitTransactionHelper, relayRepositoryMock)
+        viewModel = ReviewTransactionViewModel(submitTransactionHelper, relayRepositoryMock, tokenRepositoryMock)
     }
 
     @Test
@@ -61,6 +66,7 @@ class ReviewTransactionViewModelTest {
             TEST_GAS_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )
+        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token(TEST_GAS_TOKEN, "I neeeeed some GAS", "INSG", 18)))
         given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
         executionInfo!!.invoke(TEST_TRANSACTION).subscribe()
         then(relayRepositoryMock).should().loadExecuteInformation(TEST_SAFE, TEST_GAS_TOKEN, TEST_TRANSACTION)
@@ -89,6 +95,6 @@ class ReviewTransactionViewModelTest {
             SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)
         private val TEST_SIGNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13)).map { Solidity.Address(it) }
         private val TEST_OWNERS = TEST_SIGNERS + Solidity.Address(BigInteger.valueOf(5))
-        private val TEST_GAS_TOKEN = "0x0".asEthereumAddress()!!
+        private val TEST_GAS_TOKEN = "0xdeadbeef".asEthereumAddress()!!
     }
 }

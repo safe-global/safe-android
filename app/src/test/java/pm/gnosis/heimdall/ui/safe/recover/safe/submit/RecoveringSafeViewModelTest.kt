@@ -729,7 +729,7 @@ class RecoveringSafeViewModelTest {
         given(
             execRepoMock.submit(
                 MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(),
-                MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()
             )
         ).willReturn(Single.error(ConnectException()))
 
@@ -742,7 +742,7 @@ class RecoveringSafeViewModelTest {
         then(execRepoMock).should().calculateHash(TEST_SAFE, recoverTx, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN)
         then(execRepoMock).should().submit(
             TEST_SAFE, recoverTx, mapOf(TEST_RECOVER_1 to signature1, TEST_RECOVER_2 to signature2),
-            false, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, false
+            false, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN, false
         )
         then(execRepoMock).shouldHaveNoMoreInteractions()
         then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature1)
@@ -772,7 +772,7 @@ class RecoveringSafeViewModelTest {
         given(
             execRepoMock.submit(
                 MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(),
-                MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()
             )
         ).willReturn(Single.just(TEST_TX_HASH))
         val error = IllegalArgumentException()
@@ -788,7 +788,7 @@ class RecoveringSafeViewModelTest {
         then(execRepoMock).should().calculateHash(TEST_SAFE, recoverTx, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN)
         then(execRepoMock).should().submit(
             TEST_SAFE, recoverTx, mapOf(TEST_RECOVER_1 to signature1, TEST_RECOVER_2 to signature2),
-            false, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, false
+            false, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN, false
         )
         then(execRepoMock).shouldHaveNoMoreInteractions()
         then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature1)
@@ -818,7 +818,7 @@ class RecoveringSafeViewModelTest {
         given(
             execRepoMock.submit(
                 MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(),
-                MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()
             )
         ).willReturn(Single.just(TEST_TX_HASH))
         given(safeRepoMock.updateRecoveringSafe(MockUtils.any())).willReturn(Completable.complete())
@@ -833,7 +833,7 @@ class RecoveringSafeViewModelTest {
         then(execRepoMock).should().calculateHash(TEST_SAFE, recoverTx, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN)
         then(execRepoMock).should().submit(
             TEST_SAFE, recoverTx, mapOf(TEST_RECOVER_1 to signature1, TEST_RECOVER_2 to signature2),
-            false, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, false
+            false, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN, false
         )
         then(execRepoMock).shouldHaveNoMoreInteractions()
         then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature1)
