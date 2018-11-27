@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -37,11 +38,11 @@
                 android:id="@+id/layout_recovery_phrase_intro_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
                 android:layout_marginBottom="20dp"
+                android:layout_marginTop="40dp"
                 android:lineSpacingExtra="7sp"
-                android:paddingStart="56dp"
                 android:paddingEnd="56dp"
+                android:paddingStart="56dp"
                 android:text="@string/layout_recovery_phrase_intro_description"
                 android:textColor="@color/battleship_grey"
                 android:textSize="15sp"
@@ -110,17 +111,17 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:background="@drawable/selectable_background"
-        android:drawableEnd="@drawable/ic_arrow_forward_24dp"
         android:drawablePadding="16dp"
         android:gravity="center"
-        android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        android:paddingStart="16dp"
         android:text="@string/get_my_recovery_phrase"
         android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/layout_recovery_phrase_intro_bottom_bar"
         app:layout_constraintEnd_toEndOf="@+id/layout_recovery_phrase_intro_bottom_bar"
-        app:layout_constraintTop_toTopOf="@+id/layout_recovery_phrase_intro_bottom_bar" />
+        app:layout_constraintTop_toTopOf="@+id/layout_recovery_phrase_intro_bottom_bar"
+        tools:drawableEnd="@drawable/ic_arrow_forward_24dp" />
 
     <View
         android:id="@+id/layout_recovery_phrase_intro_toolbar_shadow"

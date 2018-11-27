@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,6 +29,8 @@ class RecoverSafeIntroActivity: BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_recover_safe_intro)
+
+        layout_recover_safe_intro_next.setCompoundDrawableResource(right = R.drawable.ic_arrow_forward_24dp)
     }
 
     override fun onStart() {

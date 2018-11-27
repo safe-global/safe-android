@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.scaleBitmapToWidth
+import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,6 +33,7 @@ abstract class RecoveryPhraseIntroActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         inject()
         setContentView(R.layout.layout_recovery_phrase_intro)
+        layout_recovery_phrase_intro_next.setCompoundDrawableResource(right = R.drawable.ic_arrow_forward_24dp)
     }
 
     override fun onStart() {

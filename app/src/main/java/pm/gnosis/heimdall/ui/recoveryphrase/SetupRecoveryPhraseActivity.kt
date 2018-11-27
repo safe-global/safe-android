@@ -16,12 +16,13 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import timber.log.Timber
 import javax.inject.Inject
 
 abstract class SetupRecoveryPhraseActivity<VM : SetupRecoveryPhraseContract> : ViewModelActivity<VM>() {
     override fun screenId(): ScreenId = ScreenId.CONFIRM_RECOVERY_PHRASE
-    
+
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
@@ -33,6 +34,8 @@ abstract class SetupRecoveryPhraseActivity<VM : SetupRecoveryPhraseContract> : V
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_setup_recovery_phrase)
+
+        layout_setup_recovery_phrase_next.setCompoundDrawableResource(right = R.drawable.ic_arrow_forward_24dp)
 
         layout_setup_recovery_phrase_recycler_view.apply {
             setHasFixedSize(true)

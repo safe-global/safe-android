@@ -52,7 +52,10 @@ class ConfirmRecoveryPhraseAdapter @Inject constructor() : RecyclerView.Adapter<
         notifyDataSetChanged()
     }
 
-    fun pushWord(word: String) {
+    /**
+     * Returns the index of the word that is active or -1 if no word is active
+     */
+    fun pushWord(word: String): Int {
         // Set the current active word to inactive
         val currentActiveWordIndex = words.indexOfFirst { it.isActive }
         if (currentActiveWordIndex != -1) {
@@ -68,9 +71,13 @@ class ConfirmRecoveryPhraseAdapter @Inject constructor() : RecyclerView.Adapter<
             words[nextActiveWordIndex].isActive = true
             notifyItemChanged(nextActiveWordIndex)
         }
+        return nextActiveWordIndex
     }
 
-    fun popWord(): String {
+    /**
+     * Returns the word that was popped and the next active position or -1 if no position is active
+     */
+    fun popWord(): Pair<String, Int> {
         var poppedWord = ""
 
         // Remove the current active status
@@ -91,7 +98,7 @@ class ConfirmRecoveryPhraseAdapter @Inject constructor() : RecyclerView.Adapter<
             notifyItemChanged(wordToPopIndex)
         }
 
-        return poppedWord
+        return poppedWord to wordToPopIndex
     }
 
     fun observeSelectedCount(): Observable<Int> = selectedWordCountSubject.startWith(getSelectedCount())
