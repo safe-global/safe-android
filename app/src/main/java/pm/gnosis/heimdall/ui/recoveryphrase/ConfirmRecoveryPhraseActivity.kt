@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
+import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.words
 import timber.log.Timber
 import javax.inject.Inject
@@ -75,7 +76,7 @@ abstract class ConfirmRecoveryPhraseActivity<VM : ConfirmRecoveryPhraseContract>
         layout_confirm_recovery_phrase_word_4.text = recoveryPhraseWords[randomPositions[3]]
         layout_confirm_recovery_phrase_word_4.isClickable = true
 
-        adapter.setWords(recoveryPhraseWords, randomPositions)
+        scrollToWord(adapter.setWords(recoveryPhraseWords, randomPositions))
     }
 
     override fun onStart() {
@@ -102,6 +103,11 @@ abstract class ConfirmRecoveryPhraseActivity<VM : ConfirmRecoveryPhraseContract>
             .subscribeBy(onNext = { finish() }, onError = Timber::e)
 
         disposables += toolbarHelper.setupShadow(layout_confirm_recovery_phrase_toolbar_shadow, layout_confirm_recovery_phrase_scroll_view)
+    }
+
+    override fun onPause() {
+        scrollRunnable?.let { layout_confirm_recovery_phrase_scroll_view.removeCallbacks(it) }
+        super.onPause()
     }
 
     private fun onIncorrectPositions(incorrectPositions: Set<Int>) {
@@ -140,13 +146,13 @@ abstract class ConfirmRecoveryPhraseActivity<VM : ConfirmRecoveryPhraseContract>
 
     private fun scrollToWord(wordPosition: Int) {
         scrollRunnable?.let { layout_confirm_recovery_phrase_scroll_view.removeCallbacks(it) }
-        layout_confirm_recovery_phrase_recycler_view.layoutManager.findViewByPosition(wordPosition)?.let {
-            scrollRunnable = Runnable { layout_confirm_recovery_phrase_scroll_view.requestChildFocus(it, it) }
-            layout_confirm_recovery_phrase_scroll_view.postDelayed(scrollRunnable, SCROLL_DELAY_MS)
-        } ?: run {
-            // View not yet present, scroll recycler view
-            layout_confirm_recovery_phrase_recycler_view.scrollToPosition(wordPosition)
+        scrollRunnable = Runnable {
+            layout_confirm_recovery_phrase_recycler_view.layoutManager.findViewByPosition(wordPosition)?.let {
+                // Android sometimes doesn't like this if this is done at the wrong point in time
+                nullOnThrow { layout_confirm_recovery_phrase_scroll_view.requestChildFocus(it, it) }
+            }
         }
+        layout_confirm_recovery_phrase_scroll_view.postDelayed(scrollRunnable, SCROLL_DELAY_MS)
     }
 
     private fun setWord(isEnabled: Boolean, wordView: TextView) {
@@ -165,7 +171,7 @@ abstract class ConfirmRecoveryPhraseActivity<VM : ConfirmRecoveryPhraseContract>
     }
 
     companion object {
-        private const val SCROLL_DELAY_MS = 500L
+        private const val SCROLL_DELAY_MS = 400L
         const val EXTRA_RECOVERY_PHRASE = "extra.string.recovery_phrase"
 
         fun createIntent(context: Context, recoveryPhrase: String) = Intent(context, ConfirmRecoveryPhraseActivity::class.java).apply {

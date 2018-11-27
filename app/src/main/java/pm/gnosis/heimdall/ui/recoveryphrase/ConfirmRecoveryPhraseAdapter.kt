@@ -42,14 +42,21 @@ class ConfirmRecoveryPhraseAdapter @Inject constructor() : RecyclerView.Adapter<
 
     override fun getItemCount() = words.size
 
-    fun setWords(words: List<String>, inputPositions: List<Int>) {
+    /**
+     * Returns the index of the word that is active or -1 if no word is active
+     */
+    fun setWords(words: List<String>, inputPositions: List<Int>): Int {
         this.words.clear()
         this.words.addAll(words.mapIndexed { index, word ->
             if (inputPositions.contains(index)) Word(word = "", isSelectable = true, isActive = false, isError = false)
             else Word(word = word, isSelectable = false, isActive = false, isError = false)
         })
-        this.words.firstOrNull { it.isSelectable }?.let { it.isActive = true }
+        val currentActiveWord = this.words.indexOfFirst { it.isSelectable }
+        if (currentActiveWord != -1) {
+            this.words[currentActiveWord].isActive = true
+        }
         notifyDataSetChanged()
+        return currentActiveWord
     }
 
     /**
