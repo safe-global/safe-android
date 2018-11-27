@@ -42,6 +42,7 @@ import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionPairingActiv
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
@@ -182,7 +183,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
 
         layout_safe_main_recover_safe.setOnClickListener {
-            startActivity(CheckSafeActivity.createIntent(this))
+            startActivity(RecoverSafeIntroActivity.createIntent(this))
             closeDrawer()
         }
 

@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
+import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -37,7 +38,7 @@ class NoSafesFragment : BaseFragment() {
             .subscribeBy(onNext = { startActivity(CreateSafeIntroActivity.createIntent(context!!)) }, onError = Timber::e)
 
         disposables += layout_no_safes_recover_safe.clicks()
-            .subscribeBy(onNext = { startActivity(CheckSafeActivity.createIntent(context!!)) }, onError = Timber::e)
+            .subscribeBy(onNext = { startActivity(RecoverSafeIntroActivity.createIntent(context!!)) }, onError = Timber::e)
     }
 
     override fun inject(component: ApplicationComponent) {

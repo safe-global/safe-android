@@ -10,7 +10,10 @@
         android:id="@+id/layout_recover_safe_intro_scroll"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         android:fillViewport="true"
+        android:paddingBottom="24dp"
+        android:paddingTop="24dp"
         app:layout_constraintBottom_toTopOf="@+id/layout_recover_safe_intro_bottom_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +27,6 @@
                 android:id="@+id/layout_recover_safe_intro_image"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:src="@drawable/ic_safe_inprogress"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -111,7 +113,6 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:background="@drawable/selectable_background"
-        android:drawableEnd="@drawable/ic_arrow_forward_24dp"
         android:drawablePadding="16dp"
         android:gravity="center"
         android:paddingEnd="16dp"
@@ -122,6 +123,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/layout_recover_safe_intro_bottom_bar"
         app:layout_constraintEnd_toEndOf="@+id/layout_recover_safe_intro_bottom_bar"
         app:layout_constraintTop_toTopOf="@+id/layout_recover_safe_intro_bottom_bar"
+        tools:drawableEnd="@drawable/ic_arrow_forward_24dp"
         tools:enabled="false" />
 
     <View
