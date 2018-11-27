@@ -1,3 +1,4 @@
+
 package pm.gnosis.heimdall.ui.transactions.create
 
 import android.content.Context
@@ -57,6 +58,7 @@ class CreateAssetTransferViewModelTest {
 
     @Test
     fun processInputEtherTransfer() {
+        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         val balancesSubject = PublishSubject.create<List<Pair<ERC20Token, BigInteger?>>>()
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(balancesSubject)
@@ -154,7 +156,8 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValueCount(10)
         testObserver.assertValueAt(9) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
-        then(tokenRepositoryMock).should(times(4)).loadToken(TEST_ETHER_TOKEN)
+        then(tokenRepositoryMock).should(times(3)).loadPaymentToken()
+        then(tokenRepositoryMock).should().loadToken(TEST_ETHER_TOKEN)
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
@@ -163,6 +166,7 @@ class CreateAssetTransferViewModelTest {
 
     @Test
     fun processInputTokenTransfer() {
+        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(TEST_GAS_TOKEN))
         val balancesSubject = PublishSubject.create<List<Pair<ERC20Token, BigInteger?>>>()
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(balancesSubject)
         val tokenSingleFactory = TestSingleFactory<ERC20Token>()
@@ -233,7 +237,7 @@ class CreateAssetTransferViewModelTest {
             TEST_OWNERS[2],
             TEST_OWNERS.size,
             TEST_OWNERS,
-            TEST_ETHER_TOKEN,
+            TEST_GAS_TOKEN.address,
             BigInteger.ONE,
             BigInteger.TEN,
             BigInteger.ZERO,
@@ -242,7 +246,7 @@ class CreateAssetTransferViewModelTest {
         )
         estimationSingleFactory.success(lowBalanceInfo)
         tokenSingleFactory.success(ERC20Token.ETHER_TOKEN)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, ERC20Token.ETHER_TOKEN, false)))
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, TEST_GAS_TOKEN, false)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
@@ -258,7 +262,7 @@ class CreateAssetTransferViewModelTest {
         )
         estimationSingleFactory.success(validInfo)
         tokenSingleFactory.success(ERC20Token.ETHER_TOKEN)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("1").value, ERC20Token.ETHER_TOKEN, true)))
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("1").value, TEST_GAS_TOKEN, true)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         reviewEvents.success(Unit)
@@ -267,7 +271,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValueAt(9) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
         then(tokenRepositoryMock).should().loadToken(TEST_TOKEN_ADDRESS)
-        then(tokenRepositoryMock).should(times(3)).loadToken(ERC20Token.ETHER_TOKEN.address)
+        then(tokenRepositoryMock).should(times(3)).loadPaymentToken()
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(TEST_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
@@ -302,6 +306,7 @@ class CreateAssetTransferViewModelTest {
         private val TEST_ETH_AMOUNT = Wei.ether("23").value
         private val TEST_TOKEN_ADDRESS = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!
         private val TEST_TOKEN = ERC20Token(TEST_TOKEN_ADDRESS, "Test Token", "TT", 10, "")
+        private val TEST_GAS_TOKEN = ERC20Token("0xdeafbeeb".asEthereumAddress()!!, "Gas Token", "GT", 18)
         private val TEST_TOKEN_AMOUNT = BigInteger("230000000000")
         private const val TEST_TRANSACTION_HASH = "SomeHash"
         private val TEST_TRANSACTION =

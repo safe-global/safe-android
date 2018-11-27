@@ -568,7 +568,8 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
         given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.error(NotImplementedError()))
+        val error = NotImplementedError()
+        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.error(error))
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
         helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION).subscribe(observer)
@@ -578,7 +579,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         observer.assertValues(
             ViewUpdate.InputMnemonic,
             ViewUpdate.ValidMnemonic,
-            ViewUpdate.RecoverDataError(SimpleLocalizedException(R.string.error_check_internet_connection.toString()))
+            ViewUpdate.RecoverDataError(error)
         )
 
         then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
