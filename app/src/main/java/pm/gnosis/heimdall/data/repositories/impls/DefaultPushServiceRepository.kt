@@ -11,6 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.push.*
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
@@ -20,6 +21,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -37,6 +39,7 @@ import javax.inject.Inject
 
 class DefaultPushServiceRepository @Inject constructor(
     @ApplicationContext private val context: Context,
+    gnosisAuthenticatorDb: ApplicationDb,
     private val accountsRepository: AccountsRepository,
     private val firebaseInstanceId: FirebaseInstanceId,
     private val localNotificationManager: LocalNotificationManager,
@@ -44,6 +47,8 @@ class DefaultPushServiceRepository @Inject constructor(
     private val preferencesManager: PreferencesManager,
     private val pushServiceApi: PushServiceApi
 ) : PushServiceRepository {
+
+    private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
 
     private val observedTransaction = HashMap<BigInteger, ReceiveSignatureObservable>()
 
@@ -208,7 +213,24 @@ class DefaultPushServiceRepository @Inject constructor(
                     )
                 )
             }
+            is PushMessage.SafeCreation -> {
+                pushMessage.safe.asEthereumAddress()?.let {
+                    // We only want to add the safe if it was pending
+                    nullOnThrow { safeDao.queryPendingSafe(it) } ?: return
+                    safeDao.pendingSafeToDeployedSafe(it)
+                    showSafeCreatedNotification(it)
+                }
+            }
         }
+    }
+
+    private fun showSafeCreatedNotification(safe: Solidity.Address) {
+        localNotificationManager.show(
+            safe.hashCode(),
+            context.getString(R.string.sign_transaction_request_title),
+            context.getString(R.string.sign_transaction_request_message, safe.asEthereumAddressChecksumString()),
+            SafeMainActivity.createIntent(context, safe)
+        )
     }
 
     private fun showSendTransactionNotification(pushMessage: PushMessage.SendTransaction) {

@@ -79,12 +79,21 @@ sealed class PushMessage(
         }
     }
 
+    data class SafeCreation(val safe: String) : PushMessage(TYPE) {
+        companion object {
+            const val TYPE = "safeCreation"
+            fun fromMap(params: Map<String, String>) =
+                SafeCreation(params.getOrThrow("safe"))
+        }
+    }
+
     companion object {
         fun fromMap(params: Map<String, String>) =
             when (params["type"]) {
                 "sendTransaction" -> SendTransaction.fromMap(params)
                 "confirmTransaction" -> ConfirmTransaction.fromMap(params)
                 "rejectTransaction" -> RejectTransaction.fromMap(params)
+                "safeCreation" -> SafeCreation.fromMap(params)
                 else -> throw IllegalArgumentException("Unknown push type")
             }
     }
