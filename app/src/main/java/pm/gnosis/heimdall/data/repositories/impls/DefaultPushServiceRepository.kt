@@ -227,8 +227,8 @@ class DefaultPushServiceRepository @Inject constructor(
     private fun showSafeCreatedNotification(safe: Solidity.Address) {
         localNotificationManager.show(
             safe.hashCode(),
-            context.getString(R.string.sign_transaction_request_title),
-            context.getString(R.string.sign_transaction_request_message, safe.asEthereumAddressChecksumString()),
+            context.getString(R.string.safe_created_notification_title),
+            context.getString(R.string.safe_created_notification_message, safe.asEthereumAddressChecksumString()),
             SafeMainActivity.createIntent(context, safe)
         )
     }
