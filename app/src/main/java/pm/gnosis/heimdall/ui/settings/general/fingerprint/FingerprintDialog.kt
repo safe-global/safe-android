@@ -45,7 +45,7 @@ class FingerprintDialog : BaseDialog() {
 
     override fun onResume() {
         super.onResume()
-        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     override fun onStart() {

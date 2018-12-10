@@ -13,6 +13,7 @@ import android.text.style.ImageSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
@@ -31,7 +32,10 @@ fun errorSnackbar(
     duration: Int = Snackbar.LENGTH_LONG,
     @StringRes defaultErrorMsg: Int = R.string.error_try_again
 ) {
-    val message = (throwable as? LocalizedException)?.localizedMessage() ?: view.context.getString(defaultErrorMsg)
+    val message = (throwable as? LocalizedException)?.localizedMessage() ?: run {
+        if (BuildConfig.DEBUG) "${throwable.javaClass.simpleName}: ${throwable.message}"
+        else view.context.getString(defaultErrorMsg)
+    }
     snackbar(view, message, duration)
 }
 

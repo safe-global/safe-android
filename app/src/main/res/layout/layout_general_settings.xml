@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_general_settings_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -116,13 +117,15 @@
                     app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_fingerprint_info"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/layout_general_settings_fingerprint_title" />
-                
+
                 <android.support.constraint.Group
                     android:id="@+id/layout_general_settings_fingerprint_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="layout_general_settings_fingerprint_background,layout_general_settings_fingerprint_icon,layout_general_settings_fingerprint_title,layout_general_settings_fingerprint_info,layout_general_settings_fingerprint_switch"/>
-                
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="layout_general_settings_fingerprint_background,layout_general_settings_fingerprint_icon,layout_general_settings_fingerprint_title,layout_general_settings_fingerprint_info,layout_general_settings_fingerprint_switch"
+                    tools:visibility="visible" />
+
                 <!-- Device Password Button -->
                 <View
                     android:id="@+id/layout_general_settings_password_background"
@@ -170,7 +173,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/layout_general_settings_password_icon"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_password_title" />
-                
+
                 <!-- ToS Button -->
                 <View
                     android:id="@+id/layout_general_settings_tos_background"
@@ -218,7 +221,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/layout_general_settings_tos_icon"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_tos_title" />
-                
+
                 <!-- Privacy Button -->
                 <View
                     android:id="@+id/layout_general_settings_privacy_background"
@@ -232,9 +235,9 @@
                 <ImageView
                     android:id="@+id/layout_general_settings_privacy_icon"
                     android:layout_width="24dp"
-                    android:padding="4dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
+                    android:padding="4dp"
                     app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_privacy_info"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/layout_general_settings_privacy_title"
@@ -267,6 +270,56 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/layout_general_settings_privacy_icon"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_privacy_title" />
+
+                <!-- Payment Token Button -->
+                <View
+                    android:id="@+id/layout_general_settings_payment_token_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selectable_background"
+                    android:clickable="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_payment_token_info"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_payment_token_title" />
+
+                <ImageView
+                    android:id="@+id/layout_general_settings_payment_token_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:padding="4dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_payment_token_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_payment_token_title"
+                    app:srcCompat="@drawable/ic_settings_payment_token" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_payment_token_title"
+                    style="@style/DarkText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/payment_token"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_payment_token_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_privacy_info" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_payment_token_info"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/loading"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_payment_token_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_payment_token_title"
+                    tools:text="ETH (Ether)" />
             </android.support.constraint.ConstraintLayout>
 
         </android.support.v4.widget.NestedScrollView>

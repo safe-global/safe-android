@@ -43,6 +43,7 @@ import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordDialog
 import pm.gnosis.heimdall.ui.settings.general.fingerprint.FingerprintDialog
+import pm.gnosis.heimdall.ui.settings.general.payment.PaymentTokenDialog
 import pm.gnosis.heimdall.ui.splash.SplashActivity
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
@@ -114,6 +115,7 @@ interface ViewComponent {
 
     fun inject(dialog: ChangePasswordDialog)
     fun inject(dialog: FingerprintDialog)
+    fun inject(dialog: PaymentTokenDialog)
     fun inject(dialog: SimpleAddressShareDialog)
     fun inject(dialog: UnlockDialog)
 }

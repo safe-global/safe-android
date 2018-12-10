@@ -25,12 +25,14 @@ import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
+import pm.gnosis.heimdall.data.remote.TokenServiceApi
 import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
-import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfo
+import pm.gnosis.heimdall.data.remote.models.PaginatedResults
+import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfoDeprecated
 import pm.gnosis.heimdall.data.remote.models.tokens.VerifiedToken
-import pm.gnosis.heimdall.data.remote.models.tokens.VerifiedTokenResult
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -69,6 +71,12 @@ class DefaultTokenRepositoryTest {
     private lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
+    private lateinit var appPreferencesManagerMock: AppPreferencesManager
+
+    @Mock
+    private lateinit var tokenServiceApiMock: TokenServiceApi
+
+    @Mock
     private lateinit var verifiedTokensServiceApiMock: VerifiedTokensServiceApi
 
     private val preferences = TestPreferences()
@@ -81,6 +89,8 @@ class DefaultTokenRepositoryTest {
         repository = DefaultTokenRepository(
             dbMock,
             ethereumRepositoryMock,
+            appPreferencesManagerMock,
+            tokenServiceApiMock,
             verifiedTokensServiceApiMock
         )
     }
@@ -512,7 +522,7 @@ class DefaultTokenRepositoryTest {
     fun loadVerifiedTokens() {
         val testObserver = TestObserver<List<ERC20Token>>()
         val verifiedToken = VerifiedToken(
-            TokenInfo(
+            TokenInfoDeprecated(
                 address = Solidity.Address(BigInteger.ZERO),
                 name = "Test Token",
                 symbol = "TST",
@@ -521,7 +531,7 @@ class DefaultTokenRepositoryTest {
             ),
             false
         )
-        val verifiedTokensList = VerifiedTokenResult(listOf(verifiedToken))
+        val verifiedTokensList = PaginatedResults(listOf(verifiedToken))
         given(verifiedTokensServiceApiMock.loadVerifiedTokenList()).willReturn(Single.just(verifiedTokensList))
 
         repository.loadVerifiedTokens().subscribe(testObserver)

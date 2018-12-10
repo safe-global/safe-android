@@ -34,6 +34,7 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordContract
+import pm.gnosis.heimdall.ui.settings.general.payment.PaymentTokenContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensContract
@@ -118,6 +119,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesPasswordSetupContract(provider: ViewModelProvider) = provider[PasswordSetupContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesPaymentTokenContract(provider: ViewModelProvider) = provider[PaymentTokenContract::class.java]
 
     @Provides
     @ForView

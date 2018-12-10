@@ -11,6 +11,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.layout_alert_dialog_title.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.svalinn.common.utils.getColorCompat
+import pm.gnosis.svalinn.common.utils.visible
 
 
 object CustomAlertDialogBuilder {
@@ -19,15 +20,15 @@ object CustomAlertDialogBuilder {
         title: CharSequence,
         contentView: View,
         @StringRes confirmRes: Int,
-        confirmCallback: (DialogInterface) -> Unit,
+        confirmCallback: ((DialogInterface) -> Unit)?,
         @StringRes cancelRes: Int = android.R.string.cancel,
-        cancelCallback: (DialogInterface) -> Unit = { dialog -> dialog.dismiss() },
+        cancelCallback: ((DialogInterface) -> Unit)? = { dialog -> dialog.dismiss() },
         @ColorRes confirmColor: Int = R.color.azure,
         @ColorRes cancelColor: Int = R.color.azure
     ): AlertDialog =
         AlertDialog.Builder(context).apply {
-            setPositiveButton(confirmRes, null)
-            setNegativeButton(cancelRes, null)
+            if (confirmRes != 0) setPositiveButton(confirmRes, null)
+            if (cancelRes != 0) setNegativeButton(cancelRes, null)
             setView(contentView)
             setCustomTitle(LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_title, null).apply {
                 layout_alert_dialog_title_text.text = title
@@ -37,15 +38,21 @@ object CustomAlertDialogBuilder {
             .apply {
                 setOnShowListener { dialog ->
                     getButton(Dialog.BUTTON_POSITIVE).apply {
-                        setTextColor(context.getColorCompat(confirmColor))
-                        setOnClickListener {
-                            confirmCallback(dialog)
+                        if (confirmRes != 0) {
+                            visible(true)
+                            setTextColor(context.getColorCompat(confirmColor))
+                            confirmCallback?.let { cb -> setOnClickListener { cb(dialog) } }
+                        } else {
+                            visible(false)
                         }
                     }
                     getButton(Dialog.BUTTON_NEGATIVE).apply {
-                        setTextColor(context.getColorCompat(cancelColor))
-                        setOnClickListener {
-                            cancelCallback(dialog)
+                        if (cancelRes != 0) {
+                            visible(true)
+                            setTextColor(context.getColorCompat(cancelColor))
+                            cancelCallback?.let { cb -> setOnClickListener { cb(dialog) } }
+                        } else {
+                            visible(false)
                         }
                     }
                 }
