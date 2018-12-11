@@ -204,7 +204,7 @@ class DefaultTokenRepository @Inject constructor(
         private const val KEY_CURRENT_PAYMENT_TOKEN_ADDRESS: String = "default_token_repo.string.current_payment_token_address"
         private const val KEY_CURRENT_PAYMENT_TOKEN_NAME: String = "default_token_repo.string.current_payment_token_name"
         private const val KEY_CURRENT_PAYMENT_TOKEN_SYMBOL: String = "default_token_repo.string.current_payment_token_symbol"
-        private const val KEY_CURRENT_PAYMENT_TOKEN_DECIMALS: String = "default_token_repo.string.current_payment_token_decimals"
+        private const val KEY_CURRENT_PAYMENT_TOKEN_DECIMALS: String = "default_token_repo.int.current_payment_token_decimals"
         private const val KEY_CURRENT_PAYMENT_TOKEN_LOGO: String = "default_token_repo.string.current_payment_token_logo"
     }
 }
