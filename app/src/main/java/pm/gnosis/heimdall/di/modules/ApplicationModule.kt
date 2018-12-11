@@ -25,6 +25,7 @@ import pm.gnosis.heimdall.data.adapters.*
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
+import pm.gnosis.heimdall.data.remote.TokenServiceApi
 import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39
@@ -126,6 +127,17 @@ class ApplicationModule(private val application: Application) {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
             .create(RelayServiceApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesTokenServiceApi(moshi: Moshi, client: OkHttpClient): TokenServiceApi =
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl(BuildConfig.RELAY_SERVICE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
+            .create(TokenServiceApi::class.java)
 
     @Provides
     @Singleton

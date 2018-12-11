@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.app.Application
+import android.content.SharedPreferences
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.Predicate
@@ -15,26 +16,28 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
+import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.Mockito.reset
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
+import pm.gnosis.heimdall.data.remote.TokenServiceApi
 import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
+import pm.gnosis.heimdall.data.remote.models.PaginatedResults
 import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfo
+import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfoDeprecated
 import pm.gnosis.heimdall.data.remote.models.tokens.VerifiedToken
-import pm.gnosis.heimdall.data.remote.models.tokens.VerifiedTokenResult
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ERC20
 import pm.gnosis.svalinn.common.utils.ErrorResult
@@ -54,7 +57,6 @@ class DefaultTokenRepositoryTest {
     val rule = ImmediateSchedulersRule()
 
     private lateinit var repository: DefaultTokenRepository
-    private lateinit var preferencesManager: PreferencesManager
 
     @Mock
     private lateinit var application: Application
@@ -69,18 +71,22 @@ class DefaultTokenRepositoryTest {
     private lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
-    private lateinit var verifiedTokensServiceApiMock: VerifiedTokensServiceApi
+    private lateinit var appPreferencesManagerMock: AppPreferencesManager
 
-    private val preferences = TestPreferences()
+    @Mock
+    private lateinit var tokenServiceApiMock: TokenServiceApi
+
+    @Mock
+    private lateinit var verifiedTokensServiceApiMock: VerifiedTokensServiceApi
 
     @Before
     fun setUp() {
-        given(application.getSharedPreferences(anyString(), anyInt())).willReturn(preferences)
         given(dbMock.erc20TokenDao()).willReturn(erc20DaoMock)
-        preferencesManager = PreferencesManager(application)
         repository = DefaultTokenRepository(
             dbMock,
             ethereumRepositoryMock,
+            appPreferencesManagerMock,
+            tokenServiceApiMock,
             verifiedTokensServiceApiMock
         )
     }
@@ -281,6 +287,7 @@ class DefaultTokenRepositoryTest {
 
     @Test
     fun loadToken() {
+        given(appPreferencesManagerMock.get(MockUtils.any())).willReturn(mock(SharedPreferences::class.java))
         given(erc20DaoMock.loadToken(MockUtils.any())).willReturn(
             Single.just(
                 ERC20TokenDb(
@@ -372,6 +379,7 @@ class DefaultTokenRepositoryTest {
 
     @Test
     fun loadTokenInfo() {
+        given(appPreferencesManagerMock.get(MockUtils.any())).willReturn(mock(SharedPreferences::class.java))
         testLoadTokenInfo(
             DataResult(ERC20Token(Solidity.Address(BigInteger.TEN), "Hello Token", "HT", 10)), // Expected result
             EthRequest.Response.Success("Hello Token".toByteArray().toHexString()),
@@ -512,7 +520,7 @@ class DefaultTokenRepositoryTest {
     fun loadVerifiedTokens() {
         val testObserver = TestObserver<List<ERC20Token>>()
         val verifiedToken = VerifiedToken(
-            TokenInfo(
+            TokenInfoDeprecated(
                 address = Solidity.Address(BigInteger.ZERO),
                 name = "Test Token",
                 symbol = "TST",
@@ -521,7 +529,7 @@ class DefaultTokenRepositoryTest {
             ),
             false
         )
-        val verifiedTokensList = VerifiedTokenResult(listOf(verifiedToken))
+        val verifiedTokensList = PaginatedResults(listOf(verifiedToken))
         given(verifiedTokensServiceApiMock.loadVerifiedTokenList()).willReturn(Single.just(verifiedTokensList))
 
         repository.loadVerifiedTokens().subscribe(testObserver)
@@ -542,6 +550,88 @@ class DefaultTokenRepositoryTest {
         testObserver.assertError(exception)
         then(verifiedTokensServiceApiMock).should().loadVerifiedTokenList()
         then(verifiedTokensServiceApiMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadPaymentTokenDefault() {
+        val testObserver = TestObserver<ERC20Token>()
+        val testPreferences = TestPreferences()
+        given(appPreferencesManagerMock.get(MockUtils.any())).willReturn(testPreferences)
+
+        repository.loadPaymentToken().subscribe(testObserver)
+
+        testObserver.assertResult(ERC20Token.ETHER_TOKEN)
+    }
+
+    @Test
+    fun setAndloadPaymentToken() {
+        val testPreferences = TestPreferences()
+        given(appPreferencesManagerMock.get(MockUtils.any())).willReturn(testPreferences)
+
+        val setObserver = TestObserver<Unit>()
+        repository.setPaymentToken(TEST_TOKEN).subscribe(setObserver)
+        setObserver.assertResult()
+
+        assertEquals(
+            "Should store token address",
+            TEST_TOKEN.address.asEthereumAddressChecksumString(),
+            testPreferences.getString("default_token_repo.string.current_payment_token_address", null)
+        )
+
+        assertEquals(
+            "Should store token name",
+            TEST_TOKEN.name,
+            testPreferences.getString("default_token_repo.string.current_payment_token_name", null)
+        )
+
+        assertEquals(
+            "Should store token symbol",
+            TEST_TOKEN.symbol,
+            testPreferences.getString("default_token_repo.string.current_payment_token_symbol", null)
+        )
+
+        assertEquals(
+            "Should store token decimals",
+            TEST_TOKEN.decimals,
+            testPreferences.getInt("default_token_repo.int.current_payment_token_decimals", 0)
+        )
+
+        assertEquals(
+            "Should store token logo url",
+            TEST_TOKEN.logoUrl,
+            testPreferences.getString("default_token_repo.string.current_payment_token_logo", null)
+        )
+
+        val loadObserver = TestObserver<ERC20Token>()
+        repository.loadPaymentToken().subscribe(loadObserver)
+        loadObserver.assertResult(TEST_TOKEN)
+    }
+
+    @Test
+    fun loadPaymentTokens() {
+        val testObserver = TestObserver<List<ERC20Token>>()
+        val tokenInfo = TokenInfo(TEST_TOKEN.address, TEST_TOKEN.name, TEST_TOKEN.symbol, TEST_TOKEN.decimals, TEST_TOKEN.logoUrl)
+        val result = PaginatedResults(listOf(tokenInfo))
+        given(tokenServiceApiMock.paymentTokens()).willReturn(Single.just(result))
+
+        repository.loadPaymentTokens().subscribe(testObserver)
+
+        testObserver.assertResult(listOf(ERC20Token.ETHER_TOKEN, TEST_TOKEN))
+        then(tokenServiceApiMock).should().paymentTokens()
+        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadPaymentTokensError() {
+        val testObserver = TestObserver<List<ERC20Token>>()
+        val exception = Exception()
+        given(tokenServiceApiMock.paymentTokens()).willReturn(Single.error(exception))
+
+        repository.loadPaymentTokens().subscribe(testObserver)
+
+        testObserver.assertError(exception)
+        then(tokenServiceApiMock).should().paymentTokens()
+        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     private fun assertEqualRequests(expected: List<EthRequest<*>>, actual: List<EthRequest<*>>) {

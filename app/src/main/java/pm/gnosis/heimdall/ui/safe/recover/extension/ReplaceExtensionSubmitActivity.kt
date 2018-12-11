@@ -47,7 +47,10 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
 
         val txGas = nullOnThrow { intent.getStringExtra(EXTRA_TX_GAS)?.toBigInteger() } ?: run { finish(); return }
         val dataGas = nullOnThrow { intent.getStringExtra(EXTRA_DATA_GAS)?.toBigInteger() } ?: run { finish(); return }
+        val operationalGas = nullOnThrow { intent.getStringExtra(EXTRA_DATA_GAS)?.toBigInteger() } ?: run { finish(); return }
         val gasPrice = nullOnThrow { intent.getStringExtra(EXTRA_GAS_PRICE)?.toBigInteger() } ?: run { finish(); return }
+        val gasToken =
+            nullOnThrow { intent.getStringExtra(EXTRA_GAS_TOKEN).asEthereumAddress()!! } ?: run { finish(); return }
         val safeTransaction = intent.getParcelableExtra<SafeTransaction>(EXTRA_SAFE_TRANSACTION) ?: run { finish(); return }
         val signature1 = nullOnThrow { Signature.from(intent.getStringExtra(EXTRA_SIGNATURE_1)) } ?: run { finish(); return }
         val signature2 = nullOnThrow { Signature.from(intent.getStringExtra(EXTRA_SIGNATURE_2)) } ?: run { finish(); return }
@@ -55,14 +58,15 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
             nullOnThrow { intent.getStringExtra(EXTRA_CHROME_EXTENSION_ADDRESS).asEthereumAddress()!! } ?: run { finish(); return }
         val txHash = nullOnThrow { intent.getStringExtra(EXTRA_TX_HASH).hexStringToByteArray() } ?: run { finish(); return }
 
-        viewModel.setup(safeTransaction, signature1, signature2, txGas, dataGas, gasPrice, chromeExtensionAddress, txHash)
-
-        layout_replace_browser_extension_fee.text = viewModel.getMaxTransactionFee().displayString()
+        viewModel.setup(safeTransaction, signature1, signature2, txGas, dataGas, operationalGas, gasPrice, gasToken, chromeExtensionAddress, txHash)
     }
 
     override fun onStart() {
         super.onStart()
         layout_replace_browser_extension_submit.isEnabled = false
+
+        disposables += viewModel.loadFeeInfo()
+            .subscribeBy { layout_replace_browser_extension_fee.text = it.displayString() }
 
         addressHelper.populateAddressInfo(
             layout_replace_browser_extension_info_safe_address,
@@ -71,7 +75,7 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
             viewModel.getSafeTransaction().wrapped.address
         ).forEach { disposables.add(it) }
 
-        disposables += viewModel.observeSafeBalance()
+        disposables += viewModel.observeSubmitStatus()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onSafeBalance, onError = ::onSafeBalanceError)
 
@@ -91,13 +95,9 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
     }
 
-    private fun onSafeBalance(safeBalance: ERC20TokenWithBalance) {
-        val maxTxFee = viewModel.getMaxTransactionFee().balance
-        layout_replace_browser_extension_submit.isEnabled =
-                safeBalance.balance != null && maxTxFee != null &&
-                safeBalance.balance >= maxTxFee &&
-                !submissionInProgress
-        layout_replace_browser_extension_safe_balance.text = safeBalance.displayString()
+    private fun onSafeBalance(status: ReplaceExtensionSubmitContract.SubmitStatus) {
+        layout_replace_browser_extension_submit.isEnabled = status.canSubmit && !submissionInProgress
+        layout_replace_browser_extension_safe_balance.text = status.balance.displayString()
     }
 
     private fun onSafeBalanceError(throwable: Throwable) {
@@ -122,7 +122,9 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
         private const val EXTRA_SIGNATURE_2 = "extra.string.signature2"
         private const val EXTRA_TX_GAS = "extra.string.tx_gas"
         private const val EXTRA_DATA_GAS = "extra.string.data_gas"
+        private const val EXTRA_OPERATIONAL_GAS = "extra.string.operational_gas"
         private const val EXTRA_GAS_PRICE = "extra.string.gas_price"
+        private const val EXTRA_GAS_TOKEN = "extra.string.gas_token"
         private const val EXTRA_CHROME_EXTENSION_ADDRESS = "extra.string.chrome_extension_address"
         private const val EXTRA_TX_HASH = "extra.string.tx_hash"
 
@@ -133,7 +135,9 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
             signature2: Signature,
             txGas: BigInteger,
             dataGas: BigInteger,
+            operationalGas: BigInteger,
             gasPrice: BigInteger,
+            gasToken: Solidity.Address,
             chromeExtensionAddress: Solidity.Address,
             txHash: String
         ) =
@@ -143,7 +147,9 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
                 putExtra(EXTRA_SIGNATURE_2, signature2.toString())
                 putExtra(EXTRA_TX_GAS, txGas.toString())
                 putExtra(EXTRA_DATA_GAS, dataGas.toString())
+                putExtra(EXTRA_OPERATIONAL_GAS, operationalGas.toString())
                 putExtra(EXTRA_GAS_PRICE, gasPrice.toString())
+                putExtra(EXTRA_GAS_TOKEN, gasToken.asEthereumAddressString())
                 putExtra(EXTRA_CHROME_EXTENSION_ADDRESS, chromeExtensionAddress.asEthereumAddressString())
                 putExtra(EXTRA_TX_HASH, txHash)
             }

@@ -134,6 +134,7 @@ class ConfirmTransactionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.just(TEST_OWNERS[0] to TEST_SIGNATURE))
@@ -154,7 +155,9 @@ class ConfirmTransactionViewModelTest {
         then(submitTransactionHelper).should().observe(events, transactionData, mapOf(TEST_OWNERS[0] to TEST_SIGNATURE))
         then(submitTransactionHelper).shouldHaveNoMoreInteractions()
 
-        then(relayRepositoryMock).should().checkConfirmation(TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_SIGNATURE)
+        then(relayRepositoryMock).should().checkConfirmation(
+            TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN, TEST_SIGNATURE
+        )
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
 
         then(txRepositoryMock).should().checkRestrictedTransaction(TEST_TRANSACTION)
@@ -258,6 +261,7 @@ class ConfirmTransactionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.error(error))
@@ -276,7 +280,9 @@ class ConfirmTransactionViewModelTest {
         then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any())
         then(submitTransactionHelper).shouldHaveNoMoreInteractions()
 
-        then(relayRepositoryMock).should().checkConfirmation(TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_SIGNATURE)
+        then(relayRepositoryMock).should().checkConfirmation(
+            TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN, TEST_SIGNATURE
+        )
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
 
         then(txRepositoryMock).should().checkRestrictedTransaction(TEST_TRANSACTION)
@@ -297,7 +303,9 @@ class ConfirmTransactionViewModelTest {
             TEST_OWNERS, BigInteger.ONE, Wei.ether("23").value
         )
         given(relayRepositoryMock.loadSafeExecuteState(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
-        given(relayRepositoryMock.notifyReject(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.notifyReject(
+            MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
+        )
             .willReturn(Completable.complete())
 
         val rejectObserver = TestObserver<Unit>()
@@ -306,7 +314,7 @@ class ConfirmTransactionViewModelTest {
 
         then(relayRepositoryMock).should().loadSafeExecuteState(TEST_SAFE, TEST_GAS_TOKEN)
         then(relayRepositoryMock).should().notifyReject(
-            TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE,
+            TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN,
             (TEST_OWNERS - TEST_OWNERS[2]).toSet()
         )
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
@@ -315,7 +323,7 @@ class ConfirmTransactionViewModelTest {
         viewModel.rejectTransaction(TEST_TRANSACTION).subscribe(cachedObserver)
         cachedObserver.assertNoErrors().assertComplete()
         then(relayRepositoryMock).should(times(2)).notifyReject(
-            TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE,
+            TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN,
             (TEST_OWNERS - TEST_OWNERS[2]).toSet()
         )
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()

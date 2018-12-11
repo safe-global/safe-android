@@ -9,13 +9,17 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_general_settings.*
+import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordDialog
 import pm.gnosis.heimdall.ui.settings.general.fingerprint.FingerprintDialog
+import pm.gnosis.heimdall.ui.settings.general.payment.PaymentTokenDialog
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
@@ -45,6 +49,11 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
                 ChangePasswordDialog.create().show(supportFragmentManager, null)
             }, onError = Timber::e)
 
+        disposables += layout_general_settings_payment_token_background.clicks()
+            .subscribeBy(onNext = {
+                showPaymentTokenDialog()
+            }, onError = Timber::e)
+
         disposables += layout_general_settings_tos_background.clicks()
             .subscribeBy(onNext = {
                 openUrl(getString(R.string.tos_link))
@@ -61,6 +70,10 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
             }, onError = Timber::e)
 
         disposables += toolbarHelper.setupShadow(layout_general_settings_toolbar_shadow, layout_general_settings_content_scroll)
+
+        disposables += viewModel.loadPaymentToken()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(Timber::e, ::displayPaymentToken)
     }
 
     private fun setupFingerprintAction() {
@@ -101,6 +114,21 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
                 snackbar(layout_general_settings_fingerprint_switch, R.string.fingerprint_unlock_enabled)
             }
         }
+    }
+
+    private fun showPaymentTokenDialog() {
+        val dialog = PaymentTokenDialog.create()
+        dialog.show(supportFragmentManager, null)
+        dialog.successListener = {
+            displayPaymentToken(it)
+        }
+        dialog.errorListener = {
+            errorSnackbar(layout_general_settings_fingerprint_switch, it)
+        }
+    }
+
+    private fun displayPaymentToken(token: ERC20Token) {
+        layout_general_settings_payment_token_info.text = "${token.symbol} (${token.name})"
     }
 
     companion object {

@@ -107,23 +107,25 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                     tokenRepository.loadToken(execInfo.gasToken).map { token -> execInfo to token }.mapToResult()
                 })
             }
-            .map { it.map { (execInfo, token) ->
-                val gasCosts = execInfo.gasCosts()
-                // If we transfer our payment token we should add this to the required funds
-                val requiredFunds = gasCosts +  when (execInfo.gasToken) {
-                    ERC20Token.ETHER_TOKEN.address -> (execInfo.transaction.wrapped.value?.value ?: BigInteger.ZERO)
-                    execInfo.transaction.wrapped.address -> {
-                        if (execInfo.transaction.wrapped.data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true) {
-                            val argData = execInfo.transaction.wrapped.data!!.removeSolidityMethodPrefix(ERC20Contract.Transfer.METHOD_ID)
-                            ERC20Contract.Transfer.decodeArguments(argData)._value.value
-                        } else {
-                            BigInteger.ZERO
+            .map {
+                it.map { (execInfo, token) ->
+                    val gasCosts = execInfo.gasCosts()
+                    // If we transfer our payment token we should add this to the required funds
+                    val requiredFunds = gasCosts + when (execInfo.gasToken) {
+                        ERC20Token.ETHER_TOKEN.address -> (execInfo.transaction.wrapped.value?.value ?: BigInteger.ZERO)
+                        execInfo.transaction.wrapped.address -> {
+                            if (execInfo.transaction.wrapped.data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true) {
+                                val argData = execInfo.transaction.wrapped.data!!.removeSolidityMethodPrefix(ERC20Contract.Transfer.METHOD_ID)
+                                ERC20Contract.Transfer.decodeArguments(argData)._value.value
+                            } else {
+                                BigInteger.ZERO
+                            }
                         }
+                        else -> BigInteger.ZERO
                     }
-                    else -> BigInteger.ZERO
+                    Triple(execInfo, token, execInfo.balance >= requiredFunds)
                 }
-                Triple(execInfo, token, execInfo.balance >= requiredFunds)
-            } }
+            }
             .emitAndNext(
                 emit = {
                     it.map { (execInfo, token, canSubmit) -> ViewUpdate.Estimate(execInfo.gasCosts(), execInfo.balance, token, canSubmit) }
@@ -194,10 +196,12 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                         // Nothing to push
                         return@switchMapSingle Single.just(DataResult(Unit))
                     }
-                    executionRepository.calculateHash(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice)
-                        .flatMapCompletable {
+                    executionRepository.calculateHash(
+                        safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken
+                    )
+                        .flatMapCompletable { hash ->
                             signaturePushRepository.requestConfirmations(
-                                it.toHexString().addHexPrefix(),
+                                hash.toHexString().addHexPrefix(),
                                 safe,
                                 params.transaction,
                                 params.txGas,
@@ -218,7 +222,9 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                 }
 
     private fun submitTransaction(params: TransactionExecutionRepository.ExecuteInformation, signatures: Map<Solidity.Address, Signature>) =
-        executionRepository.submit(safe, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice)
+        executionRepository.submit(
+            safe, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice, params.gasToken
+        )
             .flatMapCompletable {
                 val targets = (params.owners - params.sender).toSet()
                 if (targets.isEmpty()) {
@@ -252,12 +258,16 @@ class DefaultSubmitTransactionHelper @Inject constructor(
             .flatMap {
                 when (it) {
                     is PushServiceRepository.TransactionResponse.Confirmed ->
-                        executionRepository.checkConfirmation(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, it.signature)
+                        executionRepository.checkConfirmation(
+                            safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken, it.signature
+                        )
                             .map(signatureStore::add)
-                            .flatMapObservable { Observable.empty<Result<ViewUpdate>>() }
+                            .flatMapObservable { _ -> Observable.empty<Result<ViewUpdate>>() }
                             .onErrorResumeNext { e: Throwable -> Observable.just(ErrorResult(e)) }
                     is PushServiceRepository.TransactionResponse.Rejected ->
-                        executionRepository.checkRejection(safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, it.signature)
+                        executionRepository.checkRejection(
+                            safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken, it.signature
+                        )
                             .filter { (sender) -> params.owners.contains(sender) }
                             .map<Result<ViewUpdate>> { DataResult(ViewUpdate.TransactionRejected) }
                             .toObservable()

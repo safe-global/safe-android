@@ -45,7 +45,7 @@ class ScanExtensionAddressViewModel @Inject constructor(
             val parsedPayload = nullOnThrow { addressSignedPayloadAdapter.fromJson(payload) } ?: throw InvalidPayloadFormatException()
             // Check if the safe address corresponds to the the address provided in the payload
             if (safeAddress != parsedPayload.address) throw InvalidSafeAddressException(safeAddress, parsedPayload.address)
-            val expectedData = Sha3Utils.keccak("$SIGNATURE_PREFIX${safeAddress.asEthereumAddressChecksumString()}".toByteArray())
+            val expectedData = Sha3Utils.keccak("$SIGNATURE_PREFIX${parsedPayload.address.asEthereumAddressChecksumString()}".toByteArray())
             parsedPayload to expectedData
         }
             .flatMap { (payload, expectedData) -> accountsRepository.recover(expectedData, payload.signature.toSignature()) }

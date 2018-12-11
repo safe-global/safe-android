@@ -21,9 +21,11 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.ShortcutRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
+import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.nullOnThrow
@@ -66,7 +68,7 @@ class DefaultShortcutRepository @Inject constructor(
                                 .setShortLabel(context.getString(R.string.send_from_x, it.name))
                                 .setLongLabel(context.getString(R.string.send_from_x, it.name))
                                 .setIcon(Icon.createWithBitmap(blockiesBitmap(it.address)))
-                                .setIntent(SelectTokenActivity.createIntent(context, it.address).prepare())
+                                .setIntent(CreateAssetTransferActivity.createIntent(context, it.address, ERC20Token.ETHER_TOKEN).prepare())
                                 .build()
                         )
                     } ?: Observable.empty<ShortcutInfo>()

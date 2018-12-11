@@ -114,11 +114,13 @@ class ConfirmTransactionViewModel @Inject constructor(
                 )
             }
             .flatMap { transactionInfoRepository.parseTransactionData(transaction) }
-            .flatMap { data -> executionRepository.checkConfirmation(safe, transaction, txGas, dataGas, gasPrice, signature).map { data to it } }
+            .flatMap { data ->
+                executionRepository.checkConfirmation(safe, transaction, txGas, dataGas, gasPrice, gasToken, signature).map { data to it }
+            }
             .flatMapObservable { (data, signatureInfo) -> submitTransactionHelper.observe(events, data, mapOf(signatureInfo)) }
 
     override fun rejectTransaction(transaction: SafeTransaction): Completable =
         loadState(hash).flatMapCompletable {
-            executionRepository.notifyReject(safe, transaction, txGas, dataGas, gasPrice, (it.owners - it.sender).toSet())
+            executionRepository.notifyReject(safe, transaction, txGas, dataGas, gasPrice, gasToken, (it.owners - it.sender).toSet())
         }
 }

@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation
 import pm.gnosis.heimdall.data.remote.models.RelaySafeCreationParams
 import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
@@ -30,7 +31,8 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val bip39: Bip39,
     private val relayServiceApi: RelayServiceApi,
-    private val gnosisSafeRepository: GnosisSafeRepository
+    private val gnosisSafeRepository: GnosisSafeRepository,
+    private val tokenRepository: TokenRepository
 ) : CreateSafeConfirmRecoveryPhraseContract() {
 
     private var browserExtensionAddress: Solidity.Address? = null
@@ -44,11 +46,13 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
 
     override fun createSafe(): Single<Solidity.Address> =
         loadSafeOwners()
-            .map {
+            .zipWith(tokenRepository.loadPaymentToken(), BiFunction { owners: List<Solidity.Address>, token: ERC20Token -> owners to token})
+            .map { (owners, paymentToken) ->
                 RelaySafeCreationParams(
-                    owners = it,
+                    owners = owners,
                     threshold = threshold,
-                    s = BigInteger(252, secureRandom)
+                    s = BigInteger(252, secureRandom),
+                    paymentToken = paymentToken.address
                 )
             }
             .flatMap { request -> relayServiceApi.safeCreation(request).map { request to it } }
@@ -70,9 +74,10 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
                 )
             }
             .flatMap { (response, tx) ->
+                val paymentToken = response.paymentToken ?: ERC20Token.ETHER_TOKEN.address
                 val transactionHash =
                     tx.hash(ECDSASignature(response.signature.r, response.signature.s).apply { v = response.signature.v.toByte() }).asBigInteger()
-                gnosisSafeRepository.addPendingSafe(response.safe, transactionHash, null, response.payment)
+                gnosisSafeRepository.addPendingSafe(response.safe, transactionHash, null, response.payment, paymentToken)
                     .andThen(Single.just(response.safe))
             }
             .subscribeOn(Schedulers.io())
@@ -95,9 +100,13 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             to = Solidity.Address(BigInteger.ZERO),
             data = Solidity.Bytes(byteArrayOf())
         ) + "0000000000000000000000000000000000000000000000000000000000000000"
+        val paymentToken = response.paymentToken ?: ERC20Token.ETHER_TOKEN.address
+        if (request.paymentToken != paymentToken)
+            throw IllegalStateException("Unexpected payment token returned")
+        val funderAddress = response.funder ?: FUNDER_ADDRESS
         val expectedConstructor = SolidityBase.encodeTuple(listOf(
             MATER_COPY_ADDRESS, Solidity.Bytes(safeSetup.hexToByteArray()),
-            FUNDER_ADDRESS, ERC20Token.ETHER_TOKEN.address, Solidity.UInt256(response.payment.value)
+            funderAddress, paymentToken, Solidity.UInt256(response.payment)
         ))
         val responseData = response.tx.data.removeHexPrefix()
         val contractData = responseData.removeSuffix(expectedConstructor)

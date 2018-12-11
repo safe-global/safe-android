@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.transactions.builder.AssetTransferTransactionBuilder
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
@@ -138,20 +139,17 @@ class CreateAssetTransferViewModel @Inject constructor(
     }
 
     private fun estimate(safe: Solidity.Address, data: TransactionData.AssetTransfer) =
-        Observable.fromCallable {
-            AssetTransferTransactionBuilder.build(data)
-        }
-            .flatMapSingle<ViewUpdate> {
-                val tokenAddress = ERC20Token.ETHER_TOKEN.address
-                executionRepository.loadExecuteInformation(safe, tokenAddress, it)
-                    .zipWith(tokenRepository.loadToken(tokenAddress),
-                        BiFunction { execInfo: TransactionExecutionRepository.ExecuteInformation, token: ERC20Token ->
-                            val estimate = execInfo.gasCosts()
-                            val canExecute =
-                                (estimate + (if (data.token == token.address) data.amount else BigInteger.ZERO)) <= execInfo.balance
-                            ViewUpdate.Estimate(estimate, execInfo.balance, token, canExecute)
-                        })
+        tokenRepository.loadPaymentToken().map { it to AssetTransferTransactionBuilder.build(data) }
+            .flatMap<ViewUpdate> { (gasToken, transaction) ->
+                executionRepository.loadExecuteInformation(safe, gasToken.address, transaction)
+                    .map { execInfo: TransactionExecutionRepository.ExecuteInformation ->
+                        val estimate = execInfo.gasCosts()
+                        val canExecute =
+                            (estimate + (if (data.token == gasToken.address) data.amount else BigInteger.ZERO)) <= execInfo.balance
+                        ViewUpdate.Estimate(estimate, execInfo.balance, gasToken, canExecute)
+                    }
             }
+            .toObservable()
             .onErrorReturn {
                 Timber.e(it)
                 ViewUpdate.EstimateError

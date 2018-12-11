@@ -26,6 +26,8 @@ data class ExecuteParams(
     val dataGas: String,
     @Json(name = "gasPrice")
     val gasPrice: String,
+    @Json(name = "gasToken")
+    val gasToken: String,
     @Json(name = "nonce")
     val nonce: Long
 )
@@ -47,8 +49,9 @@ data class EstimateParams(
     @Json(name = "operation")
     val operation: Int,
     @Json(name = "threshold")
-    val threshold: Int
-
+    val threshold: Int,
+    @Json(name = "gasToken")
+    val gasToken: Solidity.Address
 )
 
 @JsonClass(generateAdapter = true)
@@ -61,6 +64,8 @@ data class RelayEstimate(
     val operationalGas: String,
     @Json(name = "gasPrice")
     val gasPrice: String,
+    @Json(name = "gasToken")
+    val gasToken: Solidity.Address,
     @Json(name = "lastUsedNonce")
     val lastUsedNonce: String?
 )
@@ -69,7 +74,8 @@ data class RelayEstimate(
 data class RelaySafeCreationParams(
     @Json(name = "owners") val owners: List<Solidity.Address>,
     @Json(name = "threshold") val threshold: Int,
-    @Json(name = "s") @field:DecimalNumber val s: BigInteger
+    @Json(name = "s") @field:DecimalNumber val s: BigInteger,
+    @Json(name = "paymentToken") val paymentToken: Solidity.Address
 )
 
 @JsonClass(generateAdapter = true)
@@ -77,7 +83,9 @@ data class RelaySafeCreation(
     @Json(name = "signature") val signature: ServiceSignature,
     @Json(name = "tx") val tx: RelaySafeCreationTx,
     @Json(name = "safe") val safe: Solidity.Address,
-    @Json(name = "payment") val payment: Wei
+    @Json(name = "payment") @field:DecimalNumber val payment: BigInteger,
+    @Json(name = "paymentToken") val paymentToken: Solidity.Address?,
+    @Json(name = "funder") val funder: Solidity.Address?
 )
 
 @JsonClass(generateAdapter = true)

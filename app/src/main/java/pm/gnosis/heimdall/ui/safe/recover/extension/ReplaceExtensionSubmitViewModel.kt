@@ -30,7 +30,9 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
     private lateinit var signature2: Signature
     private lateinit var txGas: BigInteger
     private lateinit var dataGas: BigInteger
+    private lateinit var operationalGas: BigInteger
     private lateinit var gasPrice: BigInteger
+    private lateinit var gasToken: Solidity.Address
     private lateinit var newChromeExtension: Solidity.Address
     private lateinit var txHash: ByteArray
 
@@ -40,7 +42,9 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
         signature2: Signature,
         txGas: BigInteger,
         dataGas: BigInteger,
+        operationalGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         newChromeExtension: Solidity.Address,
         txHash: ByteArray
     ) {
@@ -49,26 +53,36 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
         this.signature2 = signature2
         this.txGas = txGas
         this.dataGas = dataGas
+        this.operationalGas = operationalGas
         this.gasPrice = gasPrice
+        this.gasToken = gasToken
         this.newChromeExtension = newChromeExtension
         this.txHash = txHash
     }
 
-    override fun getMaxTransactionFee() = ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, (txGas + dataGas) * gasPrice)
+    override fun loadFeeInfo(): Single<ERC20TokenWithBalance> =
+        tokenRepository.loadToken(gasToken).map {
+            ERC20TokenWithBalance(it, requiredFunds())
+        }
 
-    override fun observeSafeBalance(): Observable<Result<ERC20TokenWithBalance>> =
-        Observable.interval(0,
-            SAFE_BALANCE_REQUEST_INTERVAL,
-            SAFE_BALANCE_REQUEST_TIME_UNIT
-        )
-            .concatMap { _ ->
-                tokenRepository.loadTokenBalances(safeTransaction.wrapped.address, listOf(ERC20Token.ETHER_TOKEN))
-                    .map { tokenBalances ->
-                        if (tokenBalances.size != 1) throw NoTokenBalanceException()
-                        tokenBalances[0].let { ERC20TokenWithBalance(it.first, it.second) }
+    override fun observeSubmitStatus(): Observable<Result<SubmitStatus>> =
+        tokenRepository.loadToken(gasToken)
+            .flatMapObservable { token ->
+                Observable.interval(0, SAFE_BALANCE_REQUEST_INTERVAL, SAFE_BALANCE_REQUEST_TIME_UNIT)
+                    .concatMap { _ ->
+                        tokenRepository.loadTokenBalances(safeTransaction.wrapped.address, listOf(token))
+                            .map { tokenBalances ->
+                                if (tokenBalances.size != 1) throw NoTokenBalanceException()
+                                tokenBalances.first().let { (token, balance) ->
+                                    val canSubmit = requiredFunds() <= balance
+                                    SubmitStatus(ERC20TokenWithBalance(token, balance), canSubmit)
+                                }
+                            }
+                            .mapToResult()
                     }
-                    .mapToResult()
             }
+
+    private fun requiredFunds() = (txGas + dataGas + operationalGas) * gasPrice
 
     override fun getSafeTransaction() = safeTransaction
 
@@ -80,7 +94,8 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
             transaction = safeTransaction,
             txGas = txGas,
             dataGas = dataGas,
-            gasPrice = gasPrice
+            gasPrice = gasPrice,
+            gasToken = gasToken
         )
             // Verify if transaction hash matches
             .map { computedTxHash ->
@@ -103,10 +118,10 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
                     txGas = txGas,
                     dataGas = dataGas,
                     gasPrice = gasPrice,
+                    gasToken = gasToken,
                     addToHistory = true
                 )
             }
-            // TODO: For correctness this should be done when the transaction is mined
             .flatMapCompletable {
                 pushServiceRepository.propagateSafeCreation(safeTransaction.wrapped.address, setOf(newChromeExtension)).onErrorComplete()
             }

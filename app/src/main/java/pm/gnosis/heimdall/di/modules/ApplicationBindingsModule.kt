@@ -60,6 +60,10 @@ abstract class ApplicationBindingsModule {
     @Singleton
     abstract fun bindsTransactionTriggerManager(manager: DefaultTransactionTriggerManager): TransactionTriggerManager
 
+    @Binds
+    @Singleton
+    abstract fun bindsAppPreferencesManager(manager: WrappedAppPreferencesManager): AppPreferencesManager
+
     /*
         Repositories
      */

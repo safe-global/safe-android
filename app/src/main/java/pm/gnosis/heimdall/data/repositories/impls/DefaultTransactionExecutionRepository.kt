@@ -189,13 +189,15 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                         transaction.wrapped.value?.value?.asDecimalString() ?: "0",
                         transaction.wrapped.data ?: "0x",
                         transaction.operation.toInt(),
-                        GnosisSafe.GetThreshold.decode(info.threshold.mapped()!!).param0.value.toInt()
+                        GnosisSafe.GetThreshold.decode(info.threshold.mapped()!!).param0.value.toInt(),
+                        paymentToken
                     )
                 ).map { info to it }
             }
             .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
             .flatMap { (infoWithEstimate, sender) ->
                 val (info, estimate) = infoWithEstimate
+                assert(paymentToken == estimate.gasToken)
                 // We have 3 nonce sources: RPC endpoint, Estimate endpoint, local nonce cache ... we take the maximum of all
                 val rpcNonce = GnosisSafe.Nonce.decode(info.nonce.mapped()!!).param0.value
                 val estimateNonce = estimate.lastUsedNonce?.decimalAsBigInteger()?.let { it + BigInteger.ONE } ?: BigInteger.ZERO
@@ -209,7 +211,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 val operationalGas = estimate.operationalGas.decimalAsBigInteger()
                 val gasPrice = estimate.gasPrice.decimalAsBigInteger()
                 val safeBalance = info.balance.mapped()!!
-                calculateHash(safeAddress, updatedTransaction, txGas, dataGas, gasPrice).map {
+                calculateHash(safeAddress, updatedTransaction, txGas, dataGas, gasPrice, paymentToken).map {
                     TransactionExecutionRepository.ExecuteInformation(
                         it.toHexString().addHexPrefix(),
                         updatedTransaction,
@@ -233,9 +235,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         transaction: SafeTransaction,
         txGas: BigInteger,
         dataGas: BigInteger,
-        gasPrice: BigInteger
+        gasPrice: BigInteger,
+        gasToken: Solidity.Address
     ): Single<Signature> =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
             .flatMap(accountsRepository::sign)
 
     override fun signRejection(
@@ -243,9 +246,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         transaction: SafeTransaction,
         txGas: BigInteger,
         dataGas: BigInteger,
-        gasPrice: BigInteger
+        gasPrice: BigInteger,
+        gasToken: Solidity.Address
     ): Single<Signature> =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
             .flatMap(pushServiceRepository::calculateRejectionHash)
             .flatMap(accountsRepository::sign)
 
@@ -255,9 +259,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         signature: Signature
     ): Single<Pair<Solidity.Address, Signature>> =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
             .flatMap { accountsRepository.recover(it, signature) }
             .map { it to signature }
 
@@ -267,9 +272,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         signature: Signature
     ): Single<Pair<Solidity.Address, Signature>> =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
             .flatMap(pushServiceRepository::calculateRejectionHash)
             .flatMap {
                 accountsRepository.recover(it, signature)
@@ -281,10 +287,13 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         targets: Set<Solidity.Address>
     ): Completable =
-        signRejection(safeAddress, transaction, txGas, dataGas, gasPrice)
-            .flatMap { signature -> calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice).map { it.toHexString() to signature } }
+        signRejection(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
+            .flatMap { signature ->
+                calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken).map { it.toHexString() to signature }
+            }
             .flatMapCompletable { (hash, signature) -> pushServiceRepository.propagateTransactionRejected(hash, signature, targets) }
 
     override fun submit(
@@ -295,15 +304,18 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         addToHistory: Boolean
     ): Single<String> =
-        loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, txGas, dataGas, gasPrice)
+        loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, txGas, dataGas, gasPrice, gasToken)
             .flatMap { relayServiceApi.execute(safeAddress.asEthereumAddressChecksumString(), it) }
             .flatMap {
                 transaction.wrapped.nonce?.let { nonceCache[safeAddress] = it }
                 broadcastTransactionSubmitted(safeAddress, transaction, it.transactionHash)
                 if (addToHistory)
-                    handleSubmittedTransaction(safeAddress, transaction, it.transactionHash.addHexPrefix(), txGas, dataGas, gasPrice)
+                    handleSubmittedTransaction(
+                        safeAddress, transaction, it.transactionHash.addHexPrefix(), txGas, dataGas, gasPrice, gasToken
+                    )
                 else
                     Single.just(it.transactionHash.addHexPrefix())
             }
@@ -323,9 +335,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         senderIsOwner: Boolean,
         txGas: BigInteger,
         dataGas: BigInteger,
-        gasPrice: BigInteger
+        gasPrice: BigInteger,
+        gasToken: Solidity.Address
     ): Single<ExecuteParams> =
-        loadSignatures(safeAddress, innerTransaction, signatures, senderIsOwner, txGas, dataGas, gasPrice)
+        loadSignatures(safeAddress, innerTransaction, signatures, senderIsOwner, txGas, dataGas, gasPrice, gasToken)
             .map { finalSignatures ->
                 val sortedAddresses = finalSignatures.keys.map { it.value }.sorted()
                 val serviceSignatures = mutableListOf<ServiceSignature>()
@@ -345,6 +358,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                     txGas.asDecimalString(),
                     dataGas.asDecimalString(),
                     gasPrice.asDecimalString(),
+                    gasToken.asEthereumAddressChecksumString(),
                     tx.nonce?.toLong() ?: 0
                 )
             }
@@ -356,13 +370,14 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         senderIsOwner: Boolean,
         txGas: BigInteger,
         dataGas: BigInteger,
-        gasPrice: BigInteger
+        gasPrice: BigInteger,
+        gasToken: Solidity.Address
     ): Single<Map<Solidity.Address, Signature>> =
     // If owner is signature we need to sign the hash and add the signature to the map
         if (senderIsOwner)
             accountsRepository.loadActiveAccount()
                 .flatMap { account ->
-                    calculateHash(safeAddress, innerTransaction, txGas, dataGas, gasPrice)
+                    calculateHash(safeAddress, innerTransaction, txGas, dataGas, gasPrice, gasToken)
                         .flatMap { accountsRepository.sign(it) }
                         .map { signatures.plus(account.address to it) }
                 }
@@ -374,9 +389,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txChainHash: String,
         txGas: BigInteger,
         dataGas: BigInteger,
-        gasPrice: BigInteger
+        gasPrice: BigInteger,
+        gasToken: Solidity.Address
     ) =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice)
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
             .map {
                 val tx = transaction.wrapped
                 val transactionUuid = UUID.randomUUID().toString()
@@ -389,7 +405,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                     transaction.operation.toInt().toBigInteger(),
                     txGas,
                     dataGas,
-                    ERC20Token.ETHER_TOKEN.address,
+                    gasToken,
                     gasPrice,
                     tx.nonce ?: DEFAULT_NONCE,
                     System.currentTimeMillis(),

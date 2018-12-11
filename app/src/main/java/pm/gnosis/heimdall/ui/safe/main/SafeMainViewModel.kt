@@ -94,7 +94,7 @@ class SafeMainViewModel @Inject constructor(
     override fun isConnectedToBrowserExtension(safe: AbstractSafe): Single<Result<Boolean>> =
         if (safe is Safe)
             safeRepository.checkSafe(safe.address).firstOrError()
-                .map { (isSafe, isExtensionConnected) -> isSafe && isExtensionConnected }
+                .map { (_, isExtensionConnected) -> isExtensionConnected }
                 .mapToResult()
         else Single.just(false).mapToResult()
 

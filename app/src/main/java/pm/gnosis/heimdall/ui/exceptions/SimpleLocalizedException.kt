@@ -5,6 +5,7 @@ import android.support.annotation.StringRes
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.utils.HttpCodes
 import retrofit2.HttpException
@@ -83,16 +84,25 @@ data class SimpleLocalizedException(override val message: String) : Exception(me
 
         fun networkErrorHandlerBuilder(context: Context) = Handler.Builder(context)
             .add({ it is HttpException }, { c, throwable ->
-                when ((throwable as HttpException).code()) {
-                    HttpCodes.FORBIDDEN, HttpCodes.UNAUTHORIZED -> c.getString(R.string.error_not_authorized_for_action)
-                    HttpCodes.SERVER_ERROR, HttpCodes.BAD_REQUEST -> c.getString(R.string.error_try_again)
-                    else -> context.getString(R.string.error_try_again)
+                (throwable as HttpException).let {
+                    @Suppress("ConstantConditionIf")
+                    if (BuildConfig.VERBOSE_EXCEPTIONS) {
+                        return@add "${throwable.code()} (${throwable.message()}): ${throwable.response().errorBody()?.string()}"
+                    }
+                    when (throwable.code()) {
+                        HttpCodes.FORBIDDEN, HttpCodes.UNAUTHORIZED -> c.getString(R.string.error_not_authorized_for_action)
+                        HttpCodes.SERVER_ERROR, HttpCodes.BAD_REQUEST -> c.getString(R.string.error_try_again)
+                        else -> context.getString(R.string.error_try_again)
+                    }
                 }
             })
             .add({ it is SSLHandshakeException || it.cause is SSLHandshakeException }, { c, _ -> c.getString(R.string.error_ssl_handshake) })
             .add(
                 { it is UnknownHostException || it is SocketTimeoutException || it is ConnectException },
                 { c, _ -> c.getString(R.string.error_check_internet_connection) })
+            .add({ BuildConfig.VERBOSE_EXCEPTIONS }, { _, throwable ->
+                "${throwable.javaClass.simpleName}: ${throwable.message}"
+            })
 
         fun assert(condition: Boolean, context: Context, @StringRes messagedId: Int, vararg params: Any) {
             if (!condition) {

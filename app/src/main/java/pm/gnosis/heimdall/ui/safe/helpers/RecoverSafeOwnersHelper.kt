@@ -11,6 +11,7 @@ import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.MultiSend
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
@@ -60,7 +61,8 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val bip39: Bip39,
     private val executionRepository: TransactionExecutionRepository,
-    private val safeRepository: GnosisSafeRepository
+    private val safeRepository: GnosisSafeRepository,
+    private val tokenRepository: TokenRepository
 ) : RecoverSafeOwnersHelper {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
@@ -216,14 +218,16 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
         }
 
     private fun prepareTransaction(safeInfo: SafeInfo, transaction: SafeTransaction, signingAccounts: SigningAccounts) =
-        executionRepository.loadExecuteInformation(safeInfo.address, ERC20Token.ETHER_TOKEN.address, transaction)
+        tokenRepository.loadPaymentToken()
+            .flatMap { executionRepository.loadExecuteInformation(safeInfo.address, it.address, transaction) }
             .flatMap { executionInfo ->
                 executionRepository.calculateHash(
                     safeInfo.address,
                     executionInfo.transaction,
                     executionInfo.txGas,
                     executionInfo.dataGas,
-                    executionInfo.gasPrice
+                    executionInfo.gasPrice,
+                    executionInfo.gasToken
                 )
                     .map { it to executionInfo }
             }

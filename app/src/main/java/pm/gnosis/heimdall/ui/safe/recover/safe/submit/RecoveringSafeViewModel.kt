@@ -147,7 +147,10 @@ class RecoveringSafeViewModel @Inject constructor(
                 }.map { safe to it }
             }
             .flatMap { (safe, signatures) ->
-                executionRepository.submit(address, buildSafeTransaction(safe), signatures, false, safe.txGas, safe.dataGas, safe.gasPrice, false)
+                executionRepository.submit(
+                    address, buildSafeTransaction(safe), signatures, false,
+                    safe.txGas, safe.dataGas, safe.gasPrice, safe.gasToken, false
+                )
                     .flatMap {
                         safeRepository.updateRecoveringSafe(safe.copy(transactionHash = it.hexAsBigInteger())).andThen(Single.just(safe.address))
                     }

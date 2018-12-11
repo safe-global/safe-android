@@ -18,16 +18,20 @@ abstract class ReplaceExtensionSubmitContract : ViewModel() {
         signature2: Signature,
         txGas: BigInteger,
         dataGas: BigInteger,
+        operationalGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         newChromeExtension: Solidity.Address,
         txHash: ByteArray
     )
 
-    abstract fun observeSafeBalance(): Observable<Result<ERC20TokenWithBalance>>
+    abstract fun observeSubmitStatus(): Observable<Result<SubmitStatus>>
     abstract fun submitTransaction(): Single<Result<Unit>>
-    abstract fun getMaxTransactionFee(): ERC20TokenWithBalance
+    abstract fun loadFeeInfo(): Single<ERC20TokenWithBalance>
     abstract fun getSafeTransaction(): SafeTransaction
     abstract fun loadSafe(): Single<Safe>
 
-    class NoTokenBalanceException() : Exception()
+    data class SubmitStatus(val balance: ERC20TokenWithBalance, val canSubmit: Boolean)
+
+    class NoTokenBalanceException : Exception()
 }

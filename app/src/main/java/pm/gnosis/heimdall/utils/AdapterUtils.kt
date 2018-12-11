@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.utils
 import android.support.v7.util.DiffUtil
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult

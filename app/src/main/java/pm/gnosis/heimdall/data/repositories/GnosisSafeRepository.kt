@@ -31,6 +31,7 @@ interface GnosisSafeRepository {
 
     // Deployed Safes
     fun observeSafes(): Flowable<List<Safe>>
+
     fun observeSafe(address: Solidity.Address): Flowable<Safe>
     fun loadSafe(address: Solidity.Address): Single<Safe>
     fun addSafe(address: Solidity.Address, name: String? = null): Completable
@@ -39,13 +40,22 @@ interface GnosisSafeRepository {
 
     // Pending Safes
     fun observePendingSafe(address: Solidity.Address): Flowable<PendingSafe>
+
     fun loadPendingSafe(address: Solidity.Address): Single<PendingSafe>
-    fun addPendingSafe(address: Solidity.Address, transactionHash: BigInteger, name: String?, payment: Wei): Completable
+    fun addPendingSafe(
+        address: Solidity.Address,
+        transactionHash: BigInteger,
+        name: String?,
+        payment: BigInteger,
+        paymentToken: Solidity.Address
+    ): Completable
+
     fun removePendingSafe(address: Solidity.Address): Completable
     fun updatePendingSafe(pendingSafe: PendingSafe): Completable
 
     // Recovering Safes
     fun observeRecoveringSafe(address: Solidity.Address): Flowable<RecoveringSafe>
+
     fun loadRecoveringSafe(address: Solidity.Address): Single<RecoveringSafe>
     fun addRecoveringSafe(
         safeAddress: Solidity.Address,
@@ -60,10 +70,12 @@ interface GnosisSafeRepository {
 
     // Safe Creation/ Recovery
     fun pendingSafeToDeployedSafe(pendingSafe: PendingSafe): Completable
+
     fun recoveringSafeToDeployedSafe(recoveringSafe: RecoveringSafe): Completable
     fun sendSafeCreationPush(safeAddress: Solidity.Address): Completable
 
     // Transactions
     fun observePendingTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
+
     fun observeSubmittedTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
 }

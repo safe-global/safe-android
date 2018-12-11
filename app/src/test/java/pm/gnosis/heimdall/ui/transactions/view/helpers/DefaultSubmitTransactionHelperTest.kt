@@ -311,6 +311,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 anyBoolean()
             )
         ).willReturn(Single.error(error))
@@ -329,6 +330,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 anyBoolean(),
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -356,6 +358,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 anyBoolean()
             )
         ).willReturn(Single.just(TEST_CHAIN_HASH))
@@ -378,6 +381,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.just(TEST_OWNERS[0] to TEST_SIGNATURE))
@@ -389,6 +393,7 @@ class DefaultSubmitTransactionHelperTest {
          */
         given(
             relayRepositoryMock.checkConfirmation(
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -411,6 +416,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.just(TEST_ADDRESS to TEST_SIGNATURE))
@@ -422,6 +428,7 @@ class DefaultSubmitTransactionHelperTest {
          */
         given(
             relayRepositoryMock.checkRejection(
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -439,6 +446,7 @@ class DefaultSubmitTransactionHelperTest {
          */
         given(
             relayRepositoryMock.checkRejection(
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -498,7 +506,6 @@ class DefaultSubmitTransactionHelperTest {
         relayRepositoryMock.loadExecuteInformation(TEST_SAFE, TEST_ETHER_TOKEN, transaction)
 
     private fun TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>.assertUpdates(updates: List<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>): TestObserver<Result<SubmitTransactionHelper.ViewUpdate>> {
-        System.out.println("Updated: ${values()}")
         assertValueCount(updates.size)
         updates.forEachIndexed { index, predicate ->
             assertValueAt(index, predicate)

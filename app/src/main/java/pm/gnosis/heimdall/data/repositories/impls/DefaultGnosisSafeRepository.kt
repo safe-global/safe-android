@@ -16,10 +16,7 @@ import pm.gnosis.heimdall.Proxy
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.*
-import pm.gnosis.heimdall.data.repositories.AddressBookRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.PushServiceRepository
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.model.Solidity
@@ -169,9 +166,11 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .map { it.fromDb() }
 
-    override fun addPendingSafe(address: Solidity.Address, transactionHash: BigInteger, name: String?, payment: Wei): Completable =
+    override fun addPendingSafe(
+        address: Solidity.Address, transactionHash: BigInteger, name: String?, payment: BigInteger, paymentToken: Solidity.Address
+    ): Completable =
         Completable.fromAction {
-            safeDao.insertPendingSafe(PendingGnosisSafeDb(address, transactionHash, ERC20Token.ETHER_TOKEN.address, payment.value))
+            safeDao.insertPendingSafe(PendingGnosisSafeDb(address, transactionHash, paymentToken, payment))
         }
             .subscribeOn(Schedulers.io())
             .andThen(addSafeName(address, name))
@@ -219,7 +218,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     executeInfo.txGas,
                     executeInfo.dataGas,
                     executeInfo.operationalGas,
-                    ERC20Token.ETHER_TOKEN.address,
+                    executeInfo.gasToken,
                     executeInfo.gasPrice,
                     executeInfo.transaction.wrapped.nonce!!,
                     executeInfo.transaction.operation,
