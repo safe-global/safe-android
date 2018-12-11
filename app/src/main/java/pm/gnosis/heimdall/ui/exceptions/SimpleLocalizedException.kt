@@ -85,7 +85,8 @@ data class SimpleLocalizedException(override val message: String) : Exception(me
         fun networkErrorHandlerBuilder(context: Context) = Handler.Builder(context)
             .add({ it is HttpException }, { c, throwable ->
                 (throwable as HttpException).let {
-                    if (BuildConfig.DEBUG) {
+                    @Suppress("ConstantConditionIf")
+                    if (BuildConfig.VERBOSE_EXCEPTIONS) {
                         return@add "${throwable.code()} (${throwable.message()}): ${throwable.response().errorBody()?.string()}"
                     }
                     when (throwable.code()) {
@@ -99,7 +100,7 @@ data class SimpleLocalizedException(override val message: String) : Exception(me
             .add(
                 { it is UnknownHostException || it is SocketTimeoutException || it is ConnectException },
                 { c, _ -> c.getString(R.string.error_check_internet_connection) })
-            .add({ BuildConfig.DEBUG }, { _, throwable ->
+            .add({ BuildConfig.VERBOSE_EXCEPTIONS }, { _, throwable ->
                 "${throwable.javaClass.simpleName}: ${throwable.message}"
             })
 

@@ -33,7 +33,8 @@ fun errorSnackbar(
     @StringRes defaultErrorMsg: Int = R.string.error_try_again
 ) {
     val message = (throwable as? LocalizedException)?.localizedMessage() ?: run {
-        if (BuildConfig.DEBUG) "${throwable.javaClass.simpleName}: ${throwable.message}"
+        @Suppress("ConstantConditionIf")
+        if (BuildConfig.VERBOSE_EXCEPTIONS) "${throwable.javaClass.simpleName}: ${throwable.message}"
         else view.context.getString(defaultErrorMsg)
     }
     snackbar(view, message, duration)
