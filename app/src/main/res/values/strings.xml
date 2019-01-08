@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="error_try_again">An error occurred. Please try again!</string>
     <string name="error_wrong_credentials">The entered password is wrong.</string>
     <string name="my_account">My Account</string>
@@ -35,7 +35,7 @@
     <string name="retry">Retry</string>
     <string name="address_book_entry_delete_error">Error deleting entry</string>
     <string name="safe_name_hint">Safe Name</string>
-    <string name="estimated_transaction_fee">Estimated Transaction Fee</string>
+    <string name="estimated_transaction_fee">Estimated Network Fee</string>
     <string name="manage_tokens">Manage Tokens</string>
     <string name="scan_or_tap_to_copy">Scan or tap to copy</string>
     <string name="address_hint">Enter Address</string>
@@ -63,8 +63,6 @@
     <string name="change_password">Change Password</string>
     <string name="sign_transaction_request_message">You have been requested to sign a transaction</string>
     <string name="sign_transaction_request_title">Sign request</string>
-    <string name="safe_created_notification_message" tools:ignore="MissingTranslation">Your Safe with the address %s has been created.</string>
-    <string name="safe_created_notification_title" tools:ignore="MissingTranslation">Safe created</string>
     <string name="transaction_details">Transaction details</string>
     <string name="view_transaction_on"><![CDATA[<font color=#27a0ff>View transaction on Etherscan.io</font>]]></string>
     <string name="no_safe_selected">No Safe selected</string>
@@ -187,7 +185,7 @@
     <string name="input_recovery_phrase">Input recovery phrase</string>
     <string name="recover_safe">Recover Safe</string>
     <string name="fund_recovery">Fund the Safe recovery</string>
-    <string name="fund_recovery_fees">Your Safe\'s ETH balance is: %1$s. Recovering your Safe requires %2$s in transaction fees.</string>
+    <string name="fund_recovery_fees">Your Safe\'s ETH balance is: %1$s. Recovering your Safe requires %2$s in network fees.</string>
     <string name="awaiting_deposit">Awaiting Deposit</string>
     <string name="transaction_submitted">Transaction submitted</string>
     <string name="recovering_safe">Recovering your Safe…</string>
@@ -252,8 +250,11 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="pairing_second_step">2. Scan the QR code in the browser extension.</string>
     <string name="submitted">Submitted</string>
     <string name="status">Status</string>
-    <string name="transaction_fee">Transaction fee</string>
+    <string name="transaction_fee">Network fee</string>
     <string name="later">Later</string>
-    <string name="payment_token" tools:ignore="MissingTranslation">Payment Token (for network fees)</string>
-    <string name="select_payment_token" tools:ignore="MissingTranslation">Select token</string>
+    <string name="payment_token">Payment token (for network fees)</string>
+    <string name="safe_created_notification_message">Your Safe with the address %s has been created.</string>
+    <string name="safe_created_notification_title">Safe created</string>
+    <string name="app_version">App version: %s</string>
+    <string name="select_payment_token">Select token</string>
 </resources>

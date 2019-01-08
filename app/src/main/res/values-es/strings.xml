@@ -207,7 +207,7 @@
     <string name="receive_funds">Recibir transferencias</string>
     <string name="make_your_first_deposit">Haz tu primer depósito.</string>
     <string name="required_minimum_transfer">Transferencia mínima requerida:</string>
-    <string name="this_is_the_safe_opening_fee">(Esta es coste de creación de la Safe.)</string>
+    <string name="this_is_the_safe_opening_fee">(Esto es el coste de creación de la Safe.)</string>
     <string name="layout_pending_safe_description">Escanea el código QR o comparte la dirección con la cuenta o persona que vaya a realizar la transferencia.</string>
     <string name="safe_address">Dirección de la Safe:</string>
     <string name="type">Tipo</string>
@@ -252,4 +252,5 @@ Sin ambas, no podrás recuperar el acceso a tu Safe ni al dinero.</string>
     <string name="status">Estado</string>
     <string name="transaction_fee">Coste de la transacción</string>
     <string name="later">Más tarde</string>
+    <string name="payment_token">Pago con tokens (para costes de red)</string>
 </resources>
