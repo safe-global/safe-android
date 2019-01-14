@@ -242,6 +242,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 anySet()
             )
         )
@@ -260,6 +261,7 @@ class DefaultSubmitTransactionHelperTest {
                 info.dataGas,
                 info.operationalGas,
                 info.gasPrice,
+                info.gasToken,
                 setOf(TEST_OWNERS[0], TEST_OWNERS[1])
             )
 
@@ -273,6 +275,7 @@ class DefaultSubmitTransactionHelperTest {
         given(
             signaturePushRepository.requestConfirmations(
                 anyString(),
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -296,6 +299,7 @@ class DefaultSubmitTransactionHelperTest {
                 info.dataGas,
                 info.operationalGas,
                 info.gasPrice,
+                info.gasToken,
                 setOf(TEST_OWNERS[1])
             )
 

@@ -25,6 +25,7 @@ interface PushServiceRepository {
         dataGas: BigInteger,
         operationalGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         targets: Set<Solidity.Address>
     ): Completable
 

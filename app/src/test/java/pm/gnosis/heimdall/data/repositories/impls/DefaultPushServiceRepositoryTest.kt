@@ -762,7 +762,7 @@ class DefaultPushServiceRepositoryTest {
             dataGas = "10",
             operationalGas = "10",
             gasPrice = "10",
-            gasToken = "0",
+            gasToken = "0x00000000000000000000000000000000DeaDBeef",
             refundReceiver = "0",
             nonce = "0"
         )
@@ -783,7 +783,8 @@ class DefaultPushServiceRepositoryTest {
             txGas = 10.toBigInteger(),
             dataGas = 10.toBigInteger(),
             operationalGas = 10.toBigInteger(),
-            gasPrice = 10.toBigInteger()
+            gasPrice = 10.toBigInteger(),
+            gasToken = "0xdeadbeef".asEthereumAddress()!!
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.RequestConfirmation::class.java)
@@ -819,7 +820,7 @@ class DefaultPushServiceRepositoryTest {
             dataGas = "10",
             operationalGas = "10",
             gasPrice = "10",
-            gasToken = "0",
+            gasToken = "0x0000000000000000000000000000000000000000",
             refundReceiver = "0",
             nonce = "0"
         )
@@ -841,7 +842,8 @@ class DefaultPushServiceRepositoryTest {
             txGas = 10.toBigInteger(),
             dataGas = 10.toBigInteger(),
             operationalGas = 10.toBigInteger(),
-            gasPrice = 10.toBigInteger()
+            gasPrice = 10.toBigInteger(),
+            gasToken = "0x0".asEthereumAddress()!!
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.RequestConfirmation::class.java)
@@ -877,7 +879,7 @@ class DefaultPushServiceRepositoryTest {
             dataGas = "10",
             operationalGas = "10",
             gasPrice = "10",
-            gasToken = "0",
+            gasToken = "0x0000000000000000000000000000000000000000",
             refundReceiver = "0",
             nonce = "0"
         )
@@ -898,7 +900,8 @@ class DefaultPushServiceRepositoryTest {
             txGas = 10.toBigInteger(),
             dataGas = 10.toBigInteger(),
             operationalGas = 10.toBigInteger(),
-            gasPrice = 10.toBigInteger()
+            gasPrice = 10.toBigInteger(),
+            gasToken = "0x0".asEthereumAddress()!!
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.RequestConfirmation::class.java)
@@ -926,7 +929,7 @@ class DefaultPushServiceRepositoryTest {
             dataGas = "10",
             operationalGas = "10",
             gasPrice = "10",
-            gasToken = "0",
+            gasToken = "0x0000000000000000000000000000000000000000",
             refundReceiver = "0",
             nonce = "0"
         )
@@ -946,7 +949,8 @@ class DefaultPushServiceRepositoryTest {
             txGas = 10.toBigInteger(),
             dataGas = 10.toBigInteger(),
             operationalGas = 10.toBigInteger(),
-            gasPrice = 10.toBigInteger()
+            gasPrice = 10.toBigInteger(),
+            gasToken = "0x0".asEthereumAddress()!!
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.RequestConfirmation::class.java)
