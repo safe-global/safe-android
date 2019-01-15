@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.exceptions
 
 import android.content.Context
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single

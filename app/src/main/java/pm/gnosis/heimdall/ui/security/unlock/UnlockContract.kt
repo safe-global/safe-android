@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.security.unlock
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.security.FingerprintUnlockResult

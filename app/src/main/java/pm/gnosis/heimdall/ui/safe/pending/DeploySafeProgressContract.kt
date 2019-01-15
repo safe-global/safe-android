@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.safe.pending
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import io.reactivex.Single
 import pm.gnosis.model.Solidity
 

@@ -1,13 +1,13 @@
 package pm.gnosis.heimdall.ui.tokens.balances
 
 import android.os.Bundle
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.support.v4.widget.refreshes
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers

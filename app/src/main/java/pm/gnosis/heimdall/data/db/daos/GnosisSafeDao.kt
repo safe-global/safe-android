@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.data.db.daos
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import io.reactivex.Flowable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb

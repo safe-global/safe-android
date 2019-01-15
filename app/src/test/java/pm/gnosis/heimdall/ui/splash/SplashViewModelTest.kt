@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.splash
 
-import android.arch.persistence.room.EmptyResultSetException
+import androidx.room.EmptyResultSetException
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.Before

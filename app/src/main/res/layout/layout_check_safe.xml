@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,12 +7,12 @@
     android:layout_height="match_parent"
     tools:background="@color/pale_grey_two">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
-        <android.support.v4.widget.NestedScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/layout_check_safe_intro_content_scroll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -21,12 +21,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layout_check_safe_title">
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="24dp">
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/layout_check_safe_address_input_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                         tools:drawableEnd="@drawable/ic_error"
                         tools:text="0x1234" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
                     android:id="@+id/layout_check_safe_address_input_info"
@@ -65,9 +65,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/layout_check_safe_address_input_info" />
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </android.support.v4.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
 
         <View
             android:layout_width="match_parent"
@@ -118,6 +118,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:drawableEnd="@drawable/ic_arrow_forward_24dp" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,16 +1,16 @@
 package pm.gnosis.tests.mocked
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.action.ViewActions
-import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.intent.Intents
-import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
-import android.support.test.espresso.matcher.RootMatchers.withDecorView
-import android.support.test.espresso.matcher.ViewMatchers.*
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.ActivityTestRule
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
@@ -93,7 +93,14 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         // Scrollable content
         onView(withId(R.id.layout_fingerprint_setup_image)).check(matches(isDisplayed()))
         onView(withId(R.id.layout_fingerprint_setup_info_title)).check(matches(allOf(isDisplayed(), withText(R.string.setup_fingerprint_place))))
-        onView(withId(R.id.layout_fingerprint_setup_description)).check(matches(allOf(isDisplayed(), withText(R.string.setup_fingerprint_description))))
+        onView(withId(R.id.layout_fingerprint_setup_description)).check(
+            matches(
+                allOf(
+                    isDisplayed(),
+                    withText(R.string.setup_fingerprint_description)
+                )
+            )
+        )
 
         then(encryptionManagerMock).should().unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
@@ -152,7 +159,8 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         // Fingerprint not recognized
         fingerprintSubject.onError(IllegalArgumentException())
 
-        onView(withText(activity.getString(R.string.unknown_error))).inRoot(withDecorView(not(activity.window.decorView))).check(matches(isDisplayed()))
+        onView(withText(activity.getString(R.string.unknown_error))).inRoot(withDecorView(not(activity.window.decorView)))
+            .check(matches(isDisplayed()))
 
         then(encryptionManagerMock).should(times(2)).unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()

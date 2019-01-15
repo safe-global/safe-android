@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.addressbook
 
-import android.arch.persistence.room.EmptyResultSetException
+import androidx.room.EmptyResultSetException
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import android.graphics.Bitmap

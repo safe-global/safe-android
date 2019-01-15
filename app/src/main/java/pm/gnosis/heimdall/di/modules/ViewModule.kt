@@ -1,11 +1,11 @@
 package pm.gnosis.heimdall.di.modules
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.Module
 import dagger.Provides
 import pm.gnosis.heimdall.di.ForView

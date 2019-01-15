@@ -2,8 +2,8 @@ package pm.gnosis.heimdall.ui.safe.pairing
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.v4.content.ContextCompat
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan

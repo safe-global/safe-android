@@ -1,7 +1,7 @@
 package pm.gnosis.tests
 
-import android.support.multidex.MultiDexApplication
-import android.support.test.InstrumentationRegistry
+import androidx.multidex.MultiDexApplication
+import androidx.test.InstrumentationRegistry
 import org.mockito.Mockito
 import org.spongycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom

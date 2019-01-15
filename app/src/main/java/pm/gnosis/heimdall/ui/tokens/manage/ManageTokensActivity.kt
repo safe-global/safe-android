@@ -3,7 +3,8 @@ package pm.gnosis.heimdall.ui.tokens.manage
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.support.v4.widget.refreshes
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -31,7 +32,7 @@ class ManageTokensActivity : ViewModelActivity<ManageTokensContract>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        layout_manage_tokens_recycler_view.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        layout_manage_tokens_recycler_view.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         layout_manage_tokens_recycler_view.adapter = adapter
     }
 

@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.data.db.models
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.Companion.fromInt
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe

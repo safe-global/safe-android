@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.safe.helpers
 
-import android.arch.persistence.room.EmptyResultSetException
+import androidx.room.EmptyResultSetException
 import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.Single

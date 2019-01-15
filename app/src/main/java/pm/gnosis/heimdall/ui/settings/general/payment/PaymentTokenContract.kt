@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.settings.general.payment
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.ui.base.Adapter

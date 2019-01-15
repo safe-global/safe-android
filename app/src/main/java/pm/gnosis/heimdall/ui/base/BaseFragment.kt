@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.base
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import io.reactivex.disposables.CompositeDisposable
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.di.components.ApplicationComponent

@@ -3,9 +3,9 @@ package pm.gnosis.heimdall.ui.recoveryphrase
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.view.View
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -49,7 +49,7 @@ abstract class ConfirmRecoveryPhraseActivity<VM : ConfirmRecoveryPhraseContract>
 
         layout_confirm_recovery_phrase_recycler_view.apply {
             setHasFixedSize(true)
-            layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
+            layoutManager = GridLayoutManager(context, 3, RecyclerView.VERTICAL, false)
             adapter = this@ConfirmRecoveryPhraseActivity.adapter
             addItemDecoration(RecoveryPhraseItemDecoration(this@ConfirmRecoveryPhraseActivity, R.dimen.horizontal_offset, R.dimen.vertical_offset))
         }
@@ -147,7 +147,7 @@ abstract class ConfirmRecoveryPhraseActivity<VM : ConfirmRecoveryPhraseContract>
     private fun scrollToWord(wordPosition: Int) {
         scrollRunnable?.let { layout_confirm_recovery_phrase_scroll_view.removeCallbacks(it) }
         scrollRunnable = Runnable {
-            layout_confirm_recovery_phrase_recycler_view.layoutManager.findViewByPosition(wordPosition)?.let {
+            layout_confirm_recovery_phrase_recycler_view.layoutManager?.findViewByPosition(wordPosition)?.let {
                 // Android sometimes doesn't like this if this is done at the wrong point in time
                 nullOnThrow { layout_confirm_recovery_phrase_scroll_view.requestChildFocus(it, it) }
             }

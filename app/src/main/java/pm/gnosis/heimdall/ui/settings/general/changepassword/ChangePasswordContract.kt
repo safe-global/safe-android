@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.settings.general.changepassword
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import io.reactivex.Single
 import pm.gnosis.heimdall.helpers.PasswordValidationCondition
 import pm.gnosis.svalinn.common.utils.Result

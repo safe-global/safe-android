@@ -3,8 +3,8 @@ package pm.gnosis.heimdall.ui.addressbook.detail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.PopupMenu
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import com.jakewharton.rxbinding2.support.v7.widget.itemClicks

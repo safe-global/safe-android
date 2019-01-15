@@ -1,16 +1,15 @@
 package pm.gnosis.heimdall.ui.base
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.util.SparseArray
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 
 /**
  * All fragments are lazily instantiated and cached until the adapter is gc'd.
  * Should not be used with a large amount of items
  */
-class FactoryPagerAdapter(fragmentManager: FragmentManager, val factory: Factory) :
-    FragmentPagerAdapter(fragmentManager) {
+class FactoryPagerAdapter(fragmentManager: FragmentManager, val factory: Factory) : FragmentPagerAdapter(fragmentManager) {
 
     private val fragments: SparseArray<Fragment> = SparseArray()
 

@@ -1,11 +1,11 @@
 package pm.gnosis.heimdall.ui.safe.details
 
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
+import androidx.viewpager.widget.ViewPager
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy

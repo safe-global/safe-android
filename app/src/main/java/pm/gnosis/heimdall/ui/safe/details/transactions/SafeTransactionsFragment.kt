@@ -1,10 +1,10 @@
 package pm.gnosis.heimdall.ui.safe.details.transactions
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_safe_transactions.*

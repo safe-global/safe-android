@@ -4,7 +4,7 @@ package pm.gnosis.heimdall.ui.transactions.view.review
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.widget.NestedScrollView
+import androidx.core.widget.NestedScrollView
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign

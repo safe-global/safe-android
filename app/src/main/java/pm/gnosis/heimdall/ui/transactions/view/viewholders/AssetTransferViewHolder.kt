@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.transactions.view.viewholders
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.OnLifecycleEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

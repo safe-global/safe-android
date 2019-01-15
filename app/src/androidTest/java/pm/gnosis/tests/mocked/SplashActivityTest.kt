@@ -1,12 +1,12 @@
 package pm.gnosis.tests.mocked
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
-import android.support.test.espresso.intent.Intents
-import android.support.test.espresso.intent.Intents.intended
-import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.ActivityTestRule
 import io.reactivex.Flowable
 import io.reactivex.Single
 import org.junit.After
@@ -28,7 +28,7 @@ import pm.gnosis.heimdall.ui.splash.StartPasswordSetup
 import pm.gnosis.tests.BaseUiTest
 
 @RunWith(AndroidJUnit4::class)
-class SplashActivityTest: BaseUiTest() {
+class SplashActivityTest : BaseUiTest() {
     @JvmField
     @Rule
     val activityRule = ActivityTestRule(SplashActivity::class.java, true, false)

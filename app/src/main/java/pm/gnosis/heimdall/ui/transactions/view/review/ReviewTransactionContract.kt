@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions.view.review
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events

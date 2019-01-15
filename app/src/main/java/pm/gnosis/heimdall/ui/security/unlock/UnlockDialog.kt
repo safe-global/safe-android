@@ -3,13 +3,13 @@ package pm.gnosis.heimdall.ui.security.unlock
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.DialogFragment
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.editorActions
 import io.reactivex.Observable
@@ -37,7 +37,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 
-class UnlockDialog() : BaseDialog() {
+class UnlockDialog : BaseDialog() {
 
     @Inject
     lateinit var encryptionManager: EncryptionManager

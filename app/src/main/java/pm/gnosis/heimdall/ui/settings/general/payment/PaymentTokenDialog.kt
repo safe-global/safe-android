@@ -2,9 +2,9 @@ package pm.gnosis.heimdall.ui.settings.general.payment
 
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy

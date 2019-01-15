@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.helpers
 
 import android.content.Context
-import android.support.annotation.StringRes
-import android.support.v4.content.ContextCompat
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.widget.EditText

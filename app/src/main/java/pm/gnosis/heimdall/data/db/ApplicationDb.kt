@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.data.db
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import pm.gnosis.heimdall.data.db.daos.AddressBookDao
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao

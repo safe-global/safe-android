@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.ui.base
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import android.os.Bundle
-import android.support.annotation.LayoutRes
+import androidx.annotation.LayoutRes
 import pm.gnosis.heimdall.di.components.ViewComponent
 import javax.inject.Inject
 

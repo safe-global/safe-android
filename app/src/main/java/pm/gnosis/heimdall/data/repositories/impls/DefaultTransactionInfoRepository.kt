@@ -10,7 +10,7 @@ import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
-import pm.gnosis.model.SolidityBase
+import pm.gnosis.model.SolidityBase.PADDED_HEX_LENGTH
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.isSolidityMethod
@@ -59,10 +59,10 @@ class DefaultTransactionInfoRepository @Inject constructor(
             when {
                 data.isNullOrBlank() -> // If we have no data we default to ether transfer
                     TransactionData.AssetTransfer(ERC20Token.ETHER_TOKEN.address, tx.value?.value ?: BigInteger.ZERO, tx.address)
-                tx.value?.value ?: BigInteger.ZERO == BigInteger.ZERO && data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true -> // There should be no ether transfer with the token transfer
+                tx.value?.value ?: BigInteger.ZERO == BigInteger.ZERO && data.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) -> // There should be no ether transfer with the token transfer
                     parseTokenTransfer(tx)
                 isMultiSend(transaction) && isReplaceRecoveryPhrase(transaction) -> TransactionData.ReplaceRecoveryPhrase(transaction)
-                data!!.isSolidityMethod(GnosisSafe.AddOwnerWithThreshold.METHOD_ID) -> parseAddOwnerWithThreshold(tx)
+                data.isSolidityMethod(GnosisSafe.AddOwnerWithThreshold.METHOD_ID) -> parseAddOwnerWithThreshold(tx)
                 else ->
                     TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data)
             }
@@ -76,7 +76,10 @@ class DefaultTransactionInfoRepository @Inject constructor(
 
     private fun isReplaceRecoveryPhrase(transaction: SafeTransaction): Boolean {
         val payload = transaction.wrapped.data?.removeSolidityMethodPrefix(MultiSend.MultiSend.METHOD_ID) ?: return false
-        val partitions = SolidityBase.partitionData(payload)
+
+        val noPrefix = payload.removeHexPrefix()
+        if (noPrefix.length.rem(PADDED_HEX_LENGTH) != 0) throw IllegalArgumentException("Data is not a multiple of $PADDED_HEX_LENGTH")
+        val partitions = noPrefix.chunked(PADDED_HEX_LENGTH)
         if (partitions.size != 20) return false
         if (partitions[3] != partitions[12]) return false
 

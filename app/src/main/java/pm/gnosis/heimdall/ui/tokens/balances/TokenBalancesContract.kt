@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.tokens.balances
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.ui.base.Adapter

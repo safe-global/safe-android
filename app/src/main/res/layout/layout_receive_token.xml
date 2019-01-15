@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -43,14 +43,14 @@
         app:layout_constraintStart_toEndOf="@id/layout_receive_token_back_button"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/layout_receive_token_content_scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_receive_token_title">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -96,14 +96,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_safe_name"
                 tools:text="0xf1511FAB6b7347899f51f9db027A32b39caE3910" />
 
-            <android.support.constraint.Barrier
+            <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/layout_receive_token_input_barrier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="layout_receive_token_safe_address,layout_receive_token_safe_image" />
 
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/layout_receive_token_qr_card"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
@@ -126,7 +126,7 @@
                     android:layout_margin="16dp"
                     android:scaleType="fitCenter"
                     tools:background="@color/pale_grey" />
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
 
             <TextView
@@ -173,8 +173,8 @@
             </LinearLayout>
 
 
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v4.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <View
         android:id="@+id/layout_receive_token_toolbar_shadow"
@@ -184,4 +184,4 @@
         android:background="@drawable/toolbar_dropshadow"
         app:layout_constraintTop_toBottomOf="@id/layout_receive_token_title" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

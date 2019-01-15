@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.safe.recover.safe
 
-import android.arch.persistence.room.EmptyResultSetException
+import androidx.room.EmptyResultSetException
 import android.content.Context
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers

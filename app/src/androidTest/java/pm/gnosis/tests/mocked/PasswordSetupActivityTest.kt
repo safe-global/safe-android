@@ -1,18 +1,18 @@
 package pm.gnosis.tests.mocked
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.action.ViewActions.click
-import android.support.test.espresso.action.ViewActions.typeText
-import android.support.test.espresso.assertion.ViewAssertions.doesNotExist
-import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.intent.Intents
-import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
-import android.support.test.espresso.matcher.ViewMatchers.*
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.ActivityTestRule
 import io.reactivex.Single
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
@@ -22,8 +22,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
-import org.mockito.Mockito
-import org.mockito.Mockito.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.helpers.PasswordHelper
 import pm.gnosis.heimdall.helpers.PasswordValidationCondition
@@ -131,22 +129,28 @@ class PasswordSetupActivityTest : BaseUiTest() {
 
         testConditions(activity, true, listOf(PasswordValidationCondition.MinimumCharacters(false)))
 
-        testConditions(activity, false, listOf(
-            PasswordValidationCondition.MinimumCharacters(false),
-            PasswordValidationCondition.NonIdenticalCharacters(false),
-            PasswordValidationCondition.OneNumberOneLetter(false)
-        ))
+        testConditions(
+            activity, false, listOf(
+                PasswordValidationCondition.MinimumCharacters(false),
+                PasswordValidationCondition.NonIdenticalCharacters(false),
+                PasswordValidationCondition.OneNumberOneLetter(false)
+            )
+        )
 
-        testConditions(activity, false, listOf(
-            PasswordValidationCondition.MinimumCharacters(false),
-            PasswordValidationCondition.NonIdenticalCharacters(true),
-            PasswordValidationCondition.OneNumberOneLetter(false)
-        ))
+        testConditions(
+            activity, false, listOf(
+                PasswordValidationCondition.MinimumCharacters(false),
+                PasswordValidationCondition.NonIdenticalCharacters(true),
+                PasswordValidationCondition.OneNumberOneLetter(false)
+            )
+        )
 
-        testConditions(activity, false, listOf(
-            PasswordValidationCondition.MinimumCharacters(true),
-            PasswordValidationCondition.NonIdenticalCharacters(true)
-        ))
+        testConditions(
+            activity, false, listOf(
+                PasswordValidationCondition.MinimumCharacters(true),
+                PasswordValidationCondition.NonIdenticalCharacters(true)
+            )
+        )
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Contract interaction

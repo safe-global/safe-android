@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.account
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import android.graphics.Bitmap
 import io.reactivex.Observable
 import io.reactivex.Single

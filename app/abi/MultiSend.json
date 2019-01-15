@@ -1,5 +1,5 @@
 {
-  "contract_name": "MultiSend",
+  "contractName": "MultiSend",
   "abi": [
     {
       "constant": false,

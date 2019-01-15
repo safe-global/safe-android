@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
+import com.google.android.material.snackbar.Snackbar
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.editorActions

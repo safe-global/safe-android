@@ -1,16 +1,16 @@
 package pm.gnosis.tests.mocked
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import android.content.Intent
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.action.ViewActions
-import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.intent.Intents
-import android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent
-import android.support.test.espresso.matcher.ViewMatchers.*
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.ActivityTestRule
 import io.reactivex.Single
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@+id/dialog_unlock_content_barrier" />
 
-    <android.support.constraint.Barrier
+    <androidx.constraintlayout.widget.Barrier
         android:id="@+id/dialog_unlock_content_barrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:visibility="gone" />
 
-    <android.support.constraint.Group
+    <androidx.constraintlayout.widget.Group
         android:id="@+id/dialog_unlock_fingerprint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -102,4 +102,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

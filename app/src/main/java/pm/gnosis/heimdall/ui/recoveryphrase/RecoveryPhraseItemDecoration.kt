@@ -2,9 +2,9 @@ package pm.gnosis.heimdall.ui.recoveryphrase
 
 import android.content.Context
 import android.graphics.Rect
-import android.support.annotation.DimenRes
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.annotation.DimenRes
+import androidx.recyclerview.widget.RecyclerView
 
 class RecoveryPhraseItemDecoration(private val horizontalOffset: Int, private val verticalOffset: Int) : RecyclerView.ItemDecoration() {
     constructor(context: Context, @DimenRes horizontalOffset: Int, @DimenRes verticalOffset: Int) :

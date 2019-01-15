@@ -2,7 +2,7 @@ package pm.gnosis.heimdall.ui.onboarding.fingerprint
 
 import android.content.Context
 import android.content.Intent
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign

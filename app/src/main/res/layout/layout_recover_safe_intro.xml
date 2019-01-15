@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/layout_recover_safe_intro_scroll"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_recover_safe_intro_toolbar_background">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -59,9 +59,9 @@
                 android:text="@string/recover_safe_info_explainer"
                 app:layout_constraintTop_toBottomOf="@+id/layout_recover_safe_intro_fee_explainer" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <View
         android:id="@+id/layout_recover_safe_intro_toolbar_background"
@@ -133,4 +133,4 @@
         android:background="@drawable/toolbar_dropshadow"
         app:layout_constraintTop_toBottomOf="@id/layout_recover_safe_intro_toolbar_background" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

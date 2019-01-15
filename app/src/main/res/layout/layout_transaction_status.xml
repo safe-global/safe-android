@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -46,19 +46,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_arrow_back_24dp" />
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/layout_transaction_status_transaction_info"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_toolbar_shadow">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="12dp">
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_transaction_status_info_data_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
                 android:id="@+id/layout_transaction_status_info_divider"
@@ -179,8 +179,8 @@
                 android:paddingTop="8dp"
                 app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_fee_value"
                 tools:text="View on Etherscan.io" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v4.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <View
         android:id="@+id/layout_transaction_status_toolbar_shadow"
@@ -189,4 +189,4 @@
         android:background="@drawable/toolbar_dropshadow"
         app:layout_constraintTop_toBottomOf="@id/layout_transaction_status_title" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

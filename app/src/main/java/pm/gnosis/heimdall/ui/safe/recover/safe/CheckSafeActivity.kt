@@ -4,7 +4,7 @@ package pm.gnosis.heimdall.ui.safe.recover.safe
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers

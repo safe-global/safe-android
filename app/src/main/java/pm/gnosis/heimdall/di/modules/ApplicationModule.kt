@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.di.modules
 
 import android.app.Application
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import android.content.Context
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsClient
