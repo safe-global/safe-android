@@ -144,12 +144,13 @@ class DefaultPushServiceRepository @Inject constructor(
         dataGas: BigInteger,
         operationalGas: BigInteger,
         gasPrice: BigInteger,
+        gasToken: Solidity.Address,
         targets: Set<Solidity.Address>
     ): Completable =
         Single.fromCallable {
             ServiceMessage.RequestConfirmation(
                 hash = hash,
-                safe = safeAddress.asEthereumAddressString(),
+                safe = safeAddress.asEthereumAddressChecksumString(),
                 to = transaction.wrapped.address.asEthereumAddressChecksumString(),
                 value = transaction.wrapped.value?.value?.asDecimalString() ?: "0",
                 data = transaction.wrapped.data ?: "",
@@ -158,7 +159,7 @@ class DefaultPushServiceRepository @Inject constructor(
                 dataGas = dataGas.asDecimalString(),
                 operationalGas = operationalGas.asDecimalString(),
                 gasPrice = gasPrice.asDecimalString(),
-                gasToken = "0",
+                gasToken = gasToken.asEthereumAddressChecksumString(),
                 refundReceiver = "0",
                 nonce = transaction.wrapped.nonce?.asDecimalString() ?: "0"
             )
