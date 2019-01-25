@@ -2,14 +2,14 @@ package pm.gnosis.heimdall.utils
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.support.annotation.ColorRes
-import android.support.annotation.DrawableRes
-import android.support.v4.view.ViewCompat
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.content.res.AppCompatResources
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.ViewCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.squareup.phrase.Phrase
 import pm.gnosis.svalinn.common.utils.getColorCompat
 

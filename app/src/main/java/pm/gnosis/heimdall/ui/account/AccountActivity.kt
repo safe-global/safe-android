@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.ui.account
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.PopupMenu
+import androidx.appcompat.widget.PopupMenu
 import com.jakewharton.rxbinding2.support.v4.widget.refreshes
 import com.jakewharton.rxbinding2.support.v7.widget.itemClicks
 import com.jakewharton.rxbinding2.view.clicks

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,13 +7,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/layout_safe_details_viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/layout_safe_details_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
             app:mpb_useIntrinsicPadding="false"
             tools:visibility="visible" />
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/layout_safe_details_tabbar"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -70,19 +70,19 @@
             app:tabSelectedTextColor="@color/dark_slate_blue"
             app:tabTextColor="@color/bluey_grey">
 
-            <android.support.design.widget.TabItem
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:icon="@drawable/ic_tokens"
                 android:layout="@layout/layout_tab_item"
                 android:text="@string/tab_title_assets" />
 
-            <android.support.design.widget.TabItem
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:icon="@drawable/ic_transaction_white_24dp"
                 android:layout="@layout/layout_tab_item"
                 android:text="@string/tab_title_transactions" />
-        </android.support.design.widget.TabLayout>
-    </android.support.design.widget.AppBarLayout>
-</android.support.design.widget.CoordinatorLayout>
+        </com.google.android.material.tabs.TabLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

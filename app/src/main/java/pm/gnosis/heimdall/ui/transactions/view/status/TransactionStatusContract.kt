@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.transactions.view.status
 
-import android.arch.lifecycle.ViewModel
-import android.support.annotation.StringRes
+import androidx.lifecycle.ViewModel
+import androidx.annotation.StringRes
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token

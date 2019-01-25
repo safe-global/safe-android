@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.ui.onboarding.password
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.view.inputmethod.EditorInfo
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.editorActions

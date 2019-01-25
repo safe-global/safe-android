@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.base
 
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import android.content.Context
 import android.view.View
 import pm.gnosis.heimdall.di.ViewContext

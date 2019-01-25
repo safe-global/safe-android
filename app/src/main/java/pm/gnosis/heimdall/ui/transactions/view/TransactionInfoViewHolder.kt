@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions.view
 
-import android.arch.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleObserver
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.reactivex.Single

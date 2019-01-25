@@ -3,7 +3,7 @@ package pm.gnosis.heimdall.ui.onboarding
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.text.Html
 import android.text.method.LinkMovementMethod
 import com.jakewharton.rxbinding2.view.clicks

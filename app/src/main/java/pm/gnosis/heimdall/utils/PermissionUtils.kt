@@ -2,9 +2,9 @@ package pm.gnosis.heimdall.utils
 
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.support.annotation.IntRange
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import androidx.annotation.IntRange
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 fun handlePermissionsResultRequest(
     receivedRequestCode: Int,

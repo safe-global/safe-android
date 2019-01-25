@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.transactions.view.confirm
 
-import android.arch.lifecycle.ViewModel
-import android.support.annotation.StringRes
+import androidx.lifecycle.ViewModel
+import androidx.annotation.StringRes
 import io.reactivex.Completable
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction

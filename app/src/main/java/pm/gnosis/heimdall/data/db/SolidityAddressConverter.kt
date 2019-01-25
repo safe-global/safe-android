@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.data.db
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString

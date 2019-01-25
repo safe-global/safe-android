@@ -1,9 +1,9 @@
 package pm.gnosis.heimdall.ui.safe.details.transactions
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import android.content.Intent
-import android.support.annotation.IdRes
-import android.support.annotation.StringRes
+import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single

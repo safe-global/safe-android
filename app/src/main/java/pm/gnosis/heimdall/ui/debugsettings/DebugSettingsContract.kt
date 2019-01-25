@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.debugsettings
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.Single
 import pm.gnosis.svalinn.common.utils.Result

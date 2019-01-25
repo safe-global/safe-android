@@ -1,7 +1,7 @@
 package pm.gnosis.tests
 
 import android.content.Context
-import android.support.test.InstrumentationRegistry
+import androidx.test.InstrumentationRegistry
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.mock
 import pm.gnosis.heimdall.di.components.ApplicationComponent
@@ -28,5 +28,5 @@ abstract class BaseUiTest {
             }
             given(encryptionManager()).willReturn(encryptionManagerMock)
             given(eventTracker()).willReturn(eventTrackerMock)
-    }
+        }
 }

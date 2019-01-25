@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.transactions.create
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import android.content.Intent
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer

@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.safe.mnemonic
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.model.Solidity

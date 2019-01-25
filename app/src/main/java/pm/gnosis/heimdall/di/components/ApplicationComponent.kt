@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.di.components
 
 import android.app.Application
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider
 import android.content.Context
 import com.squareup.picasso.Picasso
 import dagger.Component

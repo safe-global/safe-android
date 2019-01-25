@@ -3,9 +3,9 @@ package pm.gnosis.heimdall.utils
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.support.annotation.ColorRes
-import android.support.annotation.StringRes
-import android.support.v7.app.AlertDialog
+import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import kotlinx.android.synthetic.main.layout_alert_dialog_title.view.*

@@ -1,5 +1,5 @@
 {
-  "contract_name": "CreateAndAddModules",
+  "contractName": "CreateAndAddModules",
   "abi": [
     {
       "constant": false,

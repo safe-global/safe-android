@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.utils
 
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 fun RecyclerView.isAtEnd(threshold: Int = 0): Boolean {
     return (layoutManager as? LinearLayoutManager)?.isAtEnd(threshold) ?: false

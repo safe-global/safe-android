@@ -3,8 +3,9 @@ package pm.gnosis.heimdall.ui.recoveryphrase
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
 import android.util.DisplayMetrics
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -39,7 +40,7 @@ abstract class SetupRecoveryPhraseActivity<VM : SetupRecoveryPhraseContract> : V
 
         layout_setup_recovery_phrase_recycler_view.apply {
             setHasFixedSize(true)
-            layoutManager = GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
+            layoutManager = GridLayoutManager(context, 3, RecyclerView.VERTICAL, false)
             adapter = this@SetupRecoveryPhraseActivity.adapter
             addItemDecoration(RecoveryPhraseItemDecoration(this@SetupRecoveryPhraseActivity, R.dimen.horizontal_offset, R.dimen.vertical_offset))
         }

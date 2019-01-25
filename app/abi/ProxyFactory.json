@@ -1,5 +1,5 @@
 {
-  "contract_name": "ProxyFactory",
+  "contractName": "ProxyFactory",
   "abi": [
     {
       "anonymous": false,

@@ -4,12 +4,12 @@ package pm.gnosis.heimdall.ui.safe.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.PopupMenu
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.View
+import androidx.appcompat.widget.PopupMenu
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.support.v7.widget.itemClicks
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -41,7 +41,6 @@ import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionPairingActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity
-import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity

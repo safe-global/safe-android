@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.splash
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import io.reactivex.Single
 
 abstract class SplashContract : ViewModel() {

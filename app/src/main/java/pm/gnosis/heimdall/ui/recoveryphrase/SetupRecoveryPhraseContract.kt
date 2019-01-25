@@ -1,6 +1,6 @@
 package pm.gnosis.heimdall.ui.recoveryphrase
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import android.graphics.Bitmap
 import io.reactivex.Single
 
