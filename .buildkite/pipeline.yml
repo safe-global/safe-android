@@ -1,4 +1,6 @@
 steps:
-
   - label: ':the_horns: UI Tests'
     command: 'ci/run_ui_tests.sh'
+
+  - label: ':eyes: Obfuscate/Minify build'
+    command: 'ci/transform_with_R8.sh'
