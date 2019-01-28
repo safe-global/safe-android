@@ -66,6 +66,9 @@
 }
 -keepnames @com.squareup.moshi.JsonClass class *
 
+-keep @interface pm.gnosis.heimdall.data.adapters.HexNumber
+-keep @interface pm.gnosis.heimdall.data.adapters.DecimalNumber
+
 ####################################################################################################
 # Retrofit
 ####################################################################################################
