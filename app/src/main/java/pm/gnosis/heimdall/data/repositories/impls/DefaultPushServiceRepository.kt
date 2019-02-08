@@ -217,8 +217,12 @@ class DefaultPushServiceRepository @Inject constructor(
                 pushMessage.safe.asEthereumAddress()?.let {
                     // We only want to add the safe if it was pending
                     nullOnThrow { safeDao.queryPendingSafe(it) } ?: return
-                    safeDao.pendingSafeToDeployedSafe(it)
-                    showSafeCreatedNotification(it)
+                    try {
+                        safeDao.pendingSafeToDeployedSafe(it)
+                        showSafeCreatedNotification(it)
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                    }
                 }
             }
         }

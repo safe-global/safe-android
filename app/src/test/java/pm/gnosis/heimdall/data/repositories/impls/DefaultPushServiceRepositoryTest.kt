@@ -18,6 +18,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
 import org.mockito.Captor
 import org.mockito.Mock
@@ -25,6 +26,9 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.db.ApplicationDb
+import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
+import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.push.*
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
@@ -37,10 +41,7 @@ import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.tests.utils.TestPreferences
-import pm.gnosis.tests.utils.mockGetString
+import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
@@ -69,6 +70,12 @@ class DefaultPushServiceRepositoryTest {
     private lateinit var moshiMock: Moshi
 
     @Mock
+    private lateinit var dbMock: ApplicationDb
+
+    @Mock
+    private lateinit var safeDaoMock: GnosisSafeDao
+
+    @Mock
     private lateinit var preferencesManagerMock: PreferencesManager
 
     @Mock
@@ -95,8 +102,10 @@ class DefaultPushServiceRepositoryTest {
 
     @Before
     fun setUp() {
+        given(dbMock.gnosisSafeDao()).willReturn(safeDaoMock)
         pushServiceRepository = DefaultPushServiceRepository(
             contextMock,
+            dbMock,
             accountsRepositoryMock,
             firebaseInstanceIdMock,
             localNotificationManagerMock,
@@ -1056,6 +1065,72 @@ class DefaultPushServiceRepositoryTest {
         testObserver.dispose()
         pushServiceRepository.handlePushMessage(pushMessage)
         testObserver.assertValueCount(1)
+    }
+
+    @Test
+    fun handlePushMessageSafeCreation() {
+        contextMock.mockGetString()
+        contextMock.mockGetStringWithArgs()
+
+        // We only care about the address
+        given(safeDaoMock.queryPendingSafe(MockUtils.any()))
+            .willReturn(PendingGnosisSafeDb(TEST_SAFE_ADDRESS, BigInteger.ZERO, "0x0".asEthereumAddress()!!, BigInteger.ZERO))
+
+        val pushMessage = PushMessage.SafeCreation(
+            safe = TEST_SAFE_ADDRESS.asEthereumAddressChecksumString()
+        )
+
+        pushServiceRepository.handlePushMessage(pushMessage)
+
+        then(localNotificationManagerMock).should()
+            .show(
+                eq(TEST_SAFE_ADDRESS.hashCode()),
+                MockUtils.eq(R.string.safe_created_notification_title.toString()),
+                MockUtils.eq("${R.string.safe_created_notification_message.toString()}, ${TEST_SAFE_ADDRESS.asEthereumAddressChecksumString()}"),
+                MockUtils.any()
+            )
+        then(localNotificationManagerMock).shouldHaveNoMoreInteractions()
+
+        then(safeDaoMock).should().queryPendingSafe(TEST_SAFE_ADDRESS)
+        then(safeDaoMock).should().pendingSafeToDeployedSafe(TEST_SAFE_ADDRESS)
+        then(safeDaoMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun handlePushMessageSafeCreationNotPending() {
+
+        val pushMessage = PushMessage.SafeCreation(
+            safe = TEST_SAFE_ADDRESS.asEthereumAddressChecksumString()
+        )
+
+        pushServiceRepository.handlePushMessage(pushMessage)
+
+        then(localNotificationManagerMock).shouldHaveZeroInteractions()
+
+        then(safeDaoMock).should().queryPendingSafe(TEST_SAFE_ADDRESS)
+        then(safeDaoMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun handlePushMessageSafeCreationCouldNotConvert() {
+
+        // We only care about the address
+        given(safeDaoMock.queryPendingSafe(MockUtils.any()))
+            .willReturn(PendingGnosisSafeDb(TEST_SAFE_ADDRESS, BigInteger.ZERO, "0x0".asEthereumAddress()!!, BigInteger.ZERO))
+        given(safeDaoMock.pendingSafeToDeployedSafe(MockUtils.any()))
+            .willThrow(IllegalStateException())
+
+        val pushMessage = PushMessage.SafeCreation(
+            safe = TEST_SAFE_ADDRESS.asEthereumAddressChecksumString()
+        )
+
+        pushServiceRepository.handlePushMessage(pushMessage)
+
+        then(localNotificationManagerMock).shouldHaveZeroInteractions()
+
+        then(safeDaoMock).should().queryPendingSafe(TEST_SAFE_ADDRESS)
+        then(safeDaoMock).should().pendingSafeToDeployedSafe(TEST_SAFE_ADDRESS)
+        then(safeDaoMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
