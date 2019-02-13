@@ -31,7 +31,7 @@ class PushMessageTest {
         private const val TEST_S = "signature-s"
         private const val TEST_V = "signature-v"
         private const val TEST_HASH = "somehash"
-        private const val TEST_SAFE = "somehash"
+        private const val TEST_SAFE = "someaddress"
         private const val TEST_TX_TO = "tx-to"
         private const val TEST_TX_VALUE = "tx-value"
         private const val TEST_TX_DATA = "tx-data"
@@ -43,6 +43,15 @@ class PushMessageTest {
         private const val TEST_GAS_TOKEN = "somegastoken"
         private const val TEST_NONCE = "somenonce"
         private val TEST_DATA = mapOf(
+            PushMessage.SafeCreation::class to
+                    TestData(
+                        mapOf(
+                            "type" to "safeCreation",
+                            "safe" to TEST_SAFE
+                        ),
+                        PushMessage.SafeCreation(TEST_SAFE)
+                    ),
+
             PushMessage.RejectTransaction::class to
                     TestData(
                         mapOf(
