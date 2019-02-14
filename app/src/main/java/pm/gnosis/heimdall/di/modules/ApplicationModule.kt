@@ -26,7 +26,6 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.TokenServiceApi
-import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39Generator
@@ -138,17 +137,6 @@ class ApplicationModule(private val application: Application) {
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
             .create(TokenServiceApi::class.java)
-
-    @Provides
-    @Singleton
-    fun providesVerifiedTokensServiceApi(moshi: Moshi, client: OkHttpClient): VerifiedTokensServiceApi =
-        Retrofit.Builder()
-            .client(client)
-            .baseUrl(BuildConfig.VERIFIED_TOKEN_SERVICE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-            .build()
-            .create(VerifiedTokensServiceApi::class.java)
 
     @Provides
     @Singleton

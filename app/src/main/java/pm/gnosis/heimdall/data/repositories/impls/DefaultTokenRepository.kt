@@ -13,7 +13,6 @@ import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.TokenServiceApi
-import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -35,8 +34,7 @@ class DefaultTokenRepository @Inject constructor(
     appDb: ApplicationDb,
     private val ethereumRepository: EthereumRepository,
     private val preferencesManager: AppPreferencesManager,
-    private val tokenServiceApi: TokenServiceApi,
-    private val verifiedTokensServiceApi: VerifiedTokensServiceApi
+    private val tokenServiceApi: TokenServiceApi
 ) : TokenRepository {
 
     private val hardcodedTokens = mapOf(
@@ -82,7 +80,7 @@ class DefaultTokenRepository @Inject constructor(
         }.subscribeOn(Schedulers.io())
 
     override fun loadVerifiedTokens(): Single<List<ERC20Token>> =
-        verifiedTokensServiceApi.loadVerifiedTokenList().map { it.results.map { it.fromNetwork() } }
+        tokenServiceApi.tokens().map { resp -> resp.results.map { it.fromNetwork() } }
 
     private fun localToken(contractAddress: Solidity.Address): Single<Optional<ERC20Token>> =
         hardcodedTokens[contractAddress]?.let { Single.just(it.toOptional()) }

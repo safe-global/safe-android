@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
-import android.app.Application
 import android.content.SharedPreferences
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -14,8 +13,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.Mockito.reset
@@ -27,11 +24,8 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import pm.gnosis.heimdall.data.remote.TokenServiceApi
-import pm.gnosis.heimdall.data.remote.VerifiedTokensServiceApi
 import pm.gnosis.heimdall.data.remote.models.PaginatedResults
 import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfo
-import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfoDeprecated
-import pm.gnosis.heimdall.data.remote.models.tokens.VerifiedToken
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.helpers.AppPreferencesManager
@@ -59,9 +53,6 @@ class DefaultTokenRepositoryTest {
     private lateinit var repository: DefaultTokenRepository
 
     @Mock
-    private lateinit var application: Application
-
-    @Mock
     private lateinit var dbMock: ApplicationDb
 
     @Mock
@@ -76,9 +67,6 @@ class DefaultTokenRepositoryTest {
     @Mock
     private lateinit var tokenServiceApiMock: TokenServiceApi
 
-    @Mock
-    private lateinit var verifiedTokensServiceApiMock: VerifiedTokensServiceApi
-
     @Before
     fun setUp() {
         given(dbMock.erc20TokenDao()).willReturn(erc20DaoMock)
@@ -86,8 +74,7 @@ class DefaultTokenRepositoryTest {
             dbMock,
             ethereumRepositoryMock,
             appPreferencesManagerMock,
-            tokenServiceApiMock,
-            verifiedTokensServiceApiMock
+            tokenServiceApiMock
         )
     }
 
@@ -519,37 +506,34 @@ class DefaultTokenRepositoryTest {
     @Test
     fun loadVerifiedTokens() {
         val testObserver = TestObserver<List<ERC20Token>>()
-        val verifiedToken = VerifiedToken(
-            TokenInfoDeprecated(
-                address = Solidity.Address(BigInteger.ZERO),
-                name = "Test Token",
-                symbol = "TST",
-                decimals = 18,
-                logoUrl = ""
-            ),
-            false
+        val verifiedToken = TokenInfo(
+            address = Solidity.Address(BigInteger.ZERO),
+            name = "Test Token",
+            symbol = "TST",
+            decimals = 18,
+            logoUri = ""
         )
         val verifiedTokensList = PaginatedResults(listOf(verifiedToken))
-        given(verifiedTokensServiceApiMock.loadVerifiedTokenList()).willReturn(Single.just(verifiedTokensList))
+        given(tokenServiceApiMock.tokens()).willReturn(Single.just(verifiedTokensList))
 
         repository.loadVerifiedTokens().subscribe(testObserver)
 
         testObserver.assertResult(listOf(verifiedToken.fromNetwork()))
-        then(verifiedTokensServiceApiMock).should().loadVerifiedTokenList()
-        then(verifiedTokensServiceApiMock).shouldHaveNoMoreInteractions()
+        then(tokenServiceApiMock).should().tokens()
+        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun loadVerifiedTokensError() {
         val testObserver = TestObserver<List<ERC20Token>>()
         val exception = Exception()
-        given(verifiedTokensServiceApiMock.loadVerifiedTokenList()).willReturn(Single.error(exception))
+        given(tokenServiceApiMock.tokens()).willReturn(Single.error(exception))
 
         repository.loadVerifiedTokens().subscribe(testObserver)
 
         testObserver.assertError(exception)
-        then(verifiedTokensServiceApiMock).should().loadVerifiedTokenList()
-        then(verifiedTokensServiceApiMock).shouldHaveNoMoreInteractions()
+        then(tokenServiceApiMock).should().tokens()
+        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
