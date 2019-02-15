@@ -7,9 +7,9 @@ import retrofit2.http.GET
 
 
 interface TokenServiceApi {
-    @GET("v1/tokens/?limit=1000&gas=true")
+    @GET("v1/tokens/?limit=1000&ordering=relevance,name&gas=true")
     fun paymentTokens(): Single<PaginatedResults<TokenInfo>>
 
-    @GET("v1/tokens/?limit=1000")
+    @GET("v1/tokens/?limit=1000&ordering=relevance,name")
     fun tokens(): Single<PaginatedResults<TokenInfo>>
 }
