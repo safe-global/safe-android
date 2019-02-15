@@ -13,6 +13,8 @@ import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookViewModel
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
+import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageContract
+import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageViewModel
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupViewModel
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
@@ -94,6 +96,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(CheckSafeContract::class)
     abstract fun bindsCheckSafeContract(viewModel: CheckSafeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConfirmMessageContract::class)
+    abstract fun bindsConfirmMessageContract(viewModel: ConfirmMessageViewModel): ViewModel
 
     @Binds
     @IntoMap

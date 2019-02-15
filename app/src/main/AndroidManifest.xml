@@ -239,6 +239,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 
+        <activity android:name=".ui.messagesigning.ConfirmMessageActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

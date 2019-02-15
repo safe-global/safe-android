@@ -1,10 +1,11 @@
 package pm.gnosis.heimdall.di.components
 
 import android.app.Application
-import androidx.lifecycle.ViewModelProvider
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
 import com.squareup.picasso.Picasso
 import dagger.Component
+import pm.gnosis.eip712.EIP712JsonParser
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.di.modules.ApplicationBindingsModule
@@ -56,6 +57,7 @@ interface ApplicationComponent {
     fun addressHelper(): AddressHelper
     fun toolbarHelper(): ToolbarHelper
     fun picasso(): Picasso
+    fun eop712JsonParser(): EIP712JsonParser
 
     // Base injects
     fun inject(activity: BaseActivity)

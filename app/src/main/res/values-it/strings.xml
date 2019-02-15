@@ -249,6 +249,11 @@
     <string name="pairing_second_step">2. Scansiona il codice QR dell\'estensione del browser</string>
     <string name="submitted">Inviato</string>
     <string name="status">Stato</string>
-    <string name="transaction_fee">Costo della transazione</string>
+    <string name="transaction_fee">Costi di transazione</string>
     <string name="later">Più tardi</string>
+    <string name="payment_token">Token di pagamento (per commissioni di rete)</string>
+    <string name="safe_created_notification_message">Il tuo Safe con indirizzo %s è stato creato.</string>
+    <string name="safe_created_notification_title">Safe creato</string>
+    <string name="app_version">Versione App: %s</string>
+    <string name="select_payment_token">Seleziona il token</string>
 </resources>
