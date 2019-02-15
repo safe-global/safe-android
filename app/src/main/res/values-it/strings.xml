@@ -226,8 +226,8 @@
     <string name="confirm_recovery_phrase_title">Possiedi la copia?</string>
     <string name="confirm_recovery_phrase_description">Tocca le parole mancanti in ordine.</string>
     <string name="layout_recovery_phrase_intro_title">Rimani protetto con una frase di recupero.</string>
-    <string name="layout_recovery_phrase_intro_description">Se hai bisogno di recuperare la sicurezza su un nuovo telefono, utilizza la frase nella schermata successiva. \n 
- (Più l\'indirizzo di sicurezza che ti forniremo.) \n \n 
+    <string name="layout_recovery_phrase_intro_description">Se hai bisogno di recuperare accesso al Safe su un nuovo telefono, utilizza la frase nella schermata successiva. \n 
+ (Più l\'indirizzo del Safe che ti forniremo.) \n \n 
  Senza di esso, non sarai in grado di recuperare accesso al tuo Safe e al tuo denaro.</string>
     <string name="get_my_recovery_phrase">Ottenere la frase di recupero</string>
     <string name="layout_replace_recovery_phrase_transaction_info_description">La vecchia frase di recupero non sarà più valida e verrà sostituita da quella nuova.</string>

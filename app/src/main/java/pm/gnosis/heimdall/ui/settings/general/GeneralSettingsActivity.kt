@@ -9,7 +9,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_general_settings.*
-import pm.gnosis.heimdall.ERC20Contract
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.di.components.ViewComponent
@@ -43,6 +43,8 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
     override fun onStart() {
         super.onStart()
         if (viewModel.isFingerprintAvailable()) setupFingerprintAction()
+
+        layout_general_settings_app_version.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
 
         disposables += layout_general_settings_password_background.clicks()
             .subscribeBy(onNext = {

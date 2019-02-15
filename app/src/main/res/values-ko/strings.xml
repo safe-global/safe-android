@@ -252,4 +252,5 @@
     <string name="status">상태</string>
     <string name="transaction_fee">거래 수수료</string>
     <string name="later">추후에</string>
+    <string name="payment_token">네트워크 수수료 지불용 토큰</string>
 </resources>
