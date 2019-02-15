@@ -56,6 +56,7 @@ import javax.inject.Singleton
 class ApplicationModule(private val application: Application) {
     companion object {
         const val INFURA_REST_CLIENT = "infuraRestClient"
+        const val BRIDGE_CLIENT = "bridgeClient"
     }
 
     @Provides
