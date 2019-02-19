@@ -60,6 +60,11 @@ class WCSession(
         send(Session.PayloadAdapter.MethodCall.Response(handshakeId, params))
     }
 
+    override fun update(accounts: List<String>, chainId: Long) {
+        val params = Session.PayloadAdapter.SessionParams(true, chainId, accounts, null)
+        send(Session.PayloadAdapter.MethodCall.SessionUpdate(createCallId(), params))
+    }
+
     override fun reject() {
         val handshakeId = handshakeId ?: return
         // We should not use classes in the Response, since this will not work with proguard
@@ -69,6 +74,10 @@ class WCSession(
 
     override fun approveRequest(id: Long, response: Any) {
         send(Session.PayloadAdapter.MethodCall.Response(id, response))
+    }
+
+    override fun rejectRequest(id: Long, errorCode: Long, errorMsg: String) {
+        send(Session.PayloadAdapter.MethodCall.Response(id, result = null, error = Session.PayloadAdapter.Error(errorCode, errorMsg)))
     }
 
     private fun handleStatus(status: Session.Transport.Status) {
@@ -142,7 +151,7 @@ class WCSession(
     private fun handlePayloadError(e: Exception) {
         System.out.println("Payload error $e")
         (e as? Session.PayloadAdapter.InvalidMethodException)?.let {
-            send(Session.PayloadAdapter.MethodCall.Response(it.id, mapOf("error" to it.message)))
+            rejectRequest(it.id, 42, it.message ?: "Unknown error")
         }
     }
 

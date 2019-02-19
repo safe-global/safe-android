@@ -114,6 +114,12 @@ class WalletConnectBridgeRepository @Inject constructor(
         session.approveRequest(requestId, response)
     }
         .subscribeOn(Schedulers.io())
+
+    fun rejectRequest(sessionId: String, requestId: Long, errorCode: Long, errorMsg: String): Completable = Completable.fromAction {
+        val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
+        session.rejectRequest(requestId, errorCode, errorMsg)
+    }
+        .subscribeOn(Schedulers.io())
 }
 
 
@@ -121,9 +127,11 @@ interface Session {
     fun init()
     fun approve(accounts: List<String>, chainId: Long)
     fun reject()
-    // TODO: update()
-    // TODO: kill()
+    fun update(accounts: List<String>, chainId: Long)
     fun close()
+
+    fun approveRequest(id: Long, response: Any)
+    fun rejectRequest(id: Long, errorCode: Long, errorMsg: String)
 
     fun addCallback(cb: Session.Callback)
     fun removeCallback(cb: Session.Callback)
@@ -197,13 +205,15 @@ interface Session {
                 val data: String
             ) : MethodCall(id)
 
-            data class Response(val id: Long, val result: Any) : MethodCall(id)
+            data class Response(val id: Long, val result: Any?, val error: Error? = null) : MethodCall(id)
         }
 
         data class PeerData(val id: String, val meta: PeerMeta?)
         data class PeerMeta(val url: String?, val name: String?, val description: String?)
 
         data class SessionParams(val approved: Boolean, val chainId: Long?, val accounts: List<String>?, val message: String?)
+
+        data class Error(val code: Long, val message: String)
 
         class InvalidMethodException(val id: Long, method: String) : IllegalArgumentException("Unknown method: $method")
     }
@@ -235,6 +245,4 @@ interface Session {
         }
 
     }
-
-    fun approveRequest(id: Long, response: Any)
 }

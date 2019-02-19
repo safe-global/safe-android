@@ -20,7 +20,7 @@ import java.security.SecureRandom
 class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
 
     private val payloadAdapter = moshi.adapter(EncryptedPayload::class.java)
-    private val mapAdapter = moshi.adapter<Map<String, Any>>(
+    private val mapAdapter = moshi.adapter<Map<String, Any?>>(
         Types.newParameterizedType(
             Map::class.java,
             String::class.java,
@@ -158,11 +158,20 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
     }
 
     private fun Map<String, *>.toResponse(): Session.PayloadAdapter.MethodCall.Response {
-        val result = this["result"] ?: throw IllegalArgumentException("result missing")
+        val result = this["result"]
+        val error = this["error"] as? Map<*, *>
+        if (result == null && error == null) throw IllegalArgumentException("no result or error")
         return Session.PayloadAdapter.MethodCall.Response(
             getId(),
-            result
+            result,
+            error?.extractError()
         )
+    }
+
+    private fun Map<*, *>.extractError(): Session.PayloadAdapter.Error {
+        val code = (this["code"] as? Double)?.toLong()
+        val message = this["message"] as? String
+        return Session.PayloadAdapter.Error(code ?: 0, message ?: "Unknown error")
     }
 
     private fun Map<*, *>.extractPeerData(): Session.PayloadAdapter.PeerData {
@@ -198,16 +207,16 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
         ).toByteArray()
 
     private fun Session.PayloadAdapter.MethodCall.SessionRequest.toMap() =
-        jsonRpc(this.id, "wc_sessionRequest", this.peer.intoMap())
+        jsonRpc(id, "wc_sessionRequest", peer.intoMap())
 
     private fun Session.PayloadAdapter.MethodCall.SessionUpdate.toMap() =
-        jsonRpc(this.id, "wc_sessionUpdate", this.params.intoMap())
+        jsonRpc(id, "wc_sessionUpdate", params.intoMap())
 
     private fun Session.PayloadAdapter.MethodCall.ExchangeKey.toMap() =
         jsonRpc(
-            this.id, "wc_exchangeKey", this.peer.intoMap(
+            id, "wc_exchangeKey", peer.intoMap(
                 mutableMapOf(
-                    "nextKey" to this.nextKey
+                    "nextKey" to nextKey
                 )
             )
         )
@@ -226,11 +235,13 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
         )
 
     private fun Session.PayloadAdapter.MethodCall.Response.toMap() =
-        mapOf(
+        mutableMapOf(
             "id" to id,
-            "jsonrpc" to "2.0",
-            "result" to this.result
-        )
+            "jsonrpc" to "2.0"
+        ).apply {
+            result?.let { this["result"] = result }
+            error?.let { this["error"] = error.intoMap() }
+        }
 
     private fun jsonRpc(id: Long, method: String, vararg params: Any) =
         mapOf<String, Any>(

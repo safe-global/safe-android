@@ -26,7 +26,7 @@ class WalletConnectBridgeRepositoryTest {
         val id = UUID.randomUUID().toString()
         val clientData = Session.PayloadAdapter.PeerData(id, null)
         val uri =
-            "wc:bb33a5cc-9e98-45b4-ad73-737938a3bc7f@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=4c9929cf102d1cfa9f9b7015fd5a5e24f7654294f8c8e8a63e2231aab3b86871"
+            "wc:34c635ad-858c-41cb-a519-ede4ea63c8ac@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=948d94f8cce388152149955ae60d7690e4d15fffb2561fd4d895fb101773da12"
 
         val sessionId = repo.createSession(uri, clientData)
         repo.observeSession(sessionId)
@@ -41,7 +41,7 @@ class WalletConnectBridgeRepositoryTest {
                             approveSession(repo, sessionId)
                         }
                         is Long -> {
-                            approveRequest(repo, sessionId, it, "0x52275f87fc078ff8381f636776cb649dda7a8882e7ba7a2ba9aa1cf24ce4b849")
+                            rejectRequest(repo, sessionId, it, "0x52275f87fc078ff8381f636776cb649dda7a8882e7ba7a2ba9aa1cf24ce4b849")
                         }
                     }
                 }
@@ -78,6 +78,18 @@ class WalletConnectBridgeRepositoryTest {
             },
             onComplete = {
                 System.out.println("Approve request complete")
+            }
+        )
+    }
+
+    private fun rejectRequest(repo: WalletConnectBridgeRepository, sessionId: String, requestId: Long, errorMessage: String) {
+        System.out.println("Reject request")
+        repo.rejectRequest(sessionId, requestId, 42, errorMessage).subscribeBy(
+            onError = {
+                System.out.println("Reject request error $it")
+            },
+            onComplete = {
+                System.out.println("Reject request complete")
             }
         )
     }
