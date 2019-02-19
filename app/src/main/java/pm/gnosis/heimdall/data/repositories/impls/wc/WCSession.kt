@@ -300,45 +300,6 @@ class WCSession(
     )
 }
 
-class FileWCSessionStore(moshi: Moshi) : WCSessionStore {
-    private val adapter = moshi.adapter<Map<String, WCSessionStore.State>>(
-        Types.newParameterizedType(
-            Map::class.java,
-            String::class.java,
-            WCSessionStore.State::class.java
-        )
-    )
-
-    private val storageFile: File = File("test_store.json").apply { createNewFile() }
-    private val currentStates: MutableMap<String, WCSessionStore.State> = ConcurrentHashMap()
-
-    init {
-        val storeContent = storageFile.readText()
-        nullOnThrow { adapter.fromJson(storeContent) }?.let {
-            currentStates.putAll(it)
-        }
-    }
-
-    override fun load(id: String): WCSessionStore.State? = currentStates[id]
-
-    override fun store(id: String, state: WCSessionStore.State) {
-        currentStates[id] = state
-        writeToFile()
-    }
-
-    override fun remove(id: String) {
-        currentStates.remove(id)
-        writeToFile()
-    }
-
-    override fun list(): List<WCSessionStore.State> = currentStates.values.toList()
-
-    private fun writeToFile() {
-        storageFile.writeText(adapter.toJson(currentStates))
-    }
-
-}
-
 interface WCSessionStore {
     fun load(id: String): State?
 

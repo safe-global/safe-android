@@ -9,10 +9,7 @@ import okhttp3.OkHttpClient
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.repositories.BridgeReposity
-import pm.gnosis.heimdall.data.repositories.impls.wc.FileWCSessionStore
-import pm.gnosis.heimdall.data.repositories.impls.wc.MoshiPayloadAdapter
-import pm.gnosis.heimdall.data.repositories.impls.wc.OkHttpTransport
-import pm.gnosis.heimdall.data.repositories.impls.wc.WCSession
+import pm.gnosis.heimdall.data.repositories.impls.wc.*
 import pm.gnosis.model.Solidity
 import java.net.URLDecoder
 import java.util.concurrent.ConcurrentHashMap
@@ -20,7 +17,8 @@ import javax.inject.Inject
 
 class WalletConnectBridgeRepository @Inject constructor(
     private val client: OkHttpClient,
-    private val moshi: Moshi
+    private val moshi: Moshi,
+    private val sessionStore: WCSessionStore
 ) : BridgeReposity {
     private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
 
@@ -29,7 +27,7 @@ class WalletConnectBridgeRepository @Inject constructor(
         return (sessions[config.handshakeTopic]?.let { config.handshakeTopic } ?: WCSession(
             config,
             MoshiPayloadAdapter(moshi),
-            FileWCSessionStore(moshi),
+            sessionStore,
             OkHttpTransport.Builder(client, moshi),
             Session.PayloadAdapter.PeerMeta(name = "Gnosis Safe")
         ).let {
