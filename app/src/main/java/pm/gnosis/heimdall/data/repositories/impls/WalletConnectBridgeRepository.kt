@@ -48,6 +48,7 @@ class WalletConnectBridgeRepository @Inject constructor(
             Session.PayloadAdapter.PeerMeta(name = "Gnosis Safe")
         ).let {
             it.addCallback(object : Session.Callback {
+
                 override fun sendTransaction(
                     id: Long,
                     from: String,
@@ -59,6 +60,10 @@ class WalletConnectBridgeRepository @Inject constructor(
                     data: String
                 ) {
                     // TODO show notification or screen
+                }
+
+                override fun signMessage(id: Long, address: String, message: String) {
+                    it.rejectRequest(id, 1123, "The Gnosis Safe doesn't support eth_sign")
                 }
 
                 override fun sessionRequest(peer: Session.PayloadAdapter.PeerData) {}
@@ -76,6 +81,7 @@ class WalletConnectBridgeRepository @Inject constructor(
         try {
             val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
             val cb = object : Session.Callback {
+
                 override fun sendTransaction(
                     id: Long,
                     from: String,
@@ -88,6 +94,8 @@ class WalletConnectBridgeRepository @Inject constructor(
                 ) {
                     emitter.onNext(BridgeReposity.SessionEvent.Transaction(id, from, to, nonce, gasPrice, gasLimit, value, data))
                 }
+
+                override fun signMessage(id: Long, address: String, message: String) {}
 
                 override fun sessionClosed(msg: String?) {
                     emitter.onNext(BridgeReposity.SessionEvent.Closed(sessionId))
@@ -205,6 +213,8 @@ interface Session {
             data: String
         )
 
+        fun signMessage(id: Long, address: String, message: String)
+
         fun sessionRequest(peer: PayloadAdapter.PeerData)
 
         fun sessionClosed(msg: String?)
@@ -233,6 +243,8 @@ interface Session {
                 val value: String,
                 val data: String
             ) : MethodCall(id)
+
+            data class SignMessage(val id: Long, val address: String, val message: String) : MethodCall(id)
 
             data class Response(val id: Long, val result: Any?, val error: Error? = null) : MethodCall(id)
         }
@@ -282,6 +294,7 @@ interface Session {
 
     sealed class MethodCallException(val id: Long, val code: Long, message: String) : IllegalArgumentException(message) {
         class InvalidMethod(id: Long, method: String) : MethodCallException(id, 42, "Unknown method: $method")
+        class InvalidRequest(id: Long, request: String) : MethodCallException(id, 23, "Invalid request: $request")
         class InvalidAccount(id: Long, account: String) : MethodCallException(id, 3141, "Invalid account request: $account")
     }
 }

@@ -165,13 +165,19 @@ class WCSession(
                 // TODO: expose peer meta update
             }
             is Session.PayloadAdapter.MethodCall.SendTransaction -> {
-                System.out.println(approvedAccounts)
-                approvedAccounts?.find { it.toLowerCase() == data.from.toLowerCase() } ?: run {
-                    handlePayloadError(Session.MethodCallException.InvalidAccount(data.id, data.from))
-                    return
+                if (accountCheck(data.id, data.from)) {
+                    sessionCallbacks.forEach {
+                        nullOnThrow {
+                            it.sendTransaction(data.id, data.from, data.to, data.nonce, data.gasPrice, data.gasLimit, data.value, data.data)
+                        }
+                    }
                 }
-                sessionCallbacks.forEach {
-                    nullOnThrow { it.sendTransaction(data.id, data.from, data.to, data.nonce, data.gasPrice, data.gasLimit, data.value, data.data) }
+            }
+            is Session.PayloadAdapter.MethodCall.SignMessage -> {
+                if (accountCheck(data.id, data.address)) {
+                    sessionCallbacks.forEach {
+                        nullOnThrow { it.signMessage(data.id, data.address, data.message) }
+                    }
                 }
             }
             is Session.PayloadAdapter.MethodCall.Response -> {
@@ -180,6 +186,14 @@ class WCSession(
                 callback(data)
             }
         }
+    }
+
+    private fun accountCheck(id: Long, address: String): Boolean {
+        approvedAccounts?.find { it.toLowerCase() == address.toLowerCase() } ?: run {
+            handlePayloadError(Session.MethodCallException.InvalidAccount(id, address))
+            return false
+        }
+        return true
     }
 
     private fun handlePayloadError(e: Exception) {

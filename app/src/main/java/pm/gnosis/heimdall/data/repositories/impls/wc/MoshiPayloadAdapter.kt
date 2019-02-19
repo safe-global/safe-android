@@ -94,18 +94,25 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
      * Convert FROM request bytes
      */
     private fun ByteArray.toMethodCall(): Session.PayloadAdapter.MethodCall =
-        mapAdapter.fromJson(String(this))?.let {
-            System.out.println("Json map: $it")
-            val method = it["method"]
-            when (method) {
-                "wc_sessionRequest" -> it.toSessionRequest()
-                "wc_sessionUpdate" -> it.toSessionUpdate()
-                "wc_exchangeKey" -> it.toExchangeKey()
-                "eth_sendTransaction" -> it.toSendTransaction()
-                null -> it.toResponse()
-                else -> throw Session.MethodCallException.InvalidMethod(it.getId(), method.toString())
-            }
-        } ?: throw IllegalArgumentException("Invalid json")
+        String(this).let { json ->
+            mapAdapter.fromJson(json)?.let {
+                System.out.println("Json map: $it")
+                try {
+                    val method = it["method"]
+                    when (method) {
+                        "wc_sessionRequest" -> it.toSessionRequest()
+                        "wc_sessionUpdate" -> it.toSessionUpdate()
+                        "wc_exchangeKey" -> it.toExchangeKey()
+                        "eth_sendTransaction" -> it.toSendTransaction()
+                        "eth_sign" -> it.toSignMessage()
+                        null -> it.toResponse()
+                        else -> throw Session.MethodCallException.InvalidMethod(it.getId(), method.toString())
+                    }
+                } catch (e: Exception) {
+                    throw Session.MethodCallException.InvalidRequest(it.getId(), json)
+                }
+            } ?: throw IllegalArgumentException("Invalid json")
+        }
 
     private fun Map<String, *>.getId(): Long =
         (this["id"] as? Double)?.toLong() ?: throw IllegalArgumentException("id missing")
@@ -157,6 +164,13 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
         return Session.PayloadAdapter.MethodCall.SendTransaction(getId(), from, to, nonce, gasPrice, gasLimit, value, txData)
     }
 
+    private fun Map<String, *>.toSignMessage(): Session.PayloadAdapter.MethodCall.SignMessage {
+        val params = this["params"] as? List<*> ?: throw IllegalArgumentException("params missing")
+        val address = params.getOrNull(0) as? String ?: throw IllegalArgumentException("Missing address")
+        val message = params.getOrNull(1) as? String ?: throw IllegalArgumentException("Missing message")
+        return Session.PayloadAdapter.MethodCall.SignMessage(getId(), address, message)
+    }
+
     private fun Map<String, *>.toResponse(): Session.PayloadAdapter.MethodCall.Response {
         val result = this["result"]
         val error = this["error"] as? Map<*, *>
@@ -205,6 +219,7 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
                 is Session.PayloadAdapter.MethodCall.Response -> this.toMap()
                 is Session.PayloadAdapter.MethodCall.SessionUpdate -> this.toMap()
                 is Session.PayloadAdapter.MethodCall.SendTransaction -> this.toMap()
+                is Session.PayloadAdapter.MethodCall.SignMessage -> this.toMap()
             }
         ).toByteArray()
 
@@ -225,7 +240,7 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
 
     private fun Session.PayloadAdapter.MethodCall.SendTransaction.toMap() =
         jsonRpc(
-            this.id, "eth_sendTransaction", mapOf(
+            id, "eth_sendTransaction", mapOf(
                 "from" to from,
                 "to" to to,
                 "nonce" to nonce,
@@ -234,6 +249,11 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
                 "value" to value,
                 "data" to data
             )
+        )
+
+    private fun Session.PayloadAdapter.MethodCall.SignMessage.toMap() =
+        jsonRpc(
+            id, "eth_sign", address, message
         )
 
     private fun Session.PayloadAdapter.MethodCall.Response.toMap() =
