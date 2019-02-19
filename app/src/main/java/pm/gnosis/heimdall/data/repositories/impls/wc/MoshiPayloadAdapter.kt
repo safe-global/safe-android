@@ -103,7 +103,7 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
                 "wc_exchangeKey" -> it.toExchangeKey()
                 "eth_sendTransaction" -> it.toSendTransaction()
                 null -> it.toResponse()
-                else -> throw Session.PayloadAdapter.InvalidMethodException(it.getId(), method.toString())
+                else -> throw Session.MethodCallException.InvalidMethod(it.getId(), method.toString())
             }
         } ?: throw IllegalArgumentException("Invalid json")
 
@@ -184,7 +184,9 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
         val description = this?.get("description") as? String
         val url = this?.get("url") as? String
         val name = this?.get("name") as? String
-        return Session.PayloadAdapter.PeerMeta(url, name, description)
+        val ssl = (this?.get("ssl") as? Boolean) ?: false
+        val icons = nullOnThrow { (this?.get("icons") as? List<*>)?.toStringList() }
+        return Session.PayloadAdapter.PeerMeta(url, name, description, icons, ssl)
     }
 
     private fun List<*>.toStringList(): List<String> =

@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.repositories.BridgeReposity
+import pm.gnosis.heimdall.data.repositories.impls.wc.FileWCSessionStore
 import pm.gnosis.heimdall.data.repositories.impls.wc.MoshiPayloadAdapter
 import pm.gnosis.heimdall.data.repositories.impls.wc.OkHttpTransport
 import pm.gnosis.heimdall.data.repositories.impls.wc.WCSession
@@ -23,12 +24,14 @@ class WalletConnectBridgeRepository @Inject constructor(
 ) : BridgeReposity {
     private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
 
-    fun createSession(url: String, clientData: Session.PayloadAdapter.PeerData): String {
-        val config = Session.Config.fromWCUri(url, clientData)
+    fun createSession(url: String): String {
+        val config = Session.Config.fromWCUri(url)
         return (sessions[config.handshakeTopic]?.let { config.handshakeTopic } ?: WCSession(
             config,
             MoshiPayloadAdapter(moshi),
-            OkHttpTransport.Builder(client, moshi)
+            FileWCSessionStore(moshi),
+            OkHttpTransport.Builder(client, moshi),
+            Session.PayloadAdapter.PeerMeta(name = "Gnosis Safe")
         ).let {
             it.addCallback(object : Session.Callback {
                 override fun sendTransaction(
@@ -105,7 +108,7 @@ class WalletConnectBridgeRepository @Inject constructor(
 
     fun closeSession(sessionId: String): Completable = Completable.fromAction {
         val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
-        session.close()
+        session.kill()
     }
         .subscribeOn(Schedulers.io())
 
@@ -128,7 +131,7 @@ interface Session {
     fun approve(accounts: List<String>, chainId: Long)
     fun reject()
     fun update(accounts: List<String>, chainId: Long)
-    fun close()
+    fun kill()
 
     fun approveRequest(id: Long, response: Any)
     fun rejectRequest(id: Long, errorCode: Long, errorMsg: String)
@@ -141,11 +144,10 @@ interface Session {
         val bridge: String,
         val key: String,
         val protocol: String = "wc",
-        val version: Int = 1,
-        val clientData: PayloadAdapter.PeerData
+        val version: Int = 1
     ) {
         companion object {
-            fun fromWCUri(uri: String, clientData: PayloadAdapter.PeerData): Config {
+            fun fromWCUri(uri: String): Config {
                 val protocolSeparator = uri.indexOf(':')
                 val handshakeTopicSeparator = uri.indexOf('@', startIndex = protocolSeparator)
                 val versionSeparator = uri.indexOf('?')
@@ -157,7 +159,7 @@ interface Session {
                 }
                 val bridge = params["bridge"] ?: throw IllegalArgumentException("Missing bridge param in URI")
                 val key = params["key"] ?: throw IllegalArgumentException("Missing key param in URI")
-                return Config(handshakeTopic, bridge, key, protocol, version, clientData)
+                return Config(handshakeTopic, bridge, key, protocol, version)
             }
         }
     }
@@ -209,13 +211,18 @@ interface Session {
         }
 
         data class PeerData(val id: String, val meta: PeerMeta?)
-        data class PeerMeta(val url: String?, val name: String?, val description: String?)
+        data class PeerMeta(
+            val url: String? = null,
+            val name: String? = null,
+            val description: String? = null,
+            val icons: List<String>? = null,
+            val ssl: Boolean? = null
+        )
 
         data class SessionParams(val approved: Boolean, val chainId: Long?, val accounts: List<String>?, val message: String?)
 
         data class Error(val code: Long, val message: String)
 
-        class InvalidMethodException(val id: Long, method: String) : IllegalArgumentException("Unknown method: $method")
     }
 
     interface Transport {
@@ -244,5 +251,10 @@ interface Session {
             ): Transport
         }
 
+    }
+
+    sealed class MethodCallException(val id: Long, val code: Long, message: String) : IllegalArgumentException(message) {
+        class InvalidMethod(id: Long, method: String) : MethodCallException(id, 42, "Unknown method: $method")
+        class InvalidAccount(id: Long, account: String) : MethodCallException(id, 3141, "Invalid account request: $account")
     }
 }

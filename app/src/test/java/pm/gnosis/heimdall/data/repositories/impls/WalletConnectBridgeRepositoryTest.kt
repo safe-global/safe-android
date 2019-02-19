@@ -23,12 +23,10 @@ class WalletConnectBridgeRepositoryTest {
     @Test
     fun integration() {
         val repo = WalletConnectBridgeRepository(OkHttpClient.Builder().pingInterval(1000, TimeUnit.MILLISECONDS).build(), Moshi.Builder().build())
-        val id = UUID.randomUUID().toString()
-        val clientData = Session.PayloadAdapter.PeerData(id, null)
         val uri =
-            "wc:34c635ad-858c-41cb-a519-ede4ea63c8ac@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=948d94f8cce388152149955ae60d7690e4d15fffb2561fd4d895fb101773da12"
+            "wc:645bf32b-8697-476f-a85f-7125a03bd012@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=98650b0362374ef67e5d434900fdf294d861480ee180ea50ea080476c926ef5a"
 
-        val sessionId = repo.createSession(uri, clientData)
+        val sessionId = repo.createSession(uri)
         repo.observeSession(sessionId)
             .subscribeBy(
                 onError = {
