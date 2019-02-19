@@ -51,6 +51,8 @@ class OkHttpTransport(
                     drainQueue() // continue draining untie there are no more messages
                 }
             }
+        } else {
+            connect()
         }
     }
 
@@ -61,6 +63,7 @@ class OkHttpTransport(
     override fun onOpen(webSocket: WebSocket, response: Response) {
         super.onOpen(webSocket, response)
         connected = true
+        drainQueue()
         statusHandler(Session.Transport.Status.CONNECTED)
     }
 
@@ -83,6 +86,7 @@ class OkHttpTransport(
         socket = null
         connected = false
         statusHandler(Session.Transport.Status.DISCONNECTED)
+        // TODO: maybe implement a period retry
     }
 
     class Builder(val client: OkHttpClient, val moshi: Moshi) :

@@ -1,11 +1,8 @@
 package pm.gnosis.heimdall.data.repositories.impls.wc
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import pm.gnosis.heimdall.data.repositories.impls.Session
 import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
-import java.io.File
 import java.security.SecureRandom
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -72,6 +69,10 @@ class WCSession(
     override fun removeCallback(cb: Session.Callback) {
         sessionCallbacks.remove(cb)
     }
+
+    override fun peerMeta(): Session.PayloadAdapter.PeerMeta? = peerMeta
+
+    override fun approvedAccounts(): List<String>? = approvedAccounts
 
     override fun init() {
         if (transport.connect()) {
@@ -191,6 +192,7 @@ class WCSession(
 
     private fun endSession() {
         sessionStore.remove(config.handshakeTopic)
+        approvedAccounts = null
         internalClose()
     }
 

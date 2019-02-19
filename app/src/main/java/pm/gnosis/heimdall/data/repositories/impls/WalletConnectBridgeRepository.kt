@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -11,6 +12,7 @@ import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.repositories.BridgeReposity
 import pm.gnosis.heimdall.data.repositories.impls.wc.*
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
 import java.net.URLDecoder
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
@@ -22,7 +24,21 @@ class WalletConnectBridgeRepository @Inject constructor(
 ) : BridgeReposity {
     private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
 
-    fun createSession(url: String): String {
+    override fun sessions(): Single<List<BridgeReposity.SessionMeta>> =
+        Single.fromCallable {
+            sessionStore.list().map {
+                BridgeReposity.SessionMeta(
+                    it.config.handshakeTopic,
+                    it.peerData?.meta?.name,
+                    it.peerData?.meta?.description,
+                    it.peerData?.meta?.icons,
+                    sessions.containsKey(it.config.handshakeTopic),
+                    it.approvedAccounts?.map { acc -> acc.asEthereumAddress()!! }
+                )
+            }
+        }
+
+    override fun createSession(url: String): String {
         val config = Session.Config.fromWCUri(url)
         return (sessions[config.handshakeTopic]?.let { config.handshakeTopic } ?: WCSession(
             config,
@@ -56,7 +72,7 @@ class WalletConnectBridgeRepository @Inject constructor(
         })
     }
 
-    fun observeSession(sessionId: String): Observable<Any> = Observable.create<Any> { emitter ->
+    override fun observeSession(sessionId: String): Observable<Any> = Observable.create<Any> { emitter ->
         try {
             val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
             val cb = object : Session.Callback {
@@ -70,15 +86,26 @@ class WalletConnectBridgeRepository @Inject constructor(
                     value: String,
                     data: String
                 ) {
-                    emitter.onNext(id)
+                    emitter.onNext(BridgeReposity.SessionEvent.Transaction(id, from, to, nonce, gasPrice, gasLimit, value, data))
                 }
 
                 override fun sessionClosed(msg: String?) {
-                    emitter.onNext(msg ?: "Unknown reason")
+                    emitter.onNext(BridgeReposity.SessionEvent.Closed(sessionId))
                 }
 
                 override fun sessionRequest(peer: Session.PayloadAdapter.PeerData) {
-                    emitter.onNext(peer)
+                    emitter.onNext(
+                        BridgeReposity.SessionEvent.SessionRequest(
+                            BridgeReposity.SessionMeta(
+                                sessionId,
+                                peer.meta?.name,
+                                peer.meta?.description,
+                                peer.meta?.icons,
+                                sessions.containsKey(sessionId),
+                                null
+                            )
+                        )
+                    )
                 }
             }
             emitter.setCancellable {
@@ -92,31 +119,31 @@ class WalletConnectBridgeRepository @Inject constructor(
     }
         .subscribeOn(Schedulers.io())
 
-    fun initSession(sessionId: String): Completable = Completable.fromAction {
+    override fun initSession(sessionId: String): Completable = Completable.fromAction {
         val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
         session.init()
     }
         .subscribeOn(Schedulers.io())
 
-    fun approveSession(sessionId: String, safe: Solidity.Address): Completable = Completable.fromAction {
+    override fun approveSession(sessionId: String, safe: Solidity.Address): Completable = Completable.fromAction {
         val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
         session.approve(listOf(safe.asEthereumAddressChecksumString()), BuildConfig.BLOCKCHAIN_CHAIN_ID)
     }
         .subscribeOn(Schedulers.io())
 
-    fun closeSession(sessionId: String): Completable = Completable.fromAction {
+    override fun closeSession(sessionId: String): Completable = Completable.fromAction {
         val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
         session.kill()
     }
         .subscribeOn(Schedulers.io())
 
-    fun approveRequest(sessionId: String, requestId: Long, response: Any): Completable = Completable.fromAction {
+    override fun approveRequest(sessionId: String, requestId: Long, response: Any): Completable = Completable.fromAction {
         val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
         session.approveRequest(requestId, response)
     }
         .subscribeOn(Schedulers.io())
 
-    fun rejectRequest(sessionId: String, requestId: Long, errorCode: Long, errorMsg: String): Completable = Completable.fromAction {
+    override fun rejectRequest(sessionId: String, requestId: Long, errorCode: Long, errorMsg: String): Completable = Completable.fromAction {
         val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
         session.rejectRequest(requestId, errorCode, errorMsg)
     }
@@ -130,6 +157,9 @@ interface Session {
     fun reject()
     fun update(accounts: List<String>, chainId: Long)
     fun kill()
+
+    fun peerMeta(): PayloadAdapter.PeerMeta?
+    fun approvedAccounts(): List<String>?
 
     fun approveRequest(id: Long, response: Any)
     fun rejectRequest(id: Long, errorCode: Long, errorMsg: String)
@@ -178,7 +208,6 @@ interface Session {
         fun sessionRequest(peer: PayloadAdapter.PeerData)
 
         fun sessionClosed(msg: String?)
-
     }
 
     interface PayloadAdapter {

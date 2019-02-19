@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient
 import org.junit.Rule
 import org.junit.Test
 import pm.gnosis.heimdall.BuildConfig
+import pm.gnosis.heimdall.data.repositories.BridgeReposity
 import pm.gnosis.heimdall.data.repositories.impls.wc.WCSessionStore
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -31,8 +32,10 @@ class WalletConnectBridgeRepositoryTest {
         val moshi = Moshi.Builder().build()
         val repo = WalletConnectBridgeRepository(client, moshi, FileWCSessionStore(moshi))
         val uri =
-            "wc:645bf32b-8697-476f-a85f-7125a03bd012@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=98650b0362374ef67e5d434900fdf294d861480ee180ea50ea080476c926ef5a"
+            "wc:11ed3d6d-5611-4b29-b7b3-5cf6de484f05@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=5ddc6551e18349068f7ba3dbd909b3182be28475879d24e929c60e3cbb2d36ee"
 
+        repo.sessions()
+            .subscribe { list -> System.out.println("Sessions: $list") }
         val sessionId = repo.createSession(uri)
         repo.observeSession(sessionId)
             .subscribeBy(
@@ -42,11 +45,11 @@ class WalletConnectBridgeRepositoryTest {
                 onNext = {
                     System.out.println("Observe data $it")
                     when (it) {
-                        is Session.PayloadAdapter.PeerData -> {
+                        is BridgeReposity.SessionEvent.SessionRequest -> {
                             approveSession(repo, sessionId)
                         }
-                        is Long -> {
-                            rejectRequest(repo, sessionId, it, "0x52275f87fc078ff8381f636776cb649dda7a8882e7ba7a2ba9aa1cf24ce4b849")
+                        is BridgeReposity.SessionEvent.Transaction -> {
+                            rejectRequest(repo, sessionId, it.id, "0x52275f87fc078ff8381f636776cb649dda7a8882e7ba7a2ba9aa1cf24ce4b849")
                         }
                     }
                 }
@@ -60,6 +63,8 @@ class WalletConnectBridgeRepositoryTest {
                     System.out.println("Init complete")
                 }
             )
+        repo.sessions()
+            .subscribe { list -> System.out.println("Sessions: $list") }
         Thread.sleep(100000)
     }
 
