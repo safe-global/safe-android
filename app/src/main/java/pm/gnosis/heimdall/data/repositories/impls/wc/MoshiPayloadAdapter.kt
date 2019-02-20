@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls.wc
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -274,5 +275,9 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
         )
 
     @JsonClass(generateAdapter = true)
-    data class EncryptedPayload(val data: String, val iv: String, val hmac: String)
+    data class EncryptedPayload(
+        @Json(name = "data") val data: String,
+        @Json(name = "iv") val iv: String,
+        @Json(name = "hmac") val hmac: String
+    )
 }

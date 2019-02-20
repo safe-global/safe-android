@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import io.reactivex.Completable
@@ -442,8 +443,11 @@ interface Session {
             DISCONNECTED
         }
 
-        @JsonClass(generateAdapter = true) // TODO decouple somehow
-        data class Message(val topic: String, val type: String, val payload: String)
+        data class Message(
+            val topic: String,
+            val type: String,
+            val payload: String
+        )
 
         interface Builder {
             fun build(

@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.data.repositories.impls.wc
 
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import okhttp3.*
 import pm.gnosis.heimdall.data.repositories.impls.Session
 import timber.log.Timber
@@ -15,7 +16,13 @@ class OkHttpTransport(
     moshi: Moshi
 ) : Session.Transport, WebSocketListener() {
 
-    private val adapter = moshi.adapter(Session.Transport.Message::class.java)
+    private val adapter = moshi.adapter<Map<String, String>>(
+        Types.newParameterizedType(
+            Map::class.java,
+            String::class.java,
+            String::class.java
+        )
+    )
 
     private val socketLock = Any()
     private var socket: WebSocket? = null
@@ -47,7 +54,7 @@ class OkHttpTransport(
             socket?.let { s ->
                 queue.poll()?.let {
                     System.out.println("Transport send $it")
-                    s.send(adapter.toJson(it))
+                    s.send(adapter.toJson(it.toMap()))
                     drainQueue() // continue draining untie there are no more messages
                 }
             }
@@ -55,6 +62,13 @@ class OkHttpTransport(
             connect()
         }
     }
+
+    private fun Session.Transport.Message.toMap() =
+        mapOf(
+            "topic" to topic,
+            "type" to type,
+            "payload" to payload
+        )
 
     override fun close() {
         socket?.close(1000, null)
@@ -69,7 +83,14 @@ class OkHttpTransport(
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         super.onMessage(webSocket, text)
-        adapter.fromJson(text)?.let { messageHandler(it) } ?: Timber.e("Invalid wc payload")
+        adapter.fromJson(text)?.toMessage()?.let { messageHandler(it) } ?: Timber.e("Invalid wc payload")
+    }
+
+    private fun Map<String, String>.toMessage(): Session.Transport.Message? {
+        val topic = get("topic") ?: return null
+        val type = get("type") ?: return null
+        val payload = get("payload") ?: return null
+        return Session.Transport.Message(topic, type, payload)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
