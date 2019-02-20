@@ -62,7 +62,7 @@ class DefaultTransactionTriggerManagerTest {
         data.pushRepoSetup.accept(pushServiceRepositoryMock)
 
         val transaction = SafeTransaction(Transaction(TEST_SAFE), TransactionExecutionRepository.Operation.CALL)
-        manager.onTransactionSubmitted(TEST_SAFE, transaction, "SomeHash")
+        manager.onTransactionSubmitted(TEST_SAFE, transaction, "SomeHash", null)
 
         data.pushRepoCheck.accept(pushServiceRepositoryMock)
         then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
