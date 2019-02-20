@@ -992,7 +992,7 @@ class DefaultPushServiceRepositoryTest {
             v = "27"
         )
         contextMock.mockGetString()
-        willDoNothing().given(localNotificationManagerMock).show(anyInt(), anyString(), anyString(), MockUtils.any())
+        willDoNothing().given(localNotificationManagerMock).show(anyInt(), anyString(), anyString(), MockUtils.any(), anyString())
 
         pushServiceRepository.handlePushMessage(pushMessage)
 
@@ -1000,7 +1000,8 @@ class DefaultPushServiceRepositoryTest {
             id = eq(pushMessage.hash.hashCode()),
             title = capture(stringsArgumentCaptor),
             message = capture(stringsArgumentCaptor),
-            intent = MockUtils.any()
+            intent = MockUtils.any(),
+            channelId = isNull()
         )
 
         assertEquals(R.string.sign_transaction_request_title.toString(), stringsArgumentCaptor.allValues[0])
@@ -1087,7 +1088,8 @@ class DefaultPushServiceRepositoryTest {
                 eq(TEST_SAFE_ADDRESS.hashCode()),
                 MockUtils.eq(R.string.safe_created_notification_title.toString()),
                 MockUtils.eq("${R.string.safe_created_notification_message.toString()}, ${TEST_SAFE_ADDRESS.asEthereumAddressChecksumString()}"),
-                MockUtils.any()
+                MockUtils.any(),
+                isNull()
             )
         then(localNotificationManagerMock).shouldHaveNoMoreInteractions()
 

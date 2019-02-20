@@ -55,7 +55,7 @@ class ReviewTransactionViewModelTest {
             executionInfo = it.arguments[1] as ((SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>)?
             Unit
         }
-        viewModel.setup(TEST_SAFE)
+        viewModel.setup(TEST_SAFE, null)
 
         then(submitTransactionHelper).should().setup(TEST_SAFE, executionInfo!!)
         then(submitTransactionHelper).shouldHaveNoMoreInteractions()

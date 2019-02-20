@@ -74,6 +74,10 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindsBridgeRepository(repository: WalletConnectBridgeRepository): BridgeRepository
+
+    @Binds
+    @Singleton
     abstract fun bindsPushServiceRepository(repository: DefaultPushServiceRepository): PushServiceRepository
 
     @Binds

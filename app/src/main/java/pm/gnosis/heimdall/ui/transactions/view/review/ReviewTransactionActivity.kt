@@ -63,7 +63,8 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             return
         }
 
-        viewModel.setup(safeAddress)
+        val referenceId = if(intent.hasExtra(EXTRA_REFERENCE_ID)) intent.getLongExtra(EXTRA_REFERENCE_ID, 0) else null
+        viewModel.setup(safeAddress, referenceId)
         infoViewHelper.bind(layout_review_transaction_transaction_info)
     }
 
@@ -101,6 +102,11 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
         (layout_review_transaction_transaction_info as? NestedScrollView)?.let {
             disposables += toolbarHelper.setupShadow(layout_review_transaction_toolbar_shadow, it)
         }
+    }
+
+    override fun onBackPressed() {
+        viewModel.cancelReview()
+        super.onBackPressed()
     }
 
     private fun applyUpdate(update: ViewUpdate) {
@@ -153,9 +159,11 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
 
     companion object {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
-        fun createIntent(context: Context, safe: Solidity.Address, txData: TransactionData) =
+        private const val EXTRA_REFERENCE_ID = "extra.long.reference_id"
+        fun createIntent(context: Context, safe: Solidity.Address, txData: TransactionData, referenceId: Long? = null) =
             Intent(context, ReviewTransactionActivity::class.java).apply {
                 putExtra(EXTRA_SAFE_ADDRESS, safe.value.toHexString())
+                referenceId?.let { putExtra(EXTRA_REFERENCE_ID, it) }
                 putExtras(Bundle().apply {
                     txData.addToBundle(this)
                 })

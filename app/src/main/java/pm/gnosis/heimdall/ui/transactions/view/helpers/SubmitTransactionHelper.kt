@@ -34,7 +34,8 @@ interface SubmitTransactionHelper {
 
     fun setup(
         safe: Solidity.Address,
-        executionInfo: (SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>
+        executionInfo: (SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>,
+        referenceId: Long? = null
     )
 
     fun observe(
@@ -67,12 +68,15 @@ class DefaultSubmitTransactionHelper @Inject constructor(
 
     private lateinit var safe: Solidity.Address
     private lateinit var executionInfo: (SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>
+    private var referenceId: Long? = null
 
     override fun setup(
         safe: Solidity.Address,
-        executionInfo: (SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>
+        executionInfo: (SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>,
+        referenceId: Long?
     ) {
         this.safe = safe
+        this.referenceId = referenceId
         this.executionInfo = executionInfo
     }
 
@@ -224,7 +228,8 @@ class DefaultSubmitTransactionHelper @Inject constructor(
 
     private fun submitTransaction(params: TransactionExecutionRepository.ExecuteInformation, signatures: Map<Solidity.Address, Signature>) =
         executionRepository.submit(
-            safe, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice, params.gasToken
+            safe, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice, params.gasToken,
+            referenceId = referenceId
         )
             .flatMapCompletable {
                 val targets = (params.owners - params.sender).toSet()

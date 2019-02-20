@@ -60,6 +60,7 @@ class WCSession(
         } ?: run {
             Session.PayloadAdapter.PeerData(clientId ?: UUID.randomUUID().toString(), clientMeta)
         }
+        storeSession()
     }
 
     override fun addCallback(cb: Session.Callback) {
@@ -91,6 +92,8 @@ class WCSession(
         // We should not use classes in the Response, since this will not work with proguard
         val params = Session.PayloadAdapter.SessionParams(true, chainId, accounts, null).intoMap()
         send(Session.PayloadAdapter.MethodCall.Response(handshakeId, params))
+        storeSession()
+        sessionCallbacks.forEach { nullOnThrow { it.sessionApproved() } }
     }
 
     override fun update(accounts: List<String>, chainId: Long) {
@@ -99,10 +102,11 @@ class WCSession(
     }
 
     override fun reject() {
-        val handshakeId = handshakeId ?: return
-        // We should not use classes in the Response, since this will not work with proguard
-        val params = Session.PayloadAdapter.SessionParams(false, null, null, null).intoMap()
-        send(Session.PayloadAdapter.MethodCall.Response(handshakeId, params))
+        handshakeId?.let {
+            // We should not use classes in the Response, since this will not work with proguard
+            val params = Session.PayloadAdapter.SessionParams(false, null, null, null).intoMap()
+            send(Session.PayloadAdapter.MethodCall.Response(it, params))
+        }
         endSession()
     }
 
@@ -152,9 +156,9 @@ class WCSession(
             }
             is Session.PayloadAdapter.MethodCall.SessionUpdate -> {
                 if (!data.params.approved) {
-                    endSession()
-                    sessionCallbacks.forEach { nullOnThrow { it.sessionClosed(data.params.message) } }
+                    endSession(data.params.message)
                 }
+                // TODO handle session update -> not important for our usecase
             }
             is Session.PayloadAdapter.MethodCall.ExchangeKey -> {
                 peerId = data.peer.id
@@ -204,10 +208,11 @@ class WCSession(
         }
     }
 
-    private fun endSession() {
+    private fun endSession(message: String? = null) {
         sessionStore.remove(config.handshakeTopic)
         approvedAccounts = null
         internalClose()
+        sessionCallbacks.forEach { nullOnThrow { it.sessionClosed(message) } }
     }
 
     private fun storeSession() {
@@ -299,7 +304,7 @@ class WCSession(
         return true
     }
 
-    private fun createCallId() = System.currentTimeMillis()
+    private fun createCallId() = System.currentTimeMillis() * 1000 + Random().nextInt(999)
 
     private fun internalClose() {
         transport.close()

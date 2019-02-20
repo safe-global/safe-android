@@ -21,16 +21,18 @@ class ReviewTransactionViewModel @Inject constructor(
     private val tokenRepository: TokenRepository
 ) : ReviewTransactionContract() {
 
+    private var referenceId: Long? = null
     private lateinit var safe: Solidity.Address
 
     private val cachedState = mutableMapOf<SafeTransaction, TransactionExecutionRepository.ExecuteInformation>()
 
-    override fun setup(safe: Solidity.Address) {
+    override fun setup(safe: Solidity.Address, referenceId: Long?) {
         if (nullOnThrow { this.safe } != safe) {
             cachedState.clear()
         }
         this.safe = safe
-        submitTransactionHelper.setup(safe, ::txParams)
+        this.referenceId = referenceId
+        submitTransactionHelper.setup(safe, ::txParams, referenceId)
     }
 
     private fun txParams(transaction: SafeTransaction): Single<TransactionExecutionRepository.ExecuteInformation> {
@@ -42,4 +44,8 @@ class ReviewTransactionViewModel @Inject constructor(
 
     override fun observe(events: Events, transactionData: TransactionData): Observable<Result<ViewUpdate>> =
         submitTransactionHelper.observe(events, transactionData)
+
+    override fun cancelReview() {
+        referenceId?.let { executionRepository.reject(it) }
+    }
 }

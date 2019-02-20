@@ -10,7 +10,9 @@ import pm.gnosis.svalinn.common.utils.Result
 
 abstract class ReviewTransactionContract : ViewModel() {
 
-    abstract fun setup(safe: Solidity.Address)
+    abstract fun setup(safe: Solidity.Address, referenceId: Long?)
 
     abstract fun observe(events: Events, transactionData: TransactionData): Observable<Result<ViewUpdate>>
+
+    abstract fun cancelReview()
 }

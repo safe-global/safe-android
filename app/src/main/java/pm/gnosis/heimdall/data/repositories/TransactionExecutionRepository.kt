@@ -11,9 +11,9 @@ import java.math.BigInteger
 
 interface TransactionExecutionRepository {
 
-    fun addTransactionSubmittedCallback(callback: TransactionSubmittedCallback): Boolean
+    fun addTransactionEventsCallback(callback: TransactionEventsCallback): Boolean
 
-    fun removeTransactionSubmittedCallback(callback: TransactionSubmittedCallback): Boolean
+    fun removeTransactionEventsCallback(callback: TransactionEventsCallback): Boolean
 
     fun calculateHash(
         safeAddress: Solidity.Address, transaction: SafeTransaction,
@@ -74,7 +74,8 @@ interface TransactionExecutionRepository {
         dataGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        addToHistory: Boolean = true
+        addToHistory: Boolean = true,
+        referenceId: Long? = null
     ): Single<String>
 
     fun notifyReject(
@@ -86,6 +87,8 @@ interface TransactionExecutionRepository {
         gasToken: Solidity.Address,
         targets: Set<Solidity.Address>
     ): Completable
+
+    fun reject(referenceId: Long)
 
     data class SafeExecuteState(
         val sender: Solidity.Address,
@@ -123,8 +126,9 @@ interface TransactionExecutionRepository {
         data class Success(val timestamp: Long) : PublishStatus()
     }
 
-    interface TransactionSubmittedCallback {
-        fun onTransactionSubmitted(safeAddress: Solidity.Address, transaction: SafeTransaction, chainHash: String)
+    interface TransactionEventsCallback {
+        fun onTransactionSubmitted(safeAddress: Solidity.Address, transaction: SafeTransaction, chainHash: String, referenceId: Long?)
+        fun onTransactionRejected(referenceId: Long)
     }
 
     enum class Operation {

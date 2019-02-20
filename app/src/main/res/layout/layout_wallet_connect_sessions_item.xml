@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/layout_wallet_connect_sessions_item_icon"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@drawable/ic_gnosis_logo" />
+
+    <TextView
+        android:id="@+id/layout_wallet_connect_sessions_item_symbol"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_wallet_connect_sessions_item_name"
+        app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_item_approve"
+        app:layout_constraintStart_toEndOf="@+id/layout_wallet_connect_sessions_item_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="GNO" />
+
+    <TextView
+        android:id="@+id/layout_wallet_connect_sessions_item_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/battleship_grey"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_item_approve"
+        app:layout_constraintStart_toStartOf="@+id/layout_wallet_connect_sessions_item_symbol"
+        app:layout_constraintTop_toBottomOf="@+id/layout_wallet_connect_sessions_item_symbol"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Gnosis" />
+
+    <ImageView
+        android:id="@+id/layout_wallet_connect_sessions_item_kill"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/selectable_circle_background"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_close_24dp" />
+
+    <TextView
+        android:id="@+id/layout_wallet_connect_sessions_item_deny"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selectable_background"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Deny"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_item_kill"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/layout_wallet_connect_sessions_item_approve"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selectable_background"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Approve"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_item_deny"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/layout_wallet_connect_sessions_item_activate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selectable_background"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Activate"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_item_approve"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/divider_width"
+        android:background="@color/divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

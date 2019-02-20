@@ -50,7 +50,7 @@ class DefaultTransactionTriggerManagerTest {
     @Test
     fun init() {
         manager.init()
-        then(transactionExecutionRepositoryMock).should().addTransactionSubmittedCallback(manager)
+        then(transactionExecutionRepositoryMock).should().addTransactionEventsCallback(manager)
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(transactionInfoRepositoryMock).shouldHaveZeroInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()

@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.helpers.TransactionTriggerManager
 import pm.gnosis.heimdall.reporting.CrashTracker
 import pm.gnosis.heimdall.reporting.EventTracker
+import pm.gnosis.heimdall.services.BridgeService
 import pm.gnosis.heimdall.services.HeimdallFirebaseService
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
@@ -62,5 +63,6 @@ interface ApplicationComponent {
     // Base injects
     fun inject(activity: BaseActivity)
 
+    fun inject(service: BridgeService)
     fun inject(service: HeimdallFirebaseService)
 }

@@ -5,7 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.model.Solidity
 
-interface BridgeReposity {
+interface BridgeRepository {
     data class SessionMeta(
         val id: String,
         val dappName: String?,
@@ -17,6 +17,7 @@ interface BridgeReposity {
 
     sealed class SessionEvent {
         data class SessionRequest(val meta: SessionMeta) : SessionEvent()
+        data class MetaUpdate(val meta: SessionMeta) : SessionEvent()
         data class Closed(val id: String) : SessionEvent()
         data class Transaction(
             val id: Long,
@@ -31,11 +32,16 @@ interface BridgeReposity {
     }
 
     fun sessions(): Single<List<SessionMeta>>
+    fun session(sessionId: String): Single<SessionMeta>
     fun createSession(url: String): String
-    fun observeSession(sessionId: String): Observable<Any>
+    fun observeSession(sessionId: String): Observable<BridgeRepository.SessionEvent>
     fun initSession(sessionId: String): Completable
     fun approveSession(sessionId: String, safe: Solidity.Address): Completable
     fun closeSession(sessionId: String): Completable
-    fun approveRequest(sessionId: String, requestId: Long, response: Any): Completable
-    fun rejectRequest(sessionId: String, requestId: Long, errorCode: Long, errorMsg: String): Completable
+    fun approveRequest(requestId: Long, response: Any): Completable
+    fun rejectRequest(requestId: Long, errorCode: Long, errorMsg: String): Completable
+    fun observeActiveSessions(): Observable<List<String>>
+    fun observeSessions(): Observable<List<SessionMeta>>
+    fun rejectSession(sessionId: String): Completable
+    fun activateSession(sessionId: String): Completable
 }

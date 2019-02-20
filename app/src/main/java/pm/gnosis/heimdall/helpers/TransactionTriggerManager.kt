@@ -15,13 +15,13 @@ class DefaultTransactionTriggerManager @Inject constructor(
     private val pushServiceRepository: PushServiceRepository,
     private val transactionExecutionRepository: TransactionExecutionRepository,
     private val transactionInfoRepository: TransactionInfoRepository
-) : TransactionTriggerManager, TransactionExecutionRepository.TransactionSubmittedCallback {
+) : TransactionTriggerManager, TransactionExecutionRepository.TransactionEventsCallback {
 
     override fun init() {
-        transactionExecutionRepository.addTransactionSubmittedCallback(this)
+        transactionExecutionRepository.addTransactionEventsCallback(this)
     }
 
-    override fun onTransactionSubmitted(safeAddress: Solidity.Address, transaction: SafeTransaction, chainHash: String) {
+    override fun onTransactionSubmitted(safeAddress: Solidity.Address, transaction: SafeTransaction, chainHash: String, referenceId: Long?) {
         transactionInfoRepository.parseTransactionData(transaction)
             .flatMapCompletable {
                 when (it) {
@@ -31,6 +31,8 @@ class DefaultTransactionTriggerManager @Inject constructor(
             }
             .subscribe()
     }
+
+    override fun onTransactionRejected(referenceId: Long) {}
 
     private fun notifySafeCreated(safeAddress: Solidity.Address, target: Solidity.Address): Completable =
             pushServiceRepository.propagateSafeCreation(safeAddress, setOf(target))
