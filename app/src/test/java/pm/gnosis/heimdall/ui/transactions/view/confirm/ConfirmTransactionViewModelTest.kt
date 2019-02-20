@@ -55,7 +55,7 @@ class ConfirmTransactionViewModelTest {
     @Test
     fun setup() {
         var executionInfo: ((SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>)? = null
-        given(submitTransactionHelper.setup(MockUtils.any(), MockUtils.any())).will {
+        given(submitTransactionHelper.setup(MockUtils.any(), MockUtils.any(), MockUtils.any())).will {
             executionInfo = it.arguments[1] as ((SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>)?
             Unit
         }

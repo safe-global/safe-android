@@ -23,7 +23,7 @@ class WalletConnectBridgeRepositoryTest {
     val rule = ImmediateSchedulersRule()
 
 
-    @Test
+    //@Test
     fun integration() {
         val client = OkHttpClient.Builder().pingInterval(1000, TimeUnit.MILLISECONDS).build()
         val moshi = Moshi.Builder().build()

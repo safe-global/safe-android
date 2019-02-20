@@ -993,7 +993,6 @@ class DefaultPushServiceRepositoryTest {
             v = "27"
         )
         contextMock.mockGetString()
-        willDoNothing().given(localNotificationManagerMock).show(anyInt(), anyString(), anyString(), MockUtils.any<Intent>(), anyString())
 
         pushServiceRepository.handlePushMessage(pushMessage)
 
@@ -1004,6 +1003,7 @@ class DefaultPushServiceRepositoryTest {
             intent = MockUtils.any<Intent>(),
             channelId = isNull()
         )
+        then(localNotificationManagerMock).shouldHaveNoMoreInteractions()
 
         assertEquals(R.string.sign_transaction_request_title.toString(), stringsArgumentCaptor.allValues[0])
         assertEquals(R.string.sign_transaction_request_message.toString(), stringsArgumentCaptor.allValues[1])

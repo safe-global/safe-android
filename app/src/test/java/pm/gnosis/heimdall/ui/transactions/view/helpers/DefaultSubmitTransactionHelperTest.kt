@@ -316,7 +316,8 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                anyBoolean()
+                anyBoolean(),
+                MockUtils.any()
             )
         ).willReturn(Single.error(error))
         submitEvents.onNext(Unit)
@@ -338,7 +339,8 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                anyBoolean()
+                anyBoolean(),
+                MockUtils.any()
             )
         ).willReturn(Single.just(TEST_CHAIN_HASH))
         given(
@@ -363,7 +365,8 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                anyBoolean()
+                anyBoolean(),
+                MockUtils.any()
             )
         ).willReturn(Single.just(TEST_CHAIN_HASH))
         given(
