@@ -40,7 +40,7 @@
             android:tint="@color/dark_slate_blue"
             app:layout_constraintEnd_toEndOf="@+id/layout_wallet_connect_sessions_toolbar_background"
             app:layout_constraintTop_toTopOf="@+id/layout_wallet_connect_sessions_toolbar_background"
-            app:srcCompat="@drawable/ic_person_add" />
+            app:srcCompat="@drawable/ic_add" />
 
         <TextView
             android:id="@+id/layout_wallet_connect_sessions_title"
@@ -48,7 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/toolbar_height"
             android:gravity="center_vertical"
-            android:text="WalletConnect Sessions"
+            android:text="@string/wallet_connect_sessions"
             android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_add"
             app:layout_constraintStart_toEndOf="@+id/layout_wallet_connect_sessions_back_arrow"

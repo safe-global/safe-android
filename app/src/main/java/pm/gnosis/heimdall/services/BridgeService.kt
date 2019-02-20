@@ -6,11 +6,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -18,9 +14,7 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
-import pm.gnosis.heimdall.ui.safe.main.SafeMainViewModel
 import pm.gnosis.heimdall.ui.walletconnect.WalletConnectSessionsActivity
-import pm.gnosis.model.Solidity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -70,7 +64,7 @@ class BridgeService : Service() {
     }
 
     private fun notification(count: Int): Notification {
-        val intent = WalletConnectSessionsActivity.createIntent(this, null)
+        val intent = WalletConnectSessionsActivity.createIntent(this)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
         val message = if (count == 0) "Loading WalletConnect status ..." else "$count active WalletConnect sessions"
         return localNotificationManager.builder(

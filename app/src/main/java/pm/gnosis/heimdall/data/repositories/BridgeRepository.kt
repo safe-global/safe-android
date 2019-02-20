@@ -36,7 +36,7 @@ interface BridgeRepository {
     fun createSession(url: String): String
     fun observeSession(sessionId: String): Observable<BridgeRepository.SessionEvent>
     fun initSession(sessionId: String): Completable
-    fun approveSession(sessionId: String, safe: Solidity.Address): Completable
+    fun approveSession(sessionId: String): Completable
     fun closeSession(sessionId: String): Completable
     fun approveRequest(requestId: Long, response: Any): Completable
     fun rejectRequest(requestId: Long, errorCode: Long, errorMsg: String): Completable

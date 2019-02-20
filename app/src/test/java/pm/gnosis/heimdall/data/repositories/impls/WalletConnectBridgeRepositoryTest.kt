@@ -2,15 +2,18 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
 import com.squareup.moshi.Moshi
+import io.reactivex.Flowable
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import org.junit.Rule
-import org.junit.Test
+import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.data.repositories.impls.wc.FileWCSessionStore
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.utils.asEthereumAddress
@@ -28,6 +31,8 @@ class WalletConnectBridgeRepositoryTest {
         val client = OkHttpClient.Builder().pingInterval(1000, TimeUnit.MILLISECONDS).build()
         val moshi = Moshi.Builder().build()
         val sessionStore = FileWCSessionStore(File("build/tmp/test_store.json").apply { createNewFile() }, moshi)
+        val safeRepoMock = mock(GnosisSafeRepository::class.java)
+        given(safeRepoMock.observeSafes()).willReturn(Flowable.just(listOf(Safe("0xdeadbeef".asEthereumAddress()!!))))
         val repo =
             WalletConnectBridgeRepository(
                 mock(Context::class.java),
@@ -35,6 +40,7 @@ class WalletConnectBridgeRepositoryTest {
                 mock(TransactionInfoRepository::class.java),
                 mock(LocalNotificationManager::class.java),
                 moshi,
+                safeRepoMock,
                 sessionStore,
                 mock(TransactionExecutionRepository::class.java)
             )
@@ -77,7 +83,7 @@ class WalletConnectBridgeRepositoryTest {
 
     private fun approveSession(repo: WalletConnectBridgeRepository, sessionId: String) {
         System.out.println("Approve session")
-        repo.approveSession(sessionId, "0xdeadbeef".asEthereumAddress()!!).subscribeBy(
+        repo.approveSession(sessionId).subscribeBy(
             onError = {
                 System.out.println("Approve error $it")
             },

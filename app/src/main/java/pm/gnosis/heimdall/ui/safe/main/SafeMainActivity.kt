@@ -9,6 +9,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxbinding2.support.v7.widget.itemClicks
 import com.jakewharton.rxbinding2.view.clicks
@@ -45,6 +46,7 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
+import pm.gnosis.heimdall.ui.walletconnect.WalletConnectSessionsActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.setCompoundDrawableResource
@@ -92,7 +94,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layout_safe_main_toolbar_nav_icon.setOnClickListener {
-            layout_safe_main_drawer_layout.openDrawer(Gravity.START)
+            layout_safe_main_drawer_layout.openDrawer(GravityCompat.START)
             eventTracker.submit(Event.ScreenView(ScreenId.MENU))
         }
 
@@ -102,6 +104,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         layout_safe_main_debug_settings.visible(BuildConfig.DEBUG)
         layout_safe_main_account.visible(BuildConfig.DEBUG)
+        layout_safe_main_wallet_connect.visible(BuildConfig.DEBUG)
 
         popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
             inflate(R.menu.safe_details_menu)
@@ -115,6 +118,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_account.setCompoundDrawableResource(left = R.drawable.ic_settings_account)
         layout_safe_main_tokens.setCompoundDrawableResource(left = R.drawable.ic_tokens)
         layout_safe_main_address_book.setCompoundDrawableResource(left = R.drawable.ic_settings_address_book)
+        layout_safe_main_wallet_connect.setCompoundDrawableResource(left = R.drawable.ic_walletconnect)
         layout_safe_main_general_settings.setCompoundDrawableResource(left = R.drawable.ic_general_settings)
         layout_safe_main_debug_settings.setCompoundDrawableResource(left = R.drawable.ic_settings_debug)
     }
@@ -168,6 +172,11 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         layout_safe_main_tokens.setOnClickListener {
             startActivity(ManageTokensActivity.createIntent(this))
+            closeDrawer()
+        }
+
+        layout_safe_main_wallet_connect.setOnClickListener {
+            startActivity(WalletConnectSessionsActivity.createIntent(this))
             closeDrawer()
         }
 

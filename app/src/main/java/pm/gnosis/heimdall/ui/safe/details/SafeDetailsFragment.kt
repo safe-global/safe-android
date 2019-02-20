@@ -25,7 +25,6 @@ import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
 import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
-import pm.gnosis.heimdall.ui.walletconnect.WalletConnectSessionsActivity
 import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.withArgs
@@ -109,7 +108,7 @@ class SafeDetailsFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         disposables += layout_safe_details_send_button.clicks()
-            .subscribeBy { startActivity(WalletConnectSessionsActivity.createIntent(context!!, safeAddress)) }
+            .subscribeBy { startActivity(SelectTokenActivity.createIntent(context!!, safeAddress)) }
 
         disposables += layout_safe_details_receive_button.clicks()
             .subscribeBy { startActivity(ReceiveTokenActivity.createIntent(context!!, safeAddress)) }

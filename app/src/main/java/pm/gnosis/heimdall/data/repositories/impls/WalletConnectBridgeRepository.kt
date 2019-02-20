@@ -15,26 +15,19 @@ import okhttp3.OkHttpClient
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.remote.models.push.PushMessage
-import pm.gnosis.heimdall.data.repositories.BridgeRepository
-import pm.gnosis.heimdall.data.repositories.TransactionData
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.impls.wc.*
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.services.BridgeService
-import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.decimalAsBigInteger
-import pm.gnosis.utils.decimalAsBigIntegerOrNull
 import pm.gnosis.utils.hexAsBigIntegerOrNull
+import java.lang.IllegalStateException
 import java.net.URLDecoder
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
@@ -45,6 +38,7 @@ class WalletConnectBridgeRepository @Inject constructor(
     private val infoRepository: TransactionInfoRepository,
     private val localNotificationManager: LocalNotificationManager,
     private val moshi: Moshi,
+    private val safeRepository: GnosisSafeRepository,
     private val sessionStore: WCSessionStore,
     executionRepository: TransactionExecutionRepository
 ) : BridgeRepository, TransactionExecutionRepository.TransactionEventsCallback {
@@ -278,11 +272,16 @@ class WalletConnectBridgeRepository @Inject constructor(
     }
         .subscribeOn(Schedulers.io())
 
-    override fun approveSession(sessionId: String, safe: Solidity.Address): Completable = Completable.fromAction {
-        val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
-        session.approve(listOf(safe.asEthereumAddressChecksumString()), BuildConfig.BLOCKCHAIN_CHAIN_ID)
-    }
-        .subscribeOn(Schedulers.io())
+    override fun approveSession(sessionId: String): Completable =
+        safeRepository.observeSafes().firstOrError()
+            .flatMapCompletable { safes ->
+                if (safes.isEmpty()) throw IllegalStateException("No Safe to whitelist")
+                Completable.fromAction {
+                    val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
+                    session.approve(safes.map { it.address.asEthereumAddressChecksumString() }, BuildConfig.BLOCKCHAIN_CHAIN_ID)
+                }
+            }
+            .subscribeOn(Schedulers.io())
 
     override fun rejectSession(sessionId: String): Completable = Completable.fromAction {
         val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
