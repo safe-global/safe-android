@@ -1,9 +1,9 @@
 package pm.gnosis.heimdall.ui.addressbook
 
-import androidx.room.EmptyResultSetException
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import android.graphics.Bitmap
+import androidx.room.EmptyResultSetException
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -11,6 +11,7 @@ import io.reactivex.observers.TestObserver
 import io.reactivex.subscribers.TestSubscriber
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
@@ -28,15 +29,19 @@ import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
 import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class AddressBookViewModelTest {
+    @JvmField
+    @Rule
+    val rule = ImmediateSchedulersRule()
+
     @Mock
     private lateinit var contextMock: Context
 

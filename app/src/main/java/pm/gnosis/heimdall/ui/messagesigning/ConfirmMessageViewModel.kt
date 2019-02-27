@@ -54,11 +54,6 @@ class ConfirmMessageViewModel @Inject constructor(
                 error = result.throwable,
                 finishProcess = false
             )
-            is Result.RejectPayload -> previous.copy(
-                isLoading = false,
-                error = null,
-                finishProcess = true
-            )
             is Result.ConfirmationInProgress -> previous.copy(
                 isLoading = true,
                 error = null,
@@ -129,6 +124,5 @@ class ConfirmMessageViewModel @Inject constructor(
         object ConfirmationSent : Result()
         data class ConfirmationException(val throwable: Throwable) : Result()
         object ConfirmationInProgress : Result()
-        object RejectPayload : Result()
     }
 }
