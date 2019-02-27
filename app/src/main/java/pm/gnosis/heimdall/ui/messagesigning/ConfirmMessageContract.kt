@@ -13,7 +13,6 @@ abstract class ConfirmMessageContract : ViewModel() {
 
     sealed class UIEvent {
         object ConfirmPayloadClick : UIEvent()
-        object RejectPayload : UIEvent()
     }
 
     data class ViewUpdate(

@@ -46,8 +46,8 @@ sealed class ServiceMessage {
 
     @JsonClass(generateAdapter = true)
     data class TypedDataConfirmation(
-        @Json(name = "type") val type: String = "signTypedDataConfirmation", // Workaround since moshi is not parsing parent or non-constructor fields
         @Json(name = "hash") val hash: String,
-        @Json(name = "signature") val signature: String
+        @Json(name = "signature") val signature: String,
+        @Json(name = "type") val type: String = "signTypedDataConfirmation" // Workaround since moshi is not parsing parent or non-constructor fields
     ) : ServiceMessage()
 }
