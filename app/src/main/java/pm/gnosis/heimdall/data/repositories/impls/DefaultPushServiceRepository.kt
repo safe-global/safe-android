@@ -256,8 +256,8 @@ class DefaultPushServiceRepository @Inject constructor(
     private fun showSignTypedDataNotification(signTypedData: PushMessage.SignTypedData) {
         localNotificationManager.show(
             signTypedData.safe.hashCode(),
-            "Sign message",
-            "You have been requested to sign a message",
+            context.getString(R.string.sign_message_notification_title),
+            context.getString(R.string.sign_message_notification_description),
             ConfirmMessageActivity.createIntent(
                 context = context,
                 payload = signTypedData.payload,
