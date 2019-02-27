@@ -239,11 +239,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 
-        <activity android:name=".ui.messagesigning.ConfirmMessageActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
+        <activity
+            android:name=".ui.messagesigning.ConfirmMessageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
