@@ -47,7 +47,7 @@ interface GnosisSafeDao {
     fun loadPendingSafe(address: Solidity.Address): Single<PendingGnosisSafeDb>
 
     @Query("SELECT * FROM ${PendingGnosisSafeDb.TABLE_NAME} WHERE ${PendingGnosisSafeDb.COL_ADDRESS} = :address")
-    fun queryPendingSafe(address: Solidity.Address): PendingGnosisSafeDb
+    fun queryPendingSafe(address: Solidity.Address): PendingGnosisSafeDb?
 
     @Query("DELETE FROM ${PendingGnosisSafeDb.TABLE_NAME} WHERE ${PendingGnosisSafeDb.COL_ADDRESS} = :address")
     fun removePendingSafe(address: Solidity.Address)
@@ -79,10 +79,13 @@ interface GnosisSafeDao {
 
     // Db Transactions
     @Transaction
-    fun pendingSafeToDeployedSafe(safeAddress: Solidity.Address) {
-        val safe = queryPendingSafe(safeAddress)
-        removePendingSafe(safe.address)
-        insertSafe(GnosisSafeDb(safe.address))
+    fun pendingSafeToDeployedSafe(safeAddress: Solidity.Address): Boolean {
+        queryPendingSafe(safeAddress)?.let { safe ->
+            removePendingSafe(safe.address)
+            insertSafe(GnosisSafeDb(safe.address))
+            return true
+        }
+        return false
     }
 
     @Transaction
