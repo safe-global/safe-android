@@ -11,6 +11,8 @@ import android.os.Build
 import androidx.core.os.BuildCompat
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import com.squareup.picasso.Picasso
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -31,6 +33,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.services.BridgeService
+import pm.gnosis.heimdall.ui.messagesigning.SignatureRequestActivity
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.model.Solidity
@@ -55,6 +58,7 @@ class WalletConnectBridgeRepository @Inject constructor(
     private val sessionStore: WCSessionStore,
     private val sessionBuilder: SessionBuilder,
     private val prefs: PreferencesWalletConnect,
+    private val moshi: Moshi,
     executionRepository: TransactionExecutionRepository
 ) : BridgeRepository, TransactionExecutionRepository.TransactionEventsCallback {
 
@@ -192,25 +196,49 @@ class WalletConnectBridgeRepository @Inject constructor(
                             }
                         is Session.MethodCall.SignMessage ->
                             call.apply {
+                                Timber.e("no support wallet connect. ")
                                 session.rejectRequest(id, 1123, "The Gnosis Safe doesn't support eth_sign")
                             }
                         is Session.MethodCall.Custom ->
                             call.apply {
                                 sessionRequests[id] = sessionId
-                                try {
-                                    rpcProxyApi.proxy(RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
-                                        .subscribeBy(onError = { t ->
-                                            rejectRequest(id, 42, t.message ?: "Could not handle custom call")
-                                        }) { result ->
-                                            result.error?.let { error ->
-                                                rejectRequest(id, error.code.toLong(), error.message).subscribe()
-                                            } ?: run {
-                                                approveRequest(id, result.result ?: "").subscribe()
+                                //FIXME: create separate Session.MethodCall for this case in kotlin-walletconnect-lib
+                                if (method == "eth_signTypedData") {
+
+                                    val mapAdapter = moshi.adapter<Map<String, Any?>>(
+                                        Types.newParameterizedType(
+                                            Map::class.java,
+                                            String::class.java,
+                                            Any::class.java
+                                        )
+                                    )
+
+                                    val safe = (params!![0] as String).asEthereumAddress()!!
+                                    var payload = mapAdapter.toJson(params!![1] as Map<String, Any?>)
+                                    payload = payload.replace("\"chainId\":1.0", "\"chainId\":\"1\"")
+
+
+                                    Timber.d(payload)
+
+                                    showSignTypedDataNotification(session.peerMeta(), safe, payload, id, sessionId)
+
+                                } else {
+                                    try {
+                                        rpcProxyApi.proxy(RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
+                                            .subscribeBy(onError = { t ->
+                                                rejectRequest(id, 42, t.message ?: "Could not handle custom call")
+                                            }) { result ->
+                                                Timber.d(result.error?.message)
+                                                result.error?.let { error ->
+                                                    rejectRequest(id, error.code.toLong(), error.message).subscribe()
+                                                } ?: run {
+                                                    approveRequest(id, result.result ?: "").subscribe()
+                                                }
                                             }
-                                        }
-                                } catch (e: Exception) {
-                                    Timber.e(e)
-                                    rejectRequest(id, 42, "Could not handle custom call: $e").subscribe()
+                                    } catch (e: Exception) {
+                                        Timber.e(e)
+                                        rejectRequest(id, 42, "Could not handle custom call: $e").subscribe()
+                                    }
                                 }
                             }
                     }
@@ -242,6 +270,40 @@ class WalletConnectBridgeRepository @Inject constructor(
             sessionUpdates.onNext(Unit)
             config.handshakeTopic
         }
+
+
+    private fun showSignTypedDataNotification(
+        peerMeta: Session.PeerMeta?,
+        safe: Solidity.Address,
+        payload: String,
+        referenceId: Long,
+        sessionId: String
+    ) {
+
+        val keyguard = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        val intent = SignatureRequestActivity.createIntent(context, payload, safe)//, referenceId, sessionId)
+        // Pre Android Q we will directly show the review activity if the phone is unlocked, else we show a notification
+        // TODO: Adjust check when Q is released
+        if (BuildCompat.isAtLeastQ() || Build.VERSION.SDK_INT > Build.VERSION_CODES.P || keyguard.isKeyguardLocked) {
+            val icon = peerMeta?.icons?.firstOrNull()?.let { nullOnThrow { picasso.load(it).get() } }
+            val notification = localNotificationManager.builder(
+                peerMeta?.name ?: context.getString(R.string.unknown_dapp),
+                context.getString(R.string.sign_message_notification_description),
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT),
+                CHANNEL_WALLET_CONNECT_REQUESTS
+            )
+                .setSubText(safe.shortChecksumString())
+                .setLargeIcon(icon)
+                .build()
+            localNotificationManager.show(
+                referenceId.hashCode(),
+                notification
+            )
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+    }
 
     private fun showSendTransactionNotification(
         peerMeta: Session.PeerMeta?,
@@ -463,3 +525,4 @@ interface RpcProxyApi {
         @Json(name = "result") val result: Any?
     )
 }
+

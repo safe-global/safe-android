@@ -8,6 +8,7 @@ import com.squareup.moshi.Moshi
 import io.reactivex.*
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
@@ -26,6 +27,7 @@ import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageActivity
+import pm.gnosis.heimdall.ui.messagesigning.SignatureRequestActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
 import pm.gnosis.model.Solidity
@@ -53,6 +55,8 @@ class DefaultPushServiceRepository @Inject constructor(
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
 
     private val observedTransaction = HashMap<BigInteger, ReceiveSignatureObservable>()
+
+    private val signTypedDataConfirmationsSubject = PublishSubject.create<PushMessage.SignTypedDataConfirmation>()
 
     /*
     * Situations where a sync might be needed:
@@ -222,12 +226,32 @@ class DefaultPushServiceRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .flatMapCompletable { sendNotification(it, safe, targets) }
 
+    override fun requestTypedDataConfirmations(
+        payload: String,
+        appSignature: Signature,
+        safe: Solidity.Address,
+        targets: Set<Solidity.Address>
+    ): Completable =
+        Single.fromCallable {
+            ServiceMessage.TypedDataRequest(
+                payload = payload,
+                safe = safe.asEthereumAddressString(),
+                r = appSignature.r.asDecimalString(),
+                s = appSignature.s.asDecimalString() ,
+                v = appSignature.v.toString()
+            )
+        }
+            .subscribeOn(Schedulers.io())
+            .flatMapCompletable { sendNotification(it, safe, targets) }
+
     private fun sendNotification(message: ServiceMessage, safe: Solidity.Address, targets: Set<Solidity.Address>) =
         Single.fromCallable {
             moshi.adapter(message.javaClass).toJson(message)
         }
             .subscribeOn(Schedulers.io())
             .flatMap { rawJson ->
+
+                Timber.d(rawJson)
                 accountsRepository.sign(safe, Sha3Utils.keccak("$SIGNATURE_PREFIX$rawJson".toByteArray()))
                     .map { ServiceSignature.fromSignature(it) to rawJson }
             }
@@ -277,8 +301,11 @@ class DefaultPushServiceRepository @Inject constructor(
                 }
             }
             is PushMessage.SignTypedData -> showSignTypedDataNotification(pushMessage)
+            is PushMessage.SignTypedDataConfirmation -> signTypedDataConfirmationsSubject.onNext(pushMessage)
         }
     }
+
+    override fun observeTypedDataConfirmationPushes(): Observable<PushMessage.SignTypedDataConfirmation> = signTypedDataConfirmationsSubject
 
     private fun showSafeCreatedNotification(safe: Solidity.Address) {
         localNotificationManager.show(
@@ -294,7 +321,8 @@ class DefaultPushServiceRepository @Inject constructor(
             signTypedData.safe.hashCode(),
             context.getString(R.string.sign_message_notification_title),
             context.getString(R.string.sign_message_notification_description),
-            ConfirmMessageActivity.createIntent(
+
+            SignatureRequestActivity.createIntent(
                 context = context,
                 payload = signTypedData.payload,
                 safe = signTypedData.safe,

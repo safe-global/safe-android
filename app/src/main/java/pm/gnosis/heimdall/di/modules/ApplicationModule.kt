@@ -105,7 +105,6 @@ class ApplicationModule(private val application: Application) {
         main = AndroidSchedulers.mainThread()
     )
 
-
     @Provides
     @Singleton
     @ApplicationContext

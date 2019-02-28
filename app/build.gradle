@@ -278,6 +278,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.kotlinx_coroutines"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
+    api 'androidx.lifecycle:lifecycle-extensions:2.1.0-beta01'
     implementation "androidx.room:room-ktx:$versions.androidx_room"
 
     // Testing

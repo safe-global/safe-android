@@ -42,4 +42,6 @@ interface PushServiceRepository {
         data class Rejected(val signature: Signature) : TransactionResponse()
     }
 
+    fun requestTypedDataConfirmations(payload: String, appSignature: Signature, safe: Solidity.Address, targets: Set<Solidity.Address>): Completable
+    fun observeTypedDataConfirmationPushes(): Observable<PushMessage.SignTypedDataConfirmation>
 }

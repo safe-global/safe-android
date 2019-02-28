@@ -95,6 +95,7 @@ class SafeAccountRepository @Inject constructor(
             .flatMap { sign(it, data) }
             .subscribeOn(Schedulers.computation())
 
+
     override fun sign(safeOwner: AccountsRepository.SafeOwner, data: ByteArray): Single<Signature> =
         Single.fromCallable {
             cryptoHelper.sign(safeOwner.privateKey.value(encryptionManager), data)

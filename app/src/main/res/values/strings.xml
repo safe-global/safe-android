@@ -480,4 +480,14 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="balance">Balance</string>
     <string name="change_fee_method">Change fee payment method</string>
     <string name="pay_with">Pay with %s</string>
+
+    <string name="signature_request">Signature request</string>
+    <string name="signature_request_explanation_authentication">Open the browser extension to confirm the signature request.</string>
+    <string name="signature_request_explanation_rejected">The signature request was rejected by the browser extension.</string>
+    <string name="signature_request_explanation_confirmed">The browser extension has approved this signature request.</string>
+    <string name="domain">Domain</string>
+    <string name="message">Message</string>
+    <string name="contract">Contract</string>
+    <string name="sign">Sign</string>
+    <string name="view_message">View message</string>
 </resources>

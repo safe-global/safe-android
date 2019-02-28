@@ -62,12 +62,18 @@ class TwoStepPanel @JvmOverloads constructor(
     val forwardClicks: Observable<Unit>
     val backClicks: Observable<Unit>
 
+    var forwardClickAction: (() -> Unit)? = null
+
     init {
         LayoutInflater.from(context).inflate(R.layout.layout_two_step_panel, this, true)
         readAttributesAndSetupFields(context, attrs)
 
         forwardClicks = forward.clicks().filter { forwardEnabled }
         backClicks = back_icon.clicks().filter { backEnabled }
+
+        forward.setOnClickListener {
+            forwardClickAction?.invoke()
+        }
 
     }
 

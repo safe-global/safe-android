@@ -25,4 +25,14 @@
 
     </declare-styleable>
 
+    <declare-styleable name="ConfirmResendPanel">
+
+        <attr name="title" format="string"/>
+        <attr name="message" format="string"/>
+        <attr name="image" format="reference"/>
+        <attr name="actionTitle" format="string"/>
+        <attr name="actionPrimary" format="boolean"/>
+
+    </declare-styleable>
+
 </resources>

@@ -52,8 +52,9 @@ abstract class ApplicationBindingsModule {
     @Binds
     abstract fun bindsTransactionViewHolderBuilder(helper: DefaultTransactionViewHolderBuilder): TransactionViewHolderBuilder
 
-
-    // Scoped Helpers
+    /*
+        Scoped Helpers
+     */
 
     @Binds
     @Singleton

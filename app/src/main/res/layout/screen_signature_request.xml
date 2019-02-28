@@ -1,0 +1,253 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/signature_request_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pale_grey_two">
+
+    <View
+        android:id="@+id/signature_request_toolbar_bkg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/signature_request_toolbar_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/signature_request_toolbar_title" />
+
+
+    <ImageView
+        android:id="@+id/signature_request_toolbar_back_btn"
+        android:layout_width="@dimen/toolbar_height"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/dark_slate_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_close_24dp" />
+
+    <TextView
+        android:id="@+id/signature_request_toolbar_title"
+        style="@style/Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingEnd="16dp"
+        android:text="@string/signature_request"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/signature_request_toolbar_back_btn"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/signature_request_safe_image"
+        android:layout_width="@dimen/info_blockies"
+        android:layout_height="@dimen/info_blockies"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signature_request_progress"
+        app:layout_goneMarginTop="28dp"
+        tools:background="@drawable/circle_settings" />
+
+    <TextView
+        android:id="@+id/signature_request_safe_balance"
+        style="@style/DarkText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/signature_request_safe_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/signature_request_safe_image"
+        tools:text="12.45 ETH" />
+
+    <TextView
+        android:id="@+id/signature_request_safe_name"
+        style="@style/DarkText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/signature_request_safe_address"
+        app:layout_constraintEnd_toStartOf="@+id/signature_request_safe_balance"
+        app:layout_constraintStart_toEndOf="@+id/signature_request_safe_image"
+        app:layout_constraintTop_toTopOf="@+id/signature_request_safe_image"
+        tools:text="My Safe" />
+
+    <TextView
+        android:id="@+id/signature_request_safe_address"
+        style="@style/LightText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_asset_transfer_info_safe_image"
+        app:layout_constraintEnd_toStartOf="@+id/signature_request_safe_balance"
+        app:layout_constraintStart_toEndOf="@+id/signature_request_safe_image"
+        app:layout_constraintTop_toBottomOf="@+id/signature_request_safe_name"
+        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+    <View
+        android:id="@+id/signature_request_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/divider"
+        app:layout_constraintTop_toBottomOf="@+id/signature_request_safe_address"
+        app:layout_constraintWidth_min="32dp" />
+
+    <TextView
+        android:id="@+id/signature_request_dapp_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingExtra="5sp"
+        android:text="@string/name"
+
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signature_request_divider" />
+
+    <TextView
+        android:id="@+id/signature_request_dapp_contract_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingExtra="5sp"
+
+        android:text="@string/contract"
+        android:textColor="@color/dark_slate_blue"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/signature_request_dapp_contract_img"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/signature_request_dapp_contract_img" />
+
+    <TextView
+        android:id="@+id/signature_request_dapp_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintStart_toEndOf="@+id/signature_request_barrier"
+        app:layout_constraintTop_toBottomOf="@+id/signature_request_divider"
+        tools:text="CryptoKitties" />
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/signature_request_dapp_contract_img"
+        android:layout_width="@dimen/info_blockies"
+        android:layout_height="@dimen/info_blockies"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/signature_request_barrier"
+        app:layout_constraintTop_toBottomOf="@+id/signature_request_dapp_name"
+        tools:background="@drawable/circle_settings" />
+
+
+    <TextView
+        android:id="@+id/signature_request_dapp_contract_address"
+        style="@style/LightText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="20dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/signature_request_dapp_contract_img"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/signature_request_dapp_contract_img"
+        app:layout_constraintTop_toTopOf="@+id/signature_request_dapp_contract_img"
+        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/signature_request_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="right"
+        app:constraint_referenced_ids="signature_request_dapp_name_label,signature_request_dapp_contract_label" />
+
+    <TextView
+        android:id="@+id/signature_request_show_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="5sp"
+        android:text="@string/view_message"
+        android:textColor="@color/azure"
+        android:textSize="15sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signature_request_dapp_contract_address" />
+
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/signature_request_progress"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signature_request_toolbar_bkg"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_setBothDrawables="true" />
+
+
+    <pm.gnosis.heimdall.views.ConfirmResendPanel
+        android:id="@+id/signature_request_status_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="gone"
+        app:actionPrimary="false"
+        app:actionTitle="Resent confirmation request"
+        app:cardCornerRadius="@dimen/primary_button_radius"
+        app:image="@drawable/img_awaiting_confirmation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signature_request_show_message"
+        app:message="Open browser and do stuff"
+        app:title="Authentication required"
+        tools:visibility="visible"/>
+
+
+    <pm.gnosis.heimdall.views.TwoStepPanel
+        android:id="@+id/signature_request_barrier_bottom_panel"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/two_step_panel"
+        android:visibility="gone"
+        app:backVisible="false"
+        app:forwardLabel="@string/sign"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:step="none"
+        tools:visibility="visible" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

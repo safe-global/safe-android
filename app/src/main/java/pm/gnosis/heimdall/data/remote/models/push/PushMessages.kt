@@ -3,6 +3,8 @@ package pm.gnosis.heimdall.data.remote.models.push
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.hexAsBigInteger
+import java.math.BigInteger
 
 sealed class PushMessage(
     val type: String
@@ -111,14 +113,48 @@ sealed class PushMessage(
         }
     }
 
+    data class SignTypedDataConfirmation(
+        val hash: BigInteger,
+        val signature: BigInteger
+    ) : PushMessage(TYPE) {
+        companion object {
+            const val TYPE = "signTypedDataConfirmation"
+            fun fromMap(params: Map<String, String>) =
+                SignTypedDataConfirmation(
+                    hash = params.getOrThrow("hash").hexAsBigInteger(),
+                    signature = params.getOrThrow("signature").hexAsBigInteger()
+                )
+        }
+    }
+
+    data class RejectSignTypedData(
+        val hash: String,
+        val r: String,
+        val s: String,
+        val v: String
+    ) : PushMessage(TYPE) {
+        companion object {
+            const val TYPE = "rejectTypedData"
+            fun fromMap(params: Map<String, String>) =
+                RejectTransaction(
+                    params.getOrThrow("hash"),
+                    params.getOrThrow("r"),
+                    params.getOrThrow("s"),
+                    params.getOrThrow("v")
+                )
+        }
+    }
+
     companion object {
         fun fromMap(params: Map<String, String>) =
             when (params["type"]) {
-                "sendTransaction" -> SendTransaction.fromMap(params)
-                "confirmTransaction" -> ConfirmTransaction.fromMap(params)
-                "rejectTransaction" -> RejectTransaction.fromMap(params)
-                "safeCreation" -> SafeCreation.fromMap(params)
-                "signTypedData" -> SignTypedData.fromMap(params)
+                SendTransaction.TYPE -> SendTransaction.fromMap(params)
+                ConfirmTransaction.TYPE -> ConfirmTransaction.fromMap(params)
+                RejectTransaction.TYPE -> RejectTransaction.fromMap(params)
+                SafeCreation.TYPE -> SafeCreation.fromMap(params)
+                SignTypedData.TYPE -> SignTypedData.fromMap(params)
+                SignTypedDataConfirmation.TYPE -> SignTypedDataConfirmation.fromMap(params)
+                RejectSignTypedData.TYPE -> RejectSignTypedData.fromMap(params)
                 else -> throw IllegalArgumentException("Unknown push type")
             }
     }

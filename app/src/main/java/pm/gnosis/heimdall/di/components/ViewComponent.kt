@@ -10,7 +10,10 @@ import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
+import pm.gnosis.heimdall.ui.messagesigning.CollectMessageSignaturesActivity
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageActivity
+import pm.gnosis.heimdall.ui.messagesigning.ReviewPayloadActivity
+import pm.gnosis.heimdall.ui.messagesigning.SignatureRequestActivity
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordConfirmActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
@@ -89,6 +92,7 @@ interface ViewComponent {
     fun inject(activity: AddressBookEditEntryActivity)
     fun inject(activity: AddressBookEntryDetailsActivity)
     fun inject(activity: CheckSafeActivity)
+    fun inject(activity: CollectMessageSignaturesActivity)
     fun inject(activity: ConfirmTransactionActivity)
     fun inject(activity: ConfirmMessageActivity)
     fun inject(activity: ConfirmNewRecoveryPhraseActivity)
@@ -114,6 +118,7 @@ interface ViewComponent {
     fun inject(activity: RecoveryPhraseIntroActivity)
     fun inject(activity: ReplaceExtensionSubmitActivity)
     fun inject(activity: ReplaceExtensionRecoveryPhraseActivity)
+    fun inject(activity: ReviewPayloadActivity)
     fun inject(activity: ReviewTransactionActivity)
     fun inject(activity: SafeMainActivity)
     fun inject(activity: ScanExtensionAddressActivity)
@@ -125,6 +130,8 @@ interface ViewComponent {
     fun inject(activity: WalletConnectIntroActivity)
     fun inject(activity: WalletConnectLinkActivity)
     fun inject(activity: WalletConnectSessionsActivity)
+
+    fun inject(activity: SignatureRequestActivity)
 
     // Dialogs
 

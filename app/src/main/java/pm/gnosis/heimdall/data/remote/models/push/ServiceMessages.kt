@@ -2,6 +2,9 @@ package pm.gnosis.heimdall.data.remote.models.push
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import pm.gnosis.heimdall.data.adapters.DecimalNumber
+import pm.gnosis.model.Solidity
+import java.math.BigInteger
 
 sealed class ServiceMessage {
     @JsonClass(generateAdapter = true)
@@ -49,5 +52,15 @@ sealed class ServiceMessage {
         @Json(name = "hash") val hash: String,
         @Json(name = "signature") val signature: String,
         @Json(name = "type") val type: String = "signTypedDataConfirmation" // Workaround since moshi is not parsing parent or non-constructor fields
+    ) : ServiceMessage()
+
+    @JsonClass(generateAdapter = true)
+    data class TypedDataRequest(
+        @Json(name = "payload") val payload: String,
+        @Json(name = "safe") val safe: String,
+        @Json(name = "r") val r: String,
+        @Json(name = "s") val s: String,
+        @Json(name = "v") val v: String,
+        @Json(name = "type") val type: String = "signTypedData" // Workaround since moshi is not parsing parent or non-constructor fields
     ) : ServiceMessage()
 }

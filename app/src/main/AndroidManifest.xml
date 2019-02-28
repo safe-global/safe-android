@@ -262,6 +262,17 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
+            android:name=".ui.messagesigning.SignatureRequestActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+
+        <activity
+            android:name=".ui.messagesigning.SignatureRequestDetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
             android:name=".ui.walletconnect.sessions.WalletConnectSessionsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
@@ -280,6 +291,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
+
+        <activity
+            android:name=".ui.messagesigning.CollectMessageSignaturesActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -287,5 +304,7 @@
         </service>
 
         <service android:name=".services.BridgeService" />
+
     </application>
+
 </manifest>
