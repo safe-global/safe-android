@@ -260,12 +260,12 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     }.toString()
                 }
         else
-            Single.just(name!!)
+            Single.just(name)
 
 
     override fun pendingSafeToDeployedSafe(pendingSafe: PendingSafe): Completable =
-        Completable.fromCallable { safeDao.pendingSafeToDeployedSafe(pendingSafe.address) }
-            .andThen(sendSafeCreationPush(pendingSafe.address).onErrorComplete())
+        Single.fromCallable { safeDao.pendingSafeToDeployedSafe(pendingSafe.address) }
+            .flatMapCompletable { if (it) sendSafeCreationPush(pendingSafe.address).onErrorComplete() else Completable.complete() }
             .subscribeOn(Schedulers.io())
 
     override fun recoveringSafeToDeployedSafe(recoveringSafe: RecoveringSafe): Completable =
