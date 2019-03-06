@@ -37,7 +37,7 @@ class PaymentTokensAdapter @Inject constructor(
         override fun bind(data: ERC20Token, payloads: List<Any>) {
             itemView.layout_tokens_item_balance_symbol.text = data.symbol
             if (data == ETHER_TOKEN) itemView.layout_tokens_item_balance_symbol_image.setImageResource(R.drawable.ic_ether_symbol)
-            else picasso.load(data.logoUrl).fit().into(itemView.layout_tokens_item_balance_symbol_image)
+            else picasso.load(data.logoUrl).into(itemView.layout_tokens_item_balance_symbol_image)
         }
 
         override fun onClick(v: View?) {

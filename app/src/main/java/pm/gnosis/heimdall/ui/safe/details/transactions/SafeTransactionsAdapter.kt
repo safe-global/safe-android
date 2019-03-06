@@ -205,10 +205,12 @@ class SafeTransactionsAdapter @Inject constructor(
                 .subscribeBy(
                     onSuccess = {
                         itemView.layout_safe_transactions_item_value.text = "- ${it.displayString(amount)}"
+                        itemView.layout_safe_transactions_item_value.visible(true)
                     },
                     onError = {
                         Timber.e(it)
                         itemView.layout_safe_transactions_item_value.text = "- ${amount.asDecimalString()}"
+                        itemView.layout_safe_transactions_item_value.visible(true)
                     }
                 )
         }
