@@ -2,6 +2,9 @@ package pm.gnosis.heimdall.data.remote.models.push
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.utils.asEthereumAddress
+import java.math.BigInteger
 
 class PushMessageTest {
 
@@ -112,6 +115,22 @@ class PushMessageTest {
                             TEST_R,
                             TEST_S,
                             TEST_V
+                        )
+                    ),
+            PushMessage.SignTypedData::class to
+                    TestData(
+                        mapOf(
+                            "type" to "signTypedData",
+                            "payload" to "{}",
+                            "safe" to "0x0",
+                            "r" to "1",
+                            "s" to "1",
+                            "v" to "27"
+                        ),
+                        PushMessage.SignTypedData(
+                            payload = "{}",
+                            safe = "0x0".asEthereumAddress()!!,
+                            signature = Signature(r = BigInteger.ONE, s = BigInteger.ONE, v = 27.toByte())
                         )
                     )
         )

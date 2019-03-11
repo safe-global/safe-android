@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.di.modules
 
 import android.app.Application
-import androidx.room.Room
 import android.content.Context
+import androidx.room.Room
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsClient
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
@@ -15,6 +15,8 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import pm.gnosis.eip712.EIP712JsonParser
+import pm.gnosis.eip712.adapters.moshi.MoshiAdapter
 import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.ethereum.rpc.EthereumRpcConnector
 import pm.gnosis.ethereum.rpc.RpcEthereumRepository
@@ -227,4 +229,8 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesFirebaseInstanceId() = FirebaseInstanceId.getInstance()
+
+    @Provides
+    @Singleton
+    fun providesEIP712JsonParser(): EIP712JsonParser = EIP712JsonParser(MoshiAdapter())
 }

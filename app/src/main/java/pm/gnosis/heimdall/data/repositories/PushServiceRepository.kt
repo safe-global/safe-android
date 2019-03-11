@@ -36,4 +36,6 @@ interface PushServiceRepository {
         data class Confirmed(val signature: Signature) : TransactionResponse()
         data class Rejected(val signature: Signature) : TransactionResponse()
     }
+
+    fun sendTypedDataConfirmation(hash: ByteArray, signature: ByteArray, targets: Set<Solidity.Address>): Completable
 }

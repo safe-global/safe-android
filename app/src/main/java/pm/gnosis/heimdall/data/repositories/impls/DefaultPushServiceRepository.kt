@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
+import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
 import pm.gnosis.model.Solidity
@@ -174,6 +175,20 @@ class DefaultPushServiceRepository @Inject constructor(
                 sendNotification(it, targets)
             }
 
+    override fun sendTypedDataConfirmation(
+        hash: ByteArray,
+        signature: ByteArray,
+        targets: Set<Solidity.Address>
+    ): Completable =
+        Single.fromCallable {
+            ServiceMessage.TypedDataConfirmation(
+                hash = hash.toHexString().addHexPrefix(),
+                signature = signature.toHexString().addHexPrefix()
+            )
+        }
+            .subscribeOn(Schedulers.io())
+            .flatMapCompletable { sendNotification(it, targets) }
+
     private fun sendNotification(message: ServiceMessage, targets: Set<Solidity.Address>) =
         Single.fromCallable {
             moshi.adapter(message.javaClass).toJson(message)
@@ -225,6 +240,7 @@ class DefaultPushServiceRepository @Inject constructor(
                     }
                 }
             }
+            is PushMessage.SignTypedData -> showSignTypedDataNotification(pushMessage)
         }
     }
 
@@ -234,6 +250,20 @@ class DefaultPushServiceRepository @Inject constructor(
             context.getString(R.string.safe_created_notification_title),
             context.getString(R.string.safe_created_notification_message, safe.asEthereumAddressChecksumString()),
             SafeMainActivity.createIntent(context, safe)
+        )
+    }
+
+    private fun showSignTypedDataNotification(signTypedData: PushMessage.SignTypedData) {
+        localNotificationManager.show(
+            signTypedData.safe.hashCode(),
+            context.getString(R.string.sign_message_notification_title),
+            context.getString(R.string.sign_message_notification_description),
+            ConfirmMessageActivity.createIntent(
+                context = context,
+                payload = signTypedData.payload,
+                safe = signTypedData.safe,
+                extensionSignature = signTypedData.signature
+            )
         )
     }
 

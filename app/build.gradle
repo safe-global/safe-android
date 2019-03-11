@@ -158,6 +158,7 @@ dependencies {
     implementation "com.github.gnosis.svalinn-kotlin:android-common:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:blockies:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:crypto:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:eip712-adapter-moshi:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:ethereum:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:ethereum-rpc:$versions.svalinn"
     implementation("com.github.gnosis.svalinn-kotlin:ethereum-rpc-retrofit:$versions.svalinn") {

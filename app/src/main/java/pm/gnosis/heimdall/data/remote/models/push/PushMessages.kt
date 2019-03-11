@@ -1,5 +1,9 @@
 package pm.gnosis.heimdall.data.remote.models.push
 
+import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.utils.asEthereumAddress
+
 sealed class PushMessage(
     val type: String
 ) {
@@ -70,12 +74,12 @@ sealed class PushMessage(
         companion object {
             const val TYPE = "rejectTransaction"
             fun fromMap(params: Map<String, String>) =
-                    RejectTransaction(
-                        params.getOrThrow("hash"),
-                        params.getOrThrow("r"),
-                        params.getOrThrow("s"),
-                        params.getOrThrow("v")
-                    )
+                RejectTransaction(
+                    params.getOrThrow("hash"),
+                    params.getOrThrow("r"),
+                    params.getOrThrow("s"),
+                    params.getOrThrow("v")
+                )
         }
     }
 
@@ -87,6 +91,26 @@ sealed class PushMessage(
         }
     }
 
+    data class SignTypedData(
+        val payload: String,
+        val safe: Solidity.Address,
+        val signature: Signature
+    ) : PushMessage(TYPE) {
+        companion object {
+            const val TYPE = "signTypedData"
+            fun fromMap(params: Map<String, String>) =
+                SignTypedData(
+                    payload = params.getOrThrow("payload"),
+                    safe = params.getOrThrow("safe").asEthereumAddress()!!,
+                    signature = Signature(
+                        r = params.getOrThrow("r").toBigInteger(),
+                        s = params.getOrThrow("s").toBigInteger(),
+                        v = params.getOrThrow("v").toByte()
+                    )
+                )
+        }
+    }
+
     companion object {
         fun fromMap(params: Map<String, String>) =
             when (params["type"]) {
@@ -94,6 +118,7 @@ sealed class PushMessage(
                 "confirmTransaction" -> ConfirmTransaction.fromMap(params)
                 "rejectTransaction" -> RejectTransaction.fromMap(params)
                 "safeCreation" -> SafeCreation.fromMap(params)
+                "signTypedData" -> SignTypedData.fromMap(params)
                 else -> throw IllegalArgumentException("Unknown push type")
             }
     }
