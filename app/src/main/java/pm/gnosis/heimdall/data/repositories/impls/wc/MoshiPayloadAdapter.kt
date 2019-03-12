@@ -97,7 +97,6 @@ class MoshiPayloadAdapter(moshi: Moshi) : Session.PayloadAdapter {
     private fun ByteArray.toMethodCall(): Session.PayloadAdapter.MethodCall =
         String(this).let { json ->
             mapAdapter.fromJson(json)?.let {
-                System.out.println("Json map: $it")
                 try {
                     val method = it["method"]
                     when (method) {

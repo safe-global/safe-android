@@ -28,7 +28,10 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.TokenServiceApi
+import pm.gnosis.heimdall.data.repositories.impls.Session
 import pm.gnosis.heimdall.data.repositories.impls.wc.FileWCSessionStore
+import pm.gnosis.heimdall.data.repositories.impls.wc.MoshiPayloadAdapter
+import pm.gnosis.heimdall.data.repositories.impls.wc.OkHttpTransport
 import pm.gnosis.heimdall.data.repositories.impls.wc.WCSessionStore
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39
@@ -59,7 +62,6 @@ import javax.inject.Singleton
 class ApplicationModule(private val application: Application) {
     companion object {
         const val INFURA_REST_CLIENT = "infuraRestClient"
-        const val BRIDGE_CLIENT = "bridgeClient"
     }
 
     @Provides
@@ -175,8 +177,16 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesSesssionStore(@ApplicationContext context: Context, moshi: Moshi): WCSessionStore =
+    fun providesSessionStore(@ApplicationContext context: Context, moshi: Moshi): WCSessionStore =
         FileWCSessionStore(File(context.cacheDir, "session_store.json").apply { createNewFile() }, moshi) // TODO implement proper store
+
+    @Provides
+    @Singleton
+    fun providesSessionPayloadAdapter(moshi: Moshi): Session.PayloadAdapter = MoshiPayloadAdapter(moshi)
+
+    @Provides
+    @Singleton
+    fun providesSessionTransportBuilder(client: OkHttpClient, moshi: Moshi): Session.Transport.Builder = OkHttpTransport.Builder(client, moshi)
 
     @Provides
     @Singleton

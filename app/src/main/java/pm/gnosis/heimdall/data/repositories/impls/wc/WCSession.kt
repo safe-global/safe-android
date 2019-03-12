@@ -47,7 +47,6 @@ class WCSession(
         nextKey = null
         currentKey = config.key
         clientData = sessionStore.load(config.handshakeTopic)?.let {
-            System.out.println("Session restored $it")
             nextKey = it.nextKey
             currentKey = it.currentKey
             approvedAccounts = it.approvedAccounts
@@ -119,7 +118,6 @@ class WCSession(
     }
 
     private fun handleStatus(status: Session.Transport.Status) {
-        System.out.println("Status $status")
         when (status) {
             Session.Transport.Status.CONNECTED ->
                 // Register for all messages for this client
@@ -144,7 +142,6 @@ class WCSession(
                 return
             }
         }
-        System.out.println("Data $data")
         when (data) {
             is Session.PayloadAdapter.MethodCall.SessionRequest -> {
                 handshakeId = data.id
@@ -186,7 +183,6 @@ class WCSession(
             }
             is Session.PayloadAdapter.MethodCall.Response -> {
                 val callback = requests[data.id] ?: return
-                System.out.println("Trigger callback")
                 callback(data)
             }
         }
@@ -201,7 +197,6 @@ class WCSession(
     }
 
     private fun handlePayloadError(e: Exception) {
-        System.out.println("Payload error $e")
         e.printStackTrace()
         (e as? Session.MethodCallException)?.let {
             rejectRequest(it.id, it.code, it.message ?: "Unknown error")
@@ -234,7 +229,6 @@ class WCSession(
 
     private fun exchangeKey() {
         val nextKey = generateKey()
-        System.out.println("Key $nextKey")
         synchronized(keyLock) {
             this.nextKey = nextKey
             send(
@@ -246,7 +240,6 @@ class WCSession(
                 forceSend = true // This is an exchange key ... we should force it
             ) {
                 if (it.result as? Boolean == true) {
-                    System.out.println("Swap Keys")
                     swapKeys()
                 } else {
                     this.nextKey = null
@@ -299,7 +292,6 @@ class WCSession(
         callback?.let {
             requests[msg.id()] = callback
         }
-        System.out.println("Send Request $msg")
         transport.send(Session.Transport.Message(topic, "pub", payload))
         return true
     }

@@ -35,12 +35,12 @@ import javax.inject.Inject
 
 class WalletConnectBridgeRepository @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val client: OkHttpClient,
     private val infoRepository: TransactionInfoRepository,
     private val localNotificationManager: LocalNotificationManager,
-    private val moshi: Moshi,
     private val safeRepository: GnosisSafeRepository,
     private val sessionStore: WCSessionStore,
+    private val sessionPayloadAdapter: Session.PayloadAdapter,
+    private val sessionTransportBuilder: Session.Transport.Builder,
     executionRepository: TransactionExecutionRepository
 ) : BridgeRepository, TransactionExecutionRepository.TransactionEventsCallback {
     private val sessionUpdates = PublishSubject.create<Unit>()
@@ -83,6 +83,9 @@ class WalletConnectBridgeRepository @Inject constructor(
     override fun observeSessions(): Observable<List<BridgeRepository.SessionMeta>> =
         sessionUpdates.startWith(Unit).switchMapSingle { sessions() }
 
+    override fun observeActiveSessions(): Observable<List<String>> =
+        sessionUpdates.startWith(Unit).map { sessions.keys.sorted() }
+
     override fun session(sessionId: String): Single<BridgeRepository.SessionMeta> =
         Single.fromCallable {
             sessionStore.load(sessionId)?.let {
@@ -97,15 +100,12 @@ class WalletConnectBridgeRepository @Inject constructor(
             } ?: throw NoSuchElementException()
         }
 
-    override fun observeActiveSessions(): Observable<List<String>> =
-        sessionUpdates.startWith(Unit).map { sessions.keys.sorted() }
-
     private fun internalCreateSession(config: Session.Config) =
         (sessions[config.handshakeTopic]?.let { config.handshakeTopic } ?: WCSession(
             config,
-            MoshiPayloadAdapter(moshi),
+            sessionPayloadAdapter,
             sessionStore,
-            OkHttpTransport.Builder(client, moshi),
+            sessionTransportBuilder,
             Session.PayloadAdapter.PeerMeta(name = "Gnosis Safe")
         ).let {
             it.addCallback(object : Session.Callback {
