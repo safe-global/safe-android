@@ -6,6 +6,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -107,6 +108,10 @@ class SafeTransactionsAdapter @Inject constructor(
             disposables += viewModel.observeTransactionStatus(transactionId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::updateStatus, Timber::e)
+
+            disposables += Observable.interval(60, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ updateTimestamp() }, Timber::e)
         }
 
         private fun updateStatus(status: TransactionExecutionRepository.PublishStatus) {
@@ -141,43 +146,50 @@ class SafeTransactionsAdapter @Inject constructor(
             itemView.setOnClickListener {
                 currentData?.let { selectionSubject.onNext(it.id) }
             }
-            val address: Solidity.Address
-            val infoText: String?
-            val valueText: String?
-            val valueColor: Int
-            val iconRes: Int
+            updateTimestamp()
             when (info.data) {
                 is TransactionData.Generic -> {
-                    address = info.data.to
-                    infoText = context.getString(R.string.x_data_bytes, (info.data.data?.removeHexPrefix()?.length ?: 0) / 2)
-                    valueText = "- ${Wei(info.data.value).displayString(context)}"
-                    valueColor = R.color.tomato
-                    iconRes = R.drawable.ic_transaction_outgoing
+                    updateViews(
+                        address = info.data.to,
+                        infoText = context.getString(R.string.x_data_bytes, (info.data.data?.removeHexPrefix()?.length ?: 0) / 2),
+                        valueText = "- ${Wei(info.data.value).displayString(context)}",
+                        valueColor = R.color.tomato,
+                        iconRes = R.drawable.ic_transaction_outgoing
+                    )
                 }
                 is TransactionData.AssetTransfer -> {
-                    address = info.data.receiver
-                    infoText = null
-                    valueText = null
-                    valueColor = R.color.tomato
-                    iconRes = R.drawable.ic_transaction_outgoing
+                    updateViews(
+                        address = info.data.receiver,
+                        infoText = null,
+                        valueText = null,
+                        valueColor = R.color.tomato,
+                        iconRes = R.drawable.ic_transaction_outgoing
+                    )
 
                     loadTokenInfo(info.data.token, info.data.amount)
                 }
                 is TransactionData.ReplaceRecoveryPhrase -> {
-                    address = info.safe
-                    infoText = context.getString(R.string.replaced_recovery_phrase)
-                    valueText = null
-                    valueColor = R.color.dark_slate_blue
-                    iconRes = R.drawable.ic_transaction_white_24dp
+                    updateViews(
+                        address = info.safe,
+                        infoText = context.getString(R.string.replaced_recovery_phrase),
+                        valueText = null,
+                        valueColor = R.color.dark_slate_blue,
+                        iconRes = R.drawable.ic_transaction_white_24dp
+                    )
                 }
                 is TransactionData.ConnectExtension -> {
-                    address = info.safe
-                    infoText = context.getString(R.string.connected_extension)
-                    valueText = null
-                    valueColor = R.color.dark_slate_blue
-                    iconRes = R.drawable.ic_transaction_white_24dp
+                    updateViews(
+                        address = info.safe,
+                        infoText = context.getString(R.string.connected_extension),
+                        valueText = null,
+                        valueColor = R.color.dark_slate_blue,
+                        iconRes = R.drawable.ic_transaction_white_24dp
+                    )
                 }
             }
+        }
+
+        private fun updateViews(address: Solidity.Address, infoText: String?, valueText: String?, valueColor: Int, @DrawableRes iconRes: Int) {
             itemView.layout_safe_transactions_item_type_icon.setImageResource(iconRes)
             itemView.layout_safe_transactions_item_value.text = valueText
             itemView.layout_safe_transactions_item_value.visible(valueText != null)
@@ -192,11 +204,6 @@ class SafeTransactionsAdapter @Inject constructor(
                 itemView.layout_safe_transactions_item_target_image,
                 address
             ).forEach { disposables += it }
-
-            updateTimestamp()
-            disposables += Observable.interval(60, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ updateTimestamp() }, Timber::e)
         }
 
         private fun loadTokenInfo(token: Solidity.Address, amount: BigInteger) {

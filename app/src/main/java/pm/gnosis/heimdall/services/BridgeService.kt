@@ -44,7 +44,7 @@ class BridgeService : Service() {
     private fun checkEnabled() {
         if (!enabled) {
             enable()
-            disposables += bridgeRepository.observeActiveSessions()
+            disposables += bridgeRepository.observeActiveSessionIds()
                 .subscribeBy(onNext = ::updateNotification, onError = Timber::e)
         }
     }

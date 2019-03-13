@@ -64,6 +64,10 @@ abstract class ApplicationBindingsModule {
     @Singleton
     abstract fun bindsAppPreferencesManager(manager: WrappedAppPreferencesManager): AppPreferencesManager
 
+    @Binds
+    @Singleton
+    abstract fun bindsSessionBuilder(builder: WCSessionBuilder): SessionBuilder
+
     /*
         Repositories
      */

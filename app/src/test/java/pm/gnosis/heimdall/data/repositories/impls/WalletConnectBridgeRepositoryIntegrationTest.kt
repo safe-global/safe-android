@@ -34,6 +34,7 @@ class WalletConnectBridgeRepositoryIntegrationTest {
         val sessionStore = FileWCSessionStore(File("build/tmp/test_store.json").apply { createNewFile() }, moshi)
         val sessionPayloadAdapter = MoshiPayloadAdapter(moshi)
         val sessionTransportBuilder = OkHttpTransport.Builder(client, moshi)
+        val sessionBuilder = WCSessionBuilder(sessionStore, sessionPayloadAdapter, sessionTransportBuilder)
         val safeRepoMock = mock(GnosisSafeRepository::class.java)
         given(safeRepoMock.observeSafes()).willReturn(Flowable.just(listOf(Safe("0xdeadbeef".asEthereumAddress()!!))))
         val repo =
@@ -43,8 +44,7 @@ class WalletConnectBridgeRepositoryIntegrationTest {
                 mock(LocalNotificationManager::class.java),
                 safeRepoMock,
                 sessionStore,
-                sessionPayloadAdapter,
-                sessionTransportBuilder,
+                sessionBuilder,
                 mock(TransactionExecutionRepository::class.java)
             )
         val uri =

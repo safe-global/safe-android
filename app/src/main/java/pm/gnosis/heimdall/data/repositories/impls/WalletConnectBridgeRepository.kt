@@ -3,16 +3,12 @@ package pm.gnosis.heimdall.data.repositories.impls
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
-import okhttp3.OkHttpClient
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
@@ -32,6 +28,7 @@ import java.lang.IllegalStateException
 import java.net.URLDecoder
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+import javax.inject.Singleton
 
 class WalletConnectBridgeRepository @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -39,8 +36,7 @@ class WalletConnectBridgeRepository @Inject constructor(
     private val localNotificationManager: LocalNotificationManager,
     private val safeRepository: GnosisSafeRepository,
     private val sessionStore: WCSessionStore,
-    private val sessionPayloadAdapter: Session.PayloadAdapter,
-    private val sessionTransportBuilder: Session.Transport.Builder,
+    private val sessionBuilder: SessionBuilder,
     executionRepository: TransactionExecutionRepository
 ) : BridgeRepository, TransactionExecutionRepository.TransactionEventsCallback {
     private val sessionUpdates = PublishSubject.create<Unit>()
@@ -81,9 +77,9 @@ class WalletConnectBridgeRepository @Inject constructor(
         }
 
     override fun observeSessions(): Observable<List<BridgeRepository.SessionMeta>> =
-        sessionUpdates.startWith(Unit).switchMapSingle { sessions() }
+        sessionUpdates.startWith(Unit).switchMapSingle { sessions().onErrorReturnItem(emptyList()) }
 
-    override fun observeActiveSessions(): Observable<List<String>> =
+    override fun observeActiveSessionIds(): Observable<List<String>> =
         sessionUpdates.startWith(Unit).map { sessions.keys.sorted() }
 
     override fun session(sessionId: String): Single<BridgeRepository.SessionMeta> =
@@ -100,13 +96,13 @@ class WalletConnectBridgeRepository @Inject constructor(
             } ?: throw NoSuchElementException()
         }
 
+    private fun internalGetOrCreateSession(config: Session.Config) =
+        sessions[config.handshakeTopic]?.let { config.handshakeTopic } ?: internalCreateSession(config)
+
     private fun internalCreateSession(config: Session.Config) =
-        (sessions[config.handshakeTopic]?.let { config.handshakeTopic } ?: WCSession(
+        sessionBuilder.build(
             config,
-            sessionPayloadAdapter,
-            sessionStore,
-            sessionTransportBuilder,
-            Session.PayloadAdapter.PeerMeta(name = "Gnosis Safe")
+            Session.PayloadAdapter.PeerMeta(name = context.getString(R.string.app_name))
         ).let {
             it.addCallback(object : Session.Callback {
 
@@ -156,7 +152,7 @@ class WalletConnectBridgeRepository @Inject constructor(
             sessions[config.handshakeTopic] = it
             sessionUpdates.onNext(Unit)
             config.handshakeTopic
-        })
+        }
 
     private fun showSendTransactionNotification(safe: Solidity.Address, data: TransactionData, referenceId: Long) {
         val intent = ReviewTransactionActivity.createIntent(context, safe, data, referenceId)
@@ -169,7 +165,7 @@ class WalletConnectBridgeRepository @Inject constructor(
     }
 
     override fun createSession(url: String): String =
-        internalCreateSession(Session.Config.fromWCUri(url)).also {
+        internalGetOrCreateSession(Session.Config.fromWCUri(url)).also {
             startBridgeService()
         }
 
@@ -268,7 +264,7 @@ class WalletConnectBridgeRepository @Inject constructor(
         }
 
     override fun initSession(sessionId: String): Completable = Completable.fromAction {
-        val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
+        val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not active")
         session.init()
     }
         .subscribeOn(Schedulers.io())
@@ -278,20 +274,20 @@ class WalletConnectBridgeRepository @Inject constructor(
             .flatMapCompletable { safes ->
                 if (safes.isEmpty()) throw IllegalStateException("No Safe to whitelist")
                 Completable.fromAction {
-                    val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
+                    val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not active")
                     session.approve(safes.map { it.address.asEthereumAddressChecksumString() }, BuildConfig.BLOCKCHAIN_CHAIN_ID)
                 }
             }
             .subscribeOn(Schedulers.io())
 
     override fun rejectSession(sessionId: String): Completable = Completable.fromAction {
-        val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
+        val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not active")
         session.reject()
     }
         .subscribeOn(Schedulers.io())
 
     override fun closeSession(sessionId: String): Completable = Completable.fromAction {
-        val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not found")
+        val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not active")
         session.kill()
     }
         .subscribeOn(Schedulers.io())
@@ -310,7 +306,7 @@ class WalletConnectBridgeRepository @Inject constructor(
 
     override fun activateSession(sessionId: String): Completable = Completable.fromAction {
         val session = sessionStore.load(sessionId) ?: throw IllegalArgumentException("Session not found")
-        internalCreateSession(session.config)
+        internalGetOrCreateSession(session.config)
         startBridgeService()
     }
         .subscribeOn(Schedulers.io())
@@ -318,6 +314,25 @@ class WalletConnectBridgeRepository @Inject constructor(
     private fun startBridgeService() {
         context.startService(Intent(context, BridgeService::class.java))
     }
+}
+
+interface SessionBuilder {
+    fun build(config: Session.Config, clientMeta: Session.PayloadAdapter.PeerMeta): Session
+}
+
+@Singleton
+class WCSessionBuilder @Inject constructor(
+    private val sessionStore: WCSessionStore,
+    private val sessionPayloadAdapter: Session.PayloadAdapter,
+    private val sessionTransportBuilder: Session.Transport.Builder
+) : SessionBuilder {
+    override fun build(config: Session.Config, clientMeta: Session.PayloadAdapter.PeerMeta): Session = WCSession(
+        config,
+        sessionPayloadAdapter,
+        sessionStore,
+        sessionTransportBuilder,
+        clientMeta
+    )
 }
 
 

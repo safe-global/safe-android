@@ -40,7 +40,7 @@ interface BridgeRepository {
     fun closeSession(sessionId: String): Completable
     fun approveRequest(requestId: Long, response: Any): Completable
     fun rejectRequest(requestId: Long, errorCode: Long, errorMsg: String): Completable
-    fun observeActiveSessions(): Observable<List<String>>
+    fun observeActiveSessionIds(): Observable<List<String>>
     fun observeSessions(): Observable<List<SessionMeta>>
     fun rejectSession(sessionId: String): Completable
     fun activateSession(sessionId: String): Completable

@@ -18,6 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.R
@@ -148,12 +149,19 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
 
         then(typeIconImageView).should().setImageResource(R.drawable.ic_transaction_outgoing)
         then(typeIconImageView).shouldHaveNoMoreInteractions()
-
         then(valueTextView).should().text = null
         then(valueTextView).should().text = valueText
         then(valueTextView).should().visibility = View.GONE
+        then(valueTextView).should().visibility = View.VISIBLE
         then(valueTextView).should().setTextColor(R.color.tomato)
         then(valueTextView).shouldHaveNoMoreInteractions()
+
+        inOrder(valueTextView).apply {
+            verify(valueTextView).text = null
+            verify(valueTextView).visibility = View.GONE
+            verify(valueTextView).text = valueText
+            verify(valueTextView).visibility = View.VISIBLE
+        }
 
         then(infoTextView).should().text = null
         then(infoTextView).should().visibility = View.GONE
