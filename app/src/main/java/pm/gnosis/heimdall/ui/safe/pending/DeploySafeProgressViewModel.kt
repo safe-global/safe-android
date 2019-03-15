@@ -6,6 +6,7 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.model.Solidity
+import pm.gnosis.utils.hexAsBigIntegerOrNull
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -30,7 +31,10 @@ class DeploySafeProgressViewModel @Inject constructor(
             .flatMap { pendingSafe ->
                 relayServiceApi.safeFundStatus(pendingSafe.address.asEthereumAddressChecksumString())
                     .map {
-                        if (!it.safeDeployed) throw SafeNotDeployedException()
+                        if (pendingSafe.hash != it.txHash?.hexAsBigIntegerOrNull()) {
+                            // TODO: update tx hash of pending safe
+                        }
+                        if (it.blockNumber == null) throw SafeNotDeployedException()
                         pendingSafe
                     }
                     // retry until safe is mined

@@ -16,9 +16,12 @@ interface RelayServiceApi {
     @POST("v1/safes/")
     fun safeCreation(@Body params: RelaySafeCreationParams): Single<RelaySafeCreation>
 
+    @POST("v2/safes/")
+    fun safeCreation2(@Body params: RelaySafeCreation2Params): Single<RelaySafeCreation2>
+
     @PUT("v1/safes/{address}/funded/")
     fun notifySafeFunded(@Path("address") address: String): Completable
 
-    @GET("v1/safes/{address}/funded/")
+    @GET("v2/safes/{address}/funded/")
     fun safeFundStatus(@Path("address") address: String): Single<RelaySafeFundStatus>
 }

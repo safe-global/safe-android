@@ -26,7 +26,8 @@ android {
                 "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2," + // Version 0.0.2-alpha (Mainnet)
                         "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af" // Version 0.1.0 (All networks)
         ))
-        buildConfigField javaTypes.STRING, "CURRENT_SAFE_MASTER_COPY_ADDRESS", asString(getKey("CURRENT_SAFE_MASTER_COPY_ADDRESS", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af"))
+        buildConfigField javaTypes.STRING, "CURRENT_SAFE_MASTER_COPY_ADDRESS", asString(getKey("CURRENT_SAFE_MASTER_COPY_ADDRESS", "0xC8febcb0B7E34053D52a66148F50f2102810237F"))
+        buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("CURRENT_SAFE_MASTER_COPY_ADDRESS", "0x1D9C52B621Fd4280DE33D2374D2F1fC292d76a8A"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))
         // Safe creation params
         buildConfigField javaTypes.INT, "PROXY_INIT_DATA_LENGTH", getKey("PROXY_INIT_DATA_LENGTH", "3006")
@@ -85,9 +86,9 @@ android {
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
             minifyEnabled false
-            buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.staging.gnosisdev.com/api/"))
-            buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.staging.gnosisdev.com/api/"))
-            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0xAb8C18E66135561676f0781555D05CF6B22024A3"))
+            buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.dev.gnosisdev.com/api/"))
+            buildConfigField javaTypes.STRING, "NOTIFICATION_SERVICE_URL", asString(getKey("NOTIFICATION_SERVICE_URL", "https://safe-notification.dev.gnosisdev.com/api/"))
+            buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0x5895Ac6e2Df45Bfa825c4A5be7392afc545CEF29"))
         }
 
         internal {

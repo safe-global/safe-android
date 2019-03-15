@@ -84,6 +84,25 @@
       "type": "function"
     },
     {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "signedMessages",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "constant": false,
       "inputs": [
         {
@@ -109,6 +128,29 @@
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "address"
+        },
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "approvedHashes",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -448,6 +490,18 @@
         {
           "name": "data",
           "type": "bytes"
+        },
+        {
+          "name": "paymentToken",
+          "type": "address"
+        },
+        {
+          "name": "payment",
+          "type": "uint256"
+        },
+        {
+          "name": "paymentReceiver",
+          "type": "address"
         }
       ],
       "name": "setup",
@@ -480,7 +534,7 @@
           "type": "uint256"
         },
         {
-          "name": "dataGas",
+          "name": "baseGas",
           "type": "uint256"
         },
         {
@@ -585,8 +639,8 @@
       "name": "isValidSignature",
       "outputs": [
         {
-          "name": "isValid",
-          "type": "bool"
+          "name": "",
+          "type": "bytes4"
         }
       ],
       "payable": false,
@@ -636,7 +690,7 @@
           "type": "uint256"
         },
         {
-          "name": "dataGas",
+          "name": "baseGas",
           "type": "uint256"
         },
         {
@@ -691,7 +745,7 @@
           "type": "uint256"
         },
         {
-          "name": "dataGas",
+          "name": "baseGas",
           "type": "uint256"
         },
         {

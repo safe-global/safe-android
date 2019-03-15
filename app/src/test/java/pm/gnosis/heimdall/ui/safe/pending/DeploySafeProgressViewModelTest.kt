@@ -54,7 +54,7 @@ class DeploySafeProgressViewModelTest {
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
         given(relayServiceApiMock.safeFundStatus(MockUtils.any())).willReturn(
             Single.just(
-                RelaySafeFundStatus(true, true, "", true, "")
+                RelaySafeFundStatus(0, "")
             )
         )
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(pendingSafe)).willReturn(Completable.complete())
@@ -83,7 +83,7 @@ class DeploySafeProgressViewModelTest {
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
         given(relayServiceApiMock.safeFundStatus(MockUtils.any())).willReturn(
-            Single.fromCallable { RelaySafeFundStatus(true, true, "", safeDeployed, "") }
+            Single.fromCallable { RelaySafeFundStatus(if (safeDeployed) 42 else null, "") }
         )
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(pendingSafe)).willReturn(Completable.complete())
 
@@ -114,7 +114,7 @@ class DeploySafeProgressViewModelTest {
         given(gnosisSafeRepositoryMock.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
         given(relayServiceApiMock.notifySafeFunded(MockUtils.any())).willReturn(Completable.complete())
         given(relayServiceApiMock.safeFundStatus(MockUtils.any())).willReturn(
-            Single.fromCallable { RelaySafeFundStatus(true, true, "", true, "") }
+            Single.fromCallable { RelaySafeFundStatus(1, "") }
         )
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(pendingSafe)).willReturn(Completable.error(exception))
 

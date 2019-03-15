@@ -6,10 +6,13 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.utils.Sha3Utils
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation
+import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation2
+import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation2Params
 import pm.gnosis.heimdall.data.remote.models.RelaySafeCreationParams
 import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
@@ -36,7 +39,6 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
 ) : CreateSafeConfirmRecoveryPhraseContract() {
 
     private var browserExtensionAddress: Solidity.Address? = null
-    private val secureRandom = SecureRandom()
 
     private val threshold get() = browserExtensionAddress?.let { 2 } ?: 1
 
@@ -48,93 +50,60 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
         loadSafeOwners()
             .zipWith(tokenRepository.loadPaymentToken(), BiFunction { owners: List<Solidity.Address>, token: ERC20Token -> owners to token})
             .map { (owners, paymentToken) ->
-                RelaySafeCreationParams(
+                RelaySafeCreation2Params(
                     owners = owners,
                     threshold = threshold,
-                    s = BigInteger(252, secureRandom),
+                    saltNonce = System.nanoTime(),
                     paymentToken = paymentToken.address
                 )
             }
-            .flatMap { request -> relayServiceApi.safeCreation(request).map { request to it } }
-            // Check returned s parameter
-            .map { (request, response) ->
+            .flatMap { request -> relayServiceApi.safeCreation2(request).map { request to it } }
+            .flatMap { (request, response) ->
                 assertResponse(request, response)
-                response to Transaction(
-                    address = Solidity.Address(BigInteger.ZERO),
-                    gas = response.tx.gas,
-                    gasPrice = response.tx.gasPrice,
-                    data = response.tx.data,
-                    nonce = response.tx.nonce
-                )
-            }
-            // Check returned safe address
-            .flatMap { (response, tx) ->
-                checkGeneratedSafeAddress(tx.hash(), response.signature, response.safe).andThen(
-                    Single.just(response to tx)
-                )
-            }
-            .flatMap { (response, tx) ->
-                val paymentToken = response.paymentToken ?: ERC20Token.ETHER_TOKEN.address
-                val transactionHash =
-                    tx.hash(ECDSASignature(response.signature.r, response.signature.s).apply { v = response.signature.v.toByte() }).asBigInteger()
-                gnosisSafeRepository.addPendingSafe(response.safe, transactionHash, null, response.payment, paymentToken)
+                // TODO: check how to handle transaction hash
+                gnosisSafeRepository.addPendingSafe(response.safe, BigInteger.ZERO, null, response.payment, response.paymentToken)
                     .andThen(Single.just(response.safe))
             }
             .subscribeOn(Schedulers.io())
 
-    private fun assertResponse(request: RelaySafeCreationParams, response: RelaySafeCreation) {
-        if (request.s != response.signature.s)
-            throw IllegalStateException("Client provided parameter s does not match the one returned by the service")
-        if (response.tx.value.value != BigInteger.ZERO)
-            throw IllegalStateException("Creation transaction should not require value")
-        if (response.tx.nonce != BigInteger.ZERO)
-            throw IllegalStateException("Creation transaction should have nonce zero")
-        if (response.tx.gasPrice > MAX_GAS_PRICE)
-            throw IllegalStateException("Creation transaction should not have a gasPrice higher than $MAX_GAS_PRICE")
+    private fun assertResponse(request: RelaySafeCreation2Params, response: RelaySafeCreation2) {
+        val paymentToken = response.paymentToken
+        if (request.paymentToken != paymentToken)
+            throw IllegalStateException("Unexpected payment token returned")
+        if (response.masterCopy != MATER_COPY_ADDRESS)
+            throw IllegalStateException("Unexpected master copy returned")
+        if (response.proxyFactory != PROXY_FACTORY_ADDRESS)
+            throw IllegalStateException("Unexpected proxy factory returned")
+        if (response.paymentReceiver != TX_ORIGIN_ADDRESS && response.paymentReceiver != FUNDER_ADDRESS)
+            throw IllegalStateException("Unexpected payment receiver returned")
+
         // Web3py seems to add an empty body for empty data, I would say this is a bug
         // see https://github.com/gnosis/bivrost-kotlin/issues/49
-        // TODO: Add constructor encoding/decoding to bifrost. Then split the data in init data and constructor and decode the constructor to validate
-        val safeSetup = GnosisSafe.Setup.encode(
+        val setupData = GnosisSafe.Setup.encode(
             _owners = SolidityBase.Vector(request.owners),
             _threshold = Solidity.UInt256(request.threshold.toBigInteger()),
             to = Solidity.Address(BigInteger.ZERO),
-            data = Solidity.Bytes(byteArrayOf())
+            data = Solidity.Bytes(byteArrayOf()),
+            payment = Solidity.UInt256(response.payment),
+            paymentToken = response.paymentToken,
+            paymentReceiver = response.paymentReceiver
         ) + "0000000000000000000000000000000000000000000000000000000000000000"
-        val paymentToken = response.paymentToken ?: ERC20Token.ETHER_TOKEN.address
-        if (request.paymentToken != paymentToken)
-            throw IllegalStateException("Unexpected payment token returned")
-        val funderAddress = response.funder ?: FUNDER_ADDRESS
-        val expectedConstructor = SolidityBase.encodeTuple(listOf(
-            MATER_COPY_ADDRESS, Solidity.Bytes(safeSetup.hexToByteArray()),
-            funderAddress, paymentToken, Solidity.UInt256(response.payment)
-        ))
-        val responseData = response.tx.data.removeHexPrefix()
-        val contractData = responseData.removeSuffix(expectedConstructor)
-        // Check if the constructor data could be removed
-        if (contractData == responseData)
-            throw IllegalStateException("Unexpected proxy constructor data")
-        val initDataLength = contractData.length - SOLIDITY_SWARM_INFO_LENGTH
-        if (initDataLength != BuildConfig.PROXY_INIT_DATA_LENGTH)
-            throw IllegalStateException("Unexpected proxy init data")
-        val initData = contractData.substring(0, initDataLength)
-        val initDataHash = Sha3Utils.keccak(initData.toByteArray()).toHex()
-        if (initDataHash != BuildConfig.PROXY_INIT_DATA_HASH)
-            throw IllegalStateException("Unexpected proxy init data")
-        // TODO: we could check the swarm hash to make sure that the bytecode was generated by the same source code and same compiler
-    }
 
-    private fun checkGeneratedSafeAddress(transactionHash: ByteArray, signature: ServiceSignature, safeAddress: Solidity.Address) =
-        accountsRepository.recover(transactionHash, signature.toSignature())
-            .flatMapCompletable {
-                Completable.fromCallable {
-                    if (getDeployAddressFromNonce(
-                            it,
-                            BigInteger.ZERO
-                        ).value != safeAddress.value
-                    ) throw IllegalStateException("Address returned does not match address from signature")
-                }
-            }
-            .subscribeOn(Schedulers.computation())
+        if (setupData != response.setupData)
+            throw IllegalStateException("Unexpected setup data returned")
+
+        val setupDataHash = Sha3Utils.keccak(setupData.hexToByteArray())
+        val salt = Sha3Utils.keccak(setupDataHash + Solidity.UInt256(request.saltNonce.toBigInteger()).encode().hexToByteArray() )
+
+
+        val deploymentCode = PROXY_CODE + MATER_COPY_ADDRESS.encode()
+        val codeHash = Sha3Utils.keccak(deploymentCode.hexToByteArray())
+        val create2Hash = Sha3Utils.keccak(byteArrayOf(0xff.toByte()) + PROXY_FACTORY_ADDRESS.value.toBytes(20) + salt + codeHash)
+        val address = Solidity.Address(BigInteger(1, create2Hash.copyOfRange(12, 32)))
+
+        if (address != response.safe)
+            throw IllegalStateException("Unexpected safe address returned")
+    }
 
     private fun loadSafeOwners() =
         accountsRepository.loadActiveAccount().map { it.address }
@@ -155,9 +124,10 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             }
 
     companion object {
-        private const val SOLIDITY_SWARM_INFO_LENGTH = 86
-        private val MAX_GAS_PRICE = "200000000000".toBigInteger() // 200 GWei
         private val MATER_COPY_ADDRESS = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
+        private val PROXY_FACTORY_ADDRESS = BuildConfig.PROXY_FACTORY_ADDRESS.asEthereumAddress()!!
         private val FUNDER_ADDRESS = BuildConfig.SAFE_CREATION_FUNDER.asEthereumAddress()!!
+        private val TX_ORIGIN_ADDRESS = "0x0".asEthereumAddress()!!
+        private const val PROXY_CODE = "0x608060405234801561001057600080fd5b506040516020806101aa8339810180604052602081101561003057600080fd5b8101908080519060200190929190505050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515156100c9576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260248152602001806101866024913960400191505060405180910390fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050606e806101186000396000f3fe608060405273ffffffffffffffffffffffffffffffffffffffff600054163660008037600080366000845af43d6000803e6000811415603d573d6000fd5b3d6000f3fea165627a7a72305820fb5a6f727010799f33fdcf5590764db867b968b3e64528d5250c6935457674d00029496e76616c6964206d617374657220636f707920616464726573732070726f7669646564"
     }
 }

@@ -89,6 +89,25 @@ data class RelaySafeCreation(
 )
 
 @JsonClass(generateAdapter = true)
+data class RelaySafeCreation2Params(
+    @Json(name = "owners") val owners: List<Solidity.Address>,
+    @Json(name = "threshold") val threshold: Int,
+    @Json(name = "saltNonce") val saltNonce: Long,
+    @Json(name = "paymentToken") val paymentToken: Solidity.Address
+)
+
+@JsonClass(generateAdapter = true)
+data class RelaySafeCreation2(
+    @Json(name = "safe") val safe: Solidity.Address,
+    @Json(name = "masterCopy") val masterCopy: Solidity.Address,
+    @Json(name = "proxyFactory") val proxyFactory: Solidity.Address,
+    @Json(name = "setupData") val setupData: String,
+    @Json(name = "payment") @field:DecimalNumber val payment: BigInteger,
+    @Json(name = "paymentToken") val paymentToken: Solidity.Address,
+    @Json(name = "paymentReceiver") val paymentReceiver: Solidity.Address
+)
+
+@JsonClass(generateAdapter = true)
 data class RelaySafeCreationTx(
     @Json(name = "from") val from: Solidity.Address,
     @Json(name = "value") val value: Wei,
@@ -100,9 +119,6 @@ data class RelaySafeCreationTx(
 
 @JsonClass(generateAdapter = true)
 data class RelaySafeFundStatus(
-    @Json(name = "safeFunded") val safeFunded: Boolean,
-    @Json(name = "deployerFunded") val deployerFunded: Boolean,
-    @Json(name = "deployerFundedTxHash") val deployerFundedTxHash: String?,
-    @Json(name = "safeDeployed") val safeDeployed: Boolean,
-    @Json(name = "safeDeployedTxHash") val safeDeployedTxHash: String?
+    @Json(name = "blockNumber") val blockNumber: Long?,
+    @Json(name = "txHash") val txHash: String?
 )

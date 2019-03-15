@@ -87,7 +87,10 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             _owners = SolidityBase.Vector(owners),
             _threshold = Solidity.UInt256(if (owners.size == 3) BigInteger.ONE else 2.toBigInteger()),
             to = Solidity.Address(BigInteger.ZERO),
-            data = Solidity.Bytes(byteArrayOf())
+            data = Solidity.Bytes(byteArrayOf()),
+            paymentToken = paymentToken.address,
+            payment = Solidity.UInt256(payment),
+            paymentReceiver = funder
         ) + "0000000000000000000000000000000000000000000000000000000000000000"
         val expectedConstructor = SolidityBase.encodeTuple(
             listOf(
