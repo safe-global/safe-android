@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.data.remote.models.AddressSignedPayload
 import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
@@ -260,7 +261,8 @@ class ScanExtensionAddressViewModelTest {
             requiredConfirmations = 2L,
             owners = listOf(PHONE_ADDRESS, BROWSER_EXTENSION_ADDRESS, RECOVERY_ADDRESS_0, RECOVERY_ADDRESS_1),
             isOwner = true,
-            modules = emptyList()
+            modules = emptyList(),
+            version = SemVer(1, 0, 0)
         )
     }
 }

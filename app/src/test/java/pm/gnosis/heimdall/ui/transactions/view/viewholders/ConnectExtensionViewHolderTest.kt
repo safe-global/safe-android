@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -211,7 +212,8 @@ class ConnectExtensionViewHolderTest {
             requiredConfirmations = 1,
             owners = listOf(TEST_PHONE),
             isOwner = true,
-            modules = emptyList()
+            modules = emptyList(),
+            version = SemVer(1, 0, 0)
         )
     }
 }

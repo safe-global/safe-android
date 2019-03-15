@@ -227,7 +227,8 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                     executionInfo.txGas,
                     executionInfo.dataGas,
                     executionInfo.gasPrice,
-                    executionInfo.gasToken
+                    executionInfo.gasToken,
+                    executionInfo.safeVersion
                 )
                     .map { it to executionInfo }
             }

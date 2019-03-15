@@ -20,12 +20,10 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.models.ERC20Token
-import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
-import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -326,6 +324,7 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.just(TX_HASH))
@@ -354,10 +353,15 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 anyBoolean(),
                 MockUtils.any()
             )
         ).willReturn(Single.just("RANDOM_TX_HASH"))
+
+        given(gnosisSafeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(
+            SafeInfo(SAFE_TRANSACTION.wrapped.address, Wei.ZERO, 1, emptyList(), false, emptyList(), VERSION)
+        ))
 
         given(pushServiceRepositoryMock.propagateSafeCreation(MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
 
@@ -382,7 +386,8 @@ class ReplaceExtensionViewModelTest {
                 TX_GAS,
                 DATA_GAS,
                 GAS_PRICE,
-                GAS_TOKEN.address
+                GAS_TOKEN.address,
+                VERSION
             )
         then(accountsRepositoryMock).should().recover(
             TX_HASH,
@@ -401,6 +406,7 @@ class ReplaceExtensionViewModelTest {
             DATA_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
+            VERSION,
             true
         )
         then(pushServiceRepositoryMock).should().propagateSafeCreation(
@@ -426,6 +432,7 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.just(TX_HASH))
@@ -453,10 +460,15 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 anyBoolean(),
                 MockUtils.any()
             )
         ).willReturn(Single.just("RANDOM_TX_HASH"))
+
+        given(gnosisSafeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(
+            SafeInfo(SAFE_TRANSACTION.wrapped.address, Wei.ZERO, 1, emptyList(), false, emptyList(), VERSION)
+        ))
 
         given(pushServiceRepositoryMock.propagateSafeCreation(MockUtils.any(), MockUtils.any())).willReturn(Completable.error(exception))
 
@@ -481,7 +493,8 @@ class ReplaceExtensionViewModelTest {
                 TX_GAS,
                 DATA_GAS,
                 GAS_PRICE,
-                GAS_TOKEN.address
+                GAS_TOKEN.address,
+                VERSION
             )
         then(accountsRepositoryMock).should().recover(
             TX_HASH,
@@ -500,6 +513,7 @@ class ReplaceExtensionViewModelTest {
             DATA_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
+            VERSION,
             true
         )
         then(pushServiceRepositoryMock).should().propagateSafeCreation(
@@ -525,6 +539,7 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.just(TX_HASH))
@@ -552,10 +567,15 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 anyBoolean(),
                 MockUtils.any()
             )
         ).willReturn(Single.error(exception))
+
+        given(gnosisSafeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(
+            SafeInfo(SAFE_TRANSACTION.wrapped.address, Wei.ZERO, 1, emptyList(), false, emptyList(), VERSION)
+        ))
 
         viewModel.setup(
             SAFE_TRANSACTION,
@@ -578,7 +598,8 @@ class ReplaceExtensionViewModelTest {
                 TX_GAS,
                 DATA_GAS,
                 GAS_PRICE,
-                GAS_TOKEN.address
+                GAS_TOKEN.address,
+                VERSION
             )
         then(accountsRepositoryMock).should().recover(
             TX_HASH,
@@ -597,6 +618,7 @@ class ReplaceExtensionViewModelTest {
             DATA_GAS,
             GAS_PRICE,
             GAS_TOKEN.address,
+            VERSION,
             true
         )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
@@ -612,6 +634,7 @@ class ReplaceExtensionViewModelTest {
         val exception = Exception()
         given(
             transactionExecutionRepositoryMock.calculateHash(
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -634,6 +657,10 @@ class ReplaceExtensionViewModelTest {
             )
         ).willReturn(Single.error(exception))
 
+        given(gnosisSafeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(
+            SafeInfo(SAFE_TRANSACTION.wrapped.address, Wei.ZERO, 1, emptyList(), false, emptyList(), VERSION)
+        ))
+
         viewModel.setup(
             SAFE_TRANSACTION,
             SIGNATURE_1,
@@ -655,7 +682,8 @@ class ReplaceExtensionViewModelTest {
                 TX_GAS,
                 DATA_GAS,
                 GAS_PRICE,
-                GAS_TOKEN.address
+                GAS_TOKEN.address,
+                VERSION
             )
         then(accountsRepositoryMock).should().recover(
             TX_HASH,
@@ -682,9 +710,14 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.just(byteArrayOf(0, 0, 0)))
+
+        given(gnosisSafeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(
+            SafeInfo(SAFE_TRANSACTION.wrapped.address, Wei.ZERO, 1, emptyList(), false, emptyList(), VERSION)
+        ))
 
         viewModel.setup(
             SAFE_TRANSACTION,
@@ -707,7 +740,8 @@ class ReplaceExtensionViewModelTest {
                 TX_GAS,
                 DATA_GAS,
                 GAS_PRICE,
-                GAS_TOKEN.address
+                GAS_TOKEN.address,
+                VERSION
             )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveZeroInteractions()
@@ -727,9 +761,14 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.error(exception))
+
+        given(gnosisSafeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(
+            SafeInfo(SAFE_TRANSACTION.wrapped.address, Wei.ZERO, 1, emptyList(), false, emptyList(), VERSION)
+        ))
 
         viewModel.setup(
             SAFE_TRANSACTION,
@@ -752,7 +791,8 @@ class ReplaceExtensionViewModelTest {
                 TX_GAS,
                 DATA_GAS,
                 GAS_PRICE,
-                GAS_TOKEN.address
+                GAS_TOKEN.address,
+                VERSION
             )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveZeroInteractions()
@@ -777,6 +817,7 @@ class ReplaceExtensionViewModelTest {
         private val GAS_PRICE = 1000.toBigInteger()
         private val GAS_TOKEN = ERC20Token("0x1337".asEthereumAddress()!!, "Golden Wishing Spheres", "DBZ", 7)
         private val NEW_CHROME_EXTENSION_ADDRESS = 42.toBigInteger().let { Solidity.Address(it) }
+        private val VERSION = SemVer(1, 0, 0)
         private val TX_HASH = byteArrayOf(0, 1, 2, 3, 4, 5)
     }
 }

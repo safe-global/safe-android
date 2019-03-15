@@ -71,17 +71,19 @@ class ConfirmTransactionViewModel @Inject constructor(
     private fun txParams(transaction: SafeTransaction): Single<TransactionExecutionRepository.ExecuteInformation> {
         // We need to set the original nonce again as it is not set by the transaction view holder
         val updatedTransaction = transaction.copy(wrapped = transaction.wrapped.copy(nonce = nonce ?: BigInteger.ZERO))
-        return executionRepository.calculateHash(safe, updatedTransaction, txGas, dataGas, gasPrice, gasToken)
-            .map {
-                if (it.toHexString().toLowerCase() != hash.removeHexPrefix().toLowerCase()) {
-                    throw IllegalStateException("Invalid transaction")
+        return loadState(hash)
+            .flatMap { state ->
+                executionRepository.calculateHash(safe, updatedTransaction, txGas, dataGas, gasPrice, gasToken, state.version)
+                .map {
+                    if (it.toHexString().toLowerCase() != hash.removeHexPrefix().toLowerCase()) {
+                        throw IllegalStateException("Invalid transaction")
+                    }
+                    state
                 }
-                hash
             }
-            .flatMap { loadState(hash) }
             .map {
                 TransactionExecutionRepository.ExecuteInformation(
-                    hash, updatedTransaction, it.sender, it.requiredConfirmation, it.owners,
+                    hash, updatedTransaction, it.sender, it.requiredConfirmation, it.owners, it.version,
                     gasToken, gasPrice, txGas, dataGas, operationalGas, it.balance
                 )
             }
@@ -114,13 +116,10 @@ class ConfirmTransactionViewModel @Inject constructor(
                 )
             }
             .flatMap { transactionInfoRepository.parseTransactionData(transaction) }
-            .flatMap { data ->
-                executionRepository.checkConfirmation(safe, transaction, txGas, dataGas, gasPrice, gasToken, signature).map { data to it }
-            }
-            .flatMapObservable { (data, signatureInfo) -> submitTransactionHelper.observe(events, data, mapOf(signatureInfo)) }
+            .flatMapObservable { data -> submitTransactionHelper.observe(events, data, setOf(signature)) }
 
     override fun rejectTransaction(transaction: SafeTransaction): Completable =
         loadState(hash).flatMapCompletable {
-            executionRepository.notifyReject(safe, transaction, txGas, dataGas, gasPrice, gasToken, (it.owners - it.sender).toSet())
+            executionRepository.notifyReject(safe, transaction, txGas, dataGas, gasPrice, gasToken, (it.owners - it.sender).toSet(), it.version)
         }
 }

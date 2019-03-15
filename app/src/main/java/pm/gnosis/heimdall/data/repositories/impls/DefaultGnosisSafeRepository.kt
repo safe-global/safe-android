@@ -79,17 +79,22 @@ class DefaultGnosisSafeRepository @Inject constructor(
                     EthCall(
                         transaction = Transaction(address = address, data = GetModules.encode()),
                         id = 4
+                    ),
+                    EthCall(
+                        transaction = Transaction(address = address, data = VERSION.encode()),
+                        id = 5
                     )
                 )
             }
             .flatMapObservable { bulk -> ethereumRepository.request(bulk) }
-            .map {
-                val balance = it.balance.result() ?: throw IllegalArgumentException()
-                val threshold = GetThreshold.decode(it.threshold.result() ?: throw IllegalArgumentException()).param0.value.toLong()
-                val owners = GetOwners.decode(it.owners.result() ?: throw IllegalArgumentException()).param0.items
-                val isOwner = IsOwner.decode(it.isOwner.result() ?: throw IllegalArgumentException()).param0.value
-                val modules = GetModules.decode(it.modules.result() ?: throw IllegalArgumentException()).param0.items.map { it }
-                SafeInfo(address, balance, threshold, owners, isOwner, modules)
+            .map { info ->
+                val balance = info.balance.result() ?: throw IllegalArgumentException()
+                val threshold = GetThreshold.decode(info.threshold.result() ?: throw IllegalArgumentException()).param0.value.toLong()
+                val owners = GetOwners.decode(info.owners.result() ?: throw IllegalArgumentException()).param0.items
+                val isOwner = IsOwner.decode(info.isOwner.result() ?: throw IllegalArgumentException()).param0.value
+                val modules = GetModules.decode(info.modules.result() ?: throw IllegalArgumentException()).param0.items.map { it }
+                val version = VERSION.decode(info.version.result() ?: throw IllegalArgumentException()).param0.value.toSemVer()
+                SafeInfo(address, balance, threshold, owners, isOwner, modules, version)
             }
 
     override fun checkSafe(address: Solidity.Address): Observable<Pair<Boolean, Boolean>> =
@@ -301,8 +306,9 @@ class DefaultGnosisSafeRepository @Inject constructor(
         val threshold: EthRequest<String>,
         val owners: EthRequest<String>,
         val isOwner: EthRequest<String>,
-        val modules: EthRequest<String>
-    ) : BulkRequest(balance, threshold, owners, isOwner, modules)
+        val modules: EthRequest<String>,
+        val version: EthRequest<String>
+    ) : BulkRequest(balance, threshold, owners, isOwner, modules, version)
 
     private class CheckSafeRequest(
         val masterCopy: EthRequest<String>,

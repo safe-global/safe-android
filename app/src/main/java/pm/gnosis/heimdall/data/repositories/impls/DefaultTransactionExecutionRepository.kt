@@ -22,6 +22,8 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Publi
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.TransactionEventsCallback
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
+import pm.gnosis.heimdall.data.repositories.models.toSemVer
 import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -58,7 +60,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
 
     override fun calculateHash(
         safeAddress: Solidity.Address, transaction: SafeTransaction,
-        txGas: BigInteger, dataGas: BigInteger, gasPrice: BigInteger, gasToken: Solidity.Address
+        txGas: BigInteger, dataGas: BigInteger, gasPrice: BigInteger, gasToken: Solidity.Address, version: SemVer
     ): Single<ByteArray> =
         Single.fromCallable {
             val tx = transaction.wrapped
@@ -74,6 +76,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
             val nonce = (tx.nonce ?: DEFAULT_NONCE).paddedHexString()
             hash(
                 safeAddress,
+                version,
                 to,
                 value,
                 data,
@@ -97,15 +100,21 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                     safeAddress.value.paddedHexString()).hexToByteArray()
         ).toHex()
 
-    private fun valuesHash(parts: Array<out String>) =
-        parts.fold(StringBuilder().append("0x14d461bc7412367e924637b363c7bf29b8f47e2f84869f4426e5633d8af47b20")) { acc, part ->
+    private fun valuesHash(version: SemVer, parts: Array<out String>) =
+        parts.fold(StringBuilder().append(getTypeHash(version))) { acc, part ->
             acc.append(part)
         }.toString().run {
             Sha3Utils.keccak(hexToByteArray()).toHex()
         }
 
-    private fun hash(safeAddress: Solidity.Address, vararg parts: String): ByteArray {
-        val initial = StringBuilder().append(ERC191_BYTE).append(ERC191_VERSION).append(domainHash(safeAddress)).append(valuesHash(parts))
+    private fun getTypeHash(version: SemVer) =
+        if (version >= SemVer(1, 0, 0))
+            "0xbb8310d486368db6bd6f849402fdd73ad53d316b5a4b2644ad6efe0f941286d8"
+        else
+            "0x14d461bc7412367e924637b363c7bf29b8f47e2f84869f4426e5633d8af47b20"
+
+    private fun hash(safeAddress: Solidity.Address, version: SemVer, vararg parts: String): ByteArray {
+        val initial = StringBuilder().append(ERC191_BYTE).append(ERC191_VERSION).append(domainHash(safeAddress)).append(valuesHash(version, parts))
         return Sha3Utils.keccak(initial.toString().hexToByteArray())
     }
 
@@ -127,7 +136,12 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                         safeAddress, data = GnosisSafe.GetOwners.encode()
                     ), id = 2
                 ).toMappedRequest(),
-                balanceRequest(safeAddress, paymentToken, 3)
+                balanceRequest(safeAddress, paymentToken, 3),
+                EthCall(
+                    transaction = Transaction(
+                        safeAddress, data = GnosisSafe.VERSION.encode()
+                    ), id = 4
+                ).toMappedRequest()
             )
 
         }.subscribeOn(Schedulers.computation())
@@ -166,12 +180,14 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 val threshold = GnosisSafe.GetThreshold.decode(info.threshold.mapped()!!).param0.value.toInt()
                 val owners = GnosisSafe.GetOwners.decode(info.owners.mapped()!!).param0.items
                 val safeBalance = info.balance.mapped()!!
+                val version = GnosisSafe.VERSION.decode(info.version.mapped()!!).param0.value.toSemVer()
                 TransactionExecutionRepository.SafeExecuteState(
                     sender,
                     threshold,
                     owners,
                     nonce,
-                    safeBalance
+                    safeBalance,
+                    version
                 )
             }
 
@@ -211,13 +227,15 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                 val operationalGas = estimate.operationalGas.decimalAsBigInteger()
                 val gasPrice = estimate.gasPrice.decimalAsBigInteger()
                 val safeBalance = info.balance.mapped()!!
-                calculateHash(safeAddress, updatedTransaction, txGas, dataGas, gasPrice, paymentToken).map {
+                val safeVersion = GnosisSafe.VERSION.decode(info.version.mapped()!!).param0.value.toSemVer()
+                calculateHash(safeAddress, updatedTransaction, txGas, dataGas, gasPrice, paymentToken, safeVersion).map {
                     TransactionExecutionRepository.ExecuteInformation(
                         it.toHexString().addHexPrefix(),
                         updatedTransaction,
                         sender,
                         threshold,
                         owners,
+                        safeVersion,
                         paymentToken,
                         gasPrice,
                         txGas,
@@ -236,9 +254,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
-        gasToken: Solidity.Address
+        gasToken: Solidity.Address,
+        version: SemVer
     ): Single<Signature> =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version)
             .flatMap(accountsRepository::sign)
 
     override fun signRejection(
@@ -247,9 +266,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
-        gasToken: Solidity.Address
+        gasToken: Solidity.Address,
+        version: SemVer
     ): Single<Signature> =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version)
             .flatMap(pushServiceRepository::calculateRejectionHash)
             .flatMap(accountsRepository::sign)
 
@@ -260,9 +280,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         dataGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        signature: Signature
+        signature: Signature,
+        version: SemVer
     ): Single<Pair<Solidity.Address, Signature>> =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version)
             .flatMap { accountsRepository.recover(it, signature) }
             .map { it to signature }
 
@@ -273,9 +294,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         dataGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        signature: Signature
+        signature: Signature,
+        version: SemVer
     ): Single<Pair<Solidity.Address, Signature>> =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version)
             .flatMap(pushServiceRepository::calculateRejectionHash)
             .flatMap {
                 accountsRepository.recover(it, signature)
@@ -288,11 +310,12 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         dataGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        targets: Set<Solidity.Address>
+        targets: Set<Solidity.Address>,
+        version: SemVer
     ): Completable =
-        signRejection(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
+        signRejection(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version)
             .flatMap { signature ->
-                calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken).map { it.toHexString() to signature }
+                calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version).map { it.toHexString() to signature }
             }
             .flatMapCompletable { (hash, signature) -> pushServiceRepository.propagateTransactionRejected(hash, signature, targets) }
 
@@ -305,17 +328,18 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         dataGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
+        version: SemVer,
         addToHistory: Boolean,
         referenceId: Long?
     ): Single<String> =
-        loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, txGas, dataGas, gasPrice, gasToken)
+        loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, txGas, dataGas, gasPrice, gasToken, version)
             .flatMap { relayServiceApi.execute(safeAddress.asEthereumAddressChecksumString(), it) }
             .flatMap {
                 transaction.wrapped.nonce?.let { nonceCache[safeAddress] = it }
                 broadcastTransactionSubmitted(safeAddress, transaction, it.transactionHash, referenceId)
                 if (addToHistory)
                     handleSubmittedTransaction(
-                        safeAddress, transaction, it.transactionHash.addHexPrefix(), txGas, dataGas, gasPrice, gasToken
+                        safeAddress, transaction, it.transactionHash.addHexPrefix(), txGas, dataGas, gasPrice, gasToken, version
                     )
                 else
                     Single.just(it.transactionHash.addHexPrefix())
@@ -342,9 +366,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
-        gasToken: Solidity.Address
+        gasToken: Solidity.Address,
+        version: SemVer
     ): Single<ExecuteParams> =
-        loadSignatures(safeAddress, innerTransaction, signatures, senderIsOwner, txGas, dataGas, gasPrice, gasToken)
+        loadSignatures(safeAddress, innerTransaction, signatures, senderIsOwner, txGas, dataGas, gasPrice, gasToken, version)
             .map { finalSignatures ->
                 val sortedAddresses = finalSignatures.keys.map { it.value }.sorted()
                 val serviceSignatures = mutableListOf<ServiceSignature>()
@@ -377,13 +402,14 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
-        gasToken: Solidity.Address
+        gasToken: Solidity.Address,
+        version: SemVer
     ): Single<Map<Solidity.Address, Signature>> =
     // If owner is signature we need to sign the hash and add the signature to the map
         if (senderIsOwner)
             accountsRepository.loadActiveAccount()
                 .flatMap { account ->
-                    calculateHash(safeAddress, innerTransaction, txGas, dataGas, gasPrice, gasToken)
+                    calculateHash(safeAddress, innerTransaction, txGas, dataGas, gasPrice, gasToken, version)
                         .flatMap { accountsRepository.sign(it) }
                         .map { signatures.plus(account.address to it) }
                 }
@@ -396,9 +422,10 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
-        gasToken: Solidity.Address
+        gasToken: Solidity.Address,
+        version: SemVer
     ) =
-        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken)
+        calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version)
             .map {
                 val tx = transaction.wrapped
                 val transactionUuid = UUID.randomUUID().toString()
@@ -467,8 +494,9 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         val threshold: MappedRequest<String, String?>,
         val nonce: MappedRequest<String, String?>,
         val owners: MappedRequest<String, String?>,
-        val balance: MappedRequest<out Any, BigInteger?>
-    ) : MappingBulkRequest<Any?>(threshold, nonce, owners, balance)
+        val balance: MappedRequest<out Any, BigInteger?>,
+        val version: MappedRequest<String, String?>
+    ) : MappingBulkRequest<Any?>(threshold, nonce, owners, balance, version)
 
     private fun EthRequest<String>.toMappedRequest() = MappedRequest(this) { it }
 

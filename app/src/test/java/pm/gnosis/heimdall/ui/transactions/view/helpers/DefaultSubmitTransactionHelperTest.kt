@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
@@ -105,6 +106,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         )
@@ -140,7 +142,7 @@ class DefaultSubmitTransactionHelperTest {
         val infoTooLowBalanceEth = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH,
             TEST_TRANSACTION.copy(wrapped = TEST_TRANSACTION.wrapped.copy(value = Wei.ether("23"))),
-            TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
+            TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS, TEST_VERSION,
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )
@@ -170,7 +172,7 @@ class DefaultSubmitTransactionHelperTest {
                     data = ERC20Contract.Transfer.encode(TEST_ADDRESS, Solidity.UInt256(BigInteger.TEN))
                 )
             ),
-            TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
+            TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS, TEST_VERSION,
             testGasToken.address, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             BigInteger("19")
         )
@@ -199,7 +201,7 @@ class DefaultSubmitTransactionHelperTest {
                     data = ERC20Contract.Transfer.encode(TEST_ADDRESS, Solidity.UInt256(BigInteger.TEN))
                 )
             ),
-            TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
+            TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS, TEST_VERSION,
             testGasToken.address, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             BigInteger("21")
         )
@@ -316,6 +318,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 anyBoolean(),
                 MockUtils.any()
             )
@@ -335,6 +338,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 anyBoolean(),
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -365,6 +369,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 anyBoolean(),
                 MockUtils.any()
             )
@@ -389,6 +394,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.just(TEST_OWNERS[0] to TEST_SIGNATURE))
@@ -400,6 +406,7 @@ class DefaultSubmitTransactionHelperTest {
          */
         given(
             relayRepositoryMock.checkConfirmation(
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -424,6 +431,7 @@ class DefaultSubmitTransactionHelperTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
+                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Single.just(TEST_ADDRESS to TEST_SIGNATURE))
@@ -435,6 +443,7 @@ class DefaultSubmitTransactionHelperTest {
          */
         given(
             relayRepositoryMock.checkRejection(
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -453,6 +462,7 @@ class DefaultSubmitTransactionHelperTest {
          */
         given(
             relayRepositoryMock.checkRejection(
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
@@ -486,7 +496,7 @@ class DefaultSubmitTransactionHelperTest {
 
         val info = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH,
-            TEST_TRANSACTION, TEST_OWNERS[0], 1, TEST_OWNERS.subList(0, 1),
+            TEST_TRANSACTION, TEST_OWNERS[0], 1, TEST_OWNERS.subList(0, 1), TEST_VERSION,
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )
@@ -534,5 +544,6 @@ class DefaultSubmitTransactionHelperTest {
         private val TEST_SIGNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13)).map { Solidity.Address(it) }
         private val TEST_OWNERS = TEST_SIGNERS + Solidity.Address(BigInteger.valueOf(5))
         private val TEST_SIGNATURE = Signature(BigInteger.TEN, BigInteger.TEN, 27)
+        private val TEST_VERSION = SemVer(1, 0, 0)
     }
 }
