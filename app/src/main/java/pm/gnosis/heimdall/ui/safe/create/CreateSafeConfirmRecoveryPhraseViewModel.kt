@@ -1,33 +1,24 @@
 package pm.gnosis.heimdall.ui.safe.create
 
-import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
-import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation
 import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation2
 import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation2Params
-import pm.gnosis.heimdall.data.remote.models.RelaySafeCreationParams
-import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
-import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
-import pm.gnosis.svalinn.accounts.utils.hash
-import pm.gnosis.svalinn.utils.ethereum.getDeployAddressFromNonce
 import pm.gnosis.utils.*
 import java.math.BigInteger
-import java.security.SecureRandom
 import javax.inject.Inject
 
 class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
@@ -70,7 +61,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
         val paymentToken = response.paymentToken
         if (request.paymentToken != paymentToken)
             throw IllegalStateException("Unexpected payment token returned")
-        if (response.masterCopy != MATER_COPY_ADDRESS)
+        if (response.masterCopy != MASTER_COPY_ADDRESS)
             throw IllegalStateException("Unexpected master copy returned")
         if (response.proxyFactory != PROXY_FACTORY_ADDRESS)
             throw IllegalStateException("Unexpected proxy factory returned")
@@ -96,7 +87,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
         val salt = Sha3Utils.keccak(setupDataHash + Solidity.UInt256(request.saltNonce.toBigInteger()).encode().hexToByteArray() )
 
 
-        val deploymentCode = PROXY_CODE + MATER_COPY_ADDRESS.encode()
+        val deploymentCode = PROXY_CODE + MASTER_COPY_ADDRESS.encode()
         val codeHash = Sha3Utils.keccak(deploymentCode.hexToByteArray())
         val create2Hash = Sha3Utils.keccak(byteArrayOf(0xff.toByte()) + PROXY_FACTORY_ADDRESS.value.toBytes(20) + salt + codeHash)
         val address = Solidity.Address(BigInteger(1, create2Hash.copyOfRange(12, 32)))
@@ -124,7 +115,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             }
 
     companion object {
-        private val MATER_COPY_ADDRESS = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
+        private val MASTER_COPY_ADDRESS = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
         private val PROXY_FACTORY_ADDRESS = BuildConfig.PROXY_FACTORY_ADDRESS.asEthereumAddress()!!
         private val FUNDER_ADDRESS = BuildConfig.SAFE_CREATION_FUNDER.asEthereumAddress()!!
         private val TX_ORIGIN_ADDRESS = "0x0".asEthereumAddress()!!
