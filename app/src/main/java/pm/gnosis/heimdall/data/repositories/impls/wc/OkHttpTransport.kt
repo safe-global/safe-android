@@ -9,10 +9,10 @@ import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class OkHttpTransport(
-    val client: OkHttpClient,
-    val serverUrl: String,
-    val statusHandler: (Session.Transport.Status) -> Unit,
-    val messageHandler: (Session.Transport.Message) -> Unit,
+    private val client: OkHttpClient,
+    private val serverUrl: String,
+    private val statusHandler: (Session.Transport.Status) -> Unit,
+    private val messageHandler: (Session.Transport.Message) -> Unit,
     moshi: Moshi
 ) : Session.Transport, WebSocketListener() {
 

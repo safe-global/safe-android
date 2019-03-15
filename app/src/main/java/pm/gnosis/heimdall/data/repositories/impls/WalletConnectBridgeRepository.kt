@@ -8,6 +8,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
@@ -39,7 +40,7 @@ class WalletConnectBridgeRepository @Inject constructor(
     private val sessionBuilder: SessionBuilder,
     executionRepository: TransactionExecutionRepository
 ) : BridgeRepository, TransactionExecutionRepository.TransactionEventsCallback {
-    private val sessionUpdates = PublishSubject.create<Unit>()
+    private val sessionUpdates = BehaviorSubject.createDefault(Unit)
     private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
 
     private val sessionRequests: MutableMap<Long, String> = ConcurrentHashMap()
@@ -49,12 +50,12 @@ class WalletConnectBridgeRepository @Inject constructor(
     }
 
     override fun onTransactionRejected(referenceId: Long) {
-        sessionForRequest(referenceId)?.let { it.rejectRequest(referenceId, 4567, "Transaction rejected") }
+        sessionForRequest(referenceId)?.rejectRequest(referenceId, 4567, "Transaction rejected")
     }
 
     override fun onTransactionSubmitted(safeAddress: Solidity.Address, transaction: SafeTransaction, chainHash: String, referenceId: Long?) {
         referenceId ?: return
-        sessionForRequest(referenceId)?.let { it.approveRequest(referenceId, chainHash) }
+        sessionForRequest(referenceId)?.approveRequest(referenceId, chainHash)
     }
 
     private fun sessionForRequest(referenceId: Long) =
@@ -64,37 +65,29 @@ class WalletConnectBridgeRepository @Inject constructor(
 
     override fun sessions(): Single<List<BridgeRepository.SessionMeta>> =
         Single.fromCallable {
-            sessionStore.list().map {
-                BridgeRepository.SessionMeta(
-                    it.config.handshakeTopic,
-                    it.peerData?.meta?.name,
-                    it.peerData?.meta?.description,
-                    it.peerData?.meta?.icons,
-                    sessions.containsKey(it.config.handshakeTopic),
-                    it.approvedAccounts?.map { acc -> acc.asEthereumAddress()!! }
-                )
-            }
+            sessionStore.list().map { it.toSessionMeta() }
         }
 
     override fun observeSessions(): Observable<List<BridgeRepository.SessionMeta>> =
-        sessionUpdates.startWith(Unit).switchMapSingle { sessions().onErrorReturnItem(emptyList()) }
+        sessionUpdates.switchMapSingle { sessions().onErrorReturnItem(emptyList()) }
 
     override fun observeActiveSessionIds(): Observable<List<String>> =
-        sessionUpdates.startWith(Unit).map { sessions.keys.sorted() }
+        sessionUpdates.map { sessions.keys.sorted() }
 
     override fun session(sessionId: String): Single<BridgeRepository.SessionMeta> =
         Single.fromCallable {
-            sessionStore.load(sessionId)?.let {
-                BridgeRepository.SessionMeta(
-                    it.config.handshakeTopic,
-                    it.peerData?.meta?.name,
-                    it.peerData?.meta?.description,
-                    it.peerData?.meta?.icons,
-                    sessions.containsKey(it.config.handshakeTopic),
-                    it.approvedAccounts?.map { acc -> acc.asEthereumAddress()!! }
-                )
-            } ?: throw NoSuchElementException()
+            sessionStore.load(sessionId)?.toSessionMeta() ?: throw NoSuchElementException()
         }
+
+    private fun WCSessionStore.State.toSessionMeta() =
+        BridgeRepository.SessionMeta(
+            config.handshakeTopic,
+            peerData?.meta?.name,
+            peerData?.meta?.description,
+            peerData?.meta?.icons,
+            sessions.containsKey(config.handshakeTopic),
+            approvedAccounts?.map { acc -> acc.asEthereumAddress()!! }
+        )
 
     private fun internalGetOrCreateSession(config: Session.Config) =
         sessions[config.handshakeTopic]?.let { config.handshakeTopic } ?: internalCreateSession(config)
@@ -172,7 +165,6 @@ class WalletConnectBridgeRepository @Inject constructor(
 
     override fun observeSession(sessionId: String): Observable<BridgeRepository.SessionEvent> =
         sessionUpdates
-            .startWith(Unit)
             .map { sessions.containsKey(sessionId) }
             .scan { old, new -> old != new }.filter { it } // Only trigger updates if activity changes
             .switchMap { createSessionObservable(sessionId) }

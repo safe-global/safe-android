@@ -53,7 +53,7 @@ class WalletConnectSessionsAdapter @Inject constructor(
             current?.let { meta ->
                 disposables += viewModel.observeSession(meta.id)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeBy(onNext = ::handleSessionEven, onError = ::handleLoadingError)
+                    .subscribeBy(onNext = ::handleSessionEvent, onError = ::handleLoadingError)
 
                 disposables += itemView.layout_wallet_connect_sessions_item_activate.clicks()
                     .switchMapCompletable { viewModel.activateSession(meta.id) }
@@ -73,7 +73,7 @@ class WalletConnectSessionsAdapter @Inject constructor(
             }
         }
 
-        private fun handleSessionEven(event: BridgeRepository.SessionEvent) {
+        private fun handleSessionEvent(event: BridgeRepository.SessionEvent) {
             when (event) {
                 is BridgeRepository.SessionEvent.MetaUpdate -> {
                     updateSessionInfo(event.meta)
