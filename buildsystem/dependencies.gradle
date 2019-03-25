@@ -40,7 +40,7 @@ ext {
             rxjava                    : '2.2.1',
             rxkotlin                  : '2.3.0',
             spongycastle              : '1.58.0.0',
-            svalinn                   : 'v0.7.0',
+            svalinn                   : 'v0.7.1',
             timber                    : '4.7.1',
             zxing                     : '3.3.1',
 

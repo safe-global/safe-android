@@ -33,7 +33,7 @@ class InterceptorsModule {
         return Interceptor {
             val request = it.request()
             val builder = request.url().newBuilder()
-            val url = builder.addQueryParameter("token", BuildConfig.INFURA_API_KEY).build()
+            val url = builder.addPathSegment(BuildConfig.INFURA_API_KEY).build()
             it.proceed(request.newBuilder().url(url).build())
         }
     }
