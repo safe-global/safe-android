@@ -12,6 +12,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
@@ -353,7 +354,8 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                anyBoolean()
+                anyBoolean(),
+                MockUtils.any()
             )
         ).willReturn(Single.just("RANDOM_TX_HASH"))
 
@@ -451,7 +453,8 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                anyBoolean()
+                anyBoolean(),
+                MockUtils.any()
             )
         ).willReturn(Single.just("RANDOM_TX_HASH"))
 
@@ -549,7 +552,8 @@ class ReplaceExtensionViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                anyBoolean()
+                anyBoolean(),
+                MockUtils.any()
             )
         ).willReturn(Single.error(exception))
 

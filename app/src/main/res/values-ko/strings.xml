@@ -15,7 +15,7 @@
     <string name="tab_title_assets">토큰</string>
     <string name="address_clipboard_success">클립보드에 복사됨</string>
     <string name="share_address">주소 공유하기</string>
-    <string name="x_data_bytes">%x bytes가 포함됨</string>
+    <string name="x_data_bytes">%d bytes가 포함됨</string>
     <string name="submit_transaction">거래 제출</string>
     <string name="cancel">취소</string>
     <string name="invalid_ethereum_address">유효하지 않은 이더리움 주소</string>

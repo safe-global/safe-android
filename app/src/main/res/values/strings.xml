@@ -15,7 +15,7 @@
     <string name="tab_title_assets">Tokens</string>
     <string name="address_clipboard_success">Address copied to clipboard</string>
     <string name="share_address">Share address</string>
-    <string name="x_data_bytes">%x bytes included</string>
+    <string name="x_data_bytes">%d bytes included</string>
     <string name="submit_transaction">Submit Transaction</string>
     <string name="cancel">Cancel</string>
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
@@ -265,4 +265,9 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="review_message">Review message</string>
     <string name="sign_message_notification_title">Sign Message</string>
     <string name="sign_message_notification_description">You have been requested to sign a message</string>
+    <string name="wallet_connect">WalletConnect Beta</string>
+    <string name="wallet_connect_sessions">WalletConnect Sessions</string>
+    <string name="deny">Deny</string>
+    <string name="approve">Approve</string>
+    <string name="activate">Activate</string>
 </resources>

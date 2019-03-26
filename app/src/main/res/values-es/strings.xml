@@ -15,7 +15,7 @@
     <string name="tab_title_assets">Tokens</string>
     <string name="address_clipboard_success">Dirección copiada al portapapeles</string>
     <string name="share_address">Compartir dirección</string>
-    <string name="x_data_bytes">%x bytes incluidos</string>
+    <string name="x_data_bytes">%d bytes incluidos</string>
     <string name="submit_transaction">Enviar transacción</string>
     <string name="cancel">Cancelar</string>
     <string name="invalid_ethereum_address">Dirección de Ethereum inválida</string>

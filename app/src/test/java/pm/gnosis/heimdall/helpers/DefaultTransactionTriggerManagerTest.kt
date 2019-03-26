@@ -50,7 +50,7 @@ class DefaultTransactionTriggerManagerTest {
     @Test
     fun init() {
         manager.init()
-        then(transactionExecutionRepositoryMock).should().addTransactionSubmittedCallback(manager)
+        then(transactionExecutionRepositoryMock).should().addTransactionEventsCallback(manager)
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
         then(transactionInfoRepositoryMock).shouldHaveZeroInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
@@ -62,7 +62,7 @@ class DefaultTransactionTriggerManagerTest {
         data.pushRepoSetup.accept(pushServiceRepositoryMock)
 
         val transaction = SafeTransaction(Transaction(TEST_SAFE), TransactionExecutionRepository.Operation.CALL)
-        manager.onTransactionSubmitted(TEST_SAFE, transaction, "SomeHash")
+        manager.onTransactionSubmitted(TEST_SAFE, transaction, "SomeHash", null)
 
         data.pushRepoCheck.accept(pushServiceRepositoryMock)
         then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()

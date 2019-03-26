@@ -22,17 +22,16 @@ class AndroidLocalNotificationManager @Inject constructor(
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
 
     init {
-        createNotificationChannel()
+        createNotificationChannel(CHANNEL_ID, context.getString(R.string.channel_signing_request_description))
     }
 
-    private fun createNotificationChannel() {
+    override fun createNotificationChannel(channelId: String, description: String, importance: Int) {
         if (Build.VERSION.SDK_INT < 26) {
             return
         }
         val name = context.getString(R.string.channel_signing_request_name)
-        val importance = NotificationManager.IMPORTANCE_HIGH
-        val channel = NotificationChannel(CHANNEL_ID, name, importance)
-        channel.description = context.getString(R.string.channel_signing_request_description)
+        val channel = NotificationChannel(channelId, name, importance)
+        channel.description = description
 
         channel.enableLights(true)
         channel.lightColor = LIGHT_COLOR
@@ -47,8 +46,8 @@ class AndroidLocalNotificationManager @Inject constructor(
         notificationManager?.cancel(id)
     }
 
-    override fun show(id: Int, title: String, message: String, intent: Intent) {
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+    override fun builder(title: String, message: String, intent: PendingIntent, channelId: String, category: String?, priority: Int) =
+        NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_stat_gno)
             .setContentTitle(title)
             .setContentText(message)
@@ -56,10 +55,22 @@ class AndroidLocalNotificationManager @Inject constructor(
             .setVibrate(VIBRATE_PATTERN)
             .setLights(LIGHT_COLOR, 100, 100)
             .setDefaults(Notification.DEFAULT_ALL)
-            .setPriority(Notification.PRIORITY_HIGH)
-            .setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+            .setCategory(category)
+            .setPriority(priority)
+            .setContentIntent(intent)!!
 
-        notificationManager?.notify(id, builder.build())
+
+    override fun show(id: Int, title: String, message: String, intent: Intent, channelId: String?) =
+        show(id, title, message, PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT), channelId)
+
+    override fun show(id: Int, title: String, message: String, intent: PendingIntent, channelId: String?) {
+        val builder =
+            builder(title, message, intent, channelId ?: CHANNEL_ID)
+        show(id, builder.build())
+    }
+
+    override fun show(id: Int, notification: Notification) {
+        notificationManager?.notify(id, notification)
     }
 
     companion object {
@@ -72,5 +83,20 @@ class AndroidLocalNotificationManager @Inject constructor(
 interface LocalNotificationManager {
     fun hide(id: Int)
 
-    fun show(id: Int, title: String, message: String, intent: Intent)
+    fun createNotificationChannel(channelId: String, description: String, importance: Int = 4)
+
+    fun builder(
+        title: String,
+        message: String,
+        intent: PendingIntent,
+        channelId: String,
+        category: String? = null,
+        priority: Int = NotificationCompat.PRIORITY_HIGH
+    ): NotificationCompat.Builder
+
+    fun show(id: Int, title: String, message: String, intent: Intent, channelId: String? = null)
+
+    fun show(id: Int, title: String, message: String, intent: PendingIntent, channelId: String? = null)
+
+    fun show(id: Int, notification: Notification)
 }

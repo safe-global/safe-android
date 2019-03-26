@@ -28,6 +28,11 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.TokenServiceApi
+import pm.gnosis.heimdall.data.repositories.impls.Session
+import pm.gnosis.heimdall.data.repositories.impls.wc.FileWCSessionStore
+import pm.gnosis.heimdall.data.repositories.impls.wc.MoshiPayloadAdapter
+import pm.gnosis.heimdall.data.repositories.impls.wc.OkHttpTransport
+import pm.gnosis.heimdall.data.repositories.impls.wc.WCSessionStore
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39Generator
@@ -48,6 +53,7 @@ import pm.gnosis.svalinn.security.impls.AndroidKeyStorage
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
@@ -157,6 +163,7 @@ class ApplicationModule(private val application: Application) {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)
+            pingInterval(5, TimeUnit.SECONDS)
             certificatePinner(
                 CertificatePinner.Builder().apply {
                     BuildConfig.PINNED_URLS.split(",").forEach { pinnedUrl ->
@@ -167,6 +174,19 @@ class ApplicationModule(private val application: Application) {
                 }.build()
             )
         }.build()
+
+    @Provides
+    @Singleton
+    fun providesSessionStore(@ApplicationContext context: Context, moshi: Moshi): WCSessionStore =
+        FileWCSessionStore(File(context.cacheDir, "session_store.json").apply { createNewFile() }, moshi) // TODO implement proper store
+
+    @Provides
+    @Singleton
+    fun providesSessionPayloadAdapter(moshi: Moshi): Session.PayloadAdapter = MoshiPayloadAdapter(moshi)
+
+    @Provides
+    @Singleton
+    fun providesSessionTransportBuilder(client: OkHttpClient, moshi: Moshi): Session.Transport.Builder = OkHttpTransport.Builder(client, moshi)
 
     @Provides
     @Singleton

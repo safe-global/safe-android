@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -992,7 +993,6 @@ class DefaultPushServiceRepositoryTest {
             v = "27"
         )
         contextMock.mockGetString()
-        willDoNothing().given(localNotificationManagerMock).show(anyInt(), anyString(), anyString(), MockUtils.any())
 
         pushServiceRepository.handlePushMessage(pushMessage)
 
@@ -1000,8 +1000,10 @@ class DefaultPushServiceRepositoryTest {
             id = eq(pushMessage.hash.hashCode()),
             title = capture(stringsArgumentCaptor),
             message = capture(stringsArgumentCaptor),
-            intent = MockUtils.any()
+            intent = MockUtils.any<Intent>(),
+            channelId = isNull()
         )
+        then(localNotificationManagerMock).shouldHaveNoMoreInteractions()
 
         assertEquals(R.string.sign_transaction_request_title.toString(), stringsArgumentCaptor.allValues[0])
         assertEquals(R.string.sign_transaction_request_message.toString(), stringsArgumentCaptor.allValues[1])
@@ -1087,7 +1089,8 @@ class DefaultPushServiceRepositoryTest {
                 eq(TEST_SAFE_ADDRESS.hashCode()),
                 MockUtils.eq(R.string.safe_created_notification_title.toString()),
                 MockUtils.eq("${R.string.safe_created_notification_message.toString()}, ${TEST_SAFE_ADDRESS.asEthereumAddressChecksumString()}"),
-                MockUtils.any()
+                MockUtils.any<Intent>(),
+                isNull()
             )
         then(localNotificationManagerMock).shouldHaveNoMoreInteractions()
 

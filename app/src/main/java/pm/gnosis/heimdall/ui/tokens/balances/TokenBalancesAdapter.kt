@@ -37,7 +37,7 @@ class TokenBalancesAdapter @Inject constructor(
             itemView.layout_tokens_item_balance_symbol.text = data.token.symbol
             itemView.layout_tokens_item_balance_balance.text = data.displayString()
             if (data.token == ETHER_TOKEN) itemView.layout_tokens_item_balance_symbol_image.setImageResource(R.drawable.ic_ether_symbol)
-            else picasso.load(data.token.logoUrl).fit().into(itemView.layout_tokens_item_balance_symbol_image)
+            else picasso.load(data.token.logoUrl).into(itemView.layout_tokens_item_balance_symbol_image)
         }
 
         override fun onClick(v: View?) {

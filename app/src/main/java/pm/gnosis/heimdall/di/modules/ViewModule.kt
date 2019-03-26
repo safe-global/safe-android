@@ -44,6 +44,7 @@ import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionContract
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusContract
+import pm.gnosis.heimdall.ui.walletconnect.WalletConnectSessionsContract
 
 @Module
 class ViewModule(val context: Context) {
@@ -193,6 +194,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesUnlockContract(provider: ViewModelProvider) = provider[UnlockContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesWalletConnectSessionsContract(provider: ViewModelProvider) = provider[WalletConnectSessionsContract::class.java]
 
     @Provides
     @ForView

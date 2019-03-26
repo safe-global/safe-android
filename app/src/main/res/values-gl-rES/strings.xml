@@ -15,7 +15,7 @@
     <string name="tab_title_assets">Tokens</string>
     <string name="address_clipboard_success">Enderezo copiado no portapapeis</string>
     <string name="share_address">Compartir enderezo</string>
-    <string name="x_data_bytes">%x bytes incluídos</string>
+    <string name="x_data_bytes">%d bytes incluídos</string>
     <string name="submit_transaction">Enviar transaccións</string>
     <string name="cancel">Cancelar</string>
     <string name="invalid_ethereum_address">Enderezo de ethereum non válido</string>

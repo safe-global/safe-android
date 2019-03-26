@@ -64,6 +64,10 @@ abstract class ApplicationBindingsModule {
     @Singleton
     abstract fun bindsAppPreferencesManager(manager: WrappedAppPreferencesManager): AppPreferencesManager
 
+    @Binds
+    @Singleton
+    abstract fun bindsSessionBuilder(builder: WCSessionBuilder): SessionBuilder
+
     /*
         Repositories
      */
@@ -71,6 +75,10 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsAddressBookRepository(repository: DefaultAddressBookRepository): AddressBookRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsBridgeRepository(repository: WalletConnectBridgeRepository): BridgeRepository
 
     @Binds
     @Singleton

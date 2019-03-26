@@ -19,7 +19,7 @@ import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.TransactionSubmittedCallback
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.TransactionEventsCallback
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
@@ -47,13 +47,13 @@ class DefaultTransactionExecutionRepository @Inject constructor(
 
     private val descriptionsDao = appDb.descriptionsDao()
 
-    private val transactionSubmittedCallbacks = CopyOnWriteArraySet<TransactionSubmittedCallback>()
+    private val transactionSubmittedCallbacks = CopyOnWriteArraySet<TransactionEventsCallback>()
     private val nonceCache = ConcurrentHashMap<Solidity.Address, BigInteger>()
 
-    override fun addTransactionSubmittedCallback(callback: TransactionSubmittedCallback): Boolean =
+    override fun addTransactionEventsCallback(callback: TransactionEventsCallback): Boolean =
         transactionSubmittedCallbacks.add(callback)
 
-    override fun removeTransactionSubmittedCallback(callback: TransactionSubmittedCallback): Boolean =
+    override fun removeTransactionEventsCallback(callback: TransactionEventsCallback): Boolean =
         transactionSubmittedCallbacks.remove(callback)
 
     override fun calculateHash(
@@ -305,13 +305,14 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         dataGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        addToHistory: Boolean
+        addToHistory: Boolean,
+        referenceId: Long?
     ): Single<String> =
         loadExecutionParams(safeAddress, transaction, signatures, senderIsOwner, txGas, dataGas, gasPrice, gasToken)
             .flatMap { relayServiceApi.execute(safeAddress.asEthereumAddressChecksumString(), it) }
             .flatMap {
                 transaction.wrapped.nonce?.let { nonceCache[safeAddress] = it }
-                broadcastTransactionSubmitted(safeAddress, transaction, it.transactionHash)
+                broadcastTransactionSubmitted(safeAddress, transaction, it.transactionHash, referenceId)
                 if (addToHistory)
                     handleSubmittedTransaction(
                         safeAddress, transaction, it.transactionHash.addHexPrefix(), txGas, dataGas, gasPrice, gasToken
@@ -323,9 +324,14 @@ class DefaultTransactionExecutionRepository @Inject constructor(
     private fun broadcastTransactionSubmitted(
         safeAddress: Solidity.Address,
         transaction: SafeTransaction,
-        chainHash: String
+        chainHash: String,
+        referenceId: Long?
     ) {
-        transactionSubmittedCallbacks.forEach { it.onTransactionSubmitted(safeAddress, transaction, chainHash) }
+        transactionSubmittedCallbacks.forEach { it.onTransactionSubmitted(safeAddress, transaction, chainHash, referenceId) }
+    }
+
+    override fun reject(referenceId: Long) {
+        transactionSubmittedCallbacks.forEach { it.onTransactionRejected(referenceId) }
     }
 
     private fun loadExecutionParams(

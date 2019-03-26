@@ -729,7 +729,8 @@ class RecoveringSafeViewModelTest {
         given(
             execRepoMock.submit(
                 MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(),
-                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(),
+                anyBoolean(), MockUtils.any()
             )
         ).willReturn(Single.error(ConnectException()))
 
@@ -772,7 +773,8 @@ class RecoveringSafeViewModelTest {
         given(
             execRepoMock.submit(
                 MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(),
-                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(),
+                anyBoolean(), MockUtils.any()
             )
         ).willReturn(Single.just(TEST_TX_HASH))
         val error = IllegalArgumentException()
@@ -818,7 +820,8 @@ class RecoveringSafeViewModelTest {
         given(
             execRepoMock.submit(
                 MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(),
-                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean()
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(),
+                anyBoolean(), MockUtils.any()
             )
         ).willReturn(Single.just(TEST_TX_HASH))
         given(safeRepoMock.updateRecoveringSafe(MockUtils.any())).willReturn(Completable.complete())

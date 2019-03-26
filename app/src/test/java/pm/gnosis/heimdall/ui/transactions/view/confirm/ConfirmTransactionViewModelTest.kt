@@ -55,7 +55,7 @@ class ConfirmTransactionViewModelTest {
     @Test
     fun setup() {
         var executionInfo: ((SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>)? = null
-        given(submitTransactionHelper.setup(MockUtils.any(), MockUtils.any())).will {
+        given(submitTransactionHelper.setup(MockUtils.any(), MockUtils.any(), MockUtils.any())).will {
             executionInfo = it.arguments[1] as ((SafeTransaction) -> Single<TransactionExecutionRepository.ExecuteInformation>)?
             Unit
         }
@@ -151,7 +151,7 @@ class ConfirmTransactionViewModelTest {
 
         observer.assertNoValues().assertNoErrors().assertComplete()
 
-        then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any())
+        then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(submitTransactionHelper).should().observe(events, transactionData, mapOf(TEST_OWNERS[0] to TEST_SIGNATURE))
         then(submitTransactionHelper).shouldHaveNoMoreInteractions()
 
@@ -184,7 +184,7 @@ class ConfirmTransactionViewModelTest {
 
         observer.assertError(expected).assertNoValues()
 
-        then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any())
+        then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(submitTransactionHelper).shouldHaveNoMoreInteractions()
 
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
@@ -237,7 +237,7 @@ class ConfirmTransactionViewModelTest {
 
         observer.assertError(error).assertNoValues()
 
-        then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any())
+        then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(submitTransactionHelper).shouldHaveNoMoreInteractions()
 
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
@@ -277,7 +277,7 @@ class ConfirmTransactionViewModelTest {
 
         observer.assertError(error).assertNoValues()
 
-        then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any())
+        then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(submitTransactionHelper).shouldHaveNoMoreInteractions()
 
         then(relayRepositoryMock).should().checkConfirmation(

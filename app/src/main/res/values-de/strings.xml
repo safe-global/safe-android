@@ -15,7 +15,7 @@
     <string name="tab_title_assets">Token</string>
     <string name="address_clipboard_success">Adresse in Zwischenablage kopiert</string>
     <string name="share_address">Adresse teilen</string>
-    <string name="x_data_bytes">%x Bytes enthalten</string>
+    <string name="x_data_bytes">%d Bytes enthalten</string>
     <string name="submit_transaction">Transaktion absenden</string>
     <string name="cancel">Abbrechen</string>
     <string name="invalid_ethereum_address">Ungültige Ethereumadresse</string>
