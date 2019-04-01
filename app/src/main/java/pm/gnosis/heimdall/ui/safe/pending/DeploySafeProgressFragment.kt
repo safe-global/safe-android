@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.setupEtherscanTransactionUrl
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.appendText
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -53,9 +54,7 @@ class DeploySafeProgressFragment : BaseFragment() {
             .append("\n")
             .appendText(getString(R.string.creating_your_new_safe), StyleSpan(Typeface.BOLD))
 
-        arguments?.getString(EXTRA_SAFE_TX_HASH)?.let {
-            layout_deploy_safe_progress_description.setupEtherscanTransactionUrl(it, R.string.deploy_safe_description)
-        }
+        layout_deploy_safe_progress_description.visible(false)
     }
 
     override fun onStart() {
@@ -65,6 +64,13 @@ class DeploySafeProgressFragment : BaseFragment() {
         disposables += viewModel.notifySafeFunded()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = ::onDeployedSafe, onError = Timber::e)
+
+        disposables += viewModel.observerTransactionHash()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onError = Timber::e) {
+                layout_deploy_safe_progress_description.visible(true)
+                layout_deploy_safe_progress_description.setupEtherscanTransactionUrl(it.asTransactionHash(), R.string.deploy_safe_description)
+            }
     }
 
     private fun onDeployedSafe(address: Solidity.Address) {
@@ -80,11 +86,9 @@ class DeploySafeProgressFragment : BaseFragment() {
 
     companion object {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
-        private const val EXTRA_SAFE_TX_HASH = "extra.string.safe_tx_hash"
 
         fun createInstance(pendingSafe: PendingSafe) = DeploySafeProgressFragment().withArgs(Bundle().apply {
             putString(EXTRA_SAFE_ADDRESS, pendingSafe.address.asEthereumAddressString())
-            putString(EXTRA_SAFE_TX_HASH, pendingSafe.hash.asTransactionHash())
         })
     }
 }

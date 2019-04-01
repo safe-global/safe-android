@@ -62,7 +62,7 @@ class SafeCreationFundViewModelTest {
     fun observeCreationInfo() {
         val safeAddress = "1"
         val testObserver = TestObserver.create<Result<SafeCreationFundContract.CreationInfo>>()
-        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), BigInteger.ONE, ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         val tokenTestSingle = TestSingleFactory<ERC20Token>()
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenTestSingle.get())
@@ -109,7 +109,7 @@ class SafeCreationFundViewModelTest {
         contextMock.mockGetString()
         val safeAddress = "1"
         val testObserver = TestObserver.create<Result<SafeCreationFundContract.CreationInfo>>()
-        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), BigInteger.ONE, ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         val tokenTestSingle = TestSingleFactory<ERC20Token>()
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenTestSingle.get())
@@ -166,7 +166,7 @@ class SafeCreationFundViewModelTest {
     fun observeHashEnoughDeployBalance() {
         val safeAddress = "1"
         val testObserver = TestObserver.create<Unit>()
-        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), BigInteger.ONE, ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
             .willReturn(Observable.just(listOf(ERC20Token.ETHER_TOKEN to BigInteger.valueOf(100))))
@@ -186,7 +186,7 @@ class SafeCreationFundViewModelTest {
         RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
         val safeAddress = "1"
         val testObserver = TestObserver.create<Unit>()
-        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), BigInteger.ONE, ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         var enoughBalance = false
 
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
@@ -216,7 +216,7 @@ class SafeCreationFundViewModelTest {
         RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
         val safeAddress = "1"
         val testObserver = TestObserver.create<Unit>()
-        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), BigInteger.ONE, ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         var enoughBalance = false
 
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
@@ -244,7 +244,7 @@ class SafeCreationFundViewModelTest {
     fun observeHasEnoughDeployBalanceErrorUpdatingDb() {
         val safeAddress = "1"
         val testObserver = TestObserver.create<Unit>()
-        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), BigInteger.ONE, ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         val exception = Exception()
 
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
@@ -266,7 +266,7 @@ class SafeCreationFundViewModelTest {
     fun observeHasEnoughDeployBalanceRequestError() {
         val safeAddress = "1"
         val testObserver = TestObserver.create<Unit>()
-        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), BigInteger.ONE, ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         val exception = Exception()
 
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
@@ -286,7 +286,7 @@ class SafeCreationFundViewModelTest {
     fun observeHasEnoughDeployBalanceRequestInvalidResponse() {
         val safeAddress = "1"
         val testObserver = TestObserver.create<Unit>()
-        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), BigInteger.ONE, ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
 
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))

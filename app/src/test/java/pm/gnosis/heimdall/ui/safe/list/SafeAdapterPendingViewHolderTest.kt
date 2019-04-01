@@ -117,7 +117,7 @@ class SafeAdapterPendingViewHolderTest {
 
     @Test
     fun bindPendingSafeAndSelect() {
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         bindSafeAndSelect(safe, TEST_PENDING_SAFE, "0xC2AC...a48132")
     }
 
@@ -137,7 +137,7 @@ class SafeAdapterPendingViewHolderTest {
         val addressBookSingleFactory = TestSingleFactory<AddressBookEntry>()
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(addressBookSingleFactory.get())
 
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         viewHolder.bind(safe, emptyList())
         viewHolder.start()
 
@@ -155,7 +155,7 @@ class SafeAdapterPendingViewHolderTest {
         val addressBookSingleFactory = TestSingleFactory<AddressBookEntry>()
         given(addressBookRepository.loadAddressBookEntry(MockUtils.any())).willReturn(addressBookSingleFactory.get())
 
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         viewHolder.bind(safe, emptyList())
         viewHolder.start()
 
@@ -176,7 +176,6 @@ class SafeAdapterPendingViewHolderTest {
 
     companion object {
         private val TEST_SAFE = "0x1f81FFF89Bd57811983a35650296681f99C65C7E".asEthereumAddress()!!
-        private val TEST_TX_HASH = "0xdae721569a948b87c269ebacaa5a4a67728095e32f9e7e4626f109f27a73b40f".hexAsBigInteger()
         private val TEST_PENDING_SAFE = "0xC2AC20b3Bb950C087f18a458DB68271325a48132".asEthereumAddress()!!
         private val TEST_RECOVERING_SAFE = "0xb36574155395D41b92664e7A215103262a14244A".asEthereumAddress()!!
         private val TEST_PAYMENT_TOKEN = ERC20Token.ETHER_TOKEN.address

@@ -4,7 +4,6 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
@@ -51,8 +50,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             .flatMap { request -> relayServiceApi.safeCreation2(request).map { request to it } }
             .flatMap { (request, response) ->
                 assertResponse(request, response)
-                // TODO: check how to handle transaction hash
-                gnosisSafeRepository.addPendingSafe(response.safe, BigInteger.ZERO, null, response.payment, response.paymentToken)
+                gnosisSafeRepository.addPendingSafe(response.safe, null, response.payment, response.paymentToken)
                     .andThen(Single.just(response.safe))
             }
             .subscribeOn(Schedulers.io())

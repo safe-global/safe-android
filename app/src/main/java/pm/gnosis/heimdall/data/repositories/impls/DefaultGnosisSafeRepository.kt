@@ -172,10 +172,10 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .map { it.fromDb() }
 
     override fun addPendingSafe(
-        address: Solidity.Address, transactionHash: BigInteger, name: String?, payment: BigInteger, paymentToken: Solidity.Address
+        address: Solidity.Address, name: String?, payment: BigInteger, paymentToken: Solidity.Address
     ): Completable =
         Completable.fromAction {
-            safeDao.insertPendingSafe(PendingGnosisSafeDb(address, transactionHash, paymentToken, payment))
+            safeDao.insertPendingSafe(PendingGnosisSafeDb(address, BigInteger.ZERO, paymentToken, payment))
         }
             .subscribeOn(Schedulers.io())
             .andThen(addSafeName(address, name))

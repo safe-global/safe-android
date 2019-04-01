@@ -59,6 +59,7 @@ Creating your new Safe..." />
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_deploy_safe_progress_progress_bar"
         tools:text="This process should take a couple of minutes.
-Follow progress on Etherscan.io" />
+Follow progress on Etherscan.io"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

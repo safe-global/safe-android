@@ -133,7 +133,6 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Completable.complete())
@@ -156,7 +155,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
                     2, saltNonce!!, ETHER_TOKEN.address
                 )
             )
-        then(gnosisSafeRepositoryMock).should().addPendingSafe(response!!.safe, BigInteger.ZERO, null, response!!.payment, ETHER_TOKEN.address)
+        then(gnosisSafeRepositoryMock).should().addPendingSafe(response!!.safe, null, response!!.payment, ETHER_TOKEN.address)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
@@ -205,7 +204,6 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Completable.error(exception))
@@ -228,7 +226,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
                     2, saltNonce!!, PAYMENT_TOKEN.address
                 )
             )
-        then(gnosisSafeRepositoryMock).should().addPendingSafe(response!!.safe, BigInteger.ZERO, null, response!!.payment, PAYMENT_TOKEN.address)
+        then(gnosisSafeRepositoryMock).should().addPendingSafe(response!!.safe, null, response!!.payment, PAYMENT_TOKEN.address)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
@@ -656,7 +654,6 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
-                MockUtils.any(),
                 MockUtils.any()
             )
         ).willReturn(Completable.complete())
@@ -679,7 +676,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
                     1, saltNonce!!, ETHER_TOKEN.address
                 )
             )
-        then(gnosisSafeRepositoryMock).should().addPendingSafe(response!!.safe, BigInteger.ZERO, null, response!!.payment, ETHER_TOKEN.address)
+        then(gnosisSafeRepositoryMock).should().addPendingSafe(response!!.safe, null, response!!.payment, ETHER_TOKEN.address)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
