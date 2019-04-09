@@ -104,6 +104,17 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
+    fun providesRpcProxyApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): Session.RpcProxyApi =
+        Retrofit.Builder()
+            .client(client)
+            .baseUrl(BuildConfig.BLOCKCHAIN_NET_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+            .build()
+            .create(Session.RpcProxyApi::class.java)
+
+    @Provides
+    @Singleton
     fun providesEthereumJsonRpcApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): RetrofitEthereumRpcApi =
         Retrofit.Builder()
             .client(client)
