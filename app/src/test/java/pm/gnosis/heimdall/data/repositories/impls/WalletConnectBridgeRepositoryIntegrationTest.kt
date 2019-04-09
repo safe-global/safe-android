@@ -36,10 +36,12 @@ class WalletConnectBridgeRepositoryIntegrationTest {
         val sessionTransportBuilder = OkHttpTransport.Builder(client, moshi)
         val sessionBuilder = WCSessionBuilder(sessionStore, sessionPayloadAdapter, sessionTransportBuilder)
         val safeRepoMock = mock(GnosisSafeRepository::class.java)
+        val rpcProxyApiMock = mock(Session.RpcProxyApi::class.java)
         given(safeRepoMock.observeSafes()).willReturn(Flowable.just(listOf(Safe("0xdeadbeef".asEthereumAddress()!!))))
         val repo =
             WalletConnectBridgeRepository(
                 mock(Context::class.java),
+                rpcProxyApiMock,
                 mock(TransactionInfoRepository::class.java),
                 mock(LocalNotificationManager::class.java),
                 safeRepoMock,

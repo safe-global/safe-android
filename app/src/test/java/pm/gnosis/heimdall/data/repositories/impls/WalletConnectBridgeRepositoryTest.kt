@@ -47,6 +47,9 @@ class WalletConnectBridgeRepositoryTest {
     lateinit var localNotificationManagerMock: LocalNotificationManager
 
     @Mock
+    lateinit var rpcProxyApiMock: Session.RpcProxyApi
+
+    @Mock
     lateinit var safeRepositoryMock: GnosisSafeRepository
 
     @Mock
@@ -63,7 +66,7 @@ class WalletConnectBridgeRepositoryTest {
     @Before
     fun setUp() {
         repository = WalletConnectBridgeRepository(
-            contextMock, infoRepositoryMock, localNotificationManagerMock, safeRepositoryMock,
+            contextMock, rpcProxyApiMock, infoRepositoryMock, localNotificationManagerMock, safeRepositoryMock,
             sessionStoreMock, sessionBuilderMock,
             executionRepositoryMock
         )
