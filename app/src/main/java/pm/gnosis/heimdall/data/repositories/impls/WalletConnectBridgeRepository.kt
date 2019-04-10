@@ -3,14 +3,19 @@ package pm.gnosis.heimdall.data.repositories.impls
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.PublishSubject
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.ethereum.rpc.EthereumRpcConnector
+import pm.gnosis.ethereum.rpc.models.JsonRpcBlockResult
+import pm.gnosis.ethereum.rpc.models.JsonRpcError
+import pm.gnosis.ethereum.rpc.models.JsonRpcRequest
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
@@ -25,6 +30,9 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigIntegerOrNull
+import retrofit2.http.Body
+import retrofit2.http.POST
+import timber.log.Timber
 import java.lang.IllegalStateException
 import java.net.URLDecoder
 import java.util.concurrent.ConcurrentHashMap
@@ -33,6 +41,7 @@ import javax.inject.Singleton
 
 class WalletConnectBridgeRepository @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val rpcProxyApi: Session.RpcProxyApi,
     private val infoRepository: TransactionInfoRepository,
     private val localNotificationManager: LocalNotificationManager,
     private val safeRepository: GnosisSafeRepository,
@@ -95,45 +104,57 @@ class WalletConnectBridgeRepository @Inject constructor(
     private fun internalCreateSession(config: Session.Config) =
         sessionBuilder.build(
             config,
-            Session.PayloadAdapter.PeerMeta(name = context.getString(R.string.app_name))
+            Session.PeerMeta(name = context.getString(R.string.app_name))
         ).let {
             it.addCallback(object : Session.Callback {
 
                 @SuppressLint("CheckResult")
-                override fun sendTransaction(
-                    id: Long,
-                    from: String,
-                    to: String,
-                    nonce: String,
-                    gasPrice: String,
-                    gasLimit: String,
-                    value: String,
-                    data: String
-                ) {
-                    sessionRequests[id] = config.handshakeTopic
-                    Single.fromCallable {
-                        val safe = from.asEthereumAddress() ?: throw IllegalArgumentException("Invalid Safe address: $from")
-                        val txTo = to.asEthereumAddress() ?: throw IllegalArgumentException("Invalid to address: $to")
-                        val txValue = value.hexAsBigIntegerOrNull() ?: throw IllegalArgumentException("Invalid to value: $value")
-                        safe to SafeTransaction(
-                            Transaction(txTo, value = Wei(txValue), data = data),
-                            TransactionExecutionRepository.Operation.CALL
-                        )
+                override fun handleMethodCall(call: Session.MethodCall) {
+                    when(call) {
+                        is Session.MethodCall.SendTransaction ->
+                            call.apply {
+                                sessionRequests[id] = config.handshakeTopic
+                                Single.fromCallable {
+                                    val safe = from.asEthereumAddress() ?: throw IllegalArgumentException("Invalid Safe address: $from")
+                                    val txTo = to.asEthereumAddress() ?: throw IllegalArgumentException("Invalid to address: $to")
+                                    val txValue = value.hexAsBigIntegerOrNull() ?: throw IllegalArgumentException("Invalid to value: $value")
+                                    safe to SafeTransaction(
+                                        Transaction(txTo, value = Wei(txValue), data = data),
+                                        TransactionExecutionRepository.Operation.CALL
+                                    )
+                                }
+                                    .flatMap { (safe, tx) -> infoRepository.parseTransactionData(tx).map { txData -> safe to txData } }
+                                    .subscribeBy(onError = { t ->
+                                        rejectRequest(id, 42, t.message ?: "Could not handle transaction").subscribe()
+                                    }) { (safe, txData) ->
+                                        showSendTransactionNotification(safe, txData, id)
+                                    }
+                            }
+                        is Session.MethodCall.SignMessage ->
+                            call.apply {
+                                it.rejectRequest(id, 1123, "The Gnosis Safe doesn't support eth_sign")
+                            }
+                        is Session.MethodCall.Custom ->
+                            call.apply {
+                                sessionRequests[id] = config.handshakeTopic
+                                try {
+                                    rpcProxyApi.proxy(Session.RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
+                                        .subscribeBy(onError = { t ->
+                                            rejectRequest(id, 42, t.message ?: "Could not handle custom call")
+                                        }) { result ->
+                                            result.error?.let { error ->
+                                                rejectRequest(id, error.code.toLong(), error.message).subscribe()
+                                            } ?: run {
+                                                approveRequest(id, result.result ?: "").subscribe()
+                                            }
+                                        }
+                                } catch (e: Exception) {
+                                    Timber.e(e)
+                                    rejectRequest(id, 42, "Could not handle custom call: $e").subscribe()
+                                }
+                            }
                     }
-                        .flatMap { (safe, tx) -> infoRepository.parseTransactionData(tx).map { txData -> safe to txData } }
-                        .subscribeBy(onError = { t ->
-                            rejectRequest(id, 42, t.message ?: "Could not handle transaction")
-                        }) { (safe, txData) ->
-                            showSendTransactionNotification(safe, txData, id)
-                        }
-
                 }
-
-                override fun signMessage(id: Long, address: String, message: String) {
-                    it.rejectRequest(id, 1123, "The Gnosis Safe doesn't support eth_sign")
-                }
-
-                override fun sessionRequest(peer: Session.PayloadAdapter.PeerData) {}
 
                 override fun sessionApproved() {}
 
@@ -190,39 +211,33 @@ class WalletConnectBridgeRepository @Inject constructor(
                 }
                 val cb = object : Session.Callback {
 
-                    override fun sendTransaction(
-                        id: Long,
-                        from: String,
-                        to: String,
-                        nonce: String,
-                        gasPrice: String,
-                        gasLimit: String,
-                        value: String,
-                        data: String
-                    ) {
-                        emitter.onNext(BridgeRepository.SessionEvent.Transaction(id, from, to, nonce, gasPrice, gasLimit, value, data))
+                    override fun handleMethodCall(call: Session.MethodCall) {
+                        when(call) {
+                            is Session.MethodCall.SessionRequest ->
+                                call.apply {
+                                    emitter.onNext(
+                                        BridgeRepository.SessionEvent.SessionRequest(
+                                            BridgeRepository.SessionMeta(
+                                                sessionId,
+                                                peer.meta?.name,
+                                                peer.meta?.description,
+                                                peer.meta?.icons,
+                                                sessions.containsKey(sessionId),
+                                                null
+                                            )
+                                        )
+                                    )
+                                }
+                            is Session.MethodCall.SendTransaction ->
+                                call.apply {
+                                    emitter.onNext(BridgeRepository.SessionEvent.Transaction(id, from, to, nonce, gasPrice, gasLimit, value, data))
+                                }
+                        }
                     }
-
-                    override fun signMessage(id: Long, address: String, message: String) {}
 
                     override fun sessionClosed(msg: String?) {
                         emitter.onNext(BridgeRepository.SessionEvent.Closed(sessionId))
                         emitter.onComplete()
-                    }
-
-                    override fun sessionRequest(peer: Session.PayloadAdapter.PeerData) {
-                        emitter.onNext(
-                            BridgeRepository.SessionEvent.SessionRequest(
-                                BridgeRepository.SessionMeta(
-                                    sessionId,
-                                    peer.meta?.name,
-                                    peer.meta?.description,
-                                    peer.meta?.icons,
-                                    sessions.containsKey(sessionId),
-                                    null
-                                )
-                            )
-                        )
                     }
 
                     override fun sessionApproved() {
@@ -309,7 +324,7 @@ class WalletConnectBridgeRepository @Inject constructor(
 }
 
 interface SessionBuilder {
-    fun build(config: Session.Config, clientMeta: Session.PayloadAdapter.PeerMeta): Session
+    fun build(config: Session.Config, clientMeta: Session.PeerMeta): Session
 }
 
 @Singleton
@@ -318,7 +333,7 @@ class WCSessionBuilder @Inject constructor(
     private val sessionPayloadAdapter: Session.PayloadAdapter,
     private val sessionTransportBuilder: Session.Transport.Builder
 ) : SessionBuilder {
-    override fun build(config: Session.Config, clientMeta: Session.PayloadAdapter.PeerMeta): Session = WCSession(
+    override fun build(config: Session.Config, clientMeta: Session.PeerMeta): Session = WCSession(
         config,
         sessionPayloadAdapter,
         sessionStore,
@@ -335,7 +350,7 @@ interface Session {
     fun update(accounts: List<String>, chainId: Long)
     fun kill()
 
-    fun peerMeta(): PayloadAdapter.PeerMeta?
+    fun peerMeta(): PeerMeta?
     fun approvedAccounts(): List<String>?
 
     fun approveRequest(id: Long, response: Any)
@@ -369,22 +384,32 @@ interface Session {
         }
     }
 
-    interface Callback {
+    interface RpcProxyApi {
+        @POST(".")
+        fun proxy(@Body jsonRpcRequest: ProxiedRequest): Single<ProxiedResult>
 
-        fun sendTransaction(
-            id: Long,
-            from: String,
-            to: String,
-            nonce: String,
-            gasPrice: String,
-            gasLimit: String,
-            value: String,
-            data: String
+
+        @JsonClass(generateAdapter = true)
+        data class ProxiedRequest(
+            @Json(name = "method") val method: String,
+            @Json(name = "params") val params: List<Any>,
+            @Json(name = "id") val id: Long = 1,
+            @Json(name = "jsonrpc") val jsonRpc: String = "2.0"
         )
 
-        fun signMessage(id: Long, address: String, message: String)
 
-        fun sessionRequest(peer: PayloadAdapter.PeerData)
+        @JsonClass(generateAdapter = true)
+        data class ProxiedResult(
+            @Json(name = "id") val id: Long,
+            @Json(name = "jsonrpc") val jsonRpc: String,
+            @Json(name = "error") val error: JsonRpcError? = null,
+            @Json(name = "result") val result: Any?
+        )
+    }
+
+    interface Callback {
+
+        fun handleMethodCall(call: MethodCall)
 
         fun sessionApproved()
 
@@ -394,44 +419,6 @@ interface Session {
     interface PayloadAdapter {
         fun parse(payload: String, key: String): MethodCall
         fun prepare(data: MethodCall, key: String): String
-
-        sealed class MethodCall(private val internalId: Long) {
-            fun id() = internalId
-
-            data class SessionRequest(val id: Long, val peer: PeerData) : MethodCall(id)
-
-            data class SessionUpdate(val id: Long, val params: SessionParams) : MethodCall(id)
-
-            data class ExchangeKey(val id: Long, val nextKey: String, val peer: PeerData) : MethodCall(id)
-
-            data class SendTransaction(
-                val id: Long,
-                val from: String,
-                val to: String,
-                val nonce: String,
-                val gasPrice: String,
-                val gasLimit: String,
-                val value: String,
-                val data: String
-            ) : MethodCall(id)
-
-            data class SignMessage(val id: Long, val address: String, val message: String) : MethodCall(id)
-
-            data class Response(val id: Long, val result: Any?, val error: Error? = null) : MethodCall(id)
-        }
-
-        data class PeerData(val id: String, val meta: PeerMeta?)
-        data class PeerMeta(
-            val url: String? = null,
-            val name: String? = null,
-            val description: String? = null,
-            val icons: List<String>? = null,
-            val ssl: Boolean? = null
-        )
-
-        data class SessionParams(val approved: Boolean, val chainId: Long?, val accounts: List<String>?, val message: String?)
-
-        data class Error(val code: Long, val message: String)
 
     }
 
@@ -466,9 +453,47 @@ interface Session {
 
     }
 
+    sealed class MethodCall(private val internalId: Long) {
+        fun id() = internalId
+
+        data class SessionRequest(val id: Long, val peer: PeerData) : MethodCall(id)
+
+        data class SessionUpdate(val id: Long, val params: SessionParams) : MethodCall(id)
+
+        data class ExchangeKey(val id: Long, val nextKey: String, val peer: PeerData) : MethodCall(id)
+
+        data class SendTransaction(
+            val id: Long,
+            val from: String,
+            val to: String,
+            val nonce: String,
+            val gasPrice: String,
+            val gasLimit: String,
+            val value: String,
+            val data: String
+        ) : MethodCall(id)
+
+        data class SignMessage(val id: Long, val address: String, val message: String) : MethodCall(id)
+
+        data class Custom(val id: Long, val method: String, val params: List<*>?) : MethodCall(id)
+
+        data class Response(val id: Long, val result: Any?, val error: Error? = null) : MethodCall(id)
+    }
+
     sealed class MethodCallException(val id: Long, val code: Long, message: String) : IllegalArgumentException(message) {
-        class InvalidMethod(id: Long, method: String) : MethodCallException(id, 42, "Unknown method: $method")
         class InvalidRequest(id: Long, request: String) : MethodCallException(id, 23, "Invalid request: $request")
         class InvalidAccount(id: Long, account: String) : MethodCallException(id, 3141, "Invalid account request: $account")
     }
+
+    data class PeerData(val id: String, val meta: PeerMeta?)
+    data class PeerMeta(
+        val url: String? = null,
+        val name: String? = null,
+        val description: String? = null,
+        val icons: List<String>? = null,
+        val ssl: Boolean? = null
+    )
+
+    data class SessionParams(val approved: Boolean, val chainId: Long?, val accounts: List<String>?, val message: String?)
+    data class Error(val code: Long, val message: String)
 }

@@ -47,6 +47,9 @@ class WalletConnectBridgeRepositoryTest {
     lateinit var localNotificationManagerMock: LocalNotificationManager
 
     @Mock
+    lateinit var rpcProxyApiMock: Session.RpcProxyApi
+
+    @Mock
     lateinit var safeRepositoryMock: GnosisSafeRepository
 
     @Mock
@@ -63,7 +66,7 @@ class WalletConnectBridgeRepositoryTest {
     @Before
     fun setUp() {
         repository = WalletConnectBridgeRepository(
-            contextMock, infoRepositoryMock, localNotificationManagerMock, safeRepositoryMock,
+            contextMock, rpcProxyApiMock, infoRepositoryMock, localNotificationManagerMock, safeRepositoryMock,
             sessionStoreMock, sessionBuilderMock,
             executionRepositoryMock
         )
@@ -217,7 +220,7 @@ class WalletConnectBridgeRepositoryTest {
         Session.Config(id, "wss://bridge.gnosis.pm", UUID.randomUUID().toString())
 
     private fun randomClientData(name: String = "Safe Tests") =
-        Session.PayloadAdapter.PeerData(UUID.randomUUID().toString(), Session.PayloadAdapter.PeerMeta(name = name))
+        Session.PeerData(UUID.randomUUID().toString(), Session.PeerMeta(name = name))
 
     @Test
     fun createSessionNew() {
@@ -229,7 +232,9 @@ class WalletConnectBridgeRepositoryTest {
         given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
         assertEquals(config.handshakeTopic, repository.createSession(url))
         then(sessionStoreMock).shouldHaveZeroInteractions()
-        then(sessionBuilderMock).should().build(config, Session.PayloadAdapter.PeerMeta(name = R.string.app_name.toString()))
+        then(sessionBuilderMock).should().build(config,
+            Session.PeerMeta(name = R.string.app_name.toString())
+        )
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().startService(MockUtils.any())
         then(contextMock).should().getString(R.string.app_name)
@@ -256,7 +261,9 @@ class WalletConnectBridgeRepositoryTest {
         failObserver.assertFailure(Predicate<Throwable> { it is IllegalArgumentException && it.message == "Session not active" })
 
         val sessionId = repository.createSession(url)
-        then(sessionBuilderMock).should().build(config, Session.PayloadAdapter.PeerMeta(name = R.string.app_name.toString()))
+        then(sessionBuilderMock).should().build(config,
+            Session.PeerMeta(name = R.string.app_name.toString())
+        )
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
         then(mockSession).should().addCallback(MockUtils.any())
         then(mockSession).shouldHaveNoMoreInteractions()
@@ -282,7 +289,9 @@ class WalletConnectBridgeRepositoryTest {
         failObserver.assertFailure(Predicate<Throwable> { it is IllegalArgumentException && it.message == "Session not active" })
 
         val sessionId = repository.createSession(url)
-        then(sessionBuilderMock).should().build(config, Session.PayloadAdapter.PeerMeta(name = R.string.app_name.toString()))
+        then(sessionBuilderMock).should().build(config,
+            Session.PeerMeta(name = R.string.app_name.toString())
+        )
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
         then(mockSession).should().addCallback(MockUtils.any())
         then(mockSession).shouldHaveNoMoreInteractions()
@@ -308,7 +317,9 @@ class WalletConnectBridgeRepositoryTest {
         failObserver.assertFailure(Predicate<Throwable> { it is IllegalArgumentException && it.message == "Session not active" })
 
         val sessionId = repository.createSession(url)
-        then(sessionBuilderMock).should().build(config, Session.PayloadAdapter.PeerMeta(name = R.string.app_name.toString()))
+        then(sessionBuilderMock).should().build(config,
+            Session.PeerMeta(name = R.string.app_name.toString())
+        )
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
         then(mockSession).should().addCallback(MockUtils.any())
         then(mockSession).shouldHaveNoMoreInteractions()
@@ -373,7 +384,9 @@ class WalletConnectBridgeRepositoryTest {
         failObserver.assertFailure(Predicate<Throwable> { it is IllegalArgumentException && it.message == "Session not active" })
 
         val sessionId = repository.createSession(url)
-        then(sessionBuilderMock).should().build(config, Session.PayloadAdapter.PeerMeta(name = R.string.app_name.toString()))
+        then(sessionBuilderMock).should().build(config,
+            Session.PeerMeta(name = R.string.app_name.toString())
+        )
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
         then(mockSession).should().addCallback(MockUtils.any())
         then(mockSession).shouldHaveNoMoreInteractions()
@@ -402,7 +415,7 @@ class WalletConnectBridgeRepositoryTest {
             "wc:12345678-4242-4242-4242-abcdef42abcd@1?bridge=https%3A%2F%2Fbridge.gnosis.pm&key=5eef4242e18349068f7ba3dbd909b3182be28475879d24e929c60e3cbb2d36ee"
         val config = Session.Config.fromWCUri(url)
         given(sessionStoreMock.load(MockUtils.any())).willReturn(
-            WCSessionStore.State(config, Session.PayloadAdapter.PeerData("id", null), null, null, config.key, null, null)
+            WCSessionStore.State(config, Session.PeerData("id", null), null, null, config.key, null, null)
         )
         val mockSession = mock(Session::class.java)
         given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
@@ -411,7 +424,9 @@ class WalletConnectBridgeRepositoryTest {
         createObserver.assertResult()
         then(sessionStoreMock).should().load(config.handshakeTopic)
         then(sessionStoreMock).shouldHaveZeroInteractions()
-        then(sessionBuilderMock).should().build(config, Session.PayloadAdapter.PeerMeta(name = R.string.app_name.toString()))
+        then(sessionBuilderMock).should().build(config,
+            Session.PeerMeta(name = R.string.app_name.toString())
+        )
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().startService(MockUtils.any())
         then(contextMock).should().getString(R.string.app_name)
