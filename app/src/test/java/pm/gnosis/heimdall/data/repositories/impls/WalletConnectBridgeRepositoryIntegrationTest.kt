@@ -8,13 +8,13 @@ import okhttp3.OkHttpClient
 import org.junit.Rule
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
+import org.walletconnect.impls.FileWCSessionStore
+import org.walletconnect.impls.MoshiPayloadAdapter
+import org.walletconnect.impls.OkHttpTransport
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
-import pm.gnosis.heimdall.data.repositories.impls.wc.FileWCSessionStore
-import pm.gnosis.heimdall.data.repositories.impls.wc.MoshiPayloadAdapter
-import pm.gnosis.heimdall.data.repositories.impls.wc.OkHttpTransport
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -36,7 +36,7 @@ class WalletConnectBridgeRepositoryIntegrationTest {
         val sessionTransportBuilder = OkHttpTransport.Builder(client, moshi)
         val sessionBuilder = WCSessionBuilder(sessionStore, sessionPayloadAdapter, sessionTransportBuilder)
         val safeRepoMock = mock(GnosisSafeRepository::class.java)
-        val rpcProxyApiMock = mock(Session.RpcProxyApi::class.java)
+        val rpcProxyApiMock = mock(RpcProxyApi::class.java)
         given(safeRepoMock.observeSafes()).willReturn(Flowable.just(listOf(Safe("0xdeadbeef".asEthereumAddress()!!))))
         val repo =
             WalletConnectBridgeRepository(
