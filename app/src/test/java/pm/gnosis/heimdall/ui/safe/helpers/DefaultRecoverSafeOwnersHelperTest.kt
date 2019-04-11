@@ -24,6 +24,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.Input
@@ -83,7 +84,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         val input = Input(phraseSubject, retrySubject, createSubject)
 
         given(safeRepoMock.loadInfo(MockUtils.any()))
-            .willReturn(Observable.just(SafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
+            .willReturn(Observable.just(createSafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some mnemonic")
         given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willThrow(IllegalStateException())
 
@@ -110,7 +111,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         val input = Input(phraseSubject, retrySubject, createSubject)
 
         given(safeRepoMock.loadInfo(MockUtils.any()))
-            .willReturn(Observable.just(SafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
+            .willReturn(Observable.just(createSafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
         given(bip39Mock.validateMnemonic(MockUtils.any())).willThrow(EmptyMnemonic(""))
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
@@ -151,7 +152,7 @@ class DefaultRecoverSafeOwnersHelperTest {
 
         // Test safe info success
         given(safeRepoMock.loadInfo(MockUtils.any()))
-            .willReturn(Observable.just(SafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
+            .willReturn(Observable.just(createSafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
         retrySubject.onNext(Unit)
         observer.assertValueCount(tests + 1).assertValueAt(tests, ViewUpdate.InputMnemonic)
         then(safeRepoMock).should(times(2)).loadInfo(TEST_SAFE)
@@ -168,7 +169,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         val input = Input(phraseSubject, retrySubject, createSubject)
 
         given(safeRepoMock.loadInfo(MockUtils.any()))
-            .willReturn(Observable.just(SafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
+            .willReturn(Observable.just(createSafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
         given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
@@ -206,7 +207,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, owners, false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, owners, false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -254,7 +255,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_SAFE, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_SAFE, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -292,7 +293,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_SAFE, TEST_RECOVER_1), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_SAFE, TEST_RECOVER_1), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -330,7 +331,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -369,7 +370,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOfNotNull(TEST_APP, extension, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOfNotNull(TEST_APP, extension, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -423,7 +424,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, owners, false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, owners, false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -438,12 +439,14 @@ class DefaultRecoverSafeOwnersHelperTest {
                 val tx = it.arguments[2] as SafeTransaction
                 Single.just(
                     TransactionExecutionRepository.ExecuteInformation(
-                        TEST_HASH.toHex(), tx, TEST_SAFE, 2, owners,
+                        TEST_HASH.toHex(), tx, TEST_SAFE, 2, owners, SemVer(1, 0, 0),
                         TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO
                     )
                 )
             }
-        given(executionRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(executionRepoMock.calculateHash(
+            MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
+        )
             .willReturn(Single.just(TEST_HASH))
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
@@ -477,7 +480,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).should()
-            .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
+            .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
         then(tokenRepositoryMock).should().loadPaymentToken()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
@@ -558,7 +561,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -607,7 +610,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -618,7 +621,11 @@ class DefaultRecoverSafeOwnersHelperTest {
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
         given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
-        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.error(UnknownHostException()))
+        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
+            Single.error(
+                UnknownHostException()
+            )
+        )
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
         helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION).subscribe(observer)
@@ -656,7 +663,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    SafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -667,13 +674,25 @@ class DefaultRecoverSafeOwnersHelperTest {
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
         given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
         val execInfo = TransactionExecutionRepository.ExecuteInformation(
-            TEST_HASH.toHex(), SafeTransaction(Transaction(TEST_SAFE), TransactionExecutionRepository.Operation.CALL), TEST_SAFE, 2, TEST_OWNERS,
-            TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO
+            TEST_HASH.toHex(),
+            SafeTransaction(Transaction(TEST_SAFE), TransactionExecutionRepository.Operation.CALL),
+            TEST_SAFE,
+            2,
+            TEST_OWNERS,
+            SemVer(1, 0, 0),
+            TEST_GAS_TOKEN,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO
         )
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(execInfo))
         val error = IllegalStateException()
-        given(executionRepoMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(executionRepoMock.calculateHash(
+            MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
+        )
             .willReturn(Single.error(error))
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
@@ -694,7 +713,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).should()
-            .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
+            .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
         then(tokenRepositoryMock).should().loadPaymentToken()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
@@ -707,7 +726,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         val ownerC = Solidity.Address(12.toBigInteger())
         val ownerD = Solidity.Address(13.toBigInteger())
 
-        val safeInfo = SafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerC, ownerB), false, emptyList())
+        val safeInfo = createSafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerC, ownerB), false, emptyList())
 
         val expectedSafeTransaction = SafeTransaction(
             Transaction(
@@ -733,7 +752,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         val ownerE = Solidity.Address(14.toBigInteger())
         val ownerF = Solidity.Address(15.toBigInteger())
 
-        val safeInfo = SafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerB, ownerC, ownerD), false, emptyList())
+        val safeInfo = createSafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerB, ownerC, ownerD), false, emptyList())
 
 
         val expectedSafeTransaction = SafeTransaction(
@@ -779,7 +798,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         val ownerE = Solidity.Address(14.toBigInteger())
         val ownerF = Solidity.Address(15.toBigInteger())
 
-        val safeInfo = SafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerB, ownerC, ownerD), false, emptyList())
+        val safeInfo = createSafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerB, ownerC, ownerD), false, emptyList())
 
         val expectedSafeTransaction = SafeTransaction(
             Transaction(
@@ -824,7 +843,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         val ownerE = Solidity.Address(14.toBigInteger())
         val ownerF = Solidity.Address(15.toBigInteger())
 
-        val safeInfo = SafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerB, ownerC, ownerD), false, emptyList())
+        val safeInfo = createSafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerB, ownerC, ownerD), false, emptyList())
 
         val expectedSafeTransaction = SafeTransaction(
             Transaction(
@@ -869,7 +888,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         val ownerE = Solidity.Address(14.toBigInteger())
         val ownerF = Solidity.Address(15.toBigInteger())
 
-        val safeInfo = SafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerB, ownerC, ownerD), false, emptyList())
+        val safeInfo = createSafeInfo(TEST_SAFE, Wei.ZERO, 1, listOf(ownerA, ownerB, ownerC, ownerD), false, emptyList())
 
         Asserts.assertThrow(
             test = {
@@ -881,6 +900,16 @@ class DefaultRecoverSafeOwnersHelperTest {
             }, throwablePredicate = { it is java.lang.IllegalStateException && it.message == "Couldn't add all addresses" }
         )
     }
+
+    private fun createSafeInfo(
+        address: Solidity.Address,
+        balance: Wei,
+        requiredConfirmations: Long,
+        owners: List<Solidity.Address>,
+        isOwner: Boolean,
+        modules: List<Solidity.Address>,
+        version: SemVer = SemVer(1, 0, 0)
+    ) = SafeInfo(address, balance, requiredConfirmations, owners, isOwner, modules, version)
 
     companion object {
         private val TEST_SEED = "Better Safe Than Sorry".toByteArray()

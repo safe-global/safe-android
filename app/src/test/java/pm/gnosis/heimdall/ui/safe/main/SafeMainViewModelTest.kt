@@ -133,14 +133,14 @@ class SafeMainViewModelTest {
         safeProcessor.offer(
             listOf(
                 Safe(TEST_SAFE),
-                PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+                PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
             )
         )
 
         safeSubscriber.assertValueCount(4).assertValueAt(3) {
             (it as DataResult).data.let {
                 it.entries == listOf(
-                    PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+                    PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
                 )
                         && it.diff != null
                         && it.parentId == parentId
@@ -173,7 +173,7 @@ class SafeMainViewModelTest {
             Flowable.just(
                 listOf(
                     Safe(TEST_SAFE),
-                    PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+                    PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
                 )
             )
         )
@@ -205,7 +205,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun loadSelectedSafePending() {
-        val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         preferences.putString(KEY_SELECTED_SAFE, TEST_PENDING_SAFE.asEthereumAddressString())
         given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
         given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
@@ -237,7 +237,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun selectSafePending() {
-        val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
         given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
         given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
 
@@ -335,7 +335,7 @@ class SafeMainViewModelTest {
     @Test
     fun updatePendingSafeName() {
         context.mockGetString()
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
         given(addressBookRepository.updateAddressBookEntry(MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
 
         val nullObserver = TestObserver<Unit>()
@@ -357,7 +357,7 @@ class SafeMainViewModelTest {
     @Test
     fun updatePendingSafeNameError() {
         context.mockGetString()
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
         val error = NoSuchElementException()
         given(addressBookRepository.updateAddressBookEntry(MockUtils.any(), MockUtils.any())).willReturn(Completable.error(error))
 
@@ -469,7 +469,7 @@ class SafeMainViewModelTest {
     @Test
     fun observePendingSafe() {
         context.mockGetString()
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
         val infoProcessor = PublishProcessor.create<AddressBookEntry>()
         given(addressBookRepository.observeAddressBookEntry(MockUtils.any())).willReturn(infoProcessor)
 
@@ -497,7 +497,7 @@ class SafeMainViewModelTest {
         given(addressBookRepository.observeAddressBookEntry(MockUtils.any())).willReturn(Flowable.error(error))
 
         val safeSubscriber = TestSubscriber<Pair<String, String>>()
-        viewModel.observeSafe(PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, BigInteger.ZERO)).subscribe(safeSubscriber)
+        viewModel.observeSafe(PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)).subscribe(safeSubscriber)
 
         safeSubscriber.assertFailure(Predicate { it == error })
 
@@ -580,7 +580,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun removePendingSafe() {
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
         given(safeRepository.removePendingSafe(MockUtils.any())).willReturn(Completable.complete())
 
         val testObserver = TestObserver<Unit>()
@@ -593,7 +593,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun removePendingSafeError() {
-        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
+        val safe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, BigInteger.ZERO)
         val error = NoSuchElementException()
         given(safeRepository.removePendingSafe(MockUtils.any())).willReturn(Completable.error(error))
 
@@ -675,7 +675,7 @@ class SafeMainViewModelTest {
     @Test
     fun isConnectedToBrowserExtensionIsPendingSafe() {
         val testObserver = TestObserver.create<Result<Boolean>>()
-        val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_TX_HASH, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
+        val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
 
         viewModel.isConnectedToBrowserExtension(pendingSafe).subscribe(testObserver)
 

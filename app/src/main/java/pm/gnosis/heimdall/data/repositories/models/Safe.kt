@@ -15,7 +15,6 @@ data class Safe(val address: Solidity.Address) : AbstractSafe() {
 
 data class PendingSafe(
     val address: Solidity.Address,
-    val hash: BigInteger,
     val paymentToken: Solidity.Address,
     val paymentAmount: BigInteger,
     val isFunded: Boolean = false

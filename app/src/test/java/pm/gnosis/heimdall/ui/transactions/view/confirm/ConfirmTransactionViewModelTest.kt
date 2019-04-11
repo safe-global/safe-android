@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -70,25 +71,33 @@ class ConfirmTransactionViewModelTest {
 
         val info = TransactionExecutionRepository.SafeExecuteState(
             TEST_OWNERS[2], TEST_OWNERS.size - 1,
-            TEST_OWNERS, BigInteger.ONE, Wei.ether("23").value
+            TEST_OWNERS, BigInteger.ONE, Wei.ether("23").value,
+            SemVer(1, 0, 0)
         )
         given(relayRepositoryMock.loadSafeExecuteState(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
 
         val updatedTransaction = TEST_TRANSACTION.copy(wrapped = TEST_TRANSACTION.wrapped.copy(nonce = TEST_NONCE))
 
         // Invalid Hash
-        given(relayRepositoryMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.calculateHash(
+            MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
+        )
             .willReturn(Single.just("randomHash".toByteArray()))
 
         val invalidHashObserver = TestObserver<TransactionExecutionRepository.ExecuteInformation>()
         executionInfo!!.invoke(TEST_TRANSACTION).subscribe(invalidHashObserver)
 
         invalidHashObserver.assertFailure(IllegalStateException::class.java)
-        then(relayRepositoryMock).should().calculateHash(TEST_SAFE, updatedTransaction, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN)
+        then(relayRepositoryMock).should()
+            .calculateHash(TEST_SAFE, updatedTransaction, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN, TEST_VERSION)
+        then(relayRepositoryMock).should()
+            .loadSafeExecuteState(TEST_SAFE, TEST_GAS_TOKEN)
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Valid Hash
-        given(relayRepositoryMock.calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.calculateHash(
+            MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
+        )
             .willReturn(Single.just(TEST_TRANSACTION_HASH.hexToByteArray()))
 
         val validHashObserver = TestObserver<TransactionExecutionRepository.ExecuteInformation>()
@@ -96,12 +105,12 @@ class ConfirmTransactionViewModelTest {
 
         validHashObserver.assertValues(
             TransactionExecutionRepository.ExecuteInformation(
-                TEST_TRANSACTION_HASH, updatedTransaction, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
+                TEST_TRANSACTION_HASH, updatedTransaction, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS, TEST_VERSION,
                 TEST_GAS_TOKEN, TEST_GAS_PRICE, TEST_TX_GAS, TEST_DATA_GAS, TEST_OPERATIONAL_GAS, Wei.ether("23").value
             )
         ).assertNoErrors().assertComplete()
         then(relayRepositoryMock).should(times(2))
-            .calculateHash(TEST_SAFE, updatedTransaction, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN)
+            .calculateHash(TEST_SAFE, updatedTransaction, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN, TEST_VERSION)
         then(relayRepositoryMock).should().loadSafeExecuteState(TEST_SAFE, TEST_GAS_TOKEN)
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
 
@@ -111,12 +120,12 @@ class ConfirmTransactionViewModelTest {
 
         cachedHashObserver.assertValues(
             TransactionExecutionRepository.ExecuteInformation(
-                TEST_TRANSACTION_HASH, updatedTransaction, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
+                TEST_TRANSACTION_HASH, updatedTransaction, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS, TEST_VERSION,
                 TEST_GAS_TOKEN, TEST_GAS_PRICE, TEST_TX_GAS, TEST_DATA_GAS, TEST_OPERATIONAL_GAS, Wei.ether("23").value
             )
         ).assertNoErrors().assertComplete()
         then(relayRepositoryMock).should(times(3))
-            .calculateHash(TEST_SAFE, updatedTransaction, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN)
+            .calculateHash(TEST_SAFE, updatedTransaction, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN, TEST_VERSION)
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -127,17 +136,6 @@ class ConfirmTransactionViewModelTest {
         val observable = Observable.empty<Result<SubmitTransactionHelper.ViewUpdate>>()
         given(txRepositoryMock.checkRestrictedTransaction(MockUtils.any())).willReturn(Single.just(TEST_TRANSACTION))
         given(txRepositoryMock.parseTransactionData(MockUtils.any())).willReturn(Single.just(transactionData))
-        given(
-            relayRepositoryMock.checkConfirmation(
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any()
-            )
-        ).willReturn(Single.just(TEST_OWNERS[0] to TEST_SIGNATURE))
         given(submitTransactionHelper.observe(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(observable)
 
         val observer = TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>()
@@ -152,13 +150,10 @@ class ConfirmTransactionViewModelTest {
         observer.assertNoValues().assertNoErrors().assertComplete()
 
         then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any(), MockUtils.any())
-        then(submitTransactionHelper).should().observe(events, transactionData, mapOf(TEST_OWNERS[0] to TEST_SIGNATURE))
+        then(submitTransactionHelper).should().observe(events, transactionData, setOf(TEST_SIGNATURE))
         then(submitTransactionHelper).shouldHaveNoMoreInteractions()
 
-        then(relayRepositoryMock).should().checkConfirmation(
-            TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN, TEST_SIGNATURE
-        )
-        then(relayRepositoryMock).shouldHaveNoMoreInteractions()
+        then(relayRepositoryMock).shouldHaveZeroInteractions()
 
         then(txRepositoryMock).should().checkRestrictedTransaction(TEST_TRANSACTION)
         then(txRepositoryMock).should().parseTransactionData(TEST_TRANSACTION)
@@ -198,19 +193,19 @@ class ConfirmTransactionViewModelTest {
         val testData = mapOf(
             RestrictedTransactionException.DelegateCall::class to
                     (RestrictedTransactionException.DelegateCall to
-                    ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_delegatecall)),
+                            ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_delegatecall)),
             RestrictedTransactionException.ModifyOwners::class to
                     (RestrictedTransactionException.ModifyOwners to
-                    ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_signers)),
+                            ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_signers)),
             RestrictedTransactionException.ModifyModules::class to
                     (RestrictedTransactionException.ModifyModules to
-                    ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_modules)),
+                            ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_modules)),
             RestrictedTransactionException.ChangeThreshold::class to
                     (RestrictedTransactionException.ChangeThreshold to
-                    ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_change_threshold)),
+                            ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_change_threshold)),
             RestrictedTransactionException.ChangeMasterCopy::class to
                     (RestrictedTransactionException.ChangeMasterCopy to
-                    ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_proxy))
+                            ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_proxy))
         )
 
         RestrictedTransactionException::class.nestedClasses.forEach {
@@ -248,49 +243,6 @@ class ConfirmTransactionViewModelTest {
     }
 
     @Test
-    fun observeInvalidSignature() {
-        val events = SubmitTransactionHelper.Events(Observable.empty(), Observable.empty(), Observable.empty())
-        val error = IllegalArgumentException()
-        given(txRepositoryMock.checkRestrictedTransaction(MockUtils.any())).willReturn(Single.just(TEST_TRANSACTION))
-        val transactionData = mock(TransactionData::class.java)
-        given(txRepositoryMock.parseTransactionData(MockUtils.any())).willReturn(Single.just(transactionData))
-        given(
-            relayRepositoryMock.checkConfirmation(
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any(),
-                MockUtils.any()
-            )
-        ).willReturn(Single.error(error))
-
-        val observer = TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>()
-
-        viewModel.setup(
-            TEST_SAFE, TEST_TRANSACTION_HASH,
-            TEST_OPERATIONAL_GAS, TEST_DATA_GAS, TEST_TX_GAS, TEST_GAS_TOKEN, TEST_GAS_PRICE,
-            TEST_NONCE, TEST_SIGNATURE
-        )
-        viewModel.observe(events, TEST_TRANSACTION).subscribe(observer)
-
-        observer.assertError(error).assertNoValues()
-
-        then(submitTransactionHelper).should().setup(MockUtils.any(), MockUtils.any(), MockUtils.any())
-        then(submitTransactionHelper).shouldHaveNoMoreInteractions()
-
-        then(relayRepositoryMock).should().checkConfirmation(
-            TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN, TEST_SIGNATURE
-        )
-        then(relayRepositoryMock).shouldHaveNoMoreInteractions()
-
-        then(txRepositoryMock).should().checkRestrictedTransaction(TEST_TRANSACTION)
-        then(txRepositoryMock).should().parseTransactionData(TEST_TRANSACTION)
-        then(txRepositoryMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
     fun rejectTransaction() {
         viewModel.setup(
             TEST_SAFE, TEST_TRANSACTION_HASH,
@@ -300,11 +252,14 @@ class ConfirmTransactionViewModelTest {
 
         val info = TransactionExecutionRepository.SafeExecuteState(
             TEST_OWNERS[2], TEST_OWNERS.size - 1,
-            TEST_OWNERS, BigInteger.ONE, Wei.ether("23").value
+            TEST_OWNERS, BigInteger.ONE, Wei.ether("23").value,
+            TEST_VERSION
         )
         given(relayRepositoryMock.loadSafeExecuteState(MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
-        given(relayRepositoryMock.notifyReject(
-            MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
+        given(
+            relayRepositoryMock.notifyReject(
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()
+            )
         )
             .willReturn(Completable.complete())
 
@@ -315,7 +270,7 @@ class ConfirmTransactionViewModelTest {
         then(relayRepositoryMock).should().loadSafeExecuteState(TEST_SAFE, TEST_GAS_TOKEN)
         then(relayRepositoryMock).should().notifyReject(
             TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN,
-            (TEST_OWNERS - TEST_OWNERS[2]).toSet()
+            (TEST_OWNERS - TEST_OWNERS[2]).toSet(), TEST_VERSION
         )
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
 
@@ -324,7 +279,7 @@ class ConfirmTransactionViewModelTest {
         cachedObserver.assertNoErrors().assertComplete()
         then(relayRepositoryMock).should(times(2)).notifyReject(
             TEST_SAFE, TEST_TRANSACTION, TEST_TX_GAS, TEST_DATA_GAS, TEST_GAS_PRICE, TEST_GAS_TOKEN,
-            (TEST_OWNERS - TEST_OWNERS[2]).toSet()
+            (TEST_OWNERS - TEST_OWNERS[2]).toSet(), TEST_VERSION
         )
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
     }
@@ -343,5 +298,6 @@ class ConfirmTransactionViewModelTest {
         private val TEST_GAS_PRICE = BigInteger.valueOf(987654)
         private val TEST_NONCE = BigInteger.valueOf(23)
         private val TEST_SIGNATURE = Signature(BigInteger.valueOf(11), BigInteger.valueOf(5), 27)
+        private val TEST_VERSION = SemVer(1, 0, 0)
     }
 }

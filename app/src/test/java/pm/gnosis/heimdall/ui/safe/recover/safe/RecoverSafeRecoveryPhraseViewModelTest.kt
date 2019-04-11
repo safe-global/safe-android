@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.Input
@@ -58,7 +59,8 @@ class RecoverSafeRecoveryPhraseViewModelTest {
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
         val input = Input(Observable.empty(), Observable.empty(), Observable.empty())
-        viewModel.process(input,
+        viewModel.process(
+            input,
             TEST_SAFE,
             extension
         ).subscribe(observer)
@@ -77,10 +79,13 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         then(safeRepoMock).shouldHaveZeroInteractions()
 
         val executionInfo = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TX_HASH.asTransactionHash(), SafeTransaction(Transaction(
-                TEST_SAFE
-            ), TransactionExecutionRepository.Operation.CALL),
-            TEST_SAFE, 2, emptyList(), TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO
+            TEST_TX_HASH.asTransactionHash(), SafeTransaction(
+                Transaction(
+                    TEST_SAFE
+                ), TransactionExecutionRepository.Operation.CALL
+            ),
+            TEST_SAFE, 2, emptyList(), SemVer(1, 0, 0),
+            TEST_GAS_TOKEN, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO
         )
         val signatures = listOf(Signature(BigInteger.TEN, BigInteger.TEN, 27))
 
@@ -118,7 +123,8 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         tests++
 
         observer.assertValueCount(tests).assertNoErrors().assertNotComplete()
-        then(helperMock).should().process(input,
+        then(helperMock).should().process(
+            input,
             TEST_SAFE,
             extension
         )

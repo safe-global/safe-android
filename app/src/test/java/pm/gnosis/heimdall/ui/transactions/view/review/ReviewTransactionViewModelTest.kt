@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -62,7 +63,7 @@ class ReviewTransactionViewModelTest {
 
         val info = TransactionExecutionRepository.ExecuteInformation(
             TEST_TRANSACTION_HASH,
-            TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS,
+            TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS, SemVer(1, 0, 0),
             TEST_GAS_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )

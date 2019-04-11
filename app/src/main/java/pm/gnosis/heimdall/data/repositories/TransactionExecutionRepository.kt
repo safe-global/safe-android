@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
@@ -17,7 +18,8 @@ interface TransactionExecutionRepository {
 
     fun calculateHash(
         safeAddress: Solidity.Address, transaction: SafeTransaction,
-        txGas: BigInteger, dataGas: BigInteger, gasPrice: BigInteger, gasToken: Solidity.Address
+        txGas: BigInteger, dataGas: BigInteger, gasPrice: BigInteger, gasToken: Solidity.Address,
+        version: SemVer
     ): Single<ByteArray>
 
     fun loadSafeExecuteState(safeAddress: Solidity.Address, paymentToken: Solidity.Address): Single<SafeExecuteState>
@@ -29,7 +31,8 @@ interface TransactionExecutionRepository {
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
-        gasToken: Solidity.Address
+        gasToken: Solidity.Address,
+        version: SemVer
     ): Single<Signature>
 
     fun signRejection(
@@ -38,7 +41,8 @@ interface TransactionExecutionRepository {
         txGas: BigInteger,
         dataGas: BigInteger,
         gasPrice: BigInteger,
-        gasToken: Solidity.Address
+        gasToken: Solidity.Address,
+        version: SemVer
     ): Single<Signature>
 
     fun checkConfirmation(
@@ -48,7 +52,8 @@ interface TransactionExecutionRepository {
         dataGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        signature: Signature
+        signature: Signature,
+        version: SemVer
     ): Single<Pair<Solidity.Address, Signature>>
 
     fun checkRejection(
@@ -58,7 +63,8 @@ interface TransactionExecutionRepository {
         dataGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        signature: Signature
+        signature: Signature,
+        version: SemVer
     ): Single<Pair<Solidity.Address, Signature>>
 
     fun observePublishStatus(id: String): Observable<PublishStatus>
@@ -74,6 +80,7 @@ interface TransactionExecutionRepository {
         dataGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
+        version: SemVer,
         addToHistory: Boolean = true,
         referenceId: Long? = null
     ): Single<String>
@@ -85,7 +92,8 @@ interface TransactionExecutionRepository {
         dataGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        targets: Set<Solidity.Address>
+        targets: Set<Solidity.Address>,
+        version: SemVer
     ): Completable
 
     fun reject(referenceId: Long)
@@ -95,7 +103,8 @@ interface TransactionExecutionRepository {
         val requiredConfirmation: Int,
         val owners: List<Solidity.Address>,
         val nonce: BigInteger,
-        val balance: BigInteger
+        val balance: BigInteger,
+        val version: SemVer
     )
 
     data class ExecuteInformation(
@@ -104,6 +113,7 @@ interface TransactionExecutionRepository {
         val sender: Solidity.Address,
         val requiredConfirmation: Int,
         val owners: List<Solidity.Address>,
+        val safeVersion: SemVer,
         val gasToken: Solidity.Address,
         val gasPrice: BigInteger,
         val txGas: BigInteger,

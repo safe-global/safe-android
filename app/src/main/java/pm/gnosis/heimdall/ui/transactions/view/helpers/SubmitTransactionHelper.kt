@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import org.spongycastle.asn1.ua.DSTU4145NamedCurves.params
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -41,7 +42,7 @@ interface SubmitTransactionHelper {
     fun observe(
         events: Events,
         transactionData: TransactionData,
-        initialSignatures: Map<Solidity.Address, Signature>? = null
+        initialSignatures: Set<Signature>? = null
     ): Observable<Result<ViewUpdate>>
 
     data class Events(val retry: Observable<Unit>, val requestConfirmations: Observable<Unit>, val submit: Observable<Unit>)
@@ -83,7 +84,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
     override fun observe(
         events: Events,
         transactionData: TransactionData,
-        initialSignatures: Map<Solidity.Address, Signature>?
+        initialSignatures: Set<Signature>?
     ): Observable<Result<ViewUpdate>> =
         transactionViewHolderBuilder.build(safe, transactionData)
             .emitAndNext(
@@ -99,7 +100,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
     private fun estimation(
         events: Events,
         viewHolder: TransactionInfoViewHolder,
-        initialSignatures: Map<Solidity.Address, Signature>?
+        initialSignatures: Set<Signature>?
     ) =
         events.retry
             .subscribeOn(AndroidSchedulers.mainThread())
@@ -139,7 +140,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
     private fun confirmations(
         events: Events,
         params: Result<Triple<TransactionExecutionRepository.ExecuteInformation, ERC20Token, Boolean>>,
-        initialSignatures: Map<Solidity.Address, Signature>?
+        initialSignatures: Set<Signature>?
     ) =
         (params as? DataResult)?.data?.let { (execInfo, _, canSubmit) ->
             if (canSubmit) {
@@ -159,28 +160,42 @@ class DefaultSubmitTransactionHelper @Inject constructor(
     private fun observeConfirmationStore(
         events: Events,
         params: TransactionExecutionRepository.ExecuteInformation,
-        initialSignatures: Map<Solidity.Address, Signature>?
+        initialSignatures: Set<Signature>?
     ) =
-        signatureStore.flatMapInfo(
-            safe, params, initialSignatures
-        ).publish {
-            Observable.merge(
-                it.firstElement().flatMapObservable { requestConfirmation(events, params, it) },
+        (initialSignatures?.let {
+            Single.zip(
                 it.map {
-                    val threshold = params.requiredConfirmation - (if (params.isOwner) 1 else 0)
-                    DataResult(
-                        ViewUpdate.Confirmations(
-                            it.size >= threshold
-                        )
+                    executionRepository.checkConfirmation(
+                        safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken, it, params.safeVersion
                     )
-                },
-                it.switchMap { signatures ->
-                    events.submit
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .switchMap { submitTransaction(params, signatures) }
                 }
-            )
-        }
+            ) { results ->
+                @Suppress("UNCHECKED_CAST")
+                (results as? Array<Pair<Solidity.Address, Signature>>)?.toMap() ?: emptyMap()
+            }
+        } ?: Single.just(emptyMap()))
+            .flatMapObservable {
+                signatureStore.flatMapInfo(
+                    safe, params, it
+                )
+            }.publish {
+                Observable.merge(
+                    it.firstElement().flatMapObservable { requestConfirmation(events, params, it) },
+                    it.map {
+                        val threshold = params.requiredConfirmation - (if (params.isOwner) 1 else 0)
+                        DataResult(
+                            ViewUpdate.Confirmations(
+                                it.size >= threshold
+                            )
+                        )
+                    },
+                    it.switchMap { signatures ->
+                        events.submit
+                            .subscribeOn(AndroidSchedulers.mainThread())
+                            .switchMap { submitTransaction(params, signatures) }
+                    }
+                )
+            }
 
     private fun requestConfirmation(
         events: Events,
@@ -201,7 +216,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                         return@switchMapSingle Single.just(DataResult(Unit))
                     }
                     executionRepository.calculateHash(
-                        safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken
+                        safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken, params.safeVersion
                     )
                         .flatMapCompletable { hash ->
                             signaturePushRepository.requestConfirmations(
@@ -228,7 +243,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
 
     private fun submitTransaction(params: TransactionExecutionRepository.ExecuteInformation, signatures: Map<Solidity.Address, Signature>) =
         executionRepository.submit(
-            safe, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice, params.gasToken,
+            safe, params.transaction, signatures, params.isOwner, params.txGas, params.dataGas, params.gasPrice, params.gasToken, params.safeVersion,
             referenceId = referenceId
         )
             .flatMapCompletable {
@@ -237,7 +252,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                     // Nothing to push
                     return@flatMapCompletable Completable.complete()
                 }
-                signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, it, targets)
+                return@flatMapCompletable signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, it, targets)
                     // Ignore error here ... if push fails ... it fails
                     .doOnError(Timber::e)
                     .onErrorComplete()
@@ -265,14 +280,14 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                 when (it) {
                     is PushServiceRepository.TransactionResponse.Confirmed ->
                         executionRepository.checkConfirmation(
-                            safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken, it.signature
+                            safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken, it.signature, params.safeVersion
                         )
                             .map(signatureStore::add)
-                            .flatMapObservable { _ -> Observable.empty<Result<ViewUpdate>>() }
+                            .flatMapObservable { Observable.empty<Result<ViewUpdate>>() }
                             .onErrorResumeNext { e: Throwable -> Observable.just(ErrorResult(e)) }
                     is PushServiceRepository.TransactionResponse.Rejected ->
                         executionRepository.checkRejection(
-                            safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken, it.signature
+                            safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken, it.signature, params.safeVersion
                         )
                             .filter { (sender) -> params.owners.contains(sender) }
                             .map<Result<ViewUpdate>> { DataResult(ViewUpdate.TransactionRejected) }

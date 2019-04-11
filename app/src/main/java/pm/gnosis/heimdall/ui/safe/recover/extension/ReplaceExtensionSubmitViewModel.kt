@@ -69,7 +69,7 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
         tokenRepository.loadToken(gasToken)
             .flatMapObservable { token ->
                 Observable.interval(0, SAFE_BALANCE_REQUEST_INTERVAL, SAFE_BALANCE_REQUEST_TIME_UNIT)
-                    .concatMap { _ ->
+                    .concatMap {
                         tokenRepository.loadTokenBalances(safeTransaction.wrapped.address, listOf(token))
                             .map { tokenBalances ->
                                 if (tokenBalances.size != 1) throw NoTokenBalanceException()
@@ -89,38 +89,44 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
     override fun loadSafe() = gnosisSafeRepository.loadSafe(safeTransaction.wrapped.address)
 
     override fun submitTransaction() =
-        transactionExecutionRepository.calculateHash(
-            safeAddress = safeTransaction.wrapped.address,
-            transaction = safeTransaction,
-            txGas = txGas,
-            dataGas = dataGas,
-            gasPrice = gasPrice,
-            gasToken = gasToken
-        )
-            // Verify if transaction hash matches
-            .map { computedTxHash ->
-                if (!computedTxHash.contentEquals(txHash)) throw IllegalStateException("Invalid transaction hash")
-                else Unit
-            }
-            // Recover addresses from the signatures
-            .flatMap { _ ->
-                Single.zip(listOf(signature1, signature2).map { signature ->
-                    accountsRepository.recover(txHash, signature).map { it to signature }
-                }) { pairs -> (pairs.map { it as Pair<Solidity.Address, Signature> }).toList() }
-            }
-            // Submit transaction
-            .flatMap { signaturesWithAddresses ->
-                transactionExecutionRepository.submit(
+        gnosisSafeRepository.loadInfo(safeTransaction.wrapped.address)
+            .firstOrError()
+            .flatMap { info ->
+                transactionExecutionRepository.calculateHash(
                     safeAddress = safeTransaction.wrapped.address,
                     transaction = safeTransaction,
-                    signatures = signaturesWithAddresses.toMap(),
-                    senderIsOwner = false,
                     txGas = txGas,
                     dataGas = dataGas,
                     gasPrice = gasPrice,
                     gasToken = gasToken,
-                    addToHistory = true
+                    version = info.version
                 )
+                    // Verify if transaction hash matches
+                    .map { computedTxHash ->
+                        if (!computedTxHash.contentEquals(txHash)) throw IllegalStateException("Invalid transaction hash")
+                        else Unit
+                    }
+                    // Recover addresses from the signatures
+                    .flatMap {
+                        Single.zip(listOf(signature1, signature2).map { signature ->
+                            accountsRepository.recover(txHash, signature).map { it to signature }
+                        }) { pairs -> (pairs.map { it as Pair<Solidity.Address, Signature> }).toList() }
+                    }
+                    // Submit transaction
+                    .flatMap { signaturesWithAddresses ->
+                        transactionExecutionRepository.submit(
+                            safeAddress = safeTransaction.wrapped.address,
+                            transaction = safeTransaction,
+                            signatures = signaturesWithAddresses.toMap(),
+                            senderIsOwner = false,
+                            txGas = txGas,
+                            dataGas = dataGas,
+                            gasPrice = gasPrice,
+                            gasToken = gasToken,
+                            version = info.version,
+                            addToHistory = true
+                        )
+                    }
             }
             .flatMapCompletable {
                 pushServiceRepository.propagateSafeCreation(safeTransaction.wrapped.address, setOf(newChromeExtension)).onErrorComplete()

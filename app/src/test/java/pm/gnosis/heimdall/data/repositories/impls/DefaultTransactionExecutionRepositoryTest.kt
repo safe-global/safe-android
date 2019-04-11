@@ -26,6 +26,7 @@ import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -83,17 +84,19 @@ class DefaultTransactionExecutionRepositoryTest {
         gasPrice: BigInteger,
         gasToken: BigInteger,
         operation: TransactionExecutionRepository.Operation,
-        expected: String
+        expected: String,
+        version: SemVer = SemVer(0, 1, 0)
     ) {
         val observer = TestObserver<ByteArray>()
         repository.calculateHash(
             Solidity.Address(safe), SafeTransaction(transaction, operation),
-            txGas, dataGas, gasPrice, Solidity.Address(gasToken)
+            txGas, dataGas, gasPrice, Solidity.Address(gasToken), version
         ).subscribe(observer)
         observer.assertNoErrors().assertValueCount(1)
         assertEquals(expected, observer.values()[0].toHexString())
     }
 
+    // TODO: add tests for new hashes
     @Test
     fun calculateHash() {
         // Shared test cases: https://github.com/gnosis/gnosis-py/blob/master/gnosis/safe/tests/test_safe_service.py
@@ -178,7 +181,7 @@ class DefaultTransactionExecutionRepositoryTest {
         val tx = SafeTransaction(Transaction(TEST_ADDRESS, TEST_ETH_AMOUNT, nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)
         val observer = TestObserver<String>()
         repository.submit(TEST_SAFE, tx, mapOf(TEST_OWNER to TEST_SIGNATURE), false, BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO,
-            ERC20Token.ETHER_TOKEN.address, false)
+            ERC20Token.ETHER_TOKEN.address, SemVer(1, 0, 0), false)
             .subscribe(observer)
         observer.assertResult(TEST_TX_HASH)
         then(relayServiceApiMock).should().execute(
@@ -209,6 +212,7 @@ class DefaultTransactionExecutionRepositoryTest {
                 (bulk.requests[2] as EthRequest<String>).response =
                         EthRequest.Response.Success("20".padStart(64, '0').padEnd(128, '0').addHexPrefix())
                 (bulk.requests[3] as EthRequest<Wei>).response = EthRequest.Response.Success(Wei.ether("0"))
+                (bulk.requests[4] as EthRequest<String>).response = EthRequest.Response.Success("0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000005312e302e30000000000000000000000000000000000000000000000000000000")
                 Observable.just(bulk)
             }
         }
@@ -222,7 +226,8 @@ class DefaultTransactionExecutionRepositoryTest {
                 2,
                 emptyList(),
                 BigInteger.valueOf(11), // nonce used with submit + 1
-                BigInteger.ZERO
+                BigInteger.ZERO,
+                SemVer(1, 0, 0)
             )
         )
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
@@ -238,7 +243,8 @@ class DefaultTransactionExecutionRepositoryTest {
                 2,
                 emptyList(),
                 BigInteger.valueOf(26), // nonce used with submit + 1
-                BigInteger.ZERO
+                BigInteger.ZERO,
+                SemVer(1, 0, 0)
             )
         )
         then(ethereumRepositoryMock).should(times(2)).request(MockUtils.any<BulkRequest>())

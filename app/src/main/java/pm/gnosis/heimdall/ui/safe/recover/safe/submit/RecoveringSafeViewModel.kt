@@ -128,31 +128,39 @@ class RecoveringSafeViewModel @Inject constructor(
     override fun submitRecovery(address: Solidity.Address): Single<Solidity.Address> =
         safeRepository.loadRecoveringSafe(address)
             .flatMap { safe ->
-                executionRepository.calculateHash(
-                    address,
-                    buildSafeTransaction(safe),
-                    safe.txGas,
-                    safe.dataGas,
-                    safe.gasPrice,
-                    safe.gasToken
-                ).flatMap { txHash ->
-                    Single.zip(
-                        safe.signatures.map { signature -> accountsRepository.recover(txHash, signature).map { it to signature } }
-                    ) {
-                        it.associate {
-                            @Suppress("UNCHECKED_CAST") // Unchecked cast is necessary because of rx zip implementation
-                            it as Pair<Solidity.Address, Signature>
-                        }
-                    }
-                }.map { safe to it }
-            }
-            .flatMap { (safe, signatures) ->
-                executionRepository.submit(
-                    address, buildSafeTransaction(safe), signatures, false,
-                    safe.txGas, safe.dataGas, safe.gasPrice, safe.gasToken, false
-                )
-                    .flatMap {
-                        safeRepository.updateRecoveringSafe(safe.copy(transactionHash = it.hexAsBigInteger())).andThen(Single.just(safe.address))
+                safeRepository.loadInfo(address)
+                    .firstOrError()
+                    .flatMap { info ->
+                        executionRepository.calculateHash(
+                            address,
+                            buildSafeTransaction(safe),
+                            safe.txGas,
+                            safe.dataGas,
+                            safe.gasPrice,
+                            safe.gasToken,
+                            info.version
+                        )
+                            .flatMap { txHash ->
+                                Single.zip(
+                                    safe.signatures.map { signature -> accountsRepository.recover(txHash, signature).map { it to signature } }
+                                ) {
+                                    it.associate {
+                                        @Suppress("UNCHECKED_CAST") // Unchecked cast is necessary because of rx zip implementation
+                                        it as Pair<Solidity.Address, Signature>
+                                    }
+                                }
+                            }
+                            .map { safe to it }
+                            .flatMap { (safe, signatures) ->
+                                executionRepository.submit(
+                                    address, buildSafeTransaction(safe), signatures, false,
+                                    safe.txGas, safe.dataGas, safe.gasPrice, safe.gasToken, info.version, false
+                                )
+                                    .flatMap {
+                                        safeRepository.updateRecoveringSafe(safe.copy(transactionHash = it.hexAsBigInteger()))
+                                            .andThen(Single.just(safe.address))
+                                    }
+                            }
                     }
             }
             .onErrorResumeNext { errorHandler.single(it) }

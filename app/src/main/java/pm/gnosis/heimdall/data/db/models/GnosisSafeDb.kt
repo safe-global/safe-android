@@ -55,8 +55,8 @@ data class PendingGnosisSafeDb(
     }
 }
 
-fun PendingSafe.toDb() = PendingGnosisSafeDb(address, hash, paymentToken, paymentAmount, isFunded)
-fun PendingGnosisSafeDb.fromDb() = PendingSafe(address, transactionHash, paymentToken, paymentAmount, isFunded)
+fun PendingSafe.toDb() = PendingGnosisSafeDb(address, BigInteger.ZERO, paymentToken, paymentAmount, isFunded)
+fun PendingGnosisSafeDb.fromDb() = PendingSafe(address, paymentToken, paymentAmount, isFunded)
 
 @Entity(tableName = RecoveringGnosisSafeDb.TABLE_NAME)
 data class RecoveringGnosisSafeDb(

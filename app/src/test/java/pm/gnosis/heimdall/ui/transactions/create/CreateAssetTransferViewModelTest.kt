@@ -1,4 +1,3 @@
-
 package pm.gnosis.heimdall.ui.transactions.create
 
 import android.content.Context
@@ -19,6 +18,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -125,6 +125,7 @@ class CreateAssetTransferViewModelTest {
             TEST_OWNERS[2],
             TEST_OWNERS.size,
             TEST_OWNERS,
+            SemVer(1, 0, 0),
             TEST_ETHER_TOKEN,
             BigInteger.ONE,
             BigInteger.TEN,
@@ -143,7 +144,7 @@ class CreateAssetTransferViewModelTest {
 
         // Estimate
         val validInfo = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS,
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS, SemVer(1, 0, 0),
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )
@@ -237,6 +238,7 @@ class CreateAssetTransferViewModelTest {
             TEST_OWNERS[2],
             TEST_OWNERS.size,
             TEST_OWNERS,
+            SemVer(1, 0, 0),
             TEST_GAS_TOKEN.address,
             BigInteger.ONE,
             BigInteger.TEN,
@@ -256,7 +258,7 @@ class CreateAssetTransferViewModelTest {
 
         // Estimate, enough balance
         val validInfo = TransactionExecutionRepository.ExecuteInformation(
-            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS,
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION, TEST_OWNERS[2], TEST_OWNERS.size, TEST_OWNERS, SemVer(1, 0, 0),
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("1").value
         )

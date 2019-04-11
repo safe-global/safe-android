@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
@@ -257,7 +258,8 @@ class ConfirmNewRecoveryPhraseViewModelTest {
             requiredConfirmations = 2L,
             owners = listOf(PHONE_ADDRESS, BROWSER_EXTENSION_ADDRESS, RECOVERY_ADDRESS_0, RECOVERY_ADDRESS_1),
             isOwner = true,
-            modules = emptyList()
+            modules = emptyList(),
+            version = SemVer(1, 0, 0)
         )
     }
 }

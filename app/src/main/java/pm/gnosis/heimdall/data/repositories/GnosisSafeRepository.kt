@@ -6,7 +6,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.model.Solidity
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
 
@@ -44,7 +43,6 @@ interface GnosisSafeRepository {
     fun loadPendingSafe(address: Solidity.Address): Single<PendingSafe>
     fun addPendingSafe(
         address: Solidity.Address,
-        transactionHash: BigInteger,
         name: String?,
         payment: BigInteger,
         paymentToken: Solidity.Address
