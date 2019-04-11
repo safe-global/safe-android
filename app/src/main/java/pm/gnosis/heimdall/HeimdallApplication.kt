@@ -3,7 +3,7 @@ package pm.gnosis.heimdall
 import android.content.Context
 import androidx.multidex.MultiDexApplication
 import io.reactivex.plugins.RxJavaPlugins
-import org.spongycastle.jce.provider.BouncyCastleProvider
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
 import pm.gnosis.heimdall.di.ComponentProvider
 import pm.gnosis.heimdall.di.components.ApplicationComponent

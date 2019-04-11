@@ -11,15 +11,14 @@ import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
+import org.walletconnect.Session
+import org.walletconnect.impls.WCSession
+import org.walletconnect.impls.WCSessionStore
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
-import pm.gnosis.ethereum.rpc.EthereumRpcConnector
-import pm.gnosis.ethereum.rpc.models.JsonRpcBlockResult
 import pm.gnosis.ethereum.rpc.models.JsonRpcError
-import pm.gnosis.ethereum.rpc.models.JsonRpcRequest
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
-import pm.gnosis.heimdall.data.repositories.impls.wc.*
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
@@ -33,15 +32,13 @@ import pm.gnosis.utils.hexAsBigIntegerOrNull
 import retrofit2.http.Body
 import retrofit2.http.POST
 import timber.log.Timber
-import java.lang.IllegalStateException
-import java.net.URLDecoder
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
 class WalletConnectBridgeRepository @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val rpcProxyApi: Session.RpcProxyApi,
+    private val rpcProxyApi: RpcProxyApi,
     private val infoRepository: TransactionInfoRepository,
     private val localNotificationManager: LocalNotificationManager,
     private val safeRepository: GnosisSafeRepository,
@@ -110,7 +107,7 @@ class WalletConnectBridgeRepository @Inject constructor(
 
                 @SuppressLint("CheckResult")
                 override fun handleMethodCall(call: Session.MethodCall) {
-                    when(call) {
+                    when (call) {
                         is Session.MethodCall.SendTransaction ->
                             call.apply {
                                 sessionRequests[id] = config.handshakeTopic
@@ -138,7 +135,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                             call.apply {
                                 sessionRequests[id] = config.handshakeTopic
                                 try {
-                                    rpcProxyApi.proxy(Session.RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
+                                    rpcProxyApi.proxy(RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
                                         .subscribeBy(onError = { t ->
                                             rejectRequest(id, 42, t.message ?: "Could not handle custom call")
                                         }) { result ->
@@ -212,7 +209,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                 val cb = object : Session.Callback {
 
                     override fun handleMethodCall(call: Session.MethodCall) {
-                        when(call) {
+                        when (call) {
                             is Session.MethodCall.SessionRequest ->
                                 call.apply {
                                     emitter.onNext(
@@ -342,158 +339,25 @@ class WCSessionBuilder @Inject constructor(
     )
 }
 
-
-interface Session {
-    fun init()
-    fun approve(accounts: List<String>, chainId: Long)
-    fun reject()
-    fun update(accounts: List<String>, chainId: Long)
-    fun kill()
-
-    fun peerMeta(): PeerMeta?
-    fun approvedAccounts(): List<String>?
-
-    fun approveRequest(id: Long, response: Any)
-    fun rejectRequest(id: Long, errorCode: Long, errorMsg: String)
-
-    fun addCallback(cb: Session.Callback)
-    fun removeCallback(cb: Session.Callback)
-
-    data class Config(
-        val handshakeTopic: String,
-        val bridge: String,
-        val key: String,
-        val protocol: String = "wc",
-        val version: Int = 1
-    ) {
-        companion object {
-            fun fromWCUri(uri: String): Config {
-                val protocolSeparator = uri.indexOf(':')
-                val handshakeTopicSeparator = uri.indexOf('@', startIndex = protocolSeparator)
-                val versionSeparator = uri.indexOf('?')
-                val protocol = uri.substring(0, protocolSeparator)
-                val handshakeTopic = uri.substring(protocolSeparator + 1, handshakeTopicSeparator)
-                val version = Integer.valueOf(uri.substring(handshakeTopicSeparator + 1, versionSeparator))
-                val params = uri.substring(versionSeparator + 1).split("&").associate {
-                    it.split("=").let { param -> param.first() to URLDecoder.decode(param[1], "UTF-8") }
-                }
-                val bridge = params["bridge"] ?: throw IllegalArgumentException("Missing bridge param in URI")
-                val key = params["key"] ?: throw IllegalArgumentException("Missing key param in URI")
-                return Config(handshakeTopic, bridge, key, protocol, version)
-            }
-        }
-    }
-
-    interface RpcProxyApi {
-        @POST(".")
-        fun proxy(@Body jsonRpcRequest: ProxiedRequest): Single<ProxiedResult>
+interface RpcProxyApi {
+    @POST(".")
+    fun proxy(@Body jsonRpcRequest: ProxiedRequest): Single<ProxiedResult>
 
 
-        @JsonClass(generateAdapter = true)
-        data class ProxiedRequest(
-            @Json(name = "method") val method: String,
-            @Json(name = "params") val params: List<Any>,
-            @Json(name = "id") val id: Long = 1,
-            @Json(name = "jsonrpc") val jsonRpc: String = "2.0"
-        )
-
-
-        @JsonClass(generateAdapter = true)
-        data class ProxiedResult(
-            @Json(name = "id") val id: Long,
-            @Json(name = "jsonrpc") val jsonRpc: String,
-            @Json(name = "error") val error: JsonRpcError? = null,
-            @Json(name = "result") val result: Any?
-        )
-    }
-
-    interface Callback {
-
-        fun handleMethodCall(call: MethodCall)
-
-        fun sessionApproved()
-
-        fun sessionClosed(msg: String?)
-    }
-
-    interface PayloadAdapter {
-        fun parse(payload: String, key: String): MethodCall
-        fun prepare(data: MethodCall, key: String): String
-
-    }
-
-    interface Transport {
-
-        fun connect(): Boolean
-
-        fun send(message: Message)
-
-        fun status(): Status
-
-        fun close()
-
-        enum class Status {
-            CONNECTED,
-            DISCONNECTED
-        }
-
-        data class Message(
-            val topic: String,
-            val type: String,
-            val payload: String
-        )
-
-        interface Builder {
-            fun build(
-                url: String,
-                statusHandler: (Session.Transport.Status) -> Unit,
-                messageHandler: (Session.Transport.Message) -> Unit
-            ): Transport
-        }
-
-    }
-
-    sealed class MethodCall(private val internalId: Long) {
-        fun id() = internalId
-
-        data class SessionRequest(val id: Long, val peer: PeerData) : MethodCall(id)
-
-        data class SessionUpdate(val id: Long, val params: SessionParams) : MethodCall(id)
-
-        data class ExchangeKey(val id: Long, val nextKey: String, val peer: PeerData) : MethodCall(id)
-
-        data class SendTransaction(
-            val id: Long,
-            val from: String,
-            val to: String,
-            val nonce: String,
-            val gasPrice: String,
-            val gasLimit: String,
-            val value: String,
-            val data: String
-        ) : MethodCall(id)
-
-        data class SignMessage(val id: Long, val address: String, val message: String) : MethodCall(id)
-
-        data class Custom(val id: Long, val method: String, val params: List<*>?) : MethodCall(id)
-
-        data class Response(val id: Long, val result: Any?, val error: Error? = null) : MethodCall(id)
-    }
-
-    sealed class MethodCallException(val id: Long, val code: Long, message: String) : IllegalArgumentException(message) {
-        class InvalidRequest(id: Long, request: String) : MethodCallException(id, 23, "Invalid request: $request")
-        class InvalidAccount(id: Long, account: String) : MethodCallException(id, 3141, "Invalid account request: $account")
-    }
-
-    data class PeerData(val id: String, val meta: PeerMeta?)
-    data class PeerMeta(
-        val url: String? = null,
-        val name: String? = null,
-        val description: String? = null,
-        val icons: List<String>? = null,
-        val ssl: Boolean? = null
+    @JsonClass(generateAdapter = true)
+    data class ProxiedRequest(
+        @Json(name = "method") val method: String,
+        @Json(name = "params") val params: List<Any>,
+        @Json(name = "id") val id: Long = 1,
+        @Json(name = "jsonrpc") val jsonRpc: String = "2.0"
     )
 
-    data class SessionParams(val approved: Boolean, val chainId: Long?, val accounts: List<String>?, val message: String?)
-    data class Error(val code: Long, val message: String)
+
+    @JsonClass(generateAdapter = true)
+    data class ProxiedResult(
+        @Json(name = "id") val id: Long,
+        @Json(name = "jsonrpc") val jsonRpc: String,
+        @Json(name = "error") val error: JsonRpcError? = null,
+        @Json(name = "result") val result: Any?
+    )
 }

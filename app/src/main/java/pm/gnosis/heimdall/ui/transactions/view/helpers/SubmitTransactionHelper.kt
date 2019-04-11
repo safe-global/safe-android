@@ -4,7 +4,6 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import org.spongycastle.asn1.ua.DSTU4145NamedCurves.params
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository

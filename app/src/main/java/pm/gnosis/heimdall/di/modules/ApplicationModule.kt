@@ -15,6 +15,11 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import org.walletconnect.Session
+import org.walletconnect.impls.FileWCSessionStore
+import org.walletconnect.impls.MoshiPayloadAdapter
+import org.walletconnect.impls.OkHttpTransport
+import org.walletconnect.impls.WCSessionStore
 import pm.gnosis.eip712.EIP712JsonParser
 import pm.gnosis.eip712.adapters.moshi.MoshiAdapter
 import pm.gnosis.ethereum.EthereumRepository
@@ -28,11 +33,7 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.TokenServiceApi
-import pm.gnosis.heimdall.data.repositories.impls.Session
-import pm.gnosis.heimdall.data.repositories.impls.wc.FileWCSessionStore
-import pm.gnosis.heimdall.data.repositories.impls.wc.MoshiPayloadAdapter
-import pm.gnosis.heimdall.data.repositories.impls.wc.OkHttpTransport
-import pm.gnosis.heimdall.data.repositories.impls.wc.WCSessionStore
+import pm.gnosis.heimdall.data.repositories.impls.RpcProxyApi
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39Generator
@@ -104,14 +105,14 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesRpcProxyApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): Session.RpcProxyApi =
+    fun providesRpcProxyApi(moshi: Moshi, @Named(INFURA_REST_CLIENT) client: OkHttpClient): RpcProxyApi =
         Retrofit.Builder()
             .client(client)
             .baseUrl(BuildConfig.BLOCKCHAIN_NET_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .build()
-            .create(Session.RpcProxyApi::class.java)
+            .create(RpcProxyApi::class.java)
 
     @Provides
     @Singleton

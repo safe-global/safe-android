@@ -17,6 +17,7 @@ ext {
             androidx_room             : '2.0.0',
             billing                   : '1.0',
             bivrost                   : 'v0.7.1',
+            bouncycastle              : '1.61',
             crashlytics               : '2.9.3',
             dagger                    : '2.17',
             firebase_core             : '16.0.6',
@@ -39,9 +40,9 @@ ext {
             rxbinding                 : '2.1.1',
             rxjava                    : '2.2.1',
             rxkotlin                  : '2.3.0',
-            spongycastle              : '1.58.0.0',
-            svalinn                   : 'v0.7.1',
+            svalinn                   : 'v0.8.0',
             timber                    : '4.7.1',
+            wallet_connect            : '8db7008b87',
             zxing                     : '3.3.1',
 
             // Test dependencies
