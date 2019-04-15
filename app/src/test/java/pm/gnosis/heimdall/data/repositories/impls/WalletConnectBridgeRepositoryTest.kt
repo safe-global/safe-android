@@ -15,13 +15,14 @@ import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
+import org.walletconnect.Session
+import org.walletconnect.impls.WCSessionStore
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
-import pm.gnosis.heimdall.data.repositories.impls.wc.WCSessionStore
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -47,7 +48,7 @@ class WalletConnectBridgeRepositoryTest {
     lateinit var localNotificationManagerMock: LocalNotificationManager
 
     @Mock
-    lateinit var rpcProxyApiMock: Session.RpcProxyApi
+    lateinit var rpcProxyApiMock: RpcProxyApi
 
     @Mock
     lateinit var safeRepositoryMock: GnosisSafeRepository

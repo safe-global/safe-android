@@ -184,6 +184,9 @@ dependencies {
     // Kethereum RLP
     implementation "com.github.walleth.kethereum:rlp:$versions.kethereum"
 
+    // Wallet Connect
+    implementation "com.github.WalletConnect:kotlin-walletconnect-lib:$versions.wallet_connect"
+
     // AndroidX
     implementation "androidx.appcompat:appcompat:$versions.androidx_app_compat"
     implementation "androidx.cardview:cardview:$versions.androidx_card_view"
@@ -255,7 +258,7 @@ dependencies {
     implementation("me.zhanghai.android.materialprogressbar:library:$versions.material_progressbar") {
         exclude group: 'com.android.support', module: 'appcompat-v7'
     }
-    implementation("com.madgag.spongycastle:prov:$versions.spongycastle", {
+    implementation("org.bouncycastle:bcprov-jdk15on:$versions.bouncycastle", {
         exclude group: 'junit', module: 'junit'
     })
 

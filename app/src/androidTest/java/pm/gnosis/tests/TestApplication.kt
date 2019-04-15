@@ -2,8 +2,8 @@ package pm.gnosis.tests
 
 import androidx.multidex.MultiDexApplication
 import androidx.test.InstrumentationRegistry
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.mockito.Mockito
-import org.spongycastle.jce.provider.BouncyCastleProvider
 import pm.gnosis.crypto.LinuxSecureRandom
 import pm.gnosis.heimdall.di.ComponentProvider
 import pm.gnosis.heimdall.di.components.ApplicationComponent
