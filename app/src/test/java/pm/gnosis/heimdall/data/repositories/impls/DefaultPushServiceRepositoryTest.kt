@@ -19,13 +19,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
@@ -121,26 +121,28 @@ class DefaultPushServiceRepositoryTest {
     fun syncAuthenticationNewToken() {
         val testFirebaseInstanceIdTask = TestFirebaseInstanceIdTask()
         given(firebaseInstanceIdMock.instanceId).willReturn(testFirebaseInstanceIdTask)
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(TEST_ACCOUNT))
         given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
         given(pushServiceApiMock.auth(MockUtils.any())).willReturn(Completable.complete())
 
         pushServiceRepository.syncAuthentication()
         testFirebaseInstanceIdTask.setSuccess(TestInstanceIdResult())
 
-        then(accountsRepositoryMock).should().loadActiveAccount()
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("GNO${testFirebaseInstanceIdTask.result.token}".toByteArray()))
+        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak(bundlePushInfo(testFirebaseInstanceIdTask.result.token).toByteArray()))
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(
-            "${TEST_ACCOUNT.address.asEthereumAddressString()}${testFirebaseInstanceIdTask.result.token}",
-            testPreferences.getString(LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY, "")
+            bundlePushInfo(testFirebaseInstanceIdTask.result.token),
+            testPreferences.getString(LAST_SYNC_PUSH_INFO_PREFS_KEY, "")
         )
         then(firebaseInstanceIdMock).should().instanceId
         then(firebaseInstanceIdMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).should().auth(
             PushServiceAuth(
                 pushToken = testFirebaseInstanceIdTask.result.token,
-                signature = ServiceSignature.fromSignature(TEST_SIGNATURE)
+                buildNumber = BuildConfig.VERSION_CODE,
+                bundle = BuildConfig.APPLICATION_ID,
+                versionName = BuildConfig.VERSION_NAME,
+                client = "android",
+                signatures = listOf(ServiceSignature.fromSignature(TEST_SIGNATURE))
             )
         )
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
@@ -153,19 +155,17 @@ class DefaultPushServiceRepositoryTest {
     fun syncAuthenticationSameToken() {
         val testFirebaseInstanceIdTask = TestFirebaseInstanceIdTask()
         given(firebaseInstanceIdMock.instanceId).willReturn(testFirebaseInstanceIdTask)
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(TEST_ACCOUNT))
 
         // Set last synced token (same as new one)
         val testInstanceIdResult = TestInstanceIdResult()
         testPreferences.putString(
-            LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY,
-            "${TEST_ACCOUNT.address.asEthereumAddressString()}${testInstanceIdResult.token}"
+            LAST_SYNC_PUSH_INFO_PREFS_KEY,
+            bundlePushInfo(testInstanceIdResult.token)
         )
         pushServiceRepository.syncAuthentication()
         testFirebaseInstanceIdTask.setSuccess(testInstanceIdResult)
 
-        then(accountsRepositoryMock).should().loadActiveAccount()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(accountsRepositoryMock).shouldHaveZeroInteractions()
         then(firebaseInstanceIdMock).should().instanceId
         then(firebaseInstanceIdMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveZeroInteractions()
@@ -178,32 +178,34 @@ class DefaultPushServiceRepositoryTest {
     fun syncAuthenticationForced() {
         val testFirebaseInstanceIdTask = TestFirebaseInstanceIdTask()
         given(firebaseInstanceIdMock.instanceId).willReturn(testFirebaseInstanceIdTask)
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(TEST_ACCOUNT))
         given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
         given(pushServiceApiMock.auth(MockUtils.any())).willReturn(Completable.complete())
 
         // Set last synced token (same as new one)
         val testInstanceIdResult = TestInstanceIdResult()
         testPreferences.putString(
-            LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY,
-            "${TEST_ACCOUNT.address.asEthereumAddressString()}${testInstanceIdResult.token}"
+            LAST_SYNC_PUSH_INFO_PREFS_KEY,
+            bundlePushInfo(testInstanceIdResult.token)
         )
         pushServiceRepository.syncAuthentication(forced = true)
         testFirebaseInstanceIdTask.setSuccess(testInstanceIdResult)
 
-        then(accountsRepositoryMock).should().loadActiveAccount()
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("GNO${testFirebaseInstanceIdTask.result.token}".toByteArray()))
+        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak(bundlePushInfo(testFirebaseInstanceIdTask.result.token).toByteArray()))
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(
-            "${TEST_ACCOUNT.address.asEthereumAddressString()}${testFirebaseInstanceIdTask.result.token}",
-            testPreferences.getString(LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY, "")
+            bundlePushInfo(testFirebaseInstanceIdTask.result.token),
+            testPreferences.getString(LAST_SYNC_PUSH_INFO_PREFS_KEY, "")
         )
         then(firebaseInstanceIdMock).should().instanceId
         then(firebaseInstanceIdMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).should().auth(
             PushServiceAuth(
                 pushToken = testFirebaseInstanceIdTask.result.token,
-                signature = ServiceSignature.fromSignature(TEST_SIGNATURE)
+                buildNumber = BuildConfig.VERSION_CODE,
+                bundle = BuildConfig.APPLICATION_ID,
+                versionName = BuildConfig.VERSION_NAME,
+                client = "android",
+                signatures = listOf(ServiceSignature.fromSignature(TEST_SIGNATURE))
             )
         )
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
@@ -217,23 +219,21 @@ class DefaultPushServiceRepositoryTest {
         val testFirebaseInstanceIdTask = TestFirebaseInstanceIdTask()
         val exception = Exception()
         given(firebaseInstanceIdMock.instanceId).willReturn(testFirebaseInstanceIdTask)
-        given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(TEST_ACCOUNT))
 
         // Set last synced token
         val testInstanceIdResult = TestInstanceIdResult()
         testPreferences.putString(
-            LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY,
-            "${TEST_ACCOUNT.address.asEthereumAddressString()}${testInstanceIdResult.token}"
+            LAST_SYNC_PUSH_INFO_PREFS_KEY,
+            bundlePushInfo(testInstanceIdResult.token)
         )
         pushServiceRepository.syncAuthentication()
         testFirebaseInstanceIdTask.setFailure(exception)
 
-        then(accountsRepositoryMock).should().loadActiveAccount()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(accountsRepositoryMock).shouldHaveZeroInteractions()
         // If the FirebaseInstanceId fails then the stored token should not change
         assertEquals(
-            "${TEST_ACCOUNT.address.asEthereumAddressString()}${testInstanceIdResult.token}",
-            testPreferences.getString(LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY, "")
+            bundlePushInfo(testInstanceIdResult.token),
+            testPreferences.getString(LAST_SYNC_PUSH_INFO_PREFS_KEY, "")
         )
         then(firebaseInstanceIdMock).should().instanceId
         then(firebaseInstanceIdMock).shouldHaveNoMoreInteractions()
@@ -1163,6 +1163,9 @@ class DefaultPushServiceRepositoryTest {
             testObserver.values()[0]
         )
     }
+    // sha3("GNO" + <pushToken> + <build_number> + <version_name> + <client> + <bundle>)
+    private fun bundlePushInfo(pushToken: String) =
+        "GNO$pushToken${BuildConfig.VERSION_CODE}${BuildConfig.VERSION_NAME}android${BuildConfig.APPLICATION_ID}"
 
     companion object {
         private val TEST_ACCOUNT = Account("0x42".asEthereumAddress()!!)
@@ -1178,7 +1181,7 @@ class DefaultPushServiceRepositoryTest {
             s = BigInteger.ONE,
             v = 27.toByte()
         )
-        private const val LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY = "prefs.string.accounttoken"
+        private const val LAST_SYNC_PUSH_INFO_PREFS_KEY = "prefs.string.accounttoken"
         private const val SIGNATURE_PREFIX = "GNO"
     }
 
