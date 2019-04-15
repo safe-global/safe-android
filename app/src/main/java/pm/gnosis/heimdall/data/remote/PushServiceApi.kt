@@ -8,7 +8,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface PushServiceApi {
-    @POST("v1/auth/")
+    @POST("v2/auth/")
     fun auth(@Body pushServiceAuth: PushServiceAuth): Completable
 
     @POST("v1/pairing/")
