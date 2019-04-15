@@ -46,5 +46,5 @@ class UnlockViewModel @Inject constructor(
                 State.UNLOCKED
             }.toObservable().mapToResult()
 
-    override fun syncPushAuthentication() = pushServiceRepository.syncAuthentication()
+    override fun syncPushAuthentication() = pushServiceRepository.syncAuthentication(true)
 }

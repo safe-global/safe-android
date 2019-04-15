@@ -10,6 +10,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
@@ -53,7 +54,6 @@ class DefaultPushServiceRepository @Inject constructor(
 
     private val observedTransaction = HashMap<BigInteger, ReceiveSignatureObservable>()
 
-
     /*
     * Situations where a sync might be needed:
     * • Account changes
@@ -63,15 +63,14 @@ class DefaultPushServiceRepository @Inject constructor(
     */
     @SuppressLint("CheckResult") // We start this task in the context of the application. We don't keep track of the result.
     override fun syncAuthentication(forced: Boolean) {
-        accountsRepository.loadActiveAccount()
-            .flatMap { account -> FirebaseInstanceIdSingle().create().map { account to it.token } }
-            .map { (account, token) ->
-                val lastSyncedData = preferencesManager.prefs.getString(LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY, "")
-                val currentData = bundleAccountWithPushToken(account, token)
-                (lastSyncedData != currentData) to (account to token)
+        FirebaseInstanceIdSingle().create()
+            .map { instanceId ->
+                val lastSyncedData = preferencesManager.prefs.getString(LAST_SYNC_PUSH_INFO_PREFS_KEY, "")
+                val currentData = bundlePushInfo(instanceId.token)
+                (lastSyncedData != currentData) to instanceId.token
             }
-            .flatMapCompletable { (needsSync, accountTokenPair) ->
-                if (needsSync || forced) syncAuthentication(accountTokenPair.first, accountTokenPair.second)
+            .flatMapCompletable { (needsSync, pushToken) ->
+                if (needsSync || forced) sendAuthenticationRequest(pushToken)
                 else Completable.complete()
             }
             .subscribeBy(onComplete = { Timber.d("GnosisSafePushServiceRepository: successful sync") }, onError = Timber::e)
@@ -87,17 +86,28 @@ class DefaultPushServiceRepository @Inject constructor(
         fun create(): Single<InstanceIdResult> = Single.create(this)
     }
 
-    private fun syncAuthentication(account: Account, pushToken: String) =
-        accountsRepository.sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$pushToken".toByteArray()))
-            .map { PushServiceAuth(pushToken, ServiceSignature.fromSignature(it)) }
+    private fun sendAuthenticationRequest(pushToken: String) =
+        accountsRepository.sign(Sha3Utils.keccak(bundlePushInfo(pushToken).toByteArray()))
+            .map {
+                PushServiceAuth(
+                    pushToken = pushToken,
+                    buildNumber = BuildConfig.VERSION_CODE,
+                    versionName = BuildConfig.VERSION_NAME,
+                    client = CLIENT,
+                    bundle = BuildConfig.APPLICATION_ID,
+                    signatures = listOf(ServiceSignature.fromSignature(it))
+                )
+            }
             .flatMapCompletable { pushServiceApi.auth(it) }
             .doOnComplete {
                 preferencesManager.prefs.edit {
-                    putString(LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY, bundleAccountWithPushToken(account, pushToken))
+                    putString(LAST_SYNC_PUSH_INFO_PREFS_KEY, bundlePushInfo(pushToken))
                 }
             }
 
-    private fun bundleAccountWithPushToken(account: Account, pushToken: String) = "${account.address.asEthereumAddressString()}$pushToken"
+    // sha3("GNO" + <pushToken> + <build_number> + <version_name> + <client> + <bundle>)
+    private fun bundlePushInfo(pushToken: String) =
+        "$SIGNATURE_PREFIX$pushToken${BuildConfig.VERSION_CODE}${BuildConfig.VERSION_NAME}$CLIENT${BuildConfig.APPLICATION_ID}"
 
     override fun pair(temporaryAuthorization: PushServiceTemporaryAuthorization): Single<Solidity.Address> =
         accountsRepository.recover(
@@ -326,7 +336,8 @@ class DefaultPushServiceRepository @Inject constructor(
     }
 
     companion object {
-        private const val LAST_SYNC_ACCOUNT_AND_TOKEN_PREFS_KEY = "prefs.string.accounttoken"
+        private const val LAST_SYNC_PUSH_INFO_PREFS_KEY = "prefs.string.accounttoken"
         private const val SIGNATURE_PREFIX = "GNO"
+        private const val CLIENT = "android"
     }
 }
