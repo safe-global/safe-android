@@ -58,7 +58,7 @@ interface ApplicationComponent {
     fun addressHelper(): AddressHelper
     fun toolbarHelper(): ToolbarHelper
     fun picasso(): Picasso
-    fun eop712JsonParser(): EIP712JsonParser
+    fun eip712JsonParser(): EIP712JsonParser
 
     // Base injects
     fun inject(activity: BaseActivity)
