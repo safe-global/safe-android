@@ -171,7 +171,9 @@ dependencies {
         exclude group: "com.squareup.retrofit2", module: "converter-moshi"
     }
     implementation "com.github.gnosis.svalinn-kotlin:utils-ethereum:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:mnemonic:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:mnemonic-android:$versions.svalinn"
+    implementation "com.github.gnosis.svalinn-kotlin:models:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:security:$versions.svalinn"
     implementation "com.github.gnosis.svalinn-kotlin:utils:$versions.svalinn"
 
@@ -256,6 +258,7 @@ dependencies {
     implementation "com.squareup.picasso:picasso:$versions.picasso"
 
     // More
+    implementation "com.google.zxing:core:$versions.zxing"
     implementation "com.github.clans:fab:$versions.floating_action_button"
     implementation("me.zhanghai.android.materialprogressbar:library:$versions.material_progressbar") {
         exclude group: 'com.android.support', module: 'appcompat-v7'
