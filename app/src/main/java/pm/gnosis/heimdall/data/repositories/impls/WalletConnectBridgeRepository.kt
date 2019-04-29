@@ -155,7 +155,7 @@ class WalletConnectBridgeRepository @Inject constructor(
 
                 override fun sessionApproved() {}
 
-                override fun sessionClosed(msg: String?) {
+                override fun sessionClosed() {
                     sessions.remove(config.handshakeTopic)
                     sessionUpdates.onNext(Unit)
                 }
@@ -232,7 +232,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                         }
                     }
 
-                    override fun sessionClosed(msg: String?) {
+                    override fun sessionClosed() {
                         emitter.onNext(BridgeRepository.SessionEvent.Closed(sessionId))
                         emitter.onComplete()
                     }

@@ -42,7 +42,7 @@ ext {
             rxkotlin                  : '2.3.0',
             svalinn                   : 'v0.8.0',
             timber                    : '4.7.1',
-            wallet_connect            : '0.7',
+            wallet_connect            : '0.8',
             zxing                     : '3.3.1',
 
             // Test dependencies
