@@ -574,6 +574,8 @@ class DefaultSubmitTransactionHelperTest {
         signatureSubject.onNext(mapOf(TEST_OWNERS[0] to TEST_SIGNATURE))
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(true)) }
         testObserver.assertUpdates(updates)
+
+        then(signatureStore).should().flatMapInfo(MockUtils.eq(TEST_SAFE), MockUtils.eq(info), MockUtils.eq(mapOf(TEST_OWNERS[0] to TEST_SIGNATURE)))
     }
 
     @Test
@@ -634,6 +636,8 @@ class DefaultSubmitTransactionHelperTest {
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(false)) }
         testObserver.assertUpdates(updates)
         testSingleFactory.assertCount(1)
+
+        then(signatureStore).should().flatMapInfo(MockUtils.eq(TEST_SAFE), MockUtils.eq(info), MockUtils.eq(emptyMap()))
     }
 
     @Test
@@ -694,6 +698,8 @@ class DefaultSubmitTransactionHelperTest {
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(false)) }
         testObserver.assertUpdates(updates)
         testSingleFactory.assertCount(1)
+
+        then(signatureStore).should().flatMapInfo(MockUtils.eq(TEST_SAFE), MockUtils.eq(info), MockUtils.eq(emptyMap()))
     }
 
     private fun loadExecutionInfo(transaction: SafeTransaction) =
