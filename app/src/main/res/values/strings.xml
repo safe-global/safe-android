@@ -435,4 +435,5 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="channel_description_wallect_connect_requests">Requests from WalletConnect sessions</string>
     <string name="channel_description_wallect_connect_sessions">Updates for WalletConnect sessions</string>
     <string name="notification_new_transaction_request">New transaction request to review</string>
+    <string name="select_safe_to_connect">Select a Safe to connect</string>
 </resources>

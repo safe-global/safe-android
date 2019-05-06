@@ -33,8 +33,8 @@ class WalletConnectIntroActivity : ViewModelActivity<WalletConnectIntroContract>
 
     override fun inject(component: ViewComponent) = component.inject(this)
 
-    // Screen views are tracked manually because of view pager
-    override fun screenId(): ScreenId? = null
+    // TODO: tracked manually because of view pager (as soon as tracking is defined)
+    override fun screenId(): ScreenId? = ScreenId.WALLET_CONNECT_INTRO
 
     private val viewPager = object : PagerAdapter() {
 

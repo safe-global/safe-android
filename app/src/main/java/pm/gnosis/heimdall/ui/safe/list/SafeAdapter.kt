@@ -35,9 +35,9 @@ class SafeAdapter @Inject constructor(
         private const val TYPE_RECOVERING_SAFE = 2
     }
 
-    val safeSelection = PublishSubject.create<AbstractSafe>()!!
+    val safeSelection = PublishSubject.create<AbstractSafe>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SafeAdapter.CastingViewHolder<out AbstractSafe> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CastingViewHolder<out AbstractSafe> {
         return when (viewType) {
             TYPE_SAFE -> {
                 ViewHolder(
