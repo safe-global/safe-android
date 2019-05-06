@@ -172,6 +172,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                 @Suppress("UNCHECKED_CAST")
                 results.associate { entry -> (entry as Pair<Solidity.Address, Signature>) }
             }
+                .onErrorReturn { emptyMap() }
         } ?: Single.just(emptyMap()))
             .flatMapObservable {
                 signatureStore.flatMapInfo(
