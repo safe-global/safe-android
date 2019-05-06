@@ -699,7 +699,9 @@ class DefaultSubmitTransactionHelperTest {
         testObserver.assertUpdates(updates)
         testSingleFactory.assertCount(1)
 
-        then(signatureStore).should().flatMapInfo(MockUtils.eq(TEST_SAFE), MockUtils.eq(info), MockUtils.eq(emptyMap()))
+        then(signatureStore).should().flatMapInfo(
+            MockUtils.eq(TEST_SAFE), MockUtils.eq(info), MockUtils.eq(mapOf(Solidity.Address(BigInteger.ONE) to TEST_SIGNATURE))
+        )
     }
 
     private fun loadExecutionInfo(transaction: SafeTransaction) =
