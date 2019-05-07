@@ -34,6 +34,7 @@ import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestSingleFactory
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
+import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.util.concurrent.TimeoutException
 
@@ -517,6 +518,190 @@ class DefaultSubmitTransactionHelperTest {
         signatureSubject.onNext(emptyMap())
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(true)) }
         testObserver.assertUpdates(updates)
+    }
+
+    @Test
+    fun initialSignatures() {
+        given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        val signatureSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
+        given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
+        val pushMessageSubject = PublishSubject.create<PushServiceRepository.TransactionResponse>()
+        given(signaturePushRepository.observe(anyString())).willReturn(pushMessageSubject)
+        given(
+            relayRepositoryMock.checkConfirmation(
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any()
+            )
+        ).willReturn(Single.just(TEST_OWNERS[0] to TEST_SIGNATURE))
+
+        submitTransactionHelper.setup(TEST_SAFE, ::loadExecutionInfo)
+        val retryEvents = PublishSubject.create<Unit>()
+        val requestEvents = PublishSubject.create<Unit>()
+        val submitEvents = PublishSubject.create<Unit>()
+        val events = SubmitTransactionHelper.Events(
+            retryEvents, requestEvents, submitEvents
+        )
+        val testObserver = TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>()
+
+        val info = TransactionExecutionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS, TEST_VERSION,
+            TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
+            Wei.ether("23").value
+        )
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+            .willReturn(Single.just(info))
+
+        val initialSignatures = setOf(TEST_SIGNATURE)
+
+        submitTransactionHelper.observe(events, TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS), initialSignatures)
+            .subscribe(testObserver)
+
+        val updates = mutableListOf<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>({
+            ((it as? DataResult)?.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder == transactionViewHolder
+        })
+        updates += {
+            it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("23").value, ERC20Token.ETHER_TOKEN, true))
+        }
+        testObserver.assertUpdates(updates)
+
+        signatureSubject.onNext(mapOf(TEST_OWNERS[0] to TEST_SIGNATURE))
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(true)) }
+        testObserver.assertUpdates(updates)
+
+        then(signatureStore).should().flatMapInfo(MockUtils.eq(TEST_SAFE), MockUtils.eq(info), MockUtils.eq(mapOf(TEST_OWNERS[0] to TEST_SIGNATURE)))
+    }
+
+    @Test
+    fun initialSignaturesCheckError() {
+        given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        val signatureSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
+        given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
+        // Return a single that will not emit an value
+        val testSingleFactory = TestSingleFactory<Map<Solidity.Address, Signature>>()
+        given(signatureStore.load()).willReturn(testSingleFactory.get())
+        val pushMessageSubject = PublishSubject.create<PushServiceRepository.TransactionResponse>()
+        given(signaturePushRepository.observe(anyString())).willReturn(pushMessageSubject)
+        given(
+            relayRepositoryMock.checkConfirmation(
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any()
+            )
+        ).willReturn(Single.error(IllegalStateException()))
+
+        submitTransactionHelper.setup(TEST_SAFE, ::loadExecutionInfo)
+        val retryEvents = PublishSubject.create<Unit>()
+        val requestEvents = PublishSubject.create<Unit>()
+        val submitEvents = PublishSubject.create<Unit>()
+        val events = SubmitTransactionHelper.Events(
+            retryEvents, requestEvents, submitEvents
+        )
+        val testObserver = TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>()
+
+        val info = TransactionExecutionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS, TEST_VERSION,
+            TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
+            Wei.ether("23").value
+        )
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+            .willReturn(Single.just(info))
+
+        val initialSignatures = setOf(TEST_SIGNATURE)
+
+        submitTransactionHelper.observe(events, TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS), initialSignatures)
+            .subscribe(testObserver)
+
+        val updates = mutableListOf<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>({
+            ((it as? DataResult)?.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder == transactionViewHolder
+        })
+        updates += {
+            it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("23").value, ERC20Token.ETHER_TOKEN, true))
+        }
+        testObserver.assertUpdates(updates)
+
+        signatureSubject.onNext(emptyMap())
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(false)) }
+        testObserver.assertUpdates(updates)
+        testSingleFactory.assertCount(1)
+
+        then(signatureStore).should().flatMapInfo(MockUtils.eq(TEST_SAFE), MockUtils.eq(info), MockUtils.eq(emptyMap()))
+    }
+
+    @Test
+    fun initialSignaturesUnknownOwner() {
+        given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        val signatureSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
+        given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
+        // Return a single that will not emit an value
+        val testSingleFactory = TestSingleFactory<Map<Solidity.Address, Signature>>()
+        given(signatureStore.load()).willReturn(testSingleFactory.get())
+        val pushMessageSubject = PublishSubject.create<PushServiceRepository.TransactionResponse>()
+        given(signaturePushRepository.observe(anyString())).willReturn(pushMessageSubject)
+        given(
+            relayRepositoryMock.checkConfirmation(
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any()
+            )
+        ).willReturn(Single.just(Solidity.Address(BigInteger.ONE) to TEST_SIGNATURE))
+
+        submitTransactionHelper.setup(TEST_SAFE, ::loadExecutionInfo)
+        val retryEvents = PublishSubject.create<Unit>()
+        val requestEvents = PublishSubject.create<Unit>()
+        val submitEvents = PublishSubject.create<Unit>()
+        val events = SubmitTransactionHelper.Events(
+            retryEvents, requestEvents, submitEvents
+        )
+        val testObserver = TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>()
+
+        val info = TransactionExecutionRepository.ExecuteInformation(
+            TEST_TRANSACTION_HASH, TEST_TRANSACTION,
+            TEST_OWNERS[2], TEST_OWNERS.size - 1, TEST_OWNERS, TEST_VERSION,
+            TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
+            Wei.ether("23").value
+        )
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+            .willReturn(Single.just(info))
+
+        val initialSignatures = setOf(TEST_SIGNATURE)
+
+        submitTransactionHelper.observe(events, TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS), initialSignatures)
+            .subscribe(testObserver)
+
+        val updates = mutableListOf<((Result<SubmitTransactionHelper.ViewUpdate>) -> Boolean)>({
+            ((it as? DataResult)?.data as? SubmitTransactionHelper.ViewUpdate.TransactionInfo)?.viewHolder == transactionViewHolder
+        })
+        updates += {
+            it == DataResult(SubmitTransactionHelper.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("23").value, ERC20Token.ETHER_TOKEN, true))
+        }
+        testObserver.assertUpdates(updates)
+
+        signatureSubject.onNext(emptyMap())
+        updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(false)) }
+        testObserver.assertUpdates(updates)
+        testSingleFactory.assertCount(1)
+
+        then(signatureStore).should().flatMapInfo(
+            MockUtils.eq(TEST_SAFE), MockUtils.eq(info), MockUtils.eq(mapOf(Solidity.Address(BigInteger.ONE) to TEST_SIGNATURE))
+        )
     }
 
     private fun loadExecutionInfo(transaction: SafeTransaction) =
