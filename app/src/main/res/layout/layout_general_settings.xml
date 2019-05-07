@@ -232,7 +232,7 @@
 
                 <!-- Feedback Button -->
                 <View
-                    android:id="@+id/layout_general_settings_feedback"
+                    android:id="@+id/layout_general_settings_feedback_background"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:background="@drawable/selectable_background"
@@ -281,7 +281,7 @@
 
                 <!-- Rate Button -->
                 <View
-                    android:id="@+id/layout_general_settings_rate"
+                    android:id="@+id/layout_general_settings_rate_background"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:background="@drawable/selectable_background"

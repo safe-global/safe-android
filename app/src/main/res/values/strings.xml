@@ -268,6 +268,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="wallet_connect">WalletConnect Beta</string>
     <string name="wallet_connect_sessions">WalletConnect Sessions</string>
     <string name="deny">Deny</string>
+    <string name="approve">Approve</string>
     <string name="activate">Activate</string>
     <string name="balance_after_transfer">Balance after transfer</string>
     <string name="amount">Amount</string>
@@ -397,4 +398,13 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="sync_with_extension_sent">Resync notification sent successfully</string>
     <string name="open_in_play_store">Open in Play Store</string>
     <string name="open_mail_client">Open Mail Client</string>
+
+    <string name="feedback_subject">Feedback for %1$s</string>
+    <string name="feedback_text"><![CDATA[
+    <p>App version: Android - %1$s</p>
+    <p><strong>Safe addresses:</strong></p>
+    %2$s
+    <p>Feedback:</p>
+    ]]></string>
+    <string name="email_chooser_error">Unfortunately you do not have any mail clients configured.</string>
 </resources>
