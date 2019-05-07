@@ -1,12 +1,12 @@
 package pm.gnosis.heimdall.ui.settings.general
 
 import io.reactivex.Single
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.security.EncryptionManager
-import pm.gnosis.utils.addHexPrefix
 import javax.inject.Inject
 
 class GeneralSettingsViewModel @Inject constructor(
@@ -29,7 +29,7 @@ class GeneralSettingsViewModel @Inject constructor(
             .map {
                 val addresses = mutableListOf<String>()
                 it.forEach { safe ->
-                    addresses.add(safe.address().value.toString(16).addHexPrefix())
+                    addresses.add(safe.address().asEthereumAddressChecksumString())
                 }
                 addresses as List<String>
             }

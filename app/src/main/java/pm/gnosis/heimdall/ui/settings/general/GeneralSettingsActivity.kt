@@ -8,7 +8,7 @@ import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import android.view.View
-import android.widget.Toast
+import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -186,7 +186,7 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
         try {
             startActivity(intent)
         } catch (ex: ActivityNotFoundException) {
-            Toast.makeText(this, getString(R.string.email_chooser_error), Toast.LENGTH_SHORT).show()
+            snackbar(layout_general_settings_feedback_background, getString(R.string.email_chooser_error), Snackbar.LENGTH_SHORT)
         }
     }
 
