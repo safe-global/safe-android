@@ -1,15 +1,18 @@
 package pm.gnosis.heimdall.ui.settings.general
 
 import io.reactivex.Single
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.security.EncryptionManager
+import pm.gnosis.utils.addHexPrefix
 import javax.inject.Inject
 
 class GeneralSettingsViewModel @Inject constructor(
     private val encryptionManager: EncryptionManager,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val safeRepository: GnosisSafeRepository
 ) : GeneralSettingsContract() {
     override fun isFingerprintAvailable() = encryptionManager.canSetupFingerprint()
 
@@ -19,5 +22,16 @@ class GeneralSettingsViewModel @Inject constructor(
             .mapToResult()
 
     override fun loadPaymentToken() =
-            tokenRepository.loadPaymentToken()
+        tokenRepository.loadPaymentToken()
+
+    override fun loadSafeAdresses(): Single<List<String>> =
+        safeRepository.observeAllSafes()
+            .map {
+                val addresses = mutableListOf<String>()
+                it.forEach { safe ->
+                    addresses.add(safe.address().value.toString(16).addHexPrefix())
+                }
+                addresses as List<String>
+            }
+            .firstOrError()
 }
