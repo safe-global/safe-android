@@ -17,6 +17,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/layout_receive_token_title" />
 
+    <View
+        android:id="@+id/layout_receive_token_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:alpha="0"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/layout_receive_token_title" />
+
     <ImageView
         android:id="@+id/layout_receive_token_back_button"
         android:layout_width="@dimen/toolbar_height"
@@ -54,134 +62,162 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/layout_receive_token_safe_name"
-                style="@style/DarkText"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/layout_receive_token_qr_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:maxLines="1"
-                android:text="@string/loading"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="My Safe" />
-
-            <pm.gnosis.blockies.BlockiesImageView
-                android:id="@+id/layout_receive_token_safe_image"
-                android:layout_width="@dimen/info_blockies"
-                android:layout_height="@dimen/info_blockies"
-                android:layout_margin="8dp"
-                app:layout_constraintEnd_toStartOf="@+id/layout_receive_token_safe_address"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_safe_name"
-                tools:background="@drawable/circle_settings" />
-
-            <TextView
-                android:id="@+id/layout_receive_token_safe_address"
-                style="@style/NormalText"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:fontFamily="monospace"
-                android:letterSpacing="-0.04"
-                android:textSize="13sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toEndOf="@+id/layout_receive_token_safe_image"
-                app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_safe_name"
-                tools:text="0xf1511FAB6b7347899f51f9db027A32b39caE3910" />
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/layout_receive_token_input_barrier"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="layout_receive_token_safe_address,layout_receive_token_safe_image" />
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/layout_receive_token_qr_card"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_margin="16dp"
+                android:layout_marginTop="8dp"
                 app:cardCornerRadius="@dimen/primary_button_radius"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_input_barrier">
+                app:layout_constraintTop_toTopOf="parent">
 
-                <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-                    android:id="@+id/layout_receive_token_qr_progress"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_gravity="center" />
-
-                <ImageView
-                    android:id="@+id/layout_receive_token_qr_image"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="16dp"
-                    android:scaleType="fitCenter"
-                    tools:background="@color/pale_grey" />
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/layout_receive_token_info_text"
+                        style="@style/NormalText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:layout_marginTop="8dp"
+                        android:width="240dp"
+                        android:gravity="center"
+                        android:lineSpacingExtra="5sp"
+                        android:text="@string/share_your_address_to_receive_funds"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.496"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/layout_receive_token_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/pale_grey_two"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_info_text" />
+
+                    <TextView
+                        android:id="@+id/layout_receive_token_safe_name"
+                        style="@style/DarkText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:layout_marginTop="16dp"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:text="@string/loading"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_divider"
+                        tools:text="My Safe" />
+
+                    <pm.gnosis.blockies.BlockiesImageView
+                        android:id="@+id/layout_receive_token_safe_image"
+                        android:layout_width="@dimen/info_blockies"
+                        android:layout_height="@dimen/info_blockies"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/layout_receive_token_safe_address"
+                        app:layout_constraintEnd_toStartOf="@+id/layout_receive_token_safe_address"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/layout_receive_token_safe_address"
+                        tools:background="@drawable/circle_settings" />
+
+                    <TextView
+                        android:id="@+id/layout_receive_token_safe_address"
+                        style="@style/NormalText"
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:fontFamily="monospace"
+                        android:letterSpacing="-0.04"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toEndOf="@+id/layout_receive_token_safe_image"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_safe_name"
+                        tools:text="0xf1511FAB6b7347899f51f9db027A32b39caE3910" />
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="32dp"
+                        android:layout_marginBottom="32dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_safe_address">
+
+                        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                            android:id="@+id/layout_receive_token_qr_progress"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_gravity="center" />
+
+                        <ImageView
+                            android:id="@+id/layout_receive_token_qr_image"
+                            style="@style/PrimaryButton.White"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:scaleType="fitCenter"
+                            tools:background="@color/pale_grey" />
+
+                    </FrameLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.cardview.widget.CardView>
 
-
-            <TextView
-                android:id="@+id/layout_receive_token_info_text"
-                style="@style/NormalText"
-                android:layout_width="wrap_content"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/layout_receive_token_share_card"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:width="240dp"
-                android:gravity="center"
-                android:lineSpacingExtra="5sp"
-                android:text="@string/share_qr_code_hint"
-                android:textSize="13sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_qr_card" />
-
-            <LinearLayout
-                android:id="@+id/layout_receive_token_share_button"
-                style="@style/PrimaryButton.White"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:gravity="center"
-                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="@dimen/primary_button_radius"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_info_text">
+                app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_qr_card">
 
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:tint="@color/azure"
-                    app:srcCompat="@drawable/ic_share_24dp" />
+                <LinearLayout
+                    android:id="@+id/layout_receive_token_share_button"
 
-                <TextView
-                    style="@style/PrimaryButton.White.Text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/share" />
-            </LinearLayout>
+                    android:layout_margin="16dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:tint="@color/azure"
+                        app:srcCompat="@drawable/ic_share_24dp" />
+
+                    <TextView
+                        style="@style/PrimaryButton.White.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="1dp"
+                        android:text="@string/share" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
 
-    <View
-        android:id="@+id/layout_receive_token_toolbar_shadow"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_shadow_size"
-        android:alpha="0"
-        android:background="@drawable/toolbar_dropshadow"
-        app:layout_constraintTop_toBottomOf="@id/layout_receive_token_title" />
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

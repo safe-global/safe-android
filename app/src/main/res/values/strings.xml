@@ -13,7 +13,7 @@
     <string name="error_ssl_handshake">Please check whether the time is correctly set.</string>
     <string name="tab_title_transactions">Transactions</string>
     <string name="tab_title_assets">Tokens</string>
-    <string name="address_clipboard_success">Address copied to clipboard</string>
+    <string name="address_clipboard_success">Address copied to your clipboard!</string>
     <string name="share_address">Share address</string>
     <string name="x_data_bytes">%d bytes included</string>
     <string name="submit_transaction">Submit Transaction</string>
@@ -384,6 +384,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="funds_did_not_meet_minimum">Funds received didn\'t meet the minimum amount.</string>
     <string name="amount_received">Amount received</string>
     <string name="share_your_address">Share your address with contracts or enable senders to scan your QR code to receive Ether and tokens.</string>
+    <string name="share_your_address_to_receive_funds">Share your address with contacts or scan your QR code to receive Ether and tokens.</string>
     <string name="once_process_is_complete">Once this process is complete, you can only use the new browser extension to confirm transactions.\n\nPlease have your Safe recovery phrase ready to confirm the recovery.</string>
     <string name="future_tx_approved_by_both">All future transactions will need to be approved by both devices.</string>
     <string name="ios_open_be_link_text">1. Open the link to the Chrome browser extension on your desktop computer.</string>
