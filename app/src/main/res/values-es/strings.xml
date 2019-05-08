@@ -211,13 +211,13 @@
     <string name="layout_pending_safe_description">Escanea el código QR o comparte la dirección con la cuenta o persona que vaya a realizar la transferencia.</string>
     <string name="safe_address">Dirección de la Safe:</string>
     <string name="type">Tipo</string>
-    <string name="replace_browser_extension">Reemplazar la extensión\ndel navegador</string>
+    <string name="replace_browser_extension">Reemplazar la extensión del navegador</string>
     <string name="no_recovery_necessary">No hubo cambios de configuración en esta Safe. La recuperación no es necesaria</string>
     <string name="replace_browser_extension_transaction_info">La extensión del navegador emparejada actualmente se reemplazará con la nueva extensión.</string>
     <string name="error_retrieving_safe_balance">Error al recuperar el saldo de la Safe</string>
     <string name="cannot_delete_safe_from_address_book">No es posible eliminar una Safe activa de la libreta de direcciones.</string>
     <string name="settings_change">Cambiar ajustes</string>
-    <string name="replace_recovery_phrase">Reemplazar la clave\nde recuperación</string>
+    <string name="replace_recovery_phrase">Reemplazar la clave de recuperación</string>
     <string name="scan_your_browser_extension">Escanea tu extensión del navegador</string>
     <string name="replace_recovery_phrase_description">Para reemplazar la frase de recuperación de esta Safe, sigue estos pasos:\n\n
 <b>1.</b> Abre la extensión del navegador y selecciona la Safe de la cual quieras reemplazar su clave de recuperación\n

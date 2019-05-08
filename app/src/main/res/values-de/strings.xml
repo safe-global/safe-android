@@ -207,13 +207,13 @@
     <string name="layout_pending_safe_description">Scanne den QR-Code oder teile deine Addresse mit dem Account oder der Person, die dir Geld schicken möchte.</string>
     <string name="safe_address">Safe-Addresse:</string>
     <string name="type">Typ</string>
-    <string name="replace_browser_extension">Ersetze Browser\nExtension</string>
+    <string name="replace_browser_extension">Ersetze Browser Extension</string>
     <string name="no_recovery_necessary">Es gab keine Änderung der Konfiguration dieses Safe\'s. Wiederherstellung ist nicht nötig.</string>
     <string name="replace_browser_extension_transaction_info">Die aktuell verbundene Browser Extension wird mit der neuen ersetzt.</string>
     <string name="error_retrieving_safe_balance">Fehler beim Laden des Safe-Guthabens</string>
     <string name="cannot_delete_safe_from_address_book">Es ist nicht möglich, einen aktiven Safe aus dem Adressbuch zu löschen.</string>
     <string name="settings_change">Einstellung ändern</string>
-    <string name="replace_recovery_phrase">Ersetze\nSicherungsschlüssel</string>
+    <string name="replace_recovery_phrase">Ersetze Sicherungsschlüssel</string>
     <string name="scan_your_browser_extension">Scanne deine Browser Extension</string>
     <string name="replace_recovery_phrase_description">Um den Sicherungsschlüssel für diesen Safe zu ersetzen, mache bitte folgendes:\n \n 
  <b> 1. </b> Öffnen die Browser Extension und wähle den Safe dessen Sicherungsschlüssel du ersetzen willst.\n 

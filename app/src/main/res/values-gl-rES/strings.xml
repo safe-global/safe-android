@@ -211,13 +211,13 @@
     <string name="layout_pending_safe_description">Escanee o código QR ou comparta o seu enderezo coa conta ou persoa enviando fondos a continuación.</string>
     <string name="safe_address">Enderezo da Safe:</string>
     <string name="type">Tipo</string>
-    <string name="replace_browser_extension">Substituír a extensión\ndo navegador</string>
+    <string name="replace_browser_extension">Substituír a extensión do navegador</string>
     <string name="no_recovery_necessary">Non houbo cambios de configuración nesta Safe. Non é necesaria a recuperación.</string>
     <string name="replace_browser_extension_transaction_info">A extensión do navegador actualmente conectada substituirase pola nova extensión do navegador.</string>
     <string name="error_retrieving_safe_balance">Erro ao recuperar o saldo da Safe</string>
     <string name="cannot_delete_safe_from_address_book">Non é posible borrar unha Safe activa da axenda de enderezos.</string>
     <string name="settings_change">Cambiar axustes</string>
-    <string name="replace_recovery_phrase">Substituír a clave\nde recuperación</string>
+    <string name="replace_recovery_phrase">Substituír a clave de recuperación</string>
     <string name="scan_your_browser_extension">Escanea a túa extensión do navegador</string>
     <string name="replace_recovery_phrase_description">Para substituír a frase de recuperación desta Safe, fai o seguinte:\n\n 
  <b>1.</b> Abra a extensión do navegador e seleccione a Safe coa frase de recuperación que quere reemplazar\n 

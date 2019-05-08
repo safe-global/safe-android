@@ -210,13 +210,13 @@
     <string name="layout_pending_safe_description">Scansiona il codice QR o condividi il tuo indirizzo con il conto o la persona che invia i fondi qui sotto.</string>
     <string name="safe_address">Indirizzo del Safe:</string>
     <string name="type">Tipo</string>
-    <string name="replace_browser_extension">Sostituisci l\'estensione\ndel browser</string>
+    <string name="replace_browser_extension">Sostituisci l\'estensione del browser</string>
     <string name="no_recovery_necessary">Non ci sono state modifiche alla configurazione di questo Safe. Non è necessario alcun recupero.</string>
     <string name="replace_browser_extension_transaction_info">L\'estensione del browser attualmente connessa verrà sostituita con la nuova estensione del browser.</string>
     <string name="error_retrieving_safe_balance">Errore durante il recupero del saldo del Safe</string>
     <string name="cannot_delete_safe_from_address_book">Non è possibile cancellare un Safe attivo dalla rubrica.</string>
     <string name="settings_change">Modifica delle impostazioni</string>
-    <string name="replace_recovery_phrase">Sostituisci la frase\ndi recupero</string>
+    <string name="replace_recovery_phrase">Sostituisci la frase di recupero</string>
     <string name="scan_your_browser_extension">Scansiona l\'estensione del tuo browser</string>
     <string name="replace_recovery_phrase_description">Per sostituire la frase di recupero di questo Safe, fai quanto segue: \n\n 
  <b> 1. </b> Apri l\'estensione del browser e seleziona il Safe del quale intendi sostituire la frase di recupero\n 

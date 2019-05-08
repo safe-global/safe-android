@@ -211,13 +211,13 @@
     <string name="layout_pending_safe_description">Scan the QR code or share your address with the account or person sending funds below.</string>
     <string name="safe_address">Safe Address:</string>
     <string name="type">Type</string>
-    <string name="replace_browser_extension">Replace browser\nextension</string>
+    <string name="replace_browser_extension">Replace browser extension</string>
     <string name="no_recovery_necessary">There were no configuration changes to this Safe. No recovery is necessary</string>
     <string name="replace_browser_extension_transaction_info">The currently connected browser extension will be replaced with the new browser extension.</string>
     <string name="error_retrieving_safe_balance">Error retrieving Safe balance</string>
     <string name="cannot_delete_safe_from_address_book">It is not possible to delete an active Safe from the address book.</string>
     <string name="settings_change">Settings change</string>
-    <string name="replace_recovery_phrase">Replace recovery\nphrase</string>
+    <string name="replace_recovery_phrase">Replace recovery phrase</string>
     <string name="scan_your_browser_extension">Scan your browser extension</string>
     <string name="replace_recovery_phrase_description">In order to replace the recovery phrase for this Safe please do the following:\n\n
         <b>1.</b> Open the browser extension and select the Safe which recovery phrase you want to replace\n
