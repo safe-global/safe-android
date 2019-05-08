@@ -86,9 +86,9 @@
     <string name="setup_fingerprint">Configurar huella digital</string>
     <string name="fingerprint_confirmed">¡Huella digital confirmada!</string>
     <string name="finish">Terminar</string>
-    <string name="password_validation_identical_characters">No uses caracteres triples\n</string>
+    <string name="password_validation_identical_characters">No uses caracteres triples</string>
     <string name="password_validation_minimum_characters">Usa un mínimo de 8 caracteres\n</string>
-    <string name="password_validation_one_number_one_letter">Al menos 1 letra y 1 número\n</string>
+    <string name="password_validation_one_number_one_letter">Al menos 1 letra y 1 número</string>
     <string name="terms">Términos</string>
     <string name="terms_info"><![CDATA[Por favor, revisa nuestros <a href=\"https://safe.gnosis.io/terms\">Términos de Uso</a> y <a href=\"https://safe.gnosis.io/privacy\">Política de Privacidad</a>.]]></string>
     <string name="no_thanks">No, gracias</string>
@@ -244,7 +244,7 @@ Sin ambas, no podrás recuperar el acceso a tu Safe ni al dinero.</string>
     <string name="recover_safe_info_explainer">Por favor, mantén la dirección de tu Safe y la clave de recuperación listas, que consta de 12 palabras.</string>
     <string name="start_recovery">Empezar la recuperación</string>
     <string name="connected_extension">Extensión conectada</string>
-    <string name="connect_browser_extension">Conectar la extensión del navegador</string>
+    <string name="connect_browser_extension">Conectar la extensión\ndel navegador</string>
     <string name="connect_extension_description">Esta transacción conectará esta Safe con la extensión del navegador. Las transacciones futuras requerirán su confirmación en ambos dispositivos.</string>
     <string name="pairing_first_step"><![CDATA[1. Descargue la <font color=#27a0ff> extensión Gnosis Safe del navegador</font> .]]></string>
     <string name="pairing_second_step">2. Escanea el código QR de la extensión del navegador.</string>

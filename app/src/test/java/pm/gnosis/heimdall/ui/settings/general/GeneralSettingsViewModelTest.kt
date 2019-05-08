@@ -13,6 +13,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -34,11 +35,14 @@ class GeneralSettingsViewModelTest {
     @Mock
     private lateinit var tokenRepositoryMock: TokenRepository
 
+    @Mock
+    private lateinit var safeRepositoryMock: GnosisSafeRepository
+
     private lateinit var viewModel: GeneralSettingsViewModel
 
     @Before
     fun setUp() {
-        viewModel = GeneralSettingsViewModel(encryptionManagerMock, tokenRepositoryMock)
+        viewModel = GeneralSettingsViewModel(encryptionManagerMock, tokenRepositoryMock, safeRepositoryMock)
     }
 
     @Test

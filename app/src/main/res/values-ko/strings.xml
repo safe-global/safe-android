@@ -86,9 +86,9 @@
     <string name="setup_fingerprint">지문 설정하기</string>
     <string name="fingerprint_confirmed">지문이 확인되었습니다!</string>
     <string name="finish">완료</string>
-    <string name="password_validation_identical_characters">같은 문자를 연속 3회 입력하지 마세요\n</string>
+    <string name="password_validation_identical_characters">같은 문자를 연속 3회 입력하지 마세요</string>
     <string name="password_validation_minimum_characters">최소 8개 문자를 입력하세요\n</string>
-    <string name="password_validation_one_number_one_letter">최소 1개 문자와 숫자를 포함해야 합니다\n</string>
+    <string name="password_validation_one_number_one_letter">최소 1개 문자와 숫자를 포함해야 합니다</string>
     <string name="terms">약관</string>
     <string name="terms_info"><![CDATA[<a href=\"https://safe.gnosis.io/terms\">이용 약관</a>과 <a href=\"https://safe.gnosis.io/privacy\">개인정보처리정책</a>을 검토해주세요.]]></string>
     <string name="no_thanks">아니오</string>

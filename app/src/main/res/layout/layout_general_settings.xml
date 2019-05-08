@@ -73,9 +73,9 @@
                     android:id="@+id/layout_general_settings_fingerprint_icon"
                     android:layout_width="24dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:padding="4dp"
                     app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_fingerprint_info"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/layout_general_settings_fingerprint_title"
                     app:srcCompat="@drawable/ic_settings_fingerprint" />
@@ -85,27 +85,25 @@
                     style="@style/DarkText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:paddingTop="16dp"
                     android:text="@string/fingerprint"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toStartOf="@+id/layout_general_settings_fingerprint_switch"
-                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_fingerprint_icon"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/layout_general_settings_fingerprint_info"
                     style="@style/NormalText"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_height="34dp"
                     android:layout_marginEnd="16dp"
                     android:paddingBottom="16dp"
                     android:text="@string/disabled"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toStartOf="@+id/layout_general_settings_fingerprint_switch"
-                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_fingerprint_icon"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_fingerprint_title" />
 
                 <Switch
@@ -140,8 +138,8 @@
                     android:id="@+id/layout_general_settings_password_icon"
                     android:layout_width="24dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_password_info"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/layout_general_settings_password_title"
                     app:srcCompat="@drawable/ic_settings_device_password" />
@@ -151,28 +149,183 @@
                     style="@style/DarkText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:paddingTop="16dp"
                     android:text="@string/device_password"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_password_icon"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_fingerprint_info" />
 
                 <TextView
                     android:id="@+id/layout_general_settings_password_info"
                     style="@style/NormalText"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_height="33dp"
                     android:layout_marginEnd="16dp"
                     android:paddingBottom="16dp"
                     android:text="@string/change_password"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_password_icon"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_password_title" />
+
+                <!-- Payment Token Button -->
+                <View
+                    android:id="@+id/layout_general_settings_payment_token_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selectable_background"
+                    android:clickable="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_payment_token_info"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_payment_token_title" />
+
+                <ImageView
+                    android:id="@+id/layout_general_settings_payment_token_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_payment_token_info"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_payment_token_title"
+                    app:srcCompat="@drawable/ic_settings_payment_token" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_payment_token_title"
+                    style="@style/DarkText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/payment_token"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_password_info" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_payment_token_info"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/loading"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_payment_token_title"
+                    tools:text="ETH (Ether)" />
+
+                <!-- Main divider -->
+
+                <View
+                    android:id="@+id/layout_general_settings_main_divider"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/divider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_payment_token_info" />
+
+                <!-- Feedback Button -->
+                <View
+                    android:id="@+id/layout_general_settings_feedback_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selectable_background"
+                    android:clickable="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_feedback_info"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_feedback_title"
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:layout_editor_absoluteX="-151dp" />
+
+                <ImageView
+                    android:id="@+id/layout_general_settings_feedback_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_feedback_info"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_feedback_title"
+                    app:srcCompat="@drawable/ic_settings_give_feedback" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_feedback_title"
+                    style="@style/DarkText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/give_feedback"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_main_divider" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_feedback_info"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/open_mail_client"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_feedback_title" />
+
+
+                <!-- Rate Button -->
+                <View
+                    android:id="@+id/layout_general_settings_rate_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@drawable/selectable_background"
+                    android:clickable="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_rate_info"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_rate_title"
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:layout_editor_absoluteX="-151dp" />
+
+                <ImageView
+                    android:id="@+id/layout_general_settings_rate_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_rate_info"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_rate_title"
+                    app:srcCompat="@drawable/ic_settings_rate_app" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_rate_title"
+                    style="@style/DarkText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/rate_app"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_feedback_info" />
+
+                <TextView
+                    android:id="@+id/layout_general_settings_rate_info"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/open_in_play_store"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_rate_title" />
 
                 <!-- ToS Button -->
                 <View
@@ -182,14 +335,16 @@
                     android:background="@drawable/selectable_background"
                     android:clickable="false"
                     app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_tos_info"
-                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_tos_title" />
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_tos_title"
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:layout_editor_absoluteX="-151dp" />
 
                 <ImageView
                     android:id="@+id/layout_general_settings_tos_icon"
                     android:layout_width="24dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_tos_info"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/layout_general_settings_tos_title"
                     app:srcCompat="@drawable/ic_settings_tos" />
@@ -199,27 +354,25 @@
                     style="@style/DarkText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:paddingTop="16dp"
                     android:text="@string/terms_of_service"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_tos_icon"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_password_info" />
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_rate_info" />
 
                 <TextView
                     android:id="@+id/layout_general_settings_tos_info"
                     style="@style/NormalText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:paddingBottom="16dp"
                     android:text="@string/open_in_browser"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_tos_icon"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_tos_title" />
 
                 <!-- Privacy Button -->
@@ -236,9 +389,9 @@
                     android:id="@+id/layout_general_settings_privacy_icon"
                     android:layout_width="24dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:padding="4dp"
                     app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_privacy_info"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/layout_general_settings_privacy_title"
                     app:srcCompat="@drawable/ic_settings_privacy" />
@@ -248,13 +401,12 @@
                     style="@style/DarkText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:paddingTop="16dp"
                     android:text="@string/privacy_policy"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_privacy_icon"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_tos_info" />
 
                 <TextView
@@ -262,64 +414,60 @@
                     style="@style/NormalText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:paddingBottom="16dp"
                     android:text="@string/open_in_browser"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_privacy_icon"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_privacy_title" />
 
-                <!-- Payment Token Button -->
+                <!-- Licenses Button -->
                 <View
-                    android:id="@+id/layout_general_settings_payment_token_background"
+                    android:id="@+id/layout_general_settings_licenses_background"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:background="@drawable/selectable_background"
                     android:clickable="false"
-                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_payment_token_info"
-                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_payment_token_title" />
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_licenses_info"
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_licenses_title" />
 
                 <ImageView
-                    android:id="@+id/layout_general_settings_payment_token_icon"
+                    android:id="@+id/layout_general_settings_licenses_icon"
                     android:layout_width="24dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:padding="4dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_payment_token_info"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_general_settings_licenses_info"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_payment_token_title"
-                    app:srcCompat="@drawable/ic_settings_payment_token" />
+                    app:layout_constraintTop_toTopOf="@+id/layout_general_settings_licenses_title"
+                    app:srcCompat="@drawable/ic_settings_licenses" />
 
                 <TextView
-                    android:id="@+id/layout_general_settings_payment_token_title"
+                    android:id="@+id/layout_general_settings_licenses_title"
                     style="@style/DarkText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:paddingTop="16dp"
-                    android:text="@string/payment_token"
+                    android:text="@string/licenses"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_payment_token_icon"
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_privacy_info" />
 
                 <TextView
-                    android:id="@+id/layout_general_settings_payment_token_info"
+                    android:id="@+id/layout_general_settings_licenses_info"
                     style="@style/NormalText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:paddingBottom="16dp"
-                    android:text="@string/loading"
+                    android:text="@string/open_in_browser"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_general_settings_payment_token_icon"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_payment_token_title"
-                    tools:text="ETH (Ether)" />
+                    app:layout_constraintStart_toStartOf="@+id/guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_licenses_title" />
 
                 <!-- App Version -->
 
@@ -327,10 +475,11 @@
                     android:id="@+id/layout_general_setting_app_version_divider"
                     android:layout_width="0dp"
                     android:layout_height="1dp"
+                    android:layout_marginTop="8dp"
                     android:background="@color/divider"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_payment_token_info" />
+                    app:layout_constraintTop_toBottomOf="@+id/layout_general_settings_licenses_info" />
 
                 <TextView
                     android:id="@+id/layout_general_settings_app_version"
@@ -344,6 +493,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/layout_general_setting_app_version_divider"
                     tools:text="App version: 0.4.2-alpha-debug" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="56dp" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

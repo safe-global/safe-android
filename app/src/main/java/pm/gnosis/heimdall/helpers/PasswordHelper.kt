@@ -45,14 +45,14 @@ object PasswordHelper {
         fun handleConditions(context: Context, emptyPassword: Boolean, conditions: Collection<PasswordValidationCondition>): Result {
             var validPassword = true
             val message = SpannableStringBuilder()
-            conditions.forEach {
-                validPassword = validPassword && it.valid
+            conditions.forEachIndexed { index, condition ->
+                validPassword = validPassword && condition.valid
                 val color = when {
                     emptyPassword -> context.getColorCompat(R.color.battleship_grey)
-                    it.valid -> context.getColorCompat(R.color.green_teal)
+                    condition.valid -> context.getColorCompat(R.color.green_teal)
                     else -> context.getColorCompat(R.color.tomato)
                 }
-                message.appendText(context.getString(it.messageRes), ForegroundColorSpan(color))
+                message.appendText(context.getString(condition.messageRes) + if (index < conditions.size - 1) "\n" else "", ForegroundColorSpan(color))
             }
             return Result(message, validPassword)
         }
