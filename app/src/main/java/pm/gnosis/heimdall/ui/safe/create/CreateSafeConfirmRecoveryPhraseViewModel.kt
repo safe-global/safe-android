@@ -7,8 +7,8 @@ import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
-import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation2
-import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation2Params
+import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation
+import pm.gnosis.heimdall.data.remote.models.RelaySafeCreationParams
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -40,14 +40,14 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
         loadSafeOwners()
             .zipWith(tokenRepository.loadPaymentToken(), BiFunction { owners: List<Solidity.Address>, token: ERC20Token -> owners to token})
             .map { (owners, paymentToken) ->
-                RelaySafeCreation2Params(
+                RelaySafeCreationParams(
                     owners = owners,
                     threshold = threshold,
                     saltNonce = System.nanoTime(),
                     paymentToken = paymentToken.address
                 )
             }
-            .flatMap { request -> relayServiceApi.safeCreation2(request).map { request to it } }
+            .flatMap { request -> relayServiceApi.safeCreation(request).map { request to it } }
             .flatMap { (request, response) ->
                 assertResponse(request, response)
                 gnosisSafeRepository.addPendingSafe(response.safe, null, response.payment, response.paymentToken)
@@ -55,7 +55,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             }
             .subscribeOn(Schedulers.io())
 
-    private fun assertResponse(request: RelaySafeCreation2Params, response: RelaySafeCreation2) {
+    private fun assertResponse(request: RelaySafeCreationParams, response: RelaySafeCreation) {
         val paymentToken = response.paymentToken
         if (request.paymentToken != paymentToken)
             throw IllegalStateException("Unexpected payment token returned")

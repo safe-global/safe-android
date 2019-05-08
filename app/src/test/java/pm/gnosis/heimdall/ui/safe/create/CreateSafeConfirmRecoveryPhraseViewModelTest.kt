@@ -18,8 +18,8 @@ import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
-import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation2
-import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation2Params
+import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation
+import pm.gnosis.heimdall.data.remote.models.RelaySafeCreationParams
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -105,19 +105,19 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         val mnemonicSeed = byteArrayOf(0)
         var saltNonce: Long? = null
         var safeAddress: Solidity.Address? = null
-        var response: RelaySafeCreation2? = null
+        var response: RelaySafeCreation? = null
 
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ETHER_TOKEN))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
         given(bip39Mock.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(mnemonicSeed)
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L))).willReturn(Single.just(mnemonicAddress0 to mnemonicSeed))
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L))).willReturn(Single.just(mnemonicAddress1 to mnemonicSeed))
-        given(relayServiceApiMock.safeCreation2(MockUtils.any())).willAnswer {
-            val request = it.arguments.first() as RelaySafeCreation2Params
+        given(relayServiceApiMock.safeCreation(MockUtils.any())).willAnswer {
+            val request = it.arguments.first() as RelaySafeCreationParams
             saltNonce = request.saltNonce
             val setupData = generateSafeCreationData(listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1))
             safeAddress = calculateSafeAddress(setupData, saltNonce!!)
-            response = RelaySafeCreation2(
+            response = RelaySafeCreation(
                 setupData = setupData,
                 safe = safeAddress!!,
                 masterCopy = MASTER_COPY_ADDRESS,
@@ -149,8 +149,8 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 0L)
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 1L)
         then(relayServiceApiMock).should()
-            .safeCreation2(
-                RelaySafeCreation2Params(
+            .safeCreation(
+                RelaySafeCreationParams(
                     listOf(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                     2, saltNonce!!, ETHER_TOKEN.address
                 )
@@ -172,7 +172,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         val mnemonicSeed = byteArrayOf(0)
         var saltNonce: Long? = null
         var safeAddress: Solidity.Address?
-        var response: RelaySafeCreation2? = null
+        var response: RelaySafeCreation? = null
         val exception = Exception()
 
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(PAYMENT_TOKEN))
@@ -180,15 +180,15 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         given(bip39Mock.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(mnemonicSeed)
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L))).willReturn(Single.just(mnemonicAddress0 to mnemonicSeed))
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L))).willReturn(Single.just(mnemonicAddress1 to mnemonicSeed))
-        given(relayServiceApiMock.safeCreation2(MockUtils.any())).willAnswer {
-            val request = it.arguments.first() as RelaySafeCreation2Params
+        given(relayServiceApiMock.safeCreation(MockUtils.any())).willAnswer {
+            val request = it.arguments.first() as RelaySafeCreationParams
             saltNonce = request.saltNonce
             val setupData = generateSafeCreationData(
                 listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                 BigInteger.TEN, PAYMENT_TOKEN
             )
             safeAddress = calculateSafeAddress(setupData, saltNonce!!)
-            response = RelaySafeCreation2(
+            response = RelaySafeCreation(
                 setupData = setupData,
                 safe = safeAddress!!,
                 masterCopy = MASTER_COPY_ADDRESS,
@@ -220,8 +220,8 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 0L)
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 1L)
         then(relayServiceApiMock).should()
-            .safeCreation2(
-                RelaySafeCreation2Params(
+            .safeCreation(
+                RelaySafeCreationParams(
                     listOf(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                     2, saltNonce!!, PAYMENT_TOKEN.address
                 )
@@ -243,21 +243,21 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         val deployer = Solidity.Address(1234.toBigInteger())
         val mnemonicSeed = byteArrayOf(0)
         var saltNonce: Long? = null
-        var response: RelaySafeCreation2? = null
+        var response: RelaySafeCreation? = null
 
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ETHER_TOKEN))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
         given(bip39Mock.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(mnemonicSeed)
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L))).willReturn(Single.just(mnemonicAddress0 to mnemonicSeed))
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L))).willReturn(Single.just(mnemonicAddress1 to mnemonicSeed))
-        given(relayServiceApiMock.safeCreation2(MockUtils.any())).willAnswer {
-            val request = it.arguments.first() as RelaySafeCreation2Params
+        given(relayServiceApiMock.safeCreation(MockUtils.any())).willAnswer {
+            val request = it.arguments.first() as RelaySafeCreationParams
             saltNonce = request.saltNonce
             val setupData = generateSafeCreationData(
                 listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                 BigInteger.ZERO, ETHER_TOKEN, FUNDER_ADDRESS
             )
-            response = RelaySafeCreation2(
+            response = RelaySafeCreation(
                 setupData = setupData,
                 safe = safeAddress,
                 masterCopy = MASTER_COPY_ADDRESS,
@@ -279,8 +279,8 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 0L)
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 1L)
         then(relayServiceApiMock).should()
-            .safeCreation2(
-                RelaySafeCreation2Params(
+            .safeCreation(
+                RelaySafeCreationParams(
                     listOf(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                     2, saltNonce!!, ETHER_TOKEN.address
                 )
@@ -298,7 +298,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         mnemonicAddress0: Solidity.Address,
         mnemonicAddress1: Solidity.Address,
         chromeExtensionAddress: Solidity.Address?,
-        responseAnswer: (RelaySafeCreation2Params) -> Single<RelaySafeCreation2>,
+        responseAnswer: (RelaySafeCreationParams) -> Single<RelaySafeCreation>,
         failurePredicate: Predicate<Throwable>,
         paymentToken: ERC20Token = ETHER_TOKEN
     ) {
@@ -311,8 +311,8 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         given(bip39Mock.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(mnemonicSeed)
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L))).willReturn(Single.just(mnemonicAddress0 to mnemonicSeed))
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L))).willReturn(Single.just(mnemonicAddress1 to mnemonicSeed))
-        given(relayServiceApiMock.safeCreation2(MockUtils.any())).willAnswer {
-            val request = it.arguments.first() as RelaySafeCreation2Params
+        given(relayServiceApiMock.safeCreation(MockUtils.any())).willAnswer {
+            val request = it.arguments.first() as RelaySafeCreationParams
             saltNonce = request.saltNonce
             responseAnswer(request)
         }
@@ -327,7 +327,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 0L)
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 1L)
         then(relayServiceApiMock).should()
-            .safeCreation2(RelaySafeCreation2Params(
+            .safeCreation(RelaySafeCreationParams(
                 listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                 chromeExtensionAddress?.run { 2 } ?: 1, saltNonce!!, paymentToken.address)
             )
@@ -348,7 +348,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             account, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
             { request ->
                 Single.just(
-                    RelaySafeCreation2(
+                    RelaySafeCreation(
                         setupData = generateSafeCreationData(
                             listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                             BigInteger.ZERO, PAYMENT_TOKEN
@@ -379,7 +379,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             account, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
             { request ->
                 Single.just(
-                    RelaySafeCreation2(
+                    RelaySafeCreation(
                         setupData = generateSafeCreationData(
                             listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                             BigInteger.ZERO, ETHER_TOKEN
@@ -410,7 +410,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             account, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
             { request ->
                 Single.just(
-                    RelaySafeCreation2(
+                    RelaySafeCreation(
                         setupData = generateSafeCreationData(
                             listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                             BigInteger.ZERO, ETHER_TOKEN
@@ -441,7 +441,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             account, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
             { request ->
                 Single.just(
-                    RelaySafeCreation2(
+                    RelaySafeCreation(
                         setupData = generateSafeCreationData(
                             listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                             BigInteger.ZERO, ETHER_TOKEN, PAYMENT_TOKEN.address
@@ -472,7 +472,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             account, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
             { request ->
                 Single.just(
-                    RelaySafeCreation2(
+                    RelaySafeCreation(
                         setupData = "0000000000000000000000000000000000000000000000000000000000000000",
                         safe = safeAddress,
                         masterCopy = MASTER_COPY_ADDRESS,
@@ -500,7 +500,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             account, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
             { request ->
                 Single.just(
-                    RelaySafeCreation2(
+                    RelaySafeCreation(
                         setupData = generateSafeCreationData(
                             listOfNotNull(PAYMENT_TOKEN.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                             BigInteger.ZERO, ETHER_TOKEN
@@ -531,7 +531,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             account, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
             { request ->
                 Single.just(
-                    RelaySafeCreation2(
+                    RelaySafeCreation(
                         setupData = generateSafeCreationData(
                             listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                             BigInteger.ZERO, ETHER_TOKEN, PAYMENT_TOKEN.address
@@ -562,7 +562,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             account, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
             { request ->
                 Single.just(
-                    RelaySafeCreation2(
+                    RelaySafeCreation(
                         setupData = generateSafeCreationData(
                             listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                             BigInteger.ZERO, PAYMENT_TOKEN, TX_ORIGIN_ADDRESS
@@ -593,7 +593,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             account, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
             { request ->
                 Single.just(
-                    RelaySafeCreation2(
+                    RelaySafeCreation(
                         setupData = generateSafeCreationData(
                             listOfNotNull(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                             BigInteger.TEN, ETHER_TOKEN, TX_ORIGIN_ADDRESS
@@ -623,22 +623,22 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         val mnemonicSeed = byteArrayOf(0)
         var safeAddress: Solidity.Address? = null
         var saltNonce: Long? = null
-        var response: RelaySafeCreation2? = null
+        var response: RelaySafeCreation? = null
 
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ETHER_TOKEN))
         given(accountsRepositoryMock.loadActiveAccount()).willReturn(Single.just(account))
         given(bip39Mock.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(mnemonicSeed)
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L))).willReturn(Single.just(mnemonicAddress0 to mnemonicSeed))
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L))).willReturn(Single.just(mnemonicAddress1 to mnemonicSeed))
-        given(relayServiceApiMock.safeCreation2(MockUtils.any())).willAnswer {
-            val request = it.arguments.first() as RelaySafeCreation2Params
+        given(relayServiceApiMock.safeCreation(MockUtils.any())).willAnswer {
+            val request = it.arguments.first() as RelaySafeCreationParams
             saltNonce = request.saltNonce
             val setupData = generateSafeCreationData(
                 listOfNotNull(account.address, mnemonicAddress0, mnemonicAddress1),
                 BigInteger.ZERO, ETHER_TOKEN, FUNDER_ADDRESS
             )
             safeAddress = calculateSafeAddress(setupData, saltNonce!!)
-            response = RelaySafeCreation2(
+            response = RelaySafeCreation(
                 setupData = setupData,
                 safe = safeAddress!!,
                 masterCopy = MASTER_COPY_ADDRESS,
@@ -670,8 +670,8 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 0L)
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 1L)
         then(relayServiceApiMock).should()
-            .safeCreation2(
-                RelaySafeCreation2Params(
+            .safeCreation(
+                RelaySafeCreationParams(
                     listOf(account.address, mnemonicAddress0, mnemonicAddress1),
                     1, saltNonce!!, ETHER_TOKEN.address
                 )
@@ -698,10 +698,10 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         given(bip39Mock.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(mnemonicSeed)
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L))).willReturn(Single.just(mnemonicAddress0 to mnemonicSeed))
         given(accountsRepositoryMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L))).willReturn(Single.just(mnemonicAddress1 to mnemonicSeed))
-        given(relayServiceApiMock.safeCreation2(MockUtils.any())).willAnswer {
-            val request = it.arguments.first() as RelaySafeCreation2Params
+        given(relayServiceApiMock.safeCreation(MockUtils.any())).willAnswer {
+            val request = it.arguments.first() as RelaySafeCreationParams
             saltNonce = request.saltNonce
-            Single.error<RelaySafeCreation2>(exception)
+            Single.error<RelaySafeCreation>(exception)
         }
 
         viewModel.setup(chromeExtensionAddress)
@@ -714,8 +714,8 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 0L)
         then(accountsRepositoryMock).should().accountFromMnemonicSeed(mnemonicSeed, 1L)
         then(relayServiceApiMock).should()
-            .safeCreation2(
-                RelaySafeCreation2Params(
+            .safeCreation(
+                RelaySafeCreationParams(
                     listOf(account.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
                     2, saltNonce!!, ETHER_TOKEN.address
                 )

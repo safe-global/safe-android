@@ -74,30 +74,12 @@ data class RelayEstimate(
 data class RelaySafeCreationParams(
     @Json(name = "owners") val owners: List<Solidity.Address>,
     @Json(name = "threshold") val threshold: Int,
-    @Json(name = "s") @field:DecimalNumber val s: BigInteger,
-    @Json(name = "paymentToken") val paymentToken: Solidity.Address
-)
-
-@JsonClass(generateAdapter = true)
-data class RelaySafeCreation(
-    @Json(name = "signature") val signature: ServiceSignature,
-    @Json(name = "tx") val tx: RelaySafeCreationTx,
-    @Json(name = "safe") val safe: Solidity.Address,
-    @Json(name = "payment") @field:DecimalNumber val payment: BigInteger,
-    @Json(name = "paymentToken") val paymentToken: Solidity.Address?,
-    @Json(name = "funder") val funder: Solidity.Address?
-)
-
-@JsonClass(generateAdapter = true)
-data class RelaySafeCreation2Params(
-    @Json(name = "owners") val owners: List<Solidity.Address>,
-    @Json(name = "threshold") val threshold: Int,
     @Json(name = "saltNonce") val saltNonce: Long,
     @Json(name = "paymentToken") val paymentToken: Solidity.Address
 )
 
 @JsonClass(generateAdapter = true)
-data class RelaySafeCreation2(
+data class RelaySafeCreation(
     @Json(name = "safe") val safe: Solidity.Address,
     @Json(name = "masterCopy") val masterCopy: Solidity.Address,
     @Json(name = "proxyFactory") val proxyFactory: Solidity.Address,
