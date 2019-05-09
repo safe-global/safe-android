@@ -3,6 +3,9 @@ package pm.gnosis.heimdall.ui.tokens.receive
 
 import android.content.Context
 import android.content.Intent
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.view.longClicks
 import io.reactivex.Observable
@@ -16,10 +19,7 @@ import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.copyToClipboard
-import pm.gnosis.svalinn.common.utils.shareExternalText
-import pm.gnosis.svalinn.common.utils.snackbar
-import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
@@ -56,7 +56,14 @@ class ReceiveTokenActivity : ViewModelActivity<ReceiveTokenContract>() {
     private fun applyUpdate(update: ReceiveTokenContract.ViewUpdate) {
         when (update) {
             is ReceiveTokenContract.ViewUpdate.Address -> {
-                layout_receive_token_safe_address.text = update.checksumAddress
+
+                //make first & last 4 characters black
+                val addressString = SpannableStringBuilder(update.checksumAddress)
+                addressString.setSpan(ForegroundColorSpan(getColorCompat(R.color.address_boundaries)), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                addressString.setSpan(ForegroundColorSpan(getColorCompat(R.color.address_boundaries)), addressString.length - 4, addressString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                layout_receive_token_safe_address.text = addressString
+
                 disposables += Observable.merge(
                     layout_receive_token_safe_address.longClicks(),
                     layout_receive_token_qr_card.longClicks()
@@ -75,9 +82,9 @@ class ReceiveTokenActivity : ViewModelActivity<ReceiveTokenContract>() {
     }
 
     private fun shareViaClipboard(checksumAddress: String) {
-        copyToClipboard(getString(R.string.share_address), checksumAddress, {
+        copyToClipboard(getString(R.string.share_address), checksumAddress) {
             snackbar(layout_receive_token_safe_address, R.string.address_clipboard_success)
-        })
+        }
     }
 
     companion object {

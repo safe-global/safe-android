@@ -7,6 +7,7 @@
     <color name="toolbar_action">@color/dark_slate_blue</color>
 
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
     <color name="white_alpha_70">#b3ffffff</color>
     <color name="black_alpha_70">#b3000000</color>
     <color name="disabled_button">#9b9b9b</color>
@@ -48,4 +49,6 @@
     <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
     <color name="word_recovery_phrase_picker">#b24a4a4a</color>
     <color name="word_recovery_phrase_picker_disabled">#664a4a4a</color>
+
+    <color name="address_boundaries">@color/black</color>
 </resources>
