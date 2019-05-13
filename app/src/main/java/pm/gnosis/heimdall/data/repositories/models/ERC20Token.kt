@@ -19,7 +19,7 @@ data class ERC20Token(
         BigDecimal(unscaledAmount).setScale(decimals).div(BigDecimal.TEN.pow(decimals))
 
     fun displayString(amount: BigInteger, showSymbol: Boolean = true, decimalsToDisplay: Int = displayDecimals) =
-        "${convertAmount(amount).setScale(decimalsToDisplay, RoundingMode.UP).stringWithNoTrailingZeroes()}${if(showSymbol) symbol else ""}"
+        "${convertAmount(amount).setScale(decimalsToDisplay, RoundingMode.UP).stringWithNoTrailingZeroes()}${if(showSymbol) " $symbol" else ""}"
 
     companion object {
         val ETHER_TOKEN = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 18, symbol = "ETH", name = "Ether", displayDecimals = 5)
