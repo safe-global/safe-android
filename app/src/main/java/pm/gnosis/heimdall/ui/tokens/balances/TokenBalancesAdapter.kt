@@ -21,7 +21,7 @@ class TokenBalancesAdapter @Inject constructor(
     private val picasso: Picasso
 ) : Adapter<ERC20TokenWithBalance, TokenBalancesAdapter.ViewHolder>() {
 
-    val tokenSelectedSubject = PublishSubject.create<ERC20TokenWithBalance>()!!
+    val tokenSelectedSubject = PublishSubject.create<ERC20TokenWithBalance>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.layout_tokens_item_balance, parent, false)
@@ -35,7 +35,7 @@ class TokenBalancesAdapter @Inject constructor(
 
         override fun bind(data: ERC20TokenWithBalance, payloads: List<Any>) {
             itemView.layout_tokens_item_balance_symbol.text = data.token.symbol
-            itemView.layout_tokens_item_balance_balance.text = data.displayString()
+            itemView.layout_tokens_item_balance_balance.text = data.displayString(false)
             if (data.token == ETHER_TOKEN) itemView.layout_tokens_item_balance_symbol_image.setImageResource(R.drawable.ic_ether_symbol)
             else picasso.load(data.token.logoUrl).into(itemView.layout_tokens_item_balance_symbol_image)
         }
