@@ -10,6 +10,7 @@ import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_safe_details.*
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.components.ApplicationComponent
@@ -24,8 +25,6 @@ import pm.gnosis.heimdall.ui.base.ScrollableContainer
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
-import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
-import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
@@ -62,8 +61,11 @@ class SafeDetailsFragment : BaseFragment() {
         safeAddress = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
         viewModel.setup(safeAddress)
 
-        layout_safe_details_send_button.setCompoundDrawableResource(left = R.drawable.ic_send_azure)
-        layout_safe_details_receive_button.setCompoundDrawableResource(left = R.drawable.ic_qrcode_scan_azure)
+        layout_safe_details_safe_image.setAddress(safeAddress)
+
+        val addressString = safeAddress.asEthereumAddressChecksumString()
+        layout_safe_details_safe_address.text = "${addressString.subSequence(0, 4)}...${addressString.subSequence(addressString.length - 4, addressString.length)}"
+
         layout_safe_details_viewpager.adapter = pagerAdapter
         layout_safe_details_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
@@ -80,7 +82,6 @@ class SafeDetailsFragment : BaseFragment() {
         (0 until layout_safe_details_tabbar.tabCount).forEach {
             // We need to set this manually as 'setupWithViewPager' resets the layout specified in the xml
             layout_safe_details_tabbar.getTabAt(it)?.apply {
-                setCustomView(R.layout.layout_tab_item)
                 positionToIcon(it)?.let {
                     setIcon(it)
                 } ?: run {
@@ -107,10 +108,8 @@ class SafeDetailsFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        disposables += layout_safe_details_send_button.clicks()
-            .subscribeBy { startActivity(SelectTokenActivity.createIntent(context!!, safeAddress)) }
 
-        disposables += layout_safe_details_receive_button.clicks()
+        disposables += layout_safe_details_safe_image.clicks()
             .subscribeBy { startActivity(ReceiveTokenActivity.createIntent(context!!, safeAddress)) }
     }
 

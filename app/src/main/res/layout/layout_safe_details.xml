@@ -7,12 +7,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/layout_safe_details_viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/layout_safe_details_appbar"
         android:layout_width="match_parent"
@@ -23,52 +17,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="8dp">
+            android:orientation="vertical"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
+
+            <pm.gnosis.blockies.BlockiesImageView
+                android:id="@+id/layout_safe_details_safe_image"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                tools:background="@drawable/circle_settings" />
 
             <TextView
-                android:id="@+id/layout_safe_details_send_button"
-                style="@style/SecondaryButton"
+                android:id="@+id/layout_safe_details_safe_address"
+                style="@style/WhiteTheme.ToolbarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:drawablePadding="8dp"
-                android:gravity="center"
-                android:text="@string/send"
-                tools:drawableStart="@drawable/ic_send_azure" />
+                android:layout_marginTop="8dp"
+                android:fontFamily="monospace"
+                android:letterSpacing="-0.04"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_receive_token_safe_image"
+                app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_safe_name"
+                tools:text="0xf1511FAB6b7347899f51f9db027A32b39caE3910" />
 
-            <TextView
-                android:id="@+id/layout_safe_details_receive_button"
-                style="@style/SecondaryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:drawablePadding="8dp"
-                android:gravity="center"
-                android:text="@string/receive"
-                tools:drawableStart="@drawable/ic_qrcode_scan_azure" />
         </LinearLayout>
 
-        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-            android:id="@+id/layout_safe_details_progress_bar"
-            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_below="@+id/layout_add_token_toolbar"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            app:mpb_progressStyle="horizontal"
-            app:mpb_useIntrinsicPadding="false"
-            tools:visibility="visible" />
-
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/layout_safe_details_tabbar"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:tabIndicatorColor="@color/azure"
-            app:tabSelectedTextColor="@color/dark_slate_blue"
-            app:tabTextColor="@color/bluey_grey">
+            style="@style/TabLayout"
+            android:id="@+id/layout_safe_details_tabbar">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="match_parent"
@@ -83,6 +59,15 @@
                 android:icon="@drawable/ic_transaction_white_24dp"
                 android:layout="@layout/layout_tab_item"
                 android:text="@string/tab_title_transactions" />
+
         </com.google.android.material.tabs.TabLayout>
+
     </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/layout_safe_details_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
