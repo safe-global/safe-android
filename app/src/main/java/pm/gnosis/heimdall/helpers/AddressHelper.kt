@@ -9,6 +9,7 @@ import io.reactivex.schedulers.Schedulers
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.heimdall.utils.asMiddleEllipsized
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
@@ -33,7 +34,7 @@ class AddressHelper @Inject constructor(
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
-                    addressView.text = "${it.subSequence(0, 6)}...${it.subSequence(it.length - 6, it.length)}"
+                    addressView.text = it.asMiddleEllipsized(6)
                 }
                 .flatMap {
                     addressBookRepository.loadAddressBookEntry(address).map { it.name }

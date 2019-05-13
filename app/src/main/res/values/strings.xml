@@ -12,7 +12,7 @@
     <string name="error_check_internet_connection">Please make sure to have an internet connection.</string>
     <string name="error_ssl_handshake">Please check whether the time is correctly set.</string>
     <string name="tab_title_transactions">Transactions</string>
-    <string name="tab_title_assets">Tokens</string>
+    <string name="tab_title_assets">Assets</string>
     <string name="address_clipboard_success">Address copied to your clipboard!</string>
     <string name="share_address">Share address</string>
     <string name="x_data_bytes">%d bytes included</string>

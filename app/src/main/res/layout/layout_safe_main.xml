@@ -11,77 +11,70 @@
     tools:openDrawer="start">
 
     <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <View
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon"
-            app:layout_constraintTop_toTopOf="@+id/layout_safe_main_toolbar_nav_icon" />
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/layout_safe_main_toolbar_nav_icon"
-            android:layout_width="@dimen/toolbar_height"
-            android:layout_height="@dimen/toolbar_height"
-            android:background="@drawable/selectable_circle_background"
-            android:padding="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_menu" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon"
+                app:layout_constraintTop_toTopOf="@+id/layout_safe_main_toolbar_nav_icon" />
 
-        <ImageView
-            android:id="@+id/layout_safe_main_toolbar_icon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_gnosis_safe"
-            app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon"
-            app:layout_constraintEnd_toStartOf="@id/layout_safe_main_toolbar_title"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@id/layout_safe_main_toolbar_nav_icon"
-            app:layout_constraintTop_toTopOf="@+id/layout_safe_main_toolbar_nav_icon" />
+            <ImageView
+                android:id="@+id/layout_safe_main_toolbar_nav_icon"
+                android:layout_width="@dimen/toolbar_height"
+                android:layout_height="@dimen/toolbar_height"
+                android:background="@drawable/selectable_circle_background"
+                android:padding="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_menu" />
 
-        <TextView
-            android:id="@+id/layout_safe_main_toolbar_title"
-            style="@style/DarkText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:singleLine="true"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon"
-            app:layout_constraintEnd_toStartOf="@id/layout_safe_main_toolbar_overflow"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toEndOf="@id/layout_safe_main_toolbar_icon"
-            app:layout_constraintTop_toTopOf="@+id/layout_safe_main_toolbar_nav_icon"
-            app:layout_goneMarginEnd="64dp"
-            tools:text="MySafe" />
+            <TextView
+                android:id="@+id/layout_safe_main_toolbar_title"
+                style="@style/DarkText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="1dp"
+                android:singleLine="true"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon"
+                app:layout_constraintEnd_toStartOf="@id/layout_safe_main_toolbar_overflow"
+                app:layout_constraintStart_toEndOf="@+id/layout_safe_main_toolbar_nav_icon"
+                app:layout_constraintTop_toTopOf="@+id/layout_safe_main_toolbar_nav_icon"
+                tools:text="MySafe" />
 
-        <ImageView
-            android:id="@+id/layout_safe_main_toolbar_overflow"
-            android:layout_width="@dimen/toolbar_height"
-            android:layout_height="@dimen/toolbar_height"
-            android:background="@drawable/selectable_circle_background"
-            android:padding="16dp"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_more_vert" />
+            <ImageView
+                android:id="@+id/layout_safe_main_toolbar_overflow"
+                android:layout_width="@dimen/toolbar_height"
+                android:layout_height="@dimen/toolbar_height"
+                android:background="@drawable/selectable_circle_background"
+                android:padding="16dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_more_vert" />
 
-        <FrameLayout
-            android:id="@+id/layout_safe_main_content_frame"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <FrameLayout
+                android:id="@+id/layout_safe_main_content_frame"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_safe_main_toolbar_nav_icon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!--Container for contents of drawer - use NavigationView to make configuration easier -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/layout_safe_main_nav_view"
         android:layout_width="wrap_content"
@@ -189,8 +182,8 @@
                     android:id="@+id/layout_safe_main_selected_safe_button"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
                     app:layout_constraintBottom_toBottomOf="@+id/layout_safe_main_selected_safe_info"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/layout_safe_main_selected_safe_name"
@@ -204,10 +197,10 @@
                     android:layout_marginStart="8dp"
                     android:background="@drawable/selectable_background"
                     android:gravity="bottom"
-                    android:paddingBottom="16dp"
-                    android:paddingEnd="16dp"
                     android:paddingStart="16dp"
                     android:paddingTop="32dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="16dp"
                     android:text="@string/no_safe_added"
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_selected_safe_info"
                     tools:visibility="gone" />

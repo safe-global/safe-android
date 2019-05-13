@@ -12,4 +12,5 @@ abstract class SafeDetailsContract : ViewModel() {
     abstract fun setup(address: Solidity.Address)
     abstract fun loadQrCode(contents: String): Single<Result<Bitmap>>
     abstract fun observeSafe(): Flowable<Safe>
+    abstract fun addressString(): Single<String>
 }

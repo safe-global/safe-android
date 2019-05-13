@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.utils.asMiddleEllipsized
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
@@ -103,7 +104,7 @@ class SafeMainViewModel @Inject constructor(
     override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)
 
     private fun Solidity.Address.shortChecksumString() =
-        asEthereumAddressChecksumString().let { "${it.subSequence(0, 6)}...${it.subSequence(it.length - 6, it.length)}" }
+        asEthereumAddressChecksumString().let { it.asMiddleEllipsized(6) }
 
     companion object {
         private const val KEY_SELECTED_SAFE = "safe_main.string.selected_safe"

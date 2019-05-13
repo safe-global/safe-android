@@ -53,6 +53,25 @@
         <item name="android:textColor">@color/azure</item>
     </style>
 
+    <style name="TabLayout" parent="Widget.Design.TabLayout">
+        <item name="android:background">@color/white</item>
+        <item name="tabIndicatorColor">@color/azure</item>
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabInlineLabel">true</item>
+        <item name="tabIconTint">@color/tab_item</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="tabSelectedTextColor">@color/dark_slate_blue</item>
+        <item name="tabTextAppearance">@style/TabText</item>
+    </style>
+
+    <style name="TabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textColor">@color/bluey_grey</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="PrimaryButton">
         <item name="android:textSize">@dimen/primary_button_text_size</item>
         <item name="android:paddingStart">24dp</item>
