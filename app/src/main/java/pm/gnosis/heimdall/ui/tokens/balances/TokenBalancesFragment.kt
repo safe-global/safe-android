@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.tokens.balances
 
 import android.os.Bundle
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,9 +67,6 @@ class TokenBalancesFragment : BaseFragment() {
         layout_token_balances_list.layoutManager = layoutManager
         layout_token_balances_list.adapter = adapter
         layout_token_balances_list.addItemDecoration(DividerItemDecoration(context, layoutManager.orientation))
-
-        // lazy way
-        layout_token_balances_missing.text = Html.fromHtml(getString(R.string.missing_token_manage))
     }
 
     override fun onStart() {

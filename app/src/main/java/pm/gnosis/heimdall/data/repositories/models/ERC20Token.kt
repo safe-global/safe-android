@@ -18,8 +18,8 @@ data class ERC20Token(
     fun convertAmount(unscaledAmount: BigInteger): BigDecimal =
         BigDecimal(unscaledAmount).setScale(decimals).div(BigDecimal.TEN.pow(decimals))
 
-    fun displayString(amount: BigInteger, decimalsToDisplay: Int = displayDecimals) =
-        "${convertAmount(amount).setScale(decimalsToDisplay, RoundingMode.UP).stringWithNoTrailingZeroes()} $symbol"
+    fun displayString(amount: BigInteger, showSymbol: Boolean = true, decimalsToDisplay: Int = displayDecimals) =
+        "${convertAmount(amount).setScale(decimalsToDisplay, RoundingMode.UP).stringWithNoTrailingZeroes()}${if(showSymbol) symbol else ""}"
 
     companion object {
         val ETHER_TOKEN = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 18, symbol = "ETH", name = "Ether", displayDecimals = 5)
@@ -27,9 +27,10 @@ data class ERC20Token(
 }
 
 data class ERC20TokenWithBalance(val token: ERC20Token, val balance: BigInteger? = null) {
-    fun displayString() =
+    //FIXME: should symbol be always part of the balance string or should it be presenters job to decide how to display it
+    fun displayString(showSymbol: Boolean = true) =
         balance?.let {
-            token.displayString(it)
+            token.displayString(it, showSymbol)
         } ?: "-"
 }
 
