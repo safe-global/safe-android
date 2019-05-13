@@ -16,7 +16,10 @@ import pm.gnosis.heimdall.Proxy
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.*
-import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.model.Solidity
@@ -100,15 +103,15 @@ class DefaultGnosisSafeRepository @Inject constructor(
     override fun checkSafe(address: Solidity.Address): Observable<Pair<Boolean, Boolean>> =
         ethereumRepository.request(
             CheckSafeRequest(
-                masterCopy = EthCall(transaction = Transaction(address = address, data = Proxy.Implementation.encode()), id = 0),
+                masterCopy = EthGetStorageAt(from = address, location = BigInteger.ZERO, id = 0),
                 threshold = EthCall(transaction = Transaction(address = address, data = GetThreshold.encode()), id = 1)
             )
         )
-            .map {
-                it.masterCopy.result().let {
+            .map { r ->
+                r.masterCopy.result().let {
                     !it?.removeHexPrefix().isNullOrBlank() &&
                             SUPPORTED_SAFE_MASTER_COPIES.contains(Proxy.Implementation.decode(it!!).param0)
-                } to it.threshold.result().let {
+                } to r.threshold.result().let {
                     !it?.removeHexPrefix().isNullOrBlank() &&
                             GetThreshold.decode(it!!).param0.value > NO_EXTENSION_THRESHOLD
                 }
