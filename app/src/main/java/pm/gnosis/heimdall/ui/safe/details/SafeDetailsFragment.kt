@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.viewpager.widget.ViewPager
 import com.jakewharton.rxbinding2.view.clicks
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_safe_details.*
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.components.ApplicationComponent
@@ -25,10 +25,12 @@ import pm.gnosis.heimdall.ui.base.ScrollableContainer
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
+import pm.gnosis.heimdall.utils.asMiddleEllipsized
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import timber.log.Timber
 import javax.inject.Inject
 
 class SafeDetailsFragment : BaseFragment() {
@@ -61,11 +63,6 @@ class SafeDetailsFragment : BaseFragment() {
         safeAddress = arguments?.getString(EXTRA_SAFE_ADDRESS)?.asEthereumAddress()!!
         viewModel.setup(safeAddress)
 
-        layout_safe_details_safe_image.setAddress(safeAddress)
-
-        val addressString = safeAddress.asEthereumAddressChecksumString()
-        layout_safe_details_safe_address.text = "${addressString.subSequence(0, 4)}...${addressString.subSequence(addressString.length - 4, addressString.length)}"
-
         layout_safe_details_viewpager.adapter = pagerAdapter
         layout_safe_details_viewpager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
@@ -73,8 +70,20 @@ class SafeDetailsFragment : BaseFragment() {
                 positionToTabID(position)?.let { eventTracker.submit(Event.TabSelect(it)) }
             }
         })
+
+        setupSafeData()
         setupTabLayout()
         setSelectedTab()
+    }
+
+    private fun setupSafeData() {
+        layout_safe_details_safe_image.setAddress(safeAddress)
+        viewModel.addressString()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(Timber::e) {
+                layout_safe_details_safe_address.text = it.asMiddleEllipsized(4)
+
+            }
     }
 
     private fun setupTabLayout() {
