@@ -78,7 +78,7 @@ class SafeDetailsFragment : BaseFragment() {
 
     private fun setupSafeData() {
         layout_safe_details_safe_image.setAddress(safeAddress)
-        viewModel.addressString()
+        disposables += viewModel.addressString()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(Timber::e) {
                 layout_safe_details_safe_address.text = it.asMiddleEllipsized(4)
