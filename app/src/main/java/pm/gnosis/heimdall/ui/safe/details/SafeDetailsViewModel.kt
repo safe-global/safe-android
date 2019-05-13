@@ -3,6 +3,8 @@ package pm.gnosis.heimdall.ui.safe.details
 import android.content.Context
 import android.graphics.Bitmap
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
@@ -31,4 +33,12 @@ class SafeDetailsViewModel @Inject constructor(
         qrCodeGenerator.generateQrCode(contents)
             .onErrorResumeNext { throwable: Throwable -> errorHandler.single(throwable) }
             .mapToResult()
+
+    override fun addressString(): Single<String> {
+       return Single.just(address)
+            .subscribeOn(Schedulers.computation())
+            .map {
+                it.asEthereumAddressChecksumString()
+            }
+    }
 }
