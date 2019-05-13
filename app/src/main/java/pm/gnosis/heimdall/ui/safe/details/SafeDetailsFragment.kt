@@ -111,6 +111,9 @@ class SafeDetailsFragment : BaseFragment() {
 
         disposables += layout_safe_details_safe_image.clicks()
             .subscribeBy { startActivity(ReceiveTokenActivity.createIntent(context!!, safeAddress)) }
+
+        disposables += layout_safe_details_safe_address.clicks()
+            .subscribeBy { startActivity(ReceiveTokenActivity.createIntent(context!!, safeAddress)) }
     }
 
     private fun positionToId(position: Int) = items.getOrElse(position) { -1 }
