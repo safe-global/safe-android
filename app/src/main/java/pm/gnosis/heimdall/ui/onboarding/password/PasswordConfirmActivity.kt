@@ -3,8 +3,8 @@ package pm.gnosis.heimdall.ui.onboarding.password
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import android.view.inputmethod.EditorInfo
+import androidx.core.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.editorActions
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -15,7 +15,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_password_confirm.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
-import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
@@ -24,12 +23,8 @@ import pm.gnosis.heimdall.utils.setCompoundDrawables
 import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
-
-    @Inject
-    lateinit var toolbarHelper: ToolbarHelper
 
     private lateinit var passwordHash: ByteArray
 
@@ -37,6 +32,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
+        colorStatusBar()
         super.onCreate(savedInstanceState)
 
         intent.getByteArrayExtra(EXTRA_PASSWORD_HASH)?.let { passwordHash = it } ?: run {
@@ -76,12 +72,13 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
             .flatMapSingle { viewModel.isSamePassword(passwordHash, it.toString()) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onIsSamePassword, onError = Timber::e)
-
-        disposables += toolbarHelper.setupShadow(layout_password_confirm_toolbar_shadow, layout_password_confirm_content_scroll)
     }
 
     private fun onIsSamePassword(isSamePassword: Boolean) {
-        layout_password_confirm_info.visible(!isSamePassword)
+
+        layout_password_confirm_info.setTextColor(getColorCompat(if (isSamePassword) R.color.shamrock else R.color.tomato))
+        layout_password_confirm_info.text = getString(if (isSamePassword) R.string.password_confirmed else R.string.password_doesnt_match)
+
         layout_password_confirm_password.setCompoundDrawables(
             right = ContextCompat.getDrawable(this, if (isSamePassword) R.drawable.ic_green_check else R.drawable.ic_error)
         )
@@ -103,16 +100,15 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
     }
 
     private fun onCreateAccountLoading(isLoading: Boolean) {
-        layout_password_confirm_progress.visible(isLoading)
+        //FIXME: confirm if any progress indication needed here
+        //layout_password_confirm_progress.visible(isLoading)
         enableConfirm(false)
     }
 
     private fun enableConfirm(enable: Boolean) {
         layout_password_confirm_confirm.isEnabled = enable
-        layout_password_confirm_bottom_container.setBackgroundColor(getColorCompat(if (enable) R.color.azure else R.color.pale_grey))
-        layout_password_confirm_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.bluey_grey))
-        layout_password_confirm_back.setColorFilterCompat(if (enable) R.color.white else R.color.bluey_grey)
-        layout_password_confirm_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.bluey_grey)
+        layout_password_confirm_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.blue_grey))
+        layout_password_confirm_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.blue_grey)
     }
 
     override fun layout() = R.layout.layout_password_confirm
