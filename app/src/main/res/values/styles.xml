@@ -61,15 +61,15 @@
         <item name="tabInlineLabel">true</item>
         <item name="tabIconTint">@color/tab_item</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="tabSelectedTextColor">@color/dark_slate_blue</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="tabSelectedTextColor">@color/azure</item>
         <item name="tabTextAppearance">@style/TabText</item>
     </style>
 
     <style name="TabText" parent="TextAppearance.Design.Tab">
-        <item name="android:textColor">@color/bluey_grey</item>
+        <item name="android:textColor">@color/blue_grey</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="PrimaryButton">
@@ -192,7 +192,7 @@
 
     <style name="CapsText">
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/bluey_grey</item>
+        <item name="android:textColor">@color/blue_grey</item>
         <item name="android:textSize">12sp</item>
     </style>
 
@@ -230,7 +230,7 @@
 
     <style name="LightText" parent="Text">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/bluey_grey</item>
+        <item name="android:textColor">@color/blue_grey</item>
     </style>
 
     <style name="NormalText" parent="Text">

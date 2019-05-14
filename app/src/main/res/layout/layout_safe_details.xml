@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_safe_details_coordinator"
@@ -13,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -24,23 +25,56 @@
                 android:id="@+id/layout_safe_details_safe_image"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:background="@drawable/circle_settings" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="42dp"
+                android:layout_marginTop="42dp"
+                android:scaleType="centerInside"
+                app:layout_constraintStart_toStartOf="@+id/layout_safe_details_safe_image"
+                app:layout_constraintTop_toTopOf="@+id/layout_safe_details_safe_image"
+                app:srcCompat="@drawable/ic_barcode_white">
+
+                <aapt:attr name="android:background">
+
+                    <shape android:shape="oval">
+
+                        <solid android:color="@color/dusk" />
+
+                        <stroke android:width="2dp"
+                            android:color="@color/white"/>
+
+                    </shape>
+
+                </aapt:attr>
+
+            </ImageView>
 
             <TextView
                 android:id="@+id/layout_safe_details_safe_address"
                 style="@style/WhiteTheme.ToolbarTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:fontFamily="monospace"
-                android:letterSpacing="-0.04"
-                android:textSize="13sp"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="-1sp"
+                android:textColor="@color/dusk"
+                android:textSize="17sp"
+                android:textStyle="normal"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/layout_receive_token_safe_image"
-                app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_safe_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView"
                 tools:text="0xf1511FAB6b7347899f51f9db027A32b39caE3910" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.tabs.TabLayout
             style="@style/TabLayout"
