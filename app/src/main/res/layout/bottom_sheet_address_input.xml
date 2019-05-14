@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
+
+    <TextView
+        android:id="@+id/bottom_sheet_address_input_ens"
+        style="@style/Text"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="Input ENS address"
+        android:textColor="@color/battleship_grey"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_address_input_book"
+        style="@style/Text"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="Select from Addressbook"
+        android:textColor="@color/battleship_grey"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_address_input_qr"
+        style="@style/Text"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="Scan QR code"
+        android:textColor="@color/battleship_grey"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_address_input_paste"
+        style="@style/Text"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="Paste from clipboard"
+        android:textColor="@color/battleship_grey"
+        android:textSize="13sp" />
+
+</LinearLayout>

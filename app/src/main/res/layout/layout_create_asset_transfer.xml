@@ -206,9 +206,10 @@
                 app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_background"
                 tools:text="≈ USD 1,345.34" />
 
-            <EditText
+            <TextView
                 android:id="@+id/layout_create_asset_transfer_input_receiver"
                 style="@style/DarkText"
+                android:inputType="none"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -221,50 +222,9 @@
                 android:paddingRight="16dp"
                 android:paddingTop="8dp"
                 android:textColorHint="@color/blue_grey"
-                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_address_book"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_fiat" />
-
-            <ImageView
-                android:id="@+id/layout_create_asset_transfer_address_book"
-                android:layout_width="44dp"
-                android:layout_height="0dp"
-                android:background="@drawable/selectable_background"
-                android:scaleType="center"
-                android:tint="@color/azure"
-                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_input_receiver"
-                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_qr_code"
-                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_input_receiver"
-                app:srcCompat="@drawable/ic_add_from_addressbook" />
-
-            <View
-                android:layout_width="@dimen/divider_width"
-                android:layout_height="0dp"
-                android:background="@color/divider"
-                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_address_book"
-                app:layout_constraintStart_toStartOf="@+id/layout_create_asset_transfer_address_book"
-                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_address_book" />
-
-            <ImageView
-                android:id="@+id/layout_create_asset_transfer_qr_code"
-                android:layout_width="44dp"
-                android:layout_height="0dp"
-                android:background="@drawable/selectable_background"
-                android:paddingEnd="12dp"
-                android:paddingStart="12dp"
-                android:tint="@color/azure"
-                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_input_receiver"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_input_receiver"
-                app:srcCompat="@drawable/ic_qrcode_scan_white_24dp" />
-
-            <View
-                android:layout_width="@dimen/divider_width"
-                android:layout_height="0dp"
-                android:background="@color/divider"
-                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_qr_code"
-                app:layout_constraintStart_toStartOf="@+id/layout_create_asset_transfer_qr_code"
-                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_qr_code" />
 
             <View
                 android:layout_width="match_parent"

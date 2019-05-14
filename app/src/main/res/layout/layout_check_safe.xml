@@ -23,47 +23,69 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="24dp">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layout_check_safe_address_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/safe_address_hint"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <EditText
-                        android:id="@+id/layout_check_safe_address_input"
-                        style="@style/Input"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:drawablePadding="4dp"
-                        tools:drawableEnd="@drawable/ic_error"
-                        tools:text="0x1234" />
-
-                </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/layout_check_safe_address_input_info"
+                    android:id="@+id/layout_check_safe_input_background"
+                    style="@style/LightText"
+                    android:background="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:padding="16dp"
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:drawableEnd="@drawable/ic_more_vert"
+                    android:gravity="center_vertical"
+                    android:text="@string/address_hint" />
+
+                <pm.gnosis.blockies.BlockiesImageView
+                    android:id="@+id/layout_check_safe_image"
+                    android:layout_width="@dimen/info_blockies"
+                    android:layout_height="@dimen/info_blockies"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toStartOf="@id/layout_check_safe_input_background"
+                    app:layout_constraintTop_toTopOf="@id/layout_check_safe_input_background"
+                    app:layout_constraintBottom_toBottomOf="@id/layout_check_safe_input_background"/>
+
+                <TextView
+                    android:id="@+id/layout_check_safe_name"
+                    style="@style/DarkText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:layout_constraintBottom_toTopOf="@+id/layout_check_safe_address"
+                    app:layout_constraintStart_toEndOf="@+id/layout_check_safe_image"
+                    app:layout_constraintTop_toTopOf="@+id/layout_check_safe_image"
+                    tools:text="My Safe" />
+
+                <TextView
+                    android:id="@+id/layout_check_safe_address"
+                    style="@style/LightText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:layout_constraintBottom_toBottomOf="@+id/layout_check_safe_image"
+                    app:layout_constraintStart_toEndOf="@+id/layout_check_safe_image"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_check_safe_name"
+                    tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+                <TextView
+                    android:id="@+id/layout_check_safe_address_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_margin="16dp"
                     android:textColor="@color/tomato"
                     android:textSize="12sp"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_check_safe_address_input_layout"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_check_safe_address"
                     tools:text="@string/invalid_ethereum_address" />
-
-                <TextView
-                    android:id="@+id/layout_check_safe_qr_code_button"
-                    style="@style/PrimaryButton.White"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/scan_qr_code"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_check_safe_address_input_info" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

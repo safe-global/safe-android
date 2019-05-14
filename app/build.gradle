@@ -30,6 +30,7 @@ android {
         buildConfigField javaTypes.STRING, "CURRENT_SAFE_MASTER_COPY_ADDRESS", asString(getKey("CURRENT_SAFE_MASTER_COPY_ADDRESS", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A"))
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x12302fE9c02ff50939BaAaaf415fc226C078613C"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))
+        buildConfigField javaTypes.STRING, "ENS_REGISTRY", asString(getKey("ENS_REGISTRY", "0xe7410170f87102df0055eb195163a03b7f2bff4a"))
         // Safe creation params
         buildConfigField javaTypes.INT, "PROXY_INIT_DATA_LENGTH", getKey("PROXY_INIT_DATA_LENGTH", "3006")
         buildConfigField javaTypes.STRING, "PROXY_INIT_DATA_HASH", asString(getKey("PROXY_INIT_DATA_HASH", "edf1810f1a9b5415ef81722254f125afaa5165f526077a7d7da91687cdfbc98b"))
@@ -119,6 +120,7 @@ android {
             buildConfigField javaTypes.STRING, "BLOCKCHAIN_NET_URL", asString(getKey("BLOCKCHAIN_NET_URL", "https://mainnet.infura.io/v3/"))
             buildConfigField javaTypes.STRING, "RELAY_SERVICE_URL", asString(getKey("RELAY_SERVICE_URL", "https://safe-relay.gnosis.pm/api/"))
             buildConfigField javaTypes.STRING, "SAFE_CREATION_FUNDER", asString(getKey("SAFE_CREATION_FUNDER", "0x07F455F30e862E13E3E3D960762cB11c4F744d52"))
+            buildConfigField javaTypes.STRING, "ENS_REGISTRY", asString(getKey("MULTI_SEND_ADDRESS", "0x314159265dd8dbb310642f98f50c066173c1259b"))
         }
     }
 

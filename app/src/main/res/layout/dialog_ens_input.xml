@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialog_change_password_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/dialog_ens_input_url_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter ENS name"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/dialog_ens_input_url"
+                style="@style/Input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textUri" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <pm.gnosis.blockies.BlockiesImageView
+            android:id="@+id/dialog_ens_input_address_image"
+            android:layout_width="@dimen/info_blockies"
+            android:layout_height="@dimen/info_blockies"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_ens_input_url_layout"
+            tools:background="@drawable/circle_settings" />
+
+        <TextView
+            android:id="@+id/dialog_ens_input_name"
+            style="@style/DarkText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toTopOf="@+id/dialog_ens_input_address"
+            app:layout_constraintStart_toEndOf="@+id/dialog_ens_input_address_image"
+            app:layout_constraintTop_toTopOf="@+id/dialog_ens_input_address_image"
+            tools:text="My Safe" />
+
+        <TextView
+            android:id="@+id/dialog_ens_input_address"
+            style="@style/LightText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toBottomOf="@+id/dialog_ens_input_address_image"
+            app:layout_constraintStart_toEndOf="@+id/dialog_ens_input_address_image"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_ens_input_name"
+            tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+        <ProgressBar
+            android:id="@+id/dialog_ens_input_progress"
+            android:layout_width="@dimen/info_blockies"
+            android:layout_height="@dimen/info_blockies"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_ens_input_url_layout"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
