@@ -220,25 +220,27 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         onView(withId(R.id.layout_fingerprint_setup_continue_label)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.finish))))
         //TODO: check drawable change
 
+        // Wait for snackbar to disappear
+        Thread.sleep(3000)
+
         onView(withId(R.id.layout_fingerprint_setup_continue)).perform(ViewActions.click())
 
 
-        //FIXME: should we stay on fingerprint screen or leave it automatically after successful confirmation?
-        then(encryptionManagerMock).should(times(1)).unlocked()
+        then(encryptionManagerMock).should(times(2)).unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         // Contract interaction
         then(fingerprintSetupContract).should().observeFingerprintForSetup()
         // Check tracking
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.FINGERPRINT))
-        //then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.SAFE_MAIN))
-        //then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.NO_SAFES))
+        then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.SAFE_MAIN))
+        then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.NO_SAFES))
         then(eventTrackerMock).should().setCurrentScreenId(activity, ScreenId.FINGERPRINT)
         // We started 2 activities that call this method
-        then(eventTrackerMock).should(times(1)).setCurrentScreenId(UIMockUtils.any(), UIMockUtils.any())
+        then(eventTrackerMock).should(times(2)).setCurrentScreenId(UIMockUtils.any(), UIMockUtils.any())
         then(eventTrackerMock).shouldHaveNoMoreInteractions()
 
-//        Intents.intended(hasComponent(FingerprintSetupActivity::class.java.name))
-//        Intents.intended(matchesIntentExactly(SafeMainActivity.createIntent(activity).clearStack()))
-//        Intents.assertNoUnverifiedIntents()
+        Intents.intended(hasComponent(FingerprintSetupActivity::class.java.name))
+        Intents.intended(matchesIntentExactly(SafeMainActivity.createIntent(activity).clearStack()))
+        Intents.assertNoUnverifiedIntents()
     }
 }
