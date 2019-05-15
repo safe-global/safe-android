@@ -10,20 +10,21 @@ import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 
 class DrawableMatcher internal constructor(private val expectedId: Int) : TypeSafeMatcher<View>(View::class.java) {
+
     private var resourceName: String? = null
 
     override fun matchesSafely(target: View): Boolean {
         if (target !is ImageView) {
             return false
         }
-        val imageView = target as ImageView
+        val imageView = target
         if (expectedId == EMPTY) {
             return imageView.getDrawable() == null
         }
         if (expectedId == ANY) {
             return imageView.getDrawable() != null
         }
-        val resources = target.getContext().getResources()
+        val resources = target.getContext().resources
         val expectedDrawable = resources.getDrawable(expectedId)
         resourceName = resources.getResourceEntryName(expectedId)
 
@@ -39,7 +40,7 @@ class DrawableMatcher internal constructor(private val expectedId: Int) : TypeSa
     private fun getBitmap(drawable: Drawable): Bitmap {
         val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
         return bitmap
     }
@@ -55,8 +56,8 @@ class DrawableMatcher internal constructor(private val expectedId: Int) : TypeSa
     }
 
     companion object {
-        internal val EMPTY = -1
-        internal val ANY = -2
+        internal const val EMPTY = -1
+        internal const val ANY = -2
     }
 }
 
