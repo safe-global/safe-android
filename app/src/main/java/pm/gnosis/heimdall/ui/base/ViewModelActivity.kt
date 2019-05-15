@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.lifecycle.ViewModel
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
@@ -25,11 +26,11 @@ abstract class ViewModelActivity<VM : ViewModel> : BaseActivity() {
         setContentView(layout())
     }
 
-    protected fun colorStatusBar() {
+    protected fun colorStatusBar(@ColorRes color: Int = R.color.primary) {
         if (Build.VERSION.SDK_INT >= 21) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.statusBarColor = getColorCompat(R.color.aqua_blue)
+            window.statusBarColor = getColorCompat(color)
         }
     }
 }

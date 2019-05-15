@@ -30,7 +30,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
-        colorStatusBar()
+        colorStatusBar(R.color.aqua_blue)
         super.onCreate(savedInstanceState)
 
         layout_password_setup_password.disableAccessibility()

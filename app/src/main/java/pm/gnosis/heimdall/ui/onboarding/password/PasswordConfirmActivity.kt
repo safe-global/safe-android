@@ -32,7 +32,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
-        colorStatusBar()
+        colorStatusBar(R.color.aqua_blue)
         super.onCreate(savedInstanceState)
 
         intent.getByteArrayExtra(EXTRA_PASSWORD_HASH)?.let { passwordHash = it } ?: run {

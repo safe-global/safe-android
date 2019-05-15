@@ -27,7 +27,7 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        colorStatusBar()
+        colorStatusBar(R.color.aqua_blue)
         super.onCreate(savedInstanceState)
     }
 
