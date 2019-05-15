@@ -169,7 +169,7 @@
                 android:maxLines="1"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp"
-                android:textColorHint="@color/bluey_grey"
+                android:textColorHint="@color/blue_grey"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_input_label"
@@ -220,7 +220,7 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingTop="8dp"
-                android:textColorHint="@color/bluey_grey"
+                android:textColorHint="@color/blue_grey"
                 app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_address_book"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_fiat" />

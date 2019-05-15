@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_fingerprint_setup_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/mountain_background">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layout_fingerprint_setup_content_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="@dimen/primary_button_radius"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/layout_fingerprint_setup_content_scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/layout_fingerprint_setup_bottom_bar"
-            android:layout_below="@+id/layout_fingerprint_setup_title"
-            android:clipToPadding="false"
-            android:paddingBottom="8dp">
+            android:clipToPadding="false">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -26,95 +31,92 @@
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/layout_fingerprint_setup_title"
+                    style="@style/WhiteTheme.SubtitleBold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:text="@string/setup_fingerprint" />
+
                 <ImageView
                     android:id="@+id/layout_fingerprint_setup_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="92dp"
+                    android:layout_marginTop="24dp"
                     android:src="@drawable/ic_fingerprint_inactive" />
 
                 <TextView
                     android:id="@+id/layout_fingerprint_setup_info_title"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="32dp"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginTop="32dp"
-                    android:gravity="center"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginRight="24dp"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center_horizontal"
+                    android:lineSpacingExtra="4sp"
                     android:text="@string/setup_fingerprint_place"
+                    android:textColor="@color/dark_slate_blue"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/layout_fingerprint_setup_description"
+                    style="@style/WhiteTheme.FlatTextCenter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="32dp"
-                    android:layout_marginStart="32dp"
+                    android:layout_marginLeft="24dp"
                     android:layout_marginTop="16dp"
-                    android:gravity="center"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginBottom="20dp"
                     android:text="@string/setup_fingerprint_description" />
 
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
 
-        <RelativeLayout
-            android:id="@+id/layout_fingerprint_setup_bottom_bar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/bottom_bar_height"
-            android:layout_alignParentBottom="true"
-            android:background="@color/pale_grey">
+    </androidx.cardview.widget.CardView>
 
-            <LinearLayout
-                android:id="@+id/layout_fingerprint_setup_continue"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/selectable_background"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingEnd="16dp"
-                android:paddingStart="16dp">
+    <RelativeLayout
+        android:id="@+id/layout_fingerprint_setup_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_bar_height"
+        android:layout_alignParentBottom="true"
+        android:background="@color/dark_slate_blue_15"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="16dp">
 
-                <TextView
-                    android:id="@+id/layout_fingerprint_setup_continue_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/skip"
-                    android:textColor="@color/bluey_grey" />
-
-                <ImageView
-                    android:id="@+id/layout_fingerprint_setup_next_arrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:rotation="180"
-                    android:tint="@color/bluey_grey"
-                    app:srcCompat="@drawable/ic_arrow_back_24dp" />
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/layout_fingerprint_setup_title"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_height"
+        <LinearLayout
+            android:id="@+id/layout_fingerprint_setup_continue"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/selectable_background"
             android:gravity="center"
-            android:text="@string/setup_fingerprint"
-            android:textColor="@color/dark_slate_blue"
-            android:textSize="16sp" />
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
-        <View
-            android:id="@+id/layout_fingerprint_setup_toolbar_shadow"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_shadow_size"
-            android:layout_below="@+id/layout_fingerprint_setup_title"
-            android:alpha="0"
-            android:background="@drawable/toolbar_dropshadow"
-            tools:alpha="1" />
+            <TextView
+                android:id="@+id/layout_fingerprint_setup_continue_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/skip"
+                android:textColor="@color/white" />
+
+            <ImageView
+                android:id="@+id/layout_fingerprint_setup_next_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:rotation="180"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

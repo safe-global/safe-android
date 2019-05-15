@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.PasswordHelper
 import pm.gnosis.heimdall.helpers.PasswordValidationCondition
-import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
@@ -23,17 +22,15 @@ import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
+
 
 class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
-
-    @Inject
-    lateinit var toolbarHelper: ToolbarHelper
 
     override fun screenId() = ScreenId.PASSWORD
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
+        colorStatusBar(R.color.aqua_blue)
         super.onCreate(savedInstanceState)
 
         layout_password_setup_password.disableAccessibility()
@@ -62,27 +59,23 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
             .switchMapSingle { viewModel.validatePassword(it.toString()) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onPasswordValidation, onError = Timber::e)
-
-        disposables += toolbarHelper.setupShadow(layout_password_setup_toolbar_shadow, layout_password_setup_content_scroll)
     }
 
     private fun onPasswordValidation(validationConditions: Collection<PasswordValidationCondition>) {
         val (_, validPassword) =
-                PasswordHelper.Handler.applyToView(layout_password_setup_password, layout_password_setup_validation_info, validationConditions)
+            PasswordHelper.Handler.applyToView(layout_password_setup_password, layout_password_setup_validation_info, validationConditions)
         enableNext(validPassword)
     }
 
     private fun enableNext(enable: Boolean) {
         layout_password_setup_next.isEnabled = enable
-        layout_password_setup_bottom_container.setBackgroundColor(getColorCompat(if (enable) R.color.azure else R.color.pale_grey))
-        layout_password_setup_next_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.bluey_grey))
-        layout_password_setup_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.bluey_grey)
+        layout_password_setup_next_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.blue_grey))
+        layout_password_setup_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.blue_grey)
     }
 
     override fun layout() = R.layout.layout_password_setup
 
     override fun inject(component: ViewComponent) = viewComponent().inject(this)
-
 
     companion object {
         fun createIntent(context: Context) = Intent(context, PasswordSetupActivity::class.java)

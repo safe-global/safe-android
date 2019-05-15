@@ -36,6 +36,7 @@ import pm.gnosis.svalinn.common.utils.clearStack
 import pm.gnosis.tests.BaseUiTest
 import pm.gnosis.tests.utils.UIMockUtils
 import pm.gnosis.tests.utils.matchesIntentExactly
+import pm.gnosis.tests.utils.withDrawable
 
 
 @RunWith(AndroidJUnit4::class)
@@ -193,6 +194,7 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         onView(withId(R.id.layout_fingerprint_setup_continue)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
         onView(withId(R.id.layout_fingerprint_setup_info_title)).check(matches(allOf(isDisplayed(), withText(R.string.setup_fingerprint_place))))
         onView(withId(R.id.layout_fingerprint_setup_continue_label)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.skip))))
+        onView(withId(R.id.layout_fingerprint_setup_image)).check(matches(withDrawable(R.drawable.ic_fingerprint_inactive)))
 
         // Fingerprint not recognized
         fingerprintSubject.onNext(false)
@@ -200,19 +202,30 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         onView(withId(R.id.layout_fingerprint_setup_continue)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
         onView(withId(R.id.layout_fingerprint_setup_info_title)).check(matches(allOf(isDisplayed(), withText(R.string.setup_fingerprint_place))))
         onView(withId(R.id.layout_fingerprint_setup_continue_label)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.skip))))
+        onView(withId(R.id.layout_fingerprint_setup_image)).check(matches(withDrawable(R.drawable.ic_fingerprint_inactive)))
+
         // Wait for snackbar
         Thread.sleep(300)
         // Check and dismiss snackbar
         onView(allOf(isDisplayed(), withText(context.getString(R.string.fingerprint_not_recognized)))).perform(ViewActions.swipeRight())
         // Wait for snackbar to disappear
-        Thread.sleep(200)
+        Thread.sleep(3000)
 
         // Fingerprint setup
         fingerprintSubject.onNext(true)
 
         onView(withId(R.id.layout_fingerprint_setup_continue)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
-        onView(withId(R.id.layout_fingerprint_setup_info_title)).check(matches(allOf(isDisplayed(), withText(R.string.fingerprint_confirmed))))
+
+        // Wait for snackbar
+        Thread.sleep(300)
+        // Check and dismiss snackbar
+        onView(allOf(isDisplayed(), withText(context.getString(R.string.fingerprint_confirmed)))).perform(ViewActions.swipeRight())
+        // Wait for snackbar to disappear
+        Thread.sleep(3000)
+
         onView(withId(R.id.layout_fingerprint_setup_continue_label)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.finish))))
+        // Check drawable change
+        onView(withId(R.id.layout_fingerprint_setup_image)).check(matches(withDrawable(R.drawable.ic_fingerprint_confirmed)))
 
         onView(withId(R.id.layout_fingerprint_setup_continue)).perform(ViewActions.click())
 
@@ -228,6 +241,7 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         // We started 2 activities that call this method
         then(eventTrackerMock).should(times(2)).setCurrentScreenId(UIMockUtils.any(), UIMockUtils.any())
         then(eventTrackerMock).shouldHaveNoMoreInteractions()
+
         Intents.intended(hasComponent(FingerprintSetupActivity::class.java.name))
         Intents.intended(matchesIntentExactly(SafeMainActivity.createIntent(activity).clearStack()))
         Intents.assertNoUnverifiedIntents()
