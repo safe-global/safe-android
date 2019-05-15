@@ -205,31 +205,40 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         // Check and dismiss snackbar
         onView(allOf(isDisplayed(), withText(context.getString(R.string.fingerprint_not_recognized)))).perform(ViewActions.swipeRight())
         // Wait for snackbar to disappear
-        Thread.sleep(200)
+        Thread.sleep(3000)
 
         // Fingerprint setup
         fingerprintSubject.onNext(true)
 
         onView(withId(R.id.layout_fingerprint_setup_continue)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
-        onView(withId(R.id.layout_fingerprint_setup_info_title)).check(matches(allOf(isDisplayed(), withText(R.string.fingerprint_confirmed))))
+
+        // Wait for snackbar
+        Thread.sleep(300)
+        // Check and dismiss snackbar
+        onView(allOf(isDisplayed(), withText(context.getString(R.string.fingerprint_confirmed)))).perform(ViewActions.swipeRight())
+
         onView(withId(R.id.layout_fingerprint_setup_continue_label)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.finish))))
+        //TODO: check drawable change
 
         onView(withId(R.id.layout_fingerprint_setup_continue)).perform(ViewActions.click())
 
-        then(encryptionManagerMock).should(times(2)).unlocked()
+
+        //FIXME: should we stay on fingerprint screen or leave it automatically after successful confirmation?
+        then(encryptionManagerMock).should(times(1)).unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         // Contract interaction
         then(fingerprintSetupContract).should().observeFingerprintForSetup()
         // Check tracking
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.FINGERPRINT))
-        then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.SAFE_MAIN))
-        then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.NO_SAFES))
+        //then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.SAFE_MAIN))
+        //then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.NO_SAFES))
         then(eventTrackerMock).should().setCurrentScreenId(activity, ScreenId.FINGERPRINT)
         // We started 2 activities that call this method
-        then(eventTrackerMock).should(times(2)).setCurrentScreenId(UIMockUtils.any(), UIMockUtils.any())
+        then(eventTrackerMock).should(times(1)).setCurrentScreenId(UIMockUtils.any(), UIMockUtils.any())
         then(eventTrackerMock).shouldHaveNoMoreInteractions()
-        Intents.intended(hasComponent(FingerprintSetupActivity::class.java.name))
-        Intents.intended(matchesIntentExactly(SafeMainActivity.createIntent(activity).clearStack()))
-        Intents.assertNoUnverifiedIntents()
+
+//        Intents.intended(hasComponent(FingerprintSetupActivity::class.java.name))
+//        Intents.intended(matchesIntentExactly(SafeMainActivity.createIntent(activity).clearStack()))
+//        Intents.assertNoUnverifiedIntents()
     }
 }

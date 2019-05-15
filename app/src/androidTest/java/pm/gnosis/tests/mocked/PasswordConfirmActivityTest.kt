@@ -80,8 +80,7 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         // Scrollable content
         onView(withText(R.string.confirm_password_info)).check(matches(isDisplayed()))
         onView(withId(R.id.layout_password_confirm_password)).check(matches(isDisplayed()))
-        onView(withId(R.id.layout_password_confirm_info)).check(matches(not(isDisplayed())))
-        onView(withId(R.id.layout_password_confirm_progress)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.layout_password_confirm_info)).check(matches(withText("")))
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Contract interaction
@@ -108,7 +107,7 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         Thread.sleep(600)
         // Error: nothing changes
         onView(withId(R.id.layout_password_confirm_confirm)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
-        onView(withId(R.id.layout_password_confirm_info)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.layout_password_confirm_info)).check(matches(withText("")))
 
 
         given(passwordSetupContract.isSamePassword(UIMockUtils.any(), UIMockUtils.any()))
@@ -126,7 +125,7 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         // Wait for input delay
         Thread.sleep(600)
         onView(withId(R.id.layout_password_confirm_confirm)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
-        onView(withId(R.id.layout_password_confirm_info)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.layout_password_confirm_info)).check(matches(withText(R.string.password_confirmed)))
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Contract interaction

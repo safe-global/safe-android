@@ -100,8 +100,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
     }
 
     private fun onCreateAccountLoading(isLoading: Boolean) {
-        //FIXME: confirm if any progress indication needed here
-        //layout_password_confirm_progress.visible(isLoading)
+        layout_password_confirm_progress.visible(isLoading)
         enableConfirm(false)
     }
 
