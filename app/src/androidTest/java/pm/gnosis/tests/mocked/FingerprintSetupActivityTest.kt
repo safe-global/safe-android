@@ -216,15 +216,13 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         Thread.sleep(300)
         // Check and dismiss snackbar
         onView(allOf(isDisplayed(), withText(context.getString(R.string.fingerprint_confirmed)))).perform(ViewActions.swipeRight())
+        // Wait for snackbar to disappear
+        Thread.sleep(3000)
 
         onView(withId(R.id.layout_fingerprint_setup_continue_label)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.finish))))
         //TODO: check drawable change
 
-        // Wait for snackbar to disappear
-        Thread.sleep(3000)
-
         onView(withId(R.id.layout_fingerprint_setup_continue)).perform(ViewActions.click())
-
 
         then(encryptionManagerMock).should(times(2)).unlocked()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
