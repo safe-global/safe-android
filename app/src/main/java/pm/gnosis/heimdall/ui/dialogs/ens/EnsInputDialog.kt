@@ -54,14 +54,14 @@ class EnsInputDialog : BaseDialog() {
     var callback: ((Solidity.Address) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setStyle(DialogFragment.STYLE_NO_FRAME, 0)
+        setStyle(STYLE_NO_FRAME, 0)
         super.onCreate(savedInstanceState)
         inject()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_ens_input, null)
-        alertDialog = CustomAlertDialogBuilder.build(context!!, "Input ENS Address", dialogView, R.string.ok, {
+        alertDialog = CustomAlertDialogBuilder.build(context!!, getString(R.string.ens_input_title), dialogView, R.string.ok, {
             confirmSubject.onNext(Unit)
         })
         return alertDialog
@@ -102,25 +102,27 @@ class EnsInputDialog : BaseDialog() {
             }
             .compose(viewModel.processEnsInput())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {
+            .doOnNext { result ->
                 dialogView.dialog_ens_input_progress.visible(false)
-                (it as? DataResult)?.let {
+                (result as? DataResult)?.let {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 1f
                     dialogView.dialog_ens_input_name.visible(false)
+                    dialogView.dialog_ens_input_address.visible(true)
                     addressHelper.populateAddressInfo(
                         dialogView.dialog_ens_input_address,
                         dialogView.dialog_ens_input_name,
                         dialogView.dialog_ens_input_address_image,
-                        it.data
-                    ).forEach { disposables += it }
+                        result.data
+                    ).forEach { d -> disposables += d }
                 } ?: run {
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.alpha = 0.5f
                     dialogView.dialog_ens_input_name.visible(true)
+                    dialogView.dialog_ens_input_address.visible(false)
                     dialogView.dialog_ens_input_address.text = null
                     dialogView.dialog_ens_input_address_image.setAddress(null)
-                    dialogView.dialog_ens_input_name.text = "Could not load address"
+                    dialogView.dialog_ens_input_name.text = getString(R.string.error_resolve_ens)
                 }
             }
 

@@ -410,4 +410,11 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <p>Feedback:</p>
     ]]></string>
     <string name="email_chooser_error">Unfortunately you do not have any mail clients configured.</string>
+    <string name="choose_recipient">Choose Recipient</string>
+    <string name="address_input_address_book">Address book</string>
+    <string name="address_input_ens">ENS name</string>
+    <string name="address_input_qr_code">Scan QR code</string>
+    <string name="address_input_clipboard">Paste from clipboard</string>
+    <string name="ens_input_title">Input ENS Name</string>
+    <string name="error_resolve_ens">Could not load address</string>
 </resources>

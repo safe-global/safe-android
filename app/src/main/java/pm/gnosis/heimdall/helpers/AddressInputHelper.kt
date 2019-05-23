@@ -22,7 +22,8 @@ class AddressInputHelper(
     activity: BaseActivity,
     private val addressCallback: (Solidity.Address) -> Unit,
     private val errorCallback: ((Throwable) -> Unit)? = null,
-    allowAddressBook: Boolean = true) {
+    allowAddressBook: Boolean = true
+) {
 
     private val dialog =
         BottomSheetDialog(activity).apply {
@@ -30,24 +31,26 @@ class AddressInputHelper(
 
             setContentView(layoutInflater.inflate(R.layout.bottom_sheet_address_input, null))
             bottom_sheet_address_input_book.visible(allowAddressBook)
+            bottom_sheet_address_input_book_icon.visible(allowAddressBook)
+            bottom_sheet_address_input_book_touch.visible(allowAddressBook)
             if (allowAddressBook) {
-                bottom_sheet_address_input_book.setOnClickListener {
+                bottom_sheet_address_input_book_touch.setOnClickListener {
                     activity.selectFromAddressBook()
                     hide()
                 }
             }
-            bottom_sheet_address_input_ens.setOnClickListener {
+            bottom_sheet_address_input_ens_touch.setOnClickListener {
                 EnsInputDialog.create().apply {
                     callback = addressCallback
                     show(activity.supportFragmentManager, null)
                 }
                 hide()
             }
-            bottom_sheet_address_input_qr.setOnClickListener {
+            bottom_sheet_address_input_qr_touch.setOnClickListener {
                 QRCodeScanActivity.startForResult(activity)
                 hide()
             }
-            bottom_sheet_address_input_paste.setOnClickListener {
+            bottom_sheet_address_input_paste_touch.setOnClickListener {
                 (clipboard.primaryClip?.getItemAt(0)?.text?.let { parseEthereumAddress(it.toString()) }
                     ?: run {
                         handleError(IllegalArgumentException("No Ethereum address found"))
@@ -77,7 +80,6 @@ class AddressInputHelper(
     }
 
     private fun handleError(t: Throwable) {
-        errorCallback?.invoke(t) ?:
-                dialog.context.toast("Could not find an Ethereum address")
+        errorCallback?.invoke(t) ?: dialog.context.toast("Could not find an Ethereum address")
     }
 }

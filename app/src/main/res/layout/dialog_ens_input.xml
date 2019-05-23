@@ -20,7 +20,7 @@
             android:id="@+id/dialog_ens_input_url_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter ENS name"
+            android:hint="@string/address_input_ens"
             app:layout_constraintTop_toTopOf="parent">
 
             <EditText
