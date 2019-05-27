@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.transactions.create
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
@@ -11,12 +12,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.layout_create_asset_transfer.*
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.AddressHelper
+import pm.gnosis.heimdall.helpers.AddressInputHelper
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
@@ -40,6 +43,8 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
+    private lateinit var addressInputHelper: AddressInputHelper
+
     override fun screenId() = ScreenId.TRANSACTION_ENTER_DATA
 
     override fun layout() = R.layout.layout_create_asset_transfer
@@ -48,32 +53,26 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        addressInputHelper.handleResult(requestCode, resultCode, data)
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        addressInputHelper = AddressInputHelper(this, ::handleNewAddress)
+    }
+
+    private fun handleNewAddress(address: Solidity.Address) {
         disposables += Single.fromCallable {
-            var address: Solidity.Address? = null
-            @Suppress("MoveLambdaOutsideParentheses")
-            handleQrCodeActivityResult(requestCode, resultCode, data, {
-                address = parseEthereumAddress(it) ?: throw IllegalArgumentException()
-            })
-
-            // We couldn't parse an address yet
-            if (address == null) {
-                @Suppress("MoveLambdaOutsideParentheses")
-                handleAddressBookResult(requestCode, resultCode, data, {
-                    address = it.address
-                })
-            }
-            address?.asEthereumAddressChecksumString() ?: ""
+            address.asEthereumAddressChecksumString()
         }
+            .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onSuccess = ::onAddressProvided, onError = { toast(R.string.invalid_ethereum_address) })
-
     }
 
     private fun onAddressProvided(address: String) {
         if (!address.isBlank()) {
-            layout_create_asset_transfer_input_receiver.setText(address)
-            layout_create_asset_transfer_input_receiver.setSelection(address.length)
+            layout_create_asset_transfer_input_receiver.text = address
             layout_create_asset_transfer_input_receiver.setTextColor(getColorCompat(R.color.dark_slate_blue))
         }
     }
@@ -115,20 +114,11 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
                         }
                     )
 
-        disposables +=
-                layout_create_asset_transfer_qr_code.clicks()
-                    .subscribeBy(onNext = {
-                        QRCodeScanActivity.startForResult(this)
-                    })
-
-        disposables +=
-                layout_create_asset_transfer_address_book.clicks()
-                    .subscribeBy(onNext = {
-                        selectFromAddressBook()
-                    })
-
         disposables += layout_create_asset_transfer_back_button.clicks()
             .subscribeBy { onBackPressed() }
+
+        disposables += layout_create_asset_transfer_input_receiver.clicks()
+            .subscribeBy { addressInputHelper.showDialog() }
 
         addressHelper.populateAddressInfo(
             layout_create_asset_transfer_safe_address,

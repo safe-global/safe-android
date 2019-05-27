@@ -50,7 +50,6 @@ class AddressBookEditEntryActivity : ViewModelActivity<AddressBookContract>() {
             }
         }
 
-        layout_address_book_update_entry_scan.visibility = View.GONE
         layout_address_book_update_entry_address.isEnabled = false
         layout_address_book_update_entry_address.setTextColor(getColorCompat(R.color.blue_grey))
     }

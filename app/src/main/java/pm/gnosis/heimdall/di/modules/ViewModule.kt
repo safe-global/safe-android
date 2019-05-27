@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
+import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
@@ -101,6 +102,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesDeploySafeProgressContract(provider: ViewModelProvider) = provider[DeploySafeProgressContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesEnsInputContract(provider: ViewModelProvider) = provider[EnsInputContract::class.java]
 
     @Provides
     @ForView

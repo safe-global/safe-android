@@ -82,6 +82,10 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindsEnsRepository(repository: DefaultEnsRepository): EnsRepository
+
+    @Binds
+    @Singleton
     abstract fun bindsPushServiceRepository(repository: DefaultPushServiceRepository): PushServiceRepository
 
     @Binds
