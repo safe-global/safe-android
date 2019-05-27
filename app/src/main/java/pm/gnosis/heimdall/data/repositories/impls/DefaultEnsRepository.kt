@@ -38,7 +38,7 @@ class DefaultEnsRepository @Inject constructor(
 
     companion object {
         private val ENS_ADDRESS = BuildConfig.ENS_REGISTRY.asEthereumAddress()!!
-        private val GET_ADDRESS = "0x3b3b57de"
-        private val GET_RESOLVER = "0x0178b8bf"
+        private const val GET_ADDRESS = "0x3b3b57de"
+        private const val GET_RESOLVER = "0x0178b8bf"
     }
 }
