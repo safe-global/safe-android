@@ -94,7 +94,7 @@ class ChangePasswordDialog : BaseDialog() {
         disposables += dialogView.dialog_change_password_new.textChanges()
             .debounce(500, TimeUnit.MILLISECONDS)
             .switchMapSingle {
-                viewModel.validatePassword(it.toString())
+                viewModel.validatePassword(it.toString(), dialogView.dialog_change_password_new_repeat.text.toString())
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = {

@@ -62,7 +62,7 @@ class ChangePasswordEnterNewFragment : BaseFragment() {
             .skipInitialValue()
             .debounce(500, TimeUnit.MILLISECONDS)
             .switchMapSingle {
-                viewModel.validatePassword(it.toString())
+                viewModel.validatePassword(it.toString(), layout_password_change_enter_new_repeat.text.toString())
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = {

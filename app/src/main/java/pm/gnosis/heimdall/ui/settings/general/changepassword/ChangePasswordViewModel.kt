@@ -22,13 +22,12 @@ class ChangePasswordViewModel @Inject constructor(
     private var currentPassword: String? = null
 
 
-    override fun validatePassword(password: String): Single<Result<Collection<PasswordValidationCondition>>> =
+    override fun validatePassword(password: String, repeat: String): Single<Result<Collection<PasswordValidationCondition>>> =
         Single.fromCallable {
             PasswordHelper.Validator.validate(password)
         }
             .doOnSuccess {
-                val valid = it.all { it.valid }
-                if (!valid)
+                val valid = it.all { it.valid } && password == repeat
                 _viewState = ViewState(State.ENTER_NEW_PASSWORD, valid)
                 changeState(_viewState)
             }
@@ -41,10 +40,8 @@ class ChangePasswordViewModel @Inject constructor(
             password == repeat
         }
             .doOnSubscribe {
-                if (_viewState.state != State.ENTER_OLD_PASSWORD) {
-                    _viewState = ViewState(State.ENTER_NEW_PASSWORD, password == repeat && PasswordHelper.Validator.validate(password).all { it.valid })
-                    changeState(_viewState)
-                }
+                _viewState = ViewState(State.ENTER_NEW_PASSWORD, password == repeat && PasswordHelper.Validator.validate(password).all { it.valid })
+                changeState(_viewState)
             }
             .subscribeOn(Schedulers.io())
             .mapToResult()
@@ -55,6 +52,7 @@ class ChangePasswordViewModel @Inject constructor(
                 if (it) {
                     val checkPasswords = PasswordHelper.Validator.validate(newPassword).any { !it.valid } || newPassword != newPasswordRepeat
                     if (checkPasswords) {
+
                         return@flatMap Single.just(State.ENTER_NEW_PASSWORD)
                     }
                     encryptionManager.setupPassword(

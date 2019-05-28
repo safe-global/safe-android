@@ -7,7 +7,7 @@ import pm.gnosis.heimdall.helpers.PasswordValidationCondition
 import pm.gnosis.svalinn.common.utils.Result
 
 abstract class ChangePasswordContract : ViewModel() {
-    abstract fun validatePassword(password: String): Single<Result<Collection<PasswordValidationCondition>>>
+    abstract fun validatePassword(password: String, repeat: String): Single<Result<Collection<PasswordValidationCondition>>>
     abstract fun validateRepeat(password: String, repeat: String): Single<Result<Boolean>>
     @Deprecated("used by ChangePasswordDialog")
     abstract fun setPassword(currentPassword: String, newPassword: String, newPasswordRepeat: String): Single<Result<State>>
