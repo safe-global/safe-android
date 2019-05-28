@@ -42,7 +42,7 @@ class ChangePasswordViewModel @Inject constructor(
         }
             .doOnSubscribe {
                 if (_viewState.state != State.ENTER_OLD_PASSWORD) {
-                    _viewState = ViewState(State.ENTER_NEW_PASSWORD, password == repeat && password.isNotEmpty())
+                    _viewState = ViewState(State.ENTER_NEW_PASSWORD, password == repeat && PasswordHelper.Validator.validate(password).all { it.valid })
                     changeState(_viewState)
                 }
             }

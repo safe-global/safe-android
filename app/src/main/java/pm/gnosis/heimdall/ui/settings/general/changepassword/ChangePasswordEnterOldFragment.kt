@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ApplicationComponent
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
 import pm.gnosis.heimdall.di.modules.ViewModule
+import pm.gnosis.heimdall.helpers.PasswordHelper
 import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordContract.State.INVALID_PASSWORD
 import pm.gnosis.svalinn.common.utils.snackbar
@@ -48,7 +49,8 @@ class ChangePasswordEnterOldFragment : BaseFragment() {
         disposables += viewModel.confirmEvents()
             .switchMapSingle {
                 viewModel.confirmPassword(
-                    layout_password_change_enter_old_current.text.toString())
+                    layout_password_change_enter_old_current.text.toString()
+                )
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(::applyState) {
@@ -57,14 +59,31 @@ class ChangePasswordEnterOldFragment : BaseFragment() {
             }
 
         disposables += layout_password_change_enter_old_current.textChanges()
-            .subscribeBy { layout_password_change_enter_old_current_info.text = null }
+            .subscribeBy {
+                layout_password_change_enter_old_current_info.text = null
+                PasswordHelper.Handler.resetView(
+                    layout_password_change_enter_old_current,
+                    layout_password_change_enter_old_current_info
+                )
+            }
 
     }
 
     private fun applyState(viewState: ChangePasswordContract.ViewState) {
         when (viewState.state) {
             INVALID_PASSWORD -> {
-                layout_password_change_enter_old_current_info.text = getString(R.string.error_wrong_credentials)
+                PasswordHelper.Handler.applyToView(
+                    layout_password_change_enter_old_current,
+                    layout_password_change_enter_old_current_info,
+                    getString(R.string.error_wrong_credentials),
+                    false
+                )
+            }
+            else -> {
+                PasswordHelper.Handler.resetView(
+                    layout_password_change_enter_old_current,
+                    layout_password_change_enter_old_current_info
+                )
             }
         }
     }

@@ -55,10 +55,10 @@ class ChangePasswordEnterNewFragment : BaseFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult {
                 Timber.e(it)
-                snackbar( layout_password_change_enter_new, R.string.unknown_error)
+                snackbar(layout_password_change_enter_new, R.string.unknown_error)
             }
 
-        disposables +=  layout_password_change_enter_new.textChanges()
+        disposables += layout_password_change_enter_new.textChanges()
             .skipInitialValue()
             .debounce(500, TimeUnit.MILLISECONDS)
             .switchMapSingle {
@@ -71,6 +71,10 @@ class ChangePasswordEnterNewFragment : BaseFragment() {
                     layout_password_change_validation_info,
                     it
                 )
+                PasswordHelper.Handler.resetView(
+                    layout_password_change_enter_new_repeat,
+                    layout_password_change_enter_new_repeat_info
+                )
             }, onError = Timber::e)
 
         disposables += layout_password_change_enter_new_repeat.textChanges()
@@ -80,10 +84,13 @@ class ChangePasswordEnterNewFragment : BaseFragment() {
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = {
-                // Cannot set visibility because of ConstraintGroup
-                layout_password_change_enter_new_repeat_info.text = if (it) null else getString(R.string.password_doesnt_match)
+                PasswordHelper.Handler.applyToView(
+                    layout_password_change_enter_new_repeat,
+                    layout_password_change_enter_new_repeat_info,
+                    if (it) null else getString(R.string.password_doesnt_match),
+                    it
+                )
             }, onError = Timber::e)
-
     }
 
     override fun onResume() {

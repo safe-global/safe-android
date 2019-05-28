@@ -88,6 +88,27 @@ object PasswordHelper {
                 passwordMessage.text = message
             }
 
+
+        fun applyToView(
+            passwordInput: EditText, passwordMessage: TextView, message: String?, validPassword: Boolean
+        ) {
+
+            passwordInput.setCompoundDrawables(
+                right =
+                if (passwordInput.text.isEmpty()) null
+                else ContextCompat.getDrawable(passwordInput.context, if (validPassword) R.drawable.ic_green_check else R.drawable.ic_error)
+            )
+
+            passwordMessage.text = message
+        }
+
+        fun resetView( passwordInput: EditText, passwordMessage: TextView) {
+            passwordInput.setCompoundDrawables(
+                right = null
+            )
+            passwordMessage.text = null
+        }
+
         data class Result(val message: CharSequence, val validPassword: Boolean)
     }
 }
