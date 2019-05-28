@@ -18,15 +18,12 @@ import pm.gnosis.heimdall.ui.base.BaseFragment
 import pm.gnosis.svalinn.common.utils.showKeyboardForView
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
-import pm.gnosis.svalinn.security.EncryptionManager
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
 class ChangePasswordEnterNewFragment : BaseFragment() {
-    @Inject
-    lateinit var encryptionManager: EncryptionManager
 
     @Inject
     lateinit var viewModel: ChangePasswordContract

@@ -9,19 +9,14 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_password_change.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
-import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordContract.State.*
 import pm.gnosis.heimdall.views.TwoStepPanel
 import timber.log.Timber
-import javax.inject.Inject
 
 
 class PasswordChangeActivity : ViewModelActivity<ChangePasswordContract>() {
-
-    @Inject
-    lateinit var toolbarHelper: ToolbarHelper
 
     override fun screenId() = ScreenId.SETTINGS_CHANGE_PASSWORD
 
@@ -75,7 +70,6 @@ class PasswordChangeActivity : ViewModelActivity<ChangePasswordContract>() {
                 layout_password_change_panel.disabled = !it.confirmEnabled
             }
 
-        //disposables += toolbarHelper.setupShadow(layout_password_change_toolbar_shadow, dialog_change_password_content_scroll)
     }
 
     private fun onDismiss() {

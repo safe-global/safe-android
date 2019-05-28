@@ -36,7 +36,7 @@ class ChangePasswordViewModelTest {
     @Test
     fun validatePasswordValid() {
         val observer = TestObserver<Result<Collection<PasswordValidationCondition>>>()
-        viewModel.validatePassword("qwe123qwe").subscribe(observer)
+        viewModel.validatePassword("qwe123qwe", "").subscribe(observer)
         observer.assertResult(
             DataResult(
                 listOf(
@@ -51,7 +51,7 @@ class ChangePasswordViewModelTest {
     @Test
     fun validatePasswordInvalid() {
         val observer = TestObserver<Result<Collection<PasswordValidationCondition>>>()
-        viewModel.validatePassword("").subscribe(observer)
+        viewModel.validatePassword("", "").subscribe(observer)
         observer.assertResult(
             DataResult(
                 listOf(
