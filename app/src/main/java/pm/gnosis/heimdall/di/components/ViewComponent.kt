@@ -44,6 +44,9 @@ import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordDialog
+import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordEnterNewFragment
+import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordEnterOldFragment
+import pm.gnosis.heimdall.ui.settings.general.changepassword.PasswordChangeActivity
 import pm.gnosis.heimdall.ui.settings.general.fingerprint.FingerprintDialog
 import pm.gnosis.heimdall.ui.settings.general.payment.PaymentTokenDialog
 import pm.gnosis.heimdall.ui.splash.SplashActivity
@@ -75,6 +78,8 @@ interface ViewComponent {
     fun inject(fragment: SafeDetailsFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)
+    fun inject(fragment: ChangePasswordEnterOldFragment)
+    fun inject(fragment: ChangePasswordEnterNewFragment)
 
     // Activities
 
@@ -98,6 +103,7 @@ interface ViewComponent {
     fun inject(activity: PairingActivity)
     fun inject(activity: PasswordConfirmActivity)
     fun inject(activity: PasswordSetupActivity)
+    fun inject(activity: PasswordChangeActivity)
     fun inject(activity: QRCodeScanActivity)
     fun inject(activity: SetupNewRecoveryPhraseActivity)
     fun inject(activity: ConfirmNewRecoveryPhraseActivity)

@@ -51,6 +51,12 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".ui.settings.general.changepassword.PasswordChangeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
             android:name=".ui.onboarding.OnboardingIntroActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MountainTheme" />

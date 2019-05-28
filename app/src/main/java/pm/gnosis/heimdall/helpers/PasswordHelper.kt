@@ -1,12 +1,12 @@
 package pm.gnosis.heimdall.helpers
 
 import android.content.Context
-import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.utils.setCompoundDrawables
 import pm.gnosis.svalinn.common.utils.appendText
@@ -19,6 +19,19 @@ object PasswordHelper {
         private const val CONSECUTIVE_CHARS = 3
         private val CONTAINS_DIGIT_REGEX = ".*\\d+.*".toRegex()
         private val CONTAINS_LETTER_REGEX = ".*\\p{L}.*".toRegex()
+
+        fun getValidationInfo(context: Context): String {
+            val conditions = listOf(
+                PasswordValidationCondition.MinimumCharacters(true),
+                PasswordValidationCondition.OneNumberOneLetter(true),
+                PasswordValidationCondition.NonIdenticalCharacters(true)
+            )
+            val message = StringBuilder()
+            conditions.forEachIndexed { index, condition ->
+                message.append(context.getString(condition.messageRes) + if (index < conditions.size - 1) "\n" else "")
+            }
+            return message.toString()
+        }
 
         fun validate(password: String): Collection<PasswordValidationCondition> =
             listOf(
@@ -42,6 +55,7 @@ object PasswordHelper {
     }
 
     object Handler {
+
         fun handleConditions(context: Context, emptyPassword: Boolean, conditions: Collection<PasswordValidationCondition>): Result {
             var validPassword = true
             val message = SpannableStringBuilder()
@@ -52,7 +66,10 @@ object PasswordHelper {
                     condition.valid -> context.getColorCompat(R.color.green_teal)
                     else -> context.getColorCompat(R.color.tomato)
                 }
-                message.appendText(context.getString(condition.messageRes) + if (index < conditions.size - 1) "\n" else "", ForegroundColorSpan(color))
+                message.appendText(
+                    context.getString(condition.messageRes) + if (index < conditions.size - 1) "\n" else "",
+                    ForegroundColorSpan(color)
+                )
             }
             return Result(message, validPassword)
         }
@@ -61,14 +78,15 @@ object PasswordHelper {
             passwordInput: EditText, passwordMessage: TextView, conditions: Collection<PasswordValidationCondition>
         ): Result =
             handleConditions(passwordInput.context, passwordInput.text.isEmpty(), conditions).apply {
+
                 passwordInput.setCompoundDrawables(
                     right =
                     if (passwordInput.text.isEmpty()) null
                     else ContextCompat.getDrawable(passwordInput.context, if (validPassword) R.drawable.ic_green_check else R.drawable.ic_error)
                 )
+
                 passwordMessage.text = message
             }
-
 
         data class Result(val message: CharSequence, val validPassword: Boolean)
     }
