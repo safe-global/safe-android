@@ -51,6 +51,7 @@
                 app:layout_constraintEnd_toStartOf="@id/layout_safe_main_toolbar_overflow"
                 app:layout_constraintStart_toEndOf="@+id/layout_safe_main_toolbar_nav_icon"
                 app:layout_constraintTop_toTopOf="@+id/layout_safe_main_toolbar_nav_icon"
+                app:layout_goneMarginEnd="@dimen/toolbar_height"
                 tools:text="MySafe" />
 
             <ImageView
@@ -352,7 +353,9 @@
                     app:constraint_referenced_ids="layout_safe_main_tokens,layout_safe_main_general_settings,layout_safe_main_address_book,layout_safe_main_wallet_connect_container,layout_safe_main_account_container,layout_safe_main_debug_settings_container"
                     tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.core.widget.NestedScrollView>
+
     </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>
