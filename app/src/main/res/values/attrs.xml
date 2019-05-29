@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="DisabledState">
+        <attr name="state_disabled" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="TwoStepPanel">
+
+        <attr name="step" format="enum">
+            <enum name="none" value="0" />
+            <enum name="one" value="1" />
+            <enum name="two" value="2" />
+        </attr>
+
+        <attr name="backVisible" format="boolean"/>
+        <attr name="backEnabled" format="boolean"/>
+
+        <attr name="forwardVisible" format="boolean"/>
+        <attr name="forwardEnabled" format="boolean"/>
+        <attr name="forwardLabel" format="string"/>
+
+        <attr name="colorTextEnabled" format="color" />
+        <attr name="colorTextDisabled" format="color" />
+
+    </declare-styleable>
+
+</resources>
