@@ -101,6 +101,7 @@ class SafeAdapterPendingViewHolderTest {
         viewHolder.start()
 
         then(safeAddressTextView).should().text = shortenedAddress
+        then(safeAddressTextView).should().setOnClickListener(MockUtils.any())
         then(safeAddressTextView).shouldHaveNoMoreInteractions()
 
         then(safeNameTextView).should().text = "Some other name!"
@@ -161,6 +162,7 @@ class SafeAdapterPendingViewHolderTest {
 
         then(safeAddressTextView).should().text = null
         then(safeAddressTextView).should().text = "0xC2AC...a48132"
+        then(safeAddressTextView).should().setOnClickListener(MockUtils.any())
         then(safeAddressTextView).shouldHaveNoMoreInteractions()
 
         addressBookSingleFactory.assertAllSubscribed()
