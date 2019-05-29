@@ -36,7 +36,7 @@ class ChangePasswordViewModelTest {
     @Test
     fun validatePasswordValid() {
         val observer = TestObserver<Result<Collection<PasswordValidationCondition>>>()
-        viewModel.validatePassword("qwe123qwe").subscribe(observer)
+        viewModel.validatePassword("qwe123qwe", "").subscribe(observer)
         observer.assertResult(
             DataResult(
                 listOf(
@@ -51,7 +51,7 @@ class ChangePasswordViewModelTest {
     @Test
     fun validatePasswordInvalid() {
         val observer = TestObserver<Result<Collection<PasswordValidationCondition>>>()
-        viewModel.validatePassword("").subscribe(observer)
+        viewModel.validatePassword("", "").subscribe(observer)
         observer.assertResult(
             DataResult(
                 listOf(
@@ -78,63 +78,44 @@ class ChangePasswordViewModelTest {
     }
 
     @Test
-    fun setPasswordWrongPassword() {
+    fun confirmPasswordWrongPassword() {
         given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(false))
-        val observer = TestObserver<Result<ChangePasswordContract.State>>()
-        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe").subscribe(observer)
-        observer.assertResult(DataResult(ChangePasswordContract.State.INVALID_PASSWORD))
+        val observer = TestObserver<Result<ChangePasswordContract.ViewState>>()
+        viewModel.confirmPassword("qwe123qwe").subscribe(observer)
+        observer.assertResult(DataResult(ChangePasswordContract.ViewState(ChangePasswordContract.State.INVALID_PASSWORD, true)))
     }
 
     @Test
-    fun setPasswordPasswordTooWeak() {
-        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
-        val observer = TestObserver<Result<ChangePasswordContract.State>>()
-        viewModel.setPassword("wqe", "", "").subscribe(observer)
-        observer.assertResult(DataResult(ChangePasswordContract.State.ENTER_NEW_PASSWORD))
-    }
-
-    @Test
-    fun setPasswordNoSamePassword() {
-        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
-        val observer = TestObserver<Result<ChangePasswordContract.State>>()
-        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe2").subscribe(observer)
-        observer.assertResult(DataResult(ChangePasswordContract.State.ENTER_NEW_PASSWORD))
-    }
-
-    @Test
-    fun setPasswordCouldNotSet() {
-        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
-        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(false))
-        val observer = TestObserver<Result<ChangePasswordContract.State>>()
-        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe").subscribe(observer)
-        observer.assertResult(DataResult(ChangePasswordContract.State.INVALID_PASSWORD))
-    }
-
-    @Test
-    fun setPassword() {
-        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
-        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
-        val observer = TestObserver<Result<ChangePasswordContract.State>>()
-        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe").subscribe(observer)
-        observer.assertResult(DataResult(ChangePasswordContract.State.PASSWORD_CHANGED))
-    }
-
-    @Test
-    fun setPasswordErrorUnlock() {
+    fun confirmPasswordErrorUnlock() {
         val error = IllegalArgumentException()
         given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.error(error))
-        val observer = TestObserver<Result<ChangePasswordContract.State>>()
-        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe").subscribe(observer)
+        val observer = TestObserver<Result<ChangePasswordContract.ViewState>>()
+        viewModel.confirmPassword("qwe").subscribe(observer)
         observer.assertResult(ErrorResult(error))
     }
 
     @Test
-    fun setPasswordErrorSet() {
+    fun changePasswordCouldNotSet() {
+        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(false))
+        val observer = TestObserver<Result<ChangePasswordContract.ViewState>>()
+        viewModel.changePassword( "qwe123qwe", "qwe123qwe").subscribe(observer)
+        observer.assertResult(DataResult(ChangePasswordContract.ViewState(ChangePasswordContract.State.ERROR, true)))
+    }
+
+    @Test
+    fun changePassword() {
+        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
+        val observer = TestObserver<Result<ChangePasswordContract.ViewState>>()
+        viewModel.changePassword("qwe123qwe", "qwe123qwe").subscribe(observer)
+        observer.assertResult(DataResult(ChangePasswordContract.ViewState(ChangePasswordContract.State.PASSWORD_CHANGED, true)))
+    }
+
+    @Test
+    fun changePasswordErrorSet() {
         val error = IllegalArgumentException()
-        given(encryptionManagerMock.unlockWithPassword(MockUtils.any())).willReturn(Single.just(true))
         given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.error(error))
-        val observer = TestObserver<Result<ChangePasswordContract.State>>()
-        viewModel.setPassword("wqe", "qwe123qwe", "qwe123qwe").subscribe(observer)
+        val observer = TestObserver<Result<ChangePasswordContract.ViewState>>()
+        viewModel.changePassword("qwe123qwe", "qwe123qwe").subscribe(observer)
         observer.assertResult(ErrorResult(error))
     }
 }

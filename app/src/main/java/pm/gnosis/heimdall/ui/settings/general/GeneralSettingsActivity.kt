@@ -22,7 +22,7 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
-import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordDialog
+import pm.gnosis.heimdall.ui.settings.general.changepassword.PasswordChangeActivity
 import pm.gnosis.heimdall.ui.settings.general.fingerprint.FingerprintDialog
 import pm.gnosis.heimdall.ui.settings.general.payment.PaymentTokenDialog
 import pm.gnosis.heimdall.utils.errorSnackbar
@@ -54,7 +54,7 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
 
         disposables += layout_general_settings_password_background.clicks()
             .subscribeBy(onNext = {
-                ChangePasswordDialog.create().show(supportFragmentManager, null)
+                startActivity(PasswordChangeActivity.createIntent(this))
             }, onError = Timber::e)
 
         disposables += layout_general_settings_payment_token_background.clicks()
