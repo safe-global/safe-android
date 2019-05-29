@@ -43,7 +43,6 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeSubmitFragme
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
-import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordDialog
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordEnterNewFragment
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordEnterOldFragment
 import pm.gnosis.heimdall.ui.settings.general.changepassword.PasswordChangeActivity
@@ -124,7 +123,6 @@ interface ViewComponent {
 
     // Dialogs
 
-    fun inject(dialog: ChangePasswordDialog)
     fun inject(dialog: EnsInputDialog)
     fun inject(dialog: FingerprintDialog)
     fun inject(dialog: PaymentTokenDialog)

@@ -51,9 +51,6 @@ class PasswordChangeActivity : ViewModelActivity<ChangePasswordContract>() {
                         layout_password_change_panel.step = TwoStepPanel.Step.ONE
                         layout_password_change_panel.forwardLabel = getString(R.string.next)
                     }
-                    INVALID_PASSWORD -> {
-
-                    }
                     ENTER_NEW_PASSWORD -> {
                         if (layout_password_change_panel.step == TwoStepPanel.Step.ONE) {
                             layout_password_change_panel.step = TwoStepPanel.Step.TWO

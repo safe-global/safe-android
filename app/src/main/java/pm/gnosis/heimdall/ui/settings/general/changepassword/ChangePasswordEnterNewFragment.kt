@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.settings.general.changepassword
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,11 +29,9 @@ class ChangePasswordEnterNewFragment : BaseFragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var root = inflater.inflate(R.layout.layout_password_change_enter_new, container, false)
-        return root
+        return inflater.inflate(R.layout.layout_password_change_enter_new, container, false)
     }
 
-    @SuppressLint("RestrictedApi")
     override fun onStart() {
         super.onStart()
 

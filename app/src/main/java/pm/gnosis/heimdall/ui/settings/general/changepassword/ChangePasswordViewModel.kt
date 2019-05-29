@@ -17,7 +17,6 @@ class ChangePasswordViewModel @Inject constructor(
 
     private val confirmSubject = PublishSubject.create<Unit>()
     private val viewState = PublishSubject.create<ViewState>()
-    private var _viewState = ViewState(State.ENTER_OLD_PASSWORD, true)
 
     private var currentPassword: String? = null
 
@@ -28,8 +27,7 @@ class ChangePasswordViewModel @Inject constructor(
         }
             .doOnSuccess {
                 val valid = it.all { it.valid } && password == repeat
-                _viewState = ViewState(State.ENTER_NEW_PASSWORD, valid)
-                changeState(_viewState)
+                changeState(ViewState(State.ENTER_NEW_PASSWORD, valid))
             }
             .subscribeOn(Schedulers.io())
             .mapToResult()
@@ -40,32 +38,9 @@ class ChangePasswordViewModel @Inject constructor(
             password == repeat
         }
             .doOnSubscribe {
-                _viewState = ViewState(State.ENTER_NEW_PASSWORD, password == repeat && PasswordHelper.Validator.validate(password).all { it.valid })
-                changeState(_viewState)
+                changeState(ViewState(State.ENTER_NEW_PASSWORD, password == repeat && PasswordHelper.Validator.validate(password).all { it.valid }))
             }
             .subscribeOn(Schedulers.io())
-            .mapToResult()
-
-    override fun setPassword(currentPassword: String, newPassword: String, newPasswordRepeat: String) =
-        encryptionManager.unlockWithPassword(currentPassword.toByteArray())
-            .flatMap {
-                if (it) {
-                    val checkPasswords = PasswordHelper.Validator.validate(newPassword).any { !it.valid } || newPassword != newPasswordRepeat
-                    if (checkPasswords) {
-
-                        return@flatMap Single.just(State.ENTER_NEW_PASSWORD)
-                    }
-                    encryptionManager.setupPassword(
-                        newPassword.toByteArray(),
-                        currentPassword.toByteArray()
-                    )
-                        .map {
-                            if (it) State.PASSWORD_CHANGED
-                            else State.INVALID_PASSWORD
-                        }
-                } else
-                    Single.just(State.INVALID_PASSWORD)
-            }
             .mapToResult()
 
     override fun confirmPassword(currentPassword: String): Single<Result<ViewState>> {
@@ -73,14 +48,14 @@ class ChangePasswordViewModel @Inject constructor(
             .map {
                 if (it) {
                     this.currentPassword = currentPassword
-                    _viewState = ViewState(State.ENTER_NEW_PASSWORD, false)
-                    changeState(_viewState)
-                    _viewState
+                    val newViewState = ViewState(State.ENTER_NEW_PASSWORD, false)
+                    changeState(newViewState)
+                    newViewState
 
                 } else {
-                    _viewState = ViewState(State.INVALID_PASSWORD, true)
-                    changeState(_viewState)
-                    _viewState
+                    val newViewState = ViewState(State.INVALID_PASSWORD, true)
+                    changeState(newViewState)
+                    newViewState
                 }
             }
             .mapToResult()
@@ -89,19 +64,19 @@ class ChangePasswordViewModel @Inject constructor(
     override fun changePassword(newPassword: String, newPasswordRepeat: String): Single<Result<ViewState>> {
         val checkPasswords = PasswordHelper.Validator.validate(newPassword).any { !it.valid } || newPassword != newPasswordRepeat
         return if (checkPasswords) {
-            _viewState = ViewState(State.ENTER_NEW_PASSWORD, false)
-            changeState(_viewState)
-            Single.just(_viewState).mapToResult()
+            val newViewState = ViewState(State.ENTER_NEW_PASSWORD, false)
+            changeState(newViewState)
+            Single.just(newViewState).mapToResult()
         } else {
             encryptionManager.setupPassword(
                 newPassword.toByteArray(),
                 currentPassword?.toByteArray()
             )
                 .map {
-                    _viewState = if (it) ViewState(State.PASSWORD_CHANGED, true)
-                    else ViewState(State.INVALID_PASSWORD, true)
-                    changeState(_viewState)
-                    _viewState
+                    val newViewState = if (it) ViewState(State.PASSWORD_CHANGED, true)
+                    else ViewState(State.ERROR, true)
+                    changeState(newViewState)
+                    newViewState
                 }
                 .mapToResult()
         }
