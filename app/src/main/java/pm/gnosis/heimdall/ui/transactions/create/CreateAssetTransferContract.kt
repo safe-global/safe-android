@@ -17,7 +17,7 @@ abstract class CreateAssetTransferContract : ViewModel() {
         reviewEvents: Observable<Unit>
     ): ObservableTransformer<Input, Result<ViewUpdate>>
 
-    data class Input(val amount: String, val address: String)
+    data class Input(val amount: String, val address: Solidity.Address)
 
     sealed class ViewUpdate {
         data class Estimate(val estimate: BigInteger, val balance: BigInteger, val gasToken: ERC20Token, val canExecute: Boolean) : ViewUpdate()

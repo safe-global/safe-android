@@ -80,6 +80,6 @@ class AddressInputHelper(
     }
 
     private fun handleError(t: Throwable) {
-        errorCallback?.invoke(t) ?: dialog.context.toast("Could not find an Ethereum address")
+        errorCallback?.invoke(t) ?: dialog.context.toast(R.string.invalid_ethereum_address)
     }
 }

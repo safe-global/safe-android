@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
+import com.squareup.picasso.Picasso
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -13,10 +14,13 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_create_asset_transfer.*
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.AddressInputHelper
@@ -43,6 +47,11 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
 
+    @Inject
+    lateinit var picasso: Picasso
+
+    private val receiverInputSubject = BehaviorSubject.create<Solidity.Address>()
+
     private lateinit var addressInputHelper: AddressInputHelper
 
     override fun screenId() = ScreenId.TRANSACTION_ENTER_DATA
@@ -62,19 +71,14 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     }
 
     private fun handleNewAddress(address: Solidity.Address) {
-        disposables += Single.fromCallable {
-            address.asEthereumAddressChecksumString()
-        }
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onSuccess = ::onAddressProvided, onError = { toast(R.string.invalid_ethereum_address) })
-    }
-
-    private fun onAddressProvided(address: String) {
-        if (!address.isBlank()) {
-            layout_create_asset_transfer_input_receiver.text = address
-            layout_create_asset_transfer_input_receiver.setTextColor(getColorCompat(R.color.dark_slate_blue))
-        }
+        layout_create_asset_transfer_receiver_hint.text = null
+        addressHelper.populateAddressInfo(
+                layout_create_asset_transfer_receiver_address,
+                layout_create_asset_transfer_receiver_name,
+                layout_create_asset_transfer_receiver_image,
+                address
+        ).forEach { disposables += it }
+        receiverInputSubject.onNext(address)
     }
 
     override fun onStart() {
@@ -91,45 +95,42 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
         }
         val reviewEvents = layout_create_asset_transfer_continue_button.clicks()
         disposables +=
-            Observable.combineLatest(
-                layout_create_asset_transfer_input_value.textChanges()
-                    .doOnNext {
-                        layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
-                    },
-                layout_create_asset_transfer_input_receiver.textChanges()
-                    .doOnNext {
-                        layout_create_asset_transfer_input_receiver.setTextColor(getColorCompat(R.color.dark_slate_blue))
-                    },
-                BiFunction { value: CharSequence, receiver: CharSequence ->
-                    CreateAssetTransferContract.Input(value.toString(), receiver.toString())
-                }
-            )
-                .doOnNext { disableContinue() }
-                .compose(viewModel.processInput(safe, token, reviewEvents))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeForResult(
-                    onNext = ::applyUpdate,
-                    onError = {
-                        errorSnackbar(layout_create_asset_transfer_continue_button, it)
-                    }
+                Observable.combineLatest(
+                        layout_create_asset_transfer_input_value.textChanges()
+                                .doOnNext {
+                                    layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
+                                },
+                        receiverInputSubject,
+                        BiFunction { value: CharSequence, receiver: Solidity.Address ->
+                            CreateAssetTransferContract.Input(value.toString(), receiver)
+                        }
                 )
+                        .doOnNext { disableContinue() }
+                        .compose(viewModel.processInput(safe, token, reviewEvents))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeForResult(
+                                onNext = ::applyUpdate,
+                                onError = {
+                                    errorSnackbar(layout_create_asset_transfer_continue_button, it)
+                                }
+                        )
 
         disposables += layout_create_asset_transfer_back_button.clicks()
-            .subscribeBy { onBackPressed() }
+                .subscribeBy { onBackPressed() }
 
-        disposables += layout_create_asset_transfer_input_receiver.clicks()
-            .subscribeBy { addressInputHelper.showDialog() }
+        disposables += layout_create_asset_transfer_receiver_hint.clicks()
+                .subscribeBy { addressInputHelper.showDialog() }
 
         disposables += layout_create_asset_transfer_fees_info.clicks()
-            .subscribeBy {
-                InfoTipDialogBuilder.build(this, R.layout.dialog_network_fee, R.string.ok).show()
-            }
+                .subscribeBy {
+                    InfoTipDialogBuilder.build(this, R.layout.dialog_network_fee, R.string.ok).show()
+                }
 
         addressHelper.populateAddressInfo(
-            layout_create_asset_transfer_safe_address,
-            layout_create_asset_transfer_safe_name,
-            layout_create_asset_transfer_safe_image,
-            safe
+                layout_create_asset_transfer_safe_address,
+                layout_create_asset_transfer_safe_name,
+                layout_create_asset_transfer_safe_image,
+                safe
         ).forEach { disposables += it }
 
         disposables += toolbarHelper.setupShadow(layout_create_asset_transfer_toolbar_shadow, layout_create_asset_transfer_title_content_scroll)
@@ -137,35 +138,32 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
 
     private fun applyUpdate(update: ViewUpdate) {
         when (update) {
-            is CreateAssetTransferContract.ViewUpdate.Estimate -> {
+            is ViewUpdate.Estimate -> {
                 layout_create_asset_transfer_balance_value.text = update.gasToken.displayString(update.balance)
                 layout_create_asset_transfer_fees_value.text = "- ${update.gasToken.displayString(update.estimate)}"
                 layout_create_asset_transfer_continue_button.visible(update.canExecute)
                 if (!update.canExecute) layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.tomato))
                 else {
-                    layout_create_asset_transfer_input_receiver.setTextColor(getColorCompat(R.color.dark_slate_blue))
                     layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
                 }
             }
-            CreateAssetTransferContract.ViewUpdate.EstimateError -> disableContinue()
-            is CreateAssetTransferContract.ViewUpdate.TokenInfo -> {
+            ViewUpdate.EstimateError -> disableContinue()
+            is ViewUpdate.TokenInfo -> {
                 layout_create_asset_transfer_title.text = getString(R.string.send_x, update.value.token.name)
                 layout_create_asset_transfer_safe_balance.text = update.value.displayString()
                 layout_create_asset_transfer_input_label.text = update.value.token.symbol
+                layout_create_asset_transfer_input_icon.setImageDrawable(null)
+                if (update.value.token == ETHER_TOKEN) layout_create_asset_transfer_input_icon.setImageResource(R.drawable.ic_ether_symbol)
+                else picasso.load(update.value.token.logoUrl).into(layout_create_asset_transfer_input_icon)
             }
-            is CreateAssetTransferContract.ViewUpdate.InvalidInput -> {
+            is ViewUpdate.InvalidInput -> {
                 layout_create_asset_transfer_input_value.setTextColor(
-                    getColorCompat(
-                        if (update.amount) R.color.tomato else R.color.dark_slate_blue
-                    )
-                )
-                layout_create_asset_transfer_input_receiver.setTextColor(
-                    getColorCompat(
-                        if (update.address) R.color.tomato else R.color.dark_slate_blue
-                    )
+                        getColorCompat(
+                                if (update.amount) R.color.tomato else R.color.dark_slate_blue
+                        )
                 )
             }
-            is CreateAssetTransferContract.ViewUpdate.StartReview -> {
+            is ViewUpdate.StartReview -> {
                 startActivity(update.intent)
             }
         }
@@ -181,9 +179,9 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val EXTRA_TOKEN_ADDRESS = "extra.string.token_address"
         fun createIntent(context: Context, safe: Solidity.Address, token: ERC20Token) =
-            Intent(context, CreateAssetTransferActivity::class.java).apply {
-                putExtra(EXTRA_SAFE_ADDRESS, safe.asEthereumAddressString())
-                putExtra(EXTRA_TOKEN_ADDRESS, token.address.asEthereumAddressString())
-            }
+                Intent(context, CreateAssetTransferActivity::class.java).apply {
+                    putExtra(EXTRA_SAFE_ADDRESS, safe.asEthereumAddressString())
+                    putExtra(EXTRA_TOKEN_ADDRESS, token.address.asEthereumAddressString())
+                }
     }
 }

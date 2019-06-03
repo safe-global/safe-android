@@ -76,20 +76,8 @@ class CreateAssetTransferViewModelTest {
         )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
-        // Invalid input for both
-        inputSubject.onNext(CreateAssetTransferContract.Input("sghdjghs", "asd"))
-
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(true, true)))
-        testObserver.assertValuesOnly(*updates.toTypedArray())
-
-        // Address too short
-        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", "0xc257274276a4e539741ca11b590b9447b26a805x"))
-
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(false, true)))
-        testObserver.assertValuesOnly(*updates.toTypedArray())
-
         // Valid input for now
-        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", TEST_ADDRESS))
 
         // No token yet -> cannot validate amount
         updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(true, false)))
@@ -104,7 +92,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -114,7 +102,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -138,7 +126,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -154,8 +142,8 @@ class CreateAssetTransferViewModelTest {
 
         reviewEvents.success(Unit)
         // Cannot assert intent without predicate
-        testObserver.assertValueCount(10)
-        testObserver.assertValueAt(9) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
+        testObserver.assertValueCount(8)
+        testObserver.assertValueAt(7) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
         then(tokenRepositoryMock).should(times(3)).loadPaymentToken()
         then(tokenRepositoryMock).should().loadToken(TEST_ETHER_TOKEN)
@@ -189,20 +177,8 @@ class CreateAssetTransferViewModelTest {
         )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
-        // Invalid input for both
-        inputSubject.onNext(CreateAssetTransferContract.Input("sghdjghs", "asd"))
-
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(true, true)))
-        testObserver.assertValuesOnly(*updates.toTypedArray())
-
-        // Address too short
-        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", "0xc257274276a4e539741ca11b590b9447b26a805x"))
-
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(false, true)))
-        testObserver.assertValuesOnly(*updates.toTypedArray())
-
         // Valid input for now
-        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", TEST_ADDRESS))
 
         // No token yet -> cannot validate amount
         updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(true, false)))
@@ -217,7 +193,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -227,7 +203,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -252,7 +228,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -269,8 +245,8 @@ class CreateAssetTransferViewModelTest {
 
         reviewEvents.success(Unit)
         // Cannot assert intent without predicate
-        testObserver.assertValueCount(10)
-        testObserver.assertValueAt(9) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
+        testObserver.assertValueCount(8)
+        testObserver.assertValueAt(7) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
         then(tokenRepositoryMock).should().loadToken(TEST_TOKEN_ADDRESS)
         then(tokenRepositoryMock).should(times(3)).loadPaymentToken()
