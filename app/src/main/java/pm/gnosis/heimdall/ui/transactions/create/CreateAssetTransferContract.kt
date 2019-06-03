@@ -20,8 +20,14 @@ abstract class CreateAssetTransferContract : ViewModel() {
     data class Input(val amount: String, val address: Solidity.Address)
 
     sealed class ViewUpdate {
-        data class Estimate(val estimate: BigInteger, val balance: BigInteger, val gasToken: ERC20Token, val canExecute: Boolean) : ViewUpdate()
-        object EstimateError : ViewUpdate()
+        data class Estimate(
+            val gasToken: ERC20TokenWithBalance,
+            val networkFee: BigInteger,
+            val assetBalanceAfterTransfer: ERC20TokenWithBalance?, // null if gasToken and assetToken are the same
+            val sufficientFunds: Boolean
+        ) : ViewUpdate()
+
+        data class EstimateError(val error: Throwable) : ViewUpdate()
         data class TokenInfo(val value: ERC20TokenWithBalance) : ViewUpdate()
         data class InvalidInput(val amount: Boolean, val address: Boolean) : ViewUpdate()
         data class StartReview(val intent: Intent) : ViewUpdate()

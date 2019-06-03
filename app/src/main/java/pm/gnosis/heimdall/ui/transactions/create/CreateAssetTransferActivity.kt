@@ -4,6 +4,7 @@ package pm.gnosis.heimdall.ui.transactions.create
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.squareup.picasso.Picasso
@@ -73,10 +74,10 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     private fun handleNewAddress(address: Solidity.Address) {
         layout_create_asset_transfer_receiver_hint.text = null
         addressHelper.populateAddressInfo(
-                layout_create_asset_transfer_receiver_address,
-                layout_create_asset_transfer_receiver_name,
-                layout_create_asset_transfer_receiver_image,
-                address
+            layout_create_asset_transfer_receiver_address,
+            layout_create_asset_transfer_receiver_name,
+            layout_create_asset_transfer_receiver_image,
+            address
         ).forEach { disposables += it }
         receiverInputSubject.onNext(address)
     }
@@ -95,42 +96,42 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
         }
         val reviewEvents = layout_create_asset_transfer_continue_button.clicks()
         disposables +=
-                Observable.combineLatest(
-                        layout_create_asset_transfer_input_value.textChanges()
-                                .doOnNext {
-                                    layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
-                                },
-                        receiverInputSubject,
-                        BiFunction { value: CharSequence, receiver: Solidity.Address ->
-                            CreateAssetTransferContract.Input(value.toString(), receiver)
-                        }
+            Observable.combineLatest(
+                layout_create_asset_transfer_input_value.textChanges()
+                    .doOnNext {
+                        layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
+                    },
+                receiverInputSubject,
+                BiFunction { value: CharSequence, receiver: Solidity.Address ->
+                    CreateAssetTransferContract.Input(value.toString(), receiver)
+                }
+            )
+                .doOnNext { disableContinue() }
+                .compose(viewModel.processInput(safe, token, reviewEvents))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeForResult(
+                    onNext = ::applyUpdate,
+                    onError = {
+                        errorSnackbar(layout_create_asset_transfer_continue_button, it)
+                    }
                 )
-                        .doOnNext { disableContinue() }
-                        .compose(viewModel.processInput(safe, token, reviewEvents))
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeForResult(
-                                onNext = ::applyUpdate,
-                                onError = {
-                                    errorSnackbar(layout_create_asset_transfer_continue_button, it)
-                                }
-                        )
 
         disposables += layout_create_asset_transfer_back_button.clicks()
-                .subscribeBy { onBackPressed() }
+            .subscribeBy { onBackPressed() }
 
         disposables += layout_create_asset_transfer_receiver_hint.clicks()
-                .subscribeBy { addressInputHelper.showDialog() }
+            .subscribeBy { addressInputHelper.showDialog() }
 
         disposables += layout_create_asset_transfer_fees_info.clicks()
-                .subscribeBy {
-                    InfoTipDialogBuilder.build(this, R.layout.dialog_network_fee, R.string.ok).show()
-                }
+            .subscribeBy {
+                InfoTipDialogBuilder.build(this, R.layout.dialog_network_fee, R.string.ok).show()
+            }
 
         addressHelper.populateAddressInfo(
-                layout_create_asset_transfer_safe_address,
-                layout_create_asset_transfer_safe_name,
-                layout_create_asset_transfer_safe_image,
-                safe
+            layout_create_asset_transfer_safe_address,
+            layout_create_asset_transfer_safe_name,
+            layout_create_asset_transfer_safe_image,
+            safe
         ).forEach { disposables += it }
 
         disposables += toolbarHelper.setupShadow(layout_create_asset_transfer_toolbar_shadow, layout_create_asset_transfer_title_content_scroll)
@@ -139,15 +140,37 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     private fun applyUpdate(update: ViewUpdate) {
         when (update) {
             is ViewUpdate.Estimate -> {
-                layout_create_asset_transfer_balance_value.text = update.gasToken.displayString(update.balance)
-                layout_create_asset_transfer_fees_value.text = "- ${update.gasToken.displayString(update.estimate)}"
-                layout_create_asset_transfer_continue_button.visible(update.canExecute)
-                if (!update.canExecute) layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.tomato))
+                layout_create_asset_transfer_gas_token_balance_after_transfer_value.text =
+                    update.gasToken.displayString()
+                layout_create_asset_transfer_fees_value.text = "-${update.gasToken.token.displayString(update.networkFee)}"
+                layout_create_asset_transfer_continue_button.visible(update.sufficientFunds)
+                layout_create_asset_transfer_fees_error.visible(!update.sufficientFunds)
+
+                if (update.assetBalanceAfterTransfer != null) {
+                    layout_create_asset_transfer_asset_balance_after_transfer_value.setTextColor(
+                        ContextCompat.getColor(this, R.color.battleship_grey)
+                    )
+                    layout_create_asset_transfer_asset_balance_after_transfer_value.text =
+                        update.assetBalanceAfterTransfer.displayString()
+                    layout_create_asset_transfer_asset_balance_after_transfer_label.visible(true)
+                    layout_create_asset_transfer_asset_balance_after_transfer_value.visible(true)
+                } else {
+                    layout_create_asset_transfer_gas_token_balance_after_transfer_label.setTextColor(
+                        ContextCompat.getColor(this, R.color.dark_slate_blue)
+                    )
+                    layout_create_asset_transfer_asset_balance_after_transfer_label.visible(false)
+                    layout_create_asset_transfer_asset_balance_after_transfer_value.visible(false)
+                }
+
+                if (!update.sufficientFunds) layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.tomato))
                 else {
                     layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
                 }
             }
-            ViewUpdate.EstimateError -> disableContinue()
+            is ViewUpdate.EstimateError -> {
+                disableContinue()
+                errorSnackbar(layout_create_asset_transfer_input_label, update.error)
+            }
             is ViewUpdate.TokenInfo -> {
                 layout_create_asset_transfer_title.text = getString(R.string.send_x, update.value.token.name)
                 layout_create_asset_transfer_safe_balance.text = update.value.displayString()
@@ -158,9 +181,9 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
             }
             is ViewUpdate.InvalidInput -> {
                 layout_create_asset_transfer_input_value.setTextColor(
-                        getColorCompat(
-                                if (update.amount) R.color.tomato else R.color.dark_slate_blue
-                        )
+                    getColorCompat(
+                        if (update.amount) R.color.tomato else R.color.dark_slate_blue
+                    )
                 )
             }
             is ViewUpdate.StartReview -> {
@@ -170,7 +193,9 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     }
 
     private fun disableContinue() {
-        layout_create_asset_transfer_balance_value.text = "-"
+        layout_create_asset_transfer_asset_balance_after_transfer_label.visible(false)
+        layout_create_asset_transfer_asset_balance_after_transfer_value.visible(false)
+        layout_create_asset_transfer_gas_token_balance_after_transfer_value.text = "-"
         layout_create_asset_transfer_fees_value.text = "-"
         layout_create_asset_transfer_continue_button.visible(false)
     }
@@ -179,9 +204,9 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val EXTRA_TOKEN_ADDRESS = "extra.string.token_address"
         fun createIntent(context: Context, safe: Solidity.Address, token: ERC20Token) =
-                Intent(context, CreateAssetTransferActivity::class.java).apply {
-                    putExtra(EXTRA_SAFE_ADDRESS, safe.asEthereumAddressString())
-                    putExtra(EXTRA_TOKEN_ADDRESS, token.address.asEthereumAddressString())
-                }
+            Intent(context, CreateAssetTransferActivity::class.java).apply {
+                putExtra(EXTRA_SAFE_ADDRESS, safe.asEthereumAddressString())
+                putExtra(EXTRA_TOKEN_ADDRESS, token.address.asEthereumAddressString())
+            }
     }
 }

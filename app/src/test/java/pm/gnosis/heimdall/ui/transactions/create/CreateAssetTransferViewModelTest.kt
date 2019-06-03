@@ -30,6 +30,7 @@ import pm.gnosis.tests.utils.TestObservableFactory
 import pm.gnosis.tests.utils.TestSingleFactory
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.util.concurrent.TimeoutException
 
@@ -97,8 +98,9 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Estimate error
-        estimationSingleFactory.error(TimeoutException())
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.EstimateError))
+        val error = IllegalStateException()
+        estimationSingleFactory.error(error)
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.EstimateError(error)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
@@ -122,7 +124,13 @@ class CreateAssetTransferViewModelTest {
             BigInteger.ZERO
         )
         estimationSingleFactory.success(lowBalanceInfo)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, ERC20Token.ETHER_TOKEN, false)))
+        updates.add(
+            DataResult(
+                CreateAssetTransferContract.ViewUpdate.Estimate(
+                    ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, Wei.ether("-22").value - BigInteger.TEN), BigInteger.TEN, null, false
+                )
+            )
+        )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
@@ -137,7 +145,13 @@ class CreateAssetTransferViewModelTest {
             Wei.ether("23").value
         )
         estimationSingleFactory.success(validInfo)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("23").value, ERC20Token.ETHER_TOKEN, true)))
+        updates.add(
+            DataResult(
+                CreateAssetTransferContract.ViewUpdate.Estimate(
+                    ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, Wei.ether("1").value - BigInteger.TEN), BigInteger.TEN, null, true
+                )
+            )
+        )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         reviewEvents.success(Unit)
@@ -198,8 +212,9 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Estimate error
-        estimationSingleFactory.error(TimeoutException())
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.EstimateError))
+        val error = IllegalStateException()
+        estimationSingleFactory.error(error)
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.EstimateError(error)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
@@ -224,7 +239,14 @@ class CreateAssetTransferViewModelTest {
         )
         estimationSingleFactory.success(lowBalanceInfo)
         tokenSingleFactory.success(ERC20Token.ETHER_TOKEN)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, TEST_GAS_TOKEN, false)))
+        updates.add(
+            DataResult(
+                CreateAssetTransferContract.ViewUpdate.Estimate(
+                    ERC20TokenWithBalance(TEST_GAS_TOKEN, BigInteger.ZERO - BigInteger.TEN), BigInteger.TEN,
+                    ERC20TokenWithBalance(TEST_TOKEN, BigInteger("10000000000")), false
+                )
+            )
+        )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
@@ -240,7 +262,16 @@ class CreateAssetTransferViewModelTest {
         )
         estimationSingleFactory.success(validInfo)
         tokenSingleFactory.success(ERC20Token.ETHER_TOKEN)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("1").value, TEST_GAS_TOKEN, true)))
+        updates.add(
+            DataResult(
+                CreateAssetTransferContract.ViewUpdate.Estimate(
+                    ERC20TokenWithBalance(TEST_GAS_TOKEN, Wei.ether("1").value - BigInteger.TEN),
+                    BigInteger.TEN,
+                    ERC20TokenWithBalance(TEST_TOKEN, BigInteger("10000000000")),
+                    true
+                )
+            )
+        )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         reviewEvents.success(Unit)
