@@ -63,10 +63,10 @@ object CustomAlertDialogBuilder {
 object InfoTipDialogBuilder {
 
     fun build(context: Context, @LayoutRes contentRes: Int, @StringRes confirmRes: Int): AlertDialog {
-        val alertContent = LayoutInflater.from(context).inflate(R.layout.dialog_network_fee, null)
+        val alertContent = LayoutInflater.from(context).inflate(contentRes, null)
         return AlertDialog.Builder(context)
             .setView(alertContent)
-            .setPositiveButton(R.string.ok) { dialog, which ->
+            .setPositiveButton(confirmRes) { dialog, which ->
                 dialog.dismiss()
             }
             .create()
