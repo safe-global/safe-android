@@ -53,6 +53,13 @@
         <item name="android:textColor">@color/azure</item>
     </style>
 
+    <style name="FullScreenDialogStyle" parent="WhiteTheme">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
     <style name="TabLayout" parent="Widget.Design.TabLayout">
         <item name="android:background">@color/white</item>
         <item name="tabIndicatorColor">@color/azure</item>
