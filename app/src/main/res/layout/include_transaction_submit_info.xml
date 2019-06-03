@@ -71,15 +71,29 @@
             android:fontFamily="monospace-medium"
             android:paddingBottom="12dp"
             android:text="@string/estimated_transaction_fee"
-            app:layout_constraintEnd_toStartOf="@+id/include_transaction_submit_info_data_fees_value"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_data_balance_label" />
+
+        <TextView
+            android:id="@+id/include_transaction_submit_info_data_fees_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:paddingBottom="12dp"
+            android:text="@string/tip_link"
+            android:textColor="@color/link"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_fees_label"
+            app:layout_constraintStart_toEndOf="@+id/include_transaction_submit_info_data_fees_label"
+            app:layout_constraintTop_toTopOf="@+id/include_transaction_submit_info_data_fees_label"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/include_transaction_submit_info_data_fees_value"
             style="@style/NormalText"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="27dp"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="monospace-medium"
             android:gravity="end"
@@ -87,7 +101,7 @@
             android:text=""
             android:textColor="@color/tomato"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/include_transaction_submit_info_data_fees_label"
+            app:layout_constraintStart_toEndOf="@+id/include_transaction_submit_info_data_fees_info"
             app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_data_balance_label"
             tools:text="0.0023 ETH" />
 
@@ -149,7 +163,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmation_progress" />
 
-
         <androidx.constraintlayout.widget.Group
             android:id="@+id/include_transaction_submit_info_confirmations_group"
             android:layout_width="wrap_content"
@@ -183,7 +196,6 @@
             app:layout_constraintStart_toEndOf="@+id/include_transaction_submit_info_confirmations_image"
             app:layout_constraintTop_toTopOf="@+id/include_transaction_submit_info_confirmations_image" />
 
-
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/include_transaction_submit_info_confirmations_barrier"
             android:layout_width="wrap_content"
@@ -203,7 +215,6 @@
             app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmations_barrier"
             tools:text="@string/request_confirmation_wait_x_s" />
 
-
         <TextView
             android:id="@+id/include_transaction_submit_info_request_button"
             style="@style/PrimaryButton.White"
@@ -222,5 +233,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_confirmations_timer" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.core.widget.NestedScrollView>
