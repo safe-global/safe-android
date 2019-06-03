@@ -17,8 +17,8 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
-import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
+import pm.gnosis.heimdall.ui.transactions.TransactionSubmissionConfirmationDialog
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events
@@ -63,7 +63,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             return
         }
 
-        val referenceId = if(intent.hasExtra(EXTRA_REFERENCE_ID)) intent.getLongExtra(EXTRA_REFERENCE_ID, 0) else null
+        val referenceId = if (intent.hasExtra(EXTRA_REFERENCE_ID)) intent.getLongExtra(EXTRA_REFERENCE_ID, 0) else null
         viewModel.setup(safeAddress, referenceId)
         infoViewHelper.bind(layout_review_transaction_transaction_info)
     }
@@ -115,13 +115,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                 setupViewHolder(update.viewHolder)
             is SubmitTransactionHelper.ViewUpdate.TransactionSubmitted -> {
                 if (update.success) {
-                    startActivity(
-                        SafeMainActivity.createIntent(
-                            this,
-                            null,
-                            R.string.tab_title_transactions
-                        )
-                    )
+                    TransactionSubmissionConfirmationDialog.create().show(supportFragmentManager, null)
                 } else {
                     infoViewHelper.toggleReadyState(true)
                 }
