@@ -120,6 +120,7 @@ class AssetTransferViewHolderTest {
         then(safeImageView).should().setAddress(TEST_SAFE)
         then(safeImageView).shouldHaveNoMoreInteractions()
         then(safeAddressView).should().text = "0xFe21...5016ee"
+        then(safeAddressView).should().setOnClickListener(MockUtils.any())
         then(safeAddressView).shouldHaveNoMoreInteractions()
 
         then(receiverNameView).should().visibility = View.GONE
@@ -127,6 +128,7 @@ class AssetTransferViewHolderTest {
         then(receiverImageView).should().setAddress(TEST_RECEIVER)
         then(receiverImageView).shouldHaveNoMoreInteractions()
         then(receiverAddressView).should().text = "0x0029...0CBAA2"
+        then(receiverAddressView).should().setOnClickListener(MockUtils.any())
         then(receiverAddressView).shouldHaveNoMoreInteractions()
 
         then(addressBookRepository).should().loadAddressBookEntry(TEST_RECEIVER)

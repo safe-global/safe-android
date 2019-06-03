@@ -10,6 +10,7 @@ import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.utils.asMiddleEllipsized
+import pm.gnosis.heimdall.views.AddressTooltip
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
@@ -33,8 +34,11 @@ class AddressHelper @Inject constructor(
             }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess {
-                    addressView.text = it.asMiddleEllipsized(6)
+                .doOnSuccess { address ->
+                    addressView.text = address.asMiddleEllipsized(6)
+                    addressView.setOnClickListener {
+                        AddressTooltip(addressView.context, address).showAsDropDown(addressView)
+                    }
                 }
                 .flatMap {
                     addressBookRepository.loadAddressBookEntry(address).map { it.name }

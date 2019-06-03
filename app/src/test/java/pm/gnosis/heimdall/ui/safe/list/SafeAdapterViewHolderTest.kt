@@ -110,6 +110,7 @@ class SafeAdapterViewHolderTest {
         viewHolder.start()
 
         then(safeAddressTextView).should().text = "0x1f81...C65C7E"
+        then(safeAddressTextView).should().setOnClickListener(MockUtils.any())
         then(safeAddressTextView).shouldHaveNoMoreInteractions()
 
         then(safeNameTextView).should().text = "Some other name!"
@@ -160,6 +161,7 @@ class SafeAdapterViewHolderTest {
 
         then(safeAddressTextView).should().text = null
         then(safeAddressTextView).should().text = "0x1f81...C65C7E"
+        then(safeAddressTextView).should().setOnClickListener(MockUtils.any())
         then(safeAddressTextView).shouldHaveNoMoreInteractions()
 
         addressBookSingleFactory.assertAllSubscribed()

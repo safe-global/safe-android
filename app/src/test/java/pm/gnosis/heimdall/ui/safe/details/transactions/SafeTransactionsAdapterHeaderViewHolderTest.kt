@@ -184,6 +184,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(targetTextView).should().text = "0x31B9...184523"
         then(targetTextView).should().text = "Test Name"
         then(targetTextView).should().visibility = View.VISIBLE
+        then(targetTextView).should().setOnClickListener(MockUtils.any())
         then(targetTextView).shouldHaveNoMoreInteractions()
 
         then(viewModel).should().observeTransactionStatus("id_1")
@@ -279,6 +280,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(timestampTextView).shouldHaveNoMoreInteractions()
 
         then(targetTextView).should().text = "0x31B9...184523"
+        then(targetTextView).should().setOnClickListener(MockUtils.any())
         then(targetTextView).shouldHaveNoMoreInteractions()
 
         then(viewModel).should().observeTransactionStatus("id_1")
@@ -500,6 +502,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(targetTextView).should().text = "0xA7e1...a246EC"
         then(targetTextView).should().text = "Test Safe"
         then(targetTextView).should().visibility = View.VISIBLE
+        then(targetTextView).should().setOnClickListener(MockUtils.any())
         then(targetTextView).shouldHaveNoMoreInteractions()
 
         then(viewModel).should().observeTransactionStatus("id_1")
