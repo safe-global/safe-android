@@ -63,7 +63,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             return
         }
 
-        val referenceId = if(intent.hasExtra(EXTRA_REFERENCE_ID)) intent.getLongExtra(EXTRA_REFERENCE_ID, 0) else null
+        val referenceId = if (intent.hasExtra(EXTRA_REFERENCE_ID)) intent.getLongExtra(EXTRA_REFERENCE_ID, 0) else null
         viewModel.setup(safeAddress, referenceId)
         infoViewHelper.bind(layout_review_transaction_transaction_info)
     }
@@ -115,7 +115,7 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                 setupViewHolder(update.viewHolder)
             is SubmitTransactionHelper.ViewUpdate.TransactionSubmitted -> {
                 if (update.success) {
-                    TransactionSubmissionConfirmationDialog(this).show()
+                    TransactionSubmissionConfirmationDialog.create().show(supportFragmentManager, null)
                 } else {
                     infoViewHelper.toggleReadyState(true)
                 }
