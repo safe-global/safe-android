@@ -23,9 +23,9 @@ import pm.gnosis.heimdall.helpers.AddressInputHelper
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
-import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract.ViewUpdate
-import pm.gnosis.heimdall.utils.*
+import pm.gnosis.heimdall.utils.InfoTipDialogBuilder
+import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
@@ -91,34 +91,39 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
         }
         val reviewEvents = layout_create_asset_transfer_continue_button.clicks()
         disposables +=
-                Observable.combineLatest(
-                    layout_create_asset_transfer_input_value.textChanges()
-                        .doOnNext {
-                            layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
-                        },
-                    layout_create_asset_transfer_input_receiver.textChanges()
-                        .doOnNext {
-                            layout_create_asset_transfer_input_receiver.setTextColor(getColorCompat(R.color.dark_slate_blue))
-                        },
-                    BiFunction { value: CharSequence, receiver: CharSequence ->
-                        CreateAssetTransferContract.Input(value.toString(), receiver.toString())
+            Observable.combineLatest(
+                layout_create_asset_transfer_input_value.textChanges()
+                    .doOnNext {
+                        layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
+                    },
+                layout_create_asset_transfer_input_receiver.textChanges()
+                    .doOnNext {
+                        layout_create_asset_transfer_input_receiver.setTextColor(getColorCompat(R.color.dark_slate_blue))
+                    },
+                BiFunction { value: CharSequence, receiver: CharSequence ->
+                    CreateAssetTransferContract.Input(value.toString(), receiver.toString())
+                }
+            )
+                .doOnNext { disableContinue() }
+                .compose(viewModel.processInput(safe, token, reviewEvents))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeForResult(
+                    onNext = ::applyUpdate,
+                    onError = {
+                        errorSnackbar(layout_create_asset_transfer_continue_button, it)
                     }
                 )
-                    .doOnNext { disableContinue() }
-                    .compose(viewModel.processInput(safe, token, reviewEvents))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeForResult(
-                        onNext = ::applyUpdate,
-                        onError = {
-                            errorSnackbar(layout_create_asset_transfer_continue_button, it)
-                        }
-                    )
 
         disposables += layout_create_asset_transfer_back_button.clicks()
             .subscribeBy { onBackPressed() }
 
         disposables += layout_create_asset_transfer_input_receiver.clicks()
             .subscribeBy { addressInputHelper.showDialog() }
+
+        disposables += layout_create_asset_transfer_fees_info.clicks()
+            .subscribeBy {
+                InfoTipDialogBuilder.build(this, R.layout.dialog_network_fee, R.string.ok).show()
+            }
 
         addressHelper.populateAddressInfo(
             layout_create_asset_transfer_safe_address,

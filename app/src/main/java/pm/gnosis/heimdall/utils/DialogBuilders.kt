@@ -8,6 +8,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
+import androidx.annotation.LayoutRes
 import kotlinx.android.synthetic.main.layout_alert_dialog_title.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.svalinn.common.utils.getColorCompat
@@ -57,4 +58,17 @@ object CustomAlertDialogBuilder {
                     }
                 }
             }
+}
+
+object InfoTipDialogBuilder {
+
+    fun build(context: Context, @LayoutRes contentRes: Int, @StringRes confirmRes: Int): AlertDialog {
+        val alertContent = LayoutInflater.from(context).inflate(contentRes, null)
+        return AlertDialog.Builder(context)
+            .setView(alertContent)
+            .setPositiveButton(confirmRes) { dialog, which ->
+                dialog.dismiss()
+            }
+            .create()
+    }
 }

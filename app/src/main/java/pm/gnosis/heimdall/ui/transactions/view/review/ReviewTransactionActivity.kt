@@ -10,6 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.include_transaction_submit_info.*
 import kotlinx.android.synthetic.main.layout_review_transaction.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionData
@@ -24,6 +25,7 @@ import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.ViewUpdate
 import pm.gnosis.heimdall.ui.transactions.view.helpers.TransactionSubmitInfoViewHelper
+import pm.gnosis.heimdall.utils.InfoTipDialogBuilder
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.subscribeForResult
@@ -90,6 +92,11 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             .subscribeBy(onNext = {
                 UnlockDialog.create().show(supportFragmentManager, null)
             })
+
+        disposables += include_transaction_submit_info_data_fees_info.clicks()
+            .subscribeBy {
+                InfoTipDialogBuilder.build(this, R.layout.dialog_network_fee, R.string.ok).show()
+            }
 
         val events = Events(infoViewHelper.retryEvents(), infoViewHelper.requestConfirmationEvents(), submitEvents)
         disposables += viewModel.observe(events, transactionData)

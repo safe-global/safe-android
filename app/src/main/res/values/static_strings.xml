@@ -12,6 +12,8 @@
     <string name="x_ether" translatable="false">%s ETH</string>
     <string name="x_wei" translatable="false">%s Wei</string>
     <string name="x_gwei" translatable="false">%s GWei</string>
-    <string name="feedback_email">safe@gnosis.io</string>
-    <string name="licenses_link">https://safe.gnosis.io/licenses#android</string>
+    <string name="feedback_email" translatable="false">safe@gnosis.io</string>
+    <string name="licenses_link" translatable="false">https://safe.gnosis.io/licenses#android</string>
+    <string name="tip_link" translatable="false">[?]</string>
+    
 </resources>
