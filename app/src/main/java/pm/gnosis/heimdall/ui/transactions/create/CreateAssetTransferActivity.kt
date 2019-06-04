@@ -195,6 +195,7 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     private fun disableContinue() {
         layout_create_asset_transfer_asset_balance_after_transfer_label.visible(false)
         layout_create_asset_transfer_asset_balance_after_transfer_value.visible(false)
+        layout_create_asset_transfer_fees_error.visible(false)
         layout_create_asset_transfer_gas_token_balance_after_transfer_value.text = "-"
         layout_create_asset_transfer_fees_value.text = "-"
         layout_create_asset_transfer_continue_button.visible(false)

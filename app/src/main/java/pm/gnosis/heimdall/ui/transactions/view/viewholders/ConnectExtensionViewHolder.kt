@@ -5,6 +5,8 @@ import androidx.lifecycle.OnLifecycleEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.gojuno.koptional.None
+import com.gojuno.koptional.Optional
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -13,6 +15,7 @@ import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
@@ -26,6 +29,7 @@ class ConnectExtensionViewHolder(
     private val safe: Solidity.Address,
     private val safeRepository: GnosisSafeRepository
 ) : TransactionInfoViewHolder {
+
     private var view: View? = null
     private val disposables = CompositeDisposable()
 
@@ -45,6 +49,8 @@ class ConnectExtensionViewHolder(
                     ), operation = TransactionExecutionRepository.Operation.CALL
                 )
             }
+
+    override fun loadAssetChange(): Single<Optional<ERC20TokenWithBalance>> = Single.just(None)
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun start() {

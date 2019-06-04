@@ -6,6 +6,7 @@ import pm.gnosis.utils.stringWithNoTrailingZeroes
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
+import java.math.RoundingMode.DOWN
 
 data class ERC20Token(
     val address: Solidity.Address,
@@ -13,13 +14,13 @@ data class ERC20Token(
     val symbol: String,
     val decimals: Int,
     val logoUrl: String = "",
-    val displayDecimals: Int = decimals
+    val displayDecimals: Int = 5
 ) {
     fun convertAmount(unscaledAmount: BigInteger): BigDecimal =
         BigDecimal(unscaledAmount).setScale(decimals).div(BigDecimal.TEN.pow(decimals))
 
-    fun displayString(amount: BigInteger, showSymbol: Boolean = true, decimalsToDisplay: Int = displayDecimals) =
-        "${convertAmount(amount).setScale(decimalsToDisplay, RoundingMode.UP).stringWithNoTrailingZeroes()}${if(showSymbol) " $symbol" else ""}"
+    fun displayString(amount: BigInteger, showSymbol: Boolean = true, decimalsToDisplay: Int = displayDecimals, roundingMode: RoundingMode = DOWN) =
+        "${convertAmount(amount).setScale(decimalsToDisplay, roundingMode).stringWithNoTrailingZeroes()}${if(showSymbol) " $symbol" else ""}"
 
     companion object {
         val ETHER_TOKEN = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 18, symbol = "ETH", name = "Ether", displayDecimals = 5)

@@ -95,13 +95,22 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
     fun applyUpdate(update: SubmitTransactionHelper.ViewUpdate): Disposable? {
         when (update) {
             is SubmitTransactionHelper.ViewUpdate.Estimate -> {
-                val balanceColor = context.getColorCompat(if (update.canSubmit) R.color.battleship_grey else R.color.tomato)
-                view.include_transaction_submit_info_data_balance_label.setTextColor(balanceColor)
-                view.include_transaction_submit_info_data_balance_value.setTextColor(balanceColor)
-                view.include_transaction_submit_info_data_balance_value.text = update.token.displayString(update.balance)
-                view.include_transaction_submit_info_data_fees_value.text = "- ${update.token.displayString(update.fees)}"
-                view.include_transaction_submit_info_confirmations_group.visible(update.canSubmit)
-                view.include_transaction_submit_info_retry_button.visible(!update.canSubmit)
+                val balanceColor = context.getColorCompat(if (update.sufficientFunds) R.color.battleship_grey else R.color.tomato)
+                update.assetBalanceAfterTransfer?.let {
+                    view.include_transaction_submit_info_data_asset_balance_label.visible(true)
+                    view.include_transaction_submit_info_data_asset_balance_value.visible(true)
+                    view.include_transaction_submit_info_data_asset_balance_value.text = update.assetBalanceAfterTransfer.displayString()
+                } ?: run {
+                    view.include_transaction_submit_info_data_asset_balance_label.visible(false)
+                    view.include_transaction_submit_info_data_asset_balance_value.visible(false)
+                }
+                view.include_transaction_submit_info_data_gas_token_balance_label.setTextColor(balanceColor)
+                view.include_transaction_submit_info_data_gas_token_balance_value.setTextColor(balanceColor)
+                view.include_transaction_submit_info_data_gas_token_balance_value.text = update.gasToken.displayString()
+                view.include_transaction_submit_info_data_fees_value.text = "-${update.gasToken.token.displayString(update.networkFee)}"
+                view.include_transaction_submit_info_data_fees_error.visible(!update.sufficientFunds)
+                view.include_transaction_submit_info_confirmations_group.visible(update.sufficientFunds)
+                view.include_transaction_submit_info_retry_button.visible(!update.sufficientFunds)
             }
             is SubmitTransactionHelper.ViewUpdate.EstimateError -> {
                 view.include_transaction_submit_info_confirmation_progress.visible(false)

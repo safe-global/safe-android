@@ -5,12 +5,17 @@ import androidx.lifecycle.OnLifecycleEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.gojuno.koptional.None
+import com.gojuno.koptional.Optional
+import com.gojuno.koptional.toOptional
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.layout_generic_transaction_info.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TransactionData
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.builder.GenericTransactionBuilder
@@ -20,6 +25,7 @@ import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.removeHexPrefix
 import pm.gnosis.utils.stringWithNoTrailingZeroes
+import java.math.BigInteger
 
 class GenericTransactionViewHolder(
     private val safe: Solidity.Address,
@@ -34,6 +40,9 @@ class GenericTransactionViewHolder(
         Single.fromCallable {
             GenericTransactionBuilder.build(data)
         }.subscribeOn(Schedulers.computation())
+
+    override fun loadAssetChange(): Single<Optional<ERC20TokenWithBalance>> =
+        Single.just(if (data.value > BigInteger.ZERO) ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, data.value).toOptional() else None)
 
     override fun inflate(inflater: LayoutInflater, root: ViewGroup) {
         view = inflater.inflate(R.layout.layout_generic_transaction_info, root, true)
