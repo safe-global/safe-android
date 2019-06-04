@@ -114,11 +114,12 @@ class RecoveringSafeViewModel @Inject constructor(
                     .zipWith(tokenRepository.loadToken(safe.gasToken),
                         BiFunction { execState: TransactionExecutionRepository.SafeExecuteState, token: ERC20Token ->
                             val paymentAmount = safe.requiredFunds()
+                            val balanceAfterTx = execState.balance - paymentAmount
                             RecoveryExecuteInfo(
-                                execState.balance,
+                                balanceAfterTx,
                                 paymentAmount,
                                 token,
-                                execState.balance >= paymentAmount
+                                balanceAfterTx >= BigInteger.ZERO
                             )
                         }
                     )

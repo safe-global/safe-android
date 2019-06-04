@@ -76,6 +76,7 @@ class RecoveringSafeSubmitFragment : BaseFragment() {
             .subscribeForResult(onNext = {
                 layout_recovering_safe_submit_data_balance_value.text = it.paymentToken.displayString(it.balance)
                 layout_recovering_safe_submit_data_fees_value.text = it.paymentToken.displayString(it.paymentAmount)
+                layout_recovering_safe_submit_data_fees_error.visible(!it.canSubmit)
                 layout_recovering_safe_submit_button.visible(it.canSubmit)
                 layout_recovering_safe_submit_button.isEnabled = it.canSubmit
                 layout_recovering_safe_submit_retry.visible(!it.canSubmit)
