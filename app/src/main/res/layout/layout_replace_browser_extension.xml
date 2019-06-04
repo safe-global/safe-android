@@ -44,57 +44,22 @@
                     android:layout_marginBottom="24dp"
                     android:layout_marginTop="24dp"
                     android:background="@color/divider"
-                    app:layout_constraintBottom_toTopOf="@+id/layout_replace_browser_extension_safe_balance_label"
+                    app:layout_constraintBottom_toTopOf="@+id/layout_replace_browser_extension_max_transaction_fee"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_info" />
 
                 <TextView
-                    android:id="@+id/layout_replace_browser_extension_safe_balance_label"
+                    android:id="@+id/layout_replace_browser_extension_max_transaction_fee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/safe_balance"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/transaction_fee"
                     android:textColor="@color/battleship_grey"
                     android:textSize="13sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_divider" />
-
-                <TextView
-                    android:id="@+id/layout_replace_browser_extension_safe_balance"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginStart="16dp"
-                    android:gravity="end"
-                    android:text="-"
-                    android:textColor="@color/battleship_grey"
-                    android:textSize="13sp"
-                    app:layout_constraintBaseline_toBaselineOf="@+id/layout_replace_browser_extension_safe_balance_label"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/layout_replace_browser_extension_safe_balance_label"
-                    tools:text="94.32234 ETH" />
-
-                <androidx.constraintlayout.widget.Barrier
-                    android:id="@+id/layout_replace_browser_extension_info_balance_barrier"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:barrierDirection="bottom"
-                    app:constraint_referenced_ids="layout_replace_browser_extension_safe_balance_label,layout_replace_browser_extension_safe_balance"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:id="@+id/layout_replace_browser_extension_max_transaction_fee"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/estimated_transaction_fee"
-                    android:textColor="@color/battleship_grey"
-                    android:textSize="13sp"
-                    app:layout_constraintStart_toStartOf="@+id/layout_replace_browser_extension_safe_balance_label"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_info_balance_barrier" />
 
                 <TextView
                     android:id="@+id/layout_replace_browser_extension_fee"
@@ -108,6 +73,51 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/layout_replace_browser_extension_max_transaction_fee"
                     tools:text="-0.00001 ETH" />
+
+                <TextView
+                    android:id="@+id/layout_replace_browser_extension_gas_token_balance_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/balance_after_transfer"
+                    android:textColor="@color/battleship_grey"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_max_transaction_fee" />
+
+                <TextView
+                    android:id="@+id/layout_replace_browser_extension_gas_token_balance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:gravity="end"
+                    android:text="-"
+                    android:textColor="@color/battleship_grey"
+                    android:textSize="13sp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/layout_replace_browser_extension_gas_token_balance_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/layout_replace_browser_extension_gas_token_balance_label"
+                    tools:text="94.32234 ETH" />
+
+                <TextView
+                    android:id="@+id/layout_replace_browser_extension_fees_error"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="monospace-medium"
+                    android:gravity="start"
+                    android:text="@string/exceeds_funds"
+                    android:textColor="@color/tomato"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_replace_browser_extension_gas_token_balance"
+                    tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -28,6 +28,7 @@ import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.nullOnThrow
 import timber.log.Timber
 import java.math.BigInteger
+import java.math.RoundingMode
 import javax.inject.Inject
 
 class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitContract>() {
@@ -66,7 +67,7 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
         layout_replace_browser_extension_submit.isEnabled = false
 
         disposables += viewModel.loadFeeInfo()
-            .subscribeBy { layout_replace_browser_extension_fee.text = it.displayString() }
+            .subscribeBy { layout_replace_browser_extension_fee.text = it.displayString(roundingMode = RoundingMode.UP) }
 
         addressHelper.populateAddressInfo(
             layout_replace_browser_extension_info_safe_address,
@@ -97,12 +98,14 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
 
     private fun onSafeBalance(status: ReplaceExtensionSubmitContract.SubmitStatus) {
         layout_replace_browser_extension_submit.isEnabled = status.canSubmit && !submissionInProgress
-        layout_replace_browser_extension_safe_balance.text = status.balance.displayString()
+        layout_replace_browser_extension_fees_error.visible(!status.canSubmit)
+        layout_replace_browser_extension_gas_token_balance.text = status.balance.displayString()
     }
 
     private fun onSafeBalanceError(throwable: Throwable) {
         if (throwable !is ReplaceExtensionSubmitContract.NoTokenBalanceException) Timber.e(throwable)
-        layout_replace_browser_extension_safe_balance.text = getString(R.string.error_retrieving_safe_balance)
+        layout_replace_browser_extension_fees_error.visible(false)
+        layout_replace_browser_extension_gas_token_balance.text = getString(R.string.error_retrieving_safe_balance)
         layout_replace_browser_extension_submit.isEnabled = false
     }
 

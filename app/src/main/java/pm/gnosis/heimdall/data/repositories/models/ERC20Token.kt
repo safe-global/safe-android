@@ -29,9 +29,9 @@ data class ERC20Token(
 
 data class ERC20TokenWithBalance(val token: ERC20Token, val balance: BigInteger? = null) {
     //FIXME: should symbol be always part of the balance string or should it be presenters job to decide how to display it
-    fun displayString(showSymbol: Boolean = true) =
+    fun displayString(showSymbol: Boolean = true, roundingMode: RoundingMode = DOWN) =
         balance?.let {
-            token.displayString(it, showSymbol)
+            token.displayString(it, showSymbol, roundingMode = roundingMode)
         } ?: "-"
 }
 
