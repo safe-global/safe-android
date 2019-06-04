@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.safe.details.transactions.test
+package pm.gnosis.heimdall.ui.safe.details.transactions
 
 const val PENDING = "pending"
 const val SUBMITTED = "submitted"
