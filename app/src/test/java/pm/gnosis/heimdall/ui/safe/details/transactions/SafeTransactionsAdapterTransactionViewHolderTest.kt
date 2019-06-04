@@ -10,6 +10,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.ui.safe.details.transactions.test.SUBMITTED
 import pm.gnosis.tests.utils.mockFindViewById
 
 @RunWith(MockitoJUnitRunner::class)
