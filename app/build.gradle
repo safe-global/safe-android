@@ -275,6 +275,10 @@ dependencies {
     testImplementation "com.github.gnosis.svalinn-kotlin:utils-testing:$versions.svalinn"
     testImplementation "org.mockito:mockito-core:$versions.mockito"
     testImplementation "org.mockito:mockito-inline:$versions.mockito"
+    testImplementation "org.powermock:powermock-module-junit4:$versions.powermock"
+    testImplementation "org.powermock:powermock-api-mockito2:$versions.powermock"
+    testImplementation "org.powermock:powermock-core:$versions.powermock"
+    testImplementation "org.powermock:powermock-module-junit4-rule:$versions.powermock"
 
     // UI tests
     androidTestImplementation "org.mockito:mockito-android:$versions.mockito"

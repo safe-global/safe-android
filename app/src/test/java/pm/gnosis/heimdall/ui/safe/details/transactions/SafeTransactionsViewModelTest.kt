@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.safe.details.transactions
 
 import android.content.Context
 import android.content.Intent
+import android.text.format.DateUtils
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -16,7 +17,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
+import org.powermock.api.mockito.PowerMockito
+import org.powermock.core.classloader.annotations.PrepareForTest
+import org.powermock.modules.junit4.PowerMockRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
@@ -33,7 +36,9 @@ import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
-@RunWith(MockitoJUnitRunner::class)
+
+@RunWith(PowerMockRunner::class)
+@PrepareForTest(DateUtils::class)
 class SafeTransactionsViewModelTest {
 
     @JvmField
@@ -61,7 +66,16 @@ class SafeTransactionsViewModelTest {
 
     @Before
     fun setup() {
+
+        PowerMockito.mockStatic(DateUtils::class.java)
+        given(DateUtils.formatDateTime(any(), anyLong(), anyInt())).willReturn(DATE)
+
         viewModel = SafeTransactionsViewModel(context, safeRepository, safeTransactionRepository, tokenRepository, detailsRepository)
+
+        given(context.getString(R.string.header_pending)).willReturn(PENDING)
+        given(context.getString(R.string.header_submitted)).willReturn(SUBMITTED)
+        given(context.getString(R.string.header_today)).willReturn(TODAY)
+        given(context.getString(R.string.header_yesterday)).willReturn(YESTERDAY)
     }
 
     @Test
@@ -92,7 +106,7 @@ class SafeTransactionsViewModelTest {
         subscriber.assertValueCount(2).assertValueAt(1, {
             it is DataResult && it.data.parentId == currentId && it.data.diff != null &&
                     it.data.entries == listOf(
-                SafeTransactionsContract.AdapterEntry.Header(R.string.header_pending),
+                SafeTransactionsContract.AdapterEntry.Header(PENDING),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_1")
             )
         }).assertNoErrors()
@@ -110,13 +124,13 @@ class SafeTransactionsViewModelTest {
         subscriber.assertValueCount(3).assertValueAt(2, {
             it is DataResult && it.data.parentId == currentId &&
                     it.data.entries == listOf(
-                SafeTransactionsContract.AdapterEntry.Header(R.string.header_pending),
+                SafeTransactionsContract.AdapterEntry.Header(PENDING),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_1"),
-                SafeTransactionsContract.AdapterEntry.Header(R.string.header_today),
+                SafeTransactionsContract.AdapterEntry.Header(TODAY),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_2"),
-                SafeTransactionsContract.AdapterEntry.Header(R.string.header_yesterday),
+                SafeTransactionsContract.AdapterEntry.Header(YESTERDAY),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_3"),
-                SafeTransactionsContract.AdapterEntry.Header(R.string.header_older),
+                SafeTransactionsContract.AdapterEntry.Header(DATE),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_4")
             )
         }).assertNoErrors()
@@ -132,9 +146,9 @@ class SafeTransactionsViewModelTest {
         subscriber.assertValueCount(4).assertValueAt(3, {
             it is DataResult && it.data.parentId == currentId &&
                     it.data.entries == listOf(
-                SafeTransactionsContract.AdapterEntry.Header(R.string.header_pending),
+                SafeTransactionsContract.AdapterEntry.Header(PENDING),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_1"),
-                SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted),
+                SafeTransactionsContract.AdapterEntry.Header(SUBMITTED),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_4")
             )
         }).assertNoErrors()
@@ -146,7 +160,7 @@ class SafeTransactionsViewModelTest {
         subscriber.assertValueCount(5).assertValueAt(4, {
             it is DataResult && it.data.parentId == currentId &&
                     it.data.entries == listOf(
-                SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted),
+                SafeTransactionsContract.AdapterEntry.Header(SUBMITTED),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_4")
             )
         }).assertNoErrors()
@@ -164,7 +178,7 @@ class SafeTransactionsViewModelTest {
         cachedSubscriber.assertValueCount(1).assertValueAt(0, {
             it is DataResult && it.data.parentId == currentId &&
                     it.data.entries == listOf(
-                SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted),
+                SafeTransactionsContract.AdapterEntry.Header(SUBMITTED),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_4")
             )
         }).assertNoErrors()
@@ -172,16 +186,18 @@ class SafeTransactionsViewModelTest {
         currentId = (cachedSubscriber.values().last() as DataResult).data.id
 
         pendingProcessor.onNext(emptyList())
-        submittedProcessor.onNext(listOf(
-            TransactionStatus("id_4", System.currentTimeMillis() - (5 * DateTimeUtils.DAY_IN_MS), false),
-            TransactionStatus("id_5", System.currentTimeMillis() - (6 * DateTimeUtils.DAY_IN_MS), false),
-            TransactionStatus("id_6", System.currentTimeMillis() - (7 * DateTimeUtils.DAY_IN_MS), false)
-        ))
+        submittedProcessor.onNext(
+            listOf(
+                TransactionStatus("id_4", System.currentTimeMillis() - (5 * DateTimeUtils.DAY_IN_MS), false),
+                TransactionStatus("id_5", System.currentTimeMillis() - (6 * DateTimeUtils.DAY_IN_MS), false),
+                TransactionStatus("id_6", System.currentTimeMillis() - (7 * DateTimeUtils.DAY_IN_MS), false)
+            )
+        )
 
         cachedSubscriber.assertValueCount(2).assertValueAt(1, {
             it is DataResult && it.data.parentId == currentId &&
                     it.data.entries == listOf(
-                SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted),
+                SafeTransactionsContract.AdapterEntry.Header(SUBMITTED),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_4"),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_5"),
                 SafeTransactionsContract.AdapterEntry.Transaction("id_6")

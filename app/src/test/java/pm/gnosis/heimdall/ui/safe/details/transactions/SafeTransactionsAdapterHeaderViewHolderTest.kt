@@ -18,7 +18,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.blockies.BlockiesImageView
 import pm.gnosis.heimdall.R
@@ -322,7 +321,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         context.mockGetString()
         itemView.mockFindViewById(R.id.layout_safe_transactions_item_timestamp, timestampTextView)
 
-        viewHolder.bind(SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted), emptyList())
+        viewHolder.bind(SafeTransactionsContract.AdapterEntry.Header(SUBMITTED), emptyList())
 
         then(timestampTextView).should().text = R.string.loading.toString()
 

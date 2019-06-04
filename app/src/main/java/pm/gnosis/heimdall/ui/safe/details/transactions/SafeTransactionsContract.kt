@@ -1,9 +1,8 @@
 package pm.gnosis.heimdall.ui.safe.details.transactions
 
-import androidx.lifecycle.ViewModel
 import android.content.Intent
 import androidx.annotation.IdRes
-import androidx.annotation.StringRes
+import androidx.lifecycle.ViewModel
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -29,7 +28,7 @@ abstract class SafeTransactionsContract : ViewModel() {
     abstract fun transactionSelected(id: String): Single<Intent>
 
     sealed class AdapterEntry(@IdRes val type: Int) {
-        data class Header(@StringRes val titleRes: Int): AdapterEntry(R.id.adapter_entry_header)
+        data class Header(val title: String): AdapterEntry(R.id.adapter_entry_header)
         data class Transaction(val id: String): AdapterEntry(R.id.adapter_entry_transaction)
     }
 }

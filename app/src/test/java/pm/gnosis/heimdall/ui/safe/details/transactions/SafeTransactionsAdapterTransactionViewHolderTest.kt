@@ -6,13 +6,11 @@ import android.widget.TextView
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.tests.utils.mockFindViewById
-import pm.gnosis.tests.utils.mockGetString
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeTransactionsAdapterTransactionViewHolderTest {
@@ -35,13 +33,11 @@ class SafeTransactionsAdapterTransactionViewHolderTest {
 
     @Test
     fun bindHeaderEntry() {
-        context.mockGetString()
-        given(itemView.context).willReturn(context)
         itemView.mockFindViewById(R.id.layout_adapter_entry_header_title, headerTextView)
 
-        viewHolder.bind(SafeTransactionsContract.AdapterEntry.Header(R.string.header_submitted), emptyList())
+        viewHolder.bind(SafeTransactionsContract.AdapterEntry.Header(SUBMITTED), emptyList())
 
-        then(headerTextView).should().text = R.string.header_submitted.toString()
+        then(headerTextView).should().text = SUBMITTED
         then(headerTextView).shouldHaveNoMoreInteractions()
     }
 

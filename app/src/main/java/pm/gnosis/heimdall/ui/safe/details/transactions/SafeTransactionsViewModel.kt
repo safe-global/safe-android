@@ -14,6 +14,7 @@ import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusActivity
 import pm.gnosis.heimdall.utils.DateTimeUtils
+import pm.gnosis.heimdall.utils.formatAsDate
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
@@ -44,21 +45,21 @@ class SafeTransactionsViewModel @Inject constructor(
                     val currentTime = System.currentTimeMillis()
                     val combined = ArrayList<AdapterEntry>((pending.size + submitted.size) * 2)
                     if (pending.isNotEmpty()) {
-                        combined += AdapterEntry.Header(R.string.header_pending)
+                        combined += AdapterEntry.Header(context.getString(R.string.header_pending))
                         pending.forEach { combined += AdapterEntry.Transaction(it.id) }
                     }
-                    var lastHeaderRes = 0
+                    var lastHeaderTitle = ""
                     submitted.forEach {
                         val timeDiff = currentTime - it.timestamp
-                        val headerRes = when {
-                            timeDiff < DateTimeUtils.DAY_IN_MS -> R.string.header_today
-                            timeDiff < 2 * DateTimeUtils.DAY_IN_MS -> R.string.header_yesterday
-                            lastHeaderRes == 0 || lastHeaderRes == R.string.header_submitted -> R.string.header_submitted // First header should never be "older"
-                            else -> R.string.header_older
+                        val headerTitle = when {
+                            timeDiff < DateTimeUtils.DAY_IN_MS -> context.getString(R.string.header_today)
+                            timeDiff < 2 * DateTimeUtils.DAY_IN_MS -> context.getString(R.string.header_yesterday)
+                            lastHeaderTitle.isBlank() || lastHeaderTitle == context.getString(R.string.header_submitted) -> context.getString(R.string.header_submitted) // First header should never be "older"
+                            else -> context.formatAsDate(it.timestamp)
                         }
-                        if (lastHeaderRes != headerRes && headerRes != 0) {
-                            combined += AdapterEntry.Header(headerRes)
-                            lastHeaderRes = headerRes
+                        if (lastHeaderTitle != headerTitle && headerTitle.isNotBlank()) {
+                            combined += AdapterEntry.Header(headerTitle)
+                            lastHeaderTitle = headerTitle
                         }
                         combined += AdapterEntry.Transaction(it.id)
                     }

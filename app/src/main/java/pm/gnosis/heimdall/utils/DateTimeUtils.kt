@@ -67,4 +67,20 @@ object DateTimeUtils {
     }
 }
 
-fun Context.formatAsLongDate(referenceTime: Long): String = DateTimeUtils.getLongTimeString(this, referenceTime)
+fun Context.formatAsLongDate(referenceTime: Long): String {
+    val now = System.currentTimeMillis()
+    val diff = now - referenceTime
+    if (diff < DateUtils.MINUTE_IN_MILLIS) {
+        return this.getString(R.string.just_a_moment_ago)
+    }
+    return if (diff > DateUtils.DAY_IN_MILLIS)
+        DateUtils.formatDateTime(this, referenceTime, DateUtils.FORMAT_SHOW_TIME)
+    else
+        DateUtils.getRelativeTimeSpanString(referenceTime, now, DateUtils.SECOND_IN_MILLIS).toString() + ", " + DateUtils.formatDateTime(
+            this,
+            referenceTime,
+            DateUtils.FORMAT_SHOW_TIME
+        )
+}
+
+fun Context.formatAsDate(referenceTime: Long): String = DateUtils.formatDateTime(this, referenceTime, DateUtils.FORMAT_SHOW_DATE)
