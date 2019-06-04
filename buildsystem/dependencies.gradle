@@ -49,5 +49,6 @@ ext {
             espresso                  : '3.1.1',
             junit                     : '4.12',
             mockito                   : '2.18.3',
+            powermock                 : '2.0.2',
     ]
 }

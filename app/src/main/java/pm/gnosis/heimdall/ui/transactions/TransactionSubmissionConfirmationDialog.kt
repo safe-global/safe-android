@@ -29,7 +29,7 @@ class TransactionSubmissionConfirmationDialog : BaseDialog() {
         val dialog = super.onCreateDialog(savedInstanceState)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             with(dialog) {
-                window.statusBarColor = context!!.getColorCompat(R.color.white)
+                window.statusBarColor = context.getColorCompat(R.color.white)
                 window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LAYOUT_STABLE
 
                 if (Build.VERSION.SDK_INT >= 26) {

@@ -1,12 +1,12 @@
 package pm.gnosis.heimdall.ui.safe.details.transactions
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.OnLifecycleEvent
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -69,7 +69,7 @@ class SafeTransactionsAdapter @Inject constructor(
     class HeaderViewHolder(itemView: View) : LifecycleViewHolder<SafeTransactionsContract.AdapterEntry>(itemView) {
         override fun bind(data: SafeTransactionsContract.AdapterEntry, payloads: List<Any>) {
             (data as? Header)?.apply {
-                itemView.layout_adapter_entry_header_title.text = itemView.context.getString(titleRes)
+                itemView.layout_adapter_entry_header_title.text = title
             }
         }
     }
