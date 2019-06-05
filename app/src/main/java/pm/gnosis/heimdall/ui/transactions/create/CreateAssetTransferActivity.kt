@@ -147,17 +147,12 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
                 layout_create_asset_transfer_fees_error.visible(!update.sufficientFunds)
 
                 if (update.assetBalanceAfterTransfer != null) {
-                    layout_create_asset_transfer_asset_balance_after_transfer_value.setTextColor(
-                        ContextCompat.getColor(this, R.color.battleship_grey)
-                    )
-                    layout_create_asset_transfer_asset_balance_after_transfer_value.text =
-                        update.assetBalanceAfterTransfer.displayString()
+                    layout_create_asset_transfer_asset_balance_after_transfer_value.setTextColor(getColorCompat(R.color.battleship_grey))
+                    layout_create_asset_transfer_asset_balance_after_transfer_value.text = update.assetBalanceAfterTransfer.displayString()
                     layout_create_asset_transfer_asset_balance_after_transfer_label.visible(true)
                     layout_create_asset_transfer_asset_balance_after_transfer_value.visible(true)
                 } else {
-                    layout_create_asset_transfer_gas_token_balance_after_transfer_label.setTextColor(
-                        ContextCompat.getColor(this, R.color.dark_slate_blue)
-                    )
+                    layout_create_asset_transfer_gas_token_balance_after_transfer_label.setTextColor(getColorCompat(R.color.dark_slate_blue))
                     layout_create_asset_transfer_asset_balance_after_transfer_label.visible(false)
                     layout_create_asset_transfer_asset_balance_after_transfer_value.visible(false)
                 }

@@ -14,7 +14,7 @@ data class ERC20Token(
     val symbol: String,
     val decimals: Int,
     val logoUrl: String = "",
-    val displayDecimals: Int = 5
+    val displayDecimals: Int = DEFAULT_DISPLAY_DECIMALS
 ) {
     fun convertAmount(unscaledAmount: BigInteger): BigDecimal =
         BigDecimal(unscaledAmount).setScale(decimals).div(BigDecimal.TEN.pow(decimals))
@@ -23,7 +23,8 @@ data class ERC20Token(
         "${convertAmount(amount).setScale(decimalsToDisplay, roundingMode).stringWithNoTrailingZeroes()}${if(showSymbol) " $symbol" else ""}"
 
     companion object {
-        val ETHER_TOKEN = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 18, symbol = "ETH", name = "Ether", displayDecimals = 5)
+        const val DEFAULT_DISPLAY_DECIMALS = 5
+        val ETHER_TOKEN = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 18, symbol = "ETH", name = "Ether")
     }
 }
 
