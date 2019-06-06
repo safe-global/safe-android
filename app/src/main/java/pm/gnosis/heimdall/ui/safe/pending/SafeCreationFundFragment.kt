@@ -28,6 +28,7 @@ import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
+import java.math.RoundingMode
 import javax.inject.Inject
 
 
@@ -87,7 +88,9 @@ class SafeCreationFundFragment : BaseFragment() {
 
     private fun onCreationInfo(info: SafeCreationFundContract.CreationInfo) {
         layout_pending_safe_address.text = info.safeAddress
-        info.paymentToken?.let { layout_pending_safe_required_minimum_transfer_value.text = it.displayString(info.paymentAmount) }
+        info.paymentToken?.let {
+            layout_pending_safe_required_minimum_transfer_value.text = it.displayString(info.paymentAmount, roundingMode = RoundingMode.UP)
+        }
     }
 
     companion object {

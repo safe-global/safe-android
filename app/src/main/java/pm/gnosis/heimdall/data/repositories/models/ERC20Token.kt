@@ -6,6 +6,7 @@ import pm.gnosis.utils.stringWithNoTrailingZeroes
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.math.RoundingMode
+import java.math.RoundingMode.DOWN
 
 data class ERC20Token(
     val address: Solidity.Address,
@@ -13,24 +14,25 @@ data class ERC20Token(
     val symbol: String,
     val decimals: Int,
     val logoUrl: String = "",
-    val displayDecimals: Int = decimals
+    val displayDecimals: Int = DEFAULT_DISPLAY_DECIMALS
 ) {
     fun convertAmount(unscaledAmount: BigInteger): BigDecimal =
         BigDecimal(unscaledAmount).setScale(decimals).div(BigDecimal.TEN.pow(decimals))
 
-    fun displayString(amount: BigInteger, showSymbol: Boolean = true, decimalsToDisplay: Int = displayDecimals) =
-        "${convertAmount(amount).setScale(decimalsToDisplay, RoundingMode.UP).stringWithNoTrailingZeroes()}${if(showSymbol) " $symbol" else ""}"
+    fun displayString(amount: BigInteger, showSymbol: Boolean = true, decimalsToDisplay: Int = displayDecimals, roundingMode: RoundingMode = DOWN) =
+        "${convertAmount(amount).setScale(decimalsToDisplay, roundingMode).stringWithNoTrailingZeroes()}${if(showSymbol) " $symbol" else ""}"
 
     companion object {
-        val ETHER_TOKEN = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 18, symbol = "ETH", name = "Ether", displayDecimals = 5)
+        const val DEFAULT_DISPLAY_DECIMALS = 5
+        val ETHER_TOKEN = ERC20Token(Solidity.Address(BigInteger.ZERO), decimals = 18, symbol = "ETH", name = "Ether")
     }
 }
 
 data class ERC20TokenWithBalance(val token: ERC20Token, val balance: BigInteger? = null) {
     //FIXME: should symbol be always part of the balance string or should it be presenters job to decide how to display it
-    fun displayString(showSymbol: Boolean = true) =
+    fun displayString(showSymbol: Boolean = true, roundingMode: RoundingMode = DOWN) =
         balance?.let {
-            token.displayString(it, showSymbol)
+            token.displayString(it, showSymbol, roundingMode = roundingMode)
         } ?: "-"
 }
 

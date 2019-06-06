@@ -28,6 +28,7 @@ import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
+import java.math.RoundingMode
 import javax.inject.Inject
 
 class RecoveringSafeFundFragment : BaseFragment() {
@@ -84,7 +85,8 @@ class RecoveringSafeFundFragment : BaseFragment() {
         info.paymentToken?.let {
             val requiredFundsString = it.token.displayString(info.paymentAmount)
             layout_recovering_safe_fund_amount_label.text = getString(R.string.pending_safe_deposit_value, requiredFundsString)
-            layout_recovering_safe_fund_description.text = getString(R.string.fund_recovery_fees, it.displayString(), requiredFundsString)
+            layout_recovering_safe_fund_description.text =
+                getString(R.string.fund_recovery_fees, it.displayString(roundingMode = RoundingMode.UP), requiredFundsString)
         }
     }
 

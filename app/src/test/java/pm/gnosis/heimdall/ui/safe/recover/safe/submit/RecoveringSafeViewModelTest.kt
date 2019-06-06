@@ -590,12 +590,12 @@ class RecoveringSafeViewModelTest {
     fun loadRecoveryExecuteInfo() {
         // transactionHash == null -> not submitted yet
         val safe = testRecoveringSafe(
-            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN, gasPrice = BigInteger.ONE, txGas = BigInteger.TEN
         )
         given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         val info = RecoveringSafeContract.RecoveryExecuteInfo(
-            BigInteger.TEN,
+            12.toBigInteger(),
             safe.gasPrice * (safe.operationalGas + safe.txGas + safe.dataGas),
             ERC20Token.ETHER_TOKEN,
             true
@@ -607,7 +607,51 @@ class RecoveringSafeViewModelTest {
                     2,
                     listOf(TEST_APP),
                     safe.nonce,
-                    info.balance,
+                    22.toBigInteger(),
+                    SemVer(1, 0, 0)
+                )
+            )
+        )
+
+        val observer = TestObserver<RecoveringSafeContract.RecoveryExecuteInfo>()
+        viewModel.loadRecoveryExecuteInfo(TEST_SAFE).subscribe(observer)
+        observer.assertResult(info)
+        then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
+        then(safeRepoMock).shouldHaveNoMoreInteractions()
+        then(execRepoMock).should().loadSafeExecuteState(TEST_SAFE, TEST_TOKEN)
+        then(execRepoMock).shouldHaveNoMoreInteractions()
+        // Load the payment token info
+        then(tokenRepoMock).should().loadToken(TEST_TOKEN)
+        then(tokenRepoMock).shouldHaveNoMoreInteractions()
+        // No error message mapping
+        then(contextMock).shouldHaveZeroInteractions()
+
+        // Repos are not related to this method
+        then(accountsRepoMock).shouldHaveZeroInteractions()
+    }
+
+    @Test
+    fun loadRecoveryExecuteInfoNotEnoughFunds() {
+        // transactionHash == null -> not submitted yet
+        val safe = testRecoveringSafe(
+            TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN, gasPrice = BigInteger.ONE, txGas = BigInteger.TEN
+        )
+        given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
+        val info = RecoveringSafeContract.RecoveryExecuteInfo(
+            (-9).toBigInteger(),
+            safe.gasPrice * (safe.operationalGas + safe.txGas + safe.dataGas),
+            ERC20Token.ETHER_TOKEN,
+            false
+        )
+        given(execRepoMock.loadSafeExecuteState(MockUtils.any(), MockUtils.any())).willReturn(
+            Single.just(
+                TransactionExecutionRepository.SafeExecuteState(
+                    TEST_APP,
+                    2,
+                    listOf(TEST_APP),
+                    safe.nonce,
+                    BigInteger.ONE,
                     SemVer(1, 0, 0)
                 )
             )

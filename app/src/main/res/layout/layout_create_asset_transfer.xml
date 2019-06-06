@@ -69,37 +69,22 @@
                 style="@style/DarkText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                app:layout_constraintBottom_toTopOf="@+id/layout_create_asset_transfer_safe_fiat"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_safe_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/layout_create_asset_transfer_safe_image"
                 tools:text="94.34934 ETH" />
-
-            <TextView
-                android:id="@+id/layout_create_asset_transfer_safe_fiat"
-                style="@style/LightText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="16dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_safe_image"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_safe_balance"
-                tools:text="~ $340.23" />
 
             <TextView
                 android:id="@+id/layout_create_asset_transfer_safe_name"
                 style="@style/DarkText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 app:layout_constraintBottom_toTopOf="@+id/layout_create_asset_transfer_safe_address"
@@ -113,8 +98,8 @@
                 style="@style/LightText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_safe_image"
@@ -138,19 +123,33 @@
                 app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_input_value"
                 app:layout_constraintTop_toTopOf="@+id/layout_create_asset_transfer_input_value" />
 
+            <ImageView
+                android:id="@+id/layout_create_asset_transfer_input_icon"
+                android:layout_width="@dimen/info_blockies"
+                android:layout_height="@dimen/info_blockies"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_input_value"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/layout_create_asset_transfer_input_value"
+                tools:srcCompat="@drawable/ic_gnosis_logo" />
+
 
             <TextView
                 android:id="@+id/layout_create_asset_transfer_input_label"
                 style="@style/LightText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:ellipsize="end"
                 android:gravity="end"
                 android:maxLines="1"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_input_value"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/layout_create_asset_transfer_input_value"
                 tools:text="ETH" />
 
@@ -159,21 +158,20 @@
                 style="@style/DarkText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
                 android:background="@null"
                 android:gravity="end"
                 android:hint="@string/value_hint"
                 android:inputType="numberDecimal"
                 android:maxLines="1"
-                android:paddingTop="16dp"
                 android:paddingBottom="16dp"
+                android:paddingTop="16dp"
                 android:textColorHint="@color/blue_grey"
                 android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_input_label"
-                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_barrier"
+                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_input_label"
+                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_input_icon"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_receiver_hint"
                 tools:text="33.1122568854">
 
                 <requestFocus />
@@ -193,67 +191,89 @@
                 app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_input_background" />
 
             <TextView
-                android:id="@+id/layout_create_asset_transfer_input_fiat"
+                android:id="@+id/layout_create_asset_transfer_receiver_hint"
                 style="@style/LightText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:ellipsize="end"
-                android:gravity="end"
-                android:maxLines="1"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_background"
-                tools:text="≈ USD 1,345.34" />
-
-            <TextView
-                android:id="@+id/layout_create_asset_transfer_input_receiver"
-                style="@style/DarkText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/primary_button_full_width_white"
+                android:drawableEnd="@drawable/ic_more_horiz_24dp"
                 android:gravity="start|center_vertical"
-                android:hint="@string/address_hint"
                 android:inputType="none"
                 android:maxLines="2"
                 android:minHeight="56dp"
-                android:paddingLeft="16dp"
-                android:paddingTop="8dp"
-                android:paddingRight="16dp"
                 android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:text="@string/address_hint"
                 android:textColorHint="@color/blue_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_fiat" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_barrier" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_width"
-                android:background="@color/divider"
-                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_input_receiver" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_width"
-                android:background="@color/divider"
-                app:layout_constraintBottom_toBottomOf="@id/layout_create_asset_transfer_input_receiver" />
+            <pm.gnosis.blockies.BlockiesImageView
+                android:id="@+id/layout_create_asset_transfer_receiver_image"
+                android:layout_width="@dimen/info_blockies"
+                android:layout_height="@dimen/info_blockies"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_receiver_hint"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/layout_create_asset_transfer_receiver_hint"
+                tools:background="@drawable/circle_settings" />
 
             <TextView
-                android:id="@+id/layout_create_asset_transfer_balance_label"
-                style="@style/NormalText"
+                android:id="@+id/layout_create_asset_transfer_receiver_name"
+                style="@style/DarkText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="64dp"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintBottom_toTopOf="@+id/layout_create_asset_transfer_receiver_address"
+                app:layout_constraintEnd_toEndOf="@id/layout_create_asset_transfer_receiver_hint"
+                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_receiver_image"
+                app:layout_constraintTop_toTopOf="@+id/layout_create_asset_transfer_receiver_image"
+                tools:text="My Safe" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_receiver_address"
+                style="@style/LightText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="64dp"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_receiver_image"
+                app:layout_constraintEnd_toEndOf="@id/layout_create_asset_transfer_receiver_hint"
+                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_receiver_image"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_receiver_name"
+                tools:text="0x9beb...856da2" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider"
+                app:layout_constraintTop_toTopOf="@id/layout_create_asset_transfer_receiver_hint" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_asset_balance_after_transfer_label"
+                style="@style/DarkText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:paddingTop="12dp"
-                android:text="@string/safe_balance"
-                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_balance_value"
+                android:text="@string/balance_after_transfer"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_gas_token_balance_after_transfer_value"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_receiver" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_value" />
 
             <TextView
-                android:id="@+id/layout_create_asset_transfer_balance_value"
+                android:id="@+id/layout_create_asset_transfer_asset_balance_after_transfer_value"
                 style="@style/NormalText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -261,9 +281,10 @@
                 android:gravity="end"
                 android:paddingTop="12dp"
                 android:text="-"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_balance_label"
-                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_receiver"
+                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_gas_token_balance_after_transfer_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_input_value"
                 tools:text="42.4242 ETH" />
 
             <TextView
@@ -273,20 +294,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:fontFamily="monospace-medium"
-                android:paddingBottom="12dp"
-                android:text="@string/estimated_transaction_fee"
+                android:paddingBottom="4dp"
+                android:paddingTop="12dp"
+                android:text="@string/transaction_fee"
                 app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_fees_info"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_balance_label" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_asset_balance_after_transfer_value" />
 
             <TextView
                 android:id="@+id/layout_create_asset_transfer_fees_info"
                 style="@style/NormalText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="8dp"
-                android:paddingBottom="12dp"
+                android:layout_marginStart="8dp"
+                android:paddingTop="12dp"
                 android:text="@string/tip_link"
                 android:textColor="@color/link"
                 app:layout_constraintBottom_toBottomOf="@+id/layout_create_asset_transfer_fees_label"
@@ -300,17 +321,60 @@
                 style="@style/NormalText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
                 android:fontFamily="monospace-medium"
                 android:gravity="end"
-                android:paddingBottom="12dp"
+                android:paddingBottom="4dp"
+                android:paddingTop="12dp"
                 android:text=""
                 android:textColor="@color/tomato"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_fees_info"
-                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_balance_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_asset_balance_after_transfer_label"
                 tools:text="0.0023 ETH" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_gas_token_balance_after_transfer_label"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:paddingBottom="4dp"
+                android:text="@string/balance_after_transfer"
+                app:layout_constraintEnd_toStartOf="@+id/layout_create_asset_transfer_gas_token_balance_after_transfer_value"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_fees_label" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_gas_token_balance_after_transfer_value"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:gravity="end"
+                android:paddingBottom="4dp"
+                android:text="-"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_create_asset_transfer_gas_token_balance_after_transfer_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_fees_value"
+                tools:text="42.4242 ETH" />
+
+            <TextView
+                android:id="@+id/layout_create_asset_transfer_fees_error"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:fontFamily="monospace-medium"
+                android:gravity="start"
+                android:visibility="gone"
+                android:text="@string/exceeds_funds"
+                android:textColor="@color/tomato"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_create_asset_transfer_gas_token_balance_after_transfer_label" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -330,6 +394,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/continue_text"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

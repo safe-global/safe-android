@@ -5,17 +5,22 @@ import androidx.lifecycle.OnLifecycleEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.gojuno.koptional.None
+import com.gojuno.koptional.Optional
+import com.gojuno.koptional.toOptional
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.layout_asset_transfer_info.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.builder.AssetTransferTransactionBuilder
@@ -33,6 +38,7 @@ class AssetTransferViewHolder(
     private val showExtraInfo: Boolean
 ) : TransactionInfoViewHolder {
 
+    private val tokenSubject = BehaviorSubject.create<ERC20Token>()
     private val disposables = CompositeDisposable()
     private var view: View? = null
 
@@ -40,6 +46,11 @@ class AssetTransferViewHolder(
         Single.fromCallable {
             AssetTransferTransactionBuilder.build(data)
         }.subscribeOn(Schedulers.computation())
+
+    override fun loadAssetChange(): Single<Optional<ERC20TokenWithBalance>> =
+        tokenSubject.firstOrError()
+            .map { ERC20TokenWithBalance(it, data.amount).toOptional() }
+            .onErrorReturn { None }
 
     override fun inflate(inflater: LayoutInflater, root: ViewGroup) {
         view = inflater.inflate(R.layout.layout_asset_transfer_info, root, true)
@@ -60,6 +71,7 @@ class AssetTransferViewHolder(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = {
+                    tokenSubject.onNext(it)
                     view?.apply {
                         layout_asset_transfer_info_value.text = it.displayString(data.amount, true, it.decimals)
                         loadSafeTokenBalance(it)

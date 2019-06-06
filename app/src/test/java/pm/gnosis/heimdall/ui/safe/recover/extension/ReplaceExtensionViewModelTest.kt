@@ -157,7 +157,7 @@ class ReplaceExtensionViewModelTest {
         testScheduler.advanceTimeBy(0, TimeUnit.SECONDS)
         then(tokenRepositoryMock).should().loadTokenBalances(safeAddress, token)
         testObserver.assertValueAt(
-            0, DataResult(ReplaceExtensionSubmitContract.SubmitStatus(ERC20TokenWithBalance(GAS_TOKEN, BigInteger.ZERO), false))
+            0, DataResult(ReplaceExtensionSubmitContract.SubmitStatus(ERC20TokenWithBalance(GAS_TOKEN, (-18000000).toBigInteger()), false))
         )
 
         // Second emission with error
@@ -171,7 +171,7 @@ class ReplaceExtensionViewModelTest {
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS)
         then(tokenRepositoryMock).should(times(3)).loadTokenBalances(safeAddress, token)
         testObserver.assertValueAt(
-            2, DataResult(ReplaceExtensionSubmitContract.SubmitStatus(ERC20TokenWithBalance(GAS_TOKEN, 18000000.toBigInteger()), true))
+            2, DataResult(ReplaceExtensionSubmitContract.SubmitStatus(ERC20TokenWithBalance(GAS_TOKEN, BigInteger.ZERO), true))
         )
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 

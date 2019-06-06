@@ -74,8 +74,9 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
                             .map { tokenBalances ->
                                 if (tokenBalances.size != 1) throw NoTokenBalanceException()
                                 tokenBalances.first().let { (token, balance) ->
-                                    val canSubmit = requiredFunds() <= balance
-                                    SubmitStatus(ERC20TokenWithBalance(token, balance), canSubmit)
+                                    val balanceAfterTx = (balance ?: BigInteger.ZERO) - requiredFunds()
+                                    val canSubmit = balanceAfterTx >= BigInteger.ZERO
+                                    SubmitStatus(ERC20TokenWithBalance(token, balanceAfterTx), canSubmit)
                                 }
                             }
                             .mapToResult()

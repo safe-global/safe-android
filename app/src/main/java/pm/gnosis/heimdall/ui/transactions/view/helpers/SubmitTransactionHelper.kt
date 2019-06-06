@@ -1,15 +1,18 @@
 package pm.gnosis.heimdall.ui.transactions.view.helpers
 
+import com.gojuno.koptional.Optional
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
@@ -48,7 +51,13 @@ interface SubmitTransactionHelper {
 
     sealed class ViewUpdate {
         data class TransactionInfo(val viewHolder: TransactionInfoViewHolder) : ViewUpdate()
-        data class Estimate(val fees: BigInteger, val balance: BigInteger, val token: ERC20Token, val canSubmit: Boolean) : ViewUpdate()
+        data class Estimate(
+            val gasToken: ERC20TokenWithBalance,
+            val networkFee: BigInteger,
+            val assetBalanceAfterTransfer: ERC20TokenWithBalance?, // null if gasToken and assetToken are the same
+            val sufficientFunds: Boolean
+        ) : ViewUpdate()
+
         object EstimateError : ViewUpdate()
         data class Confirmations(val isReady: Boolean) : ViewUpdate()
         object ConfirmationsRequested : ViewUpdate()
@@ -108,41 +117,54 @@ class DefaultSubmitTransactionHelper @Inject constructor(
             .switchMapSingle { tx -> executionInfo(tx).mapToResult() }
             .switchMapSingle {
                 it.mapSingle({ execInfo ->
-                    tokenRepository.loadToken(execInfo.gasToken).map { token -> execInfo to token }.mapToResult()
-                })
-            }
-            .map {
-                it.map { (execInfo, token) ->
-                    val gasCosts = execInfo.gasCosts()
-                    // If we transfer our payment token we should add this to the required funds
-                    val requiredFunds = gasCosts + when (execInfo.gasToken) {
-                        ERC20Token.ETHER_TOKEN.address -> (execInfo.transaction.wrapped.value?.value ?: BigInteger.ZERO)
-                        execInfo.transaction.wrapped.address -> {
-                            if (execInfo.transaction.wrapped.data?.isSolidityMethod(ERC20Contract.Transfer.METHOD_ID) == true) {
-                                val argData = execInfo.transaction.wrapped.data!!.removeSolidityMethodPrefix(ERC20Contract.Transfer.METHOD_ID)
-                                ERC20Contract.Transfer.decodeArguments(argData)._value.value
+                    Single.zip(
+                        tokenRepository.loadToken(execInfo.gasToken),
+                        viewHolder.loadAssetChange(), BiFunction { gasToken: ERC20Token, assetChange: Optional<ERC20TokenWithBalance> ->
+                            gasToken to assetChange.toNullable()
+                        })
+                        .flatMap { (gasToken, assetChange) ->
+                            val networkFee = execInfo.gasCosts()
+                            if (assetChange?.token == null || assetChange.token == gasToken) {
+                                val balanceAfterTransfer = execInfo.balance - networkFee - (assetChange?.balance ?: BigInteger.ZERO)
+                                val canSubmit = balanceAfterTransfer >= BigInteger.ZERO
+                                Single.just(ViewUpdate.Estimate(ERC20TokenWithBalance(gasToken, balanceAfterTransfer), networkFee, null, canSubmit))
                             } else {
-                                BigInteger.ZERO
+                                tokenRepository.loadTokenBalances(safe, listOf(assetChange.token))
+                                    .firstOrError()
+                                    .map { balances ->
+                                        val (_, assetBalance) = balances.first()
+                                        val balanceAfterTransfer = execInfo.balance - networkFee
+                                        val assetBalanceAfterTransfer = (assetBalance ?: BigInteger.ZERO) - (assetChange.balance ?: BigInteger.ZERO)
+                                        val canSubmit = balanceAfterTransfer >= BigInteger.ZERO && assetBalanceAfterTransfer >= BigInteger.ZERO
+                                        ViewUpdate.Estimate(
+                                            ERC20TokenWithBalance(gasToken, balanceAfterTransfer), networkFee,
+                                            ERC20TokenWithBalance(assetChange.token, assetBalanceAfterTransfer), canSubmit
+                                        )
+                                    }
+                                    .onErrorReturn {
+                                        val balanceAfterTransfer = execInfo.balance - networkFee
+                                        val gasBalanceAfterTransfer = ERC20TokenWithBalance(gasToken, balanceAfterTransfer)
+                                        ViewUpdate.Estimate(gasBalanceAfterTransfer, networkFee, null, balanceAfterTransfer >= BigInteger.ZERO)
+                                    }
                             }
                         }
-                        else -> BigInteger.ZERO
-                    }
-                    Triple(execInfo, token, execInfo.balance >= requiredFunds)
-                }
+                        .map { update -> execInfo to update }
+                        .mapToResult()
+                })
             }
             .emitAndNext(
                 emit = {
-                    it.map { (execInfo, token, canSubmit) -> ViewUpdate.Estimate(execInfo.gasCosts(), execInfo.balance, token, canSubmit) }
+                    it.map { (_, update) -> update }
                 },
                 next = { confirmations(events, it, initialSignatures) })
 
     private fun confirmations(
         events: Events,
-        params: Result<Triple<TransactionExecutionRepository.ExecuteInformation, ERC20Token, Boolean>>,
+        params: Result<Pair<TransactionExecutionRepository.ExecuteInformation, ViewUpdate.Estimate>>,
         initialSignatures: Set<Signature>?
     ) =
-        (params as? DataResult)?.data?.let { (execInfo, _, canSubmit) ->
-            if (canSubmit) {
+        (params as? DataResult)?.data?.let { (execInfo, update) ->
+            if (update.sufficientFunds) {
                 // Once we have the execution information we can setup everything related to requesting and receiving confirmation
                 Observable.merge(
                     observeConfirmationStore(events, execInfo, initialSignatures),

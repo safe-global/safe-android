@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.builder.AssetTransferTransactionBuilder
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.utils.emitAndNext
@@ -34,6 +35,9 @@ class CreateAssetTransferViewModel @Inject constructor(
     private val executionRepository: TransactionExecutionRepository,
     private val tokenRepository: TokenRepository
 ) : CreateAssetTransferContract() {
+
+    private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
+
     override fun processInput(
         safe: Solidity.Address,
         tokenAddress: Solidity.Address,
@@ -85,11 +89,9 @@ class CreateAssetTransferViewModel @Inject constructor(
 
     private fun parseInput(input: Input): Observable<Pair<Solidity.Address?, BigDecimal?>> =
         Observable.fromCallable {
-            // Address needs to be completely entered
-            val address = if (input.address.removeHexPrefix().length != 40) null else input.address.asEthereumAddress()
             val amount = input.amount.toBigDecimalOrNull()
             // Value should not be zero
-            address to if (amount != BigDecimal.ZERO) amount else null
+            input.address to if (amount != BigDecimal.ZERO) amount else null
         }
 
     private fun loadTokenInfo(safe: Solidity.Address, tokenAddress: Solidity.Address) =
@@ -127,7 +129,7 @@ class CreateAssetTransferViewModel @Inject constructor(
         )
         val data = TransactionData.AssetTransfer(token.token.address, amount, recipient)
         return Observable.merge(
-            estimate(safe, data),
+            estimate(safe, data, token.token, token.balance),
             reviewEvents
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .map {
@@ -138,21 +140,30 @@ class CreateAssetTransferViewModel @Inject constructor(
         )
     }
 
-    private fun estimate(safe: Solidity.Address, data: TransactionData.AssetTransfer) =
+    private fun estimate(safe: Solidity.Address, data: TransactionData.AssetTransfer, transferToken: ERC20Token, assetBalance: BigInteger) =
         tokenRepository.loadPaymentToken().map { it to AssetTransferTransactionBuilder.build(data) }
             .flatMap<ViewUpdate> { (gasToken, transaction) ->
                 executionRepository.loadExecuteInformation(safe, gasToken.address, transaction)
                     .map { execInfo: TransactionExecutionRepository.ExecuteInformation ->
                         val estimate = execInfo.gasCosts()
-                        val canExecute =
-                            (estimate + (if (data.token == gasToken.address) data.amount else BigInteger.ZERO)) <= execInfo.balance
-                        ViewUpdate.Estimate(estimate, execInfo.balance, gasToken, canExecute)
+                        val assetBalanceAfterTransfer =
+                            if (data.token == gasToken.address) null else ERC20TokenWithBalance(transferToken, assetBalance - data.amount)
+                        val gasTokenBalanceAfterTransfer =
+                            execInfo.balance - estimate - (if (data.token == gasToken.address) data.amount else BigInteger.ZERO)
+                        val canExecute = gasTokenBalanceAfterTransfer >= BigInteger.ZERO &&
+                                (assetBalanceAfterTransfer == null || gasTokenBalanceAfterTransfer >= BigInteger.ZERO)
+                        ViewUpdate.Estimate(
+                            ERC20TokenWithBalance(gasToken, gasTokenBalanceAfterTransfer),
+                            estimate,
+                            assetBalanceAfterTransfer,
+                            canExecute
+                        )
                     }
             }
             .toObservable()
             .onErrorReturn {
                 Timber.e(it)
-                ViewUpdate.EstimateError
+                ViewUpdate.EstimateError(errorHandler.translate(it))
             }
             .mapToResult()
 }

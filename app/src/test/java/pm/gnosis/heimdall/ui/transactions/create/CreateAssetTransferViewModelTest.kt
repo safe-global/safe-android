@@ -30,6 +30,7 @@ import pm.gnosis.tests.utils.TestObservableFactory
 import pm.gnosis.tests.utils.TestSingleFactory
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.util.concurrent.TimeoutException
 
@@ -76,20 +77,8 @@ class CreateAssetTransferViewModelTest {
         )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
-        // Invalid input for both
-        inputSubject.onNext(CreateAssetTransferContract.Input("sghdjghs", "asd"))
-
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(true, true)))
-        testObserver.assertValuesOnly(*updates.toTypedArray())
-
-        // Address too short
-        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", "0xc257274276a4e539741ca11b590b9447b26a805x"))
-
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(false, true)))
-        testObserver.assertValuesOnly(*updates.toTypedArray())
-
         // Valid input for now
-        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", TEST_ADDRESS))
 
         // No token yet -> cannot validate amount
         updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(true, false)))
@@ -104,17 +93,18 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Estimate error
-        estimationSingleFactory.error(TimeoutException())
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.EstimateError))
+        val error = IllegalStateException()
+        estimationSingleFactory.error(error)
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.EstimateError(error)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -134,11 +124,17 @@ class CreateAssetTransferViewModelTest {
             BigInteger.ZERO
         )
         estimationSingleFactory.success(lowBalanceInfo)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, ERC20Token.ETHER_TOKEN, false)))
+        updates.add(
+            DataResult(
+                CreateAssetTransferContract.ViewUpdate.Estimate(
+                    ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, Wei.ether("-22").value - BigInteger.TEN), BigInteger.TEN, null, false
+                )
+            )
+        )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -149,13 +145,19 @@ class CreateAssetTransferViewModelTest {
             Wei.ether("23").value
         )
         estimationSingleFactory.success(validInfo)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("23").value, ERC20Token.ETHER_TOKEN, true)))
+        updates.add(
+            DataResult(
+                CreateAssetTransferContract.ViewUpdate.Estimate(
+                    ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, Wei.ether("1").value - BigInteger.TEN), BigInteger.TEN, null, true
+                )
+            )
+        )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         reviewEvents.success(Unit)
         // Cannot assert intent without predicate
-        testObserver.assertValueCount(10)
-        testObserver.assertValueAt(9) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
+        testObserver.assertValueCount(8)
+        testObserver.assertValueAt(7) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
         then(tokenRepositoryMock).should(times(3)).loadPaymentToken()
         then(tokenRepositoryMock).should().loadToken(TEST_ETHER_TOKEN)
@@ -189,20 +191,8 @@ class CreateAssetTransferViewModelTest {
         )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
-        // Invalid input for both
-        inputSubject.onNext(CreateAssetTransferContract.Input("sghdjghs", "asd"))
-
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(true, true)))
-        testObserver.assertValuesOnly(*updates.toTypedArray())
-
-        // Address too short
-        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", "0xc257274276a4e539741ca11b590b9447b26a805x"))
-
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(false, true)))
-        testObserver.assertValuesOnly(*updates.toTypedArray())
-
         // Valid input for now
-        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("31.5", TEST_ADDRESS))
 
         // No token yet -> cannot validate amount
         updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.InvalidInput(true, false)))
@@ -217,17 +207,18 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Estimate error
-        estimationSingleFactory.error(TimeoutException())
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.EstimateError))
+        val error = IllegalStateException()
+        estimationSingleFactory.error(error)
+        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.EstimateError(error)))
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -248,11 +239,18 @@ class CreateAssetTransferViewModelTest {
         )
         estimationSingleFactory.success(lowBalanceInfo)
         tokenSingleFactory.success(ERC20Token.ETHER_TOKEN)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, BigInteger.ZERO, TEST_GAS_TOKEN, false)))
+        updates.add(
+            DataResult(
+                CreateAssetTransferContract.ViewUpdate.Estimate(
+                    ERC20TokenWithBalance(TEST_GAS_TOKEN, BigInteger.ZERO - BigInteger.TEN), BigInteger.TEN,
+                    ERC20TokenWithBalance(TEST_TOKEN, BigInteger("10000000000")), false
+                )
+            )
+        )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         // Valid input -> retrigger estimate
-        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS.asEthereumAddressString()))
+        inputSubject.onNext(CreateAssetTransferContract.Input("22", TEST_ADDRESS))
         // No estimate = no update
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
@@ -264,13 +262,22 @@ class CreateAssetTransferViewModelTest {
         )
         estimationSingleFactory.success(validInfo)
         tokenSingleFactory.success(ERC20Token.ETHER_TOKEN)
-        updates.add(DataResult(CreateAssetTransferContract.ViewUpdate.Estimate(BigInteger.TEN, Wei.ether("1").value, TEST_GAS_TOKEN, true)))
+        updates.add(
+            DataResult(
+                CreateAssetTransferContract.ViewUpdate.Estimate(
+                    ERC20TokenWithBalance(TEST_GAS_TOKEN, Wei.ether("1").value - BigInteger.TEN),
+                    BigInteger.TEN,
+                    ERC20TokenWithBalance(TEST_TOKEN, BigInteger("10000000000")),
+                    true
+                )
+            )
+        )
         testObserver.assertValuesOnly(*updates.toTypedArray())
 
         reviewEvents.success(Unit)
         // Cannot assert intent without predicate
-        testObserver.assertValueCount(10)
-        testObserver.assertValueAt(9) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
+        testObserver.assertValueCount(8)
+        testObserver.assertValueAt(7) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
         then(tokenRepositoryMock).should().loadToken(TEST_TOKEN_ADDRESS)
         then(tokenRepositoryMock).should(times(3)).loadPaymentToken()

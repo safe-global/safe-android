@@ -133,34 +133,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:background="@color/pale_grey"
-                app:layout_constraintBottom_toBottomOf="@+id/layout_recovering_safe_submit_data_fees_label"
-                app:layout_constraintTop_toTopOf="@+id/layout_recovering_safe_submit_data_balance_label" />
-
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_data_balance_label"
-                style="@style/NormalText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:paddingTop="12dp"
-                android:text="@string/safe_balance"
-                app:layout_constraintEnd_toStartOf="@+id/layout_recovering_safe_submit_data_balance_value"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_generic_transaction_description" />
-
-            <TextView
-                android:id="@+id/layout_recovering_safe_submit_data_balance_value"
-                style="@style/NormalText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:gravity="end"
-                android:paddingTop="12dp"
-                android:text="-"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/layout_recovering_safe_submit_data_balance_label"
-                app:layout_constraintTop_toBottomOf="@+id/layout_generic_transaction_description"
-                tools:text="42.4242 ETH" />
+                app:layout_constraintBottom_toBottomOf="@+id/layout_recovering_safe_submit_data_estimate_barrier"
+                app:layout_constraintTop_toTopOf="@+id/layout_recovering_safe_submit_data_fees_label" />
 
             <TextView
                 android:id="@+id/layout_recovering_safe_submit_data_fees_label"
@@ -169,11 +143,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:fontFamily="monospace-medium"
-                android:paddingBottom="12dp"
-                android:text="@string/estimated_transaction_fee"
+                android:paddingTop="12dp"
+                android:text="@string/transaction_fee"
                 app:layout_constraintEnd_toStartOf="@+id/layout_recovering_safe_submit_data_fees_value"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_balance_label" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_generic_transaction_description" />
 
             <TextView
                 android:id="@+id/layout_recovering_safe_submit_data_fees_value"
@@ -183,20 +157,60 @@
                 android:layout_marginEnd="16dp"
                 android:fontFamily="monospace-medium"
                 android:gravity="end"
-                android:paddingBottom="12dp"
+                android:paddingTop="12dp"
                 android:text=""
                 android:textColor="@color/tomato"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/layout_recovering_safe_submit_data_fees_label"
-                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_balance_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_generic_transaction_description"
                 tools:text="0.0023 ETH" />
 
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/layout_recovering_safe_submit_data_estimate_barrier"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/layout_recovering_safe_submit_data_balance_label"
+                style="@style/NormalText"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="layout_recovering_safe_submit_data_fees_label" />
+                android:layout_marginStart="16dp"
+                android:text="@string/balance_after_transfer"
+                app:layout_constraintEnd_toStartOf="@+id/layout_recovering_safe_submit_data_balance_value"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_fees_label" />
+
+            <TextView
+                android:id="@+id/layout_recovering_safe_submit_data_balance_value"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:gravity="end"
+                android:text="-"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout_recovering_safe_submit_data_balance_label"
+                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_fees_value"
+                tools:text="42.4242 ETH" />
+
+            <TextView
+                android:id="@+id/layout_recovering_safe_submit_data_fees_error"
+                style="@style/NormalText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:fontFamily="monospace-medium"
+                android:gravity="start"
+                android:text="@string/exceeds_funds"
+                android:textColor="@color/tomato"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_balance_value"
+                tools:visibility="visible" />
+
+            <View
+                android:id="@+id/layout_recovering_safe_submit_data_estimate_barrier"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_submit_data_fees_error" />
 
             <View
                 android:id="@+id/layout_recovering_safe_submit_data_container_divider"
