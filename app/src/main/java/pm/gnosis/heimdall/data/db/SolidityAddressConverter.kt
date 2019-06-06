@@ -7,8 +7,8 @@ import pm.gnosis.utils.asEthereumAddressString
 
 class SolidityAddressConverter {
     @TypeConverter
-    fun fromHexString(address: String) = address.asEthereumAddress()!!
+    fun fromHexString(address: String?) = address?.asEthereumAddress()!!
 
     @TypeConverter
-    fun toHexString(address: Solidity.Address): String = address.asEthereumAddressString()
+    fun toHexString(address: Solidity.Address?): String? = address?.asEthereumAddressString()
 }
