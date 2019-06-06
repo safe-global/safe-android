@@ -16,7 +16,9 @@ import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
-import pm.gnosis.utils.*
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.toBytes
 import java.math.BigInteger
 import javax.inject.Inject
 
@@ -37,8 +39,24 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
     }
 
     override fun createSafe(): Single<Solidity.Address> =
-        loadSafeOwners()
-            .zipWith(tokenRepository.loadPaymentToken(), BiFunction { owners: List<Solidity.Address>, token: ERC20Token -> owners to token})
+        createSafeOwner()
+            .flatMap { ownerAddress ->
+
+                val mnemonicSeed = bip39.mnemonicToSeed(getRecoveryPhrase())
+                Single.zip(
+                    accountsRepository.accountFromMnemonicSeed(mnemonicSeed, 0).map { it.first },
+                    accountsRepository.accountFromMnemonicSeed(mnemonicSeed, 1).map { it.first },
+                    BiFunction<Solidity.Address, Solidity.Address, List<Solidity.Address>> { recoveryAccount1, recoveryAccount2 ->
+                        listOfNotNull(
+                            ownerAddress,
+                            browserExtensionAddress,
+                            recoveryAccount1,
+                            recoveryAccount2
+                        )
+                    }
+                )
+            }
+            .zipWith(tokenRepository.loadPaymentToken(), BiFunction { owners: List<Solidity.Address>, token: ERC20Token -> owners to token })
             .map { (owners, paymentToken) ->
                 RelaySafeCreationParams(
                     owners = owners,
@@ -50,6 +68,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             .flatMap { request -> relayServiceApi.safeCreation(request).map { request to it } }
             .flatMap { (request, response) ->
                 assertResponse(request, response)
+                gnosisSafeRepository.assignOwnerToSafe(request.owners[0], response.safe)
                 gnosisSafeRepository.addPendingSafe(response.safe, null, response.payment, response.paymentToken)
                     .andThen(Single.just(response.safe))
             }
@@ -82,7 +101,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             throw IllegalStateException("Unexpected setup data returned")
 
         val setupDataHash = Sha3Utils.keccak(setupData.hexToByteArray())
-        val salt = Sha3Utils.keccak(setupDataHash + Solidity.UInt256(request.saltNonce.toBigInteger()).encode().hexToByteArray() )
+        val salt = Sha3Utils.keccak(setupDataHash + Solidity.UInt256(request.saltNonce.toBigInteger()).encode().hexToByteArray())
 
 
         val deploymentCode = PROXY_CODE + MASTER_COPY_ADDRESS.encode()
@@ -94,29 +113,14 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             throw IllegalStateException("Unexpected safe address returned")
     }
 
-    private fun loadSafeOwners() =
-        accountsRepository.loadActiveAccount().map { it.address }
-            .flatMap { deviceAddress ->
-                val mnemonicSeed = bip39.mnemonicToSeed(getRecoveryPhrase())
-                Single.zip(
-                    accountsRepository.accountFromMnemonicSeed(mnemonicSeed, 0).map { it.first },
-                    accountsRepository.accountFromMnemonicSeed(mnemonicSeed, 1).map { it.first },
-                    BiFunction<Solidity.Address, Solidity.Address, List<Solidity.Address>> { recoveryAccount1, recoveryAccount2 ->
-                        listOfNotNull(
-                            deviceAddress,
-                            browserExtensionAddress,
-                            recoveryAccount1,
-                            recoveryAccount2
-                        )
-                    }
-                )
-            }
+    private fun createSafeOwner() = gnosisSafeRepository.createOwner()
 
     companion object {
         private val MASTER_COPY_ADDRESS = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
         private val PROXY_FACTORY_ADDRESS = BuildConfig.PROXY_FACTORY_ADDRESS.asEthereumAddress()!!
         private val FUNDER_ADDRESS = BuildConfig.SAFE_CREATION_FUNDER.asEthereumAddress()!!
         private val TX_ORIGIN_ADDRESS = "0x0".asEthereumAddress()!!
-        private const val PROXY_CODE = "0x608060405234801561001057600080fd5b506040516020806101a88339810180604052602081101561003057600080fd5b8101908080519060200190929190505050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614156100c7576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260248152602001806101846024913960400191505060405180910390fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050606e806101166000396000f3fe608060405273ffffffffffffffffffffffffffffffffffffffff600054163660008037600080366000845af43d6000803e6000811415603d573d6000fd5b3d6000f3fea165627a7a723058201e7d648b83cfac072cbccefc2ffc62a6999d4a050ee87a721942de1da9670db80029496e76616c6964206d617374657220636f707920616464726573732070726f7669646564"
+        private const val PROXY_CODE =
+            "0x608060405234801561001057600080fd5b506040516020806101a88339810180604052602081101561003057600080fd5b8101908080519060200190929190505050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614156100c7576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260248152602001806101846024913960400191505060405180910390fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050606e806101166000396000f3fe608060405273ffffffffffffffffffffffffffffffffffffffff600054163660008037600080366000845af43d6000803e6000811415603d573d6000fd5b3d6000f3fea165627a7a723058201e7d648b83cfac072cbccefc2ffc62a6999d4a050ee87a721942de1da9670db80029496e76616c6964206d617374657220636f707920616464726573732070726f7669646564"
     }
 }
