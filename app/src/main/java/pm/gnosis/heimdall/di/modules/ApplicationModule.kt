@@ -204,6 +204,7 @@ class ApplicationModule(private val application: Application) {
     @Singleton
     fun providesDb(@ApplicationContext context: Context) =
         Room.databaseBuilder(context, ApplicationDb::class.java, ApplicationDb.DB_NAME)
+            .addMigrations(ApplicationDb.MIGRATION_1_2)
             .build()
 
     @Provides
