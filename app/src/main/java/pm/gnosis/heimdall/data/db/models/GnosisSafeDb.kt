@@ -51,7 +51,7 @@ data class GnosisSafeOwnerDb(
     val address: Solidity.Address,
 
     @ColumnInfo(name = COL_SAFE_ADDRESS)
-    val safeAddress: Solidity.Address? = null
+    val safeAddress: Solidity.Address = Solidity.Address(BigInteger.valueOf(0))
 ) {
     companion object {
         const val TABLE_NAME = "gnosis_safe_owners"
