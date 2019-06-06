@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.models.EstimateParams
 import pm.gnosis.heimdall.data.remote.models.ExecuteParams
 import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.PublishStatus
@@ -28,7 +29,6 @@ import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.utils.*
 import java.math.BigInteger
 import java.util.*
@@ -41,7 +41,7 @@ import javax.inject.Singleton
 @Singleton
 class DefaultTransactionExecutionRepository @Inject constructor(
     appDb: ApplicationDb,
-    private val accountsRepository: AccountsRepository,
+    private val safeRepository: GnosisSafeRepository,
     private val ethereumRepository: EthereumRepository,
     private val pushServiceRepository: PushServiceRepository,
     private val relayServiceApi: RelayServiceApi
@@ -174,7 +174,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         paymentToken: Solidity.Address
     ): Single<TransactionExecutionRepository.SafeExecuteState> =
         loadSafeState(safeAddress, paymentToken)
-            .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
+            .flatMap { info -> safeRepository.loadOwnerAddress(safeAddress).map { info to it} }
             .map { (info, sender) ->
                 val nonce = checkNonce(safeAddress, GnosisSafe.Nonce.decode(info.nonce.mapped()!!).param0.value)
                 val threshold = GnosisSafe.GetThreshold.decode(info.threshold.mapped()!!).param0.value.toInt()
@@ -210,7 +210,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
                     )
                 ).map { info to it }
             }
-            .flatMap { info -> accountsRepository.loadActiveAccount().map { info to it.address } }
+            .flatMap { info -> safeRepository.loadOwnerAddress(safeAddress).map { info to it } }
             .flatMap { (infoWithEstimate, sender) ->
                 val (info, estimate) = infoWithEstimate
                 assert(paymentToken == estimate.gasToken)
@@ -258,7 +258,9 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         version: SemVer
     ): Single<Signature> =
         calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version)
-            .flatMap(accountsRepository::sign)
+            .flatMap {
+                safeRepository.sign(safeAddress, it)
+            }
 
     override fun signRejection(
         safeAddress: Solidity.Address,
@@ -271,7 +273,9 @@ class DefaultTransactionExecutionRepository @Inject constructor(
     ): Single<Signature> =
         calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version)
             .flatMap(pushServiceRepository::calculateRejectionHash)
-            .flatMap(accountsRepository::sign)
+            .flatMap {
+                safeRepository.sign(safeAddress, it)
+            }
 
     override fun checkConfirmation(
         safeAddress: Solidity.Address,
@@ -284,7 +288,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         version: SemVer
     ): Single<Pair<Solidity.Address, Signature>> =
         calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version)
-            .flatMap { accountsRepository.recover(it, signature) }
+            .flatMap { safeRepository.recover(it, signature) }
             .map { it to signature }
 
     override fun checkRejection(
@@ -300,7 +304,7 @@ class DefaultTransactionExecutionRepository @Inject constructor(
         calculateHash(safeAddress, transaction, txGas, dataGas, gasPrice, gasToken, version)
             .flatMap(pushServiceRepository::calculateRejectionHash)
             .flatMap {
-                accountsRepository.recover(it, signature)
+                safeRepository.recover(it, signature)
             }.map { it to signature }
 
     override fun notifyReject(
@@ -407,11 +411,11 @@ class DefaultTransactionExecutionRepository @Inject constructor(
     ): Single<Map<Solidity.Address, Signature>> =
     // If owner is signature we need to sign the hash and add the signature to the map
         if (senderIsOwner)
-            accountsRepository.loadActiveAccount()
-                .flatMap { account ->
+            safeRepository.loadOwnerAddress(safeAddress)
+                .flatMap { ownerAddress ->
                     calculateHash(safeAddress, innerTransaction, txGas, dataGas, gasPrice, gasToken, version)
-                        .flatMap { accountsRepository.sign(it) }
-                        .map { signatures.plus(account.address to it) }
+                        .flatMap { safeRepository.sign(safeAddress, it) }
+                        .map { signatures.plus(ownerAddress to it) }
                 }
         else Single.just(signatures)
 
