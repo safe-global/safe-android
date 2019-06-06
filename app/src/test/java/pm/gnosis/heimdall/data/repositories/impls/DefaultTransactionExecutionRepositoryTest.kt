@@ -30,9 +30,7 @@ import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.*
@@ -45,7 +43,7 @@ class DefaultTransactionExecutionRepositoryTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var accountRepositoryMock: AccountsRepository
+    lateinit var safeRepositoryMock: DefaultGnosisSafeRepository
 
     @Mock
     lateinit var ethereumRepositoryMock: EthereumRepository
@@ -69,7 +67,7 @@ class DefaultTransactionExecutionRepositoryTest {
         given(appDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
         repository = DefaultTransactionExecutionRepository(
             appDbMock,
-            accountRepositoryMock,
+            safeRepositoryMock,
             ethereumRepositoryMock,
             pushServiceRepositoryMock,
             relayServiceApiMock
@@ -200,10 +198,10 @@ class DefaultTransactionExecutionRepositoryTest {
             )
         )
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
-        then(accountRepositoryMock).shouldHaveZeroInteractions()
+        then(safeRepositoryMock).shouldHaveZeroInteractions()
 
         // Check that nonce was cached
-        given(accountRepositoryMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_OWNER)))
+        given(safeRepositoryMock.loadOwnerAddress(TEST_SAFE)).willReturn(Single.just(TEST_OWNER))
         var remoteNonceString = "9".padStart(64, '0').addHexPrefix()
         given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).willAnswer {
             (it.arguments.first() as BulkRequest).let { bulk ->
@@ -231,7 +229,7 @@ class DefaultTransactionExecutionRepositoryTest {
             )
         )
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
-        then(accountRepositoryMock).should().loadActiveAccount()
+        then(safeRepositoryMock).should().loadOwnerAddress(TEST_SAFE)
 
         // Remote nonce should be used if it is higher
         remoteNonceString = "1a".padStart(64, '0').addHexPrefix()
@@ -248,10 +246,10 @@ class DefaultTransactionExecutionRepositoryTest {
             )
         )
         then(ethereumRepositoryMock).should(times(2)).request(MockUtils.any<BulkRequest>())
-        then(accountRepositoryMock).should(times(2)).loadActiveAccount()
+        then(safeRepositoryMock).should(times(2)).loadOwnerAddress(TEST_SAFE)
 
         then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
-        then(accountRepositoryMock).shouldHaveNoMoreInteractions()
+        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
         then(descriptionsDaoMock).shouldHaveZeroInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
