@@ -3,8 +3,8 @@ package pm.gnosis.heimdall.views
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
-import androidx.appcompat.widget.AppCompatEditText
 import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatEditText
 
 class CurrencyEditText : AppCompatEditText {
 

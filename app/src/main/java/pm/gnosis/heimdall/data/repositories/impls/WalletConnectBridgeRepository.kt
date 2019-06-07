@@ -14,7 +14,6 @@ import io.reactivex.subjects.BehaviorSubject
 import org.walletconnect.Session
 import org.walletconnect.impls.WCSession
 import org.walletconnect.impls.WCSessionStore
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.rpc.models.JsonRpcError
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R

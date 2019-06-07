@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
 import com.squareup.moshi.Moshi
-import io.reactivex.Flowable
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import org.junit.Rule
@@ -12,10 +11,8 @@ import org.walletconnect.impls.FileWCSessionStore
 import org.walletconnect.impls.MoshiPayloadAdapter
 import org.walletconnect.impls.OkHttpTransport
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
-import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule

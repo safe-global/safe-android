@@ -1,11 +1,11 @@
 package pm.gnosis.heimdall.ui.tokens.manage
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.OnLifecycleEvent
 import com.jakewharton.rxbinding2.widget.checkedChanges
 import com.squareup.picasso.Picasso
 import io.reactivex.disposables.CompositeDisposable

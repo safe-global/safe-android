@@ -29,7 +29,6 @@ import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestSingleFactory
 import pm.gnosis.tests.utils.mockFindViewById
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.hexAsBigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class SafeAdapterViewHolderTest {

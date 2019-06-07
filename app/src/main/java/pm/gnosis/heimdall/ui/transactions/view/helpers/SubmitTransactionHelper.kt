@@ -6,7 +6,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
-import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
@@ -26,8 +25,6 @@ import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.addHexPrefix
-import pm.gnosis.utils.isSolidityMethod
-import pm.gnosis.utils.removeSolidityMethodPrefix
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.math.BigInteger

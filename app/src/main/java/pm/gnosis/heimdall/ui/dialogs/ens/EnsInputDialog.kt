@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,7 +25,10 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.utils.*
+import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.Result
+import pm.gnosis.svalinn.common.utils.subscribeForResult
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.svalinn.security.EncryptionManager
 import timber.log.Timber
 import java.util.concurrent.TimeUnit

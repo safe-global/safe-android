@@ -24,7 +24,6 @@ import pm.gnosis.heimdall.data.repositories.ShortcutRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.ApplicationContext
-import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddressString

@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.ui.safe.main
 
 import android.app.Application
-import androidx.room.EmptyResultSetException
 import android.content.Context
+import androidx.room.EmptyResultSetException
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -28,8 +28,10 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.models.*
+import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.PendingSafe
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Wei

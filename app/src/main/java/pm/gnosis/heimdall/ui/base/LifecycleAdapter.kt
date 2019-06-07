@@ -1,9 +1,9 @@
 package pm.gnosis.heimdall.ui.base
 
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import android.content.Context
 import android.view.View
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import pm.gnosis.heimdall.di.ViewContext
 
 abstract class LifecycleAdapter<T, VH : LifecycleAdapter.LifecycleViewHolder<T>>(

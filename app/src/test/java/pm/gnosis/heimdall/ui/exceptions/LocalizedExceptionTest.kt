@@ -16,7 +16,6 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.utils.HttpCodes
 import retrofit2.HttpException
 import retrofit2.Response
-import java.lang.RuntimeException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLHandshakeException

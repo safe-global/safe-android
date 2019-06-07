@@ -1,9 +1,9 @@
 package pm.gnosis.heimdall.ui.addressbook
 
-import androidx.room.EmptyResultSetException
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import androidx.annotation.ColorInt
+import androidx.room.EmptyResultSetException
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single

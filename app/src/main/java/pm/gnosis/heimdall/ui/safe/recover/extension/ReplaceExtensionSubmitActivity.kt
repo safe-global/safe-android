@@ -10,7 +10,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_replace_browser_extension.*
 import kotlinx.android.synthetic.main.layout_replace_browser_extension_info.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.AddressHelper

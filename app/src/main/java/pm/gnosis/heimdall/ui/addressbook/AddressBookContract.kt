@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.ui.addressbook
 
-import androidx.lifecycle.ViewModel
 import android.graphics.Bitmap
 import androidx.annotation.ColorInt
+import androidx.lifecycle.ViewModel
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single

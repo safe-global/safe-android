@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.recoveryphrase
 
-import androidx.lifecycle.ViewModel
 import android.graphics.Bitmap
+import androidx.lifecycle.ViewModel
 import io.reactivex.Single
 
 abstract class SetupRecoveryPhraseContract : ViewModel() {

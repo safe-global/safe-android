@@ -27,7 +27,6 @@ import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestSingleFactory
 import pm.gnosis.tests.utils.mockFindViewById
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)

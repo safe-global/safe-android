@@ -1,9 +1,9 @@
 package pm.gnosis.heimdall.views
 
 import android.content.Context
-import androidx.appcompat.widget.AppCompatEditText
 import android.util.AttributeSet
 import android.view.KeyEvent
+import androidx.appcompat.widget.AppCompatEditText
 
 
 class ExtendedEditText: AppCompatEditText {

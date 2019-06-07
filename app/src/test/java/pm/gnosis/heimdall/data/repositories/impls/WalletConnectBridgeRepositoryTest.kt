@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
-import io.reactivex.Flowable
 import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
@@ -21,8 +20,10 @@ import org.walletconnect.Session
 import org.walletconnect.impls.WCSessionStore
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.*
-import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.BridgeRepository
+import pm.gnosis.heimdall.data.repositories.SessionIdAndSafe
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
