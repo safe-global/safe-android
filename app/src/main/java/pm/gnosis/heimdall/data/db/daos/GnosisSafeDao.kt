@@ -43,7 +43,7 @@ interface GnosisSafeDao {
     fun assignOwnerToSafe(ownerAddress: Solidity.Address, safeAddress: Solidity.Address)
 
     @Query("SELECT * FROM ${GnosisSafeOwnerDb.TABLE_NAME} WHERE ${GnosisSafeOwnerDb.COL_SAFE_ADDRESS} = :safeAddress")
-    fun loadSafeOwner(safeAddress: Solidity.Address): Maybe<GnosisSafeOwnerDb>
+    fun loadSafeOwner(safeAddress: Solidity.Address): Single<GnosisSafeOwnerDb>
 
     // Pending Safes
     @Insert(onConflict = OnConflictStrategy.REPLACE)

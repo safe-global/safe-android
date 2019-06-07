@@ -330,41 +330,32 @@ class DefaultGnosisSafeRepository @Inject constructor(
     }
 
     override fun assignOwnerToSafe(ownerAddress: Solidity.Address, safeAddress: Solidity.Address): Completable {
-       return Completable.fromCallable {
-           safeDao.assignOwnerToSafe(ownerAddress, safeAddress)
-       }
+        return Completable.fromCallable {
+            safeDao.assignOwnerToSafe(ownerAddress, safeAddress)
+        }
     }
 
     override fun loadOwnerAddress(safeAddress: Solidity.Address): Single<Solidity.Address> {
         return safeDao.loadSafeOwner(safeAddress)
-            .toObservable()
-            .materialize()
-            .take(1)
-            .flatMap {
-                if (it.isOnNext) Observable.just(it.value).map { it.address } else Observable.just(accountsRepository.loadActiveAccount().map { it.address })
+            .map {
+                it.address
             }
-            .dematerialize<Solidity.Address>()
-            .firstOrError()
+            .onErrorResumeNext {
+                accountsRepository.loadActiveAccount().map { it.address }
+            }
             .subscribeOn(Schedulers.io())
     }
 
     override fun sign(safeAddress: Solidity.Address, data: ByteArray): Single<Signature> {
-        return safeDao.loadSafeOwner(safeAddress)
-            .toObservable()
-            .materialize()
-            .take(1)
-            .flatMap {
-                if (it.isOnNext)
-                    Observable.just(it.value)
-                        .map { it.privateKey.value(encryptionManager).asBigInteger() }
-                        .map { KeyPair.fromPrivate(it) }
-                        .map { it.sign(data).let { Signature(it.r, it.s, it.v) } }
-                else Observable.just(accountsRepository.sign(data))
-            }
-            .dematerialize<Signature>()
-            .firstOrError()
-            .subscribeOn(Schedulers.io())
 
+        return safeDao.loadSafeOwner(safeAddress)
+            .map { it.privateKey.value(encryptionManager).asBigInteger() }
+            .map { KeyPair.fromPrivate(it) }
+            .map { it.sign(data).let { Signature(it.r, it.s, it.v) } }
+            .onErrorResumeNext {
+                accountsRepository.sign(data)
+            }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun recover(data: ByteArray, signature: Signature): Single<Solidity.Address> {
