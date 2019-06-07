@@ -264,29 +264,13 @@
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_tokens"
                     tools:drawableStart="@drawable/ic_settings_address_book" />
 
-                <!-- Container to hide this when not in Debug Mode (else it is controlled by ContraintGroup) -->
-                <FrameLayout
-                    android:id="@+id/layout_safe_main_wallet_connect_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_address_book">
-
-                    <TextView
-                        android:id="@+id/layout_safe_main_wallet_connect"
-                        style="@style/NavigationText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/wallet_connect"
-                        tools:drawableStart="@drawable/ic_walletconnect" />
-                </FrameLayout>
-
                 <TextView
                     android:id="@+id/layout_safe_main_general_settings"
                     style="@style/NavigationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/settings"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_wallet_connect_container"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_address_book"
                     tools:drawableStart="@drawable/ic_general_settings" />
 
 

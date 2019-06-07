@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
@@ -20,6 +21,7 @@ import pm.gnosis.svalinn.common.utils.WhatTheFuck
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
+import pm.gnosis.utils.asEthereumAddress
 import java.util.*
 import java.util.concurrent.BrokenBarrierException
 
@@ -37,6 +39,7 @@ class WalletConnectSessionsViewModelTest {
     @Before
     fun setUp() {
         viewModel = WalletConnectSessionsViewModel(bridgeRepoMock)
+        viewModel.setup(TEST_SAFE)
     }
 
     @Test
@@ -60,52 +63,6 @@ class WalletConnectSessionsViewModelTest {
         viewModel.observeSession(sessionId).subscribe(testObserver)
         testObserver.assertSubscribed().assertError(error).assertNoValues()
         then(bridgeRepoMock).should().observeSession(sessionId)
-        then(bridgeRepoMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun approveSession() {
-        val sessionId = UUID.randomUUID().toString()
-        given(bridgeRepoMock.approveSession(MockUtils.any())).willReturn(Completable.complete())
-        val testObserver = TestObserver<Unit>()
-        viewModel.approveSession(sessionId).subscribe(testObserver)
-        testObserver.assertComplete()
-        then(bridgeRepoMock).should().approveSession(sessionId)
-        then(bridgeRepoMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun approveSessionError() {
-        val sessionId = UUID.randomUUID().toString()
-        val error = WhatTheFuck(BrokenBarrierException())
-        given(bridgeRepoMock.approveSession(MockUtils.any())).willReturn(Completable.error(error))
-        val testObserver = TestObserver<Unit>()
-        viewModel.approveSession(sessionId).subscribe(testObserver)
-        testObserver.assertSubscribed().assertError(error).assertNoValues()
-        then(bridgeRepoMock).should().approveSession(sessionId)
-        then(bridgeRepoMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun denySession() {
-        val sessionId = UUID.randomUUID().toString()
-        given(bridgeRepoMock.rejectSession(MockUtils.any())).willReturn(Completable.complete())
-        val testObserver = TestObserver<Unit>()
-        viewModel.denySession(sessionId).subscribe(testObserver)
-        testObserver.assertComplete()
-        then(bridgeRepoMock).should().rejectSession(sessionId)
-        then(bridgeRepoMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun denySessionError() {
-        val sessionId = UUID.randomUUID().toString()
-        val error = WhatTheFuck(BrokenBarrierException())
-        given(bridgeRepoMock.rejectSession(MockUtils.any())).willReturn(Completable.error(error))
-        val testObserver = TestObserver<Unit>()
-        viewModel.denySession(sessionId).subscribe(testObserver)
-        testObserver.assertSubscribed().assertError(error).assertNoValues()
-        then(bridgeRepoMock).should().rejectSession(sessionId)
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
     }
 
@@ -135,13 +92,13 @@ class WalletConnectSessionsViewModelTest {
     @Test
     fun createSession() {
         val sessionId = UUID.randomUUID().toString()
-        given(bridgeRepoMock.createSession(MockUtils.any())).willReturn(sessionId)
+        given(bridgeRepoMock.createSession(MockUtils.any(), MockUtils.any())).willReturn(sessionId)
         given(bridgeRepoMock.initSession(MockUtils.any())).willReturn(Completable.complete())
         val url = "ws:someconfigparams@kkhfksddfjsgsh"
         val testObserver = TestObserver<Unit>()
         viewModel.createSession(url).subscribe(testObserver)
         testObserver.assertComplete()
-        then(bridgeRepoMock).should().createSession(url)
+        then(bridgeRepoMock).should().createSession(url, TEST_SAFE)
         then(bridgeRepoMock).should().initSession(sessionId)
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
     }
@@ -149,12 +106,12 @@ class WalletConnectSessionsViewModelTest {
     @Test
     fun createSessionCreationError() {
         val error = WhatTheFuck(BrokenBarrierException())
-        given(bridgeRepoMock.createSession(MockUtils.any())).willThrow(error)
+        given(bridgeRepoMock.createSession(MockUtils.any(), MockUtils.any())).willThrow(error)
         val url = "ws:someconfigparams@kkhfksddfjsgsh"
         val testObserver = TestObserver<Unit>()
         viewModel.createSession(url).subscribe(testObserver)
         testObserver.assertSubscribed().assertError(error).assertNoValues()
-        then(bridgeRepoMock).should().createSession(url)
+        then(bridgeRepoMock).should().createSession(url, TEST_SAFE)
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
     }
 
@@ -162,13 +119,13 @@ class WalletConnectSessionsViewModelTest {
     fun createSessionInitError() {
         val sessionId = UUID.randomUUID().toString()
         val error = WhatTheFuck(BrokenBarrierException())
-        given(bridgeRepoMock.createSession(MockUtils.any())).willReturn(sessionId)
+        given(bridgeRepoMock.createSession(MockUtils.any(), MockUtils.any())).willReturn(sessionId)
         given(bridgeRepoMock.initSession(MockUtils.any())).willReturn(Completable.error(error))
         val url = "ws:someconfigparams@kkhfksddfjsgsh"
         val testObserver = TestObserver<Unit>()
         viewModel.createSession(url).subscribe(testObserver)
         testObserver.assertSubscribed().assertError(error).assertNoValues()
-        then(bridgeRepoMock).should().createSession(url)
+        then(bridgeRepoMock).should().createSession(url, TEST_SAFE)
         then(bridgeRepoMock).should().initSession(sessionId)
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
     }
@@ -219,10 +176,10 @@ class WalletConnectSessionsViewModelTest {
     @Test
     fun observeSessions() {
         val metaSubject = PublishSubject.create<List<BridgeRepository.SessionMeta>>()
-        given(bridgeRepoMock.observeSessions()).willReturn(metaSubject)
+        given(bridgeRepoMock.observeSessions(MockUtils.any())).willReturn(metaSubject)
         val testObserver = TestObserver<Adapter.Data<BridgeRepository.SessionMeta>>()
         viewModel.observeSessions().subscribe(testObserver)
-        then(bridgeRepoMock).should().observeSessions()
+        then(bridgeRepoMock).should().observeSessions(TEST_SAFE)
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
         testObserver
             .assertValueCount(1)
@@ -239,7 +196,7 @@ class WalletConnectSessionsViewModelTest {
                         it.diff != null &&
                         it.entries == emptyList<BridgeRepository.SessionMeta>()
             }
-        val initialValues = listOf(BridgeRepository.SessionMeta(UUID.randomUUID().toString(), null, null, null, false, null))
+        val initialValues = listOf(BridgeRepository.SessionMeta(UUID.randomUUID().toString(), null, null, null, null, false, null))
         metaSubject.onNext(initialValues)
         testObserver
             .assertValueCount(3)
@@ -250,7 +207,7 @@ class WalletConnectSessionsViewModelTest {
             }
         val updatedValues = listOf(
             initialValues.first(),
-            BridgeRepository.SessionMeta(UUID.randomUUID().toString(), null, null, null, false, null)
+            BridgeRepository.SessionMeta(UUID.randomUUID().toString(), null, null, null, null, false, null)
         )
         metaSubject.onNext(updatedValues)
         testObserver
@@ -266,5 +223,11 @@ class WalletConnectSessionsViewModelTest {
             .assertValueCount(4)
             .assertError(error)
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
+    }
+
+    fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()
+
+    companion object {
+        private val TEST_SAFE = "0xbaddad".asEthereumAddress()!!
     }
 }

@@ -17,6 +17,9 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -33,6 +36,8 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val safe = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() ?: run { finish(); return }
+        viewModel.setup(safe)
         layout_wallet_connect_sessions_recycler_view.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         layout_wallet_connect_sessions_recycler_view.adapter = adapter
     }
@@ -60,6 +65,9 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
     }
 
     companion object {
-        fun createIntent(context: Context) = Intent(context, WalletConnectSessionsActivity::class.java)
+        private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
+        fun createIntent(context: Context, safe: Solidity.Address) = Intent(context, WalletConnectSessionsActivity::class.java).apply {
+            putExtra(EXTRA_SAFE_ADDRESS, safe.asEthereumAddressString())
+        }
     }
 }

@@ -16,8 +16,11 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.TestPreferences
 import pm.gnosis.utils.asEthereumAddress
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -35,26 +38,26 @@ class WalletConnectBridgeRepositoryIntegrationTest {
         val sessionPayloadAdapter = MoshiPayloadAdapter(moshi)
         val sessionTransportBuilder = OkHttpTransport.Builder(client, moshi)
         val sessionBuilder = WCSessionBuilder(sessionStore, sessionPayloadAdapter, sessionTransportBuilder)
-        val safeRepoMock = mock(GnosisSafeRepository::class.java)
         val rpcProxyApiMock = mock(RpcProxyApi::class.java)
-        given(safeRepoMock.observeSafes()).willReturn(Flowable.just(listOf(Safe("0xdeadbeef".asEthereumAddress()!!))))
+        val preferencesManager = mock(AppPreferencesManager::class.java)
+        given(preferencesManager.get(MockUtils.any())).willReturn(TestPreferences())
         val repo =
             WalletConnectBridgeRepository(
                 mock(Context::class.java),
                 rpcProxyApiMock,
                 mock(TransactionInfoRepository::class.java),
                 mock(LocalNotificationManager::class.java),
-                safeRepoMock,
                 sessionStore,
                 sessionBuilder,
+                preferencesManager,
                 mock(TransactionExecutionRepository::class.java)
             )
         val uri =
             "wc:11ed3d6d-5611-4b29-b7b3-5cf6de484f05@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=5ddc6551e18349068f7ba3dbd909b3182be28475879d24e929c60e3cbb2d36ee"
 
-        repo.sessions()
+        repo.sessions(null)
             .subscribe { list -> System.out.println("Sessions: $list") }
-        val sessionId = repo.createSession(uri)
+        val sessionId = repo.createSession(uri, "0xdeadbeef".asEthereumAddress()!!)
         repo.observeSession(sessionId)
             .subscribeBy(
                 onError = {
@@ -63,9 +66,6 @@ class WalletConnectBridgeRepositoryIntegrationTest {
                 onNext = {
                     System.out.println("Observe data $it")
                     when (it) {
-                        is BridgeRepository.SessionEvent.SessionRequest -> {
-                            approveSession(repo, sessionId)
-                        }
                         is BridgeRepository.SessionEvent.Transaction -> {
                             rejectRequest(repo, it.id, "0x52275f87fc078ff8381f636776cb649dda7a8882e7ba7a2ba9aa1cf24ce4b849")
                         }
@@ -81,21 +81,9 @@ class WalletConnectBridgeRepositoryIntegrationTest {
                     System.out.println("Init complete")
                 }
             )
-        repo.sessions()
+        repo.sessions(null)
             .subscribe { list -> System.out.println("Sessions: $list") }
         Thread.sleep(100000)
-    }
-
-    private fun approveSession(repo: WalletConnectBridgeRepository, sessionId: String) {
-        System.out.println("Approve session")
-        repo.approveSession(sessionId).subscribeBy(
-            onError = {
-                System.out.println("Approve error $it")
-            },
-            onComplete = {
-                System.out.println("Approve complete")
-            }
-        )
     }
 
     private fun approveRequest(repo: WalletConnectBridgeRepository, requestId: Long, response: Any) {

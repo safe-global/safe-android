@@ -62,23 +62,12 @@ class WalletConnectSessionsAdapter @Inject constructor(
                 disposables += itemView.layout_wallet_connect_sessions_item_kill.clicks()
                     .switchMapCompletable { viewModel.killSession(meta.id) }
                     .subscribeBy(onError = Timber::e)
-
-                disposables += itemView.layout_wallet_connect_sessions_item_approve.clicks()
-                    .switchMapCompletable { viewModel.approveSession(meta.id) }
-                    .subscribeBy(onError = Timber::e)
-
-                disposables += itemView.layout_wallet_connect_sessions_item_deny.clicks()
-                    .switchMapCompletable { viewModel.denySession(meta.id) }
-                    .subscribeBy(onError = Timber::e)
             }
         }
 
         private fun handleSessionEvent(event: BridgeRepository.SessionEvent) {
             when (event) {
                 is BridgeRepository.SessionEvent.MetaUpdate -> {
-                    updateSessionInfo(event.meta)
-                }
-                is BridgeRepository.SessionEvent.SessionRequest -> {
                     updateSessionInfo(event.meta)
                 }
                 is BridgeRepository.SessionEvent.Closed -> {
@@ -91,13 +80,11 @@ class WalletConnectSessionsAdapter @Inject constructor(
         private fun updateSessionInfo(meta: BridgeRepository.SessionMeta) {
             val hasPeerData = !meta.dappName.isNullOrBlank()
             itemView.layout_wallet_connect_sessions_item_symbol.text = if (hasPeerData) meta.dappName else "Unknown dapp"
-            itemView.layout_wallet_connect_sessions_item_name.text = meta.dappDescription
+            itemView.layout_wallet_connect_sessions_item_name.text = meta.dappUrl ?: meta.dappDescription
             itemView.layout_wallet_connect_sessions_item_activate.visible(!meta.active)
-            val unapprovedSession = hasPeerData && meta.approvedSafes?.isEmpty() != false
-            itemView.layout_wallet_connect_sessions_item_kill.visible(meta.active && !unapprovedSession)
-            itemView.layout_wallet_connect_sessions_item_approve.visible(meta.active && unapprovedSession)
-            itemView.layout_wallet_connect_sessions_item_deny.visible(meta.active && unapprovedSession)
+            itemView.layout_wallet_connect_sessions_item_kill.visible(meta.active)
 
+            itemView.layout_wallet_connect_sessions_item_icon.setImageDrawable(null)
             meta.dappIcons?.firstOrNull()?.let {
                 picasso.load(it).into(itemView.layout_wallet_connect_sessions_item_icon)
             }
