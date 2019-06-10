@@ -16,7 +16,7 @@ import pm.gnosis.svalinn.security.db.EncryptedByteArray
     entities = [
         AddressBookEntryDb::class,
         ERC20TokenDb::class,
-        GnosisSafeOwnerDb::class,
+        GnosisSafeInfoDb::class,
         GnosisSafeDb::class,
         PendingGnosisSafeDb::class,
         RecoveringGnosisSafeDb::class,
@@ -32,11 +32,11 @@ abstract class ApplicationDb : RoomDatabase() {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
-                    """CREATE TABLE `${GnosisSafeOwnerDb.TABLE_NAME}`
-                            (`${GnosisSafeOwnerDb.COL_PRIVATE_KEY}` TEXT,
-                            `${GnosisSafeOwnerDb.COL_ADDRESS}` TEXT,
-                            `${GnosisSafeOwnerDb.COL_SAFE_ADDRESS}` TEXT,
-                            PRIMARY KEY(`${GnosisSafeOwnerDb.COL_PRIVATE_KEY}`))"""
+                    """CREATE TABLE `${GnosisSafeInfoDb.TABLE_NAME}`
+                            (`${GnosisSafeInfoDb.COL_SAFE_ADDRESS}` TEXT,
+                            `${GnosisSafeInfoDb.COL_OWNER_ADDRESS}` TEXT,
+                            `${GnosisSafeInfoDb.COL_OWNER_PRIVATE_KEY}` TEXT,
+                            PRIMARY KEY(`${GnosisSafeInfoDb.COL_SAFE_ADDRESS}`))"""
                 )
             }
         }

@@ -27,37 +27,25 @@ fun Safe.toDb() = GnosisSafeDb(address)
 fun GnosisSafeDb.fromDb() = Safe(address)
 
 @Entity(
-    tableName = GnosisSafeOwnerDb.TABLE_NAME,
-    foreignKeys = [
-        ForeignKey(
-            entity = GnosisSafeDb::class,
-            parentColumns = [GnosisSafeDb.COL_ADDRESS],
-            childColumns = [GnosisSafeOwnerDb.COL_SAFE_ADDRESS],
-            onUpdate = ForeignKey.NO_ACTION,
-            onDelete = ForeignKey.CASCADE,
-            deferred = true
-        )
-    ],
-    indices = [
-        Index(value = [GnosisSafeOwnerDb.COL_SAFE_ADDRESS])
-    ]
+    tableName = GnosisSafeInfoDb.TABLE_NAME
 )
-data class GnosisSafeOwnerDb(
+data class GnosisSafeInfoDb(
     @PrimaryKey
-    @ColumnInfo(name = COL_PRIVATE_KEY)
-    var privateKey: EncryptedByteArray,
-
-    @ColumnInfo(name = COL_ADDRESS)
-    val address: Solidity.Address,
-
     @ColumnInfo(name = COL_SAFE_ADDRESS)
-    val safeAddress: Solidity.Address? = null
+    val safeAddress: Solidity.Address,
+
+    @ColumnInfo(name = COL_OWNER_ADDRESS)
+    val ownerAddress: Solidity.Address,
+
+    @ColumnInfo(name = COL_OWNER_PRIVATE_KEY)
+    var ownerPrivateKey: EncryptedByteArray
+
 ) {
     companion object {
-        const val TABLE_NAME = "gnosis_safe_owners"
-        const val COL_PRIVATE_KEY = "private_key"
-        const val COL_ADDRESS = "address"
+        const val TABLE_NAME = "gnosis_safe_info"
         const val COL_SAFE_ADDRESS = "safe_address"
+        const val COL_OWNER_ADDRESS = "address"
+        const val COL_OWNER_PRIVATE_KEY = "private_key"
     }
 }
 
