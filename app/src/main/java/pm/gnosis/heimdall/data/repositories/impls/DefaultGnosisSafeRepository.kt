@@ -164,7 +164,9 @@ class DefaultGnosisSafeRepository @Inject constructor(
         Completable.fromCallable {
             safeDao.removeSafe(address)
             // TODO: remove transactions from descriptions DAO
-        }.subscribeOn(Schedulers.io())!!
+        }
+            .andThen { safeDao.removeSafeInfo(address) }
+            .subscribeOn(Schedulers.io())!!
 
     override fun updateSafe(safe: Safe) =
         Completable.fromCallable {
@@ -314,7 +316,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .map { it.map { TransactionStatus(it.id, it.timestamp, false) } }
 
 
-    override fun createOwner(): Single<Solidity.Address> {
+    override fun createOwner(): Single<Pair<Solidity.Address, ByteArray>> {
         return Single.just(
             bip39.mnemonicToSeed(bip39.generateMnemonic(languageId = R.id.english))
         )
@@ -323,22 +325,21 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 val key = hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(0).keyPair
                 val privateKey = key.privKeyBytes ?: throw IllegalStateException("Private key must not be null")
                 val address = key.address.asBigInteger()
-                safeDao.insertOwner(GnosisSafeOwnerDb(EncryptedByteArray.create(encryptionManager, privateKey), Solidity.Address(address)))
-                Solidity.Address(address)
+                Solidity.Address(address) to privateKey
             }
             .subscribeOn(Schedulers.io())
     }
 
-    override fun assignOwnerToSafe(ownerAddress: Solidity.Address, safeAddress: Solidity.Address): Completable {
-        return Completable.fromCallable {
-            safeDao.assignOwnerToSafe(ownerAddress, safeAddress)
-        }
-    }
+    override fun saveOwner(safeAddress: Solidity.Address, ownerAddress: Solidity.Address, ownerKey: ByteArray) =
+        Completable.fromCallable {
+            safeDao.insertSafeInfo(GnosisSafeInfoDb(safeAddress, ownerAddress, EncryptedByteArray.create(encryptionManager, ownerKey)))
+        }.subscribeOn(Schedulers.io())
+
 
     override fun loadOwnerAddress(safeAddress: Solidity.Address): Single<Solidity.Address> {
-        return safeDao.loadSafeOwner(safeAddress)
+        return safeDao.loadSafeInfo(safeAddress)
             .map {
-                it.address
+                it.ownerAddress
             }
             .onErrorResumeNext {
                 accountsRepository.loadActiveAccount().map { it.address }
@@ -348,8 +349,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     override fun sign(safeAddress: Solidity.Address, data: ByteArray): Single<Signature> {
 
-        return safeDao.loadSafeOwner(safeAddress)
-            .map { it.privateKey.value(encryptionManager).asBigInteger() }
+        return safeDao.loadSafeInfo(safeAddress)
+            .map { it.ownerPrivateKey.value(encryptionManager).asBigInteger() }
             .map { KeyPair.fromPrivate(it) }
             .map { it.sign(data).let { Signature(it.r, it.s, it.v) } }
             .onErrorResumeNext {
@@ -363,10 +364,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
             KeyPair.signatureToKey(data, signature.v, signature.r, signature.s).address.asBigInteger()
         }.map { Solidity.Address(it) }
     }
-
-
-    // ------------------------------------------
-
+    
     private class SafeInfoRequest(
         val balance: EthRequest<Wei>,
         val threshold: EthRequest<String>,

@@ -40,36 +40,44 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
 
     override fun createSafe(): Single<Solidity.Address> =
         createSafeOwner()
-            .flatMap { ownerAddress ->
+            .flatMap { (ownerAddress, ownerKey) ->
 
                 val mnemonicSeed = bip39.mnemonicToSeed(getRecoveryPhrase())
                 Single.zip(
                     accountsRepository.accountFromMnemonicSeed(mnemonicSeed, 0).map { it.first },
                     accountsRepository.accountFromMnemonicSeed(mnemonicSeed, 1).map { it.first },
-                    BiFunction<Solidity.Address, Solidity.Address, List<Solidity.Address>> { recoveryAccount1, recoveryAccount2 ->
-                        listOfNotNull(
+                    BiFunction<Solidity.Address, Solidity.Address, OwnerData> { recoveryAccount1, recoveryAccount2 ->
+
+                        OwnerData(
+                            ownerKey,
                             ownerAddress,
-                            browserExtensionAddress,
-                            recoveryAccount1,
-                            recoveryAccount2
+                            listOfNotNull(
+                                ownerAddress,
+                                browserExtensionAddress,
+                                recoveryAccount1,
+                                recoveryAccount2
+                            )
                         )
                     }
                 )
             }
-            .zipWith(tokenRepository.loadPaymentToken(), BiFunction { owners: List<Solidity.Address>, token: ERC20Token -> owners to token })
-            .map { (owners, paymentToken) ->
-                RelaySafeCreationParams(
-                    owners = owners,
+            .zipWith(
+                tokenRepository.loadPaymentToken(),
+                BiFunction<OwnerData, ERC20Token, Pair<OwnerData, ERC20Token>> { ownerData, token: ERC20Token -> ownerData to token })
+            .map { (ownerData, paymentToken) ->
+
+                ownerData to RelaySafeCreationParams(
+                    owners = ownerData.fullListOfOwners,
                     threshold = threshold,
                     saltNonce = System.nanoTime(),
                     paymentToken = paymentToken.address
                 )
             }
-            .flatMap { request -> relayServiceApi.safeCreation(request).map { request to it } }
-            .flatMap { (request, response) ->
+            .flatMap { (ownerData, request) -> relayServiceApi.safeCreation(request).map { Triple(ownerData, request, it) } }
+            .flatMap { (ownerData, request, response) ->
                 assertResponse(request, response)
-                gnosisSafeRepository.assignOwnerToSafe(request.owners[0], response.safe)
                 gnosisSafeRepository.addPendingSafe(response.safe, null, response.payment, response.paymentToken)
+                    .andThen(gnosisSafeRepository.saveOwner(response.safe, request.owners[0], ownerData.ownerKey))
                     .andThen(Single.just(response.safe))
             }
             .subscribeOn(Schedulers.io())
@@ -114,6 +122,12 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
     }
 
     private fun createSafeOwner() = gnosisSafeRepository.createOwner()
+
+    data class OwnerData(
+        val ownerKey: ByteArray,
+        val ownerAddress: Solidity.Address,
+        val fullListOfOwners: List<Solidity.Address>
+    )
 
     companion object {
         private val MASTER_COPY_ADDRESS = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
