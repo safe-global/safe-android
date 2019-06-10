@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.safe.helpers
 
-import androidx.room.EmptyResultSetException
 import android.content.Context
+import androidx.room.EmptyResultSetException
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -237,12 +237,12 @@ class DefaultRecoverSafeOwnersHelperTest {
 
     @Test
     fun processInvalidOwnerCountWithExtension() {
-        testProcessInvalidOwnerCount(TEST_EXTENSION, listOf(TEST_APP, TEST_RECOVER_1, TEST_RECOVER_2))
+        testProcessInvalidOwnerCount(TEST_EXTENSION, listOf(TEST_OWNER, TEST_RECOVER_1, TEST_RECOVER_2))
     }
 
     @Test
     fun processInvalidOwnerCountWithoutExtension() {
-        testProcessInvalidOwnerCount(null, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2))
+        testProcessInvalidOwnerCount(null, listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2))
     }
 
     @Test
@@ -255,7 +255,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_SAFE, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_SAFE, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -293,7 +293,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_SAFE, TEST_RECOVER_1), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_SAFE, TEST_RECOVER_1), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -331,7 +331,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -340,7 +340,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(accountsRepoMock.loadActiveAccount()).willReturn(Single.error(EmptyResultSetException("")))
+        given(safeRepoMock.createOwner()).willReturn(Single.error(EmptyResultSetException("")))
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
         helper.process(input, TEST_SAFE, TEST_EXTENSION).subscribe(observer)
@@ -353,7 +353,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
-        then(accountsRepoMock).should().loadActiveAccount()
+        then(safeRepoMock).should().createOwner()
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
@@ -370,7 +370,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOfNotNull(TEST_APP, extension, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOfNotNull(TEST_OWNER, extension, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -379,7 +379,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_APP)))
+        given(safeRepoMock.createOwner()).willReturn(Single.just(TEST_OWNER to TEST_OWNER_KEY))
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
         helper.process(input, TEST_SAFE, extension).subscribe(observer)
@@ -392,8 +392,8 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
-        then(accountsRepoMock).should().loadActiveAccount()
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
+        then(safeRepoMock).should().createOwner()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
@@ -411,9 +411,10 @@ class DefaultRecoverSafeOwnersHelperTest {
     }
 
     private fun testRecoverPayload(
-        app: Solidity.Address, extension: Solidity.Address?, recoverer: Solidity.Address,
+        ownerAddress: Solidity.Address, ownerKey: ByteArray,
+        extension: Solidity.Address?, recoverer: Solidity.Address,
         operation: TransactionExecutionRepository.Operation, data: String,
-        owners: List<Solidity.Address> = listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2)
+        owners: List<Solidity.Address> = listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2)
     ) {
         val phraseSubject = PublishSubject.create<CharSequence>()
         val retrySubject = PublishSubject.create<Unit>()
@@ -433,7 +434,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(app)))
+        given(safeRepoMock.createOwner()).willReturn(Single.just(ownerAddress to ownerKey))
         given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willAnswer {
                 val tx = it.arguments[2] as SafeTransaction
@@ -474,8 +475,8 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
-        then(accountsRepoMock).should().loadActiveAccount()
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
+        then(safeRepoMock).should().createOwner()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
@@ -490,7 +491,8 @@ class DefaultRecoverSafeOwnersHelperTest {
     @Test
     fun processReplaceApp() {
         testRecoverPayload(
-            TEST_NEW_APP,
+            TEST_NEW_OWNER,
+            TEST_NEW_OWNER_KEY,
             TEST_EXTENSION,
             TEST_SAFE,
             TransactionExecutionRepository.Operation.CALL,
@@ -501,19 +503,21 @@ class DefaultRecoverSafeOwnersHelperTest {
     @Test
     fun processReplaceAppWithoutExtension() {
         testRecoverPayload(
-            TEST_NEW_APP,
+            TEST_NEW_OWNER,
+            TEST_NEW_OWNER_KEY,
             null,
             TEST_SAFE,
             TransactionExecutionRepository.Operation.CALL,
             "0xe318b52b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000071de9579cd3857ce70058a1ce19e3d8894f65ab900000000000000000000000031b98d14007bdee637298086988a0bbd31184523",
-            listOf(TEST_APP, TEST_RECOVER_1, TEST_RECOVER_2)
+            listOf(TEST_OWNER, TEST_RECOVER_1, TEST_RECOVER_2)
         )
     }
 
     @Test
     fun processReplaceExtension() {
         testRecoverPayload(
-            TEST_APP,
+            TEST_OWNER,
+            TEST_OWNER_KEY,
             TEST_NEW_EXTENSION,
             TEST_SAFE,
             TransactionExecutionRepository.Operation.CALL,
@@ -524,7 +528,8 @@ class DefaultRecoverSafeOwnersHelperTest {
     @Test
     fun processReplaceAppAndExtension() {
         testRecoverPayload(
-            TEST_NEW_APP,
+            TEST_NEW_OWNER,
+            TEST_NEW_OWNER_KEY,
             TEST_NEW_EXTENSION,
             "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!, // MultiSend address
             TransactionExecutionRepository.Operation.DELEGATE_CALL,
@@ -561,7 +566,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -570,7 +575,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
+        given(safeRepoMock.createOwner()).willReturn(Single.just(TEST_NEW_OWNER to TEST_NEW_OWNER_KEY))
         val error = NotImplementedError()
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.error(error))
 
@@ -590,8 +595,8 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
-        then(accountsRepoMock).should().loadActiveAccount()
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
+        then(safeRepoMock).should().createOwner()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
@@ -610,7 +615,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -619,7 +624,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
+        given(safeRepoMock.createOwner()).willReturn(Single.just(TEST_NEW_OWNER to TEST_NEW_OWNER_KEY))
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
             Single.error(
@@ -643,8 +648,8 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
-        then(accountsRepoMock).should().loadActiveAccount()
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
+        then(safeRepoMock).should().createOwner()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
@@ -663,7 +668,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
-                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
+                    createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
         given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
@@ -672,7 +677,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
         given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
             .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(accountsRepoMock.loadActiveAccount()).willReturn(Single.just(Account(TEST_NEW_APP)))
+        given(safeRepoMock.createOwner()).willReturn(Single.just(TEST_NEW_OWNER to TEST_NEW_OWNER_KEY))
         val execInfo = TransactionExecutionRepository.ExecuteInformation(
             TEST_HASH.toHex(),
             SafeTransaction(Transaction(TEST_SAFE), TransactionExecutionRepository.Operation.CALL),
@@ -707,8 +712,8 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(bip39Mock).shouldHaveNoMoreInteractions()
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
         then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
-        then(accountsRepoMock).should().loadActiveAccount()
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
+        then(safeRepoMock).should().createOwner()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
@@ -916,14 +921,19 @@ class DefaultRecoverSafeOwnersHelperTest {
         private val TEST_HASH = Sha3Utils.keccak(TEST_SEED)
         private val TEST_GAS_TOKEN = ERC20Token.ETHER_TOKEN.address
         private val TEST_SAFE = "0x1f81FFF89Bd57811983a35650296681f99C65C7E".asEthereumAddress()!!
-        private val TEST_APP = "0x71De9579cD3857ce70058a1ce19e3d8894f65Ab9".asEthereumAddress()!!
-        private val TEST_NEW_APP = "0x31B98D14007bDEe637298086988A0bBd31184523".asEthereumAddress()!!
+        private val TEST_OWNER = "0x71De9579cD3857ce70058a1ce19e3d8894f65Ab9".asEthereumAddress()!!
+        private val TEST_OWNER_KEY = byteArrayOf(0)
+        private val TEST_NEW_OWNER = "0x31B98D14007bDEe637298086988A0bBd31184523".asEthereumAddress()!!
+        private val TEST_NEW_OWNER_KEY = byteArrayOf(1)
+        //private val TEST_APP = "0x71De9579cD3857ce70058a1ce19e3d8894f65Ab9".asEthereumAddress()!!
+        //private val TEST_NEW_APP = "0x31B98D14007bDEe637298086988A0bBd31184523".asEthereumAddress()!!
         private val TEST_EXTENSION = "0xC2AC20b3Bb950C087f18a458DB68271325a48132".asEthereumAddress()!!
         private val TEST_NEW_EXTENSION = "0x1e6534e09b2B0Dc5EA965D0cE84AB07A4bd56B38".asEthereumAddress()!!
         private val TEST_RECOVER_1 = "0x979861dF79C7408553aAF20c01Cfb3f81CCf9341".asEthereumAddress()!!
         private val TEST_RECOVER_2 = "0x8e6A5aDb2B88257A3DAc7A76A7B4EcaCdA090b66".asEthereumAddress()!!
         private val TEST_RECOVER_1_KEY = Sha3Utils.keccak(TEST_RECOVER_1.value.toByteArray())
         private val TEST_RECOVER_2_KEY = Sha3Utils.keccak(TEST_RECOVER_2.value.toByteArray())
-        private val TEST_OWNERS = listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2)
+        //private val TEST_OWNERS = listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2)
+        private val TEST_OWNERS = listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2)
     }
 }

@@ -123,7 +123,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
 
     private fun createSafeOwner() = gnosisSafeRepository.createOwner()
 
-    data class OwnerData(
+    private data class OwnerData(
         val ownerKey: ByteArray,
         val ownerAddress: Solidity.Address,
         val fullListOfOwners: List<Solidity.Address>

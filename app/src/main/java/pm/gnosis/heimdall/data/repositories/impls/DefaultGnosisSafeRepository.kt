@@ -364,7 +364,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
             KeyPair.signatureToKey(data, signature.v, signature.r, signature.s).address.asBigInteger()
         }.map { Solidity.Address(it) }
     }
-    
+
     private class SafeInfoRequest(
         val balance: EthRequest<Wei>,
         val threshold: EthRequest<String>,

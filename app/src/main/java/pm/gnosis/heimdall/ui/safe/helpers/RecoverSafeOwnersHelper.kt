@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.MultiSend
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
@@ -37,6 +36,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 private typealias SigningAccounts = Pair<Pair<Solidity.Address, ByteArray>, Pair<Solidity.Address, ByteArray>>
+
+private data class RecoverySafeData(
+    val ownerAddress: Solidity.Address,
+    val ownerKey: ByteArray,
+    val signingAccounts: SigningAccounts,
+    val safeTransaction: SafeTransaction
+)
 
 interface RecoverSafeOwnersHelper {
     fun process(input: InputRecoveryPhraseContract.Input, safeAddress: Solidity.Address, extensionAddress: Solidity.Address?):
@@ -119,13 +125,21 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                             }
                         )
                     }
-                    .flatMap { signingAccounts -> accountsRepository.loadActiveAccount().map { account -> account to signingAccounts } }
-                    .map { (appAccount, signingAccounts) ->
-                        buildRecoverTransaction(
-                            safeInfo,
-                            addressesToKeep = setOf(signingAccounts.first.first, signingAccounts.second.first),
-                            addressesToSwapIn = listOfNotNull(appAccount.address, extensionAddress).toSet()
-                        ) to signingAccounts
+                    .flatMap { signingAccounts ->
+                        safeRepository.createOwner().map { (ownerAddress, ownerKey) -> Triple(ownerAddress, ownerKey, signingAccounts) }
+                    }
+                    .map { (ownerAddress, ownerKey, signingAccounts) ->
+
+                        RecoverySafeData(
+                            ownerAddress,
+                            ownerKey,
+                            signingAccounts,
+                            buildRecoverTransaction(
+                                safeInfo,
+                                addressesToKeep = setOf(signingAccounts.first.first, signingAccounts.second.first),
+                                addressesToSwapIn = listOfNotNull(ownerAddress, extensionAddress).toSet()
+                            )
+                        )
                     }
                     .mapToResult()
             }
@@ -135,19 +149,17 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                     is ErrorResult -> Observable.just(
                         when (it.error) {
                             is Bip39ValidationResult -> InputRecoveryPhraseContract.ViewUpdate.InvalidMnemonic
-                            is NoNeedToRecoverSafeException -> InputRecoveryPhraseContract.ViewUpdate.NoRecoveryNecessary(
-                                safeInfo.address
-                            )
+                            is NoNeedToRecoverSafeException -> InputRecoveryPhraseContract.ViewUpdate.NoRecoveryNecessary(safeInfo.address)
                             else -> InputRecoveryPhraseContract.ViewUpdate.WrongMnemonic
                         }
                     )
                     // We successfully parsed the mnemonic and build the data, now we can show the create button and if pressed pull the data
                     is DataResult -> {
-                        val (transaction, signingAccounts) = it.data
+                        val (ownerAddress, ownerKey, signingAccounts, transaction) = it.data
                         input.create
                             .subscribeOn(AndroidSchedulers.mainThread())
                             .switchMapSingle { _ ->
-                                prepareTransaction(safeInfo, transaction, signingAccounts)
+                                prepareTransaction(safeInfo, transaction, signingAccounts, ownerAddress, ownerKey)
                             }.startWith(InputRecoveryPhraseContract.ViewUpdate.ValidMnemonic)
                     }
                 }
@@ -217,7 +229,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
                 )
         }
 
-    private fun prepareTransaction(safeInfo: SafeInfo, transaction: SafeTransaction, signingAccounts: SigningAccounts) =
+    private fun prepareTransaction(safeInfo: SafeInfo, transaction: SafeTransaction, signingAccounts: SigningAccounts, ownerAddress: Solidity.Address, ownerKey: ByteArray) =
         tokenRepository.loadPaymentToken()
             .flatMap { executionRepository.loadExecuteInformation(safeInfo.address, it.address, transaction) }
             .flatMap { executionInfo ->
@@ -235,7 +247,9 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
             .map<InputRecoveryPhraseContract.ViewUpdate> { (hash, executionInfo) ->
                 InputRecoveryPhraseContract.ViewUpdate.RecoverData(
                     executionInfo,
-                    listOf(signHash(signingAccounts.first.second, hash), signHash(signingAccounts.second.second, hash))
+                    listOf(signHash(signingAccounts.first.second, hash), signHash(signingAccounts.second.second, hash)),
+                    ownerAddress,
+                    ownerKey
                 )
             }
             .onErrorReturn { InputRecoveryPhraseContract.ViewUpdate.RecoverDataError(errorHandler.translate(it)) }
@@ -244,6 +258,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
         KeyPair.fromPrivate(privKey).sign(hash).let { Signature(it.r, it.s, it.v) }
 
     data class NoNeedToRecoverSafeException(val safeAddress: Solidity.Address) : IllegalStateException("Safe is already in expected state!")
+
 
     companion object {
         private val SENTINEL = "0x01".asEthereumAddress()!!
