@@ -34,7 +34,6 @@ import pm.gnosis.mnemonic.EmptyMnemonic
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.tests.utils.Asserts
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -925,15 +924,12 @@ class DefaultRecoverSafeOwnersHelperTest {
         private val TEST_OWNER_KEY = byteArrayOf(0)
         private val TEST_NEW_OWNER = "0x31B98D14007bDEe637298086988A0bBd31184523".asEthereumAddress()!!
         private val TEST_NEW_OWNER_KEY = byteArrayOf(1)
-        //private val TEST_APP = "0x71De9579cD3857ce70058a1ce19e3d8894f65Ab9".asEthereumAddress()!!
-        //private val TEST_NEW_APP = "0x31B98D14007bDEe637298086988A0bBd31184523".asEthereumAddress()!!
         private val TEST_EXTENSION = "0xC2AC20b3Bb950C087f18a458DB68271325a48132".asEthereumAddress()!!
         private val TEST_NEW_EXTENSION = "0x1e6534e09b2B0Dc5EA965D0cE84AB07A4bd56B38".asEthereumAddress()!!
         private val TEST_RECOVER_1 = "0x979861dF79C7408553aAF20c01Cfb3f81CCf9341".asEthereumAddress()!!
         private val TEST_RECOVER_2 = "0x8e6A5aDb2B88257A3DAc7A76A7B4EcaCdA090b66".asEthereumAddress()!!
         private val TEST_RECOVER_1_KEY = Sha3Utils.keccak(TEST_RECOVER_1.value.toByteArray())
         private val TEST_RECOVER_2_KEY = Sha3Utils.keccak(TEST_RECOVER_2.value.toByteArray())
-        //private val TEST_OWNERS = listOf(TEST_APP, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2)
         private val TEST_OWNERS = listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2)
     }
 }
