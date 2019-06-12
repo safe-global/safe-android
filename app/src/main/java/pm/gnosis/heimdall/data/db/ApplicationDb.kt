@@ -32,10 +32,10 @@ abstract class ApplicationDb : RoomDatabase() {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
-                    """CREATE TABLE `${GnosisSafeInfoDb.TABLE_NAME}`
-                            (`${GnosisSafeInfoDb.COL_SAFE_ADDRESS}` TEXT,
-                            `${GnosisSafeInfoDb.COL_OWNER_ADDRESS}` TEXT,
-                            `${GnosisSafeInfoDb.COL_OWNER_PRIVATE_KEY}` TEXT,
+                    """CREATE TABLE IF NOT EXISTS `${GnosisSafeInfoDb.TABLE_NAME}`
+                            (`${GnosisSafeInfoDb.COL_SAFE_ADDRESS}` TEXT NOT NULL,
+                            `${GnosisSafeInfoDb.COL_OWNER_ADDRESS}` TEXT NOT NULL,
+                            `${GnosisSafeInfoDb.COL_OWNER_PRIVATE_KEY}` TEXT NOT NULL,
                             PRIMARY KEY(`${GnosisSafeInfoDb.COL_SAFE_ADDRESS}`))"""
                 )
             }

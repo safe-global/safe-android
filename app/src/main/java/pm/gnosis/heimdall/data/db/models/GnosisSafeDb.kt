@@ -44,8 +44,8 @@ data class GnosisSafeInfoDb(
     companion object {
         const val TABLE_NAME = "gnosis_safe_info"
         const val COL_SAFE_ADDRESS = "safe_address"
-        const val COL_OWNER_ADDRESS = "address"
-        const val COL_OWNER_PRIVATE_KEY = "private_key"
+        const val COL_OWNER_ADDRESS = "owner_address"
+        const val COL_OWNER_PRIVATE_KEY = "owner_private_key"
     }
 }
 
