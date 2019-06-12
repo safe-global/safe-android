@@ -316,19 +316,15 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .map { it.map { TransactionStatus(it.id, it.timestamp, false) } }
 
 
-    override fun createOwner(): Single<Pair<Solidity.Address, ByteArray>> {
-        return Single.just(
-            bip39.mnemonicToSeed(bip39.generateMnemonic(languageId = R.id.english))
-        )
-            .map {
-                val hdNode = KeyGenerator.masterNode(ByteString.of(*it))
-                val key = hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(0).keyPair
-                val privateKey = key.privKeyBytes ?: throw IllegalStateException("Private key must not be null")
-                val address = key.address.asBigInteger()
-                Solidity.Address(address) to privateKey
-            }
-            .subscribeOn(Schedulers.io())
-    }
+    override fun createOwner(): Single<Pair<Solidity.Address, ByteArray>> = Single.fromCallable {
+        val seed = bip39.mnemonicToSeed(bip39.generateMnemonic(languageId = R.id.english))
+        val hdNode = KeyGenerator.masterNode(ByteString.of(*seed))
+        val key = hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(0).keyPair
+        val privateKey = key.privKeyBytes ?: throw IllegalStateException("Private key must not be null")
+        val address = key.address.asBigInteger()
+        Solidity.Address(address) to privateKey
+    }.subscribeOn(Schedulers.io())
+
 
     override fun saveOwner(safeAddress: Solidity.Address, ownerAddress: Solidity.Address, ownerKey: ByteArray) =
         Completable.fromCallable {
@@ -341,6 +337,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .map {
                 it.ownerAddress
             }
+            // use device account for legacy safes that don't have separate owner
             .onErrorResumeNext {
                 accountsRepository.loadActiveAccount().map { it.address }
             }
@@ -353,6 +350,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .map { it.ownerPrivateKey.value(encryptionManager).asBigInteger() }
             .map { KeyPair.fromPrivate(it) }
             .map { it.sign(data).let { Signature(it.r, it.s, it.v) } }
+            // use device account for legacy safes that don't have separate owner
             .onErrorResumeNext {
                 accountsRepository.sign(data)
             }
