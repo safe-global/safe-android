@@ -8,6 +8,9 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
+import okio.ByteString
+import pm.gnosis.crypto.KeyGenerator
+import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.BuildConfig
@@ -22,11 +25,15 @@ import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.security.EncryptionManager
+import pm.gnosis.svalinn.security.db.EncryptedByteArray
+import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
@@ -40,7 +47,9 @@ class DefaultGnosisSafeRepository @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val addressBookRepository: AddressBookRepository,
     private val ethereumRepository: EthereumRepository,
-    private val pushServiceRepository: PushServiceRepository
+    private val pushServiceRepository: PushServiceRepository,
+    private val bip39: Bip39,
+    private val encryptionManager: EncryptionManager
 ) : GnosisSafeRepository {
 
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
@@ -155,7 +164,9 @@ class DefaultGnosisSafeRepository @Inject constructor(
         Completable.fromCallable {
             safeDao.removeSafe(address)
             // TODO: remove transactions from descriptions DAO
-        }.subscribeOn(Schedulers.io())!!
+        }
+            .andThen { safeDao.removeSafeInfo(address) }
+            .subscribeOn(Schedulers.io())!!
 
     override fun updateSafe(safe: Safe) =
         Completable.fromCallable {
@@ -303,6 +314,54 @@ class DefaultGnosisSafeRepository @Inject constructor(
         descriptionsDao.observeSubmittedTransaction(address)
             .subscribeOn(Schedulers.io())
             .map { it.map { TransactionStatus(it.id, it.timestamp, false) } }
+
+
+    override fun createOwner(): Single<Pair<Solidity.Address, ByteArray>> = Single.fromCallable {
+        val seed = bip39.mnemonicToSeed(bip39.generateMnemonic(languageId = R.id.english))
+        val hdNode = KeyGenerator.masterNode(ByteString.of(*seed))
+        val key = hdNode.derive(KeyGenerator.BIP44_PATH_ETHEREUM).deriveChild(0).keyPair
+        val privateKey = key.privKeyBytes ?: throw IllegalStateException("Private key must not be null")
+        val address = key.address.asBigInteger()
+        Solidity.Address(address) to privateKey
+    }.subscribeOn(Schedulers.io())
+
+
+    override fun saveOwner(safeAddress: Solidity.Address, ownerAddress: Solidity.Address, ownerKey: ByteArray) =
+        Completable.fromCallable {
+            safeDao.insertSafeInfo(GnosisSafeInfoDb(safeAddress, ownerAddress, EncryptedByteArray.create(encryptionManager, ownerKey)))
+        }.subscribeOn(Schedulers.io())
+
+
+    override fun loadOwnerAddress(safeAddress: Solidity.Address): Single<Solidity.Address> {
+        return safeDao.loadSafeInfo(safeAddress)
+            .map {
+                it.ownerAddress
+            }
+            // use device account for legacy safes that don't have separate owner
+            .onErrorResumeNext {
+                accountsRepository.loadActiveAccount().map { it.address }
+            }
+            .subscribeOn(Schedulers.io())
+    }
+
+    override fun sign(safeAddress: Solidity.Address, data: ByteArray): Single<Signature> {
+
+        return safeDao.loadSafeInfo(safeAddress)
+            .map { it.ownerPrivateKey.value(encryptionManager).asBigInteger() }
+            .map { KeyPair.fromPrivate(it) }
+            .map { it.sign(data).let { Signature(it.r, it.s, it.v) } }
+            // use device account for legacy safes that don't have separate owner
+            .onErrorResumeNext {
+                accountsRepository.sign(data)
+            }
+            .subscribeOn(Schedulers.io())
+    }
+
+    override fun recover(data: ByteArray, signature: Signature): Single<Solidity.Address> {
+        return Single.fromCallable {
+            KeyPair.signatureToKey(data, signature.v, signature.r, signature.s).address.asBigInteger()
+        }.map { Solidity.Address(it) }
+    }
 
     private class SafeInfoRequest(
         val balance: EthRequest<Wei>,

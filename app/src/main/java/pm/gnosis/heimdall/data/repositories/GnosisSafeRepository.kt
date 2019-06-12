@@ -76,4 +76,15 @@ interface GnosisSafeRepository {
     fun observePendingTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
 
     fun observeSubmittedTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>>
+
+    // Safe owner
+    fun createOwner(): Single<Pair<Solidity.Address, ByteArray>>
+
+    fun saveOwner(safeAddress: Solidity.Address, ownerAddress: Solidity.Address, ownerKey: ByteArray): Completable
+
+    fun loadOwnerAddress(safeAddress: Solidity.Address): Single<Solidity.Address>
+
+    fun sign(safeAddress: Solidity.Address, data: ByteArray): Single<Signature>
+
+    fun recover(data: ByteArray, signature: Signature): Single<Solidity.Address>
 }

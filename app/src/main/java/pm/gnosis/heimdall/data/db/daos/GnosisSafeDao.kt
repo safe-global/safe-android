@@ -4,6 +4,7 @@ import androidx.room.*
 import io.reactivex.Flowable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
+import pm.gnosis.heimdall.data.db.models.GnosisSafeInfoDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.RecoveringGnosisSafeDb
 import pm.gnosis.model.Solidity
@@ -32,6 +33,16 @@ interface GnosisSafeDao {
 
     @Update
     fun updateSafe(safe: GnosisSafeDb)
+
+    // Safe owner
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertSafeInfo(safeInfo: GnosisSafeInfoDb)
+
+    @Query("DELETE FROM ${GnosisSafeInfoDb.TABLE_NAME} WHERE ${GnosisSafeInfoDb.COL_SAFE_ADDRESS} = :safeAddress")
+    fun removeSafeInfo(safeAddress: Solidity.Address)
+
+    @Query("SELECT * FROM ${GnosisSafeInfoDb.TABLE_NAME} WHERE ${GnosisSafeInfoDb.COL_SAFE_ADDRESS} = :safeAddress")
+    fun loadSafeInfo(safeAddress: Solidity.Address): Single<GnosisSafeInfoDb>
 
     // Pending Safes
     @Insert(onConflict = OnConflictStrategy.REPLACE)

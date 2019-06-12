@@ -24,9 +24,11 @@ class RecoverSafeRecoveryPhraseViewModel @Inject constructor(
                             it.executionInfo,
                             it.signatures
                         )
+                            .andThen(safeRepository.saveOwner(safeAddress, it.ownerAddress, it.ownerKey))
                             .andThen(Single.just<ViewUpdate>(it))
                             .onErrorReturn(ViewUpdate::RecoverDataError)
                     }
+                    //FIXME: save owner info?
                     is ViewUpdate.NoRecoveryNecessary -> {
                         safeRepository.addSafe(safeAddress)
                             .andThen(Single.just<ViewUpdate>(it))

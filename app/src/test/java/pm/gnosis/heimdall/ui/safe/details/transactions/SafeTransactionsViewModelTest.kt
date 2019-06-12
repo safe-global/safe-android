@@ -26,7 +26,6 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Publi
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.TransactionStatus
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.safe.details.transactions.test.*
 import pm.gnosis.heimdall.utils.DateTimeUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult

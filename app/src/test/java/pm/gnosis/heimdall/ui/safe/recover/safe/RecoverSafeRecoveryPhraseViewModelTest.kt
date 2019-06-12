@@ -24,7 +24,6 @@ import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.Input
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.ViewUpdate
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
@@ -55,7 +54,23 @@ class RecoverSafeRecoveryPhraseViewModelTest {
 
     private fun process(extension: Solidity.Address?) {
         val helperSubject = PublishSubject.create<InputRecoveryPhraseContract.ViewUpdate>()
-        given(helperMock.process(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(helperSubject)
+
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val ownerKey = byteArrayOf(0)
+
+        given(
+            helperMock.process(
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any()))
+            .willReturn(helperSubject)
+        given(
+            safeRepoMock.saveOwner(
+                MockUtils.any(),
+                MockUtils.any(),
+                MockUtils.any())
+        ).willReturn(Completable.complete())
+
 
         val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
         val input = Input(Observable.empty(), Observable.empty(), Observable.empty())
@@ -93,18 +108,20 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         given(safeRepoMock.addRecoveringSafe(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
             Completable.error(error)
         )
-        helperSubject.onNext(ViewUpdate.RecoverData(executionInfo, signatures))
+        helperSubject.onNext(ViewUpdate.RecoverData(executionInfo, signatures, ownerAddress, ownerKey))
         observer.assertValueAt(tests, ViewUpdate.RecoverDataError(error))
         then(safeRepoMock).should().addRecoveringSafe(TEST_SAFE, null, null, executionInfo, signatures)
+        then(safeRepoMock).should().saveOwner(TEST_SAFE, ownerAddress, ownerKey)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         tests++
 
         given(safeRepoMock.addRecoveringSafe(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
             Completable.complete()
         )
-        helperSubject.onNext(ViewUpdate.RecoverData(executionInfo, signatures))
-        observer.assertValueAt(tests, ViewUpdate.RecoverData(executionInfo, signatures))
+        helperSubject.onNext(ViewUpdate.RecoverData(executionInfo, signatures, ownerAddress, ownerKey))
+        observer.assertValueAt(tests, ViewUpdate.RecoverData(executionInfo, signatures, ownerAddress, ownerKey))
         then(safeRepoMock).should(times(2)).addRecoveringSafe(TEST_SAFE, null, null, executionInfo, signatures)
+        then(safeRepoMock).should(times(2)).saveOwner(TEST_SAFE, ownerAddress, ownerKey)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         tests++
 

@@ -1,8 +1,6 @@
 package pm.gnosis.heimdall.data.db.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.Companion.fromInt
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
@@ -10,6 +8,7 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import java.math.BigInteger
 
 @Entity(tableName = GnosisSafeDb.TABLE_NAME)
@@ -26,6 +25,29 @@ data class GnosisSafeDb(
 
 fun Safe.toDb() = GnosisSafeDb(address)
 fun GnosisSafeDb.fromDb() = Safe(address)
+
+@Entity(
+    tableName = GnosisSafeInfoDb.TABLE_NAME
+)
+data class GnosisSafeInfoDb(
+    @PrimaryKey
+    @ColumnInfo(name = COL_SAFE_ADDRESS)
+    val safeAddress: Solidity.Address,
+
+    @ColumnInfo(name = COL_OWNER_ADDRESS)
+    val ownerAddress: Solidity.Address,
+
+    @ColumnInfo(name = COL_OWNER_PRIVATE_KEY)
+    var ownerPrivateKey: EncryptedByteArray
+
+) {
+    companion object {
+        const val TABLE_NAME = "gnosis_safe_info"
+        const val COL_SAFE_ADDRESS = "safe_address"
+        const val COL_OWNER_ADDRESS = "address"
+        const val COL_OWNER_PRIVATE_KEY = "private_key"
+    }
+}
 
 @Entity(tableName = PendingGnosisSafeDb.TABLE_NAME)
 data class PendingGnosisSafeDb(

@@ -20,8 +20,10 @@ import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
+import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
@@ -60,6 +62,12 @@ class DefaultGnosisSafeRepositoryTest {
     @Mock
     private lateinit var pushRepositoryMock: PushServiceRepository
 
+    @Mock
+    private lateinit var bip39: Bip39
+
+    @Mock
+    private lateinit var encryptionManager: EncryptionManager
+
 
     @Before
     fun setUp() {
@@ -71,7 +79,9 @@ class DefaultGnosisSafeRepositoryTest {
             accountsRepository,
             addressBookRepository,
             ethereumRepositoryMock,
-            pushRepositoryMock
+            pushRepositoryMock,
+            bip39,
+            encryptionManager
         )
     }
 
