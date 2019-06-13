@@ -6,8 +6,10 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.InstanceIdResult
 import com.squareup.moshi.Moshi
 import io.reactivex.*
+import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
@@ -33,6 +35,7 @@ import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
+import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigInteger
@@ -43,6 +46,7 @@ class DefaultPushServiceRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     gnosisAuthenticatorDb: ApplicationDb,
     private val accountsRepository: AccountsRepository,
+    private val encryptionManager: EncryptionManager,
     private val firebaseInstanceId: FirebaseInstanceId,
     private val localNotificationManager: LocalNotificationManager,
     private val moshi: Moshi,
@@ -87,7 +91,22 @@ class DefaultPushServiceRepository @Inject constructor(
     }
 
     private fun sendAuthenticationRequest(pushToken: String) =
-        accountsRepository.sign(Sha3Utils.keccak(bundlePushInfo(pushToken).toByteArray()))
+        Single.fromCallable { Sha3Utils.keccak(bundlePushInfo(pushToken).toByteArray()) }
+            .subscribeOn(Schedulers.computation())
+            .flatMap { hash ->
+                accountsRepository.sign(hash)
+                    .zipWith(
+                        safeDao.loadSafeInfos().map {
+                            it.map { info ->
+                                KeyPair.fromPrivate(info.ownerPrivateKey.value(encryptionManager).asBigInteger())
+                                    .sign(hash)
+                                    .let { signature -> ServiceSignature(signature.r, signature.s, signature.v.toInt()) }
+                            }
+                        },
+                        BiFunction { deviceSig: Signature, ownerSigs: List<ServiceSignature> ->
+                            ownerSigs + ServiceSignature.fromSignature(deviceSig)
+                        })
+            }
             .map {
                 PushServiceAuth(
                     pushToken = pushToken,
@@ -95,7 +114,7 @@ class DefaultPushServiceRepository @Inject constructor(
                     versionName = BuildConfig.VERSION_NAME,
                     client = CLIENT,
                     bundle = BuildConfig.APPLICATION_ID,
-                    signatures = listOf(ServiceSignature.fromSignature(it))
+                    signatures = it
                 )
             }
             .flatMapCompletable { pushServiceApi.auth(it) }
@@ -223,8 +242,11 @@ class DefaultPushServiceRepository @Inject constructor(
      */
     override fun handlePushMessage(pushMessage: PushMessage) {
         when (pushMessage) {
-            is PushMessage.SendTransaction ->
+            is PushMessage.SendTransaction -> {
+                // Only show notification if we have the Safe
+                nullOnThrow { safeDao.querySafe(pushMessage.safe.asEthereumAddress()!!) } ?: return
                 showSendTransactionNotification(pushMessage)
+            }
             is PushMessage.ConfirmTransaction ->
                 observedTransaction[pushMessage.hash.hexAsBigInteger()]?.publish(
                     TransactionResponse.Confirmed(

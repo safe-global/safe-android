@@ -26,6 +26,9 @@ interface GnosisSafeDao {
     fun observeSafe(address: Solidity.Address): Flowable<GnosisSafeDb>
 
     @Query("SELECT * FROM ${GnosisSafeDb.TABLE_NAME} WHERE ${GnosisSafeDb.COL_ADDRESS} = :address")
+    fun querySafe(address: Solidity.Address): GnosisSafeDb?
+
+    @Query("SELECT * FROM ${GnosisSafeDb.TABLE_NAME} WHERE ${GnosisSafeDb.COL_ADDRESS} = :address")
     fun loadSafe(address: Solidity.Address): Single<GnosisSafeDb>
 
     @Query("DELETE FROM ${GnosisSafeDb.TABLE_NAME} WHERE ${GnosisSafeDb.COL_ADDRESS} = :address")
@@ -43,6 +46,9 @@ interface GnosisSafeDao {
 
     @Query("SELECT * FROM ${GnosisSafeInfoDb.TABLE_NAME} WHERE ${GnosisSafeInfoDb.COL_SAFE_ADDRESS} = :safeAddress")
     fun loadSafeInfo(safeAddress: Solidity.Address): Single<GnosisSafeInfoDb>
+
+    @Query("SELECT * FROM ${GnosisSafeInfoDb.TABLE_NAME}")
+    fun loadSafeInfos(): Single<List<GnosisSafeInfoDb>>
 
     // Pending Safes
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -329,7 +329,9 @@ class DefaultGnosisSafeRepository @Inject constructor(
     override fun saveOwner(safeAddress: Solidity.Address, ownerAddress: Solidity.Address, ownerKey: ByteArray) =
         Completable.fromCallable {
             safeDao.insertSafeInfo(GnosisSafeInfoDb(safeAddress, ownerAddress, EncryptedByteArray.create(encryptionManager, ownerKey)))
-        }.subscribeOn(Schedulers.io())
+        }
+            .doOnComplete { pushServiceRepository.syncAuthentication(true) }
+            .subscribeOn(Schedulers.io())
 
 
     override fun loadOwnerAddress(safeAddress: Solidity.Address): Single<Solidity.Address> {
@@ -347,9 +349,11 @@ class DefaultGnosisSafeRepository @Inject constructor(
     override fun sign(safeAddress: Solidity.Address, data: ByteArray): Single<Signature> {
 
         return safeDao.loadSafeInfo(safeAddress)
-            .map { it.ownerPrivateKey.value(encryptionManager).asBigInteger() }
-            .map { KeyPair.fromPrivate(it) }
-            .map { it.sign(data).let { Signature(it.r, it.s, it.v) } }
+            .map { info ->
+                KeyPair.fromPrivate(info.ownerPrivateKey.value(encryptionManager).asBigInteger())
+                    .sign(data)
+                    .let { Signature(it.r, it.s, it.v) }
+            }
             // use device account for legacy safes that don't have separate owner
             .onErrorResumeNext {
                 accountsRepository.sign(data)
