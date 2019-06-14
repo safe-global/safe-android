@@ -126,6 +126,8 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        androidTest.assets.srcDirs +=
+                files("$projectDir/schemas".toString())
     }
 
     packagingOptions {
@@ -287,6 +289,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     androidTestImplementation "androidx.test.ext:junit:$versions.androidx_test_ext"
+
+    androidTestImplementation "android.arch.persistence.room:testing:$versions.androidx_room"
 }
 
 apply plugin: 'com.google.gms.google-services'
