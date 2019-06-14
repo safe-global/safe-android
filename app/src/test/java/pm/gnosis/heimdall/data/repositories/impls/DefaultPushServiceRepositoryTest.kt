@@ -23,17 +23,22 @@ import org.mockito.BDDMockito.*
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
+import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
+import pm.gnosis.heimdall.data.db.models.GnosisSafeInfoDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.push.*
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.model.Solidity
@@ -42,7 +47,10 @@ import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
+import pm.gnosis.svalinn.security.EncryptionManager
+import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.*
+import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
@@ -60,6 +68,9 @@ class DefaultPushServiceRepositoryTest {
 
     @Mock
     private lateinit var accountsRepositoryMock: AccountsRepository
+
+    @Mock
+    private lateinit var encryptionManagerMock: EncryptionManager
 
     @Mock
     private lateinit var firebaseInstanceIdMock: FirebaseInstanceId
@@ -108,6 +119,7 @@ class DefaultPushServiceRepositoryTest {
             contextMock,
             dbMock,
             accountsRepositoryMock,
+            encryptionManagerMock,
             firebaseInstanceIdMock,
             localNotificationManagerMock,
             moshiMock,
@@ -123,6 +135,7 @@ class DefaultPushServiceRepositoryTest {
         given(firebaseInstanceIdMock.instanceId).willReturn(testFirebaseInstanceIdTask)
         given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
         given(pushServiceApiMock.auth(MockUtils.any())).willReturn(Completable.complete())
+        given(safeDaoMock.loadSafeInfos()).willReturn(Single.just(listOf()))
 
         pushServiceRepository.syncAuthentication()
         testFirebaseInstanceIdTask.setSuccess(TestInstanceIdResult())
@@ -176,10 +189,15 @@ class DefaultPushServiceRepositoryTest {
 
     @Test
     fun syncAuthenticationForced() {
+        val localOwner = "0xbaddad".asEthereumAddress()!!
+        val localOwnerKey = Sha3Utils.keccak("cow".toByteArray())
+        val localOwnerKeyEncrypted = EncryptedByteArray.Converter().fromStorage("0dad${EncryptionManager.CryptoData.SEPARATOR}bad0")
         val testFirebaseInstanceIdTask = TestFirebaseInstanceIdTask()
+        given(safeDaoMock.loadSafeInfos()).willReturn(Single.just(listOf(GnosisSafeInfoDb(TEST_SAFE_ADDRESS, localOwner, localOwnerKeyEncrypted))))
         given(firebaseInstanceIdMock.instanceId).willReturn(testFirebaseInstanceIdTask)
         given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
         given(pushServiceApiMock.auth(MockUtils.any())).willReturn(Completable.complete())
+        given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(localOwnerKey)
 
         // Set last synced token (same as new one)
         val testInstanceIdResult = TestInstanceIdResult()
@@ -190,8 +208,15 @@ class DefaultPushServiceRepositoryTest {
         pushServiceRepository.syncAuthentication(forced = true)
         testFirebaseInstanceIdTask.setSuccess(testInstanceIdResult)
 
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak(bundlePushInfo(testFirebaseInstanceIdTask.result.token).toByteArray()))
+        val hash = Sha3Utils.keccak(bundlePushInfo(testFirebaseInstanceIdTask.result.token).toByteArray())
+        val localOwnerSig = KeyPair.fromPrivate(localOwnerKey.asBigInteger()).sign(hash)
+
+        then(accountsRepositoryMock).should().sign(hash)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(safeDaoMock).should().loadSafeInfos()
+        then(safeDaoMock).shouldHaveNoMoreInteractions()
+        then(encryptionManagerMock).should().decrypt(MockUtils.any())
+        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         assertEquals(
             bundlePushInfo(testFirebaseInstanceIdTask.result.token),
             testPreferences.getString(LAST_SYNC_PUSH_INFO_PREFS_KEY, "")
@@ -205,7 +230,10 @@ class DefaultPushServiceRepositoryTest {
                 bundle = BuildConfig.APPLICATION_ID,
                 versionName = BuildConfig.VERSION_NAME,
                 client = "android",
-                signatures = listOf(ServiceSignature.fromSignature(TEST_SIGNATURE))
+                signatures = listOf(
+                    ServiceSignature(localOwnerSig.r, localOwnerSig.s, localOwnerSig.v.toInt()),
+                    ServiceSignature.fromSignature(TEST_SIGNATURE)
+                )
             )
         )
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
@@ -974,7 +1002,33 @@ class DefaultPushServiceRepositoryTest {
     }
 
     @Test
+    fun handlePushMessageSendTransactionUnknownSafe() {
+        val pushMessage = PushMessage.SendTransaction(
+            hash = "hash",
+            safe = TEST_SAFE_ADDRESS.asEthereumAddressString(),
+            to = TEST_ACCOUNT.address.asEthereumAddressString(),
+            value = "",
+            data = "",
+            operation = "0",
+            txGas = "10",
+            dataGas = "10",
+            operationalGas = "10",
+            gasPrice = "10",
+            gasToken = "0",
+            nonce = "0",
+            r = "12",
+            s = "12",
+            v = "27"
+        )
+
+        pushServiceRepository.handlePushMessage(pushMessage)
+
+        then(localNotificationManagerMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
     fun handlePushMessageSendTransaction() {
+        given(safeDaoMock.querySafe(TEST_SAFE_ADDRESS)).willReturn(GnosisSafeDb(TEST_SAFE_ADDRESS))
         val pushMessage = PushMessage.SendTransaction(
             hash = "hash",
             safe = TEST_SAFE_ADDRESS.asEthereumAddressString(),
