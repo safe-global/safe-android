@@ -65,14 +65,16 @@ class DbMigrationTest {
 
         // Get the latest, migrated, version of the database
         // Check that the correct data is in the database
+        val migratedDb = getMigratedRoomDatabase()
+
         val safeObserver = TestObserver<GnosisSafeDb>()
-        getMigratedRoomDatabase().gnosisSafeDao().loadSafe(safe.address).subscribe(safeObserver)
+        migratedDb.gnosisSafeDao().loadSafe(safe.address).subscribe(safeObserver)
         safeObserver.assertResult(
             safe.toDb()
         )
 
         val pendingSafeObserver = TestObserver<PendingGnosisSafeDb>()
-        getMigratedRoomDatabase().gnosisSafeDao().loadPendingSafe(pendingSafe.address).subscribe(pendingSafeObserver)
+        migratedDb.gnosisSafeDao().loadPendingSafe(pendingSafe.address).subscribe(pendingSafeObserver)
         pendingSafeObserver.assertResult(
             pendingSafe.toDb()
         )
