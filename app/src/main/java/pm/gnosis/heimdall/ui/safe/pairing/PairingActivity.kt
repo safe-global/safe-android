@@ -2,11 +2,11 @@ package pm.gnosis.heimdall.ui.safe.pairing
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
 import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.style.ImageSpan
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
@@ -14,6 +14,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_pairing.*
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -72,13 +73,13 @@ abstract class PairingActivity : ViewModelActivity<PairingContract>() {
     }
 
     private fun pair(payload: String) =
-        viewModel.pair(payload)
+        viewModel.pair(payload, signingSafe())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { onPairingLoading(true) }
             .doFinally { onPairingLoading(false) }
-            .subscribeBy(onSuccess = {
+            .subscribeBy(onSuccess = { (signingOwner, extension) ->
                 toast(R.string.devices_paired_successfuly)
-                onSuccess(it)
+                onSuccess(signingOwner, extension)
             }, onError = {
                 snackbar(layout_pairing_coordinator, R.string.error_pairing_devices)
                 Timber.e(it)
@@ -92,7 +93,9 @@ abstract class PairingActivity : ViewModelActivity<PairingContract>() {
     @StringRes
     abstract fun titleRes(): Int
 
-    abstract fun onSuccess(extension: Solidity.Address)
+    abstract fun onSuccess(signingOwner: AccountsRepository.SafeOwner, extension: Solidity.Address)
 
     abstract fun shouldShowLaterOption(): Boolean
+
+    abstract fun signingSafe(): Solidity.Address?
 }

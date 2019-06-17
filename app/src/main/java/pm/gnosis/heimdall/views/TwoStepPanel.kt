@@ -174,17 +174,15 @@ class TwoStepPanel @JvmOverloads constructor(
                     )
                 )
             }
+            Step.NONE -> { /*NOOP*/ }
         }
     }
 
     private fun changeShapeColor(view: View, color: Int) {
-        val background = view.background
-        if (background is ShapeDrawable) {
-            background.paint.color = color
-        } else if (background is GradientDrawable) {
-            background.setColor(color)
-        } else if (background is ColorDrawable) {
-            background.color = color
+        when (val background = view.background) {
+            is ShapeDrawable -> background.paint.color = color
+            is GradientDrawable -> background.setColor(color)
+            is ColorDrawable -> background.color = color
         }
     }
 

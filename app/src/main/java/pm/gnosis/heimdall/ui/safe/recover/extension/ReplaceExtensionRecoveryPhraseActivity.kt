@@ -44,7 +44,7 @@ class ReplaceExtensionRecoveryPhraseActivity : InputRecoveryPhraseActivity<Repla
 
     companion object {
         fun createIntent(context: Context, safeAddress: Solidity.Address, extensionAddress: Solidity.Address) =
-            InputRecoveryPhraseActivity.addExtras(
+            addExtras(
                 Intent(context, ReplaceExtensionRecoveryPhraseActivity::class.java),
                 safeAddress,
                 extensionAddress

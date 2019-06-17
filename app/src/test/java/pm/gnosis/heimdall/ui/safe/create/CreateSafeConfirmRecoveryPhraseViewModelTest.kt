@@ -26,7 +26,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress

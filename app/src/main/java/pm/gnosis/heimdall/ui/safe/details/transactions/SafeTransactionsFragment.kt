@@ -41,7 +41,7 @@ class SafeTransactionsFragment : BaseFragment(), ScrollableContainer {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val address = arguments!!.getString(ARGUMENT_SAFE_ADDRESS).asEthereumAddress()!!
+        val address = arguments!!.getString(ARGUMENT_SAFE_ADDRESS)!!.asEthereumAddress()!!
         viewModel.setup(address)
     }
 

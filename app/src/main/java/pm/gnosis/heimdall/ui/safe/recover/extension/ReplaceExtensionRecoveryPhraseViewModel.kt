@@ -10,6 +10,6 @@ class ReplaceExtensionRecoveryPhraseViewModel @Inject constructor(
 ) : ReplaceExtensionRecoveryPhraseContract() {
     override fun process(input: Input, safeAddress: Solidity.Address, extensionAddress: Solidity.Address?): Observable<ViewUpdate> =
         extensionAddress?.let {
-            recoverSafeOwnersHelper.process(input, safeAddress, extensionAddress)
+            recoverSafeOwnersHelper.process(input, safeAddress, extensionAddress, null)
         } ?: Observable.just<ViewUpdate>(ViewUpdate.RecoverDataError(IllegalStateException("Extension is required!")))
 }

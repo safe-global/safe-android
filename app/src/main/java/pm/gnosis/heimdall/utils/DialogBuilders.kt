@@ -66,7 +66,7 @@ object InfoTipDialogBuilder {
         val alertContent = LayoutInflater.from(context).inflate(contentRes, null)
         return AlertDialog.Builder(context)
             .setView(alertContent)
-            .setPositiveButton(confirmRes) { dialog, which ->
+            .setPositiveButton(confirmRes) { dialog, _ ->
                 dialog.dismiss()
             }
             .create()

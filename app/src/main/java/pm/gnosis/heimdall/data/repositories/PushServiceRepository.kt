@@ -12,10 +12,14 @@ import java.math.BigInteger
 
 interface PushServiceRepository {
     fun syncAuthentication(forced: Boolean = false)
-    fun pair(temporaryAuthorization: PushServiceTemporaryAuthorization): Single<Solidity.Address>
+    fun pair(
+        temporaryAuthorization: PushServiceTemporaryAuthorization,
+        signingSafe: Solidity.Address?
+    ): Single<Pair<AccountsRepository.SafeOwner, Solidity.Address>>
+
     fun propagateSafeCreation(safeAddress: Solidity.Address, targets: Set<Solidity.Address>): Completable
-    fun propagateSubmittedTransaction(hash: String, chainHash: String, targets: Set<Solidity.Address>): Completable
-    fun propagateTransactionRejected(hash: String, signature: Signature, targets: Set<Solidity.Address>): Completable
+    fun propagateSubmittedTransaction(hash: String, chainHash: String, safe: Solidity.Address, targets: Set<Solidity.Address>): Completable
+    fun propagateTransactionRejected(hash: String, signature: Signature, safe: Solidity.Address, targets: Set<Solidity.Address>): Completable
     fun observe(hash: String): Observable<TransactionResponse>
     fun requestConfirmations(
         hash: String,
@@ -31,11 +35,11 @@ interface PushServiceRepository {
 
     fun handlePushMessage(pushMessage: PushMessage)
     fun calculateRejectionHash(transactionHash: ByteArray): Single<ByteArray>
+    fun sendTypedDataConfirmation(hash: ByteArray, signature: ByteArray, safe: Solidity.Address, targets: Set<Solidity.Address>): Completable
 
     sealed class TransactionResponse {
         data class Confirmed(val signature: Signature) : TransactionResponse()
         data class Rejected(val signature: Signature) : TransactionResponse()
     }
 
-    fun sendTypedDataConfirmation(hash: ByteArray, signature: ByteArray, targets: Set<Solidity.Address>): Completable
 }

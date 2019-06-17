@@ -2,14 +2,13 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.room.EmptyResultSetException
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.InstanceIdResult
 import com.squareup.moshi.Moshi
 import io.reactivex.*
-import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
@@ -23,6 +22,7 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -30,12 +30,10 @@ import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivit
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.edit
-import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigInteger
@@ -46,7 +44,7 @@ class DefaultPushServiceRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     gnosisAuthenticatorDb: ApplicationDb,
     private val accountsRepository: AccountsRepository,
-    private val encryptionManager: EncryptionManager,
+    private val cryptoHelper: CryptoHelper,
     private val firebaseInstanceId: FirebaseInstanceId,
     private val localNotificationManager: LocalNotificationManager,
     private val moshi: Moshi,
@@ -94,18 +92,12 @@ class DefaultPushServiceRepository @Inject constructor(
         Single.fromCallable { Sha3Utils.keccak(bundlePushInfo(pushToken).toByteArray()) }
             .subscribeOn(Schedulers.computation())
             .flatMap { hash ->
-                accountsRepository.sign(hash)
-                    .zipWith(
-                        safeDao.loadSafeInfos().map {
-                            it.map { info ->
-                                KeyPair.fromPrivate(info.ownerPrivateKey.value(encryptionManager).asBigInteger())
-                                    .sign(hash)
-                                    .let { signature -> ServiceSignature(signature.r, signature.s, signature.v.toInt()) }
-                            }
-                        },
-                        BiFunction { deviceSig: Signature, ownerSigs: List<ServiceSignature> ->
-                            ownerSigs + ServiceSignature.fromSignature(deviceSig)
-                        })
+                accountsRepository.owners()
+                    .flatMap { accounts ->
+                        Single.zip(accounts.map { accountsRepository.sign(it, hash) }) { sigs ->
+                            sigs.mapNotNull { sig -> (sig as? Signature)?.let { s -> ServiceSignature.fromSignature(s) } }
+                        }
+                    }
             }
             .map {
                 PushServiceAuth(
@@ -128,18 +120,28 @@ class DefaultPushServiceRepository @Inject constructor(
     private fun bundlePushInfo(pushToken: String) =
         "$SIGNATURE_PREFIX$pushToken${BuildConfig.VERSION_CODE}${BuildConfig.VERSION_NAME}$CLIENT${BuildConfig.APPLICATION_ID}"
 
-    override fun pair(temporaryAuthorization: PushServiceTemporaryAuthorization): Single<Solidity.Address> =
-        accountsRepository.recover(
-            Sha3Utils.keccak("$SIGNATURE_PREFIX${temporaryAuthorization.expirationDate}".toByteArray()),
-            temporaryAuthorization.signature.toSignature()
-        )
+    override fun pair(
+        temporaryAuthorization: PushServiceTemporaryAuthorization,
+        signingSafe: Solidity.Address?
+    ): Single<Pair<AccountsRepository.SafeOwner, Solidity.Address>> =
+        Single.fromCallable {
+            cryptoHelper.recover(
+                Sha3Utils.keccak("$SIGNATURE_PREFIX${temporaryAuthorization.expirationDate}".toByteArray()),
+                temporaryAuthorization.signature.toSignature()
+            )
+        }
+            .subscribeOn(Schedulers.computation())
             .map { Sha3Utils.keccak("$SIGNATURE_PREFIX${it.asEthereumAddressChecksumString()}".toByteArray()) to it }
-            .flatMap { (hash, extensionAddress) -> accountsRepository.sign(hash).map { it to extensionAddress } }
-            .map { (signature, extensionAddress) ->
+            .flatMap { (hash, extensionAddress) ->
+                (signingSafe?.let { accountsRepository.signingOwner(it) } ?: accountsRepository.createOwner())
+                    .flatMap { signer -> accountsRepository.sign(signer, hash).map { signer to it } }
+                    .map { it to extensionAddress }
+            }
+            .map { (signerAndSignature, extensionAddress) ->
                 PushServicePairing(
-                    ServiceSignature.fromSignature(signature),
+                    ServiceSignature.fromSignature(signerAndSignature.second),
                     temporaryAuthorization = temporaryAuthorization
-                ) to extensionAddress
+                ) to (signerAndSignature.first to extensionAddress)
             }
             .flatMap { pushServiceApi.pair(it.first).andThen(Single.just(it.second)) }
 
@@ -147,17 +149,22 @@ class DefaultPushServiceRepository @Inject constructor(
         Single.fromCallable { ServiceMessage.SafeCreation(safe = safeAddress.asEthereumAddressString()) }
             .subscribeOn(Schedulers.io())
             .flatMapCompletable {
-                sendNotification(it, targets)
+                sendNotification(it, safeAddress, targets)
             }
 
-    override fun propagateSubmittedTransaction(hash: String, chainHash: String, targets: Set<Solidity.Address>): Completable =
+    override fun propagateSubmittedTransaction(hash: String, chainHash: String, safe: Solidity.Address, targets: Set<Solidity.Address>): Completable =
         Single.fromCallable { ServiceMessage.SendTransactionHash(hash, chainHash) }
             .subscribeOn(Schedulers.io())
             .flatMapCompletable {
-                sendNotification(it, targets)
+                sendNotification(it, safe, targets)
             }
 
-    override fun propagateTransactionRejected(hash: String, signature: Signature, targets: Set<Solidity.Address>): Completable =
+    override fun propagateTransactionRejected(
+        hash: String,
+        signature: Signature,
+        safe: Solidity.Address,
+        targets: Set<Solidity.Address>
+    ): Completable =
         Single.fromCallable {
             ServiceMessage.RejectTransaction(
                 hash,
@@ -168,7 +175,7 @@ class DefaultPushServiceRepository @Inject constructor(
         }
             .subscribeOn(Schedulers.io())
             .flatMapCompletable {
-                sendNotification(it, targets)
+                sendNotification(it, safe, targets)
             }
 
     override fun requestConfirmations(
@@ -201,12 +208,13 @@ class DefaultPushServiceRepository @Inject constructor(
         }
             .subscribeOn(Schedulers.io())
             .flatMapCompletable {
-                sendNotification(it, targets)
+                sendNotification(it, safeAddress, targets)
             }
 
     override fun sendTypedDataConfirmation(
         hash: ByteArray,
         signature: ByteArray,
+        safe: Solidity.Address,
         targets: Set<Solidity.Address>
     ): Completable =
         Single.fromCallable {
@@ -216,15 +224,15 @@ class DefaultPushServiceRepository @Inject constructor(
             )
         }
             .subscribeOn(Schedulers.io())
-            .flatMapCompletable { sendNotification(it, targets) }
+            .flatMapCompletable { sendNotification(it, safe, targets) }
 
-    private fun sendNotification(message: ServiceMessage, targets: Set<Solidity.Address>) =
+    private fun sendNotification(message: ServiceMessage, safe: Solidity.Address, targets: Set<Solidity.Address>) =
         Single.fromCallable {
             moshi.adapter(message.javaClass).toJson(message)
         }
             .subscribeOn(Schedulers.io())
             .flatMap { rawJson ->
-                accountsRepository.sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$rawJson".toByteArray()))
+                accountsRepository.sign(safe, Sha3Utils.keccak("$SIGNATURE_PREFIX$rawJson".toByteArray()))
                     .map { ServiceSignature.fromSignature(it) to rawJson }
             }
             .map { (signature, message) ->

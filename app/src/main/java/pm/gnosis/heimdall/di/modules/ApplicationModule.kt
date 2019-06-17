@@ -39,7 +39,7 @@ import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39Generator
 import pm.gnosis.mnemonic.android.AndroidWordListProvider
 import pm.gnosis.mnemonic.wordlists.WordListProvider
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.accounts.data.db.AccountsDatabase
 import pm.gnosis.svalinn.accounts.repositories.impls.KethereumAccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
@@ -206,15 +206,6 @@ class ApplicationModule(private val application: Application) {
         Room.databaseBuilder(context, ApplicationDb::class.java, ApplicationDb.DB_NAME)
             .addMigrations(ApplicationDb.MIGRATION_1_2)
             .build()
-
-    @Provides
-    @Singleton
-    fun providesAccountsRepository(
-        accountsDatabase: AccountsDatabase,
-        encryptionManager: EncryptionManager,
-        preferencesManager: PreferencesManager
-    ): AccountsRepository =
-        KethereumAccountsRepository(accountsDatabase, encryptionManager, preferencesManager)
 
     @Provides
     @Singleton

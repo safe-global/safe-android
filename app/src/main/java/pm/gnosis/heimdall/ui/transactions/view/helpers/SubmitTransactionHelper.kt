@@ -274,7 +274,7 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                     // Nothing to push
                     return@flatMapCompletable Completable.complete()
                 }
-                return@flatMapCompletable signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, it, targets)
+                return@flatMapCompletable signaturePushRepository.propagateSubmittedTransaction(params.transactionHash, it, safe, targets)
                     // Ignore error here ... if push fails ... it fails
                     .doOnError(Timber::e)
                     .onErrorComplete()

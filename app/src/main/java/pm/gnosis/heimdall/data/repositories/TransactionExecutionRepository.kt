@@ -23,7 +23,12 @@ interface TransactionExecutionRepository {
     ): Single<ByteArray>
 
     fun loadSafeExecuteState(safeAddress: Solidity.Address, paymentToken: Solidity.Address): Single<SafeExecuteState>
-    fun loadExecuteInformation(safeAddress: Solidity.Address, paymentToken: Solidity.Address, transaction: SafeTransaction): Single<ExecuteInformation>
+    fun loadExecuteInformation(
+        safeAddress: Solidity.Address,
+        paymentToken: Solidity.Address,
+        transaction: SafeTransaction,
+        safeOwner: AccountsRepository.SafeOwner? = null
+    ): Single<ExecuteInformation>
 
     fun signConfirmation(
         safeAddress: Solidity.Address,

@@ -7,17 +7,20 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import pm.gnosis.eip712.*
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.nullOnThrow
 import javax.inject.Inject
 
 class ConfirmMessageViewModel @Inject constructor(
-    private val accountsRepository: AccountsRepository,
+    private val cryptoHelper: CryptoHelper,
     private val eiP712JsonParser: EIP712JsonParser,
+    private val gnosisSafeRepository: GnosisSafeRepository,
     private val pushServiceRepository: PushServiceRepository
 ) : ConfirmMessageContract() {
 
@@ -73,6 +76,7 @@ class ConfirmMessageViewModel @Inject constructor(
                     ?.let { typedDataHash(message = it.message, domain = it.domain) }
                     ?: throw InvalidPayload
             }
+            .subscribeOn(Schedulers.computation())
             // Generate EIP712 hash for the payload
             // TODO: this can probably be extracted somewhere else...
             .map { payloadHash ->
@@ -98,21 +102,28 @@ class ConfirmMessageViewModel @Inject constructor(
                 typedDataHash(message = safeMessageStruct, domain = safeDomain)
             }
             // Recover the account that sent the request
-            .flatMapSingle { safeMessageHash ->
-                accountsRepository.recover(safeMessageHash, viewArguments.signature)
-                    .map { it to safeMessageHash }
-                    .onErrorResumeNext { Single.error(ErrorRecoveringSender) }
+            .map { safeMessageHash ->
+                try {
+                    cryptoHelper.recover(safeMessageHash, viewArguments.signature) to safeMessageHash
+                } catch (e: Exception) {
+                    throw ErrorRecoveringSender
+                }
             }
             // Sign the hash
             .flatMapSingle { (requester, safeMessageHash) ->
-                accountsRepository.sign(safeMessageHash)
+                gnosisSafeRepository.sign(viewArguments.safe, safeMessageHash)
                     .map { it.toString().hexStringToByteArray() }
                     .map { Triple(requester, it, safeMessageHash) }
                     .onErrorResumeNext { Single.error(ErrorSigningHash) }
             }
             // Send push to requester with result
             .flatMapCompletable { (requester, signatureBytes, safeMessageHash) ->
-                pushServiceRepository.sendTypedDataConfirmation(hash = safeMessageHash, signature = signatureBytes, targets = setOf(requester))
+                pushServiceRepository.sendTypedDataConfirmation(
+                    hash = safeMessageHash,
+                    safe = viewArguments.safe,
+                    signature = signatureBytes,
+                    targets = setOf(requester)
+                )
                     .onErrorResumeNext { Completable.error(ErrorSendingPush) }
             }
             .andThen(Observable.just<Result>(Result.ConfirmationSent))

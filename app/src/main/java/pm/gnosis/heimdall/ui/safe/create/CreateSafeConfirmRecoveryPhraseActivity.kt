@@ -7,6 +7,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.ui.recoveryphrase.ConfirmRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -19,7 +20,10 @@ import timber.log.Timber
 class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<CreateSafeConfirmRecoveryPhraseContract>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.setup(intent.getStringExtra(EXTRA_BROWSER_EXTENSION_ADDRESS)?.run { asEthereumAddress()!! })
+        viewModel.setup(
+            intent.getStringExtra(EXTRA_BROWSER_EXTENSION_ADDRESS)?.run { asEthereumAddress()!! },
+            intent.getParcelableExtra(EXTRA_SAFE_OWNER)
+        )
     }
 
     override fun isRecoveryPhraseConfirmed() {
@@ -43,11 +47,18 @@ class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<Cr
 
     companion object {
         private const val EXTRA_BROWSER_EXTENSION_ADDRESS = "extra.string.browser_extension_address"
+        private const val EXTRA_SAFE_OWNER = "extra.parcelable.safe_owner"
 
-        fun createIntent(context: Context, recoveryPhrase: String, browserExtensionAddress: Solidity.Address?) =
+        fun createIntent(
+            context: Context,
+            recoveryPhrase: String,
+            browserExtensionAddress: Solidity.Address?,
+            safeOwner: AccountsRepository.SafeOwner?
+        ) =
             Intent(context, CreateSafeConfirmRecoveryPhraseActivity::class.java).apply {
                 putExtra(EXTRA_RECOVERY_PHRASE, recoveryPhrase)
                 putExtra(EXTRA_BROWSER_EXTENSION_ADDRESS, browserExtensionAddress?.asEthereumAddressString())
+                putExtra(EXTRA_SAFE_OWNER, safeOwner)
             }
     }
 }

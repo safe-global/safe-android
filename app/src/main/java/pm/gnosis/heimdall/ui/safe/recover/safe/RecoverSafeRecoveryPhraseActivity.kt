@@ -2,7 +2,9 @@ package pm.gnosis.heimdall.ui.safe.recover.safe
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_input_recovery_phrase.*
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -12,6 +14,11 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.visible
 
 class RecoverSafeRecoveryPhraseActivity : InputRecoveryPhraseActivity<RecoverSafeRecoveryPhraseContract>() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.setup(intent.getParcelableExtra(EXTRA_SAFE_OWNER))
+    }
 
     override fun noRecoveryNecessary(safe: Solidity.Address) = onSuccess(safe)
 
@@ -31,7 +38,15 @@ class RecoverSafeRecoveryPhraseActivity : InputRecoveryPhraseActivity<RecoverSaf
     override fun inject(component: ViewComponent) = component.inject(this)
 
     companion object {
-        fun createIntent(context: Context, safeAddress: Solidity.Address, extensionAddress: Solidity.Address?) =
-            InputRecoveryPhraseActivity.addExtras(Intent(context, RecoverSafeRecoveryPhraseActivity::class.java), safeAddress, extensionAddress)
+        private const val EXTRA_SAFE_OWNER = "extra.parcelable.safe_owner"
+        fun createIntent(
+            context: Context,
+            safeAddress: Solidity.Address,
+            extensionAddress: Solidity.Address?,
+            safeOwner: AccountsRepository.SafeOwner?
+        ) =
+            addExtras(Intent(context, RecoverSafeRecoveryPhraseActivity::class.java), safeAddress, extensionAddress).apply {
+                putExtra(EXTRA_SAFE_OWNER, safeOwner)
+            }
     }
 }
