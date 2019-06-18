@@ -1,7 +1,7 @@
 package pm.gnosis.tests
 
 import android.content.Context
-import androidx.test.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.mock
 import pm.gnosis.heimdall.di.components.ApplicationComponent

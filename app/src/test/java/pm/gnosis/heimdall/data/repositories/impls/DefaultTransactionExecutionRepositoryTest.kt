@@ -22,15 +22,18 @@ import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.models.ExecuteParams
 import pm.gnosis.heimdall.data.remote.models.RelayExecution
 import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.models.SemVer
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.*
@@ -43,7 +46,10 @@ class DefaultTransactionExecutionRepositoryTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var safeRepositoryMock: DefaultGnosisSafeRepository
+    lateinit var accountRepositoryMock: AccountsRepository
+
+    @Mock
+    lateinit var cryptoHelperMock: CryptoHelper
 
     @Mock
     lateinit var ethereumRepositoryMock: EthereumRepository
@@ -67,7 +73,8 @@ class DefaultTransactionExecutionRepositoryTest {
         given(appDbMock.descriptionsDao()).willReturn(descriptionsDaoMock)
         repository = DefaultTransactionExecutionRepository(
             appDbMock,
-            safeRepositoryMock,
+            accountRepositoryMock,
+            cryptoHelperMock,
             ethereumRepositoryMock,
             pushServiceRepositoryMock,
             relayServiceApiMock
@@ -198,10 +205,11 @@ class DefaultTransactionExecutionRepositoryTest {
             )
         )
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
-        then(safeRepositoryMock).shouldHaveZeroInteractions()
+        then(accountRepositoryMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
 
         // Check that nonce was cached
-        given(safeRepositoryMock.loadOwnerAddress(TEST_SAFE)).willReturn(Single.just(TEST_OWNER))
+        given(accountRepositoryMock.signingOwner(TEST_SAFE)).willReturn(Single.just(AccountsRepository.SafeOwner(TEST_OWNER, TEST_PK)))
         var remoteNonceString = "9".padStart(64, '0').addHexPrefix()
         given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).willAnswer {
             (it.arguments.first() as BulkRequest).let { bulk ->
@@ -229,7 +237,7 @@ class DefaultTransactionExecutionRepositoryTest {
             )
         )
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
-        then(safeRepositoryMock).should().loadOwnerAddress(TEST_SAFE)
+        then(accountRepositoryMock).should().signingOwner(TEST_SAFE)
 
         // Remote nonce should be used if it is higher
         remoteNonceString = "1a".padStart(64, '0').addHexPrefix()
@@ -246,10 +254,10 @@ class DefaultTransactionExecutionRepositoryTest {
             )
         )
         then(ethereumRepositoryMock).should(times(2)).request(MockUtils.any<BulkRequest>())
-        then(safeRepositoryMock).should(times(2)).loadOwnerAddress(TEST_SAFE)
+        then(accountRepositoryMock).should(times(2)).signingOwner(TEST_SAFE)
 
         then(ethereumRepositoryMock).shouldHaveNoMoreInteractions()
-        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
+        then(accountRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
         then(descriptionsDaoMock).shouldHaveZeroInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
@@ -261,6 +269,7 @@ class DefaultTransactionExecutionRepositoryTest {
         private val TEST_SAFE = "0xA7e15e2e76Ab469F8681b576cFF168F37Aa246EC".asEthereumAddress()!!
         private val TEST_ADDRESS = "0xc257274276a4e539741ca11b590b9447b26a8051".asEthereumAddress()!!
         private val TEST_OWNER = Solidity.Address(BigInteger.valueOf(5))
+        private val TEST_PK = EncryptedByteArray.Converter().fromStorage("encrypted_pk")
         private val TEST_SIGNATURE = Signature(BigInteger.TEN, BigInteger.TEN, 27)
         private val TEST_ETH_AMOUNT = Wei.ether("23")
         private val TEST_PAYMENT_TOKEN = "0x0".asEthereumAddress()!!

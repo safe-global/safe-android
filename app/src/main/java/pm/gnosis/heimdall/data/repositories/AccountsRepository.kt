@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.data.repositories
 
 import android.os.Parcelable
+import io.reactivex.Completable
 import io.reactivex.Single
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.TypeParceler
@@ -28,4 +29,6 @@ interface AccountsRepository {
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
     @TypeParceler<EncryptedByteArray, EncryptedByteArrayParceler>
     data class SafeOwner(val address: Solidity.Address, val privateKey: EncryptedByteArray) : Parcelable
+
+    fun saveOwner(safeAddress: Solidity.Address, safeOwner: SafeOwner): Completable
 }

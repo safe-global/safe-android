@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okio.ByteString
@@ -7,6 +8,7 @@ import pm.gnosis.crypto.KeyGenerator
 import pm.gnosis.crypto.KeyPair
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
+import pm.gnosis.heimdall.data.db.models.GnosisSafeInfoDb
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.mnemonic.Bip39
@@ -58,6 +60,12 @@ class SafeAccountRepository @Inject constructor(
                 AccountsRepository.SafeOwner(Solidity.Address(address), EncryptedByteArray.create(encryptionManager, privateKey))
             }
         }
+
+    override fun saveOwner(safeAddress: Solidity.Address, safeOwner: AccountsRepository.SafeOwner) =
+        Completable.fromCallable {
+            safeDao.insertSafeInfo(GnosisSafeInfoDb(safeAddress, safeOwner.address, safeOwner.privateKey))
+        }
+            .subscribeOn(Schedulers.io())
 
     override fun signingOwner(safeAddress: Solidity.Address): Single<AccountsRepository.SafeOwner> =
         safeDao.loadSafeInfo(safeAddress)

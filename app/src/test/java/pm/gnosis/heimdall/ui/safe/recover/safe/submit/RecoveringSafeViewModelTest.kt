@@ -14,7 +14,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.R
@@ -22,13 +21,12 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.*
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionViewModelTest
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -51,7 +49,7 @@ class RecoveringSafeViewModelTest {
     private lateinit var contextMock: Context
 
     @Mock
-    private lateinit var accountsRepoMock: AccountsRepository
+    private lateinit var cryptoHelperMock: CryptoHelper
 
     @Mock
     private lateinit var execRepoMock: TransactionExecutionRepository
@@ -66,7 +64,7 @@ class RecoveringSafeViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = RecoveringSafeViewModel(contextMock, accountsRepoMock, execRepoMock, safeRepoMock, tokenRepoMock)
+        viewModel = RecoveringSafeViewModel(contextMock, cryptoHelperMock, execRepoMock, safeRepoMock, tokenRepoMock)
     }
 
     @Test
@@ -84,7 +82,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -106,7 +104,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -122,7 +120,7 @@ class RecoveringSafeViewModelTest {
             TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), SemVer(1, 0, 0),
             TEST_TOKEN, BigInteger.TEN, BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO
         )
-        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
+        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
 
         val observer = TestObserver<Pair<RecoveringSafe, RecoveringSafeContract.RecoveryState>>()
         viewModel.checkSafeState(TEST_SAFE).subscribe(observer)
@@ -135,7 +133,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -151,7 +149,7 @@ class RecoveringSafeViewModelTest {
             TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), SemVer(1, 0, 0),
             TEST_TOKEN, BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO, Wei.ether("1").value
         )
-        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
+        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
 
         val observer = TestObserver<Pair<RecoveringSafe, RecoveringSafeContract.RecoveryState>>()
         viewModel.checkSafeState(TEST_SAFE).subscribe(observer)
@@ -164,7 +162,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -181,7 +179,7 @@ class RecoveringSafeViewModelTest {
             TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), SemVer(1, 0, 0),
             TEST_TOKEN, BigInteger.TEN, BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, Wei.ether("1").value
         )
-        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
+        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
 
         val observer = TestObserver<Pair<RecoveringSafe, RecoveringSafeContract.RecoveryState>>()
         viewModel.checkSafeState(TEST_SAFE).subscribe(observer)
@@ -195,7 +193,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -215,7 +213,7 @@ class RecoveringSafeViewModelTest {
             TEST_TX_HASH, recoverTx, TEST_APP, 2, listOf(TEST_APP), SemVer(1, 0, 0),
             TEST_TOKEN, BigInteger.TEN, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO, Wei.ether("1").value
         )
-        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
+        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
 
         val observer = TestObserver<Pair<RecoveringSafe, RecoveringSafeContract.RecoveryState>>()
         viewModel.checkSafeState(TEST_SAFE).subscribe(observer)
@@ -228,7 +226,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -240,7 +238,7 @@ class RecoveringSafeViewModelTest {
             TEST_SAFE, null, TEST_SAFE, gasToken = TEST_TOKEN
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
-        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.error(UnknownHostException()))
+        given(execRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.error(UnknownHostException()))
 
         val observer = TestObserver<Pair<RecoveringSafe, RecoveringSafeContract.RecoveryState>>()
         viewModel.checkSafeState(TEST_SAFE).subscribe(observer)
@@ -254,7 +252,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveNoMoreInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -273,7 +271,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -294,7 +292,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -318,7 +316,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveNoMoreInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -341,7 +339,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -366,7 +364,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -391,7 +389,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(tokenRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -411,7 +409,7 @@ class RecoveringSafeViewModelTest {
 
         // Repos are not related to this method
         then(execRepoMock).shouldHaveZeroInteractions()
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -439,7 +437,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(execRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -503,7 +501,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(execRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -523,7 +521,7 @@ class RecoveringSafeViewModelTest {
 
         // Repos are not related to this method
         then(tokenRepoMock).shouldHaveZeroInteractions()
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -555,7 +553,7 @@ class RecoveringSafeViewModelTest {
         then(tokenRepoMock).shouldHaveNoMoreInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -583,7 +581,7 @@ class RecoveringSafeViewModelTest {
         then(tokenRepoMock).shouldHaveNoMoreInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -627,7 +625,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -671,7 +669,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -684,7 +682,7 @@ class RecoveringSafeViewModelTest {
         observer.assertFailure(Predicate { it == error })
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(execRepoMock).shouldHaveZeroInteractions()
         // No error message mapping
         then(contextMock).shouldHaveZeroInteractions()
@@ -724,7 +722,7 @@ class RecoveringSafeViewModelTest {
         val recoverTx = SafeTransaction(Transaction(TEST_SAFE, data = "", nonce = BigInteger.ZERO), TransactionExecutionRepository.Operation.CALL)
         then(execRepoMock).should().calculateHash(TEST_SAFE, recoverTx, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN, TEST_VERSION)
         then(execRepoMock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         // No error message mapping
         then(contextMock).shouldHaveZeroInteractions()
 
@@ -748,9 +746,9 @@ class RecoveringSafeViewModelTest {
             )
         )
             .willReturn(Single.just(TEST_HASH_BYTES))
-        given(accountsRepoMock.recover(TEST_HASH_BYTES, signature1)).willReturn(Single.just(TEST_RECOVER_1))
+        given(cryptoHelperMock.recover(TEST_HASH_BYTES, signature1)).willReturn(TEST_RECOVER_1)
         val error = IllegalArgumentException()
-        given(accountsRepoMock.recover(TEST_HASH_BYTES, signature2)).willReturn(Single.error(error))
+        given(cryptoHelperMock.recover(TEST_HASH_BYTES, signature2)).willThrow(error)
 
         given(safeRepoMock.loadInfo(MockUtils.any())).willReturn(
             Observable.just(
@@ -767,9 +765,9 @@ class RecoveringSafeViewModelTest {
         val recoverTx = SafeTransaction(Transaction(TEST_SAFE, data = "", nonce = BigInteger.ZERO), TransactionExecutionRepository.Operation.CALL)
         then(execRepoMock).should().calculateHash(TEST_SAFE, recoverTx, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN, TEST_VERSION)
         then(execRepoMock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature1)
-        then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature2)
-        then(accountsRepoMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelperMock).should().recover(TEST_HASH_BYTES, signature1)
+        then(cryptoHelperMock).should().recover(TEST_HASH_BYTES, signature2)
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
         // No error message mapping
         then(contextMock).shouldHaveZeroInteractions()
 
@@ -794,8 +792,8 @@ class RecoveringSafeViewModelTest {
             )
         )
             .willReturn(Single.just(TEST_HASH_BYTES))
-        given(accountsRepoMock.recover(TEST_HASH_BYTES, signature1)).willReturn(Single.just(TEST_RECOVER_1))
-        given(accountsRepoMock.recover(TEST_HASH_BYTES, signature2)).willReturn(Single.just(TEST_RECOVER_2))
+        given(cryptoHelperMock.recover(TEST_HASH_BYTES, signature1)).willReturn(TEST_RECOVER_1)
+        given(cryptoHelperMock.recover(TEST_HASH_BYTES, signature2)).willReturn(TEST_RECOVER_2)
         given(
             execRepoMock.submit(
                 MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(),
@@ -823,9 +821,9 @@ class RecoveringSafeViewModelTest {
             false, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN, TEST_VERSION, false
         )
         then(execRepoMock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature1)
-        then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature2)
-        then(accountsRepoMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelperMock).should().recover(TEST_HASH_BYTES, signature1)
+        then(cryptoHelperMock).should().recover(TEST_HASH_BYTES, signature2)
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.error_check_internet_connection)
         then(contextMock).shouldHaveNoMoreInteractions()
 
@@ -849,8 +847,8 @@ class RecoveringSafeViewModelTest {
             )
         )
             .willReturn(Single.just(TEST_HASH_BYTES))
-        given(accountsRepoMock.recover(TEST_HASH_BYTES, signature1)).willReturn(Single.just(TEST_RECOVER_1))
-        given(accountsRepoMock.recover(TEST_HASH_BYTES, signature2)).willReturn(Single.just(TEST_RECOVER_2))
+        given(cryptoHelperMock.recover(TEST_HASH_BYTES, signature1)).willReturn(TEST_RECOVER_1)
+        given(cryptoHelperMock.recover(TEST_HASH_BYTES, signature2)).willReturn(TEST_RECOVER_2)
         given(
             execRepoMock.submit(
                 MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(),
@@ -881,9 +879,9 @@ class RecoveringSafeViewModelTest {
             false, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN, TEST_VERSION, false
         )
         then(execRepoMock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature1)
-        then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature2)
-        then(accountsRepoMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelperMock).should().recover(TEST_HASH_BYTES, signature1)
+        then(cryptoHelperMock).should().recover(TEST_HASH_BYTES, signature2)
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
         // No error message mapping
         then(contextMock).shouldHaveZeroInteractions()
 
@@ -907,8 +905,8 @@ class RecoveringSafeViewModelTest {
             )
         )
             .willReturn(Single.just(TEST_HASH_BYTES))
-        given(accountsRepoMock.recover(TEST_HASH_BYTES, signature1)).willReturn(Single.just(TEST_RECOVER_1))
-        given(accountsRepoMock.recover(TEST_HASH_BYTES, signature2)).willReturn(Single.just(TEST_RECOVER_2))
+        given(cryptoHelperMock.recover(TEST_HASH_BYTES, signature1)).willReturn(TEST_RECOVER_1)
+        given(cryptoHelperMock.recover(TEST_HASH_BYTES, signature2)).willReturn(TEST_RECOVER_2)
         given(
             execRepoMock.submit(
                 MockUtils.any(), MockUtils.any(), MockUtils.any(), anyBoolean(),
@@ -938,9 +936,9 @@ class RecoveringSafeViewModelTest {
             false, BigInteger.ZERO, BigInteger.ONE, BigInteger.TEN, TEST_TOKEN, TEST_VERSION, false
         )
         then(execRepoMock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature1)
-        then(accountsRepoMock).should().recover(TEST_HASH_BYTES, signature2)
-        then(accountsRepoMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelperMock).should().recover(TEST_HASH_BYTES, signature1)
+        then(cryptoHelperMock).should().recover(TEST_HASH_BYTES, signature2)
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
         // No error message mapping
         then(contextMock).shouldHaveZeroInteractions()
 
@@ -963,7 +961,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(execRepoMock).shouldHaveZeroInteractions()
     }
 
@@ -1005,7 +1003,7 @@ class RecoveringSafeViewModelTest {
         then(contextMock).shouldHaveZeroInteractions()
 
         // Repos are not related to this method
-        then(accountsRepoMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(execRepoMock).shouldHaveZeroInteractions()
     }
 

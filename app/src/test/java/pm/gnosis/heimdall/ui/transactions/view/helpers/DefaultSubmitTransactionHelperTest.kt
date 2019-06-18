@@ -96,7 +96,8 @@ class DefaultSubmitTransactionHelperTest {
         val error = TimeoutException()
         val estimationSingleFactory = TestSingleFactory<TransactionExecutionRepository.ExecuteInformation>()
         given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(estimationSingleFactory.get())
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
+            .willReturn(estimationSingleFactory.get())
         val signatureSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
         given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
         val signatureSingleFactory = TestSingleFactory<Map<Solidity.Address, Signature>>()
@@ -151,7 +152,7 @@ class DefaultSubmitTransactionHelperTest {
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(infoTooLowBalanceEth))
         given(transactionViewHolder.loadAssetChange())
             .willReturn(Single.just(ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, Wei.ether("23").value).toOptional()))
@@ -183,7 +184,7 @@ class DefaultSubmitTransactionHelperTest {
             testGasToken.address, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             BigInteger("19")
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(infoTooLowBalanceToken))
         given(transactionViewHolder.loadAssetChange())
             .willReturn(Single.just(ERC20TokenWithBalance(testGasToken, BigInteger.TEN).toOptional()))
@@ -216,7 +217,7 @@ class DefaultSubmitTransactionHelperTest {
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(assetTooLowBalanceToken))
         given(transactionViewHolder.loadAssetChange())
             .willReturn(Single.just(ERC20TokenWithBalance(testToken, BigInteger.TEN).toOptional()))
@@ -253,7 +254,7 @@ class DefaultSubmitTransactionHelperTest {
             testGasToken.address, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             BigInteger("21")
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
         given(transactionViewHolder.loadAssetChange()).willReturn(Single.just(None))
         retryEvents.onNext(Unit)
 
@@ -397,13 +398,13 @@ class DefaultSubmitTransactionHelperTest {
             )
         ).willReturn(Single.just(TEST_CHAIN_HASH))
         given(
-            signaturePushRepository.propagateSubmittedTransaction(anyString(), anyString(), anySet())
+            signaturePushRepository.propagateSubmittedTransaction(anyString(), anyString(), MockUtils.any(), anySet())
         ).willReturn(Completable.error(TimeoutException()))
         submitEvents.onNext(Unit)
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(true)) }
         testObserver.assertUpdates(updates)
         then(signaturePushRepository).should()
-            .propagateSubmittedTransaction(TEST_TRANSACTION_HASH, TEST_CHAIN_HASH, setOf(TEST_OWNERS[0], TEST_OWNERS[1]))
+            .propagateSubmittedTransaction(TEST_TRANSACTION_HASH, TEST_CHAIN_HASH, TEST_SAFE, setOf(TEST_OWNERS[0], TEST_OWNERS[1]))
 
         /*
          * Test submit transaction success
@@ -424,13 +425,13 @@ class DefaultSubmitTransactionHelperTest {
             )
         ).willReturn(Single.just(TEST_CHAIN_HASH))
         given(
-            signaturePushRepository.propagateSubmittedTransaction(anyString(), anyString(), anySet())
+            signaturePushRepository.propagateSubmittedTransaction(anyString(), anyString(), MockUtils.any(), anySet())
         ).willReturn(Completable.complete())
         submitEvents.onNext(Unit)
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.TransactionSubmitted(true)) }
         testObserver.assertUpdates(updates)
         then(signaturePushRepository).should(times(2))
-            .propagateSubmittedTransaction(TEST_TRANSACTION_HASH, TEST_CHAIN_HASH, setOf(TEST_OWNERS[0], TEST_OWNERS[1]))
+            .propagateSubmittedTransaction(TEST_TRANSACTION_HASH, TEST_CHAIN_HASH, TEST_SAFE, setOf(TEST_OWNERS[0], TEST_OWNERS[1]))
 
         /*
          * Test confirmation push message
@@ -550,7 +551,7 @@ class DefaultSubmitTransactionHelperTest {
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
 
         submitTransactionHelper.observe(events, TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS))
@@ -609,7 +610,7 @@ class DefaultSubmitTransactionHelperTest {
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
 
         val initialSignatures = setOf(TEST_SIGNATURE)
@@ -675,7 +676,7 @@ class DefaultSubmitTransactionHelperTest {
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
 
         val initialSignatures = setOf(TEST_SIGNATURE)
@@ -742,7 +743,7 @@ class DefaultSubmitTransactionHelperTest {
             TEST_ETHER_TOKEN, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             Wei.ether("23").value
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(info))
 
         val initialSignatures = setOf(TEST_SIGNATURE)

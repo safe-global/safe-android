@@ -26,12 +26,14 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
+import java.lang.RuntimeException
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
@@ -42,7 +44,7 @@ class ReplaceExtensionViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    private lateinit var accountsRepositoryMock: AccountsRepository
+    private lateinit var cryptoHelper: CryptoHelper
 
     @Mock
     private lateinit var gnosisSafeRepositoryMock: GnosisSafeRepository
@@ -61,7 +63,7 @@ class ReplaceExtensionViewModelTest {
     @Before
     fun setUp() {
         viewModel = ReplaceExtensionSubmitViewModel(
-            accountsRepositoryMock,
+            cryptoHelper,
             gnosisSafeRepositoryMock,
             pushServiceRepositoryMock,
             tokenRepositoryMock,
@@ -331,17 +333,17 @@ class ReplaceExtensionViewModelTest {
 
 
         given(
-            accountsRepositoryMock.recover(
+            cryptoHelper.recover(
                 TX_HASH,
                 SIGNATURE_1
             )
-        ).willReturn(Single.just("0x0a".asEthereumAddress()))
+        ).willReturn("0x0a".asEthereumAddress()!!)
         given(
-            accountsRepositoryMock.recover(
+            cryptoHelper.recover(
                 TX_HASH,
                 SIGNATURE_2
             )
-        ).willReturn(Single.just("0x14".asEthereumAddress()))
+        ).willReturn("0x14".asEthereumAddress()!!)
 
         given(
             transactionExecutionRepositoryMock.submit(
@@ -389,11 +391,11 @@ class ReplaceExtensionViewModelTest {
                 GAS_TOKEN.address,
                 VERSION
             )
-        then(accountsRepositoryMock).should().recover(
+        then(cryptoHelper).should().recover(
             TX_HASH,
             SIGNATURE_1
         )
-        then(accountsRepositoryMock).should().recover(
+        then(cryptoHelper).should().recover(
             TX_HASH,
             SIGNATURE_2
         )
@@ -415,7 +417,7 @@ class ReplaceExtensionViewModelTest {
             )
         )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelper).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
 
         testObserver.assertResult(DataResult(Unit))
@@ -438,17 +440,17 @@ class ReplaceExtensionViewModelTest {
         ).willReturn(Single.just(TX_HASH))
 
         given(
-            accountsRepositoryMock.recover(
+            cryptoHelper.recover(
                 TX_HASH,
                 SIGNATURE_1
             )
-        ).willReturn(Single.just("0x0a".asEthereumAddress()))
+        ).willReturn("0x0a".asEthereumAddress()!!)
         given(
-            accountsRepositoryMock.recover(
+            cryptoHelper.recover(
                 TX_HASH,
                 SIGNATURE_2
             )
-        ).willReturn(Single.just("0x14".asEthereumAddress()))
+        ).willReturn("0x14".asEthereumAddress()!!)
 
         given(
             transactionExecutionRepositoryMock.submit(
@@ -496,11 +498,11 @@ class ReplaceExtensionViewModelTest {
                 GAS_TOKEN.address,
                 VERSION
             )
-        then(accountsRepositoryMock).should().recover(
+        then(cryptoHelper).should().recover(
             TX_HASH,
             SIGNATURE_1
         )
-        then(accountsRepositoryMock).should().recover(
+        then(cryptoHelper).should().recover(
             TX_HASH,
             SIGNATURE_2
         )
@@ -522,7 +524,7 @@ class ReplaceExtensionViewModelTest {
             )
         )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelper).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
 
         testObserver.assertResult(DataResult(Unit))
@@ -545,17 +547,17 @@ class ReplaceExtensionViewModelTest {
         ).willReturn(Single.just(TX_HASH))
 
         given(
-            accountsRepositoryMock.recover(
+            cryptoHelper.recover(
                 TX_HASH,
                 SIGNATURE_1
             )
-        ).willReturn(Single.just("0x0a".asEthereumAddress()))
+        ).willReturn("0x0a".asEthereumAddress()!!)
         given(
-            accountsRepositoryMock.recover(
+            cryptoHelper.recover(
                 TX_HASH,
                 SIGNATURE_2
             )
-        ).willReturn(Single.just("0x14".asEthereumAddress()))
+        ).willReturn("0x14".asEthereumAddress()!!)
 
         given(
             transactionExecutionRepositoryMock.submit(
@@ -601,11 +603,11 @@ class ReplaceExtensionViewModelTest {
                 GAS_TOKEN.address,
                 VERSION
             )
-        then(accountsRepositoryMock).should().recover(
+        then(cryptoHelper).should().recover(
             TX_HASH,
             SIGNATURE_1
         )
-        then(accountsRepositoryMock).should().recover(
+        then(cryptoHelper).should().recover(
             TX_HASH,
             SIGNATURE_2
         )
@@ -622,7 +624,7 @@ class ReplaceExtensionViewModelTest {
             true
         )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelper).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
 
         testObserver.assertValue { it is ErrorResult && it.error == exception }
@@ -631,7 +633,7 @@ class ReplaceExtensionViewModelTest {
     @Test
     fun submitTransactionErrorRecovering() {
         val testObserver = TestObserver.create<Result<Unit>>()
-        val exception = Exception()
+        val exception = RuntimeException()
         given(
             transactionExecutionRepositoryMock.calculateHash(
                 MockUtils.any(),
@@ -645,17 +647,17 @@ class ReplaceExtensionViewModelTest {
         ).willReturn(Single.just(TX_HASH))
 
         given(
-            accountsRepositoryMock.recover(
+            cryptoHelper.recover(
                 TX_HASH,
                 SIGNATURE_1
             )
-        ).willReturn(Single.just("0x0a".asEthereumAddress()))
+        ).willReturn("0x0a".asEthereumAddress())
         given(
-            accountsRepositoryMock.recover(
+            cryptoHelper.recover(
                 TX_HASH,
                 SIGNATURE_2
             )
-        ).willReturn(Single.error(exception))
+        ).willThrow(exception)
 
         given(gnosisSafeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(
             SafeInfo(SAFE_TRANSACTION.wrapped.address, Wei.ZERO, 1, emptyList(), false, emptyList(), VERSION)
@@ -685,16 +687,16 @@ class ReplaceExtensionViewModelTest {
                 GAS_TOKEN.address,
                 VERSION
             )
-        then(accountsRepositoryMock).should().recover(
+        then(cryptoHelper).should().recover(
             TX_HASH,
             SIGNATURE_1
         )
-        then(accountsRepositoryMock).should().recover(
+        then(cryptoHelper).should().recover(
             TX_HASH,
             SIGNATURE_2
         )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelper).shouldHaveNoMoreInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
 
         testObserver.assertValue { it is ErrorResult && it.error == exception }
@@ -744,7 +746,7 @@ class ReplaceExtensionViewModelTest {
                 VERSION
             )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveZeroInteractions()
+        then(cryptoHelper).shouldHaveZeroInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
 
         testObserver.assertValue { it is ErrorResult && it.error is IllegalStateException }
@@ -795,7 +797,7 @@ class ReplaceExtensionViewModelTest {
                 VERSION
             )
         then(transactionExecutionRepositoryMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveZeroInteractions()
+        then(cryptoHelper).shouldHaveZeroInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
 
         testObserver.assertValue { it is ErrorResult && it.error == exception }

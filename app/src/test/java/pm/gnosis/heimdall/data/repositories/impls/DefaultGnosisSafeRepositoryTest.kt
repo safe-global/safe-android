@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertArrayEquals
@@ -69,12 +70,6 @@ class DefaultGnosisSafeRepositoryTest {
     @Mock
     private lateinit var pushRepositoryMock: PushServiceRepository
 
-    @Mock
-    private lateinit var bip39: Bip39
-
-    @Mock
-    private lateinit var encryptionManagerMock: EncryptionManager
-
     @Captor
     private lateinit var safeInfoCaptor: ArgumentCaptor<GnosisSafeInfoDb>
 
@@ -89,9 +84,7 @@ class DefaultGnosisSafeRepositoryTest {
             accountsRepository,
             addressBookRepository,
             ethereumRepositoryMock,
-            pushRepositoryMock,
-            bip39,
-            encryptionManagerMock
+            pushRepositoryMock
         )
     }
 
@@ -180,44 +173,20 @@ class DefaultGnosisSafeRepositoryTest {
 
     @Test
     fun saveOwner() {
-        val owner = "0xfeeddad0".asEthereumAddress()!!
-        val ownerKey = Sha3Utils.keccak("cow".toByteArray())
-        val cryptoData = EncryptionManager.CryptoData("0bad".hexToByteArray(), "dad0".hexToByteArray())
-        given(encryptionManagerMock.encrypt(MockUtils.any()))
-            .willReturn(cryptoData)
+        val pk = EncryptedByteArray.Converter().fromStorage("crypt_data")
+        val address = "0xfeeddad0".asEthereumAddress()!!
+        given(accountsRepository.saveOwner(MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
 
+        val safeOwner = AccountsRepository.SafeOwner(address, pk)
         val testObserver = TestObserver<Unit>()
-        repository.saveOwner(TEST_SAFE, owner, ownerKey).subscribe(testObserver)
+        repository.saveOwner(TEST_SAFE, safeOwner).subscribe(testObserver)
 
         testObserver.assertResult()
-        then(encryptionManagerMock).should().encrypt(ownerKey)
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        then(safeDaoMock).should().insertSafeInfo(capture(safeInfoCaptor))
-        then(safeDaoMock).shouldHaveNoMoreInteractions()
-        assertEquals(TEST_SAFE, safeInfoCaptor.value.safeAddress)
-        assertEquals(owner, safeInfoCaptor.value.ownerAddress)
-        assertEquals(cryptoData.toString(), EncryptedByteArray.Converter().toStorage(safeInfoCaptor.value.ownerPrivateKey))
+        then(accountsRepository).should().saveOwner(TEST_SAFE, safeOwner)
+        then(accountsRepository).shouldHaveNoMoreInteractions()
         then(pushRepositoryMock).should().syncAuthentication(true)
-        then(safeDaoMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun createOwner() {
-        given(bip39.generateMnemonic(anyInt(), anyInt())).willReturn("some mnemonic")
-        val seed = "08fc1d796483593d2ab1495511c560cbc2574d76ebce9efbe513b1eb006a8bbc71921b3c29c6229f7fc1d688c5012e199d30869efc57a7b538b7f31d0c1f7fe7"
-        given(bip39.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(seed.hexToByteArray())
-
-        val testObserver = TestObserver<Pair<Solidity.Address, ByteArray>>()
-        repository.createOwner().subscribe(testObserver)
-        val privateKey = "0xc956d2ca057d1c7ad15abff311bfc2f9cf6d396618c38a57332498ee78cf03dd".hexToByteArray()
-        testObserver.assertSubscribed().assertNoErrors().assertComplete().assertValueCount(1)
-        val generatedPair = testObserver.values().first()
-        assertEquals("0xB7262c07974aA58fE8c705fD1f72C31E8A248f51".asEthereumAddress()!!, generatedPair.first)
-        assertArrayEquals(privateKey, generatedPair.second)
-
-        then(bip39).should().generateMnemonic(Bip39.MIN_ENTROPY_BITS, R.id.english)
-        then(bip39).should().mnemonicToSeed("some mnemonic")
-        then(bip39).shouldHaveNoMoreInteractions()
+        then(pushRepositoryMock).shouldHaveNoMoreInteractions()
+        then(safeDaoMock).shouldHaveZeroInteractions()
     }
 
     fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()

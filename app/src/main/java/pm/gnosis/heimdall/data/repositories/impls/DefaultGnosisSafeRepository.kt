@@ -303,18 +303,15 @@ class DefaultGnosisSafeRepository @Inject constructor(
     override fun observePendingTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>> =
         descriptionsDao.observePendingTransaction(address)
             .subscribeOn(Schedulers.io())
-            .map { it.map { TransactionStatus(it.id, it.timestamp, true) } }
+            .map { it.map { tx -> TransactionStatus(tx.id, tx.timestamp, true) } }
 
     override fun observeSubmittedTransactions(address: Solidity.Address): Flowable<List<TransactionStatus>> =
         descriptionsDao.observeSubmittedTransaction(address)
             .subscribeOn(Schedulers.io())
-            .map { it.map { TransactionStatus(it.id, it.timestamp, false) } }
+            .map { it.map { tx -> TransactionStatus(tx.id, tx.timestamp, false) } }
 
     override fun saveOwner(safeAddress: Solidity.Address, safeOwner: AccountsRepository.SafeOwner) =
-        Completable.fromCallable {
-            // TODO: move to accounts repository
-            safeDao.insertSafeInfo(GnosisSafeInfoDb(safeAddress, safeOwner.address, safeOwner.privateKey))
-        }
+        accountsRepository.saveOwner(safeAddress, safeOwner)
             .doOnComplete { pushServiceRepository.syncAuthentication(true) }
             .subscribeOn(Schedulers.io())
 

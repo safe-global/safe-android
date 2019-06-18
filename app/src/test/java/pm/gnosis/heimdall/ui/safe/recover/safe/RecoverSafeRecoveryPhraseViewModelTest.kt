@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.safe.recover.safe
 
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import org.junit.Before
@@ -13,18 +14,19 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
-import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.Input
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.ViewUpdate
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
@@ -40,26 +42,37 @@ class RecoverSafeRecoveryPhraseViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
+    private lateinit var accountsRepositoryMock: AccountsRepository
+
+    @Mock
     private lateinit var helperMock: RecoverSafeOwnersHelper
 
     @Mock
     private lateinit var safeRepoMock: GnosisSafeRepository
 
+    private val encryptedByteArrayConverter = EncryptedByteArray.Converter()
+
     private lateinit var viewModel: RecoverSafeRecoveryPhraseViewModel
 
     @Before
     fun setUp() {
-        viewModel = RecoverSafeRecoveryPhraseViewModel(helperMock, safeRepoMock)
+        viewModel = RecoverSafeRecoveryPhraseViewModel(accountsRepositoryMock, helperMock, safeRepoMock)
     }
 
-    private fun process(extension: Solidity.Address?) {
-        val helperSubject = PublishSubject.create<InputRecoveryPhraseContract.ViewUpdate>()
-
-        val ownerAddress = Solidity.Address(10.toBigInteger())
-        val ownerKey = byteArrayOf(0)
+    private fun process(extension: Solidity.Address?, signingOwner: AccountsRepository.SafeOwner?) {
+        val safeOwner: AccountsRepository.SafeOwner
+        if (signingOwner == null) {
+            val pk = encryptedByteArrayConverter.fromStorage("owner_pk")
+            safeOwner = AccountsRepository.SafeOwner(TEST_OWNER, pk)
+            given(accountsRepositoryMock.createOwner()).willReturn(Single.just(safeOwner))
+        } else {
+            safeOwner = signingOwner
+        }
+        val helperSubject = PublishSubject.create<ViewUpdate>()
 
         given(
             helperMock.process(
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any()))
@@ -67,13 +80,13 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         given(
             safeRepoMock.saveOwner(
                 MockUtils.any(),
-                MockUtils.any(),
                 MockUtils.any())
         ).willReturn(Completable.complete())
 
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
+        val observer = TestObserver<ViewUpdate>()
         val input = Input(Observable.empty(), Observable.empty(), Observable.empty())
+        viewModel.setup(signingOwner)
         viewModel.process(
             input,
             TEST_SAFE,
@@ -108,20 +121,20 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         given(safeRepoMock.addRecoveringSafe(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
             Completable.error(error)
         )
-        helperSubject.onNext(ViewUpdate.RecoverData(executionInfo, signatures, ownerAddress, ownerKey))
+        helperSubject.onNext(ViewUpdate.RecoverData(executionInfo, signatures, safeOwner))
         observer.assertValueAt(tests, ViewUpdate.RecoverDataError(error))
         then(safeRepoMock).should().addRecoveringSafe(TEST_SAFE, null, null, executionInfo, signatures)
-        then(safeRepoMock).should().saveOwner(TEST_SAFE, ownerAddress, ownerKey)
+        then(safeRepoMock).should().saveOwner(TEST_SAFE, safeOwner)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         tests++
 
         given(safeRepoMock.addRecoveringSafe(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
             Completable.complete()
         )
-        helperSubject.onNext(ViewUpdate.RecoverData(executionInfo, signatures, ownerAddress, ownerKey))
-        observer.assertValueAt(tests, ViewUpdate.RecoverData(executionInfo, signatures, ownerAddress, ownerKey))
+        helperSubject.onNext(ViewUpdate.RecoverData(executionInfo, signatures, safeOwner))
+        observer.assertValueAt(tests, ViewUpdate.RecoverData(executionInfo, signatures, safeOwner))
         then(safeRepoMock).should(times(2)).addRecoveringSafe(TEST_SAFE, null, null, executionInfo, signatures)
-        then(safeRepoMock).should(times(2)).saveOwner(TEST_SAFE, ownerAddress, ownerKey)
+        then(safeRepoMock).should(times(2)).saveOwner(TEST_SAFE, safeOwner)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         tests++
 
@@ -143,7 +156,8 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         then(helperMock).should().process(
             input,
             TEST_SAFE,
-            extension
+            extension,
+            safeOwner
         )
         then(helperMock).shouldHaveNoMoreInteractions()
 
@@ -151,12 +165,26 @@ class RecoverSafeRecoveryPhraseViewModelTest {
 
     @Test
     fun processWithExtension() {
-        process(TEST_EXTENSION)
+        process(TEST_EXTENSION, null)
     }
 
     @Test
     fun processWithoutExtension() {
-        process(null)
+        process(null, null)
+    }
+
+    @Test
+    fun processWithExtensionAndWithOwner() {
+        val pk = encryptedByteArrayConverter.fromStorage("another_pk")
+        val signingOwner = AccountsRepository.SafeOwner("0xbadad".asEthereumAddress()!!, pk)
+        process(TEST_EXTENSION, signingOwner)
+    }
+
+    @Test
+    fun processWithoutExtensionAndWithOwner() {
+        val pk = encryptedByteArrayConverter.fromStorage("another_pk")
+        val signingOwner = AccountsRepository.SafeOwner("0xbadad".asEthereumAddress()!!, pk)
+        process(null, signingOwner)
     }
 
     companion object {
@@ -170,6 +198,7 @@ class RecoverSafeRecoveryPhraseViewModelTest {
         )
         private val TEST_GAS_TOKEN = ERC20Token.ETHER_TOKEN.address
         private val TEST_SAFE = "0x1f81FFF89Bd57811983a35650296681f99C65C7E".asEthereumAddress()!!
+        private val TEST_OWNER = "0xdeadbeef".asEthereumAddress()!!
         private val TEST_EXTENSION = "0xC2AC20b3Bb950C087f18a458DB68271325a48132".asEthereumAddress()!!
         private val TEST_TX_HASH = "0xdae721569a948b87c269ebacaa5a4a67728095e32f9e7e4626f109f27a73b40f".hexAsBigInteger()
     }

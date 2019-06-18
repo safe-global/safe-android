@@ -64,7 +64,7 @@ class CreateAssetTransferViewModelTest {
         val balancesSubject = PublishSubject.create<List<Pair<ERC20Token, BigInteger?>>>()
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(balancesSubject)
         val estimationSingleFactory = TestSingleFactory<TransactionExecutionRepository.ExecuteInformation>()
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(estimationSingleFactory.get())
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(estimationSingleFactory.get())
         val reviewEvents = TestObservableFactory<Unit>()
         val inputSubject = PublishSubject.create<CreateAssetTransferContract.Input>()
         val testObserver = TestObserver<Result<CreateAssetTransferContract.ViewUpdate>>()
@@ -163,7 +163,7 @@ class CreateAssetTransferViewModelTest {
         then(tokenRepositoryMock).should().loadToken(TEST_ETHER_TOKEN)
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
-        then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
+        then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -175,7 +175,7 @@ class CreateAssetTransferViewModelTest {
         val tokenSingleFactory = TestSingleFactory<ERC20Token>()
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenSingleFactory.get())
         val estimationSingleFactory = TestSingleFactory<TransactionExecutionRepository.ExecuteInformation>()
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(estimationSingleFactory.get())
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(estimationSingleFactory.get())
         val reviewEvents = TestObservableFactory<Unit>()
         val inputSubject = PublishSubject.create<CreateAssetTransferContract.Input>()
         val testObserver = TestObserver<Result<CreateAssetTransferContract.ViewUpdate>>()
@@ -283,7 +283,7 @@ class CreateAssetTransferViewModelTest {
         then(tokenRepositoryMock).should(times(3)).loadPaymentToken()
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(TEST_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
-        then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
+        then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
