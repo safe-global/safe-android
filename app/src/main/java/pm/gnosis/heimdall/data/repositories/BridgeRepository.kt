@@ -45,4 +45,6 @@ interface BridgeRepository {
     fun rejectRequest(requestId: Long, errorCode: Long, errorMsg: String): Completable
     fun observeActiveSessionInfo(): Observable<List<SessionIdAndSafe>>
     fun observeSessions(safe: Solidity.Address?): Observable<List<SessionMeta>>
+    fun shouldShowIntro(): Single<Boolean>
+    fun markIntroDone(): Completable
 }

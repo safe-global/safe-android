@@ -73,8 +73,10 @@ import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionContract
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionViewModel
 import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusContract
 import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusViewModel
-import pm.gnosis.heimdall.ui.walletconnect.WalletConnectSessionsContract
-import pm.gnosis.heimdall.ui.walletconnect.WalletConnectSessionsViewModel
+import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroContract
+import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroViewModel
+import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsContract
+import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsViewModel
 import javax.inject.Singleton
 
 @Module
@@ -245,6 +247,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(UnlockContract::class)
     abstract fun bindsUnlockContract(viewModel: UnlockViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(WalletConnectIntroContract::class)
+    abstract fun bindsWalletConnectIntroContract(viewModel: WalletConnectIntroViewModel): ViewModel
 
     @Binds
     @IntoMap

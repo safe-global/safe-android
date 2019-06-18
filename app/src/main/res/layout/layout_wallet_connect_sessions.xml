@@ -54,16 +54,16 @@
             app:layout_constraintStart_toEndOf="@+id/layout_wallet_connect_sessions_back_arrow"
             app:layout_constraintTop_toTopOf="@+id/layout_wallet_connect_sessions_toolbar_background" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/layout_wallet_connect_sessions_recycler_view"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_wallet_connect_sessions_title"
-                tools:itemCount="3"
-                tools:listitem="@layout/layout_wallet_connect_sessions_item" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/layout_wallet_connect_sessions_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_wallet_connect_sessions_title"
+            tools:itemCount="3"
+            tools:listitem="@layout/layout_wallet_connect_sessions_item" />
 
         <View
             android:layout_width="match_parent"

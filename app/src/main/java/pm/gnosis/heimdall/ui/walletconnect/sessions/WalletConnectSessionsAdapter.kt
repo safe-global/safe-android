@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.walletconnect
+package pm.gnosis.heimdall.ui.walletconnect.sessions
 
 import android.content.Context
 import android.view.LayoutInflater

@@ -247,9 +247,10 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.walletconnect.WalletConnectSessionsActivity"
+            android:name=".ui.walletconnect.sessions.WalletConnectSessionsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
+        <activity android:name=".ui.walletconnect.intro.WalletConnectIntroActivity" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

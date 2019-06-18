@@ -48,6 +48,8 @@ class WalletConnectBridgeRepository @Inject constructor(
     appPreferencesManager: AppPreferencesManager,
     executionRepository: TransactionExecutionRepository
 ) : BridgeRepository, TransactionExecutionRepository.TransactionEventsCallback {
+
+    private val bridgePreferences = appPreferencesManager.get(PREFERENCES_BRIDGE)
     private val sessionsPreferences = appPreferencesManager.get(PREFERENCES_SESSIONS)
     private val sessionUpdates = BehaviorSubject.createDefault(Unit)
     private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
@@ -315,9 +317,23 @@ class WalletConnectBridgeRepository @Inject constructor(
         context.startService(Intent(context, BridgeService::class.java))
     }
 
+    override fun shouldShowIntro(): Single<Boolean> =
+        Single.fromCallable {
+            !bridgePreferences.getBoolean(KEY_INTRO_DONE, false)
+        }
+            .subscribeOn(Schedulers.io())
+
+    override fun markIntroDone(): Completable =
+        Completable.fromAction {
+            bridgePreferences.edit { putBoolean(KEY_INTRO_DONE, true) }
+        }
+            .subscribeOn(Schedulers.io())
+
     companion object {
         private const val KEY_PREFIX_SESSION_SAFE = "session_safe_"
         private const val PREFERENCES_SESSIONS = "preferences.wallet_connect_bridge_repository.sessions"
+        private const val PREFERENCES_BRIDGE = "preferences.wallet_connect_bridge_repository.bridge"
+        private const val KEY_INTRO_DONE = "wallet_connect_bridge_repository.boolean.intro_done"
     }
 }
 

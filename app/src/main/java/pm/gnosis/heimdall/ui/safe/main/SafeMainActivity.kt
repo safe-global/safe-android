@@ -44,7 +44,8 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
-import pm.gnosis.heimdall.ui.walletconnect.WalletConnectSessionsActivity
+import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroActivity
+import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.setCompoundDrawableResource
@@ -180,7 +181,16 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
 
         layout_safe_main_debug_settings.setOnClickListener {
-            startActivity(DebugSettingsActivity.createIntent(this))
+            disposables += viewModel.shouldShowWalletConnectIntro()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy {
+                    startActivity(
+                        if (it)
+                            WalletConnectIntroActivity.createIntent(this, "0x0".asEthereumAddress()!!)
+                        else
+                            WalletConnectSessionsActivity.createIntent(this, "0x0".asEthereumAddress()!!)
+                    )
+                }
             closeDrawer()
         }
 

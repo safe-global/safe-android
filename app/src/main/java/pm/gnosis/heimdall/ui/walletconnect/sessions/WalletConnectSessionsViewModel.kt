@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.walletconnect
+package pm.gnosis.heimdall.ui.walletconnect.sessions
 
 import io.reactivex.Completable
 import io.reactivex.Observable

@@ -417,4 +417,11 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="address_input_clipboard">Paste from clipboard</string>
     <string name="ens_input_title">Input ENS Name</string>
     <string name="error_resolve_ens">Could not load address</string>
+    <string name="get_started">Get started</string>
+    <string name="welcome_to_walletconnect">Welcome to WalletConnect</string>
+    <string name="walletconnect_is">WalletConnect is a protocol that allows you to connect the Safe to desktop Dapps. The Safe will notify you when the Dapp wants to make a transaction.</string>
+    <string name="how_does_it_work">How does it work?</string>
+    <string name="you_can_manage_connections">You can manage connections using the list of active sessions. Transaction requests from Dapps can be confirmed using your Safe.</string>
+    <string name="lets_get_started">Let\'s get started</string>
+    <string name="to_connect_to_dapp">To connect your Safe to the desktop Dapp, scan its QR code.</string>
 </resources>

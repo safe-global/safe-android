@@ -12,6 +12,7 @@ import io.reactivex.processors.BehaviorProcessor
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
@@ -33,6 +34,7 @@ import javax.inject.Inject
 class SafeMainViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addressBookRepository: AddressBookRepository,
+    private val bridgeRepository: BridgeRepository,
     private val preferenceManager: PreferencesManager,
     private val safeRepository: GnosisSafeRepository
 ) : SafeMainContract() {
@@ -91,6 +93,9 @@ class SafeMainViewModel @Inject constructor(
             is PendingSafe -> safeRepository.removePendingSafe(safe.address)
             is RecoveringSafe -> safeRepository.removeRecoveringSafe(safe.address)
         }
+
+    override fun shouldShowWalletConnectIntro(): Single<Boolean> =
+        bridgeRepository.shouldShowIntro()
 
     override fun isConnectedToBrowserExtension(safe: AbstractSafe): Single<Result<Boolean>> =
         if (safe is Safe)

@@ -17,6 +17,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsViewModel
 import pm.gnosis.svalinn.common.utils.WhatTheFuck
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils

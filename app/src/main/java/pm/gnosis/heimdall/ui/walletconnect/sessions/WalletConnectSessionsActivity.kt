@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.walletconnect
+package pm.gnosis.heimdall.ui.walletconnect.sessions
 
 
 import android.content.Context
@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
+import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
@@ -28,6 +29,8 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
     @Inject
     lateinit var adapter: WalletConnectSessionsAdapter
 
+    private lateinit var safe: Solidity.Address
+
     override fun screenId() = ScreenId.WALLET_CONNECT_SESSIONS
 
     override fun layout() = R.layout.layout_wallet_connect_sessions
@@ -36,7 +39,7 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val safe = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() ?: run { finish(); return }
+        safe = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() ?: run { finish(); return }
         viewModel.setup(safe)
         layout_wallet_connect_sessions_recycler_view.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         layout_wallet_connect_sessions_recycler_view.adapter = adapter
@@ -56,7 +59,8 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
         disposables += layout_wallet_connect_sessions_back_arrow.clicks()
             .subscribeBy { onBackPressed() }
 
-        disposables += viewModel.observeSessions().observeOn(AndroidSchedulers.mainThread())
+        disposables += viewModel.observeSessions()
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(onNext = adapter::updateData, onError = Timber::e)
 
         disposables += layout_wallet_connect_sessions_add.clicks()
