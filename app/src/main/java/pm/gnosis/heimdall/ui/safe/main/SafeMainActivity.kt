@@ -181,16 +181,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
 
         layout_safe_main_debug_settings.setOnClickListener {
-            disposables += viewModel.shouldShowWalletConnectIntro()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {
-                    startActivity(
-                        if (it)
-                            WalletConnectIntroActivity.createIntent(this, "0x0".asEthereumAddress()!!)
-                        else
-                            WalletConnectSessionsActivity.createIntent(this, "0x0".asEthereumAddress()!!)
-                    )
-                }
+            startActivity(DebugSettingsActivity.createIntent(this))
             closeDrawer()
         }
 
@@ -359,7 +350,16 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                     R.id.safe_details_menu_delete -> selectedSafe?.let { safe -> removeSafe(safe) }
                     R.id.safe_details_menu_rename -> selectedSafe?.let { safe -> renameSafe(safe) }
                     R.id.safe_details_menu_wallet_connect -> selectedSafe?.let { safe ->
-                        startActivity(WalletConnectSessionsActivity.createIntent(this, safe.address()))
+                        disposables += viewModel.shouldShowWalletConnectIntro()
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeBy { showIntro ->
+                                startActivity(
+                                    if (showIntro)
+                                        WalletConnectIntroActivity.createIntent(this, safe.address())
+                                    else
+                                        WalletConnectSessionsActivity.createIntent(this, safe.address())
+                                )
+                            }
                     }
                     R.id.safe_details_menu_sync -> selectedSafe?.let { safe ->
                         disposables += viewModel.syncWithChromeExtension(safe.address())
