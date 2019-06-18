@@ -84,6 +84,7 @@ class WalletConnectBridgeRepositoryTest {
         then(executionRepositoryMock).should().addTransactionEventsCallback(repository)
         then(executionRepositoryMock).shouldHaveNoMoreInteractions()
         then(appPreferencesManagerMock).should().get("preferences.wallet_connect_bridge_repository.sessions")
+        then(appPreferencesManagerMock).should().get("preferences.wallet_connect_bridge_repository.bridge")
         then(appPreferencesManagerMock).shouldHaveNoMoreInteractions()
     }
 

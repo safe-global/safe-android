@@ -27,6 +27,7 @@ import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -62,6 +63,9 @@ class SafeMainViewModelTest {
     private lateinit var context: Context
 
     @Mock
+    private lateinit var bridgeRepository: BridgeRepository
+
+    @Mock
     private lateinit var addressBookRepository: AddressBookRepository
 
     @Mock
@@ -75,7 +79,7 @@ class SafeMainViewModelTest {
     fun setUp() {
         BDDMockito.given(application.getSharedPreferences(anyString(), anyInt())).willReturn(preferences)
         preferencesManager = PreferencesManager(application)
-        viewModel = SafeMainViewModel(context, addressBookRepository, preferencesManager, safeRepository)
+        viewModel = SafeMainViewModel(context, addressBookRepository, bridgeRepository, preferencesManager, safeRepository)
     }
 
     @Test
@@ -709,6 +713,31 @@ class SafeMainViewModelTest {
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
         testObserver.assertResult(ErrorResult(exception))
+    }
+
+    @Test
+    fun shouldShowWalletConnectIntro() {
+        val exception = IllegalStateException()
+        given(bridgeRepository.shouldShowIntro()).willReturn(Single.error(exception))
+
+        val testObserver = TestObserver.create<Boolean>()
+        viewModel.shouldShowWalletConnectIntro().subscribe(testObserver)
+
+        then(bridgeRepository).should().shouldShowIntro()
+        then(bridgeRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertFailure(Predicate { it == exception })
+    }
+
+    @Test
+    fun shouldShowWalletConnectIntroError() {
+        given(bridgeRepository.shouldShowIntro()).willReturn(Single.just(true))
+
+        val testObserver = TestObserver.create<Boolean>()
+        viewModel.shouldShowWalletConnectIntro().subscribe(testObserver)
+
+        then(bridgeRepository).should().shouldShowIntro()
+        then(bridgeRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(true)
     }
 
     companion object {
