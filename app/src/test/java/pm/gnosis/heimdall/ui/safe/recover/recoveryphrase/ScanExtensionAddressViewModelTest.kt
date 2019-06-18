@@ -4,7 +4,6 @@ import android.content.Context
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -22,10 +21,10 @@ import pm.gnosis.heimdall.data.remote.models.push.ServiceSignature
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SemVer
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -41,7 +40,7 @@ class ScanExtensionAddressViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    private lateinit var accountsRepositoryMock: AccountsRepository
+    private lateinit var cryptoHelperMock: CryptoHelper
 
     @Mock
     private lateinit var contextMock: Context
@@ -61,7 +60,7 @@ class ScanExtensionAddressViewModelTest {
     fun setUp() {
         contextMock.mockGetString()
         given(moshiMock.adapter<AddressSignedPayload>(MockUtils.any())).willReturn(jsonAdapterMock)
-        viewModel = ScanExtensionAddressViewModel(accountsRepositoryMock, contextMock, safeRepositoryMock, moshiMock)
+        viewModel = ScanExtensionAddressViewModel(cryptoHelperMock, contextMock, safeRepositoryMock, moshiMock)
         then(moshiMock).should().adapter<AddressSignedPayload>(AddressSignedPayload::class.java)
         viewModel.setup(SAFE_ADDRESS)
     }
@@ -87,17 +86,17 @@ class ScanExtensionAddressViewModelTest {
         val expectedData = Sha3Utils.keccak("$SIGNATURE_PREFIX${SAFE_ADDRESS.asEthereumAddressChecksumString()}".toByteArray())
 
         given(jsonAdapterMock.fromJson(anyString())).willReturn(parsedPayload)
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(BROWSER_EXTENSION_ADDRESS))
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(BROWSER_EXTENSION_ADDRESS)
         given(safeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(SAFE_INFO))
 
         viewModel.validatePayload(payload).subscribe(testObserver)
 
         testObserver.assertValue { it is DataResult && it.data == BROWSER_EXTENSION_ADDRESS }
         then(jsonAdapterMock).should().fromJson(payload)
-        then(accountsRepositoryMock).should().recover(expectedData, parsedPayload.signature.toSignature())
+        then(cryptoHelperMock).should().recover(expectedData, parsedPayload.signature.toSignature())
         then(safeRepositoryMock).should().loadInfo(SAFE_ADDRESS)
         then(jsonAdapterMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         then(contextMock).shouldHaveZeroInteractions()
         then(moshiMock).shouldHaveNoMoreInteractions()
@@ -120,17 +119,17 @@ class ScanExtensionAddressViewModelTest {
         val extensionNotOwner = "0xfa".asEthereumAddress()!!
 
         given(jsonAdapterMock.fromJson(anyString())).willReturn(parsedPayload)
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(extensionNotOwner))
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(extensionNotOwner)
         given(safeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.just(SAFE_INFO))
 
         viewModel.validatePayload(payload).subscribe(testObserver)
 
         testObserver.assertValue(ErrorResult(SimpleLocalizedException(R.string.scan_extension_not_owner.toString())))
         then(jsonAdapterMock).should().fromJson(payload)
-        then(accountsRepositoryMock).should().recover(expectedData, parsedPayload.signature.toSignature())
+        then(cryptoHelperMock).should().recover(expectedData, parsedPayload.signature.toSignature())
         then(safeRepositoryMock).should().loadInfo(SAFE_ADDRESS)
         then(jsonAdapterMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().getString(R.string.scan_extension_not_owner)
         then(contextMock).shouldHaveNoMoreInteractions()
@@ -154,17 +153,17 @@ class ScanExtensionAddressViewModelTest {
         val exception = IllegalStateException()
 
         given(jsonAdapterMock.fromJson(anyString())).willReturn(parsedPayload)
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(BROWSER_EXTENSION_ADDRESS))
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(BROWSER_EXTENSION_ADDRESS)
         given(safeRepositoryMock.loadInfo(MockUtils.any())).willReturn(Observable.error(exception))
 
         viewModel.validatePayload(payload).subscribe(testObserver)
 
         testObserver.assertValue(ErrorResult(exception))
         then(jsonAdapterMock).should().fromJson(payload)
-        then(accountsRepositoryMock).should().recover(expectedData, parsedPayload.signature.toSignature())
+        then(cryptoHelperMock).should().recover(expectedData, parsedPayload.signature.toSignature())
         then(safeRepositoryMock).should().loadInfo(SAFE_ADDRESS)
         then(jsonAdapterMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         then(contextMock).shouldHaveZeroInteractions()
         then(moshiMock).shouldHaveNoMoreInteractions()
@@ -187,15 +186,15 @@ class ScanExtensionAddressViewModelTest {
         val exception = IllegalStateException()
 
         given(jsonAdapterMock.fromJson(anyString())).willReturn(parsedPayload)
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willThrow(exception)
 
         viewModel.validatePayload(payload).subscribe(testObserver)
 
         testObserver.assertValue(ErrorResult(exception))
         then(jsonAdapterMock).should().fromJson(payload)
-        then(accountsRepositoryMock).should().recover(expectedData, parsedPayload.signature.toSignature())
+        then(cryptoHelperMock).should().recover(expectedData, parsedPayload.signature.toSignature())
         then(jsonAdapterMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
         then(safeRepositoryMock).shouldHaveZeroInteractions()
         then(contextMock).shouldHaveZeroInteractions()
         then(moshiMock).shouldHaveNoMoreInteractions()
@@ -221,7 +220,7 @@ class ScanExtensionAddressViewModelTest {
         testObserver.assertValue(ErrorResult(SimpleLocalizedException(R.string.scan_extension_invalid_signature.toString())))
         then(jsonAdapterMock).should().fromJson(payload)
         then(jsonAdapterMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(safeRepositoryMock).shouldHaveZeroInteractions()
         then(contextMock).should().getString(R.string.scan_extension_invalid_signature)
         then(contextMock).shouldHaveNoMoreInteractions()
@@ -240,7 +239,7 @@ class ScanExtensionAddressViewModelTest {
         testObserver.assertValue(ErrorResult(SimpleLocalizedException(R.string.scan_extension_invalid_format.toString())))
         then(jsonAdapterMock).should().fromJson(payload)
         then(jsonAdapterMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
         then(safeRepositoryMock).shouldHaveZeroInteractions()
         then(contextMock).should().getString(R.string.scan_extension_invalid_format)
         then(contextMock).shouldHaveNoMoreInteractions()

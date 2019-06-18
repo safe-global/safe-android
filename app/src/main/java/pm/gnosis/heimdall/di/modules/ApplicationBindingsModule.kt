@@ -52,6 +52,13 @@ abstract class ApplicationBindingsModule {
     @Binds
     abstract fun bindsTransactionViewHolderBuilder(helper: DefaultTransactionViewHolderBuilder): TransactionViewHolderBuilder
 
+
+    // Scoped Helpers
+
+    @Binds
+    @Singleton
+    abstract fun bindsCryptoHelper(manager: SvalinnCryptoHelper): CryptoHelper
+
     @Binds
     @Singleton
     abstract fun bindsLocalNotificationManager(manager: AndroidLocalNotificationManager): LocalNotificationManager
@@ -75,6 +82,10 @@ abstract class ApplicationBindingsModule {
     @Binds
     @Singleton
     abstract fun bindsAddressBookRepository(repository: DefaultAddressBookRepository): AddressBookRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsAccountsRepository(repository: SafeAccountRepository): AccountsRepository
 
     @Binds
     @Singleton

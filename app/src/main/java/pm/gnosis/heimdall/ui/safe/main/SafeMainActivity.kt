@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import android.view.Gravity
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.GravityCompat
@@ -28,12 +27,10 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
-import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
-import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputDialog
 import pm.gnosis.heimdall.ui.safe.connect.ConnectExtensionActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
@@ -104,7 +101,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_safes_list.adapter = adapter
 
         layout_safe_main_debug_settings.visible(BuildConfig.DEBUG)
-        layout_safe_main_account.visible(BuildConfig.DEBUG)
         layout_safe_main_wallet_connect.visible(BuildConfig.DEBUG)
 
         popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
@@ -116,7 +112,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         layout_safe_main_add_safe.setCompoundDrawableResource(left = R.drawable.ic_create_new_safe)
         layout_safe_main_recover_safe.setCompoundDrawableResource(left = R.drawable.ic_recover_safe)
-        layout_safe_main_account.setCompoundDrawableResource(left = R.drawable.ic_settings_account)
         layout_safe_main_tokens.setCompoundDrawableResource(left = R.drawable.ic_tokens)
         layout_safe_main_address_book.setCompoundDrawableResource(left = R.drawable.ic_settings_address_book)
         layout_safe_main_wallet_connect.setCompoundDrawableResource(left = R.drawable.ic_walletconnect)
@@ -163,11 +158,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         layout_safe_main_address_book.setOnClickListener {
             startActivity(AddressBookActivity.createIntent(this))
-            closeDrawer()
-        }
-
-        layout_safe_main_account.setOnClickListener {
-            startActivity(AccountActivity.createIntent(this))
             closeDrawer()
         }
 
@@ -448,7 +438,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 disposables += viewModel.removeSafe(safe)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        startActivity(SafeMainActivity.createIntent(this))
+                        startActivity(createIntent(this))
                         snackbar(layout_safe_main_toolbar_title, getString(R.string.safe_remove_success, safeName))
                     }, {
                         errorSnackbar(layout_safe_main_toolbar_title, it)

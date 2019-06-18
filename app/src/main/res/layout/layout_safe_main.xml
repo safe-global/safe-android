@@ -107,6 +107,7 @@
                     android:id="@+id/layout_safe_main_safes_list_background_padding_bottom"
                     android:layout_width="0dp"
                     android:layout_height="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/layout_safe_main_selected_safe_info" />
 
                 <View
@@ -240,35 +241,18 @@
                     android:layout_height="@dimen/divider_width"
                     android:layout_marginTop="8dp"
                     android:background="@color/divider"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layout_safe_main_recover_safe" />
-
-                <!-- Container to hide this when not in Debug Mode (else it is controlled by ContraintGroup) -->
-                <FrameLayout
-                    android:id="@+id/layout_safe_main_account_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_navigation_safe_creation_divider"
-                    app:layout_goneMarginTop="16dp">
-
-                    <TextView
-                        android:id="@+id/layout_safe_main_account"
-                        style="@style/NavigationText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/my_account"
-                        android:visibility="gone"
-                        tools:drawableStart="@drawable/ic_settings_account"
-                        tools:visibility="visible" />
-                </FrameLayout>
 
                 <TextView
                     android:id="@+id/layout_safe_main_tokens"
                     style="@style/NavigationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:text="@string/manage_tokens"
-                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_account_container"
+                    app:layout_constraintTop_toBottomOf="@id/layout_safe_main_navigation_safe_creation_divider"
+                    app:layout_goneMarginTop="16dp"
                     tools:drawableStart="@drawable/ic_tokens" />
 
                 <TextView

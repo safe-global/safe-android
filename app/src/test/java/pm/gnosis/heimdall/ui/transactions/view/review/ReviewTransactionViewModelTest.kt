@@ -68,7 +68,7 @@ class ReviewTransactionViewModelTest {
             Wei.ether("23").value
         )
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token(TEST_GAS_TOKEN, "I neeeeed some GAS", "INSG", 18)))
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
         executionInfo!!.invoke(TEST_TRANSACTION).subscribe()
         then(relayRepositoryMock).should().loadExecuteInformation(TEST_SAFE, TEST_GAS_TOKEN, TEST_TRANSACTION)
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()

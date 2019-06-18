@@ -47,13 +47,13 @@ class ReplaceExtensionRecoveryPhraseViewModelTest {
 
         given(
             recoverSafeOwnersHelperMock.process(
-                MockUtils.any(), MockUtils.any(), MockUtils.any()
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()
             )
         ).willReturn(Observable.just(viewUpdate))
 
         viewModel.process(input, safeAddress, extensionAddress).subscribe(testObserver)
 
-        then(recoverSafeOwnersHelperMock).should().process(input, safeAddress, extensionAddress)
+        then(recoverSafeOwnersHelperMock).should().process(input, safeAddress, extensionAddress, null)
         then(recoverSafeOwnersHelperMock).shouldHaveNoMoreInteractions()
         testObserver.assertResult(viewUpdate)
     }
@@ -93,13 +93,13 @@ class ReplaceExtensionRecoveryPhraseViewModelTest {
 
         given(
             recoverSafeOwnersHelperMock.process(
-                MockUtils.any(), MockUtils.any(), MockUtils.any()
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()
             )
         ).willReturn(Observable.error(exception))
 
         viewModel.process(input, safeAddress, extensionAddress).subscribe(testObserver)
 
-        then(recoverSafeOwnersHelperMock).should().process(input, safeAddress, extensionAddress)
+        then(recoverSafeOwnersHelperMock).should().process(input, safeAddress, extensionAddress, null)
         then(recoverSafeOwnersHelperMock).shouldHaveNoMoreInteractions()
         testObserver.assertFailure(Exception::class.java)
     }

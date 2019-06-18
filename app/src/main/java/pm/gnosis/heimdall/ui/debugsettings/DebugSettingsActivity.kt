@@ -41,7 +41,6 @@ class DebugSettingsActivity : BaseActivity() {
 
         disposables += layout_debug_settings_pair.clicks()
             .subscribeBy(onNext = {
-                //startActivity(PairingActivity.createIntent(this))
                 QRCodeScanActivity.startForResult(this)
             }, onError = Timber::e)
 
@@ -67,7 +66,7 @@ class DebugSettingsActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         handleQrCodeActivityResult(requestCode, resultCode, data, onQrCodeResult = {
-            disposables += viewModel.pair(it)
+            disposables += viewModel.pair(it, layout_debug_settings_address.text.toString())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
                     layout_debug_settings_pair.isEnabled = false

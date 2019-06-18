@@ -14,7 +14,9 @@ import pm.gnosis.eip712.*
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.hexAsBigInteger
@@ -28,10 +30,13 @@ class ConfirmMessageViewModelTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    private lateinit var accountsRepositoryMock: AccountsRepository
+    private lateinit var cryptoHelperMock: CryptoHelper
 
     @Mock
     private lateinit var eiP712JsonParserMock: EIP712JsonParser
+
+    @Mock
+    private lateinit var safeRepoMock: GnosisSafeRepository
 
     @Mock
     private lateinit var pushServiceRepositoryMock: PushServiceRepository
@@ -40,7 +45,7 @@ class ConfirmMessageViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = ConfirmMessageViewModel(accountsRepositoryMock, eiP712JsonParserMock, pushServiceRepositoryMock)
+        viewModel = ConfirmMessageViewModel(cryptoHelperMock, eiP712JsonParserMock, safeRepoMock, pushServiceRepositoryMock)
     }
 
     @Test
@@ -67,10 +72,11 @@ class ConfirmMessageViewModelTest {
         val testObserver = TestObserver.create<ConfirmMessageContract.ViewUpdate>()
 
         given(eiP712JsonParserMock.parseMessage(anyString())).willReturn(PARSING_RESULT)
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(REQUESTER))
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(REQUESTER)
+        given(safeRepoMock.sign(MockUtils.any(), MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
         given(
             pushServiceRepositoryMock.sendTypedDataConfirmation(
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any()
@@ -83,15 +89,18 @@ class ConfirmMessageViewModelTest {
         // Click Confirm
         viewModel.uiEvents.onNext(ConfirmMessageContract.UIEvent.ConfirmPayloadClick)
 
+        then(cryptoHelperMock).should().recover(SAFE_MESSAGE_HASH, TEST_SIGNATURE)
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
+
+        then(safeRepoMock).should().sign(SAFE_ADDRESS, SAFE_MESSAGE_HASH)
+        then(safeRepoMock).shouldHaveNoMoreInteractions()
+
+        then(pushServiceRepositoryMock).should()
+            .sendTypedDataConfirmation(SAFE_MESSAGE_HASH, TEST_SIGNATURE.toString().hexStringToByteArray(), SAFE_ADDRESS, setOf(REQUESTER))
+        then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
 
         then(eiP712JsonParserMock).should().parseMessage(TEST_PAYLOAD)
-        then(accountsRepositoryMock).should().recover(SAFE_MESSAGE_HASH, TEST_SIGNATURE)
-        then(accountsRepositoryMock).should().sign(SAFE_MESSAGE_HASH)
-        then(pushServiceRepositoryMock).should()
-            .sendTypedDataConfirmation(SAFE_MESSAGE_HASH, TEST_SIGNATURE.toString().hexStringToByteArray(), setOf(REQUESTER))
         then(eiP712JsonParserMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-        then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
 
         testObserver
             .assertValues(
@@ -123,10 +132,11 @@ class ConfirmMessageViewModelTest {
         val exception = IllegalArgumentException()
 
         given(eiP712JsonParserMock.parseMessage(anyString())).willReturn(PARSING_RESULT)
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(REQUESTER))
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(REQUESTER)
+        given(safeRepoMock.sign(MockUtils.any(), MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
         given(
             pushServiceRepositoryMock.sendTypedDataConfirmation(
+                MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any(),
                 MockUtils.any()
@@ -139,14 +149,18 @@ class ConfirmMessageViewModelTest {
         // Click Confirm
         viewModel.uiEvents.onNext(ConfirmMessageContract.UIEvent.ConfirmPayloadClick)
 
-        then(eiP712JsonParserMock).should().parseMessage(TEST_PAYLOAD)
-        then(accountsRepositoryMock).should().recover(SAFE_MESSAGE_HASH, TEST_SIGNATURE)
-        then(accountsRepositoryMock).should().sign(SAFE_MESSAGE_HASH)
+        then(cryptoHelperMock).should().recover(SAFE_MESSAGE_HASH, TEST_SIGNATURE)
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
+
+        then(safeRepoMock).should().sign(SAFE_ADDRESS, SAFE_MESSAGE_HASH)
+        then(safeRepoMock).shouldHaveNoMoreInteractions()
+
         then(pushServiceRepositoryMock).should()
-            .sendTypedDataConfirmation(SAFE_MESSAGE_HASH, TEST_SIGNATURE.toString().hexStringToByteArray(), setOf(REQUESTER))
-        then(eiP712JsonParserMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+            .sendTypedDataConfirmation(SAFE_MESSAGE_HASH, TEST_SIGNATURE.toString().hexStringToByteArray(), SAFE_ADDRESS, setOf(REQUESTER))
         then(pushServiceRepositoryMock).shouldHaveNoMoreInteractions()
+
+        then(eiP712JsonParserMock).should().parseMessage(TEST_PAYLOAD)
+        then(eiP712JsonParserMock).shouldHaveNoMoreInteractions()
 
         testObserver
             .assertValues(
@@ -178,8 +192,8 @@ class ConfirmMessageViewModelTest {
         val exception = IllegalArgumentException()
 
         given(eiP712JsonParserMock.parseMessage(anyString())).willReturn(PARSING_RESULT)
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(REQUESTER))
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.error(exception))
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(REQUESTER)
+        given(safeRepoMock.sign(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
 
         viewModel.setup(TEST_PAYLOAD, SAFE_ADDRESS, TEST_SIGNATURE)
         viewModel.observe().subscribe(testObserver)
@@ -188,10 +202,14 @@ class ConfirmMessageViewModelTest {
         viewModel.uiEvents.onNext(ConfirmMessageContract.UIEvent.ConfirmPayloadClick)
 
         then(eiP712JsonParserMock).should().parseMessage(TEST_PAYLOAD)
-        then(accountsRepositoryMock).should().recover(SAFE_MESSAGE_HASH, TEST_SIGNATURE)
-        then(accountsRepositoryMock).should().sign(SAFE_MESSAGE_HASH)
         then(eiP712JsonParserMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+
+        then(cryptoHelperMock).should().recover(SAFE_MESSAGE_HASH, TEST_SIGNATURE)
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
+
+        then(safeRepoMock).should().sign(SAFE_ADDRESS, SAFE_MESSAGE_HASH)
+        then(safeRepoMock).shouldHaveNoMoreInteractions()
+
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
 
         testObserver
@@ -224,7 +242,7 @@ class ConfirmMessageViewModelTest {
         val exception = IllegalArgumentException()
 
         given(eiP712JsonParserMock.parseMessage(anyString())).willReturn(PARSING_RESULT)
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willThrow(exception)
 
         viewModel.setup(TEST_PAYLOAD, SAFE_ADDRESS, TEST_SIGNATURE)
         viewModel.observe().subscribe(testObserver)
@@ -233,9 +251,12 @@ class ConfirmMessageViewModelTest {
         viewModel.uiEvents.onNext(ConfirmMessageContract.UIEvent.ConfirmPayloadClick)
 
         then(eiP712JsonParserMock).should().parseMessage(TEST_PAYLOAD)
-        then(accountsRepositoryMock).should().recover(SAFE_MESSAGE_HASH, TEST_SIGNATURE)
         then(eiP712JsonParserMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+
+        then(cryptoHelperMock).should().recover(SAFE_MESSAGE_HASH, TEST_SIGNATURE)
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
+
+        then(safeRepoMock).shouldHaveZeroInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
 
         testObserver
@@ -277,7 +298,8 @@ class ConfirmMessageViewModelTest {
 
         then(eiP712JsonParserMock).should().parseMessage(TEST_PAYLOAD)
         then(eiP712JsonParserMock).shouldHaveNoMoreInteractions()
-        then(accountsRepositoryMock).shouldHaveZeroInteractions()
+        then(cryptoHelperMock).shouldHaveZeroInteractions()
+        then(safeRepoMock).shouldHaveZeroInteractions()
         then(pushServiceRepositoryMock).shouldHaveZeroInteractions()
 
         testObserver

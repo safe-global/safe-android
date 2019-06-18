@@ -72,11 +72,11 @@ sealed class TransactionData : Parcelable {
 
         fun fromBundle(bundle: Bundle): TransactionData? =
             bundle.run {
-                when (getInt(TransactionData.EXTRA_DATA_TYPE, 0)) {
-                    TransactionData.TYPE_GENERIC -> getParcelable<TransactionData.Generic>(TransactionData.EXTRA_DATA)
-                    TransactionData.TYPE_ASSET_TRANSFER -> getParcelable<TransactionData.AssetTransfer>(TransactionData.EXTRA_DATA)
-                    TransactionData.TYPE_REPLACE_RECOVERY_PHRASE -> getParcelable<TransactionData.ReplaceRecoveryPhrase>(TransactionData.EXTRA_DATA)
-                    TransactionData.TYPE_CONNECT_EXTENSION -> getParcelable<TransactionData.ConnectExtension>(TransactionData.EXTRA_DATA)
+                when (getInt(EXTRA_DATA_TYPE, 0)) {
+                    TYPE_GENERIC -> getParcelable<Generic>(EXTRA_DATA)
+                    TYPE_ASSET_TRANSFER -> getParcelable<AssetTransfer>(EXTRA_DATA)
+                    TYPE_REPLACE_RECOVERY_PHRASE -> getParcelable<ReplaceRecoveryPhrase>(EXTRA_DATA)
+                    TYPE_CONNECT_EXTENSION -> getParcelable<ConnectExtension>(EXTRA_DATA)
                     else -> throw IllegalArgumentException("Unknown transaction data type")
                 }
             }

@@ -7,6 +7,6 @@ import pm.gnosis.svalinn.common.utils.Result
 
 abstract class DebugSettingsContract : ViewModel() {
     abstract fun forceSyncAuthentication()
-    abstract fun pair(payload: String): Completable
+    abstract fun pair(payload: String, safe: String): Completable
     abstract fun sendTestSafeCreationPush(chromeExtensionAddress: String): Single<Result<Unit>>
 }

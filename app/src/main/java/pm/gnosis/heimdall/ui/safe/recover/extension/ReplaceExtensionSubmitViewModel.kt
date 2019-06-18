@@ -9,9 +9,10 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import java.math.BigInteger
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ReplaceExtensionSubmitViewModel @Inject constructor(
-    private val accountsRepository: AccountsRepository,
+    private val cryptoHelper: CryptoHelper,
     private val gnosisSafeRepository: GnosisSafeRepository,
     private val pushServiceRepository: PushServiceRepository,
     private val tokenRepository: TokenRepository,
@@ -110,7 +111,7 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
                     // Recover addresses from the signatures
                     .flatMap {
                         Single.zip(listOf(signature1, signature2).map { signature ->
-                            accountsRepository.recover(txHash, signature).map { it to signature }
+                            Single.fromCallable { cryptoHelper.recover(txHash, signature) to signature }
                         }) { pairs -> (pairs.map { it as Pair<Solidity.Address, Signature> }).toList() }
                     }
                     // Submit transaction

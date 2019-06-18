@@ -12,10 +12,9 @@ import pm.gnosis.heimdall.data.remote.models.RelaySafeCreationParams
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
-import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
 import pm.gnosis.utils.toBytes
@@ -24,42 +23,36 @@ import javax.inject.Inject
 
 class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
     private val accountsRepository: AccountsRepository,
-    private val bip39: Bip39,
     private val relayServiceApi: RelayServiceApi,
     private val gnosisSafeRepository: GnosisSafeRepository,
     private val tokenRepository: TokenRepository
 ) : CreateSafeConfirmRecoveryPhraseContract() {
 
     private var browserExtensionAddress: Solidity.Address? = null
+    private var safeOwner: AccountsRepository.SafeOwner? = null
 
     private val threshold get() = browserExtensionAddress?.let { 2 } ?: 1
 
-    override fun setup(browserExtensionAddress: Solidity.Address?) {
+    override fun setup(browserExtensionAddress: Solidity.Address?, safeOwner: AccountsRepository.SafeOwner?) {
         this.browserExtensionAddress = browserExtensionAddress
+        this.safeOwner = safeOwner
     }
 
     override fun createSafe(): Single<Solidity.Address> =
-        createSafeOwner()
-            .flatMap { (ownerAddress, ownerKey) ->
-
-                val mnemonicSeed = bip39.mnemonicToSeed(getRecoveryPhrase())
-                Single.zip(
-                    accountsRepository.accountFromMnemonicSeed(mnemonicSeed, 0).map { it.first },
-                    accountsRepository.accountFromMnemonicSeed(mnemonicSeed, 1).map { it.first },
-                    BiFunction<Solidity.Address, Solidity.Address, OwnerData> { recoveryAccount1, recoveryAccount2 ->
-
+        (safeOwner?.let { Single.just(it) } ?: accountsRepository.createOwner())
+            .flatMap { owner ->
+                accountsRepository.createOwnersFromPhrase(getRecoveryPhrase(), listOf(0, 1))
+                    .map { accounts ->
                         OwnerData(
-                            ownerKey,
-                            ownerAddress,
+                            owner,
                             listOfNotNull(
-                                ownerAddress,
+                                owner.address,
                                 browserExtensionAddress,
-                                recoveryAccount1,
-                                recoveryAccount2
+                                accounts[0].address,
+                                accounts[1].address
                             )
                         )
                     }
-                )
             }
             .zipWith(
                 tokenRepository.loadPaymentToken(),
@@ -77,7 +70,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             .flatMap { (ownerData, request, response) ->
                 assertResponse(request, response)
                 gnosisSafeRepository.addPendingSafe(response.safe, null, response.payment, response.paymentToken)
-                    .andThen(gnosisSafeRepository.saveOwner(response.safe, request.owners[0], ownerData.ownerKey))
+                    .andThen(gnosisSafeRepository.saveOwner(response.safe, ownerData.owner))
                     .andThen(Single.just(response.safe))
             }
             .subscribeOn(Schedulers.io())
@@ -121,11 +114,8 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             throw IllegalStateException("Unexpected safe address returned")
     }
 
-    private fun createSafeOwner() = gnosisSafeRepository.createOwner()
-
     private data class OwnerData(
-        val ownerKey: ByteArray,
-        val ownerAddress: Solidity.Address,
+        val owner: AccountsRepository.SafeOwner,
         val fullListOfOwners: List<Solidity.Address>
     )
 

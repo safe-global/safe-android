@@ -19,9 +19,9 @@ class DebugSettingsViewModel @Inject constructor(
 ) : DebugSettingsContract() {
     override fun forceSyncAuthentication() = pushServiceRepository.syncAuthentication(true)
 
-    override fun pair(payload: String): Completable =
+    override fun pair(payload: String, safe: String): Completable =
         parseChromeExtensionPayload(payload)
-            .flatMapCompletable { pushServiceRepository.pair(it).toCompletable() }
+            .flatMapCompletable { pushServiceRepository.pair(it, safe.asEthereumAddress()!!).ignoreElement() }
 
     private fun parseChromeExtensionPayload(payload: String): Single<PushServiceTemporaryAuthorization> =
         Single.fromCallable { moshi.adapter(PushServiceTemporaryAuthorization::class.java).fromJson(payload)!! }

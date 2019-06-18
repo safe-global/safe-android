@@ -11,13 +11,15 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
@@ -26,15 +28,13 @@ import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.Input
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract.ViewUpdate
-import pm.gnosis.mnemonic.Bip39
-import pm.gnosis.mnemonic.EmptyMnemonic
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.Asserts
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
@@ -57,9 +57,6 @@ class DefaultRecoverSafeOwnersHelperTest {
     private lateinit var accountsRepoMock: AccountsRepository
 
     @Mock
-    private lateinit var bip39Mock: Bip39
-
-    @Mock
     private lateinit var executionRepoMock: TransactionExecutionRepository
 
     @Mock
@@ -68,11 +65,13 @@ class DefaultRecoverSafeOwnersHelperTest {
     @Mock
     private lateinit var tokenRepositoryMock: TokenRepository
 
+    private val encryptedByteArrayConverter = EncryptedByteArray.Converter()
+
     private lateinit var helper: DefaultRecoverSafeOwnersHelper
 
     @Before
     fun setUp() {
-        helper = DefaultRecoverSafeOwnersHelper(contextMock, accountsRepoMock, bip39Mock, executionRepoMock, safeRepoMock, tokenRepositoryMock)
+        helper = DefaultRecoverSafeOwnersHelper(contextMock, accountsRepoMock, executionRepoMock, safeRepoMock, tokenRepositoryMock)
     }
 
     @Test
@@ -84,42 +83,16 @@ class DefaultRecoverSafeOwnersHelperTest {
 
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(Observable.just(createSafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some mnemonic")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willThrow(IllegalStateException())
+        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any())).willReturn(Single.error(IllegalStateException()))
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_EXTENSION).subscribe(observer)
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, TEST_EXTENSION, null).subscribe(observer)
 
         // Test mnemonic to seed
         phraseSubject.onNext("this is probably not a valid mnemonic")
         observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.WrongMnemonic)
-        then(bip39Mock).should().validateMnemonic("this is probably not a valid mnemonic")
-        then(bip39Mock).should().mnemonicToSeed("some mnemonic")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(safeRepoMock).should().loadInfo(TEST_SAFE)
-        then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(executionRepoMock).shouldHaveZeroInteractions()
-        then(tokenRepositoryMock).shouldHaveZeroInteractions()
-    }
-
-    @Test
-    fun processInvalidMnemonic() {
-        val phraseSubject = PublishSubject.create<CharSequence>()
-        val retrySubject = PublishSubject.create<Unit>()
-        val createSubject = PublishSubject.create<Unit>()
-        val input = Input(phraseSubject, retrySubject, createSubject)
-
-        given(safeRepoMock.loadInfo(MockUtils.any()))
-            .willReturn(Observable.just(createSafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willThrow(EmptyMnemonic(""))
-
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_EXTENSION).subscribe(observer)
-        phraseSubject.onNext("")
-
-        observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.InvalidMnemonic)
-        then(bip39Mock).should().validateMnemonic("")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
+        then(accountsRepoMock).should().createOwnersFromPhrase("this is probably not a valid mnemonic", listOf(0, 1))
+        then(accountsRepoMock).shouldHaveNoMoreInteractions()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
@@ -138,8 +111,8 @@ class DefaultRecoverSafeOwnersHelperTest {
 
         given(safeRepoMock.loadInfo(MockUtils.any())).willReturn(Observable.error(UnknownHostException()))
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_EXTENSION).subscribe(observer)
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, TEST_EXTENSION, null).subscribe(observer)
 
         // Test safe info failure
         observer.assertValueCount(tests + 1)
@@ -158,40 +131,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
         then(tokenRepositoryMock).shouldHaveZeroInteractions()
-    }
-
-    @Test
-    fun processAccountFromSeedError() {
-        val phraseSubject = PublishSubject.create<CharSequence>()
-        val retrySubject = PublishSubject.create<Unit>()
-        val createSubject = PublishSubject.create<Unit>()
-        val input = Input(phraseSubject, retrySubject, createSubject)
-
-        given(safeRepoMock.loadInfo(MockUtils.any()))
-            .willReturn(Observable.just(createSafeInfo(TEST_SAFE, Wei.ZERO, 2, TEST_OWNERS, false, emptyList())))
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
-            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
-            .willReturn(Single.error(IllegalArgumentException()))
-
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_EXTENSION).subscribe(observer)
-
-        phraseSubject.onNext("this is not a valid mnemonic!")
-        observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.WrongMnemonic)
-
-        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
-        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
-        then(accountsRepoMock).shouldHaveNoMoreInteractions()
-        then(safeRepoMock).should().loadInfo(TEST_SAFE)
-        then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(executionRepoMock).shouldHaveZeroInteractions()
-        then(tokenRepositoryMock).shouldHaveZeroInteractions()
+        then(accountsRepoMock).shouldHaveZeroInteractions()
     }
 
     private fun testProcessInvalidOwnerCount(
@@ -209,24 +149,25 @@ class DefaultRecoverSafeOwnersHelperTest {
                     createSafeInfo(TEST_SAFE, Wei.ZERO, 2, owners, false, emptyList())
                 )
             )
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
-            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
-            .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, extension).subscribe(observer)
+        val ownerKey = encryptedByteArrayConverter.fromStorage("encrypted_key")
+        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
+            .willReturn(
+                Single.just(
+                    listOf(
+                        AccountsRepository.SafeOwner(TEST_RECOVER_1, ownerKey),
+                        AccountsRepository.SafeOwner(TEST_RECOVER_2, ownerKey)
+                    )
+                )
+            )
+
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, extension, null).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.WrongMnemonic)
 
-        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
-        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
+        then(accountsRepoMock).should().createOwnersFromPhrase("this is not a valid mnemonic!", listOf(0, 1))
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
@@ -257,24 +198,24 @@ class DefaultRecoverSafeOwnersHelperTest {
                     createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_SAFE, TEST_RECOVER_2), false, emptyList())
                 )
             )
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
-            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
-            .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
+        val ownerKey = encryptedByteArrayConverter.fromStorage("encrypted_key")
+        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
+            .willReturn(
+                Single.just(
+                    listOf(
+                        AccountsRepository.SafeOwner(TEST_RECOVER_1, ownerKey),
+                        AccountsRepository.SafeOwner(TEST_RECOVER_2, ownerKey)
+                    )
+                )
+            )
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_EXTENSION).subscribe(observer)
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, TEST_EXTENSION, null).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.WrongMnemonic)
 
-        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
-        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
+        then(accountsRepoMock).should().createOwnersFromPhrase("this is not a valid mnemonic!", listOf(0, 1))
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
@@ -295,24 +236,24 @@ class DefaultRecoverSafeOwnersHelperTest {
                     createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_SAFE, TEST_RECOVER_1), false, emptyList())
                 )
             )
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
-            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
-            .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
+        val ownerKey = encryptedByteArrayConverter.fromStorage("encrypted_key")
+        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
+            .willReturn(
+                Single.just(
+                    listOf(
+                        AccountsRepository.SafeOwner(TEST_RECOVER_1, ownerKey),
+                        AccountsRepository.SafeOwner(TEST_RECOVER_2, ownerKey)
+                    )
+                )
+            )
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_EXTENSION).subscribe(observer)
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, TEST_EXTENSION, null).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.WrongMnemonic)
 
-        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
-        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
+        then(accountsRepoMock).should().createOwnersFromPhrase("this is not a valid mnemonic!", listOf(0, 1))
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
@@ -333,26 +274,26 @@ class DefaultRecoverSafeOwnersHelperTest {
                     createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
-            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
-            .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(safeRepoMock.createOwner()).willReturn(Single.error(EmptyResultSetException("")))
+        val ownerKey = encryptedByteArrayConverter.fromStorage("encrypted_key")
+        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
+            .willReturn(
+                Single.just(
+                    listOf(
+                        AccountsRepository.SafeOwner(TEST_RECOVER_1, ownerKey),
+                        AccountsRepository.SafeOwner(TEST_RECOVER_2, ownerKey)
+                    )
+                )
+            )
+        given(accountsRepoMock.signingOwner(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_EXTENSION).subscribe(observer)
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, TEST_EXTENSION, null).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.WrongMnemonic)
 
-        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
-        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
-        then(safeRepoMock).should().createOwner()
+        then(accountsRepoMock).should().signingOwner(TEST_SAFE)
+        then(accountsRepoMock).should().createOwnersFromPhrase("this is not a valid mnemonic!", listOf(0, 1))
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
@@ -372,27 +313,28 @@ class DefaultRecoverSafeOwnersHelperTest {
                     createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOfNotNull(TEST_OWNER, extension, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
-            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
-            .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(safeRepoMock.createOwner()).willReturn(Single.just(TEST_OWNER to TEST_OWNER_KEY))
+        val ownerKey = encryptedByteArrayConverter.fromStorage("encrypted_key")
+        given(accountsRepoMock.signingOwner(MockUtils.any())).willReturn(Single.just(AccountsRepository.SafeOwner(TEST_OWNER, ownerKey)))
+        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
+            .willReturn(
+                Single.just(
+                    listOf(
+                        AccountsRepository.SafeOwner(TEST_RECOVER_1, ownerKey),
+                        AccountsRepository.SafeOwner(TEST_RECOVER_2, ownerKey)
+                    )
+                )
+            )
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, extension).subscribe(observer)
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, extension, null).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.NoRecoveryNecessary(TEST_SAFE))
 
-        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
-        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
+        then(accountsRepoMock).should().signingOwner(TEST_SAFE)
+        then(accountsRepoMock).should().createOwnersFromPhrase("this is not a valid mnemonic!", listOf(0, 1))
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
-        then(safeRepoMock).should().createOwner()
+
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
@@ -410,10 +352,11 @@ class DefaultRecoverSafeOwnersHelperTest {
     }
 
     private fun testRecoverPayload(
-        ownerAddress: Solidity.Address, ownerKey: ByteArray,
+        safeOwner: AccountsRepository.SafeOwner,
         extension: Solidity.Address?, recoverer: Solidity.Address,
         operation: TransactionExecutionRepository.Operation, data: String,
-        owners: List<Solidity.Address> = listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2)
+        owners: List<Solidity.Address> = listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2),
+        existingSafe: Boolean = true
     ) {
         val phraseSubject = PublishSubject.create<CharSequence>()
         val retrySubject = PublishSubject.create<Unit>()
@@ -427,14 +370,23 @@ class DefaultRecoverSafeOwnersHelperTest {
                     createSafeInfo(TEST_SAFE, Wei.ZERO, 2, owners, false, emptyList())
                 )
             )
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
-            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
-            .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(safeRepoMock.createOwner()).willReturn(Single.just(ownerAddress to ownerKey))
-        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any()))
+        val ownerKey = encryptedByteArrayConverter.fromStorage("another_encrypted_key")
+        if (existingSafe) {
+            given(accountsRepoMock.signingOwner(MockUtils.any())).willReturn(Single.just(safeOwner))
+        } else {
+        }
+        val recoverers = listOf(
+            AccountsRepository.SafeOwner(TEST_RECOVER_1, ownerKey),
+            AccountsRepository.SafeOwner(TEST_RECOVER_2, ownerKey)
+        )
+        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
+            .willReturn(Single.just(recoverers))
+        given(accountsRepoMock.sign(MockUtils.eq(recoverers[0]), MockUtils.any()))
+            .willReturn(Single.just(Signature(BigInteger.TEN, BigInteger.ONE, 27)))
+        given(accountsRepoMock.sign(MockUtils.eq(recoverers[1]), MockUtils.any()))
+            .willReturn(Single.just(Signature(BigInteger.ONE, BigInteger.TEN, 28)))
+
+        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willAnswer {
                 val tx = it.arguments[2] as SafeTransaction
                 Single.just(
@@ -444,13 +396,15 @@ class DefaultRecoverSafeOwnersHelperTest {
                     )
                 )
             }
-        given(executionRepoMock.calculateHash(
-            MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
+        given(
+            executionRepoMock.calculateHash(
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()
+            )
         )
             .willReturn(Single.just(TEST_HASH))
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, extension).subscribe(observer)
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, extension, if (existingSafe) null else safeOwner).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         createSubject.onNext(Unit)
@@ -459,6 +413,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             .assertValueAt(1, ViewUpdate.ValidMnemonic)
             .assertValueAt(2) {
                 it is ViewUpdate.RecoverData &&
+                        it.safeOwner == safeOwner &&
                         it.signatures.size == 2 &&
                         it.executionInfo.transactionHash == TEST_HASH.toHex() &&
                         it.executionInfo.transaction.operation == operation &&
@@ -469,16 +424,16 @@ class DefaultRecoverSafeOwnersHelperTest {
             }
             .assertValueCount(3)
 
-        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
-        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
+        if (existingSafe) {
+            then(accountsRepoMock).should().signingOwner(TEST_SAFE)
+        }
+        then(accountsRepoMock).should().sign(recoverers[0], TEST_HASH)
+        then(accountsRepoMock).should().sign(recoverers[1], TEST_HASH)
+        then(accountsRepoMock).should().createOwnersFromPhrase("this is not a valid mnemonic!", listOf(0, 1))
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
-        then(safeRepoMock).should().createOwner()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
+        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).should()
             .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
@@ -490,8 +445,7 @@ class DefaultRecoverSafeOwnersHelperTest {
     @Test
     fun processReplaceApp() {
         testRecoverPayload(
-            TEST_NEW_OWNER,
-            TEST_NEW_OWNER_KEY,
+            AccountsRepository.SafeOwner(TEST_NEW_OWNER, TEST_NEW_OWNER_KEY),
             TEST_EXTENSION,
             TEST_SAFE,
             TransactionExecutionRepository.Operation.CALL,
@@ -502,8 +456,7 @@ class DefaultRecoverSafeOwnersHelperTest {
     @Test
     fun processReplaceAppWithoutExtension() {
         testRecoverPayload(
-            TEST_NEW_OWNER,
-            TEST_NEW_OWNER_KEY,
+            AccountsRepository.SafeOwner(TEST_NEW_OWNER, TEST_NEW_OWNER_KEY),
             null,
             TEST_SAFE,
             TransactionExecutionRepository.Operation.CALL,
@@ -515,8 +468,7 @@ class DefaultRecoverSafeOwnersHelperTest {
     @Test
     fun processReplaceExtension() {
         testRecoverPayload(
-            TEST_OWNER,
-            TEST_OWNER_KEY,
+            AccountsRepository.SafeOwner(TEST_OWNER, TEST_OWNER_KEY),
             TEST_NEW_EXTENSION,
             TEST_SAFE,
             TransactionExecutionRepository.Operation.CALL,
@@ -527,8 +479,7 @@ class DefaultRecoverSafeOwnersHelperTest {
     @Test
     fun processReplaceAppAndExtension() {
         testRecoverPayload(
-            TEST_NEW_OWNER,
-            TEST_NEW_OWNER_KEY,
+            AccountsRepository.SafeOwner(TEST_NEW_OWNER, TEST_NEW_OWNER_KEY),
             TEST_NEW_EXTENSION,
             "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!, // MultiSend address
             TransactionExecutionRepository.Operation.DELEGATE_CALL,
@@ -555,6 +506,73 @@ class DefaultRecoverSafeOwnersHelperTest {
     }
 
     @Test
+    fun processReplaceAppOwnerProvided() {
+        testRecoverPayload(
+            AccountsRepository.SafeOwner(TEST_NEW_OWNER, TEST_NEW_OWNER_KEY),
+            TEST_EXTENSION,
+            TEST_SAFE,
+            TransactionExecutionRepository.Operation.CALL,
+            "0xe318b52b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000071de9579cd3857ce70058a1ce19e3d8894f65ab900000000000000000000000031b98d14007bdee637298086988a0bbd31184523",
+            existingSafe = false
+        )
+    }
+
+    @Test
+    fun processReplaceAppWithoutExtensionOwnerProvided() {
+        testRecoverPayload(
+            AccountsRepository.SafeOwner(TEST_NEW_OWNER, TEST_NEW_OWNER_KEY),
+            null,
+            TEST_SAFE,
+            TransactionExecutionRepository.Operation.CALL,
+            "0xe318b52b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000071de9579cd3857ce70058a1ce19e3d8894f65ab900000000000000000000000031b98d14007bdee637298086988a0bbd31184523",
+            listOf(TEST_OWNER, TEST_RECOVER_1, TEST_RECOVER_2),
+            existingSafe = false
+        )
+    }
+
+    @Test
+    fun processReplaceExtensionOwnerProvided() {
+        testRecoverPayload(
+            AccountsRepository.SafeOwner(TEST_OWNER, TEST_OWNER_KEY),
+            TEST_NEW_EXTENSION,
+            TEST_SAFE,
+            TransactionExecutionRepository.Operation.CALL,
+            "0xe318b52b00000000000000000000000071de9579cd3857ce70058a1ce19e3d8894f65ab9000000000000000000000000c2ac20b3bb950c087f18a458db68271325a481320000000000000000000000001e6534e09b2b0dc5ea965d0ce84ab07a4bd56b38",
+            existingSafe = false
+        )
+    }
+
+    @Test
+    fun processReplaceAppAndExtensionOwnerProvided() {
+        testRecoverPayload(
+            AccountsRepository.SafeOwner(TEST_NEW_OWNER, TEST_NEW_OWNER_KEY),
+            TEST_NEW_EXTENSION,
+            "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e".asEthereumAddress()!!, // MultiSend address
+            TransactionExecutionRepository.Operation.DELEGATE_CALL,
+            "0x8d80ff0a" +
+                    "0000000000000000000000000000000000000000000000000000000000000020" +
+                    "0000000000000000000000000000000000000000000000000000000000000240" +
+                    // First replace transaction
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" +
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    "e318b52b00000000000000000000000071de9579cd3857ce70058a1ce19e3d8894f65ab9000000000000000000000000c2ac20b3bb950c087f18a458db68271325a481320000000000000000000000001e6534e09b2b0dc5ea965d0ce84ab07a4bd56b38" +
+                    "00000000000000000000000000000000000000000000000000000000" + // Padding
+                    // Second replace transaction
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000001f81fff89bd57811983a35650296681f99c65c7e" +
+                    "0000000000000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000080" +
+                    "0000000000000000000000000000000000000000000000000000000000000064" +
+                    "e318b52b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000071de9579cd3857ce70058a1ce19e3d8894f65ab900000000000000000000000031b98d14007bdee637298086988a0bbd31184523" +
+                    "00000000000000000000000000000000000000000000000000000000", // Padding
+            existingSafe = false
+        )
+    }
+
+    @Test
     fun processLoadPaymentTokenError() {
         contextMock.mockGetString()
         val phraseSubject = PublishSubject.create<CharSequence>()
@@ -568,18 +586,22 @@ class DefaultRecoverSafeOwnersHelperTest {
                     createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
-            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
-            .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(safeRepoMock.createOwner()).willReturn(Single.just(TEST_NEW_OWNER to TEST_NEW_OWNER_KEY))
+        val ownerKey = encryptedByteArrayConverter.fromStorage("encrypted_key")
+        given(accountsRepoMock.signingOwner(MockUtils.any())).willReturn(Single.just(AccountsRepository.SafeOwner(TEST_OWNER, ownerKey)))
+        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
+            .willReturn(
+                Single.just(
+                    listOf(
+                        AccountsRepository.SafeOwner(TEST_RECOVER_1, ownerKey),
+                        AccountsRepository.SafeOwner(TEST_RECOVER_2, ownerKey)
+                    )
+                )
+            )
         val error = NotImplementedError()
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.error(error))
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION).subscribe(observer)
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION, null).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         createSubject.onNext(Unit)
@@ -589,13 +611,9 @@ class DefaultRecoverSafeOwnersHelperTest {
             ViewUpdate.RecoverDataError(error)
         )
 
-        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
-        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
+        then(accountsRepoMock).should().signingOwner(TEST_SAFE)
+        then(accountsRepoMock).should().createOwnersFromPhrase("this is not a valid mnemonic!", listOf(0, 1))
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
-        then(safeRepoMock).should().createOwner()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
@@ -617,22 +635,26 @@ class DefaultRecoverSafeOwnersHelperTest {
                     createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
-            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
-            .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(safeRepoMock.createOwner()).willReturn(Single.just(TEST_NEW_OWNER to TEST_NEW_OWNER_KEY))
+        val ownerKey = encryptedByteArrayConverter.fromStorage("encrypted_key")
+        given(accountsRepoMock.signingOwner(MockUtils.any())).willReturn(Single.just(AccountsRepository.SafeOwner(TEST_OWNER, ownerKey)))
+        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
+            .willReturn(
+                Single.just(
+                    listOf(
+                        AccountsRepository.SafeOwner(TEST_RECOVER_1, ownerKey),
+                        AccountsRepository.SafeOwner(TEST_RECOVER_2, ownerKey)
+                    )
+                )
+            )
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
-        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
+        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
             Single.error(
                 UnknownHostException()
             )
         )
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION).subscribe(observer)
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION, null).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         createSubject.onNext(Unit)
@@ -642,16 +664,12 @@ class DefaultRecoverSafeOwnersHelperTest {
             ViewUpdate.RecoverDataError(SimpleLocalizedException(R.string.error_check_internet_connection.toString()))
         )
 
-        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
-        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
+        then(accountsRepoMock).should().signingOwner(TEST_SAFE)
+        then(accountsRepoMock).should().createOwnersFromPhrase("this is not a valid mnemonic!", listOf(0, 1))
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
-        then(safeRepoMock).should().createOwner()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
+        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
         then(tokenRepositoryMock).should().loadPaymentToken()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
@@ -670,13 +688,17 @@ class DefaultRecoverSafeOwnersHelperTest {
                     createSafeInfo(TEST_SAFE, Wei.ZERO, 2, listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2), false, emptyList())
                 )
             )
-        given(bip39Mock.validateMnemonic(MockUtils.any())).willReturn("some new mnemonic!")
-        given(bip39Mock.mnemonicToSeed(MockUtils.any(), MockUtils.any())).willReturn(TEST_SEED)
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(0L)))
-            .willReturn(Single.just(TEST_RECOVER_1 to TEST_RECOVER_1_KEY))
-        given(accountsRepoMock.accountFromMnemonicSeed(MockUtils.any(), eq(1L)))
-            .willReturn(Single.just(TEST_RECOVER_2 to TEST_RECOVER_2_KEY))
-        given(safeRepoMock.createOwner()).willReturn(Single.just(TEST_NEW_OWNER to TEST_NEW_OWNER_KEY))
+        val ownerKey = encryptedByteArrayConverter.fromStorage("encrypted_key")
+        given(accountsRepoMock.signingOwner(MockUtils.any())).willReturn(Single.just(AccountsRepository.SafeOwner(TEST_OWNER, ownerKey)))
+        given(accountsRepoMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
+            .willReturn(
+                Single.just(
+                    listOf(
+                        AccountsRepository.SafeOwner(TEST_RECOVER_1, ownerKey),
+                        AccountsRepository.SafeOwner(TEST_RECOVER_2, ownerKey)
+                    )
+                )
+            )
         val execInfo = TransactionExecutionRepository.ExecuteInformation(
             TEST_HASH.toHex(),
             SafeTransaction(Transaction(TEST_SAFE), TransactionExecutionRepository.Operation.CALL),
@@ -692,30 +714,32 @@ class DefaultRecoverSafeOwnersHelperTest {
             BigInteger.ZERO
         )
         given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
-        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(execInfo))
+        given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
+            Single.just(
+                execInfo
+            )
+        )
         val error = IllegalStateException()
-        given(executionRepoMock.calculateHash(
-            MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
+        given(
+            executionRepoMock.calculateHash(
+                MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()
+            )
         )
             .willReturn(Single.error(error))
 
-        val observer = TestObserver<InputRecoveryPhraseContract.ViewUpdate>()
-        helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION).subscribe(observer)
+        val observer = TestObserver<ViewUpdate>()
+        helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION, null).subscribe(observer)
 
         phraseSubject.onNext("this is not a valid mnemonic!")
         createSubject.onNext(Unit)
         observer.assertValues(ViewUpdate.InputMnemonic, ViewUpdate.ValidMnemonic, ViewUpdate.RecoverDataError(error))
 
-        then(bip39Mock).should().validateMnemonic("this is not a valid mnemonic!")
-        then(bip39Mock).should().mnemonicToSeed("some new mnemonic!")
-        then(bip39Mock).shouldHaveNoMoreInteractions()
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 0L)
-        then(accountsRepoMock).should().accountFromMnemonicSeed(TEST_SEED, 1L)
+        then(accountsRepoMock).should().signingOwner(TEST_SAFE)
+        then(accountsRepoMock).should().createOwnersFromPhrase("this is not a valid mnemonic!", listOf(0, 1))
         then(accountsRepoMock).shouldHaveNoMoreInteractions()
-        then(safeRepoMock).should().createOwner()
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
-        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any())
+        then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).should()
             .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
@@ -921,15 +945,13 @@ class DefaultRecoverSafeOwnersHelperTest {
         private val TEST_GAS_TOKEN = ERC20Token.ETHER_TOKEN.address
         private val TEST_SAFE = "0x1f81FFF89Bd57811983a35650296681f99C65C7E".asEthereumAddress()!!
         private val TEST_OWNER = "0x71De9579cD3857ce70058a1ce19e3d8894f65Ab9".asEthereumAddress()!!
-        private val TEST_OWNER_KEY = byteArrayOf(0)
+        private val TEST_OWNER_KEY = EncryptedByteArray.Converter().fromStorage("test_owner_key")
         private val TEST_NEW_OWNER = "0x31B98D14007bDEe637298086988A0bBd31184523".asEthereumAddress()!!
-        private val TEST_NEW_OWNER_KEY = byteArrayOf(1)
+        private val TEST_NEW_OWNER_KEY = EncryptedByteArray.Converter().fromStorage("test_new_owner_key")
         private val TEST_EXTENSION = "0xC2AC20b3Bb950C087f18a458DB68271325a48132".asEthereumAddress()!!
         private val TEST_NEW_EXTENSION = "0x1e6534e09b2B0Dc5EA965D0cE84AB07A4bd56B38".asEthereumAddress()!!
         private val TEST_RECOVER_1 = "0x979861dF79C7408553aAF20c01Cfb3f81CCf9341".asEthereumAddress()!!
         private val TEST_RECOVER_2 = "0x8e6A5aDb2B88257A3DAc7A76A7B4EcaCdA090b66".asEthereumAddress()!!
-        private val TEST_RECOVER_1_KEY = Sha3Utils.keccak(TEST_RECOVER_1.value.toByteArray())
-        private val TEST_RECOVER_2_KEY = Sha3Utils.keccak(TEST_RECOVER_2.value.toByteArray())
         private val TEST_OWNERS = listOf(TEST_OWNER, TEST_EXTENSION, TEST_RECOVER_1, TEST_RECOVER_2)
     }
 }

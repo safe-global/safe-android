@@ -23,7 +23,6 @@ import org.mockito.BDDMockito.*
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.crypto.KeyPair
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
@@ -31,26 +30,21 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
-import pm.gnosis.heimdall.data.db.models.GnosisSafeInfoDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.push.*
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.models.Safe
-import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
-import pm.gnosis.svalinn.accounts.base.models.Account
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
-import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.*
-import pm.gnosis.utils.asBigInteger
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import java.math.BigInteger
@@ -70,9 +64,6 @@ class DefaultPushServiceRepositoryTest {
     private lateinit var accountsRepositoryMock: AccountsRepository
 
     @Mock
-    private lateinit var encryptionManagerMock: EncryptionManager
-
-    @Mock
     private lateinit var firebaseInstanceIdMock: FirebaseInstanceId
 
     @Mock
@@ -86,6 +77,9 @@ class DefaultPushServiceRepositoryTest {
 
     @Mock
     private lateinit var safeDaoMock: GnosisSafeDao
+
+    @Mock
+    private lateinit var cryptoHelperMock: CryptoHelper
 
     @Mock
     private lateinit var preferencesManagerMock: PreferencesManager
@@ -110,6 +104,8 @@ class DefaultPushServiceRepositoryTest {
 
     private val testPreferences = TestPreferences()
 
+    private val encryptedByteArrayConverter = EncryptedByteArray.Converter()
+
     private lateinit var pushServiceRepository: DefaultPushServiceRepository
 
     @Before
@@ -119,7 +115,7 @@ class DefaultPushServiceRepositoryTest {
             contextMock,
             dbMock,
             accountsRepositoryMock,
-            encryptionManagerMock,
+            cryptoHelperMock,
             firebaseInstanceIdMock,
             localNotificationManagerMock,
             moshiMock,
@@ -131,16 +127,23 @@ class DefaultPushServiceRepositoryTest {
 
     @Test
     fun syncAuthenticationNewToken() {
+        val owner1 = AccountsRepository.SafeOwner("0x1".asEthereumAddress()!!, encryptedByteArrayConverter.fromStorage("owner1_pk"))
+        val owner2 = AccountsRepository.SafeOwner("0x2".asEthereumAddress()!!, encryptedByteArrayConverter.fromStorage("owner2_pk"))
+        val safeOwners = listOf(owner1, owner2)
         val testFirebaseInstanceIdTask = TestFirebaseInstanceIdTask()
         given(firebaseInstanceIdMock.instanceId).willReturn(testFirebaseInstanceIdTask)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
+        given(accountsRepositoryMock.owners()).willReturn(Single.just(safeOwners))
+        given(accountsRepositoryMock.sign(MockUtils.eq(owner1), MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
+        given(accountsRepositoryMock.sign(MockUtils.eq(owner2), MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE.copy(v = 28)))
         given(pushServiceApiMock.auth(MockUtils.any())).willReturn(Completable.complete())
-        given(safeDaoMock.loadSafeInfos()).willReturn(Single.just(listOf()))
 
         pushServiceRepository.syncAuthentication()
         testFirebaseInstanceIdTask.setSuccess(TestInstanceIdResult())
 
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak(bundlePushInfo(testFirebaseInstanceIdTask.result.token).toByteArray()))
+        val hash = Sha3Utils.keccak(bundlePushInfo(testFirebaseInstanceIdTask.result.token).toByteArray())
+        then(accountsRepositoryMock).should().owners()
+        then(accountsRepositoryMock).should().sign(owner1, hash)
+        then(accountsRepositoryMock).should().sign(owner2, hash)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(
             bundlePushInfo(testFirebaseInstanceIdTask.result.token),
@@ -155,13 +158,14 @@ class DefaultPushServiceRepositoryTest {
                 bundle = BuildConfig.APPLICATION_ID,
                 versionName = BuildConfig.VERSION_NAME,
                 client = "android",
-                signatures = listOf(ServiceSignature.fromSignature(TEST_SIGNATURE))
+                signatures = listOf(ServiceSignature.fromSignature(TEST_SIGNATURE), ServiceSignature.fromSignature(TEST_SIGNATURE.copy(v = 28)))
             )
         )
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
         then(moshiMock).shouldHaveZeroInteractions()
         then(contextMock).shouldHaveZeroInteractions()
         then(localNotificationManagerMock).shouldHaveZeroInteractions()
+        then(safeDaoMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -185,42 +189,30 @@ class DefaultPushServiceRepositoryTest {
         then(moshiMock).shouldHaveZeroInteractions()
         then(contextMock).shouldHaveZeroInteractions()
         then(localNotificationManagerMock).shouldHaveZeroInteractions()
+        then(safeDaoMock).shouldHaveZeroInteractions()
     }
 
     @Test
     fun syncAuthenticationForced() {
-        val localOwner = "0xbaddad".asEthereumAddress()!!
-        val localOwnerKey = Sha3Utils.keccak("cow".toByteArray())
-        val localOwnerKeyEncrypted = EncryptedByteArray.Converter().fromStorage("0dad${EncryptionManager.CryptoData.SEPARATOR}bad0")
+        val owner = AccountsRepository.SafeOwner("0xbaddad".asEthereumAddress()!!, encryptedByteArrayConverter.fromStorage("owner_pk"))
         val testFirebaseInstanceIdTask = TestFirebaseInstanceIdTask()
-        given(safeDaoMock.loadSafeInfos()).willReturn(Single.just(listOf(GnosisSafeInfoDb(TEST_SAFE_ADDRESS, localOwner, localOwnerKeyEncrypted))))
         given(firebaseInstanceIdMock.instanceId).willReturn(testFirebaseInstanceIdTask)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
+        given(accountsRepositoryMock.owners()).willReturn(Single.just(listOf(owner)))
+        given(accountsRepositoryMock.sign(MockUtils.any<AccountsRepository.SafeOwner>(), MockUtils.any())).willReturn(Single.just(TEST_SIGNATURE))
         given(pushServiceApiMock.auth(MockUtils.any())).willReturn(Completable.complete())
-        given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(localOwnerKey)
 
         // Set last synced token (same as new one)
         val testInstanceIdResult = TestInstanceIdResult()
-        testPreferences.putString(
-            LAST_SYNC_PUSH_INFO_PREFS_KEY,
-            bundlePushInfo(testInstanceIdResult.token)
-        )
+        val storedBundle = bundlePushInfo(testInstanceIdResult.token)
+        testPreferences.putString(LAST_SYNC_PUSH_INFO_PREFS_KEY, storedBundle)
         pushServiceRepository.syncAuthentication(forced = true)
         testFirebaseInstanceIdTask.setSuccess(testInstanceIdResult)
 
+        then(accountsRepositoryMock).should().owners()
         val hash = Sha3Utils.keccak(bundlePushInfo(testFirebaseInstanceIdTask.result.token).toByteArray())
-        val localOwnerSig = KeyPair.fromPrivate(localOwnerKey.asBigInteger()).sign(hash)
-
-        then(accountsRepositoryMock).should().sign(hash)
+        then(accountsRepositoryMock).should().sign(owner, hash)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-        then(safeDaoMock).should().loadSafeInfos()
-        then(safeDaoMock).shouldHaveNoMoreInteractions()
-        then(encryptionManagerMock).should().decrypt(MockUtils.any())
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        assertEquals(
-            bundlePushInfo(testFirebaseInstanceIdTask.result.token),
-            testPreferences.getString(LAST_SYNC_PUSH_INFO_PREFS_KEY, "")
-        )
+        assertEquals(storedBundle, testPreferences.getString(LAST_SYNC_PUSH_INFO_PREFS_KEY, ""))
         then(firebaseInstanceIdMock).should().instanceId
         then(firebaseInstanceIdMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).should().auth(
@@ -231,7 +223,6 @@ class DefaultPushServiceRepositoryTest {
                 versionName = BuildConfig.VERSION_NAME,
                 client = "android",
                 signatures = listOf(
-                    ServiceSignature(localOwnerSig.r, localOwnerSig.s, localOwnerSig.v.toInt()),
                     ServiceSignature.fromSignature(TEST_SIGNATURE)
                 )
             )
@@ -240,6 +231,7 @@ class DefaultPushServiceRepositoryTest {
         then(moshiMock).shouldHaveZeroInteractions()
         then(contextMock).shouldHaveZeroInteractions()
         then(localNotificationManagerMock).shouldHaveZeroInteractions()
+        then(safeDaoMock).shouldHaveZeroInteractions()
     }
 
     @Test
@@ -272,30 +264,84 @@ class DefaultPushServiceRepositoryTest {
     }
 
     @Test
-    fun pair() {
-        val testObserver = TestObserver<Solidity.Address>()
+    fun pairExistingSafe() {
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(TEST_EXTENSION_ADDRESS)
+
+        val safeOwner = AccountsRepository.SafeOwner(TEST_ACCOUNT_ADDRESS, encryptedByteArrayConverter.fromStorage("owner_pk"))
+        given(accountsRepositoryMock.signingOwner(MockUtils.any())).willReturn(Single.just(safeOwner))
+        given(accountsRepositoryMock.sign(MockUtils.any<AccountsRepository.SafeOwner>(), MockUtils.any()))
+            .willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+
+        given(pushServiceApiMock.pair(MockUtils.any())).willReturn(Completable.complete())
+
         val pushServiceTemporaryAuthorization = PushServiceTemporaryAuthorization(
             signature = ServiceSignature.fromSignature(TEST_SIGNATURE),
             expirationDate = "testExpirationDate"
         )
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(TEST_EXTENSION_ADDRESS))
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
-        given(pushServiceApiMock.pair(MockUtils.any())).willReturn(Completable.complete())
+        val testObserver = TestObserver<Pair<AccountsRepository.SafeOwner, Solidity.Address>>()
+        pushServiceRepository.pair(pushServiceTemporaryAuthorization, TEST_SAFE_ADDRESS).subscribe(testObserver)
 
-        pushServiceRepository.pair(pushServiceTemporaryAuthorization).subscribe(testObserver)
-
-        then(accountsRepositoryMock).should().recover(
-            data = Sha3Utils.keccak("$SIGNATURE_PREFIX${pushServiceTemporaryAuthorization.expirationDate}".toByteArray()),
+        then(cryptoHelperMock).should().recover(
+            hash = Sha3Utils.keccak("$SIGNATURE_PREFIX${pushServiceTemporaryAuthorization.expirationDate}".toByteArray()),
             signature = pushServiceTemporaryAuthorization.signature.toSignature()
         )
-        then(accountsRepositoryMock).should()
-            .sign(Sha3Utils.keccak("$SIGNATURE_PREFIX${TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()}".toByteArray()))
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
+
+        val hash = Sha3Utils.keccak("$SIGNATURE_PREFIX${TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()}".toByteArray())
+        then(accountsRepositoryMock).should().signingOwner(TEST_SAFE_ADDRESS)
+        then(accountsRepositoryMock).should().sign(safeOwner, hash)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+
         then(pushServiceApiMock).should().pair(
             PushServicePairing(
                 signature = ServiceSignature.fromSignature(TEST_ACCOUNT_SIGNATURE),
                 temporaryAuthorization = pushServiceTemporaryAuthorization
             )
         )
+        then(pushServiceApiMock).shouldHaveNoMoreInteractions()
+
+        then(preferencesManagerMock).shouldHaveZeroInteractions()
+        then(localNotificationManagerMock).shouldHaveZeroInteractions()
+        then(moshiMock).shouldHaveZeroInteractions()
+        then(contextMock).shouldHaveZeroInteractions()
+
+        testObserver.assertResult(safeOwner to TEST_EXTENSION_ADDRESS)
+    }
+
+    @Test
+    fun pairNewSafeOwner() {
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(TEST_EXTENSION_ADDRESS)
+
+        val newAccountAddress = "0x2323".asEthereumAddress()!!
+        val safeOwner = AccountsRepository.SafeOwner(newAccountAddress, encryptedByteArrayConverter.fromStorage("new_owner_pk"))
+        given(accountsRepositoryMock.createOwner()).willReturn(Single.just(safeOwner))
+        given(accountsRepositoryMock.sign(MockUtils.any<AccountsRepository.SafeOwner>(), MockUtils.any()))
+            .willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+
+        given(pushServiceApiMock.pair(MockUtils.any())).willReturn(Completable.complete())
+
+        val pushServiceTemporaryAuthorization = PushServiceTemporaryAuthorization(
+            signature = ServiceSignature.fromSignature(TEST_SIGNATURE),
+            expirationDate = "testExpirationDate"
+        )
+        val testObserver = TestObserver<Pair<AccountsRepository.SafeOwner, Solidity.Address>>()
+        pushServiceRepository.pair(pushServiceTemporaryAuthorization, null).subscribe(testObserver)
+
+        then(cryptoHelperMock).should().recover(
+            hash = Sha3Utils.keccak("$SIGNATURE_PREFIX${pushServiceTemporaryAuthorization.expirationDate}".toByteArray()),
+            signature = pushServiceTemporaryAuthorization.signature.toSignature()
+        )
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
+
+        then(pushServiceApiMock).should().pair(
+            PushServicePairing(
+                signature = ServiceSignature.fromSignature(TEST_ACCOUNT_SIGNATURE),
+                temporaryAuthorization = pushServiceTemporaryAuthorization
+            )
+        )
+        val hash = Sha3Utils.keccak("$SIGNATURE_PREFIX${TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()}".toByteArray())
+        then(accountsRepositoryMock).should().createOwner()
+        then(accountsRepositoryMock).should().sign(safeOwner, hash)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
         then(preferencesManagerMock).shouldHaveZeroInteractions()
@@ -303,37 +349,47 @@ class DefaultPushServiceRepositoryTest {
         then(moshiMock).shouldHaveZeroInteractions()
         then(contextMock).shouldHaveZeroInteractions()
 
-        testObserver.assertResult(TEST_EXTENSION_ADDRESS)
+        testObserver.assertResult(safeOwner to TEST_EXTENSION_ADDRESS)
     }
 
     @Test
     fun pairPushServiceApiError() {
-        val testObserver = TestObserver<Solidity.Address>()
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(TEST_EXTENSION_ADDRESS)
+
+        val safeOwner = AccountsRepository.SafeOwner(TEST_ACCOUNT_ADDRESS, encryptedByteArrayConverter.fromStorage("owner_pk"))
+        given(accountsRepositoryMock.signingOwner(MockUtils.any())).willReturn(Single.just(safeOwner))
+        given(accountsRepositoryMock.sign(MockUtils.any<AccountsRepository.SafeOwner>(), MockUtils.any()))
+            .willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+
+        val exception = IllegalStateException()
+        given(pushServiceApiMock.pair(MockUtils.any())).willReturn(Completable.error(exception))
+
         val pushServiceTemporaryAuthorization = PushServiceTemporaryAuthorization(
             signature = ServiceSignature.fromSignature(TEST_SIGNATURE),
             expirationDate = "testExpirationDate"
         )
-        val exception = IllegalStateException()
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(TEST_EXTENSION_ADDRESS))
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
-        given(pushServiceApiMock.pair(MockUtils.any())).willReturn(Completable.error(exception))
+        val testObserver = TestObserver<Pair<AccountsRepository.SafeOwner, Solidity.Address>>()
+        pushServiceRepository.pair(pushServiceTemporaryAuthorization, TEST_SAFE_ADDRESS).subscribe(testObserver)
 
-        pushServiceRepository.pair(pushServiceTemporaryAuthorization).subscribe(testObserver)
-
-        then(accountsRepositoryMock).should().recover(
-            data = Sha3Utils.keccak("$SIGNATURE_PREFIX${pushServiceTemporaryAuthorization.expirationDate}".toByteArray()),
+        then(cryptoHelperMock).should().recover(
+            hash = Sha3Utils.keccak("$SIGNATURE_PREFIX${pushServiceTemporaryAuthorization.expirationDate}".toByteArray()),
             signature = pushServiceTemporaryAuthorization.signature.toSignature()
         )
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
+
         then(accountsRepositoryMock).should()
-            .sign(Sha3Utils.keccak("$SIGNATURE_PREFIX${TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()}".toByteArray()))
+            .sign(safeOwner, Sha3Utils.keccak("$SIGNATURE_PREFIX${TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()}".toByteArray()))
+        then(accountsRepositoryMock).should().signingOwner(TEST_SAFE_ADDRESS)
+        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+
         then(pushServiceApiMock).should().pair(
             PushServicePairing(
                 signature = ServiceSignature.fromSignature(TEST_ACCOUNT_SIGNATURE),
                 temporaryAuthorization = pushServiceTemporaryAuthorization
             )
         )
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
+
         then(preferencesManagerMock).shouldHaveZeroInteractions()
         then(localNotificationManagerMock).shouldHaveZeroInteractions()
         then(moshiMock).shouldHaveZeroInteractions()
@@ -344,24 +400,31 @@ class DefaultPushServiceRepositoryTest {
 
     @Test
     fun pairSignError() {
-        val testObserver = TestObserver<Solidity.Address>()
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(TEST_EXTENSION_ADDRESS)
+
+        val safeOwner = AccountsRepository.SafeOwner(TEST_ACCOUNT_ADDRESS, encryptedByteArrayConverter.fromStorage("owner_pk"))
+        given(accountsRepositoryMock.signingOwner(MockUtils.any())).willReturn(Single.just(safeOwner))
+        val exception = IllegalStateException()
+        given(accountsRepositoryMock.sign(MockUtils.any<AccountsRepository.SafeOwner>(), MockUtils.any())).willReturn(Single.error(exception))
+
         val pushServiceTemporaryAuthorization = PushServiceTemporaryAuthorization(
             signature = ServiceSignature.fromSignature(TEST_SIGNATURE),
             expirationDate = "testExpirationDate"
         )
-        val exception = IllegalStateException()
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.just(TEST_EXTENSION_ADDRESS))
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.error(exception))
+        val testObserver = TestObserver<Pair<AccountsRepository.SafeOwner, Solidity.Address>>()
+        pushServiceRepository.pair(pushServiceTemporaryAuthorization, TEST_SAFE_ADDRESS).subscribe(testObserver)
 
-        pushServiceRepository.pair(pushServiceTemporaryAuthorization).subscribe(testObserver)
-
-        then(accountsRepositoryMock).should().recover(
-            data = Sha3Utils.keccak("$SIGNATURE_PREFIX${pushServiceTemporaryAuthorization.expirationDate}".toByteArray()),
+        then(cryptoHelperMock).should().recover(
+            hash = Sha3Utils.keccak("$SIGNATURE_PREFIX${pushServiceTemporaryAuthorization.expirationDate}".toByteArray()),
             signature = pushServiceTemporaryAuthorization.signature.toSignature()
         )
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
+
         then(accountsRepositoryMock).should()
-            .sign(Sha3Utils.keccak("$SIGNATURE_PREFIX${TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()}".toByteArray()))
+            .sign(safeOwner, Sha3Utils.keccak("$SIGNATURE_PREFIX${TEST_EXTENSION_ADDRESS.asEthereumAddressChecksumString()}".toByteArray()))
+        then(accountsRepositoryMock).should().signingOwner(TEST_SAFE_ADDRESS)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
+
         then(pushServiceApiMock).shouldHaveZeroInteractions()
         then(preferencesManagerMock).shouldHaveZeroInteractions()
         then(localNotificationManagerMock).shouldHaveZeroInteractions()
@@ -373,20 +436,22 @@ class DefaultPushServiceRepositoryTest {
 
     @Test
     fun pairRecoverError() {
-        val testObserver = TestObserver<Solidity.Address>()
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(TEST_EXTENSION_ADDRESS)
+        val exception = IllegalStateException()
+        given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willThrow(exception)
+
         val pushServiceTemporaryAuthorization = PushServiceTemporaryAuthorization(
             signature = ServiceSignature.fromSignature(TEST_SIGNATURE),
             expirationDate = "testExpirationDate"
         )
-        val exception = IllegalStateException()
-        given(accountsRepositoryMock.recover(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
+        val testObserver = TestObserver<Pair<AccountsRepository.SafeOwner, Solidity.Address>>()
+        pushServiceRepository.pair(pushServiceTemporaryAuthorization, TEST_SAFE_ADDRESS).subscribe(testObserver)
 
-        pushServiceRepository.pair(pushServiceTemporaryAuthorization).subscribe(testObserver)
-
-        then(accountsRepositoryMock).should().recover(
-            data = Sha3Utils.keccak("$SIGNATURE_PREFIX${pushServiceTemporaryAuthorization.expirationDate}".toByteArray()),
+        then(cryptoHelperMock).should().recover(
+            hash = Sha3Utils.keccak("$SIGNATURE_PREFIX${pushServiceTemporaryAuthorization.expirationDate}".toByteArray()),
             signature = pushServiceTemporaryAuthorization.signature.toSignature()
         )
+        then(cryptoHelperMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveZeroInteractions()
         then(preferencesManagerMock).shouldHaveZeroInteractions()
@@ -404,7 +469,7 @@ class DefaultPushServiceRepositoryTest {
         val message = ServiceMessage.SafeCreation(safe = TEST_SAFE_ADDRESS.asEthereumAddressString())
         given(moshiMock.adapter<ServiceMessage.SafeCreation>(MockUtils.any())).willReturn(safeCreationJsonAdapter)
         given(safeCreationJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
         given(pushServiceApiMock.notify(MockUtils.any())).willReturn(Completable.complete())
 
         pushServiceRepository.propagateSafeCreation(
@@ -414,7 +479,7 @@ class DefaultPushServiceRepositoryTest {
 
         then(moshiMock).should().adapter(ServiceMessage.SafeCreation::class.java)
         then(safeCreationJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(pushServiceApiMock).should().notify(
             PushServiceNotification(
                 devices = listOf(TEST_EXTENSION_ADDRESS.asEthereumAddressString()),
@@ -438,7 +503,7 @@ class DefaultPushServiceRepositoryTest {
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.SafeCreation>(MockUtils.any())).willReturn(safeCreationJsonAdapter)
         given(safeCreationJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
         given(pushServiceApiMock.notify(MockUtils.any())).willReturn(Completable.error(exception))
 
         pushServiceRepository.propagateSafeCreation(
@@ -448,7 +513,7 @@ class DefaultPushServiceRepositoryTest {
 
         then(moshiMock).should().adapter(ServiceMessage.SafeCreation::class.java)
         then(safeCreationJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(pushServiceApiMock).should().notify(
             PushServiceNotification(
                 devices = listOf(TEST_EXTENSION_ADDRESS.asEthereumAddressString()),
@@ -472,7 +537,7 @@ class DefaultPushServiceRepositoryTest {
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.SafeCreation>(MockUtils.any())).willReturn(safeCreationJsonAdapter)
         given(safeCreationJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.error(exception))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.error(exception))
 
         pushServiceRepository.propagateSafeCreation(
             safeAddress = TEST_SAFE_ADDRESS,
@@ -481,7 +546,7 @@ class DefaultPushServiceRepositoryTest {
 
         then(moshiMock).should().adapter(ServiceMessage.SafeCreation::class.java)
         then(safeCreationJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(moshiMock).shouldHaveNoMoreInteractions()
         then(safeCreationJsonAdapter).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -523,18 +588,19 @@ class DefaultPushServiceRepositoryTest {
         )
         given(moshiMock.adapter<ServiceMessage.SendTransactionHash>(MockUtils.any())).willReturn(sendTransactionHashJsonAdapter)
         given(sendTransactionHashJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
         given(pushServiceApiMock.notify(MockUtils.any())).willReturn(Completable.complete())
 
         pushServiceRepository.propagateSubmittedTransaction(
             hash = message.hash,
             chainHash = message.txHash,
+            safe = TEST_SAFE_ADDRESS,
             targets = setOf(TEST_EXTENSION_ADDRESS)
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.SendTransactionHash::class.java)
         then(sendTransactionHashJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(pushServiceApiMock).should().notify(
             PushServiceNotification(
                 devices = listOf(TEST_EXTENSION_ADDRESS.asEthereumAddressString()),
@@ -561,18 +627,19 @@ class DefaultPushServiceRepositoryTest {
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.SendTransactionHash>(MockUtils.any())).willReturn(sendTransactionHashJsonAdapter)
         given(sendTransactionHashJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
         given(pushServiceApiMock.notify(MockUtils.any())).willReturn(Completable.error(exception))
 
         pushServiceRepository.propagateSubmittedTransaction(
             hash = message.hash,
             chainHash = message.txHash,
+            safe = TEST_SAFE_ADDRESS,
             targets = setOf(TEST_EXTENSION_ADDRESS)
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.SendTransactionHash::class.java)
         then(sendTransactionHashJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(pushServiceApiMock).should().notify(
             PushServiceNotification(
                 devices = listOf(TEST_EXTENSION_ADDRESS.asEthereumAddressString()),
@@ -599,17 +666,18 @@ class DefaultPushServiceRepositoryTest {
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.SendTransactionHash>(MockUtils.any())).willReturn(sendTransactionHashJsonAdapter)
         given(sendTransactionHashJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.error(exception))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.error(exception))
 
         pushServiceRepository.propagateSubmittedTransaction(
             hash = message.hash,
             chainHash = message.txHash,
+            safe = TEST_SAFE_ADDRESS,
             targets = setOf(TEST_EXTENSION_ADDRESS)
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.SendTransactionHash::class.java)
         then(sendTransactionHashJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(moshiMock).shouldHaveNoMoreInteractions()
         then(sendTransactionHashJsonAdapter).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -632,6 +700,7 @@ class DefaultPushServiceRepositoryTest {
         pushServiceRepository.propagateSubmittedTransaction(
             hash = message.hash,
             chainHash = message.txHash,
+            safe = TEST_SAFE_ADDRESS,
             targets = setOf(TEST_EXTENSION_ADDRESS)
         ).subscribe(testObserver)
 
@@ -657,18 +726,19 @@ class DefaultPushServiceRepositoryTest {
         )
         given(moshiMock.adapter<ServiceMessage.RejectTransaction>(MockUtils.any())).willReturn(rejectTransactionJsonAdapter)
         given(rejectTransactionJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
         given(pushServiceApiMock.notify(MockUtils.any())).willReturn(Completable.complete())
 
         pushServiceRepository.propagateTransactionRejected(
             targets = setOf(TEST_EXTENSION_ADDRESS),
             hash = "hash",
+            safe = TEST_SAFE_ADDRESS,
             signature = TEST_SIGNATURE
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.RejectTransaction::class.java)
         then(rejectTransactionJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(pushServiceApiMock).should().notify(
             PushServiceNotification(
                 devices = listOf(TEST_EXTENSION_ADDRESS.asEthereumAddressString()),
@@ -697,18 +767,19 @@ class DefaultPushServiceRepositoryTest {
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.RejectTransaction>(MockUtils.any())).willReturn(rejectTransactionJsonAdapter)
         given(rejectTransactionJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
         given(pushServiceApiMock.notify(MockUtils.any())).willReturn(Completable.error(exception))
 
         pushServiceRepository.propagateTransactionRejected(
             targets = setOf(TEST_EXTENSION_ADDRESS),
             hash = "hash",
+            safe = TEST_SAFE_ADDRESS,
             signature = TEST_SIGNATURE
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.RejectTransaction::class.java)
         then(rejectTransactionJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(pushServiceApiMock).should().notify(
             PushServiceNotification(
                 devices = listOf(TEST_EXTENSION_ADDRESS.asEthereumAddressString()),
@@ -737,17 +808,18 @@ class DefaultPushServiceRepositoryTest {
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.RejectTransaction>(MockUtils.any())).willReturn(rejectTransactionJsonAdapter)
         given(rejectTransactionJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.error(exception))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.error(exception))
 
         pushServiceRepository.propagateTransactionRejected(
             targets = setOf(TEST_EXTENSION_ADDRESS),
             hash = "hash",
+            safe = TEST_SAFE_ADDRESS,
             signature = TEST_SIGNATURE
         ).subscribe(testObserver)
 
         then(moshiMock).should().adapter(ServiceMessage.RejectTransaction::class.java)
         then(rejectTransactionJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(moshiMock).shouldHaveNoMoreInteractions()
         then(rejectTransactionJsonAdapter).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -772,6 +844,7 @@ class DefaultPushServiceRepositoryTest {
         pushServiceRepository.propagateTransactionRejected(
             targets = setOf(TEST_EXTENSION_ADDRESS),
             hash = "hash",
+            safe = TEST_SAFE_ADDRESS,
             signature = TEST_SIGNATURE
         ).subscribe(testObserver)
 
@@ -806,7 +879,7 @@ class DefaultPushServiceRepositoryTest {
         )
         given(moshiMock.adapter<ServiceMessage.RequestConfirmation>(MockUtils.any())).willReturn(requestConfirmationJsonAdapter)
         given(requestConfirmationJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
         given(pushServiceApiMock.notify(MockUtils.any())).willReturn(Completable.complete())
 
         pushServiceRepository.requestConfirmations(
@@ -827,7 +900,7 @@ class DefaultPushServiceRepositoryTest {
 
         then(moshiMock).should().adapter(ServiceMessage.RequestConfirmation::class.java)
         then(requestConfirmationJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(pushServiceApiMock).should().notify(
             PushServiceNotification(
                 devices = listOf(TEST_EXTENSION_ADDRESS.asEthereumAddressString()),
@@ -865,7 +938,7 @@ class DefaultPushServiceRepositoryTest {
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.RequestConfirmation>(MockUtils.any())).willReturn(requestConfirmationJsonAdapter)
         given(requestConfirmationJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.just(TEST_ACCOUNT_SIGNATURE))
         given(pushServiceApiMock.notify(MockUtils.any())).willReturn(Completable.error(exception))
 
         pushServiceRepository.requestConfirmations(
@@ -886,7 +959,7 @@ class DefaultPushServiceRepositoryTest {
 
         then(moshiMock).should().adapter(ServiceMessage.RequestConfirmation::class.java)
         then(requestConfirmationJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(pushServiceApiMock).should().notify(
             PushServiceNotification(
                 devices = listOf(TEST_EXTENSION_ADDRESS.asEthereumAddressString()),
@@ -924,7 +997,7 @@ class DefaultPushServiceRepositoryTest {
         val exception = IllegalStateException()
         given(moshiMock.adapter<ServiceMessage.RequestConfirmation>(MockUtils.any())).willReturn(requestConfirmationJsonAdapter)
         given(requestConfirmationJsonAdapter.toJson(MockUtils.any())).willReturn(json)
-        given(accountsRepositoryMock.sign(MockUtils.any())).willReturn(Single.error(exception))
+        given(accountsRepositoryMock.sign(MockUtils.any<Solidity.Address>(), MockUtils.any())).willReturn(Single.error(exception))
 
         pushServiceRepository.requestConfirmations(
             targets = setOf(TEST_EXTENSION_ADDRESS),
@@ -944,7 +1017,7 @@ class DefaultPushServiceRepositoryTest {
 
         then(moshiMock).should().adapter(ServiceMessage.RequestConfirmation::class.java)
         then(requestConfirmationJsonAdapter).should().toJson(message)
-        then(accountsRepositoryMock).should().sign(Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
+        then(accountsRepositoryMock).should().sign(TEST_SAFE_ADDRESS, Sha3Utils.keccak("$SIGNATURE_PREFIX$json".toByteArray()))
         then(moshiMock).shouldHaveNoMoreInteractions()
         then(requestConfirmationJsonAdapter).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -1006,7 +1079,7 @@ class DefaultPushServiceRepositoryTest {
         val pushMessage = PushMessage.SendTransaction(
             hash = "hash",
             safe = TEST_SAFE_ADDRESS.asEthereumAddressString(),
-            to = TEST_ACCOUNT.address.asEthereumAddressString(),
+            to = TEST_ACCOUNT_ADDRESS.asEthereumAddressString(),
             value = "",
             data = "",
             operation = "0",
@@ -1032,7 +1105,7 @@ class DefaultPushServiceRepositoryTest {
         val pushMessage = PushMessage.SendTransaction(
             hash = "hash",
             safe = TEST_SAFE_ADDRESS.asEthereumAddressString(),
-            to = TEST_ACCOUNT.address.asEthereumAddressString(),
+            to = TEST_ACCOUNT_ADDRESS.asEthereumAddressString(),
             value = "",
             data = "",
             operation = "0",
@@ -1217,12 +1290,13 @@ class DefaultPushServiceRepositoryTest {
             testObserver.values()[0]
         )
     }
+
     // sha3("GNO" + <pushToken> + <build_number> + <version_name> + <client> + <bundle>)
     private fun bundlePushInfo(pushToken: String) =
         "GNO$pushToken${BuildConfig.VERSION_CODE}${BuildConfig.VERSION_NAME}android${BuildConfig.APPLICATION_ID}"
 
     companion object {
-        private val TEST_ACCOUNT = Account("0x42".asEthereumAddress()!!)
+        private val TEST_ACCOUNT_ADDRESS = "0x42".asEthereumAddress()!!
         private val TEST_SAFE_ADDRESS = "0x40".asEthereumAddress()!!
         private val TEST_EXTENSION_ADDRESS = "0x43".asEthereumAddress()!!
         private val TEST_ACCOUNT_SIGNATURE = Signature(

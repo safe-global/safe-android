@@ -7,8 +7,6 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import pm.gnosis.heimdall.di.ViewModelFactory
 import pm.gnosis.heimdall.di.ViewModelKey
-import pm.gnosis.heimdall.ui.account.AccountContract
-import pm.gnosis.heimdall.ui.account.AccountViewModel
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookViewModel
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
@@ -81,10 +79,6 @@ import javax.inject.Singleton
 
 @Module
 abstract class ViewModelFactoryModule {
-    @Binds
-    @IntoMap
-    @ViewModelKey(AccountContract::class)
-    abstract fun bindsAccountContract(viewModel: AccountViewModel): ViewModel
 
     @Binds
     @IntoMap

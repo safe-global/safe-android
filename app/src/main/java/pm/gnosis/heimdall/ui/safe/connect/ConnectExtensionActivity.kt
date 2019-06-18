@@ -3,6 +3,7 @@ package pm.gnosis.heimdall.ui.safe.connect
 import android.content.Context
 import android.content.Intent
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
@@ -11,9 +12,10 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
 class ConnectExtensionActivity : PairingActivity() {
+
     override fun titleRes() = R.string.connect
 
-    override fun onSuccess(extension: Solidity.Address) {
+    override fun onSuccess(signingOwner: AccountsRepository.SafeOwner, extension: Solidity.Address) {
         startActivity(
             ReviewTransactionActivity.createIntent(
                 context = this,
@@ -24,6 +26,8 @@ class ConnectExtensionActivity : PairingActivity() {
     }
 
     override fun shouldShowLaterOption() = false
+
+    override fun signingSafe(): Solidity.Address? = intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!!
 
     companion object {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"

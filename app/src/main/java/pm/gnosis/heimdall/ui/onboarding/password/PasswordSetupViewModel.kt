@@ -13,7 +13,7 @@ import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.mnemonic.Bip39
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.svalinn.security.EncryptionManager
@@ -21,10 +21,8 @@ import javax.inject.Inject
 
 class PasswordSetupViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val accountsRepository: AccountsRepository,
     private val encryptionManager: EncryptionManager,
-    private val pushServiceRepository: PushServiceRepository,
-    private val bip39: Bip39
+    private val pushServiceRepository: PushServiceRepository
 ) : PasswordSetupContract() {
     override fun validatePassword(password: String): Single<Result<Collection<PasswordValidationCondition>>> =
         Single.fromCallable { PasswordHelper.Validator.validate(password) }
@@ -46,19 +44,15 @@ class PasswordSetupViewModel @Inject constructor(
         }.flatMap {
             encryptionManager.setupPassword(it)
                 .map { if (it) Unit else throw Exception() }
-                .onErrorResumeNext { _: Throwable -> Single.error(SimpleLocalizedException(context.getString(R.string.password_error_saving))) }
-        }.flatMapCompletable {
-            createAccount()
-        }.doOnComplete {
+                .onErrorResumeNext { Single.error(SimpleLocalizedException(context.getString(R.string.password_error_saving))) }
+        }.doOnSuccess {
             pushServiceRepository.syncAuthentication(true)
-        }.andThen(Single.fromCallable {
-            if (encryptionManager.canSetupFingerprint()) FingerprintSetupActivity.createIntent(context)
-            else SafeMainActivity.createIntent(context)
-        }).mapToResult()
+        }.flatMap {
+            Single.fromCallable {
+                if (encryptionManager.canSetupFingerprint()) FingerprintSetupActivity.createIntent(context)
+                else SafeMainActivity.createIntent(context)
+            }
+        }.mapToResult()
 
     private fun isEqualPassword(passwordHash: ByteArray, repeat: String) = Sha3Utils.keccak(repeat.toByteArray()).contentEquals(passwordHash)
-
-    private fun createAccount() =
-        Single.fromCallable { bip39.mnemonicToSeed(bip39.generateMnemonic(languageId = R.id.english)) }
-            .flatMapCompletable { accountsRepository.saveAccountFromMnemonicSeed(it) }
 }

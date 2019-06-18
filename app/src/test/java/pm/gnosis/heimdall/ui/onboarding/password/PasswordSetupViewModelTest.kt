@@ -19,7 +19,7 @@ import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.helpers.PasswordValidationCondition
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.mnemonic.Bip39
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -42,19 +42,13 @@ class PasswordSetupViewModelTest {
     private lateinit var encryptionManagerMock: EncryptionManager
 
     @Mock
-    private lateinit var accountsRepository: AccountsRepository
-
-    @Mock
     private lateinit var pushServiceRepository: PushServiceRepository
-
-    @Mock
-    private lateinit var bip39: Bip39
 
     private lateinit var viewModel: PasswordSetupViewModel
 
     @Before
     fun setUp() {
-        viewModel = PasswordSetupViewModel(contextMock, accountsRepository, encryptionManagerMock, pushServiceRepository, bip39)
+        viewModel = PasswordSetupViewModel(contextMock, encryptionManagerMock, pushServiceRepository)
     }
 
     @Test
@@ -182,54 +176,6 @@ class PasswordSetupViewModelTest {
         then(pushServiceRepository).shouldHaveZeroInteractions()
         then(contextMock).should().getString(R.string.password_error_saving)
         observer.assertResult(ErrorResult(SimpleLocalizedException(R.string.password_error_saving.toString())))
-    }
-
-    @Test
-    fun createAccountSuccess() {
-        val observer = createObserver()
-        val testCompletable = TestCompletable()
-        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
-        given(bip39.generateMnemonic(anyInt(), anyInt())).willReturn("mnemonic")
-        given(bip39.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(ByteArray(0))
-        given(accountsRepository.saveAccountFromMnemonicSeed(MockUtils.any(), anyLong())).willReturn(testCompletable)
-        given(encryptionManagerMock.canSetupFingerprint()).willReturn(true)
-
-        viewModel.createAccount(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
-
-        then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
-        then(encryptionManagerMock).should().canSetupFingerprint()
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        then(pushServiceRepository).should().syncAuthentication(true)
-        then(pushServiceRepository).shouldHaveNoMoreInteractions()
-        then(bip39).should().generateMnemonic(languageId = R.id.english)
-        then(bip39).should().mnemonicToSeed("mnemonic")
-        then(bip39).shouldHaveNoMoreInteractions()
-        then(accountsRepository).should().saveAccountFromMnemonicSeed(ByteArray(0))
-        then(accountsRepository).shouldHaveNoMoreInteractions()
-        observer.assertValue { it is DataResult }.assertComplete()
-        assertEquals(1, testCompletable.callCount)
-    }
-
-    @Test
-    fun createAccountError() {
-        val observer = createObserver()
-        val exception = Exception()
-        given(encryptionManagerMock.setupPassword(MockUtils.any(), MockUtils.any())).willReturn(Single.just(true))
-        given(bip39.generateMnemonic(anyInt(), anyInt())).willReturn("mnemonic")
-        given(bip39.mnemonicToSeed(anyString(), MockUtils.any())).willReturn(ByteArray(0))
-        given(accountsRepository.saveAccountFromMnemonicSeed(MockUtils.any(), anyLong())).willReturn(Completable.error(exception))
-
-        viewModel.createAccount(Sha3Utils.keccak("111111".toByteArray()), "111111").subscribe(observer)
-
-        then(encryptionManagerMock).should().setupPassword("111111".toByteArray())
-        then(encryptionManagerMock).shouldHaveNoMoreInteractions()
-        then(pushServiceRepository).shouldHaveZeroInteractions()
-        then(bip39).should().generateMnemonic(languageId = R.id.english)
-        then(bip39).should().mnemonicToSeed("mnemonic")
-        then(bip39).shouldHaveNoMoreInteractions()
-        then(accountsRepository).should().saveAccountFromMnemonicSeed(ByteArray(0))
-        then(accountsRepository).shouldHaveNoMoreInteractions()
-        observer.assertResult(ErrorResult(exception))
     }
 
     @Test

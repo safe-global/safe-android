@@ -10,12 +10,11 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import javax.inject.Inject
 
 class ConfirmNewRecoveryPhraseViewModel @Inject constructor(
     private val accountsRepository: AccountsRepository,
-    private val bip39: Bip39,
     private val safeRepository: GnosisSafeRepository,
     private val recoverSafeOwnersHelper: RecoverSafeOwnersHelper
 ) : ConfirmNewRecoveryPhraseContract() {
@@ -30,12 +29,12 @@ class ConfirmNewRecoveryPhraseViewModel @Inject constructor(
     override fun loadTransaction(): Single<Pair<Solidity.Address, SafeTransaction>> =
         Single.zip(
             safeRepository.loadInfo(safeAddress).firstOrError(),
-            accountsRepository.loadActiveAccount().map { it.address },
+            accountsRepository.signingOwner(safeAddress),
             getAddressesFromRecoveryPhrase(),
-            Function3 { safeInfo: SafeInfo, appAccount: Solidity.Address, recoveryPhraseAddresses: Set<Solidity.Address> ->
+            Function3 { safeInfo: SafeInfo, appAccount: AccountsRepository.SafeOwner, recoveryPhraseAddresses: Set<Solidity.Address> ->
                 recoverSafeOwnersHelper.buildRecoverTransaction(
                     safeInfo = safeInfo,
-                    addressesToKeep = listOfNotNull(appAccount, browserExtensionAddress).toSet(),
+                    addressesToKeep = listOfNotNull(appAccount.address, browserExtensionAddress).toSet(),
                     addressesToSwapIn = recoveryPhraseAddresses
                 )
             }
@@ -46,17 +45,6 @@ class ConfirmNewRecoveryPhraseViewModel @Inject constructor(
     override fun getSafeAddress(): Solidity.Address = safeAddress
 
     private fun getAddressesFromRecoveryPhrase() =
-        Single.fromCallable { bip39.mnemonicToSeed(bip39.validateMnemonic(getRecoveryPhrase())) }
-            .flatMap { seed ->
-                Single.zip(
-                    accountsRepository.accountFromMnemonicSeed(seed, accountIndex = 0).map { it.first },
-                    accountsRepository.accountFromMnemonicSeed(seed, accountIndex = 1).map { it.first },
-                    BiFunction { recoveryAccount1: Solidity.Address, recoveryAccount2: Solidity.Address ->
-                        setOf(
-                            recoveryAccount1,
-                            recoveryAccount2
-                        )
-                    }
-                )
-            }
+        accountsRepository.createOwnersFromPhrase(getRecoveryPhrase(), listOf(0, 1))
+            .map { accounts -> setOf(accounts[0].address, accounts[1].address) }
 }

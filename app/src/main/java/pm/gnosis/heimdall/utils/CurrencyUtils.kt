@@ -9,11 +9,11 @@ import java.math.BigInteger
 
 fun Wei.displayString(context: Context) = when {
     value <= WEI_LIMIT ->
-        context.getString(R.string.x_wei, value.asDecimalString())!!
+        context.getString(R.string.x_wei, value.asDecimalString())
     value <= GWEI_LIMIT ->
-        context.getString(R.string.x_gwei, value.divide(GWEI_FACTOR).asDecimalString())!!
+        context.getString(R.string.x_gwei, value.divide(GWEI_FACTOR).asDecimalString())
     else ->
-        context.getString(R.string.x_ether, toEther().stringWithNoTrailingZeroes())!!
+        context.getString(R.string.x_ether, toEther().stringWithNoTrailingZeroes())
 }
 
 fun Wei.format(context: Context) = when {

@@ -10,7 +10,6 @@ import dagger.Module
 import dagger.Provides
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
-import pm.gnosis.heimdall.ui.account.AccountContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
@@ -57,10 +56,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesLinearLayoutManager() = LinearLayoutManager(context)
-
-    @Provides
-    @ForView
-    fun providesAccountContract(provider: ViewModelProvider) = provider[AccountContract::class.java]
 
     @Provides
     @ForView

@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundViewModel
 import pm.gnosis.heimdall.utils.emitAndNext
@@ -20,7 +21,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.accounts.base.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
@@ -32,7 +33,7 @@ import javax.inject.Inject
 
 class RecoveringSafeViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val accountsRepository: AccountsRepository,
+    private val cryptoHelper: CryptoHelper,
     private val executionRepository: TransactionExecutionRepository,
     private val safeRepository: GnosisSafeRepository,
     private val tokenRepository: TokenRepository
@@ -143,7 +144,9 @@ class RecoveringSafeViewModel @Inject constructor(
                         )
                             .flatMap { txHash ->
                                 Single.zip(
-                                    safe.signatures.map { signature -> accountsRepository.recover(txHash, signature).map { it to signature } }
+                                    safe.signatures.map { signature ->
+                                        Single.fromCallable { cryptoHelper.recover(txHash, signature) to signature }
+                                    }
                                 ) {
                                     it.associate {
                                         @Suppress("UNCHECKED_CAST") // Unchecked cast is necessary because of rx zip implementation

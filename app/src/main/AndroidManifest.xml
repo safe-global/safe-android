@@ -84,11 +84,6 @@
             android:theme="@style/GreyBackgroundTheme" />
 
         <activity
-            android:name=".ui.account.AccountActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/GreyBackgroundTheme" />
-
-        <activity
             android:name=".ui.security.unlock.UnlockActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MountainTheme"

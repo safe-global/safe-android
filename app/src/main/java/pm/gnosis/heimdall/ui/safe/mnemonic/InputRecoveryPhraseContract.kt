@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.safe.mnemonic
 
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
@@ -37,8 +38,7 @@ abstract class InputRecoveryPhraseContract : ViewModel() {
         data class RecoverData(
             val executionInfo: TransactionExecutionRepository.ExecuteInformation,
             val signatures: List<Signature>,
-            val ownerAddress: Solidity.Address,
-            val ownerKey: ByteArray
+            val safeOwner: AccountsRepository.SafeOwner
         ) : ViewUpdate()
     }
 }

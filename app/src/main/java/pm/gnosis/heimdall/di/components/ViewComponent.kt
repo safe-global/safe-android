@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.di.components
 import dagger.Component
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.modules.ViewModule
-import pm.gnosis.heimdall.ui.account.AccountActivity
 import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.addressbook.edit.AddressBookEditEntryActivity
@@ -82,7 +81,6 @@ interface ViewComponent {
 
     // Activities
 
-    fun inject(activity: AccountActivity)
     fun inject(activity: AddressBookActivity)
     fun inject(activity: AddressBookAddEntryActivity)
     fun inject(activity: AddressBookEditEntryActivity)
