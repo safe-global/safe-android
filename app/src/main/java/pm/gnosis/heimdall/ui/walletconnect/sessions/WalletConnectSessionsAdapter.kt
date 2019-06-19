@@ -1,23 +1,31 @@
 package pm.gnosis.heimdall.ui.walletconnect.sessions
 
 import android.content.Context
+import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.OnLifecycleEvent
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.view.clicks
 import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.android.synthetic.main.dialog_content_simple_text.view.*
 import kotlinx.android.synthetic.main.layout_wallet_connect_sessions_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
+import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
+import pm.gnosis.heimdall.utils.SwipeableTouchHelperCallback
+import pm.gnosis.heimdall.utils.SwipeableViewHolder
+import pm.gnosis.heimdall.utils.errorToast
 import pm.gnosis.svalinn.common.utils.visible
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,16 +37,28 @@ class WalletConnectSessionsAdapter @Inject constructor(
     private val picasso: Picasso
 ) : LifecycleAdapter<BridgeRepository.SessionMeta, WalletConnectSessionsAdapter.SessionViewHolder>(context) {
 
+    private val touchCallback by lazy { SwipeableTouchHelperCallback() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder =
         SessionViewHolder(
             viewModel,
             picasso,
+            { notifyItemChanged(it.adapterPosition) },
             LayoutInflater.from(parent.context).inflate(R.layout.layout_wallet_connect_sessions_item, parent, false)
         )
 
-    class SessionViewHolder(private val viewModel: WalletConnectSessionsContract, private val picasso: Picasso, itemView: View) :
-        LifecycleAdapter.LifecycleViewHolder<BridgeRepository.SessionMeta>(itemView) {
+    fun attach(recyclerView: RecyclerView) {
+        recyclerView.adapter = this
+        ItemTouchHelper(touchCallback).attachToRecyclerView(recyclerView)
+    }
+
+    class SessionViewHolder(
+        private val viewModel: WalletConnectSessionsContract,
+        private val picasso: Picasso,
+        private val swipeCanceledCallback: (SessionViewHolder) -> Unit,
+        itemView: View
+    ) :
+        LifecycleAdapter.LifecycleViewHolder<BridgeRepository.SessionMeta>(itemView), SwipeableViewHolder {
         private val disposables = CompositeDisposable()
         private var current: BridgeRepository.SessionMeta? = null
 
@@ -46,6 +66,47 @@ class WalletConnectSessionsAdapter @Inject constructor(
             current = data
             updateSessionInfo(data)
         }
+
+        override fun onSwiped() {
+            val meta = current ?: return
+            val context = itemView.context
+            val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_content_simple_text, null)
+            val dappName = if (meta.dappName.isNullOrBlank()) meta.dappName else itemView.context.getString(R.string.unknown_dapp)
+            dialogView.dialog_content_simple_text_content.text = context.getString(R.string.this_will_disconnect_x, dappName)
+            CustomAlertDialogBuilder.build(
+                context,
+                context.getString(R.string.disconnect_from_dapp),
+                dialogView,
+                confirmRes = R.string.disconnect,
+                confirmCallback = {
+                    closeSession()
+                    it.dismiss()
+                },
+                cancelCallback = {
+                    it.dismiss()
+                },
+                dismissCallback = DialogInterface.OnDismissListener {
+                    cancelSwipe()
+                }
+
+            ).show()
+        }
+
+        private fun closeSession() {
+            current?.let { meta ->
+                viewModel.killSession(meta.id).subscribeBy(onError = {
+                    Timber.e(it)
+                    itemView.context.errorToast(it)
+                })
+            }
+        }
+
+        private fun cancelSwipe() {
+            swipeCanceledCallback(this)
+        }
+
+        override fun swipeableView(): View =
+            itemView.layout_wallet_connect_sessions_item_foreground
 
         @OnLifecycleEvent(Lifecycle.Event.ON_START)
         fun start() {
@@ -57,10 +118,6 @@ class WalletConnectSessionsAdapter @Inject constructor(
 
                 disposables += itemView.layout_wallet_connect_sessions_item_activate.clicks()
                     .switchMapCompletable { viewModel.activateSession(meta.id) }
-                    .subscribeBy(onError = Timber::e)
-
-                disposables += itemView.layout_wallet_connect_sessions_item_kill.clicks()
-                    .switchMapCompletable { viewModel.killSession(meta.id) }
                     .subscribeBy(onError = Timber::e)
             }
         }
@@ -78,15 +135,23 @@ class WalletConnectSessionsAdapter @Inject constructor(
         }
 
         private fun updateSessionInfo(meta: BridgeRepository.SessionMeta) {
-            val hasPeerData = !meta.dappName.isNullOrBlank()
-            itemView.layout_wallet_connect_sessions_item_symbol.text = if (hasPeerData) meta.dappName else "Unknown dapp"
-            itemView.layout_wallet_connect_sessions_item_name.text = meta.dappUrl ?: meta.dappDescription
+            if (meta.dappName == null) {
+                itemView.layout_wallet_connect_sessions_item_title.setText(R.string.please_wait)
+                itemView.layout_wallet_connect_sessions_item_subtitle.setText(R.string.connecting)
+            } else {
+                itemView.layout_wallet_connect_sessions_item_title.text =
+                    if (meta.dappName.isNotBlank()) meta.dappName else itemView.context.getString(R.string.unknown_dapp)
+                itemView.layout_wallet_connect_sessions_item_subtitle.text = meta.dappUrl ?: meta.dappDescription
+            }
             itemView.layout_wallet_connect_sessions_item_activate.visible(!meta.active)
-            itemView.layout_wallet_connect_sessions_item_kill.visible(meta.active)
 
-            itemView.layout_wallet_connect_sessions_item_icon.setImageDrawable(null)
+            itemView.layout_wallet_connect_sessions_item_icon.setImageResource(R.drawable.image_placeholder)
             meta.dappIcons?.firstOrNull()?.let {
+                itemView.layout_wallet_connect_sessions_item_image_text.text = null
                 picasso.load(it).into(itemView.layout_wallet_connect_sessions_item_icon)
+            } ?: run {
+                itemView.layout_wallet_connect_sessions_item_image_text.visible(true)
+                itemView.layout_wallet_connect_sessions_item_image_text.text = meta.dappName?.first()?.toUpperCase()?.toString()
             }
         }
 

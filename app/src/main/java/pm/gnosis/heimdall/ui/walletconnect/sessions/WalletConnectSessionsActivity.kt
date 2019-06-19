@@ -16,9 +16,9 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
-import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
 import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
@@ -42,7 +42,7 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
         safe = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() ?: run { finish(); return }
         viewModel.setup(safe)
         layout_wallet_connect_sessions_recycler_view.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        layout_wallet_connect_sessions_recycler_view.adapter = adapter
+        adapter.attach(layout_wallet_connect_sessions_recycler_view)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -61,6 +61,7 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
 
         disposables += viewModel.observeSessions()
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext { layout_wallet_connect_sessions_empty_view.visible(it.entries.isEmpty()) }
             .subscribeBy(onNext = adapter::updateData, onError = Timber::e)
 
         disposables += layout_wallet_connect_sessions_add.clicks()

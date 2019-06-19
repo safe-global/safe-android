@@ -1,85 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:minHeight="64dp">
 
-    <ImageView
-        android:id="@+id/layout_wallet_connect_sessions_item_icon"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/ic_gnosis_logo" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/tomato"
+        android:gravity="center_vertical|right">
 
-    <TextView
-        android:id="@+id/layout_wallet_connect_sessions_item_symbol"
-        android:layout_width="0dp"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/disconnect"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="24dp"
+            android:src="@drawable/ic_disconnect"
+            android:tint="@color/white" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_wallet_connect_sessions_item_foreground"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/dark_slate_blue"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/layout_wallet_connect_sessions_item_name"
-        app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_item_activate"
-        app:layout_constraintStart_toEndOf="@+id/layout_wallet_connect_sessions_item_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="GNO" />
+        android:background="@color/white"
+        tools:translationX="-200dp">
 
-    <TextView
-        android:id="@+id/layout_wallet_connect_sessions_item_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColor="@color/battleship_grey"
-        android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_item_activate"
-        app:layout_constraintStart_toStartOf="@+id/layout_wallet_connect_sessions_item_symbol"
-        app:layout_constraintTop_toBottomOf="@+id/layout_wallet_connect_sessions_item_symbol"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="Gnosis" />
+        <ImageView
+            android:id="@+id/layout_wallet_connect_sessions_item_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/image_placeholder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/layout_wallet_connect_sessions_item_kill"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/selectable_circle_background"
-        android:scaleType="centerInside"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_close_24dp" />
+        <TextView
+            android:id="@+id/layout_wallet_connect_sessions_item_image_text"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="T" />
 
-    <TextView
-        android:id="@+id/layout_wallet_connect_sessions_item_activate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/selectable_background"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="@string/activate"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_item_kill"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        <TextView
+            android:id="@+id/layout_wallet_connect_sessions_item_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/dark_slate_blue"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/layout_wallet_connect_sessions_item_subtitle"
+            app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_item_activate"
+            app:layout_constraintStart_toEndOf="@+id/layout_wallet_connect_sessions_item_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="GNO" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="@dimen/divider_width"
-        android:background="@color/divider"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/layout_wallet_connect_sessions_item_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/battleship_grey"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/layout_wallet_connect_sessions_item_activate"
+            app:layout_constraintStart_toStartOf="@+id/layout_wallet_connect_sessions_item_title"
+            app:layout_constraintTop_toBottomOf="@+id/layout_wallet_connect_sessions_item_title"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Gnosis" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/layout_wallet_connect_sessions_item_activate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selectable_background"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/activate"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/divider_width"
+            android:background="@color/divider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

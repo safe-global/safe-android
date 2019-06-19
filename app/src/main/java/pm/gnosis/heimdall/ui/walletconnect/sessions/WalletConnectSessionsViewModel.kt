@@ -37,6 +37,6 @@ class WalletConnectSessionsViewModel @Inject constructor(
         bridgeRepository.activateSession(sessionId).andThen(bridgeRepository.initSession(sessionId))
 
     override fun killSession(sessionId: String): Completable =
-        bridgeRepository.closeSession(sessionId)
+        activateSession(sessionId).andThen( bridgeRepository.closeSession(sessionId))
 
 }

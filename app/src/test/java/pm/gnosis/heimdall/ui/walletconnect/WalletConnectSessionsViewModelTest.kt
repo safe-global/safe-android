@@ -5,6 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 
 import org.junit.Rule
@@ -70,10 +71,14 @@ class WalletConnectSessionsViewModelTest {
     @Test
     fun killSession() {
         val sessionId = UUID.randomUUID().toString()
+        given(bridgeRepoMock.activateSession(MockUtils.any())).willReturn(Completable.complete())
+        given(bridgeRepoMock.initSession(MockUtils.any())).willReturn(Completable.complete())
         given(bridgeRepoMock.closeSession(MockUtils.any())).willReturn(Completable.complete())
         val testObserver = TestObserver<Unit>()
         viewModel.killSession(sessionId).subscribe(testObserver)
         testObserver.assertComplete()
+        then(bridgeRepoMock).should().activateSession(sessionId)
+        then(bridgeRepoMock).should().initSession(sessionId)
         then(bridgeRepoMock).should().closeSession(sessionId)
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
     }
@@ -82,12 +87,52 @@ class WalletConnectSessionsViewModelTest {
     fun killSessionError() {
         val sessionId = UUID.randomUUID().toString()
         val error = WhatTheFuck(BrokenBarrierException())
+        given(bridgeRepoMock.activateSession(MockUtils.any())).willReturn(Completable.complete())
+        given(bridgeRepoMock.initSession(MockUtils.any())).willReturn(Completable.complete())
         given(bridgeRepoMock.closeSession(MockUtils.any())).willReturn(Completable.error(error))
         val testObserver = TestObserver<Unit>()
         viewModel.killSession(sessionId).subscribe(testObserver)
         testObserver.assertSubscribed().assertError(error).assertNoValues()
+        then(bridgeRepoMock).should().activateSession(sessionId)
+        then(bridgeRepoMock).should().initSession(sessionId)
         then(bridgeRepoMock).should().closeSession(sessionId)
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun killSessionErrorInit() {
+        val sessionId = UUID.randomUUID().toString()
+        val error = WhatTheFuck(BrokenBarrierException())
+        val testCompletable = TestCompletable()
+        given(bridgeRepoMock.activateSession(MockUtils.any())).willReturn(Completable.complete())
+        given(bridgeRepoMock.initSession(MockUtils.any())).willReturn(Completable.error(error))
+        given(bridgeRepoMock.closeSession(MockUtils.any())).willReturn(testCompletable)
+        val testObserver = TestObserver<Unit>()
+        viewModel.killSession(sessionId).subscribe(testObserver)
+        testObserver.assertSubscribed().assertError(error).assertNoValues()
+        then(bridgeRepoMock).should().activateSession(sessionId)
+        then(bridgeRepoMock).should().initSession(sessionId)
+        then(bridgeRepoMock).should().closeSession(sessionId)
+        then(bridgeRepoMock).shouldHaveNoMoreInteractions()
+        assertEquals(0, testCompletable.callCount)
+    }
+
+    @Test
+    fun killSessionErrorActivate() {
+        val sessionId = UUID.randomUUID().toString()
+        val error = WhatTheFuck(BrokenBarrierException())
+        val testCompletable = TestCompletable()
+        given(bridgeRepoMock.activateSession(MockUtils.any())).willReturn(Completable.error(error))
+        given(bridgeRepoMock.initSession(MockUtils.any())).willReturn(testCompletable)
+        given(bridgeRepoMock.closeSession(MockUtils.any())).willReturn(testCompletable)
+        val testObserver = TestObserver<Unit>()
+        viewModel.killSession(sessionId).subscribe(testObserver)
+        testObserver.assertSubscribed().assertError(error).assertNoValues()
+        then(bridgeRepoMock).should().activateSession(sessionId)
+        then(bridgeRepoMock).should().initSession(sessionId)
+        then(bridgeRepoMock).should().closeSession(sessionId)
+        then(bridgeRepoMock).shouldHaveNoMoreInteractions()
+        assertEquals(0, testCompletable.callCount)
     }
 
     @Test

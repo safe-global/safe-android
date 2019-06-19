@@ -6,7 +6,7 @@
     <string name="currency_wei" translatable="false">Wei</string>
     <string name="etherscan_transaction_url" translatable="false">https://rinkeby.etherscan.io/tx/%s</string>
     <string name="etherscan_address_url" translatable="false">https://rinkeby.etherscan.io/address/%s</string>
-    <string name="empty_safe_transactions_title" translatable="false">¯\\_(ツ)_/¯</string>
+    <string name="empty_screen_title" translatable="false">¯\\_(ツ)_/¯</string>
     <string name="tos_link" translatable="false">https://safe.gnosis.io/terms</string>
     <string name="privacy_link" translatable="false">https://safe.gnosis.io/privacy</string>
     <string name="x_ether" translatable="false">%s ETH</string>
