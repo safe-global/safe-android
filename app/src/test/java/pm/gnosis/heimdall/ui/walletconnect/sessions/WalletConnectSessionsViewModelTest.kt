@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.walletconnect
+package pm.gnosis.heimdall.ui.walletconnect.sessions
 
 import android.content.Context
 import io.reactivex.Completable
@@ -19,8 +19,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsContract
-import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsViewModel
 import pm.gnosis.svalinn.common.utils.WhatTheFuck
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
@@ -156,7 +154,9 @@ class WalletConnectSessionsViewModelTest {
         val testObserver = TestObserver<Unit>()
         viewModel.createSession(url).subscribe(testObserver)
         testObserver.assertComplete()
-        then(bridgeRepoMock).should().createSession(url, TEST_SAFE)
+        then(bridgeRepoMock).should().createSession(url,
+            TEST_SAFE
+        )
         then(bridgeRepoMock).should().initSession(sessionId)
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
         then(contextMock).shouldHaveZeroInteractions()
@@ -170,7 +170,9 @@ class WalletConnectSessionsViewModelTest {
         val testObserver = TestObserver<Unit>()
         viewModel.createSession(url).subscribe(testObserver)
         testObserver.assertSubscribed().assertError(error).assertNoValues()
-        then(bridgeRepoMock).should().createSession(url, TEST_SAFE)
+        then(bridgeRepoMock).should().createSession(url,
+            TEST_SAFE
+        )
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
         then(contextMock).shouldHaveZeroInteractions()
     }
@@ -185,7 +187,9 @@ class WalletConnectSessionsViewModelTest {
         val testObserver = TestObserver<Unit>()
         viewModel.createSession(url).subscribe(testObserver)
         testObserver.assertSubscribed().assertError(error).assertNoValues()
-        then(bridgeRepoMock).should().createSession(url, TEST_SAFE)
+        then(bridgeRepoMock).should().createSession(url,
+            TEST_SAFE
+        )
         then(bridgeRepoMock).should().initSession(sessionId)
         then(bridgeRepoMock).shouldHaveNoMoreInteractions()
         then(contextMock).shouldHaveZeroInteractions()
