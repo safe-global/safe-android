@@ -54,7 +54,7 @@ class AddressHelperTest {
         helper.populateAddressInfo(addressView, nameView, null, testAddress)
 
         then(imageView).shouldHaveNoMoreInteractions()
-        then(addressView).should().text = "0x0000...00000A"
+        then(addressView).should().text = "0x00...000A"
         then(addressView).should().setOnClickListener(MockUtils.any())
         then(addressView).shouldHaveNoMoreInteractions()
         then(nameView).shouldHaveZeroInteractions()
@@ -74,7 +74,7 @@ class AddressHelperTest {
 
         then(imageView).should().setAddress(testAddress)
         then(imageView).shouldHaveNoMoreInteractions()
-        then(addressView).should().text = "0xA7e1...a246EC"
+        then(addressView).should().text = "0xA7...46EC"
         then(addressView).should().setOnClickListener(MockUtils.any())
         then(addressView).shouldHaveNoMoreInteractions()
         then(nameView).should().text = "I need more Mate!"

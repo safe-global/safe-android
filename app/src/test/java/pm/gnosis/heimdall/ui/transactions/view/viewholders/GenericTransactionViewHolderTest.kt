@@ -109,7 +109,7 @@ class GenericTransactionViewHolderTest {
         then(safeNameView).shouldHaveNoMoreInteractions()
         then(safeImageView).should().setAddress(TEST_SAFE)
         then(safeImageView).shouldHaveNoMoreInteractions()
-        then(safeAddressView).should().text = "0xFe21...5016ee"
+        then(safeAddressView).should().text = "0xFe...16ee"
         then(safeAddressView).should().setOnClickListener(MockUtils.any())
         then(safeAddressView).shouldHaveNoMoreInteractions()
 
@@ -117,7 +117,7 @@ class GenericTransactionViewHolderTest {
         then(receiverNameView).shouldHaveNoMoreInteractions()
         then(receiverImageView).should().setAddress(TEST_RECEIVER)
         then(receiverImageView).shouldHaveNoMoreInteractions()
-        then(receiverAddressView).should().text = "0x0029...0CBAA2"
+        then(receiverAddressView).should().text = "0x00...BAA2"
         then(receiverAddressView).should().setOnClickListener(MockUtils.any())
         then(receiverAddressView).shouldHaveNoMoreInteractions()
 

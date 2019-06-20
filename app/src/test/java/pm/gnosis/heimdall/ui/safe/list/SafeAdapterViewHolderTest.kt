@@ -108,7 +108,7 @@ class SafeAdapterViewHolderTest {
 
         viewHolder.start()
 
-        then(safeAddressTextView).should().text = "0x1f81...C65C7E"
+        then(safeAddressTextView).should().text = "0x1f...5C7E"
         then(safeAddressTextView).should().setOnClickListener(MockUtils.any())
         then(safeAddressTextView).shouldHaveNoMoreInteractions()
 
@@ -159,7 +159,7 @@ class SafeAdapterViewHolderTest {
         viewHolder.start()
 
         then(safeAddressTextView).should().text = null
-        then(safeAddressTextView).should().text = "0x1f81...C65C7E"
+        then(safeAddressTextView).should().text = "0x1f...5C7E"
         then(safeAddressTextView).should().setOnClickListener(MockUtils.any())
         then(safeAddressTextView).shouldHaveNoMoreInteractions()
 

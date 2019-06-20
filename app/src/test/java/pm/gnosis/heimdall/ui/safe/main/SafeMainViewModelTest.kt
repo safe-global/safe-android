@@ -445,12 +445,12 @@ class SafeMainViewModelTest {
         infoProcessor.offer(AddressBookEntry(TEST_SAFE, "Old Name", ""))
         safeSubscriber
             .assertValueCount(1)
-            .assertValueAt(0, "Old Name" to "0x1f81...C65C7E")
+            .assertValueAt(0, "Old Name" to "0x1f...5C7E")
 
         infoProcessor.offer(AddressBookEntry(TEST_SAFE, "", ""))
         safeSubscriber
             .assertValueCount(2)
-            .assertValueAt(1, "" to "0x1f81...C65C7E")
+            .assertValueAt(1, "" to "0x1f...5C7E")
 
         then(addressBookRepository).should().observeAddressBookEntry(TEST_SAFE)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
@@ -485,12 +485,12 @@ class SafeMainViewModelTest {
         infoProcessor.offer(AddressBookEntry(TEST_PENDING_SAFE, "Old Name", ""))
         safeSubscriber
             .assertValueCount(1)
-            .assertValueAt(0, "Old Name" to "0xC2AC...a48132")
+            .assertValueAt(0, "Old Name" to "0xC2...8132")
 
         infoProcessor.offer(AddressBookEntry(TEST_PENDING_SAFE, "", ""))
         safeSubscriber
             .assertValueCount(2)
-            .assertValueAt(1, "" to "0xC2AC...a48132")
+            .assertValueAt(1, "" to "0xC2...8132")
 
         then(addressBookRepository).should().observeAddressBookEntry(TEST_PENDING_SAFE)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
@@ -527,12 +527,12 @@ class SafeMainViewModelTest {
         infoProcessor.offer(AddressBookEntry(TEST_RECOVERING_SAFE, "Old Name", ""))
         safeSubscriber
             .assertValueCount(1)
-            .assertValueAt(0, "Old Name" to "0xb365...14244A")
+            .assertValueAt(0, "Old Name" to "0xb3...244A")
 
         infoProcessor.offer(AddressBookEntry(TEST_RECOVERING_SAFE, "", ""))
         safeSubscriber
             .assertValueCount(2)
-            .assertValueAt(1, "" to "0xb365...14244A")
+            .assertValueAt(1, "" to "0xb3...244A")
 
         then(addressBookRepository).should().observeAddressBookEntry(TEST_RECOVERING_SAFE)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
