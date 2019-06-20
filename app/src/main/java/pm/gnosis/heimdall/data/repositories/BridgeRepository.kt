@@ -47,4 +47,5 @@ interface BridgeRepository {
     fun observeSessions(safe: Solidity.Address?): Observable<List<SessionMeta>>
     fun shouldShowIntro(): Single<Boolean>
     fun markIntroDone(): Completable
+    fun init()
 }

@@ -36,8 +36,7 @@ class HeimdallApplication : MultiDexApplication(), ComponentProvider {
         val asyncMainThreadScheduler = AndroidSchedulers.from(Looper.getMainLooper(), true)
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { asyncMainThreadScheduler }
 
-        component.shortcutRepository().init()
-        component.transactionTriggerManager().init()
+        component.appInitManager().init()
 
         try {
             LinuxSecureRandom()

@@ -3,6 +3,9 @@ package pm.gnosis.heimdall.data.repositories.impls
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import io.reactivex.Completable
@@ -69,10 +72,32 @@ class WalletConnectBridgeRepository @Inject constructor(
         sessionForRequest(referenceId)?.approveRequest(referenceId, chainHash)
     }
 
+    override fun init() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).registerDefaultNetworkCallback(
+                object : ConnectivityManager.NetworkCallback() {
+                    override fun onAvailable(network: Network?) {
+                        super.onAvailable(network)
+                        activateAllSessions()
+                    }
+                })
+        }
+    }
+
     private fun sessionForRequest(referenceId: Long) =
         sessionRequests.remove(referenceId)?.let {
             sessions[it]
         }
+
+    private fun activateAllSessions() =
+        Single.fromCallable {
+            sessionStore.list()
+                .map { session -> internalGetOrCreateSession(session.config) }
+                .map { sessions[it]?.init() }
+            startBridgeService()
+        }
+            .subscribeOn(Schedulers.io())
+            .subscribeBy(onError = Timber::e)
 
     override fun sessions(safe: Solidity.Address?): Single<List<BridgeRepository.SessionMeta>> =
         Single.fromCallable {
