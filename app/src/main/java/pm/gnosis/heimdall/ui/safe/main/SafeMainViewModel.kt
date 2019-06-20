@@ -9,7 +9,6 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.processors.BehaviorProcessor
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
@@ -20,7 +19,7 @@ import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.utils.asMiddleEllipsized
+import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.PreferencesManager
@@ -107,9 +106,6 @@ class SafeMainViewModel @Inject constructor(
 
 
     override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)
-
-    private fun Solidity.Address.shortChecksumString() =
-        asEthereumAddressChecksumString().let { it.asMiddleEllipsized(6) }
 
     companion object {
         private const val KEY_SELECTED_SAFE = "safe_main.string.selected_safe"

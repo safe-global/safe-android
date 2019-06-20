@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -8,6 +9,7 @@ import android.net.Network
 import android.os.Build
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.squareup.picasso.Picasso
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -17,6 +19,7 @@ import io.reactivex.subjects.BehaviorSubject
 import org.walletconnect.Session
 import org.walletconnect.impls.WCSession
 import org.walletconnect.impls.WCSessionStore
+import org.walletconnect.nullOnThrow
 import pm.gnosis.ethereum.rpc.models.JsonRpcError
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
@@ -27,6 +30,7 @@ import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.services.BridgeService
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
+import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -44,6 +48,7 @@ import javax.inject.Singleton
 class WalletConnectBridgeRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val rpcProxyApi: RpcProxyApi,
+    private val picasso: Picasso,
     private val infoRepository: TransactionInfoRepository,
     private val localNotificationManager: LocalNotificationManager,
     private val sessionStore: WCSessionStore,
@@ -73,6 +78,10 @@ class WalletConnectBridgeRepository @Inject constructor(
     }
 
     override fun init() {
+        localNotificationManager.createNotificationChannel(
+            CHANNEL_WALLET_CONNECT_REQUESTS,
+            context.getString(R.string.channel_description_wallect_connect_requests)
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).registerDefaultNetworkCallback(
                 object : ConnectivityManager.NetworkCallback() {
@@ -172,7 +181,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                                     .subscribeBy(onError = { t ->
                                         rejectRequest(id, 42, t.message ?: "Could not handle transaction").subscribe()
                                     }) { (safe, txData) ->
-                                        showSendTransactionNotification(safe, txData, id)
+                                        showSendTransactionNotification(session.peerMeta(), safe, txData, id)
                                     }
                             }
                         is Session.MethodCall.SignMessage ->
@@ -214,13 +223,21 @@ class WalletConnectBridgeRepository @Inject constructor(
             config.handshakeTopic
         }
 
-    private fun showSendTransactionNotification(safe: Solidity.Address, data: TransactionData, referenceId: Long) {
+    private fun showSendTransactionNotification(peerMeta: Session.PeerMeta?, safe: Solidity.Address, data: TransactionData, referenceId: Long) {
+        val icon = peerMeta?.icons?.firstOrNull()?.let { nullOnThrow { picasso.load(it).get() } }
         val intent = ReviewTransactionActivity.createIntent(context, safe, data, referenceId)
+        val notification = localNotificationManager.builder(
+            peerMeta?.name ?: context.getString(R.string.unknown_dapp),
+            context.getString(R.string.notification_new_transaction_request),
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT),
+            CHANNEL_WALLET_CONNECT_REQUESTS
+        )
+            .setSubText(safe.shortChecksumString())
+            .setLargeIcon(icon)
+            .build()
         localNotificationManager.show(
             referenceId.hashCode(),
-            context.getString(R.string.sign_transaction_request_title),
-            context.getString(R.string.sign_transaction_request_message),
-            intent
+            notification
         )
     }
 
@@ -359,6 +376,7 @@ class WalletConnectBridgeRepository @Inject constructor(
         private const val PREFERENCES_SESSIONS = "preferences.wallet_connect_bridge_repository.sessions"
         private const val PREFERENCES_BRIDGE = "preferences.wallet_connect_bridge_repository.bridge"
         private const val KEY_INTRO_DONE = "wallet_connect_bridge_repository.boolean.intro_done"
+        private const val CHANNEL_WALLET_CONNECT_REQUESTS = "channel_wallet_connect_requests"
     }
 }
 

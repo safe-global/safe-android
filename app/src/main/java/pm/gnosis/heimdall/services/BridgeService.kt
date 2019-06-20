@@ -11,6 +11,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import pm.gnosis.heimdall.HeimdallApplication
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.SessionIdAndSafe
 import pm.gnosis.heimdall.helpers.AppPreferencesManager
@@ -41,7 +42,7 @@ class BridgeService : Service() {
         super.onCreate()
         HeimdallApplication[this].inject(this)
 
-        localNotificationManager.createNotificationChannel(NOTIFICATION_CHANNEL, "Updates of WalletConnect connections", 0)
+        localNotificationManager.createNotificationChannel(NOTIFICATION_CHANNEL, getString(R.string.channel_description_wallect_connect_sessions), 0)
     }
 
     private fun checkEnabled() {

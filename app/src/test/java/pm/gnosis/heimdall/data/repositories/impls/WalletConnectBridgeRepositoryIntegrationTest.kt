@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
 import com.squareup.moshi.Moshi
+import com.squareup.picasso.Picasso
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import org.junit.Rule
@@ -42,6 +43,7 @@ class WalletConnectBridgeRepositoryIntegrationTest {
             WalletConnectBridgeRepository(
                 mock(Context::class.java),
                 rpcProxyApiMock,
+                mock(Picasso::class.java),
                 mock(TransactionInfoRepository::class.java),
                 mock(LocalNotificationManager::class.java),
                 sessionStore,

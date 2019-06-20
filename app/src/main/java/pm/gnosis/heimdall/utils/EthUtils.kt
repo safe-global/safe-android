@@ -1,7 +1,9 @@
 package pm.gnosis.heimdall.utils
 
 import android.content.Context
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.utils.asDecimalString
 import pm.gnosis.utils.stringWithNoTrailingZeroes
@@ -28,3 +30,6 @@ fun Wei.format(context: Context) = when {
 private val WEI_LIMIT = BigInteger.TEN.pow(6)
 private val GWEI_LIMIT = BigInteger.TEN.pow(14)
 private val GWEI_FACTOR = BigInteger.TEN.pow(9)
+
+fun Solidity.Address.shortChecksumString() =
+        asEthereumAddressChecksumString().asMiddleEllipsized(4)

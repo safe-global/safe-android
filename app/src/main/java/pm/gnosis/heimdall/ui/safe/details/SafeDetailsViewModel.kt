@@ -4,10 +4,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
@@ -38,7 +38,7 @@ class SafeDetailsViewModel @Inject constructor(
        return Single.just(address)
             .subscribeOn(Schedulers.computation())
             .map {
-                it.asEthereumAddressChecksumString()
+                it.shortChecksumString()
             }
     }
 }

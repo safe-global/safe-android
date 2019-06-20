@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
+import com.squareup.picasso.Picasso
 import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
@@ -60,6 +61,9 @@ class WalletConnectBridgeRepositoryTest {
     lateinit var sessionStoreMock: WCSessionStore
 
     @Mock
+    lateinit var picassoMock: Picasso
+
+    @Mock
     lateinit var executionRepositoryMock: TransactionExecutionRepository
 
     @Mock
@@ -77,7 +81,7 @@ class WalletConnectBridgeRepositoryTest {
         testPreferences.clear()
         given(appPreferencesManagerMock.get(MockUtils.any())).willReturn(testPreferences)
         repository = WalletConnectBridgeRepository(
-            contextMock, rpcProxyApiMock, infoRepositoryMock, localNotificationManagerMock,
+            contextMock, rpcProxyApiMock, picassoMock, infoRepositoryMock, localNotificationManagerMock,
             sessionStoreMock, sessionBuilderMock,
             appPreferencesManagerMock, executionRepositoryMock
         )

@@ -25,7 +25,6 @@ import pm.gnosis.heimdall.ui.base.ScrollableContainer
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
-import pm.gnosis.heimdall.utils.asMiddleEllipsized
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.withArgs
 import pm.gnosis.utils.asEthereumAddress
@@ -81,7 +80,7 @@ class SafeDetailsFragment : BaseFragment() {
         disposables += viewModel.addressString()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(Timber::e) {
-                layout_safe_details_safe_address.text = it.asMiddleEllipsized(4)
+                layout_safe_details_safe_address.text = it
 
             }
     }
