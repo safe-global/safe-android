@@ -3,9 +3,9 @@ package pm.gnosis.heimdall.ui.onboarding
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.text.Html
 import android.text.method.LinkMovementMethod
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy

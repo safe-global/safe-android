@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.tokens.receive
 
-import androidx.lifecycle.ViewModel
 import android.graphics.Bitmap
+import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import pm.gnosis.model.Solidity
 

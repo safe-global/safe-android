@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.services.BridgeService
 import pm.gnosis.heimdall.services.HeimdallFirebaseService
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
+import pm.gnosis.heimdall.helpers.AppInitManager
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.security.EncryptionManager
 import javax.inject.Singleton
@@ -43,17 +44,11 @@ interface ApplicationComponent {
     fun crashTracker(): CrashTracker
     fun eventTracker(): EventTracker
 
-    fun accountsRepository(): AccountsRepository
-    fun addressBookRepository(): AddressBookRepository
-    fun safeRepository(): GnosisSafeRepository
-    fun shortcutRepository(): ShortcutRepository
-    fun tokenRepository(): TokenRepository
-    fun transactionInfoRepository(): TransactionInfoRepository
+    fun appInitManager(): AppInitManager
 
     fun viewModelFactory(): ViewModelProvider.Factory
 
     fun encryptionManager(): EncryptionManager
-    fun transactionTriggerManager(): TransactionTriggerManager
     fun qrCodeGenerator(): QrCodeGenerator
     fun addressHelper(): AddressHelper
     fun toolbarHelper(): ToolbarHelper

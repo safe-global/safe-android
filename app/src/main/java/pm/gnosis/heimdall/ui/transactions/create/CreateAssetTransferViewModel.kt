@@ -13,7 +13,6 @@ import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
-import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.transactions.builder.AssetTransferTransactionBuilder
@@ -23,8 +22,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.removeHexPrefix
 import timber.log.Timber
 import java.math.BigDecimal
 import java.math.BigInteger

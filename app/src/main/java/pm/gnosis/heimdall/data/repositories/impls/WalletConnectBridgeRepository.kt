@@ -1,10 +1,15 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.squareup.picasso.Picasso
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -14,20 +19,24 @@ import io.reactivex.subjects.BehaviorSubject
 import org.walletconnect.Session
 import org.walletconnect.impls.WCSession
 import org.walletconnect.impls.WCSessionStore
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import org.walletconnect.nullOnThrow
 import pm.gnosis.ethereum.rpc.models.JsonRpcError
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.services.BridgeService
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
+import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
+import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigIntegerOrNull
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -39,13 +48,17 @@ import javax.inject.Singleton
 class WalletConnectBridgeRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val rpcProxyApi: RpcProxyApi,
+    private val picasso: Picasso,
     private val infoRepository: TransactionInfoRepository,
     private val localNotificationManager: LocalNotificationManager,
-    private val safeRepository: GnosisSafeRepository,
     private val sessionStore: WCSessionStore,
     private val sessionBuilder: SessionBuilder,
+    appPreferencesManager: AppPreferencesManager,
     executionRepository: TransactionExecutionRepository
 ) : BridgeRepository, TransactionExecutionRepository.TransactionEventsCallback {
+
+    private val bridgePreferences = appPreferencesManager.get(PREFERENCES_BRIDGE)
+    private val sessionsPreferences = appPreferencesManager.get(PREFERENCES_SESSIONS)
     private val sessionUpdates = BehaviorSubject.createDefault(Unit)
     private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
 
@@ -64,21 +77,56 @@ class WalletConnectBridgeRepository @Inject constructor(
         sessionForRequest(referenceId)?.approveRequest(referenceId, chainHash)
     }
 
+    override fun init() {
+        localNotificationManager.createNotificationChannel(
+            CHANNEL_WALLET_CONNECT_REQUESTS,
+            context.getString(R.string.channel_description_wallect_connect_requests)
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).registerDefaultNetworkCallback(
+                object : ConnectivityManager.NetworkCallback() {
+                    override fun onAvailable(network: Network?) {
+                        super.onAvailable(network)
+                        activateAllSessions()
+                    }
+                })
+        }
+    }
+
     private fun sessionForRequest(referenceId: Long) =
         sessionRequests.remove(referenceId)?.let {
             sessions[it]
         }
 
-    override fun sessions(): Single<List<BridgeRepository.SessionMeta>> =
+    private fun activateAllSessions() =
         Single.fromCallable {
-            sessionStore.list().map { it.toSessionMeta() }
+            sessionStore.list()
+                .map { session -> internalGetOrCreateSession(session.config) }
+                .map { sessions[it]?.init() }
+            startBridgeService()
+        }
+            .subscribeOn(Schedulers.io())
+            .subscribeBy(onError = Timber::e)
+
+    override fun sessions(safe: Solidity.Address?): Single<List<BridgeRepository.SessionMeta>> =
+        Single.fromCallable {
+            sessionStore.list()
+                .filter { safe == null || getSafeForSession(it.config.handshakeTopic) == safe }
+                .map { it.toSessionMeta() }
         }
 
-    override fun observeSessions(): Observable<List<BridgeRepository.SessionMeta>> =
-        sessionUpdates.switchMapSingle { sessions().onErrorReturnItem(emptyList()) }
+    private fun getSafeForSession(sessionId: String) =
+        sessionsPreferences.getString(KEY_PREFIX_SESSION_SAFE + sessionId, null)?.asEthereumAddress()
 
-    override fun observeActiveSessionIds(): Observable<List<String>> =
-        sessionUpdates.map { sessions.keys.sorted() }
+    override fun observeSessions(safe: Solidity.Address?): Observable<List<BridgeRepository.SessionMeta>> =
+        sessionUpdates.switchMapSingle { sessions(safe).onErrorReturnItem(emptyList()) }
+
+    override fun observeActiveSessionInfo(): Observable<List<SessionIdAndSafe>> =
+        sessionUpdates.map {
+            sessions.keys.mapNotNull { sessionId ->
+                getSafeForSession(sessionId)?.let { sessionId to it }
+            }.sortedBy { it.first }
+        }
 
     override fun session(sessionId: String): Single<BridgeRepository.SessionMeta> =
         Single.fromCallable {
@@ -90,6 +138,7 @@ class WalletConnectBridgeRepository @Inject constructor(
             config.handshakeTopic,
             peerData?.meta?.name,
             peerData?.meta?.description,
+            peerData?.meta?.url,
             peerData?.meta?.icons,
             sessions.containsKey(config.handshakeTopic),
             approvedAccounts?.map { acc -> acc.asEthereumAddress()!! }
@@ -102,15 +151,23 @@ class WalletConnectBridgeRepository @Inject constructor(
         sessionBuilder.build(
             config,
             Session.PeerMeta(name = context.getString(R.string.app_name))
-        ).let {
-            it.addCallback(object : Session.Callback {
+        ).let { session ->
+            val sessionId = config.handshakeTopic
+            session.addCallback(object : Session.Callback {
 
                 @SuppressLint("CheckResult")
                 override fun handleMethodCall(call: Session.MethodCall) {
                     when (call) {
+                        is Session.MethodCall.SessionRequest -> {
+                            getSafeForSession(sessionId)?.let {
+                                session.approve(listOf(it.asEthereumAddressString()), BuildConfig.BLOCKCHAIN_CHAIN_ID)
+                            } ?: run {
+                                session.reject()
+                            }
+                        }
                         is Session.MethodCall.SendTransaction ->
                             call.apply {
-                                sessionRequests[id] = config.handshakeTopic
+                                sessionRequests[id] = sessionId
                                 Single.fromCallable {
                                     val safe = from.asEthereumAddress() ?: throw IllegalArgumentException("Invalid Safe address: $from")
                                     val txTo = to.asEthereumAddress() ?: throw IllegalArgumentException("Invalid to address: $to")
@@ -124,16 +181,16 @@ class WalletConnectBridgeRepository @Inject constructor(
                                     .subscribeBy(onError = { t ->
                                         rejectRequest(id, 42, t.message ?: "Could not handle transaction").subscribe()
                                     }) { (safe, txData) ->
-                                        showSendTransactionNotification(safe, txData, id)
+                                        showSendTransactionNotification(session.peerMeta(), safe, txData, id)
                                     }
                             }
                         is Session.MethodCall.SignMessage ->
                             call.apply {
-                                it.rejectRequest(id, 1123, "The Gnosis Safe doesn't support eth_sign")
+                                session.rejectRequest(id, 1123, "The Gnosis Safe doesn't support eth_sign")
                             }
                         is Session.MethodCall.Custom ->
                             call.apply {
-                                sessionRequests[id] = config.handshakeTopic
+                                sessionRequests[id] = sessionId
                                 try {
                                     rpcProxyApi.proxy(RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
                                         .subscribeBy(onError = { t ->
@@ -156,28 +213,41 @@ class WalletConnectBridgeRepository @Inject constructor(
                 override fun sessionApproved() {}
 
                 override fun sessionClosed() {
-                    sessions.remove(config.handshakeTopic)
+                    sessionsPreferences.edit { remove(KEY_PREFIX_SESSION_SAFE + sessionId) }
+                    sessions.remove(sessionId)
                     sessionUpdates.onNext(Unit)
                 }
             })
-            sessions[config.handshakeTopic] = it
+            sessions[config.handshakeTopic] = session
             sessionUpdates.onNext(Unit)
             config.handshakeTopic
         }
 
-    private fun showSendTransactionNotification(safe: Solidity.Address, data: TransactionData, referenceId: Long) {
+    private fun showSendTransactionNotification(peerMeta: Session.PeerMeta?, safe: Solidity.Address, data: TransactionData, referenceId: Long) {
+        val icon = peerMeta?.icons?.firstOrNull()?.let { nullOnThrow { picasso.load(it).get() } }
         val intent = ReviewTransactionActivity.createIntent(context, safe, data, referenceId)
+        val notification = localNotificationManager.builder(
+            peerMeta?.name ?: context.getString(R.string.unknown_dapp),
+            context.getString(R.string.notification_new_transaction_request),
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT),
+            CHANNEL_WALLET_CONNECT_REQUESTS
+        )
+            .setSubText(safe.shortChecksumString())
+            .setLargeIcon(icon)
+            .build()
         localNotificationManager.show(
             referenceId.hashCode(),
-            context.getString(R.string.sign_transaction_request_title),
-            context.getString(R.string.sign_transaction_request_message),
-            intent
+            notification
         )
     }
 
-    override fun createSession(url: String): String =
-        internalGetOrCreateSession(Session.Config.fromWCUri(url)).also {
+    override fun createSession(url: String, safe: Solidity.Address): String =
+        Session.Config.fromWCUri(url).let { config ->
+            val sessionId = config.handshakeTopic
+            sessionsPreferences.edit { putString(KEY_PREFIX_SESSION_SAFE + sessionId, safe.asEthereumAddressString()) }
+            internalGetOrCreateSession(config)
             startBridgeService()
+            sessionId
         }
 
 
@@ -197,6 +267,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                         sessionId,
                         peer?.meta?.name,
                         peer?.meta?.description,
+                        peer?.meta?.url,
                         peer?.meta?.icons,
                         sessions.containsKey(sessionId),
                         it.approvedAccounts?.map { acc -> acc.asEthereumAddress()!! }
@@ -210,21 +281,6 @@ class WalletConnectBridgeRepository @Inject constructor(
 
                     override fun handleMethodCall(call: Session.MethodCall) {
                         when (call) {
-                            is Session.MethodCall.SessionRequest ->
-                                call.apply {
-                                    emitter.onNext(
-                                        BridgeRepository.SessionEvent.SessionRequest(
-                                            BridgeRepository.SessionMeta(
-                                                sessionId,
-                                                peer.meta?.name,
-                                                peer.meta?.description,
-                                                peer.meta?.icons,
-                                                sessions.containsKey(sessionId),
-                                                null
-                                            )
-                                        )
-                                    )
-                                }
                             is Session.MethodCall.SendTransaction ->
                                 call.apply {
                                     emitter.onNext(BridgeRepository.SessionEvent.Transaction(id, from, to, nonce, gasPrice, gasLimit, value, data))
@@ -260,6 +316,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                     sessionId,
                     meta?.name,
                     meta?.description,
+                    meta?.url,
                     meta?.icons,
                     sessions.containsKey(sessionId),
                     it.approvedAccounts()?.map { acc -> acc.asEthereumAddress()!! }
@@ -270,23 +327,6 @@ class WalletConnectBridgeRepository @Inject constructor(
     override fun initSession(sessionId: String): Completable = Completable.fromAction {
         val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not active")
         session.init()
-    }
-        .subscribeOn(Schedulers.io())
-
-    override fun approveSession(sessionId: String): Completable =
-        safeRepository.observeSafes().firstOrError()
-            .flatMapCompletable { safes ->
-                if (safes.isEmpty()) throw IllegalStateException("No Safe to whitelist")
-                Completable.fromAction {
-                    val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not active")
-                    session.approve(safes.map { it.address.asEthereumAddressChecksumString() }, BuildConfig.BLOCKCHAIN_CHAIN_ID)
-                }
-            }
-            .subscribeOn(Schedulers.io())
-
-    override fun rejectSession(sessionId: String): Completable = Completable.fromAction {
-        val session = sessions[sessionId] ?: throw IllegalArgumentException("Session not active")
-        session.reject()
     }
         .subscribeOn(Schedulers.io())
 
@@ -317,6 +357,26 @@ class WalletConnectBridgeRepository @Inject constructor(
 
     private fun startBridgeService() {
         context.startService(Intent(context, BridgeService::class.java))
+    }
+
+    override fun shouldShowIntro(): Single<Boolean> =
+        Single.fromCallable {
+            !bridgePreferences.getBoolean(KEY_INTRO_DONE, false)
+        }
+            .subscribeOn(Schedulers.io())
+
+    override fun markIntroDone(): Completable =
+        Completable.fromAction {
+            bridgePreferences.edit { putBoolean(KEY_INTRO_DONE, true) }
+        }
+            .subscribeOn(Schedulers.io())
+
+    companion object {
+        private const val KEY_PREFIX_SESSION_SAFE = "session_safe_"
+        private const val PREFERENCES_SESSIONS = "preferences.wallet_connect_bridge_repository.sessions"
+        private const val PREFERENCES_BRIDGE = "preferences.wallet_connect_bridge_repository.bridge"
+        private const val KEY_INTRO_DONE = "wallet_connect_bridge_repository.boolean.intro_done"
+        private const val CHANNEL_WALLET_CONNECT_REQUESTS = "channel_wallet_connect_requests"
     }
 }
 

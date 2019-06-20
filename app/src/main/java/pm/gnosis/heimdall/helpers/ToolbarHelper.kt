@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.helpers
 
-import androidx.core.widget.NestedScrollView
 import android.view.View
+import androidx.core.widget.NestedScrollView
 import com.jakewharton.rxbinding2.support.v4.widget.scrollChangeEvents
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy

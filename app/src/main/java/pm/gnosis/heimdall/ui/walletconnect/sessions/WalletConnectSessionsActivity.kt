@@ -1,4 +1,4 @@
-package pm.gnosis.heimdall.ui.walletconnect
+package pm.gnosis.heimdall.ui.walletconnect.sessions
 
 
 import android.content.Context
@@ -17,6 +17,10 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
+import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -24,6 +28,8 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
 
     @Inject
     lateinit var adapter: WalletConnectSessionsAdapter
+
+    private lateinit var safe: Solidity.Address
 
     override fun screenId() = ScreenId.WALLET_CONNECT_SESSIONS
 
@@ -33,8 +39,10 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        safe = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() ?: run { finish(); return }
+        viewModel.setup(safe)
         layout_wallet_connect_sessions_recycler_view.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        layout_wallet_connect_sessions_recycler_view.adapter = adapter
+        adapter.attach(layout_wallet_connect_sessions_recycler_view)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -51,7 +59,9 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
         disposables += layout_wallet_connect_sessions_back_arrow.clicks()
             .subscribeBy { onBackPressed() }
 
-        disposables += viewModel.observeSessions().observeOn(AndroidSchedulers.mainThread())
+        disposables += viewModel.observeSessions()
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext { layout_wallet_connect_sessions_empty_view.visible(it.entries.isEmpty()) }
             .subscribeBy(onNext = adapter::updateData, onError = Timber::e)
 
         disposables += layout_wallet_connect_sessions_add.clicks()
@@ -60,6 +70,9 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
     }
 
     companion object {
-        fun createIntent(context: Context) = Intent(context, WalletConnectSessionsActivity::class.java)
+        private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
+        fun createIntent(context: Context, safe: Solidity.Address) = Intent(context, WalletConnectSessionsActivity::class.java).apply {
+            putExtra(EXTRA_SAFE_ADDRESS, safe.asEthereumAddressString())
+        }
     }
 }

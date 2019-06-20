@@ -44,7 +44,8 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
-import pm.gnosis.heimdall.ui.walletconnect.WalletConnectSessionsActivity
+import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroActivity
+import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.heimdall.utils.setCompoundDrawableResource
@@ -101,7 +102,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_safes_list.adapter = adapter
 
         layout_safe_main_debug_settings.visible(BuildConfig.DEBUG)
-        layout_safe_main_wallet_connect.visible(BuildConfig.DEBUG)
 
         popupMenu = PopupMenu(this, layout_safe_main_toolbar_overflow).apply {
             inflate(R.menu.safe_details_menu)
@@ -114,7 +114,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_recover_safe.setCompoundDrawableResource(left = R.drawable.ic_recover_safe)
         layout_safe_main_tokens.setCompoundDrawableResource(left = R.drawable.ic_tokens)
         layout_safe_main_address_book.setCompoundDrawableResource(left = R.drawable.ic_settings_address_book)
-        layout_safe_main_wallet_connect.setCompoundDrawableResource(left = R.drawable.ic_walletconnect)
         layout_safe_main_general_settings.setCompoundDrawableResource(left = R.drawable.ic_general_settings)
         layout_safe_main_debug_settings.setCompoundDrawableResource(left = R.drawable.ic_settings_debug)
     }
@@ -163,11 +162,6 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
 
         layout_safe_main_tokens.setOnClickListener {
             startActivity(ManageTokensActivity.createIntent(this))
-            closeDrawer()
-        }
-
-        layout_safe_main_wallet_connect.setOnClickListener {
-            startActivity(WalletConnectSessionsActivity.createIntent(this))
             closeDrawer()
         }
 
@@ -355,6 +349,18 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 when (it.itemId) {
                     R.id.safe_details_menu_delete -> selectedSafe?.let { safe -> removeSafe(safe) }
                     R.id.safe_details_menu_rename -> selectedSafe?.let { safe -> renameSafe(safe) }
+                    R.id.safe_details_menu_wallet_connect -> selectedSafe?.let { safe ->
+                        disposables += viewModel.shouldShowWalletConnectIntro()
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeBy { showIntro ->
+                                startActivity(
+                                    if (showIntro)
+                                        WalletConnectIntroActivity.createIntent(this, safe.address())
+                                    else
+                                        WalletConnectSessionsActivity.createIntent(this, safe.address())
+                                )
+                            }
+                    }
                     R.id.safe_details_menu_sync -> selectedSafe?.let { safe ->
                         disposables += viewModel.syncWithChromeExtension(safe.address())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -386,6 +392,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
     private fun updateOverflowMenu() {
         layout_safe_main_toolbar_overflow.visible(selectedSafe != null)
         popupMenu.menu.findItem(R.id.safe_details_menu_replace_recovery_phrase).isVisible = selectedSafe is Safe
+        popupMenu.menu.findItem(R.id.safe_details_menu_wallet_connect).isVisible = selectedSafe is Safe
     }
 
     private fun hideMenuOptions() {

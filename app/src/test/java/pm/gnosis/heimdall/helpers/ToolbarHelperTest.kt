@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.helpers
 
+import android.view.View
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.NestedScrollView.OnScrollChangeListener
-import android.view.View
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

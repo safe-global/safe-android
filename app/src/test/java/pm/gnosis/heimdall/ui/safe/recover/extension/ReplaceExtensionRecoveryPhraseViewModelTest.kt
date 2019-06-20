@@ -15,7 +15,6 @@ import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
 import pm.gnosis.model.Solidity
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
-import java.lang.IllegalStateException
 
 @RunWith(MockitoJUnitRunner::class)
 class ReplaceExtensionRecoveryPhraseViewModelTest {

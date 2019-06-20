@@ -3,12 +3,12 @@ package pm.gnosis.heimdall.utils
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import androidx.annotation.ColorRes
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
+import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.layout_alert_dialog_title.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.svalinn.common.utils.getColorCompat
@@ -25,16 +25,18 @@ object CustomAlertDialogBuilder {
         @StringRes cancelRes: Int = android.R.string.cancel,
         cancelCallback: ((DialogInterface) -> Unit)? = { dialog -> dialog.dismiss() },
         @ColorRes confirmColor: Int = R.color.azure,
-        @ColorRes cancelColor: Int = R.color.azure
+        @ColorRes cancelColor: Int = R.color.azure,
+        dismissCallback: DialogInterface.OnDismissListener? = null
     ): AlertDialog =
         AlertDialog.Builder(context).apply {
             if (confirmRes != 0) setPositiveButton(confirmRes, null)
             if (cancelRes != 0) setNegativeButton(cancelRes, null)
-            setView(contentView)
-            setCustomTitle(LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_title, null).apply {
+            if (dismissCallback != null) setOnDismissListener(dismissCallback)
+        }
+            .setView(contentView)
+            .setCustomTitle(LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_title, null).apply {
                 layout_alert_dialog_title_text.text = title
             })
-        }
             .create()
             .apply {
                 setOnShowListener { dialog ->

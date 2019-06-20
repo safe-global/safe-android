@@ -11,10 +11,14 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import pm.gnosis.heimdall.HeimdallApplication
+import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
+import pm.gnosis.heimdall.data.repositories.SessionIdAndSafe
 import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
-import pm.gnosis.heimdall.ui.walletconnect.WalletConnectSessionsActivity
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
+import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivity
+import pm.gnosis.model.Solidity
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -38,34 +42,34 @@ class BridgeService : Service() {
         super.onCreate()
         HeimdallApplication[this].inject(this)
 
-        localNotificationManager.createNotificationChannel(NOTIFICATION_CHANNEL, "Updates of WalletConnect connections", 0)
+        localNotificationManager.createNotificationChannel(NOTIFICATION_CHANNEL, getString(R.string.channel_description_wallect_connect_sessions), 0)
     }
 
     private fun checkEnabled() {
         if (!enabled) {
             enable()
-            disposables += bridgeRepository.observeActiveSessionIds()
+            disposables += bridgeRepository.observeActiveSessionInfo()
                 .subscribeBy(onNext = ::updateNotification, onError = Timber::e)
         }
     }
 
-    private fun updateNotification(sessionIds: List<String>) {
-        if (sessionIds.isEmpty()) {
+    private fun updateNotification(sessionInfo: List<SessionIdAndSafe>) {
+        if (sessionInfo.isEmpty()) {
             disable()
         } else {
-            localNotificationManager.show(NOTIFICATION_ID, notification(sessionIds.size))
+            localNotificationManager.show(NOTIFICATION_ID, notification(sessionInfo.size, sessionInfo.first().second))
         }
     }
 
     private fun enable() {
         enabled = true
         // Start foreground service.
-        startForeground(NOTIFICATION_ID, notification(0))
+        startForeground(NOTIFICATION_ID, notification(0, null))
     }
 
-    private fun notification(count: Int): Notification {
-        val intent = WalletConnectSessionsActivity.createIntent(this)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+    private fun notification(count: Int, safe: Solidity.Address?): Notification {
+        val intent = safe?.let { WalletConnectSessionsActivity.createIntent(this, it) } ?: SafeMainActivity.createIntent(this)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         val message = if (count == 0) "Loading WalletConnect status ..." else "$count active WalletConnect sessions"
         return localNotificationManager.builder(
             "Connected to WalletConnect",

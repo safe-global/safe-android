@@ -27,7 +27,6 @@ import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestSingleFactory
 import pm.gnosis.tests.utils.mockFindViewById
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.hexAsBigInteger
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -119,7 +118,7 @@ class SafeAdapterPendingViewHolderTest {
     @Test
     fun bindPendingSafeAndSelect() {
         val safe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
-        bindSafeAndSelect(safe, TEST_PENDING_SAFE, "0xC2AC...a48132")
+        bindSafeAndSelect(safe, TEST_PENDING_SAFE, "0xC2...8132")
     }
 
     @Test
@@ -128,7 +127,7 @@ class SafeAdapterPendingViewHolderTest {
             TEST_RECOVERING_SAFE, BigInteger.ZERO, TEST_RECOVERING_SAFE, "", BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO,
             ERC20Token.ETHER_TOKEN.address, BigInteger.ZERO, BigInteger.ZERO, TransactionExecutionRepository.Operation.CALL, emptyList()
         )
-        bindSafeAndSelect(safe, TEST_RECOVERING_SAFE, "0xb365...14244A")
+        bindSafeAndSelect(safe, TEST_RECOVERING_SAFE, "0xb3...244A")
     }
 
     @Test
@@ -161,7 +160,7 @@ class SafeAdapterPendingViewHolderTest {
         viewHolder.start()
 
         then(safeAddressTextView).should().text = null
-        then(safeAddressTextView).should().text = "0xC2AC...a48132"
+        then(safeAddressTextView).should().text = "0xC2...8132"
         then(safeAddressTextView).should().setOnClickListener(MockUtils.any())
         then(safeAddressTextView).shouldHaveNoMoreInteractions()
 

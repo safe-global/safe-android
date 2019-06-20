@@ -56,7 +56,8 @@ import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.ui.transactions.view.status.TransactionStatusActivity
-import pm.gnosis.heimdall.ui.walletconnect.WalletConnectSessionsActivity
+import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroActivity
+import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivity
 
 @ForView
 @Component(
@@ -117,6 +118,7 @@ interface ViewComponent {
     fun inject(activity: SplashActivity)
     fun inject(activity: TransactionStatusActivity)
     fun inject(activity: UnlockActivity)
+    fun inject(activity: WalletConnectIntroActivity)
     fun inject(activity: WalletConnectSessionsActivity)
 
     // Dialogs

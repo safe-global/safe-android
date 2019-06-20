@@ -11,7 +11,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
@@ -29,8 +28,6 @@ import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestObservableFactory
 import pm.gnosis.tests.utils.TestSingleFactory
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
-import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.util.concurrent.TimeoutException
 

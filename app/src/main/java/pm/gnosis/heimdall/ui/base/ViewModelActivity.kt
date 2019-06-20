@@ -1,11 +1,11 @@
 package pm.gnosis.heimdall.ui.base
 
 import android.os.Build
-import androidx.lifecycle.ViewModel
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
+import androidx.lifecycle.ViewModel
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.svalinn.common.utils.getColorCompat

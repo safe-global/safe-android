@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
-import io.reactivex.Flowable
+import com.squareup.picasso.Picasso
 import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
@@ -9,8 +9,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
+import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
@@ -20,15 +22,17 @@ import org.walletconnect.impls.WCSessionStore
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.SessionIdAndSafe
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
-import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.TestPreferences
 import pm.gnosis.tests.utils.mockGetString
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import java.util.*
 import kotlin.NoSuchElementException
 
@@ -42,6 +46,9 @@ class WalletConnectBridgeRepositoryTest {
     lateinit var contextMock: Context
 
     @Mock
+    lateinit var appPreferencesManagerMock: AppPreferencesManager
+
+    @Mock
     lateinit var infoRepositoryMock: TransactionInfoRepository
 
     @Mock
@@ -51,10 +58,10 @@ class WalletConnectBridgeRepositoryTest {
     lateinit var rpcProxyApiMock: RpcProxyApi
 
     @Mock
-    lateinit var safeRepositoryMock: GnosisSafeRepository
+    lateinit var sessionStoreMock: WCSessionStore
 
     @Mock
-    lateinit var sessionStoreMock: WCSessionStore
+    lateinit var picassoMock: Picasso
 
     @Mock
     lateinit var executionRepositoryMock: TransactionExecutionRepository
@@ -62,24 +69,33 @@ class WalletConnectBridgeRepositoryTest {
     @Mock
     lateinit var sessionBuilderMock: SessionBuilder
 
+    @Captor
+    private lateinit var callbackArgumentCaptor: ArgumentCaptor<Session.Callback>
+
+    private val testPreferences = TestPreferences()
+
     private lateinit var repository: WalletConnectBridgeRepository
 
     @Before
     fun setUp() {
+        testPreferences.clear()
+        given(appPreferencesManagerMock.get(MockUtils.any())).willReturn(testPreferences)
         repository = WalletConnectBridgeRepository(
-            contextMock, rpcProxyApiMock, infoRepositoryMock, localNotificationManagerMock, safeRepositoryMock,
+            contextMock, rpcProxyApiMock, picassoMock, infoRepositoryMock, localNotificationManagerMock,
             sessionStoreMock, sessionBuilderMock,
-            executionRepositoryMock
+            appPreferencesManagerMock, executionRepositoryMock
         )
         then(executionRepositoryMock).should().addTransactionEventsCallback(repository)
         then(executionRepositoryMock).shouldHaveNoMoreInteractions()
+        then(appPreferencesManagerMock).should().get("preferences.wallet_connect_bridge_repository.sessions")
+        then(appPreferencesManagerMock).should().get("preferences.wallet_connect_bridge_repository.bridge")
+        then(appPreferencesManagerMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun sessions() {
         val mockSession = mock(Session::class.java)
         given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
-        val testObserver = TestObserver<List<BridgeRepository.SessionMeta>>()
         val firstSession = WCSessionStore.State(randomConfig(), randomClientData(), null, null, UUID.randomUUID().toString(), null)
         val secondSession = WCSessionStore.State(
             randomConfig(),
@@ -101,15 +117,17 @@ class WalletConnectBridgeRepositoryTest {
         then(sessionStoreMock).should().load(firstSession.config.handshakeTopic)
         then(sessionStoreMock).shouldHaveNoMoreInteractions()
         // List sessions
-        repository.sessions().subscribe(testObserver)
+        val allSessionsObserver = TestObserver<List<BridgeRepository.SessionMeta>>()
+        repository.sessions(null).subscribe(allSessionsObserver)
         then(sessionStoreMock).should().list()
         then(sessionStoreMock).shouldHaveNoMoreInteractions()
-        testObserver.assertResult(
+        allSessionsObserver.assertResult(
             listOf(
-                BridgeRepository.SessionMeta(firstSession.config.handshakeTopic, null, null, null, true, null),
+                BridgeRepository.SessionMeta(firstSession.config.handshakeTopic, null, null, null, null, true, null),
                 BridgeRepository.SessionMeta(
                     secondSession.config.handshakeTopic,
                     "Peer",
+                    null,
                     null,
                     null,
                     false,
@@ -117,6 +135,42 @@ class WalletConnectBridgeRepositoryTest {
                 )
             )
         )
+
+        val filteredSessionsObserver = TestObserver<List<BridgeRepository.SessionMeta>>()
+        testPreferences.putString(KEY_PREFIX + secondSession.config.handshakeTopic, "0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d")
+        repository.sessions("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d".asEthereumAddress()!!).subscribe(filteredSessionsObserver)
+        then(sessionStoreMock).should(times(2)).list()
+        then(sessionStoreMock).shouldHaveNoMoreInteractions()
+        filteredSessionsObserver.assertResult(
+            listOf(
+                BridgeRepository.SessionMeta(
+                    secondSession.config.handshakeTopic,
+                    "Peer",
+                    null,
+                    null,
+                    null,
+                    false,
+                    listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d".asEthereumAddress()!!)
+                )
+            )
+        )
+
+        val filteredUnapprovedSessionsObserver = TestObserver<List<BridgeRepository.SessionMeta>>()
+        testPreferences.putString(KEY_PREFIX + firstSession.config.handshakeTopic, "0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6a")
+        repository.sessions("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6a".asEthereumAddress()!!).subscribe(filteredUnapprovedSessionsObserver)
+        then(sessionStoreMock).should(times(3)).list()
+        then(sessionStoreMock).shouldHaveNoMoreInteractions()
+        filteredUnapprovedSessionsObserver.assertResult(
+            listOf(
+                BridgeRepository.SessionMeta(firstSession.config.handshakeTopic, null, null, null, null, true, null)
+            )
+        )
+
+        val noSessionsObserver = TestObserver<List<BridgeRepository.SessionMeta>>()
+        repository.sessions("0xdeadbeef".asEthereumAddress()!!).subscribe(noSessionsObserver)
+        then(sessionStoreMock).should(times(4)).list()
+        then(sessionStoreMock).shouldHaveNoMoreInteractions()
+        noSessionsObserver.assertResult(listOf())
     }
 
     @Test
@@ -124,7 +178,7 @@ class WalletConnectBridgeRepositoryTest {
         val testObserver = TestObserver<List<BridgeRepository.SessionMeta>>()
         val error = RuntimeException()
         given(sessionStoreMock.list()).willThrow(error)
-        repository.sessions().subscribe(testObserver)
+        repository.sessions(null).subscribe(testObserver)
         then(sessionStoreMock).should().list()
         then(sessionStoreMock).shouldHaveNoMoreInteractions()
         testObserver.assertSubscribed().assertValueCount(0).assertError(error)
@@ -157,6 +211,7 @@ class WalletConnectBridgeRepositoryTest {
                 "Peer",
                 null,
                 null,
+                null,
                 true,
                 listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d".asEthereumAddress()!!)
             )
@@ -183,6 +238,7 @@ class WalletConnectBridgeRepositoryTest {
             BridgeRepository.SessionMeta(
                 sessionId,
                 "Peer",
+                null,
                 null,
                 null,
                 false,
@@ -223,14 +279,17 @@ class WalletConnectBridgeRepositoryTest {
     @Test
     fun createSessionNew() {
         contextMock.mockGetString()
+        val testSafe = "0xbaddad".asEthereumAddress()!!
         val url =
             "wc:12345678-4242-4242-4242-abcdef42abcd@1?bridge=https%3A%2F%2Fbridge.gnosis.pm&key=5eef4242e18349068f7ba3dbd909b3182be28475879d24e929c60e3cbb2d36ee"
         val config = Session.Config.fromWCUri(url)
         val mockSession = mock(Session::class.java)
         given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
-        assertEquals(config.handshakeTopic, repository.createSession(url))
+        assertEquals(config.handshakeTopic, repository.createSession(url, testSafe))
+        assertEquals(testPreferences.getString(KEY_PREFIX + config.handshakeTopic, null), testSafe.asEthereumAddressString())
         then(sessionStoreMock).shouldHaveZeroInteractions()
-        then(sessionBuilderMock).should().build(config,
+        then(sessionBuilderMock).should().build(
+            config,
             Session.PeerMeta(name = R.string.app_name.toString())
         )
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
@@ -239,7 +298,54 @@ class WalletConnectBridgeRepositoryTest {
         then(contextMock).shouldHaveNoMoreInteractions()
 
         // Should only create once
-        assertEquals(config.handshakeTopic, repository.createSession(url))
+        assertEquals(config.handshakeTopic, repository.createSession(url, testSafe))
+        assertEquals(testPreferences.all.size, 1)
+        assertEquals(testPreferences.getString(KEY_PREFIX + config.handshakeTopic, null), testSafe.asEthereumAddressString())
+        then(sessionBuilderMock).shouldHaveNoMoreInteractions()
+        then(contextMock).should(times(2)).startService(MockUtils.any())
+        then(contextMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun createSessionAutoInit() {
+        contextMock.mockGetString()
+        val testSafe = "0xbaddad".asEthereumAddress()!!
+        val url =
+            "wc:12345678-4242-4242-4242-abcdef42abcd@1?bridge=https%3A%2F%2Fbridge.gnosis.pm&key=5eef4242e18349068f7ba3dbd909b3182be28475879d24e929c60e3cbb2d36ee"
+        val config = Session.Config.fromWCUri(url)
+        val mockSession = mock(Session::class.java)
+
+        given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
+        assertEquals(config.handshakeTopic, repository.createSession(url, testSafe))
+        assertEquals(testPreferences.getString(KEY_PREFIX + config.handshakeTopic, null), testSafe.asEthereumAddressString())
+        then(sessionStoreMock).shouldHaveZeroInteractions()
+        then(sessionBuilderMock).should().build(
+            config,
+            Session.PeerMeta(name = R.string.app_name.toString())
+        )
+        then(sessionBuilderMock).shouldHaveNoMoreInteractions()
+        then(contextMock).should().startService(MockUtils.any())
+        then(contextMock).should().getString(R.string.app_name)
+        then(contextMock).shouldHaveNoMoreInteractions()
+
+        then(mockSession).should().addCallback(capture(callbackArgumentCaptor))
+        then(mockSession).shouldHaveNoMoreInteractions()
+
+        val someId = System.currentTimeMillis()
+        callbackArgumentCaptor.value.handleMethodCall(Session.MethodCall.SessionRequest(someId, Session.PeerData(UUID.randomUUID().toString(), null)))
+        then(mockSession).should().approve(listOf(testSafe.asEthereumAddressString()), BuildConfig.BLOCKCHAIN_CHAIN_ID)
+        then(mockSession).shouldHaveNoMoreInteractions()
+        // No safe for session should reject
+        testPreferences.clear()
+        callbackArgumentCaptor.value.handleMethodCall(Session.MethodCall.SessionRequest(someId, Session.PeerData(UUID.randomUUID().toString(), null)))
+        then(mockSession).should().reject()
+        then(mockSession).shouldHaveNoMoreInteractions()
+
+
+        // Should only create once
+        assertEquals(config.handshakeTopic, repository.createSession(url, testSafe))
+        assertEquals(testPreferences.all.size, 1)
+        assertEquals(testPreferences.getString(KEY_PREFIX + config.handshakeTopic, null), testSafe.asEthereumAddressString())
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
         then(contextMock).should(times(2)).startService(MockUtils.any())
         then(contextMock).shouldHaveNoMoreInteractions()
@@ -248,6 +354,7 @@ class WalletConnectBridgeRepositoryTest {
     @Test
     fun initSession() {
         contextMock.mockGetString()
+        val testSafe = "0xbaddad".asEthereumAddress()!!
         val url =
             "wc:12345678-4242-4242-4242-abcdef42abcd@1?bridge=https%3A%2F%2Fbridge.gnosis.pm&key=5eef4242e18349068f7ba3dbd909b3182be28475879d24e929c60e3cbb2d36ee"
         val config = Session.Config.fromWCUri(url)
@@ -258,8 +365,9 @@ class WalletConnectBridgeRepositoryTest {
         repository.initSession("randomid").subscribe(failObserver)
         failObserver.assertFailure(Predicate<Throwable> { it is IllegalArgumentException && it.message == "Session not active" })
 
-        val sessionId = repository.createSession(url)
-        then(sessionBuilderMock).should().build(config,
+        val sessionId = repository.createSession(url, testSafe)
+        then(sessionBuilderMock).should().build(
+            config,
             Session.PeerMeta(name = R.string.app_name.toString())
         )
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
@@ -274,36 +382,9 @@ class WalletConnectBridgeRepositoryTest {
     }
 
     @Test
-    fun rejectSession() {
-        contextMock.mockGetString()
-        val url =
-            "wc:12345678-4242-4242-4242-abcdef42abcd@1?bridge=https%3A%2F%2Fbridge.gnosis.pm&key=5eef4242e18349068f7ba3dbd909b3182be28475879d24e929c60e3cbb2d36ee"
-        val config = Session.Config.fromWCUri(url)
-        val mockSession = mock(Session::class.java)
-        given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
-
-        val failObserver = TestObserver<Unit>()
-        repository.rejectSession("randomid").subscribe(failObserver)
-        failObserver.assertFailure(Predicate<Throwable> { it is IllegalArgumentException && it.message == "Session not active" })
-
-        val sessionId = repository.createSession(url)
-        then(sessionBuilderMock).should().build(config,
-            Session.PeerMeta(name = R.string.app_name.toString())
-        )
-        then(sessionBuilderMock).shouldHaveNoMoreInteractions()
-        then(mockSession).should().addCallback(MockUtils.any())
-        then(mockSession).shouldHaveNoMoreInteractions()
-        val successObserver = TestObserver<Unit>()
-        repository.rejectSession(sessionId).subscribe(successObserver)
-        successObserver.assertResult()
-        then(mockSession).should().reject()
-        then(mockSession).shouldHaveNoMoreInteractions()
-        then(sessionBuilderMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
     fun closeSession() {
         contextMock.mockGetString()
+        val testSafe = "0xbaddad".asEthereumAddress()!!
         val url =
             "wc:12345678-4242-4242-4242-abcdef42abcd@1?bridge=https%3A%2F%2Fbridge.gnosis.pm&key=5eef4242e18349068f7ba3dbd909b3182be28475879d24e929c60e3cbb2d36ee"
         val config = Session.Config.fromWCUri(url)
@@ -314,8 +395,9 @@ class WalletConnectBridgeRepositoryTest {
         repository.closeSession("randomid").subscribe(failObserver)
         failObserver.assertFailure(Predicate<Throwable> { it is IllegalArgumentException && it.message == "Session not active" })
 
-        val sessionId = repository.createSession(url)
-        then(sessionBuilderMock).should().build(config,
+        val sessionId = repository.createSession(url, testSafe)
+        then(sessionBuilderMock).should().build(
+            config,
             Session.PeerMeta(name = R.string.app_name.toString())
         )
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
@@ -325,76 +407,6 @@ class WalletConnectBridgeRepositoryTest {
         repository.closeSession(sessionId).subscribe(successObserver)
         successObserver.assertResult()
         then(mockSession).should().kill()
-        then(mockSession).shouldHaveNoMoreInteractions()
-        then(sessionBuilderMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun approveSessionNoSafes() {
-        given(safeRepositoryMock.observeSafes()).willReturn(Flowable.just(emptyList()))
-        val failObserver = TestObserver<Unit>()
-        repository.approveSession("anyid").subscribe(failObserver)
-        failObserver.assertFailure(Predicate<Throwable> { it is IllegalStateException && it.message == "No Safe to whitelist" })
-        then(safeRepositoryMock).should().observeSafes()
-        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun approveSessionNoSafesEvent() {
-        given(safeRepositoryMock.observeSafes()).willReturn(Flowable.empty())
-        val failObserver = TestObserver<Unit>()
-        repository.approveSession("anyid").subscribe(failObserver)
-        failObserver.assertFailure(NoSuchElementException::class.java)
-        then(safeRepositoryMock).should().observeSafes()
-        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun approveSessionSafesError() {
-        val error = IllegalStateException("test exception")
-        given(safeRepositoryMock.observeSafes()).willReturn(Flowable.error(error))
-        val failObserver = TestObserver<Unit>()
-        repository.approveSession("anyid").subscribe(failObserver)
-        failObserver.assertFailure(Predicate<Throwable> { it == error })
-        then(safeRepositoryMock).should().observeSafes()
-        then(safeRepositoryMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun approveSession() {
-        given(safeRepositoryMock.observeSafes()).willReturn(
-            Flowable.just(
-                listOf(
-                    Safe("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d".asEthereumAddress()!!),
-                    Safe("0x0e329fa8d6Fcd1ba0Cda495431F1f7CA24F442C2".asEthereumAddress()!!)
-                )
-            )
-        )
-        contextMock.mockGetString()
-        val url =
-            "wc:12345678-4242-4242-4242-abcdef42abcd@1?bridge=https%3A%2F%2Fbridge.gnosis.pm&key=5eef4242e18349068f7ba3dbd909b3182be28475879d24e929c60e3cbb2d36ee"
-        val config = Session.Config.fromWCUri(url)
-        val mockSession = mock(Session::class.java)
-        given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
-
-        val failObserver = TestObserver<Unit>()
-        repository.approveSession("randomid").subscribe(failObserver)
-        failObserver.assertFailure(Predicate<Throwable> { it is IllegalArgumentException && it.message == "Session not active" })
-
-        val sessionId = repository.createSession(url)
-        then(sessionBuilderMock).should().build(config,
-            Session.PeerMeta(name = R.string.app_name.toString())
-        )
-        then(sessionBuilderMock).shouldHaveNoMoreInteractions()
-        then(mockSession).should().addCallback(MockUtils.any())
-        then(mockSession).shouldHaveNoMoreInteractions()
-        val successObserver = TestObserver<Unit>()
-        repository.approveSession(sessionId).subscribe(successObserver)
-        successObserver.assertResult()
-        then(mockSession).should().approve(
-            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d", "0x0e329fa8d6Fcd1ba0Cda495431F1f7CA24F442C2"),
-            BuildConfig.BLOCKCHAIN_CHAIN_ID
-        )
         then(mockSession).shouldHaveNoMoreInteractions()
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
     }
@@ -422,13 +434,17 @@ class WalletConnectBridgeRepositoryTest {
         createObserver.assertResult()
         then(sessionStoreMock).should().load(config.handshakeTopic)
         then(sessionStoreMock).shouldHaveZeroInteractions()
-        then(sessionBuilderMock).should().build(config,
+        then(sessionBuilderMock).should().build(
+            config,
             Session.PeerMeta(name = R.string.app_name.toString())
         )
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
         then(contextMock).should().startService(MockUtils.any())
         then(contextMock).should().getString(R.string.app_name)
         then(contextMock).shouldHaveNoMoreInteractions()
+
+        then(mockSession).should().addCallback(MockUtils.any())
+        then(mockSession).shouldHaveNoMoreInteractions()
 
         // Should only create once
         val activeObserver = TestObserver<Unit>()
@@ -447,7 +463,7 @@ class WalletConnectBridgeRepositoryTest {
         given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
 
         val observer = TestObserver<List<BridgeRepository.SessionMeta>>()
-        repository.observeSessions().subscribe(observer)
+        repository.observeSessions(null).subscribe(observer)
         then(sessionStoreMock).should().list()
         then(sessionStoreMock).shouldHaveNoMoreInteractions()
         // Initial value should be empty (even if there is a error while loading the session from the store)
@@ -478,10 +494,11 @@ class WalletConnectBridgeRepositoryTest {
         observer.assertValues(
             emptyList(),
             listOf(
-                BridgeRepository.SessionMeta(firstSession.config.handshakeTopic, null, null, null, true, null),
+                BridgeRepository.SessionMeta(firstSession.config.handshakeTopic, null, null, null, null, true, null),
                 BridgeRepository.SessionMeta(
                     secondSession.config.handshakeTopic,
                     "Peer",
+                    null,
                     null,
                     null,
                     false,
@@ -496,13 +513,15 @@ class WalletConnectBridgeRepositoryTest {
         val mockSession = mock(Session::class.java)
         given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
 
-        val observer = TestObserver<List<String>>()
-        repository.observeActiveSessionIds().subscribe(observer)
+        val observer = TestObserver<List<SessionIdAndSafe>>()
+        repository.observeActiveSessionInfo().subscribe(observer)
         // Initial value should be empty (even if there is a error while loading the session from the store)
         observer.assertValues(emptyList())
 
         // Setup sessions
         val firstSession = WCSessionStore.State(randomConfig(), randomClientData(), null, null, UUID.randomUUID().toString(), null)
+        val firstSessionSafe = "0xbaddad".asEthereumAddress()!!
+        testPreferences.putString(KEY_PREFIX + firstSession.config.handshakeTopic, firstSessionSafe.asEthereumAddressString())
         val secondSession = WCSessionStore.State(
             randomConfig(),
             randomClientData(),
@@ -511,13 +530,15 @@ class WalletConnectBridgeRepositoryTest {
             UUID.randomUUID().toString(),
             listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d")
         )
+        val secondSessionSafe = "0xdeadbeef".asEthereumAddress()!!
+        testPreferences.putString(KEY_PREFIX + secondSession.config.handshakeTopic, secondSessionSafe.asEthereumAddressString())
 
         // Activate first session, should trigger an update
         given(sessionStoreMock.load(firstSession.config.handshakeTopic)).willReturn(firstSession)
         repository.activateSession(firstSession.config.handshakeTopic).subscribe()
         then(sessionStoreMock).should().load(firstSession.config.handshakeTopic)
 
-        observer.assertValues(emptyList(), listOf(firstSession.config.handshakeTopic))
+        observer.assertValues(emptyList(), listOf(firstSession.config.handshakeTopic to firstSessionSafe))
 
         // Activate second session, should trigger an update
         given(sessionStoreMock.load(secondSession.config.handshakeTopic)).willReturn(secondSession)
@@ -526,11 +547,16 @@ class WalletConnectBridgeRepositoryTest {
 
         observer.assertValues(
             emptyList(),
-            listOf(firstSession.config.handshakeTopic),
-            listOf(firstSession.config.handshakeTopic, secondSession.config.handshakeTopic).sorted()
+            listOf(firstSession.config.handshakeTopic to firstSessionSafe),
+            listOf(firstSession.config.handshakeTopic to firstSessionSafe, secondSession.config.handshakeTopic to secondSessionSafe)
+                .sortedBy { it.first }
         )
 
         then(sessionStoreMock).shouldHaveNoMoreInteractions()
+    }
+
+    companion object {
+        private const val KEY_PREFIX = "session_safe_"
     }
 
 }

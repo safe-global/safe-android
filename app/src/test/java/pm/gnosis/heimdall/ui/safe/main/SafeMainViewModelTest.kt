@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.ui.safe.main
 
 import android.app.Application
-import androidx.room.EmptyResultSetException
 import android.content.Context
+import androidx.room.EmptyResultSetException
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -27,9 +27,12 @@ import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
+import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.models.*
+import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.PendingSafe
+import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Wei
@@ -60,6 +63,9 @@ class SafeMainViewModelTest {
     private lateinit var context: Context
 
     @Mock
+    private lateinit var bridgeRepository: BridgeRepository
+
+    @Mock
     private lateinit var addressBookRepository: AddressBookRepository
 
     @Mock
@@ -73,7 +79,7 @@ class SafeMainViewModelTest {
     fun setUp() {
         BDDMockito.given(application.getSharedPreferences(anyString(), anyInt())).willReturn(preferences)
         preferencesManager = PreferencesManager(application)
-        viewModel = SafeMainViewModel(context, addressBookRepository, preferencesManager, safeRepository)
+        viewModel = SafeMainViewModel(context, addressBookRepository, bridgeRepository, preferencesManager, safeRepository)
     }
 
     @Test
@@ -439,12 +445,12 @@ class SafeMainViewModelTest {
         infoProcessor.offer(AddressBookEntry(TEST_SAFE, "Old Name", ""))
         safeSubscriber
             .assertValueCount(1)
-            .assertValueAt(0, "Old Name" to "0x1f81...C65C7E")
+            .assertValueAt(0, "Old Name" to "0x1f...5C7E")
 
         infoProcessor.offer(AddressBookEntry(TEST_SAFE, "", ""))
         safeSubscriber
             .assertValueCount(2)
-            .assertValueAt(1, "" to "0x1f81...C65C7E")
+            .assertValueAt(1, "" to "0x1f...5C7E")
 
         then(addressBookRepository).should().observeAddressBookEntry(TEST_SAFE)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
@@ -479,12 +485,12 @@ class SafeMainViewModelTest {
         infoProcessor.offer(AddressBookEntry(TEST_PENDING_SAFE, "Old Name", ""))
         safeSubscriber
             .assertValueCount(1)
-            .assertValueAt(0, "Old Name" to "0xC2AC...a48132")
+            .assertValueAt(0, "Old Name" to "0xC2...8132")
 
         infoProcessor.offer(AddressBookEntry(TEST_PENDING_SAFE, "", ""))
         safeSubscriber
             .assertValueCount(2)
-            .assertValueAt(1, "" to "0xC2AC...a48132")
+            .assertValueAt(1, "" to "0xC2...8132")
 
         then(addressBookRepository).should().observeAddressBookEntry(TEST_PENDING_SAFE)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
@@ -521,12 +527,12 @@ class SafeMainViewModelTest {
         infoProcessor.offer(AddressBookEntry(TEST_RECOVERING_SAFE, "Old Name", ""))
         safeSubscriber
             .assertValueCount(1)
-            .assertValueAt(0, "Old Name" to "0xb365...14244A")
+            .assertValueAt(0, "Old Name" to "0xb3...244A")
 
         infoProcessor.offer(AddressBookEntry(TEST_RECOVERING_SAFE, "", ""))
         safeSubscriber
             .assertValueCount(2)
-            .assertValueAt(1, "" to "0xb365...14244A")
+            .assertValueAt(1, "" to "0xb3...244A")
 
         then(addressBookRepository).should().observeAddressBookEntry(TEST_RECOVERING_SAFE)
         then(addressBookRepository).shouldHaveNoMoreInteractions()
@@ -707,6 +713,31 @@ class SafeMainViewModelTest {
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
         testObserver.assertResult(ErrorResult(exception))
+    }
+
+    @Test
+    fun shouldShowWalletConnectIntro() {
+        val exception = IllegalStateException()
+        given(bridgeRepository.shouldShowIntro()).willReturn(Single.error(exception))
+
+        val testObserver = TestObserver.create<Boolean>()
+        viewModel.shouldShowWalletConnectIntro().subscribe(testObserver)
+
+        then(bridgeRepository).should().shouldShowIntro()
+        then(bridgeRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertFailure(Predicate { it == exception })
+    }
+
+    @Test
+    fun shouldShowWalletConnectIntroError() {
+        given(bridgeRepository.shouldShowIntro()).willReturn(Single.just(true))
+
+        val testObserver = TestObserver.create<Boolean>()
+        viewModel.shouldShowWalletConnectIntro().subscribe(testObserver)
+
+        then(bridgeRepository).should().shouldShowIntro()
+        then(bridgeRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertResult(true)
     }
 
     companion object {

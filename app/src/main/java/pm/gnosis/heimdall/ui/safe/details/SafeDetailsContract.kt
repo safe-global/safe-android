@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.safe.details
 
-import androidx.lifecycle.ViewModel
 import android.graphics.Bitmap
+import androidx.lifecycle.ViewModel
 import io.reactivex.Flowable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.models.Safe

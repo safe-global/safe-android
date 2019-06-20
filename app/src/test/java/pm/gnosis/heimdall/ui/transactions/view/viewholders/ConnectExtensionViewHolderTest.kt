@@ -33,7 +33,6 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.mockFindViewById
 import pm.gnosis.utils.asEthereumAddress
-import java.lang.IllegalStateException
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)

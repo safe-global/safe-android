@@ -5,7 +5,6 @@ import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
-import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events

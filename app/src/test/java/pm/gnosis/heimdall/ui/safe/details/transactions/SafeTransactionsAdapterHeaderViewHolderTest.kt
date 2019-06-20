@@ -180,7 +180,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(timestampTextView).should(times(2)).text = R.string.just_a_moment_ago.toString()
         then(timestampTextView).shouldHaveNoMoreInteractions()
 
-        then(targetTextView).should().text = "0x31B9...184523"
+        then(targetTextView).should().text = "0x31...4523"
         then(targetTextView).should().text = "Test Name"
         then(targetTextView).should().visibility = View.VISIBLE
         then(targetTextView).should().setOnClickListener(MockUtils.any())
@@ -278,7 +278,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(timestampTextView).should(times(2)).text = R.string.just_a_moment_ago.toString()
         then(timestampTextView).shouldHaveNoMoreInteractions()
 
-        then(targetTextView).should().text = "0x31B9...184523"
+        then(targetTextView).should().text = "0x31...4523"
         then(targetTextView).should().setOnClickListener(MockUtils.any())
         then(targetTextView).shouldHaveNoMoreInteractions()
 
@@ -498,7 +498,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(timestampTextView).should(times(2)).text = R.string.just_a_moment_ago.toString()
         then(timestampTextView).shouldHaveNoMoreInteractions()
 
-        then(targetTextView).should().text = "0xA7e1...a246EC"
+        then(targetTextView).should().text = "0xA7...46EC"
         then(targetTextView).should().text = "Test Safe"
         then(targetTextView).should().visibility = View.VISIBLE
         then(targetTextView).should().setOnClickListener(MockUtils.any())

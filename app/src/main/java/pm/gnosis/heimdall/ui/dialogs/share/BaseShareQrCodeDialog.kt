@@ -2,9 +2,9 @@ package pm.gnosis.heimdall.ui.dialogs.share
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

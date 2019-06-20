@@ -17,7 +17,6 @@ import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
-import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.getTestString

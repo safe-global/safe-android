@@ -1,8 +1,8 @@
 package pm.gnosis.heimdall.ui.base
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -31,12 +31,12 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private var performSecurityCheck = true
 
-    abstract fun screenId(): ScreenId
+    abstract fun screenId(): ScreenId?
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         HeimdallApplication[this].inject(this)
-        eventTracker.setCurrentScreenId(this, screenId())
+        screenId()?.let { eventTracker.setCurrentScreenId(this, it) }
         if (!BuildConfig.DEBUG) {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
@@ -51,7 +51,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::checkSecurity, ::handleCheckError)
         }
-        eventTracker.submit(Event.ScreenView(screenId()))
+        screenId()?.let { eventTracker.submit(Event.ScreenView(it)) }
     }
 
     override fun onStop() {

@@ -6,8 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.jakewharton.rxbinding2.view.clicks
-import com.jakewharton.rxbinding2.view.visibility
-import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -20,19 +18,14 @@ import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.exceptions.LocalizedException
-import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract.CheckResult.*
-import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
-import pm.gnosis.heimdall.utils.parseEthereumAddress
 import pm.gnosis.heimdall.utils.setCompoundDrawableResource
 import pm.gnosis.heimdall.utils.setCompoundDrawables
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CheckSafeActivity : ViewModelActivity<CheckSafeContract>() {

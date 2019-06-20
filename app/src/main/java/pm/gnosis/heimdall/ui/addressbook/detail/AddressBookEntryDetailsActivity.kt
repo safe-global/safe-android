@@ -3,10 +3,10 @@ package pm.gnosis.heimdall.ui.addressbook.detail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.PopupMenu
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
 import com.jakewharton.rxbinding2.support.v7.widget.itemClicks
 import com.jakewharton.rxbinding2.view.clicks
 import io.reactivex.android.schedulers.AndroidSchedulers

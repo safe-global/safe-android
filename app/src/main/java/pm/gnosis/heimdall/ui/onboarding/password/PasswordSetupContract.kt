@@ -1,7 +1,7 @@
 package pm.gnosis.heimdall.ui.onboarding.password
 
-import androidx.lifecycle.ViewModel
 import android.content.Intent
+import androidx.lifecycle.ViewModel
 import io.reactivex.Single
 import pm.gnosis.heimdall.helpers.PasswordValidationCondition
 import pm.gnosis.svalinn.common.utils.Result

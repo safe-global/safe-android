@@ -31,16 +31,19 @@
             app:layout_constraintTop_toTopOf="@+id/layout_wallet_connect_sessions_toolbar_background"
             app:srcCompat="@drawable/ic_arrow_back_24dp" />
 
-        <ImageView
+        <TextView
             android:id="@+id/layout_wallet_connect_sessions_add"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/toolbar_height"
-            android:background="@drawable/selectable_circle_background"
-            android:padding="16dp"
-            android:tint="@color/dark_slate_blue"
+            android:background="@drawable/selectable_background"
+            android:gravity="center"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
+            android:text="@string/scan"
+            android:textAllCaps="true"
+            android:textColor="@color/primary"
             app:layout_constraintEnd_toEndOf="@+id/layout_wallet_connect_sessions_toolbar_background"
-            app:layout_constraintTop_toTopOf="@+id/layout_wallet_connect_sessions_toolbar_background"
-            app:srcCompat="@drawable/ic_add" />
+            app:layout_constraintTop_toTopOf="@+id/layout_wallet_connect_sessions_toolbar_background" />
 
         <TextView
             android:id="@+id/layout_wallet_connect_sessions_title"
@@ -54,16 +57,44 @@
             app:layout_constraintStart_toEndOf="@+id/layout_wallet_connect_sessions_back_arrow"
             app:layout_constraintTop_toTopOf="@+id/layout_wallet_connect_sessions_toolbar_background" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/layout_wallet_connect_sessions_recycler_view"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_wallet_connect_sessions_title"
-                tools:itemCount="3"
-                tools:listitem="@layout/layout_wallet_connect_sessions_item" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/layout_wallet_connect_sessions_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_wallet_connect_sessions_title"
+            tools:itemCount="3"
+            tools:listitem="@layout/layout_wallet_connect_sessions_item" />
+
+
+        <LinearLayout
+            android:id="@+id/layout_wallet_connect_sessions_empty_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_wallet_connect_sessions_title">
+
+            <TextView
+                style="@style/LightText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/empty_screen_title"
+                android:textSize="28sp" />
+
+            <TextView
+                style="@style/LightText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_active_sessions"
+                android:textSize="20sp" />
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"

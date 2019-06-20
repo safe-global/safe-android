@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.dialogs.ens
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.subjects.PublishSubject
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,7 +19,6 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
-import java.lang.IllegalStateException
 
 @RunWith(MockitoJUnitRunner::class)
 class EnsInputViewModelTest {

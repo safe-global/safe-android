@@ -38,7 +38,6 @@ import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestSingleFactory
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
-import java.lang.IllegalStateException
 import java.math.BigInteger
 import java.util.concurrent.TimeoutException
 

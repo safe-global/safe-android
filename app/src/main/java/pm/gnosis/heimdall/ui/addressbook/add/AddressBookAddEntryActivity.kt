@@ -10,7 +10,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_address_book_update_entry.*
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.AddressInputHelper
@@ -18,14 +17,9 @@ import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
-import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputDialog
-import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.heimdall.utils.handleQrCodeActivityResult
-import pm.gnosis.heimdall.utils.parseEthereumAddress
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
-import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber

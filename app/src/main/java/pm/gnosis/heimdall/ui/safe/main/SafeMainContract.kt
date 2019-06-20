@@ -18,4 +18,5 @@ abstract class SafeMainContract : ViewModel() {
     abstract fun observeSafe(safe: AbstractSafe): Flowable<Pair<String, String>>
     abstract fun removeSafe(safe: AbstractSafe): Completable
     abstract fun isConnectedToBrowserExtension(safe: AbstractSafe): Single<Result<Boolean>>
+    abstract fun shouldShowWalletConnectIntro(): Single<Boolean>
 }
