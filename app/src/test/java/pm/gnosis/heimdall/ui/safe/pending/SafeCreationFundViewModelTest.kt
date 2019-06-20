@@ -168,6 +168,7 @@ class SafeCreationFundViewModelTest {
         val testObserver = TestObserver.create<Unit>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
             .willReturn(Observable.just(listOf(ERC20Token.ETHER_TOKEN to BigInteger.valueOf(100))))
         given(gnosisSafeRepositoryMock.updatePendingSafe(MockUtils.any())).willReturn(Completable.complete())
@@ -175,20 +176,29 @@ class SafeCreationFundViewModelTest {
         viewModel.setup(safeAddress)
         viewModel.observeHasEnoughDeployBalance().subscribe(testObserver)
 
+        testObserver.assertResult(Unit)
+
         then(gnosisSafeRepositoryMock).should().observePendingSafe(safeAddress.asEthereumAddress()!!)
         then(gnosisSafeRepositoryMock).should().updatePendingSafe(pendingSafe.copy(isFunded = true))
-        testObserver.assertResult(Unit)
+        then(gnosisSafeRepositoryMock).should().checkSafe(safeAddress.asEthereumAddress()!!)
+        then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadTokenBalances(
+            pendingSafe.address,
+            listOf(ERC20Token(pendingSafe.paymentToken, decimals = 0, name = "", symbol = ""))
+        )
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeHasEnoughDeployBalanceNotEnoughFunds() {
         val testScheduler = TestScheduler()
-        RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
+        RxJavaPlugins.setComputationSchedulerHandler { testScheduler }
         val safeAddress = "1"
         val testObserver = TestObserver.create<Unit>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         var enoughBalance = false
 
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
             .willReturn(Observable.fromCallable {
@@ -207,18 +217,25 @@ class SafeCreationFundViewModelTest {
 
         then(gnosisSafeRepositoryMock).should().observePendingSafe(safeAddress.asEthereumAddress()!!)
         then(gnosisSafeRepositoryMock).should().updatePendingSafe(pendingSafe.copy(isFunded = true))
+        then(gnosisSafeRepositoryMock).should().checkSafe(safeAddress.asEthereumAddress()!!)
         then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadTokenBalances(
+            pendingSafe.address,
+            listOf(ERC20Token(pendingSafe.paymentToken, decimals = 0, name = "", symbol = ""))
+        )
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeHasEnoughDeployBalanceNoBalance() {
         val testScheduler = TestScheduler()
-        RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
+        RxJavaPlugins.setComputationSchedulerHandler { testScheduler }
         val safeAddress = "1"
         val testObserver = TestObserver.create<Unit>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         var enoughBalance = false
 
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
             .willReturn(Observable.fromCallable {
@@ -237,7 +254,13 @@ class SafeCreationFundViewModelTest {
 
         then(gnosisSafeRepositoryMock).should().observePendingSafe(safeAddress.asEthereumAddress()!!)
         then(gnosisSafeRepositoryMock).should().updatePendingSafe(pendingSafe.copy(isFunded = true))
+        then(gnosisSafeRepositoryMock).should().checkSafe(safeAddress.asEthereumAddress()!!)
         then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadTokenBalances(
+            pendingSafe.address,
+            listOf(ERC20Token(pendingSafe.paymentToken, decimals = 0, name = "", symbol = ""))
+        )
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -247,6 +270,7 @@ class SafeCreationFundViewModelTest {
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         val exception = Exception()
 
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
             .willReturn(Observable.just(listOf(ERC20Token.ETHER_TOKEN to BigInteger.valueOf(100))))
@@ -259,46 +283,146 @@ class SafeCreationFundViewModelTest {
 
         then(gnosisSafeRepositoryMock).should().observePendingSafe(safeAddress.asEthereumAddress()!!)
         then(gnosisSafeRepositoryMock).should().updatePendingSafe(pendingSafe.copy(isFunded = true))
+        then(gnosisSafeRepositoryMock).should().checkSafe(safeAddress.asEthereumAddress()!!)
         then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadTokenBalances(
+            pendingSafe.address,
+            listOf(ERC20Token(pendingSafe.paymentToken, decimals = 0, name = "", symbol = ""))
+        )
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeHasEnoughDeployBalanceRequestError() {
+        val testScheduler = TestScheduler()
+        RxJavaPlugins.setComputationSchedulerHandler { testScheduler }
         val safeAddress = "1"
         val testObserver = TestObserver.create<Unit>()
-        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ONE), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        var shouldThrow = true
         val exception = Exception()
 
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
+        given(gnosisSafeRepositoryMock.updatePendingSafe(MockUtils.any())).willReturn(Completable.complete())
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
-            .willReturn(Observable.error(exception))
+            .willReturn(Observable.fromCallable {
+                if (shouldThrow) throw exception
+                listOf(ERC20Token.ETHER_TOKEN to BigInteger.valueOf(100))
+            })
 
         viewModel.setup(safeAddress)
         viewModel.observeHasEnoughDeployBalance().subscribe(testObserver)
 
-        testObserver.assertError(exception).assertNoValues()
+        testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
+        testObserver.assertEmpty()
+        shouldThrow = false
+        testScheduler.advanceTimeBy(10, TimeUnit.SECONDS)
+        testObserver.assertResult(Unit)
 
         then(gnosisSafeRepositoryMock).should().observePendingSafe(safeAddress.asEthereumAddress()!!)
+        then(gnosisSafeRepositoryMock).should().checkSafe(safeAddress.asEthereumAddress()!!)
+        then(gnosisSafeRepositoryMock).should().updatePendingSafe(pendingSafe.copy(isFunded = true))
         then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadTokenBalances(
+            safeAddress.asEthereumAddress()!!,
+            listOf(ERC20Token(pendingSafe.paymentToken, decimals = 0, name = "", symbol = ""))
+        )
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeHasEnoughDeployBalanceRequestInvalidResponse() {
+        val testScheduler = TestScheduler()
+        RxJavaPlugins.setComputationSchedulerHandler { testScheduler }
         val safeAddress = "1"
         val testObserver = TestObserver.create<Unit>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        var shouldReturnInvalid = true
 
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
+        given(gnosisSafeRepositoryMock.updatePendingSafe(MockUtils.any())).willReturn(Completable.complete())
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
-            .willReturn(Observable.just(emptyList()))
+            .willReturn(Observable.fromCallable {
+                if (shouldReturnInvalid) emptyList()
+                else listOf(ERC20Token.ETHER_TOKEN to BigInteger.valueOf(100))
+            })
 
         viewModel.setup(safeAddress)
         viewModel.observeHasEnoughDeployBalance().subscribe(testObserver)
 
-        testObserver.assertFailure(NoSuchElementException::class.java)
+        testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
+        testObserver.assertEmpty()
+        shouldReturnInvalid = false
+        testScheduler.advanceTimeBy(10, TimeUnit.SECONDS)
+        testObserver.assertResult(Unit)
 
         then(gnosisSafeRepositoryMock).should().observePendingSafe(safeAddress.asEthereumAddress()!!)
+        then(gnosisSafeRepositoryMock).should().checkSafe(safeAddress.asEthereumAddress()!!)
+        then(gnosisSafeRepositoryMock).should().updatePendingSafe(pendingSafe.copy(isFunded = true))
         then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadTokenBalances(
+            pendingSafe.address,
+            listOf(ERC20Token(pendingSafe.paymentToken, decimals = 0, name = "", symbol = ""))
+        )
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeHasEnoughDeployBalanceAlreadyDeployed() {
+        val safeAddress = "1"
+        val testObserver = TestObserver.create<Unit>()
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(true to false))
+        given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
+        given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(MockUtils.any())).willReturn(Completable.complete())
+
+        viewModel.setup(safeAddress)
+        viewModel.observeHasEnoughDeployBalance().subscribe(testObserver)
+
+        testObserver.assertResult(Unit)
+
+        then(gnosisSafeRepositoryMock).should().observePendingSafe(safeAddress.asEthereumAddress()!!)
+        then(gnosisSafeRepositoryMock).should().checkSafe(safeAddress.asEthereumAddress()!!)
+        then(gnosisSafeRepositoryMock).should().pendingSafeToDeployedSafe(pendingSafe)
+        then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
+    }
+
+    @Test
+    fun observeHasEnoughDeployCheckRequestError() {
+        val testScheduler = TestScheduler()
+        RxJavaPlugins.setComputationSchedulerHandler { testScheduler }
+        val safeAddress = "1"
+        val testObserver = TestObserver.create<Unit>()
+        val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ONE), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
+        var shouldThrow = true
+        val exception = Exception()
+
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any()))
+            .willReturn(Observable.fromCallable {
+                if (shouldThrow) throw exception
+                true to true
+            })
+        given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
+        given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(MockUtils.any())).willReturn(Completable.complete())
+
+        viewModel.setup(safeAddress)
+        viewModel.observeHasEnoughDeployBalance().subscribe(testObserver)
+
+        testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
+        testObserver.assertEmpty()
+        shouldThrow = false
+        testScheduler.advanceTimeBy(10, TimeUnit.SECONDS)
+        testObserver.assertResult(Unit)
+
+        then(gnosisSafeRepositoryMock).should().observePendingSafe(safeAddress.asEthereumAddress()!!)
+        then(gnosisSafeRepositoryMock).should().checkSafe(safeAddress.asEthereumAddress()!!)
+        then(gnosisSafeRepositoryMock).should().pendingSafeToDeployedSafe(pendingSafe)
+        then(gnosisSafeRepositoryMock).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
     }
 
     @Test
