@@ -16,12 +16,15 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.dialog_content_simple_text.view.*
+import kotlinx.android.synthetic.main.layout_adapter_entry_header.view.*
 import kotlinx.android.synthetic.main.layout_wallet_connect_sessions_item.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
+import pm.gnosis.heimdall.ui.base.LifecycleAdapter.LifecycleViewHolder
+import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsContract.AdapterEntry
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
 import pm.gnosis.heimdall.utils.SwipeableTouchHelperCallback
 import pm.gnosis.heimdall.utils.SwipeableViewHolder
@@ -35,21 +38,39 @@ class WalletConnectSessionsAdapter @Inject constructor(
     @ViewContext private val context: Context,
     private val viewModel: WalletConnectSessionsContract,
     private val picasso: Picasso
-) : LifecycleAdapter<BridgeRepository.SessionMeta, WalletConnectSessionsAdapter.SessionViewHolder>(context) {
+) : LifecycleAdapter<AdapterEntry, LifecycleViewHolder<AdapterEntry>>(context) {
 
     private val touchCallback by lazy { SwipeableTouchHelperCallback() }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder =
-        SessionViewHolder(
-            viewModel,
-            picasso,
-            { notifyItemChanged(it.adapterPosition) },
-            LayoutInflater.from(parent.context).inflate(R.layout.layout_wallet_connect_sessions_item, parent, false)
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LifecycleViewHolder<AdapterEntry> =
+        when (viewType) {
+            R.id.adapter_entry_header ->
+                HeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.layout_adapter_entry_header, parent, false))
+            R.id.adapter_entry_session ->
+                SessionViewHolder(
+                    viewModel,
+                    picasso,
+                    { notifyItemChanged(it.adapterPosition) },
+                    LayoutInflater.from(parent.context).inflate(R.layout.layout_wallet_connect_sessions_item, parent, false)
+                )
+            else -> throw IllegalArgumentException("Unknown type")
+        }
+
+    override fun getItemViewType(position: Int): Int {
+        return items.getOrNull(position)?.type ?: 0
+    }
 
     fun attach(recyclerView: RecyclerView) {
         recyclerView.adapter = this
         ItemTouchHelper(touchCallback).attachToRecyclerView(recyclerView)
+    }
+
+    class HeaderViewHolder(itemView: View) : LifecycleViewHolder<AdapterEntry>(itemView) {
+        override fun bind(data: AdapterEntry, payloads: List<Any>) {
+            (data as? AdapterEntry.Header)?.apply {
+                itemView.layout_adapter_entry_header_title.text = title
+            }
+        }
     }
 
     class SessionViewHolder(
@@ -58,13 +79,15 @@ class WalletConnectSessionsAdapter @Inject constructor(
         private val swipeCanceledCallback: (SessionViewHolder) -> Unit,
         itemView: View
     ) :
-        LifecycleAdapter.LifecycleViewHolder<BridgeRepository.SessionMeta>(itemView), SwipeableViewHolder {
+        LifecycleViewHolder<AdapterEntry>(itemView), SwipeableViewHolder {
         private val disposables = CompositeDisposable()
         private var current: BridgeRepository.SessionMeta? = null
 
-        override fun bind(data: BridgeRepository.SessionMeta, payloads: List<Any>) {
-            current = data
-            updateSessionInfo(data)
+        override fun bind(data: AdapterEntry, payloads: List<Any>) {
+            (data as? AdapterEntry.Session)?.apply {
+                current = meta
+                updateSessionInfo(meta)
+            }
         }
 
         override fun onSwiped() {

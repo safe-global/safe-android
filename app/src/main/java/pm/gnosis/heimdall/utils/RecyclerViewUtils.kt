@@ -35,11 +35,7 @@ class SwipeableTouchHelperCallback: ItemTouchHelper.SimpleCallback(0, ItemTouchH
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
-        (viewHolder as? SwipeableViewHolder)?.let {
-            uiUtil.onSelected(viewHolder.swipeableView())
-        } ?: run {
-            super.onSelectedChanged(viewHolder, actionState)
-        }
+        (viewHolder as? SwipeableViewHolder)?.let { uiUtil.onSelected(viewHolder.swipeableView()) }
     }
 
     override fun onChildDrawOver(
@@ -53,8 +49,6 @@ class SwipeableTouchHelperCallback: ItemTouchHelper.SimpleCallback(0, ItemTouchH
     ) {
         (viewHolder as? SwipeableViewHolder)?.let {
             uiUtil.onDraw(c, recyclerView, viewHolder.swipeableView(), dX, dY, actionState, isCurrentlyActive)
-        } ?: run {
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
     }
 
@@ -69,9 +63,11 @@ class SwipeableTouchHelperCallback: ItemTouchHelper.SimpleCallback(0, ItemTouchH
     ) {
         (viewHolder as? SwipeableViewHolder)?.let {
             uiUtil.onDraw(c, recyclerView, viewHolder.swipeableView(), dX, dY, actionState, isCurrentlyActive)
-        } ?: run {
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
+    }
+
+    override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+        return (viewHolder as? SwipeableViewHolder)?.let { super.getSwipeDirs(recyclerView, viewHolder) } ?: 0
     }
 
     fun clearView(viewHolder: SwipeableViewHolder) {
@@ -81,8 +77,6 @@ class SwipeableTouchHelperCallback: ItemTouchHelper.SimpleCallback(0, ItemTouchH
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
         (viewHolder as? SwipeableViewHolder)?.let {
             clearView(viewHolder)
-        } ?: run {
-            super.clearView(recyclerView, viewHolder)
         }
     }
 }

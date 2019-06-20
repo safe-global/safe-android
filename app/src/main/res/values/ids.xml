@@ -2,4 +2,5 @@
 <resources>
     <item name="adapter_entry_header" type="id" />
     <item name="adapter_entry_transaction" type="id" />
+    <item name="adapter_entry_session" type="id" />
 </resources>

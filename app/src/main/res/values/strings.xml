@@ -431,4 +431,5 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="disconnect">Disconnect</string>
     <string name="disconnect_from_dapp">Disconnect from Dapp?</string>
     <string name="this_will_disconnect_x">This will disconnect the active session with %s</string>
+    <string name="active_sessions">Active sessions</string>
 </resources>
