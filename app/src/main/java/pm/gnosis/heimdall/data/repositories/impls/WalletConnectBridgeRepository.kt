@@ -228,6 +228,7 @@ class WalletConnectBridgeRepository @Inject constructor(
     private fun showSendTransactionNotification(peerMeta: Session.PeerMeta?, safe: Solidity.Address, data: TransactionData, referenceId: Long) {
         val keyguard = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         val intent = ReviewTransactionActivity.createIntent(context, safe, data, referenceId)
+        // Pre Android Q we will directly show the review activity if the phone is unlocked, else we show a notification
         // TODO: Adjust check when Q is released
         if (BuildCompat.isAtLeastQ() || Build.VERSION.SDK_INT > Build.VERSION_CODES.P || keyguard.isKeyguardLocked) {
             val icon = peerMeta?.icons?.firstOrNull()?.let { nullOnThrow { picasso.load(it).get() } }
