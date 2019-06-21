@@ -67,6 +67,7 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
 
     private fun handleNewAddress(address: Solidity.Address) {
         layout_create_asset_transfer_receiver_hint.text = null
+        layout_create_asset_transfer_receiver_name.visible(false)
         addressHelper.populateAddressInfo(
             layout_create_asset_transfer_receiver_address,
             layout_create_asset_transfer_receiver_name,

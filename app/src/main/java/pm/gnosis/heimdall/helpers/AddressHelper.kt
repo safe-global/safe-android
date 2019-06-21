@@ -7,6 +7,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.blockies.BlockiesImageView
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.heimdall.views.AddressTooltip
@@ -29,14 +30,14 @@ class AddressHelper @Inject constructor(
         imageView?.setAddress(address)
         return listOf(
             Single.fromCallable {
-                address.shortChecksumString()
+                address.shortChecksumString() to address.asEthereumAddressChecksumString()
             }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess { displayAddress ->
+                .doOnSuccess { (displayAddress, fullAddress) ->
                     addressView.text = displayAddress
                     addressView.setOnClickListener {
-                        AddressTooltip(addressView.context, displayAddress).showAsDropDown(addressView)
+                        AddressTooltip(addressView.context, fullAddress).showAsDropDown(addressView)
                     }
                 }
                 .flatMap {
