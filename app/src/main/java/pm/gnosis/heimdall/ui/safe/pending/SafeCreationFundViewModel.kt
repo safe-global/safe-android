@@ -51,20 +51,24 @@ class SafeCreationFundViewModel @Inject constructor(
     override fun observeHasEnoughDeployBalance(): Observable<Unit> =
         gnosisSafeRepository.observePendingSafe(safeAddress).toObservable()
             .switchMap { pendingSafe ->
-                // Create a fake token since only the address is necessary to load the balance
-                requestBalance(pendingSafe.address, ERC20Token(pendingSafe.paymentToken, decimals = 0, name = "", symbol = ""))
-                    .map { if (it < pendingSafe.paymentAmount) throw NotEnoughFundsException() }
-                    .retryWhen { errors ->
-                        errors.flatMap {
-                            if (it is NotEnoughFundsException) Observable.just(it).delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS)
-                            else Observable.error(it)
-                        }
+                gnosisSafeRepository.checkSafe(safeAddress)
+                    .retryWhen { errors -> errors.flatMap { Observable.just(it).delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS) } }
+                    .switchMapCompletable { (deployed) ->
+                        if (deployed)
+                            gnosisSafeRepository.pendingSafeToDeployedSafe(pendingSafe)
+                        else
+                            checkFunding(pendingSafe)
                     }
-                    .flatMap { gnosisSafeRepository.updatePendingSafe(pendingSafe.copy(isFunded = true)).andThen(Observable.just(Unit)) }
+                    .andThen(Observable.just(Unit))
             }
 
-    private fun requestBalance(address: Solidity.Address, paymentToken: ERC20Token) =
-        tokenRepository.loadTokenBalances(address, listOf(paymentToken)).map { it.first().second ?: BigInteger.ZERO }
+    private fun checkFunding(pendingSafe: PendingSafe) =
+        // Create a fake token since only the address is necessary to load the balance
+        tokenRepository.loadTokenBalances(pendingSafe.address, listOf(ERC20Token(pendingSafe.paymentToken, decimals = 0, name = "", symbol = "")))
+            .map { it.first().second ?: BigInteger.ZERO }
+            .map { if (it < pendingSafe.paymentAmount) throw NotEnoughFundsException() }
+            .retryWhen { errors -> errors.flatMap { Observable.just(it).delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS) } }
+            .flatMapCompletable { gnosisSafeRepository.updatePendingSafe(pendingSafe.copy(isFunded = true)) }
 
     companion object {
         private const val BALANCE_REQUEST_INTERVAL_SECONDS = 10L
