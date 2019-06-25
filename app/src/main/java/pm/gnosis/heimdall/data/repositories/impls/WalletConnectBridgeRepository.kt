@@ -1,12 +1,14 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.annotation.SuppressLint
+import android.app.KeyguardManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
+import androidx.core.os.BuildCompat
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.picasso.Picasso
@@ -224,21 +226,29 @@ class WalletConnectBridgeRepository @Inject constructor(
         }
 
     private fun showSendTransactionNotification(peerMeta: Session.PeerMeta?, safe: Solidity.Address, data: TransactionData, referenceId: Long) {
-        val icon = peerMeta?.icons?.firstOrNull()?.let { nullOnThrow { picasso.load(it).get() } }
+        val keyguard = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         val intent = ReviewTransactionActivity.createIntent(context, safe, data, referenceId)
-        val notification = localNotificationManager.builder(
-            peerMeta?.name ?: context.getString(R.string.unknown_dapp),
-            context.getString(R.string.notification_new_transaction_request),
-            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT),
-            CHANNEL_WALLET_CONNECT_REQUESTS
-        )
-            .setSubText(safe.shortChecksumString())
-            .setLargeIcon(icon)
-            .build()
-        localNotificationManager.show(
-            referenceId.hashCode(),
-            notification
-        )
+        // Pre Android Q we will directly show the review activity if the phone is unlocked, else we show a notification
+        // TODO: Adjust check when Q is released
+        if (BuildCompat.isAtLeastQ() || Build.VERSION.SDK_INT > Build.VERSION_CODES.P || keyguard.isKeyguardLocked) {
+            val icon = peerMeta?.icons?.firstOrNull()?.let { nullOnThrow { picasso.load(it).get() } }
+            val notification = localNotificationManager.builder(
+                peerMeta?.name ?: context.getString(R.string.unknown_dapp),
+                context.getString(R.string.notification_new_transaction_request),
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT),
+                CHANNEL_WALLET_CONNECT_REQUESTS
+            )
+                .setSubText(safe.shortChecksumString())
+                .setLargeIcon(icon)
+                .build()
+            localNotificationManager.show(
+                referenceId.hashCode(),
+                notification
+            )
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
     }
 
     override fun createSession(url: String, safe: Solidity.Address): String =

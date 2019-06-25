@@ -45,18 +45,29 @@ class TransactionSubmissionConfirmationDialog : BaseDialog() {
     override fun onStart() {
         super.onStart()
         congratulations_continue.setOnClickListener {
-            startActivity(
-                SafeMainActivity.createIntent(
-                    context!!,
-                    null,
-                    R.string.tab_title_transactions
+            val refId = arguments?.getLong(ARG_REFERENCE_ID, -1) ?: -1
+            val parentActivity = activity
+            // If we have a reference id then we have been opened from a external request and should just close the screen without opening a new one
+            if (parentActivity == null || refId < 0)
+                startActivity(
+                    SafeMainActivity.createIntent(
+                        context!!,
+                        null,
+                        R.string.tab_title_transactions
+                    )
                 )
-            )
+            else
+                parentActivity.finish()
             dismiss()
         }
     }
 
     companion object {
-        fun create() = TransactionSubmissionConfirmationDialog()
+        private const val ARG_REFERENCE_ID = "argument.long.reference_id"
+        fun create(referenceId: Long?) = TransactionSubmissionConfirmationDialog().apply {
+            arguments = Bundle().apply {
+                referenceId?.let { putLong(ARG_REFERENCE_ID, referenceId) }
+            }
+        }
     }
 }

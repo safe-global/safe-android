@@ -67,12 +67,20 @@ class WalletConnectSessionsActivity : ViewModelActivity<WalletConnectSessionsCon
         disposables += layout_wallet_connect_sessions_add.clicks()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { QRCodeScanActivity.startForResult(this) }
+
+        intent.getStringExtra(EXTRA_WC_URI)?.let {
+            intent.removeExtra(EXTRA_WC_URI)
+            disposables += viewModel.createSession(it).subscribeBy(onError = Timber::e)
+        }
     }
 
     companion object {
+        private const val EXTRA_WC_URI = "extra.string.wc_uri"
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
-        fun createIntent(context: Context, safe: Solidity.Address) = Intent(context, WalletConnectSessionsActivity::class.java).apply {
-            putExtra(EXTRA_SAFE_ADDRESS, safe.asEthereumAddressString())
-        }
+        fun createIntent(context: Context, safe: Solidity.Address, wcUri: String? = null) =
+            Intent(context, WalletConnectSessionsActivity::class.java).apply {
+                putExtra(EXTRA_SAFE_ADDRESS, safe.asEthereumAddressString())
+                putExtra(EXTRA_WC_URI, wcUri)
+            }
     }
 }
