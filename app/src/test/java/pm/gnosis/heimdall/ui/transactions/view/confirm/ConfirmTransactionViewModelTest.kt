@@ -205,7 +205,10 @@ class ConfirmTransactionViewModelTest {
                             ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_change_threshold)),
             RestrictedTransactionException.ChangeMasterCopy::class to
                     (RestrictedTransactionException.ChangeMasterCopy to
-                            ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_proxy))
+                            ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_modify_proxy)),
+            RestrictedTransactionException.DataCallToSafe::class
+                    (RestrictedTransactionException.DataCallToSafe to
+                            ConfirmTransactionContract.InvalidTransactionException(R.string.restricted_transaction_data_call_to_safe))
         )
 
         RestrictedTransactionException::class.nestedClasses.forEach {
