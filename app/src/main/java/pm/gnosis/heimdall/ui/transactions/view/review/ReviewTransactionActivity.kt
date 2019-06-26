@@ -1,12 +1,13 @@
 package pm.gnosis.heimdall.ui.transactions.view.review
 
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.widget.NestedScrollView
 import com.jakewharton.rxbinding2.view.clicks
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
@@ -14,6 +15,7 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.include_transaction_submit_info.*
 import kotlinx.android.synthetic.main.layout_review_transaction.*
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
@@ -22,7 +24,6 @@ import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.ui.transactions.TransactionSubmissionConfirmationDialog
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.ViewUpdate
 import pm.gnosis.heimdall.ui.transactions.view.helpers.TransactionSubmitInfoViewHelper
@@ -34,6 +35,7 @@ import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
+import java.lang.Exception
 import javax.inject.Inject
 
 class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>(), UnlockDialog.UnlockCallback {
@@ -43,6 +45,9 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
 
     @Inject
     lateinit var toolbarHelper: ToolbarHelper
+
+    @Inject
+    lateinit var picasso: Picasso
 
     private var transactionInfoViewHolder: TransactionInfoViewHolder? = null
 
@@ -68,8 +73,8 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             return
         }
 
-        referenceId = if(intent.hasExtra(EXTRA_REFERENCE_ID)) intent.getLongExtra(EXTRA_REFERENCE_ID, 0) else null
-        viewModel.setup(safeAddress, referenceId)
+        referenceId = if (intent.hasExtra(EXTRA_REFERENCE_ID)) intent.getLongExtra(EXTRA_REFERENCE_ID, 0) else null
+        viewModel.setup(safeAddress, referenceId, intent.getStringExtra(EXTRA_SESSION_ID))
         infoViewHelper.bind(layout_review_transaction_transaction_info)
     }
 
@@ -80,6 +85,10 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             finish()
             return
         }
+
+        disposables += viewModel.observeSessionInfo()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeForResult(onNext = ::updateSessionInfo, onError = ::sessionInfoError)
 
         infoViewHelper.onToggleReadyState = this::toggleReadyState
         infoViewHelper.toggleRejectionState(false)
@@ -112,6 +121,31 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
         (layout_review_transaction_transaction_info as? NestedScrollView)?.let {
             disposables += toolbarHelper.setupShadow(layout_review_transaction_toolbar_shadow, it)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        picasso.cancelRequest(layout_review_transaction_session_info_dapp_img)
+    }
+
+    private fun updateSessionInfo(info: ReviewTransactionContract.SessionInfo) {
+        layout_review_transaction_session_info_group.visible(true)
+        layout_review_transaction_session_info_dapp_label.text =
+            if (!info.dappName.isNullOrBlank()) info.dappName else getString(R.string.unknown_dapp)
+        layout_review_transaction_session_info_url_label.text = info.dappUrl
+        layout_review_transaction_session_info_image_label.text = info.dappName?.first()?.toUpperCase()?.toString()
+        info.iconUrl?.let {
+            picasso.load(it).into(layout_review_transaction_session_info_dapp_img, object : Callback.EmptyCallback() {
+                override fun onSuccess() {
+                    layout_review_transaction_session_info_image_label.text = null
+                }
+            })
+        }
+    }
+
+    private fun sessionInfoError(t: Throwable) {
+        errorSnackbar(layout_review_transaction_session_info_dapp_img, t)
+        layout_review_transaction_session_info_group.visible(false)
     }
 
     override fun onBackPressed() {
@@ -164,10 +198,12 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
     companion object {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val EXTRA_REFERENCE_ID = "extra.long.reference_id"
-        fun createIntent(context: Context, safe: Solidity.Address, txData: TransactionData, referenceId: Long? = null) =
+        private const val EXTRA_SESSION_ID = "extra.string.session_id"
+        fun createIntent(context: Context, safe: Solidity.Address, txData: TransactionData, referenceId: Long? = null, sessionId: String? = null) =
             Intent(context, ReviewTransactionActivity::class.java).apply {
                 putExtra(EXTRA_SAFE_ADDRESS, safe.value.toHexString())
                 referenceId?.let { putExtra(EXTRA_REFERENCE_ID, it) }
+                putExtra(EXTRA_SESSION_ID, sessionId)
                 putExtras(Bundle().apply {
                     txData.addToBundle(this)
                 })
