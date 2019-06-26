@@ -134,7 +134,7 @@ class ConfirmTransactionViewModelTest {
         val events = SubmitTransactionHelper.Events(Observable.empty(), Observable.empty(), Observable.empty())
         val transactionData = mock(TransactionData::class.java)
         val observable = Observable.empty<Result<SubmitTransactionHelper.ViewUpdate>>()
-        given(txRepositoryMock.checkRestrictedTransaction(MockUtils.any())).willReturn(Single.just(TEST_TRANSACTION))
+        given(txRepositoryMock.checkRestrictedTransaction(MockUtils.any(), MockUtils.any())).willReturn(Single.just(TEST_TRANSACTION))
         given(txRepositoryMock.parseTransactionData(MockUtils.any())).willReturn(Single.just(transactionData))
         given(submitTransactionHelper.observe(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(observable)
 
@@ -155,7 +155,7 @@ class ConfirmTransactionViewModelTest {
 
         then(relayRepositoryMock).shouldHaveZeroInteractions()
 
-        then(txRepositoryMock).should().checkRestrictedTransaction(TEST_TRANSACTION)
+        then(txRepositoryMock).should().checkRestrictedTransaction(TEST_SAFE, TEST_TRANSACTION)
         then(txRepositoryMock).should().parseTransactionData(TEST_TRANSACTION)
         then(txRepositoryMock).shouldHaveNoMoreInteractions()
     }
@@ -166,7 +166,7 @@ class ConfirmTransactionViewModelTest {
         reset(txRepositoryMock)
 
         val events = SubmitTransactionHelper.Events(Observable.empty(), Observable.empty(), Observable.empty())
-        given(txRepositoryMock.checkRestrictedTransaction(MockUtils.any())).willReturn(Single.error(exception))
+        given(txRepositoryMock.checkRestrictedTransaction(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
 
         val observer = TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>()
 
@@ -184,7 +184,7 @@ class ConfirmTransactionViewModelTest {
 
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
 
-        then(txRepositoryMock).should().checkRestrictedTransaction(TEST_TRANSACTION)
+        then(txRepositoryMock).should().checkRestrictedTransaction(TEST_SAFE, TEST_TRANSACTION)
         then(txRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -218,7 +218,7 @@ class ConfirmTransactionViewModelTest {
     fun observeInvalidTransaction() {
         val events = SubmitTransactionHelper.Events(Observable.empty(), Observable.empty(), Observable.empty())
         val error = IllegalArgumentException()
-        given(txRepositoryMock.checkRestrictedTransaction(MockUtils.any())).willReturn(Single.just(TEST_TRANSACTION))
+        given(txRepositoryMock.checkRestrictedTransaction(MockUtils.any(), MockUtils.any())).willReturn(Single.just(TEST_TRANSACTION))
         given(txRepositoryMock.parseTransactionData(MockUtils.any())).willReturn(Single.error(error))
 
         val observer = TestObserver<Result<SubmitTransactionHelper.ViewUpdate>>()
@@ -237,7 +237,7 @@ class ConfirmTransactionViewModelTest {
 
         then(relayRepositoryMock).shouldHaveNoMoreInteractions()
 
-        then(txRepositoryMock).should().checkRestrictedTransaction(TEST_TRANSACTION)
+        then(txRepositoryMock).should().checkRestrictedTransaction(TEST_SAFE, TEST_TRANSACTION)
         then(txRepositoryMock).should().parseTransactionData(TEST_TRANSACTION)
         then(txRepositoryMock).shouldHaveNoMoreInteractions()
     }

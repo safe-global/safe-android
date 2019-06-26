@@ -96,7 +96,7 @@ class ConfirmTransactionViewModel @Inject constructor(
             }
 
     override fun observe(events: Events, transaction: SafeTransaction): Observable<Result<ViewUpdate>> =
-        transactionInfoRepository.checkRestrictedTransaction(transaction)
+        transactionInfoRepository.checkRestrictedTransaction(safe, transaction)
             .onErrorResumeNext {
                 Single.error(
                     when (it) {
@@ -110,6 +110,8 @@ class ConfirmTransactionViewModel @Inject constructor(
                             InvalidTransactionException(R.string.restricted_transaction_change_threshold)
                         is RestrictedTransactionException.ChangeMasterCopy ->
                             InvalidTransactionException(R.string.restricted_transaction_modify_proxy)
+                        is RestrictedTransactionException.DataCallToSafe ->
+                            InvalidTransactionException(R.string.restricted_transaction_data_call_to_safe)
                         else ->
                             it
                     }

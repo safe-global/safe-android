@@ -51,13 +51,13 @@ class DefaultTransactionInfoRepositoryTest {
 
     @Test
     fun checkRestrictedTransaction() {
-        val testData = mapOf(
+        val safeInteractionTransactions = mapOf(
             RestrictedTransactionException.ChangeThreshold::class to (
                     RestrictedTransactionException.ChangeThreshold to
                             listOf(
                                 SafeTransaction(
                                     Transaction(
-                                        address = "0x0".asEthereumAddress()!!,
+                                        address = TEST_SAFE,
                                         data = GnosisSafe.ChangeThreshold.encode(Solidity.UInt256(BigInteger.ONE))
                                     ), CALL
                                 )
@@ -68,7 +68,7 @@ class DefaultTransactionInfoRepositoryTest {
                             listOf(
                                 SafeTransaction(
                                     Transaction(
-                                        address = "0x0".asEthereumAddress()!!,
+                                        address = TEST_SAFE,
                                         data = GnosisSafe.ChangeMasterCopy.encode("0x1".asEthereumAddress()!!)
                                     ), CALL
                                 )
@@ -79,7 +79,7 @@ class DefaultTransactionInfoRepositoryTest {
                             listOf(
                                 SafeTransaction(
                                     Transaction(
-                                        address = "0x0".asEthereumAddress()!!,
+                                        address = TEST_SAFE,
                                         data = GnosisSafe.AddOwnerWithThreshold.encode(
                                             "0x1".asEthereumAddress()!!,
                                             Solidity.UInt256(BigInteger.ZERO)
@@ -88,7 +88,7 @@ class DefaultTransactionInfoRepositoryTest {
                                 ),
                                 SafeTransaction(
                                     Transaction(
-                                        address = "0x0".asEthereumAddress()!!,
+                                        address = TEST_SAFE,
                                         data = GnosisSafe.SwapOwner.encode(
                                             "0x1".asEthereumAddress()!!,
                                             "0x2".asEthereumAddress()!!,
@@ -98,7 +98,7 @@ class DefaultTransactionInfoRepositoryTest {
                                 ),
                                 SafeTransaction(
                                     Transaction(
-                                        address = "0x0".asEthereumAddress()!!,
+                                        address = TEST_SAFE,
                                         data = GnosisSafe.RemoveOwner.encode(
                                             "0x1".asEthereumAddress()!!,
                                             "0x2".asEthereumAddress()!!,
@@ -113,7 +113,7 @@ class DefaultTransactionInfoRepositoryTest {
                             listOf(
                                 SafeTransaction(
                                     Transaction(
-                                        address = "0x0".asEthereumAddress()!!,
+                                        address = TEST_SAFE,
                                         data = GnosisSafe.EnableModule.encode(
                                             "0x1".asEthereumAddress()!!
                                         )
@@ -121,7 +121,7 @@ class DefaultTransactionInfoRepositoryTest {
                                 ),
                                 SafeTransaction(
                                     Transaction(
-                                        address = "0x0".asEthereumAddress()!!,
+                                        address = TEST_SAFE,
                                         data = GnosisSafe.DisableModule.encode(
                                             "0x1".asEthereumAddress()!!,
                                             "0x2".asEthereumAddress()!!
@@ -130,6 +130,19 @@ class DefaultTransactionInfoRepositoryTest {
                                 )
                             )
                     ),
+            RestrictedTransactionException.DataCallToSafe::class to (
+                    RestrictedTransactionException.DataCallToSafe to
+                            listOf(
+                                SafeTransaction(
+                                    Transaction(
+                                        address = TEST_SAFE,
+                                        data = "0xdeadbeef"
+                                    ), CALL
+                                )
+                            )
+                    )
+        )
+        val allRestrictedTx = safeInteractionTransactions + mapOf(
             RestrictedTransactionException.DelegateCall::class to (
                     RestrictedTransactionException.DelegateCall to
                             listOf(
@@ -152,16 +165,20 @@ class DefaultTransactionInfoRepositoryTest {
                     )
         )
         RestrictedTransactionException::class.nestedClasses.forEach { nestedClass ->
-            val (expected, tests) = testData[nestedClass] ?: throw IllegalStateException("Missing tests for ${nestedClass.simpleName}")
+            val (expected, tests) = allRestrictedTx[nestedClass] ?: throw IllegalStateException("Missing tests for ${nestedClass.simpleName}")
             if (tests.isEmpty()) throw IllegalStateException("Missing tests for ${nestedClass.simpleName}")
             tests.forEach { safeTransaction ->
                 val testObserver = TestObserver<SafeTransaction>()
-                repository.checkRestrictedTransaction(safeTransaction).subscribe(testObserver)
+                repository.checkRestrictedTransaction(TEST_SAFE, safeTransaction).subscribe(testObserver)
+                @Suppress("RedundantSamConstructor")
                 testObserver.assertFailure(Predicate { it == expected })
             }
         }
 
-        listOf(
+        (safeInteractionTransactions.values.flatMap { (_, tx) ->
+            // Check that we can perform management transactions to other contracts
+            tx.map { it.copy(it.wrapped.copy(address = TEST_ADDRESS)) }
+        } + listOf(
             SafeTransaction(
                 Transaction(
                     address = "0x0".asEthereumAddress()!!,
@@ -176,10 +193,33 @@ class DefaultTransactionInfoRepositoryTest {
                         Solidity.UInt256(BigInteger.ONE)
                     )
                 ), CALL
+            ),
+            SafeTransaction(
+                Transaction(
+                    address = TEST_SAFE
+                ), CALL
+            ),
+            SafeTransaction(
+                Transaction(
+                    address = TEST_SAFE,
+                    value = Wei.ether("1")
+                ), CALL
+            ),
+            SafeTransaction(
+                Transaction(
+                    address = TEST_SAFE,
+                    data = "0x"
+                ), CALL
+            ),
+            SafeTransaction(
+                Transaction(
+                    address = TEST_SAFE,
+                    data = ""
+                ), CALL
             )
-        ).forEach {
+        )).forEach {
             val validObserver = TestObserver<SafeTransaction>()
-            repository.checkRestrictedTransaction(it).subscribe(validObserver)
+            repository.checkRestrictedTransaction(TEST_SAFE, it).subscribe(validObserver)
             validObserver.assertResult(it)
         }
     }
