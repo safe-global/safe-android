@@ -179,9 +179,17 @@ class WalletConnectBridgeRepository @Inject constructor(
                                         TransactionExecutionRepository.Operation.CALL
                                     )
                                 }
-                                    .flatMap { (safe, tx) -> infoRepository.parseTransactionData(tx).map { txData -> safe to txData } }
+                                    .flatMap { (safe, tx) ->
+                                        infoRepository.checkRestrictedTransaction(safe, tx)
+                                            .flatMap(infoRepository::parseTransactionData)
+                                            .map { txData -> safe to txData }
+                                    }
                                     .subscribeBy(onError = { t ->
-                                        rejectRequest(id, 42, t.message ?: "Could not handle transaction").subscribe()
+                                        val message = when (t) {
+                                            is RestrictedTransactionException -> "This transaction is not allowed"
+                                            else -> t.message ?: "Could not handle transaction"
+                                        }
+                                        rejectRequest(id, 42, message).subscribe()
                                     }) { (safe, txData) ->
                                         showSendTransactionNotification(session.peerMeta(), safe, txData, id, sessionId)
                                     }

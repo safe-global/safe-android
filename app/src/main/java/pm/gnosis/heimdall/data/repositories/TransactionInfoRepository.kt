@@ -12,7 +12,7 @@ import java.math.BigInteger
 
 
 interface TransactionInfoRepository {
-    fun checkRestrictedTransaction(transaction: SafeTransaction): Single<SafeTransaction>
+    fun checkRestrictedTransaction(safe: Solidity.Address, transaction: SafeTransaction): Single<SafeTransaction>
     fun parseTransactionData(transaction: SafeTransaction): Single<TransactionData>
     fun loadTransactionInfo(id: String): Single<TransactionInfo>
 }
@@ -23,6 +23,7 @@ sealed class RestrictedTransactionException : IllegalArgumentException() {
     object ModifyModules : RestrictedTransactionException()
     object ChangeThreshold : RestrictedTransactionException()
     object ChangeMasterCopy : RestrictedTransactionException()
+    object DataCallToSafe : RestrictedTransactionException()
 }
 
 data class TransactionInfo(

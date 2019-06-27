@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.data.db.models.TransactionDescriptionDb
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase.PADDED_HEX_LENGTH
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -28,29 +29,34 @@ class DefaultTransactionInfoRepository @Inject constructor(
 
     private val descriptionsDao = appDb.descriptionsDao()
 
-    override fun checkRestrictedTransaction(transaction: SafeTransaction): Single<SafeTransaction> =
+    override fun checkRestrictedTransaction(safe: Solidity.Address, transaction: SafeTransaction): Single<SafeTransaction> =
         Single.fromCallable {
             when {
                 transaction.operation == TransactionExecutionRepository.Operation.DELEGATE_CALL ->
                     throw RestrictedTransactionException.DelegateCall
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.AddOwnerWithThreshold.METHOD_ID) == true ->
+                checkIsMethodCallOnSafe(safe, transaction, GnosisSafe.AddOwnerWithThreshold.METHOD_ID) ->
                     throw RestrictedTransactionException.ModifyOwners
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.RemoveOwner.METHOD_ID) == true ->
+                checkIsMethodCallOnSafe(safe, transaction, GnosisSafe.RemoveOwner.METHOD_ID) ->
                     throw RestrictedTransactionException.ModifyOwners
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.SwapOwner.METHOD_ID) == true ->
+                checkIsMethodCallOnSafe(safe, transaction, GnosisSafe.SwapOwner.METHOD_ID) ->
                     throw RestrictedTransactionException.ModifyOwners
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.EnableModule.METHOD_ID) == true ->
+                checkIsMethodCallOnSafe(safe, transaction, GnosisSafe.EnableModule.METHOD_ID) ->
                     throw RestrictedTransactionException.ModifyModules
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.DisableModule.METHOD_ID) == true ->
+                checkIsMethodCallOnSafe(safe, transaction, GnosisSafe.DisableModule.METHOD_ID) ->
                     throw RestrictedTransactionException.ModifyModules
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.ChangeThreshold.METHOD_ID) == true ->
+                checkIsMethodCallOnSafe(safe, transaction, GnosisSafe.ChangeThreshold.METHOD_ID) ->
                     throw RestrictedTransactionException.ChangeThreshold
-                transaction.wrapped.data?.isSolidityMethod(GnosisSafe.ChangeMasterCopy.METHOD_ID) == true ->
+                checkIsMethodCallOnSafe(safe, transaction, GnosisSafe.ChangeMasterCopy.METHOD_ID) ->
                     throw RestrictedTransactionException.ChangeMasterCopy
+                transaction.wrapped.address == safe && !transaction.wrapped.data?.removeHexPrefix().isNullOrEmpty() ->
+                    throw RestrictedTransactionException.DataCallToSafe
             }
             transaction
         }
             .subscribeOn(Schedulers.io())
+
+    private fun checkIsMethodCallOnSafe(safe: Solidity.Address, transaction: SafeTransaction, methodId: String) =
+        transaction.wrapped.address == safe && transaction.wrapped.data?.isSolidityMethod(methodId) == true
 
     override fun parseTransactionData(transaction: SafeTransaction): Single<TransactionData> =
         Single.fromCallable {
