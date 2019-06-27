@@ -10,6 +10,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.view.clicks
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -87,6 +88,7 @@ class WalletConnectSessionsAdapter @Inject constructor(
             (data as? AdapterEntry.Session)?.apply {
                 current = meta
                 updateSessionInfo(meta)
+                itemView.setOnClickListener { onSwiped() }
             }
         }
 
@@ -169,12 +171,13 @@ class WalletConnectSessionsAdapter @Inject constructor(
             itemView.layout_wallet_connect_sessions_item_activate.visible(!meta.active)
 
             itemView.layout_wallet_connect_sessions_item_icon.setImageResource(R.drawable.image_placeholder)
+            itemView.layout_wallet_connect_sessions_item_image_text.text = meta.dappName?.first()?.toUpperCase()?.toString()
             meta.dappIcons?.firstOrNull()?.let {
-                itemView.layout_wallet_connect_sessions_item_image_text.text = null
-                picasso.load(it).into(itemView.layout_wallet_connect_sessions_item_icon)
-            } ?: run {
-                itemView.layout_wallet_connect_sessions_item_image_text.visible(true)
-                itemView.layout_wallet_connect_sessions_item_image_text.text = meta.dappName?.first()?.toUpperCase()?.toString()
+                picasso.load(it).into(itemView.layout_wallet_connect_sessions_item_icon, object : Callback.EmptyCallback() {
+                    override fun onSuccess() {
+                        itemView.layout_wallet_connect_sessions_item_image_text.text = null
+                    }
+                })
             }
         }
 
@@ -185,6 +188,7 @@ class WalletConnectSessionsAdapter @Inject constructor(
         @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
         fun stop() {
             disposables.clear()
+            picasso.cancelRequest(itemView.layout_wallet_connect_sessions_item_icon)
         }
 
         override fun unbind() {
