@@ -21,20 +21,21 @@ import pm.gnosis.utils.asBigInteger
 import javax.inject.Inject
 
 class SafeAccountRepository @Inject constructor(
+    accountsDatabase: AccountsDatabase,
     gnosisAuthenticatorDb: ApplicationDb,
-    private val accountsDatabase: AccountsDatabase,
     private val bip39: Bip39,
     private val cryptoHelper: CryptoHelper,
     private val encryptionManager: EncryptionManager
 ) : AccountsRepository {
 
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
+    private val accountsDao = accountsDatabase.accountsDao()
 
     override fun owners(): Single<List<AccountsRepository.SafeOwner>> =
         safeDao.loadSafeInfos()
             .map { it.map { a -> AccountsRepository.SafeOwner(a.ownerAddress, a.ownerPrivateKey) } }
             .flatMap { owners ->
-                accountsDatabase.accountsDao().observeAccounts()
+                accountsDao.observeAccounts()
                     .map { owners + AccountsRepository.SafeOwner(it.address, it.privateKey) }
                     .onErrorReturnItem(owners)
             }
@@ -74,7 +75,7 @@ class SafeAccountRepository @Inject constructor(
             }
             // use device account for legacy safes that don't have separate owner
             .onErrorResumeNext {
-                accountsDatabase.accountsDao().observeAccounts().map { AccountsRepository.SafeOwner(it.address, it.privateKey) }
+                accountsDao.observeAccounts().map { AccountsRepository.SafeOwner(it.address, it.privateKey) }
             }
             .subscribeOn(Schedulers.io())
 
