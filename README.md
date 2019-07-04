@@ -1,7 +1,8 @@
 # Gnosis Safe Android App [![Build Status](https://travis-ci.org/gnosis/safe-android.svg?branch=master)](https://travis-ci.org/gnosis/safe-android)
 
 ## Goal
-The goal of this project is to provide a 2FA-enabled Ethereum Wallet. This can be achieved by using the new [Gnosis Safe](https://github.com/gnosis/safe-contracts) (the new version of our [Multisig Wallet](https://github.com/gnosis/MultiSigWallet)).
+The Gnosis Safe aims to provide all users with a convenient, yet secure way to manage their funds and interact with decentralized applications on Ethereum. 
+Transactions are secured by on-chain multi-factor-authentication. This is achieved by using the [Gnosis Safe smart contracts](https://github.com/gnosis/safe-contracts). They are the successor of the broadly trusted [Gnosis Multisig Wallet smart contracts](https://github.com/gnosis/MultiSigWallet)).
 
 ## Setup
 
