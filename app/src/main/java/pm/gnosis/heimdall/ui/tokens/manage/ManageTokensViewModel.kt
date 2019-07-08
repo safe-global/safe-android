@@ -27,24 +27,31 @@ class ManageTokensViewModel @Inject constructor(
 
     override fun observeErrors(): Observable<Throwable> = errorSubject.map { errorHandler.translate(it) }
 
-    override fun observeVerifiedTokens() = ObservableTransformer<Unit, Adapter.Data<ERC20TokenEnabled>> { inStream ->
+    override fun observeVerifiedTokens() = ObservableTransformer<String, Adapter.Data<ERC20TokenEnabled>> { inStream ->
         Observable.combineLatest(
-            inStream.switchMapSingle {
-                tokenRepository.loadVerifiedTokens().map { it.map { ERC20TokenEnabled(it, enabled = false) } }.doOnError(errorSubject::onNext)
+            inStream.switchMapSingle { search ->
+                tokenRepository.loadVerifiedTokens(search)
+                    .doOnError(errorSubject::onNext)
                     .onErrorReturnItem(emptyList())
+                    .map { tokens -> tokens to search }
             },
-            tokenRepository.observeEnabledTokens().toObservable().map { it.map { ERC20TokenEnabled(it, enabled = true) } },
-            BiFunction { verifiedTokens: List<ERC20TokenEnabled>, enabledTokens: List<ERC20TokenEnabled> -> loadData(verifiedTokens, enabledTokens) }
+            tokenRepository.observeEnabledTokens().toObservable(),
+            BiFunction { (tokens, search): Pair<List<ERC20Token>, String>, enabledTokens: List<ERC20Token> ->
+                combineData(tokens, enabledTokens, search)
+            }
         )
             .scanToAdapterData({ it.erc20Token.address }, payloadCalc = { _, _ -> Unit }, initialData = cachedData)
             .doOnNext { this.cachedData = it }
     }
 
-    private fun loadData(verifiedTokens: List<ERC20TokenEnabled>, enabledTokens: List<ERC20TokenEnabled>): List<ERC20TokenEnabled> {
-        val map = verifiedTokens.associateByTo(mutableMapOf()) { it.erc20Token.address }
-        enabledTokens.forEach { map[it.erc20Token.address] = it }
+    private fun combineData(verifiedTokens: List<ERC20Token>, enabledTokens: List<ERC20Token>, search: String): List<ERC20TokenEnabled> {
+        val map = verifiedTokens.associateTo(mutableMapOf()) { it.address to ERC20TokenEnabled(it, false) }
+        enabledTokens.forEach { if (it.applies(search)) map[it.address] = ERC20TokenEnabled(it, true) }
         return map.values.toList()
     }
+
+    private fun ERC20Token.applies(filter: String) =
+        name.contains(filter, true) or symbol.contains(filter, true)
 
     override fun enableToken(erC20Token: ERC20Token) = tokenRepository.enableToken(erC20Token).mapToResult()
 

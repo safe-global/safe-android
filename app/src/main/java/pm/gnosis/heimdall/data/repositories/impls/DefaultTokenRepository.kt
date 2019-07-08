@@ -79,8 +79,8 @@ class DefaultTokenRepository @Inject constructor(
             erc20TokenDao.deleteToken(address)
         }.subscribeOn(Schedulers.io())
 
-    override fun loadVerifiedTokens(): Single<List<ERC20Token>> =
-        tokenServiceApi.tokens().map { resp -> resp.results.map { it.fromNetwork() } }
+    override fun loadVerifiedTokens(filter: String): Single<List<ERC20Token>> =
+        tokenServiceApi.tokens(filter).map { resp -> resp.results.map { it.fromNetwork() } }
 
     private fun localToken(contractAddress: Solidity.Address): Single<Optional<ERC20Token>> =
         hardcodedTokens[contractAddress]?.let { Single.just(it.toOptional()) }

@@ -383,15 +383,18 @@ class WalletConnectBridgeRepository @Inject constructor(
         context.startService(Intent(context, BridgeService::class.java))
     }
 
+    private var showedIntro = false
     override fun shouldShowIntro(): Single<Boolean> =
         Single.fromCallable {
             !bridgePreferences.getBoolean(KEY_INTRO_DONE, false)
+            !showedIntro
         }
             .subscribeOn(Schedulers.io())
 
     override fun markIntroDone(): Completable =
         Completable.fromAction {
             bridgePreferences.edit { putBoolean(KEY_INTRO_DONE, true) }
+            showedIntro = true
         }
             .subscribeOn(Schedulers.io())
 

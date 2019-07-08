@@ -43,6 +43,8 @@ import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 import java.net.UnknownHostException
+import java.util.*
+import kotlin.NoSuchElementException
 
 @RunWith(MockitoJUnitRunner::class)
 class DefaultTokenRepositoryTest {
@@ -514,12 +516,13 @@ class DefaultTokenRepositoryTest {
             logoUri = ""
         )
         val verifiedTokensList = PaginatedResults(listOf(verifiedToken))
-        given(tokenServiceApiMock.tokens()).willReturn(Single.just(verifiedTokensList))
+        given(tokenServiceApiMock.tokens(MockUtils.any())).willReturn(Single.just(verifiedTokensList))
 
-        repository.loadVerifiedTokens().subscribe(testObserver)
+        val randomSearch = UUID.randomUUID().toString()
+        repository.loadVerifiedTokens(randomSearch).subscribe(testObserver)
 
         testObserver.assertResult(listOf(verifiedToken.fromNetwork()))
-        then(tokenServiceApiMock).should().tokens()
+        then(tokenServiceApiMock).should().tokens(randomSearch)
         then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
@@ -527,12 +530,12 @@ class DefaultTokenRepositoryTest {
     fun loadVerifiedTokensError() {
         val testObserver = TestObserver<List<ERC20Token>>()
         val exception = Exception()
-        given(tokenServiceApiMock.tokens()).willReturn(Single.error(exception))
+        given(tokenServiceApiMock.tokens(MockUtils.any())).willReturn(Single.error(exception))
 
-        repository.loadVerifiedTokens().subscribe(testObserver)
+        repository.loadVerifiedTokens("").subscribe(testObserver)
 
         testObserver.assertError(exception)
-        then(tokenServiceApiMock).should().tokens()
+        then(tokenServiceApiMock).should().tokens("")
         then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
