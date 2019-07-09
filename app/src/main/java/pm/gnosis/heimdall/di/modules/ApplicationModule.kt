@@ -44,9 +44,7 @@ import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39Generator
 import pm.gnosis.mnemonic.android.AndroidWordListProvider
 import pm.gnosis.mnemonic.wordlists.WordListProvider
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.accounts.data.db.AccountsDatabase
-import pm.gnosis.svalinn.accounts.repositories.impls.KethereumAccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.ZxingQrCodeGenerator
