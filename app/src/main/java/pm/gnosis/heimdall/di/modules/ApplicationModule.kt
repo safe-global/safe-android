@@ -65,6 +65,40 @@ class ApplicationModule(private val application: Application) {
         const val INFURA_REST_CLIENT = "infuraRestClient"
     }
 
+    data class AppCoroutineDispatchers(
+        val database: CoroutineDispatcher,
+        val disk: CoroutineDispatcher,
+        val network: CoroutineDispatcher,
+        val main: CoroutineDispatcher
+    )
+
+    data class AppRxSchedulers(
+        val database: Scheduler,
+        val disk: Scheduler,
+        val network: Scheduler,
+        val main: Scheduler
+    )
+
+    @Singleton
+    @Provides
+    fun provideDispatchers(schedulers: AppRxSchedulers) =
+        AppCoroutineDispatchers(
+            database = schedulers.database.asCoroutineDispatcher(),
+            disk = schedulers.disk.asCoroutineDispatcher(),
+            network = schedulers.network.asCoroutineDispatcher(),
+            main = Dispatchers.Main
+        )
+
+    @Singleton
+    @Provides
+    fun provideRxSchedulers() = AppRxSchedulers(
+        database = Schedulers.single(),
+        disk = Schedulers.io(),
+        network = Schedulers.io(),
+        main = AndroidSchedulers.mainThread()
+    )
+
+
     @Provides
     @Singleton
     @ApplicationContext
