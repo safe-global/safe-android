@@ -27,6 +27,7 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import pm.gnosis.heimdall.data.preferences.PreferencesToken
+import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.models.PaginatedResults
 import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfo
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
@@ -67,7 +68,7 @@ class DefaultTokenRepositoryTest {
     private lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
-    private lateinit var tokenServiceApiMock: TokenServiceApi
+    private lateinit var relayServiceApiMock: RelayServiceApi
 
     private val testPreferences = TestPreferences()
 
@@ -86,7 +87,7 @@ class DefaultTokenRepositoryTest {
             dbMock,
             ethereumRepositoryMock,
             tokenPrefs,
-            tokenServiceApiMock
+            relayServiceApiMock
         )
     }
 
@@ -524,27 +525,27 @@ class DefaultTokenRepositoryTest {
             logoUri = ""
         )
         val verifiedTokensList = PaginatedResults(listOf(verifiedToken))
-        given(tokenServiceApiMock.tokens(MockUtils.any())).willReturn(Single.just(verifiedTokensList))
+        given(relayServiceApiMock.tokens(MockUtils.any())).willReturn(Single.just(verifiedTokensList))
 
         val randomSearch = UUID.randomUUID().toString()
         repository.loadVerifiedTokens(randomSearch).subscribe(testObserver)
 
         testObserver.assertResult(listOf(verifiedToken.fromNetwork()))
-        then(tokenServiceApiMock).should().tokens(randomSearch)
-        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
+        then(relayServiceApiMock).should().tokens(randomSearch)
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun loadVerifiedTokensError() {
         val testObserver = TestObserver<List<ERC20Token>>()
         val exception = Exception()
-        given(tokenServiceApiMock.tokens(MockUtils.any())).willReturn(Single.error(exception))
+        given(relayServiceApiMock.tokens(MockUtils.any())).willReturn(Single.error(exception))
 
         repository.loadVerifiedTokens("").subscribe(testObserver)
 
         testObserver.assertError(exception)
-        then(tokenServiceApiMock).should().tokens("")
-        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
+        then(relayServiceApiMock).should().tokens("")
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -557,9 +558,9 @@ class DefaultTokenRepositoryTest {
     }
 
     @Test
-    fun setAndloadPaymentToken() {
+    fun setAndloadDefaultPaymentToken() {
         val setObserver = TestObserver<Unit>()
-        repository.setPaymentToken(TEST_TOKEN).subscribe(setObserver)
+        repository.setPaymentToken(null, TEST_TOKEN).subscribe(setObserver)
         setObserver.assertResult()
 
         val token = tokenPrefs.paymendToken
@@ -604,26 +605,26 @@ class DefaultTokenRepositoryTest {
         val testObserver = TestObserver<List<ERC20Token>>()
         val tokenInfo = TokenInfo(TEST_TOKEN.address, TEST_TOKEN.name, TEST_TOKEN.symbol, TEST_TOKEN.decimals, TEST_TOKEN.logoUrl)
         val result = PaginatedResults(listOf(tokenInfo))
-        given(tokenServiceApiMock.paymentTokens()).willReturn(Single.just(result))
+        given(relayServiceApiMock.paymentTokens()).willReturn(Single.just(result))
 
         repository.loadPaymentTokens().subscribe(testObserver)
 
         testObserver.assertResult(listOf(ERC20Token.ETHER_TOKEN, TEST_TOKEN))
-        then(tokenServiceApiMock).should().paymentTokens()
-        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
+        then(relayServiceApiMock).should().paymentTokens()
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun loadPaymentTokensError() {
         val testObserver = TestObserver<List<ERC20Token>>()
         val exception = Exception()
-        given(tokenServiceApiMock.paymentTokens()).willReturn(Single.error(exception))
+        given(relayServiceApiMock.paymentTokens()).willReturn(Single.error(exception))
 
         repository.loadPaymentTokens().subscribe(testObserver)
 
         testObserver.assertError(exception)
-        then(tokenServiceApiMock).should().paymentTokens()
-        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
+        then(relayServiceApiMock).should().paymentTokens()
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     private fun assertEqualRequests(expected: List<EthRequest<*>>, actual: List<EthRequest<*>>) {

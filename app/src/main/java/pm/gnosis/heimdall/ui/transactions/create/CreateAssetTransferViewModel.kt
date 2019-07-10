@@ -138,7 +138,7 @@ class CreateAssetTransferViewModel @Inject constructor(
     }
 
     private fun estimate(safe: Solidity.Address, data: TransactionData.AssetTransfer, transferToken: ERC20Token, assetBalance: BigInteger) =
-        tokenRepository.loadPaymentToken().map { it to AssetTransferTransactionBuilder.build(data) }
+        tokenRepository.loadPaymentToken(safe).map { it to AssetTransferTransactionBuilder.build(data) }
             .flatMap<ViewUpdate> { (gasToken, transaction) ->
                 executionRepository.loadExecuteInformation(safe, gasToken.address, transaction)
                     .map { execInfo: TransactionExecutionRepository.ExecuteInformation ->

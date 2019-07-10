@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
 import pm.gnosis.heimdall.data.db.models.GnosisSafeInfoDb
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
@@ -84,7 +85,7 @@ class SafeAccountRepositoryTest {
         val safeAccountAddress = "0xdb81D06BB45F29FB2F6510A9750d1Dd350378095".asEthereumAddress()!!
         val safeCryptoData = EncryptionManager.CryptoData.fromString("dead####beef")
         val safeEncryptedKey = encryptedByteArrayConverter.fromStorage(safeCryptoData.toString())
-        given(safeDaoMock.loadSafeInfos()).willReturn(Single.just(listOf(GnosisSafeInfoDb(safe, safeAccountAddress, safeEncryptedKey))))
+        given(safeDaoMock.loadSafeInfos()).willReturn(Single.just(listOf(buildGnosisSafeInfoDb(safe, safeAccountAddress, safeEncryptedKey))))
         val defaultAccountAddress = "0xa0A6E24f1450F46aB13cFb5F4034EFc54886a278".asEthereumAddress()!!
         val defaultCryptoData = EncryptionManager.CryptoData.fromString("feed####beef")
         val defaultEncryptedKey = encryptedByteArrayConverter.fromStorage(defaultCryptoData.toString())
@@ -119,10 +120,14 @@ class SafeAccountRepositoryTest {
         val safe2AccountAddress = "0xa0A6E24f1450F46aB13cFb5F4034EFc54886a278".asEthereumAddress()!!
         val safe2CryptoData = EncryptionManager.CryptoData.fromString("feed####beef")
         val safe2EncryptedKey = encryptedByteArrayConverter.fromStorage(safe2CryptoData.toString())
-        given(safeDaoMock.loadSafeInfos()).willReturn(Single.just(listOf(
-            GnosisSafeInfoDb(safe1, safe1AccountAddress, safe1EncryptedKey),
-            GnosisSafeInfoDb(safe2, safe2AccountAddress, safe2EncryptedKey)
-        )))
+        given(safeDaoMock.loadSafeInfos()).willReturn(
+            Single.just(
+                listOf(
+                    buildGnosisSafeInfoDb(safe1, safe1AccountAddress, safe1EncryptedKey),
+                    buildGnosisSafeInfoDb(safe2, safe2AccountAddress, safe2EncryptedKey)
+                )
+            )
+        )
         given(accountsDaoMock.observeAccounts()).willReturn(Single.error(EmptyResultSetException("No default account")))
 
         val testObserver = TestObserver<List<AccountsRepository.SafeOwner>>()
@@ -258,10 +263,10 @@ class SafeAccountRepositoryTest {
         val encryptedKey = encryptedByteArrayConverter.fromStorage("dead####beef")
 
         val testObserver = TestObserver<Unit>()
-        repository.saveOwner(safe, AccountsRepository.SafeOwner(ownerAddress, encryptedKey)).subscribe(testObserver)
+        repository.saveOwner(safe, AccountsRepository.SafeOwner(ownerAddress, encryptedKey), ERC20Token.ETHER_TOKEN).subscribe(testObserver)
         testObserver.assertResult()
 
-        val expectedInfo = GnosisSafeInfoDb(safe, ownerAddress, encryptedKey)
+        val expectedInfo = buildGnosisSafeInfoDb(safe, ownerAddress, encryptedKey, "")
         then(safeDaoMock).should().insertSafeInfo(expectedInfo)
         then(safeDaoMock).shouldHaveNoMoreInteractions()
         // Check that key is never decrypted
@@ -301,7 +306,7 @@ class SafeAccountRepositoryTest {
         val safe = "0xa0A6E24f1450F46aB13cFb5F4034EFc54886a278".asEthereumAddress()!!
         val accountAddress = "0xdb81D06BB45F29FB2F6510A9750d1Dd350378095".asEthereumAddress()!!
         val encryptedKey = encryptedByteArrayConverter.fromStorage("dead####beef")
-        given(safeDaoMock.loadSafeInfo(safe)).willReturn(Single.just(GnosisSafeInfoDb(safe, accountAddress, encryptedKey)))
+        given(safeDaoMock.loadSafeInfo(safe)).willReturn(Single.just(buildGnosisSafeInfoDb(safe, accountAddress, encryptedKey)))
 
         val testObserver = TestObserver<AccountsRepository.SafeOwner>()
         repository.signingOwner(safe).subscribe(testObserver)
@@ -327,7 +332,7 @@ class SafeAccountRepositoryTest {
         val safe = "0xa0A6E24f1450F46aB13cFb5F4034EFc54886a278".asEthereumAddress()!!
         val accountAddress = "0xdb81D06BB45F29FB2F6510A9750d1Dd350378095".asEthereumAddress()!!
         val encryptedKey = encryptedByteArrayConverter.fromStorage("dead####beef")
-        given(safeDaoMock.loadSafeInfo(safe)).willReturn(Single.just(GnosisSafeInfoDb(safe, accountAddress, encryptedKey)))
+        given(safeDaoMock.loadSafeInfo(safe)).willReturn(Single.just(buildGnosisSafeInfoDb(safe, accountAddress, encryptedKey)))
         val privateKey = Sha3Utils.keccak("moooh".toByteArray())
         given(encryptionManagerMock.decrypt(MockUtils.any())).willReturn(privateKey)
         val signature = Signature(BigInteger.valueOf(11), BigInteger.valueOf(5), 27)
@@ -369,6 +374,22 @@ class SafeAccountRepositoryTest {
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         assertEquals("dead####beef", cryptoDataArgumentCaptor.value.toString())
     }
+
+    private fun buildGnosisSafeInfoDb(
+        safe: Solidity.Address,
+        safeAccountAddress: Solidity.Address,
+        safeEncryptedKey: EncryptedByteArray,
+        paymentTokenIcon: String? = null
+    ) = GnosisSafeInfoDb(
+        safe,
+        safeAccountAddress,
+        safeEncryptedKey,
+        ERC20Token.ETHER_TOKEN.address,
+        ERC20Token.ETHER_TOKEN.symbol,
+        ERC20Token.ETHER_TOKEN.name,
+        ERC20Token.ETHER_TOKEN.decimals,
+        paymentTokenIcon
+    )
 
     private fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()
 

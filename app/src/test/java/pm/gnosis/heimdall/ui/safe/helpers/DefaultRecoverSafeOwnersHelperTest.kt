@@ -363,7 +363,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         val createSubject = PublishSubject.create<Unit>()
         val input = Input(phraseSubject, retrySubject, createSubject)
 
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(safeRepoMock.loadInfo(MockUtils.any()))
             .willReturn(
                 Observable.just(
@@ -437,7 +437,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(executionRepoMock).should()
             .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
-        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).should().loadPaymentToken(TEST_SAFE)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
     }
@@ -598,7 +598,7 @@ class DefaultRecoverSafeOwnersHelperTest {
                 )
             )
         val error = NotImplementedError()
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.error(error))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.error(error))
 
         val observer = TestObserver<ViewUpdate>()
         helper.process(input, TEST_SAFE, TEST_NEW_EXTENSION, null).subscribe(observer)
@@ -617,7 +617,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).should().loadInfo(TEST_SAFE)
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).shouldHaveZeroInteractions()
-        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).should().loadPaymentToken(TEST_SAFE)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -646,7 +646,7 @@ class DefaultRecoverSafeOwnersHelperTest {
                     )
                 )
             )
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
             Single.error(
                 UnknownHostException()
@@ -671,7 +671,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(safeRepoMock).shouldHaveNoMoreInteractions()
         then(executionRepoMock).should().loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
-        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).should().loadPaymentToken(TEST_SAFE)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -713,7 +713,7 @@ class DefaultRecoverSafeOwnersHelperTest {
             BigInteger.ZERO,
             BigInteger.ZERO
         )
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(executionRepoMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
             Single.just(
                 execInfo
@@ -743,7 +743,7 @@ class DefaultRecoverSafeOwnersHelperTest {
         then(executionRepoMock).should()
             .calculateHash(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())
         then(executionRepoMock).shouldHaveNoMoreInteractions()
-        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).should().loadPaymentToken(TEST_SAFE)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 

@@ -70,7 +70,7 @@ class EnsInputDialog : BaseDialog() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
     }
 
     override fun onStart() {
@@ -132,7 +132,7 @@ class EnsInputDialog : BaseDialog() {
         dismiss()
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         callback = null
         super.onDismiss(dialog)
     }

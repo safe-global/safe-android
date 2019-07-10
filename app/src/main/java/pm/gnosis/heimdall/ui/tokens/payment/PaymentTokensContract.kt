@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.tokens.payment
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -29,14 +30,15 @@ import javax.inject.Inject
 
 abstract class PaymentTokensContract : ViewModel() {
     abstract val state: LiveData<State>
+    abstract val paymentToken: LiveData<ERC20Token>
 
-    abstract fun setup(safe: Solidity.Address, metricType: MetricType)
-    abstract fun observePaymentToken(): LiveData<ERC20Token>
+    abstract fun setup(safe: Solidity.Address?, metricType: MetricType)
     abstract fun setPaymentToken(token: ERC20Token)
+    abstract fun loadPaymentTokens()
 
     data class State(val items: List<PaymentToken>, val loading: Boolean, val viewAction: ViewAction?)
 
-    data class PaymentToken(val erc20Token: ERC20Token, val metricValue: BigInteger?)
+    data class PaymentToken(val erc20Token: ERC20Token, val metricValue: String?, val selectable: Boolean)
 
     sealed class ViewAction {
         data class ShowError(val error: Throwable) : ViewAction()
@@ -45,10 +47,8 @@ abstract class PaymentTokensContract : ViewModel() {
     sealed class MetricType {
         object Balance : MetricType()
         data class TransactionFees(val transaction: SafeTransaction) : MetricType()
-        data class CreationFees(val transaction: SafeTransaction) : MetricType()
+        data class CreationFees(val numbersOwners: Long) : MetricType()
     }
-
-    abstract fun loadPaymentTokens()
 }
 
 
@@ -64,9 +64,9 @@ class PaymentTokensViewModel @Inject constructor(
     /*
      * Setup logic
      */
-    private lateinit var safe: Solidity.Address
+    private var safe: Solidity.Address? = null
     private lateinit var metricType: MetricType
-    override fun setup(safe: Solidity.Address, metricType: MetricType) {
+    override fun setup(safe: Solidity.Address?, metricType: MetricType) {
         this.safe = safe
         this.metricType = metricType
     }
@@ -77,17 +77,17 @@ class PaymentTokensViewModel @Inject constructor(
     private val stateChannel = ConflatedBroadcastChannel(State(emptyList(), false, null))
 
     override val state = liveData {
-        val updates = stateChannel.openSubscription()
         loadPaymentTokens()
-        for (state in updates) emit(state)
+        for (state in stateChannel.openSubscription()) emit(state)
     }
 
-    private suspend fun updateState(items: List<PaymentToken>? = null, viewAction: ViewAction? = null) {
+    private suspend fun updateState(items: List<PaymentToken>? = null, viewAction: ViewAction? = null, loading: Boolean? = null) {
         try {
             val currentState = stateChannel.value
             val newSate = currentState.copy(
                 items = items ?: currentState.items,
-                viewAction = if (viewAction == currentState.viewAction) null else viewAction
+                viewAction = if (viewAction == currentState.viewAction) null else viewAction,
+                loading = loading ?: currentState.loading
             )
             stateChannel.send(newSate)
         } catch (e: Exception) {
@@ -100,44 +100,66 @@ class PaymentTokensViewModel @Inject constructor(
      * State processing
      */
     override fun loadPaymentTokens() {
-        // TODO: maybe add different dispatcher
-        viewModelScope.launch(dispatchers.network) {
+        viewModelScope.launch(dispatchers.background) {
+            if (stateChannel.value.loading) return@launch
             try {
+                updateState(loading = true)
                 metricType.let {
                     when (it) {
                         MetricType.Balance -> loadPaymentTokensWithBalances()
-                        is MetricType.CreationFees -> loadPaymentTokensWithCreationFees(it.transaction)
+                        is MetricType.CreationFees -> loadPaymentTokensWithCreationFees(it.numbersOwners)
                         is MetricType.TransactionFees -> loadPaymentTokensWithTransactionFees(it.transaction)
                     }
                 }
             } catch (e: Exception) {
-                updateState(viewAction = ViewAction.ShowError(errorHandler.translate(e)))
+                updateState(viewAction = ViewAction.ShowError(errorHandler.translate(e)), loading = false)
             }
         }
     }
 
     private suspend fun loadPaymentTokensWithBalances() {
         val tokens = tokenRepository.loadPaymentTokens().await()
-        updateState(tokenRepository.loadTokenBalances(safe, tokens).awaitFirst().map { (token, balance) -> PaymentToken(token, balance) })
+        updateState(
+            items = tokenRepository.loadTokenBalances(safe!!, tokens).awaitFirst()
+                .map { (token, balance) ->
+                    val selectable = balance == null || balance > BigInteger.ZERO
+                    val metricValue = balance?.let { token.displayString(balance, false) }
+                    PaymentToken(token, metricValue, selectable)
+                },
+            loading = false
+        )
     }
 
-    private suspend fun loadPaymentTokensWithCreationFees(transaction: SafeTransaction) {
+    private suspend fun loadPaymentTokensWithCreationFees(numbersOwners: Long) {
+        tokenRepository.loadPaymentTokensWithCreationFees(numbersOwners).await()
+        updateState(loading = false)
     }
 
     private suspend fun loadPaymentTokensWithTransactionFees(transaction: SafeTransaction) {
+        tokenRepository.loadPaymentTokensWithTransactionFees(safe!!, transaction).await()
+        updateState(loading = false)
     }
 
     /*
      * Payment token management
      */
     private val paymentTokenChannel = BroadcastChannel<ERC20Token>(Channel.CONFLATED)
-    override fun observePaymentToken(): LiveData<ERC20Token> = liveData {
+
+    override val paymentToken = liveData {
+        // Set initial value on channel
+        loadPaymentToken()
         for (i in paymentTokenChannel.openSubscription()) emit(i)
     }
 
+    private suspend fun loadPaymentToken() {
+        viewModelScope.launch(dispatchers.background) {
+            paymentTokenChannel.send(tokenRepository.loadPaymentToken(safe).await())
+        }
+    }
+
     override fun setPaymentToken(token: ERC20Token) {
-        viewModelScope.launch(dispatchers.network) {
-            tokenRepository.setPaymentToken(token).await()
+        viewModelScope.launch(dispatchers.background) {
+            tokenRepository.setPaymentToken(safe, token).await()
             paymentTokenChannel.send(token)
         }
     }

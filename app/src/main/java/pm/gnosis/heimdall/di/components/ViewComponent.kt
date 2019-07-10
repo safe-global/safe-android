@@ -50,6 +50,7 @@ import pm.gnosis.heimdall.ui.settings.general.payment.PaymentTokenDialog
 import pm.gnosis.heimdall.ui.splash.SplashActivity
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesFragment
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
+import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenActivity
 import pm.gnosis.heimdall.ui.tokens.select.SelectTokenActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferActivity
@@ -90,22 +91,22 @@ interface ViewComponent {
     fun inject(activity: CheckSafeActivity)
     fun inject(activity: ConfirmTransactionActivity)
     fun inject(activity: ConfirmMessageActivity)
+    fun inject(activity: ConfirmNewRecoveryPhraseActivity)
     fun inject(activity: ConnectExtensionActivity)
     fun inject(activity: CreateAssetTransferActivity)
     fun inject(activity: CreateSafeIntroActivity)
     fun inject(activity: CreateSafeConfirmRecoveryPhraseActivity)
     fun inject(activity: CreateSafeSetupRecoveryPhraseActivity)
-    fun inject(activity: ScanExtensionAddressActivity)
-    fun inject(activity: FingerprintSetupActivity)
-    fun inject(activity: ManageTokensActivity)
     fun inject(activity: DebugSettingsActivity)
+    fun inject(activity: FingerprintSetupActivity)
+    fun inject(activity: GeneralSettingsActivity)
+    fun inject(activity: ManageTokensActivity)
     fun inject(activity: PairingActivity)
     fun inject(activity: PasswordConfirmActivity)
     fun inject(activity: PasswordSetupActivity)
     fun inject(activity: PasswordChangeActivity)
+    fun inject(activity: PaymentTokensActivity)
     fun inject(activity: QRCodeScanActivity)
-    fun inject(activity: SetupNewRecoveryPhraseActivity)
-    fun inject(activity: ConfirmNewRecoveryPhraseActivity)
     fun inject(activity: ReceiveTokenActivity)
     fun inject(activity: RecoverSafeIntroActivity)
     fun inject(activity: RecoverSafeRecoveryPhraseActivity)
@@ -114,8 +115,9 @@ interface ViewComponent {
     fun inject(activity: ReplaceExtensionRecoveryPhraseActivity)
     fun inject(activity: ReviewTransactionActivity)
     fun inject(activity: SafeMainActivity)
-    fun inject(activity: GeneralSettingsActivity)
+    fun inject(activity: ScanExtensionAddressActivity)
     fun inject(activity: SelectTokenActivity)
+    fun inject(activity: SetupNewRecoveryPhraseActivity)
     fun inject(activity: SplashActivity)
     fun inject(activity: TransactionStatusActivity)
     fun inject(activity: UnlockActivity)

@@ -255,7 +255,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="status">Status</string>
     <string name="transaction_fee">Network fee</string>
     <string name="later">Later</string>
-    <string name="payment_token">Payment token (for network fees)</string>
+    <string name="payment_token">Payment token</string>
     <string name="safe_created_notification_message">Your Safe with the address %s has been created.</string>
     <string name="safe_created_notification_title">Safe created</string>
     <string name="app_version">App version: %s</string>

@@ -71,6 +71,18 @@ data class RelayEstimate(
 )
 
 @JsonClass(generateAdapter = true)
+data class EstimatesParams(
+    @Json(name = "to")
+    val to: String,
+    @Json(name = "value")
+    val value: String,
+    @Json(name = "data")
+    val data: String,
+    @Json(name = "operation")
+    val operation: Int
+)
+
+@JsonClass(generateAdapter = true)
 data class RelayEstimates(
     @Json(name = "safeTxGas")
     val safeTxGas: String,

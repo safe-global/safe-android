@@ -9,15 +9,20 @@ import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import io.reactivex.observers.TestObserver
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
+import pm.gnosis.heimdall.data.db.models.GnosisSafeInfoDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.toDb
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.model.Solidity
+import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.toHexString
@@ -37,8 +42,10 @@ class DbMigrationTest {
             FrameworkSQLiteOpenHelperFactory()
         )
 
+    val encryptedByteArrayConverter = EncryptedByteArray.Converter()
+
     @Test
-    fun migrationFrom1To2_keepsData() {
+    fun migrations_keepData() {
 
         val safe = Safe(TEST_SAFE_ADDRESS.asEthereumAddress()!!)
 
@@ -52,15 +59,27 @@ class DbMigrationTest {
         // Create the database in version 1
         val db = migrationTestHelper.createDatabase(TEST_DB_NAME, 1)
         // insert data
-        insertSafe(safe, db)
-        insertPendingSafe(pendingSafe, db)
+        db.insertSafe(safe)
+        db.insertPendingSafe(pendingSafe)
         //Prepare for the next version
         db.close()
 
         // Re-open the database with version 2 and provide MIGRATION_1_2 as the migration process.
-        migrationTestHelper.runMigrationsAndValidate(
+        val db2 = migrationTestHelper.runMigrationsAndValidate(
             TEST_DB_NAME, 2, true,
             ApplicationDb.MIGRATION_1_2
+        )
+
+        db2.insertSafeInfo(
+            TEST_SAFE_ADDRESS.asEthereumAddress()!!,
+            TEST_OWNER_ADDRESS.asEthereumAddress()!!,
+            encryptedByteArrayConverter.fromStorage("encrypted_key")
+        )
+
+        // Re-open the database with version 2 and provide MIGRATION_1_2 as the migration process.
+        migrationTestHelper.runMigrationsAndValidate(
+            TEST_DB_NAME, 3, true,
+            ApplicationDb.MIGRATION_2_3
         )
 
         // Get the latest, migrated, version of the database
@@ -69,15 +88,25 @@ class DbMigrationTest {
 
         val safeObserver = TestObserver<GnosisSafeDb>()
         migratedDb.gnosisSafeDao().loadSafe(safe.address).subscribe(safeObserver)
-        safeObserver.assertResult(
-            safe.toDb()
-        )
+        safeObserver.assertResult(safe.toDb())
 
         val pendingSafeObserver = TestObserver<PendingGnosisSafeDb>()
         migratedDb.gnosisSafeDao().loadPendingSafe(pendingSafe.address).subscribe(pendingSafeObserver)
-        pendingSafeObserver.assertResult(
-            pendingSafe.toDb()
-        )
+        pendingSafeObserver.assertResult(pendingSafe.toDb())
+
+        val safeInfoObserver = TestObserver<GnosisSafeInfoDb>()
+        migratedDb.gnosisSafeDao().loadSafeInfo(safe.address).subscribe(safeInfoObserver)
+        safeInfoObserver.assertValueCount(1).assertNoErrors().assertValue {
+            assertEquals(TEST_SAFE_ADDRESS.asEthereumAddress()!!, it.safeAddress)
+            assertEquals(TEST_OWNER_ADDRESS.asEthereumAddress()!!, it.ownerAddress)
+            assertEquals("encrypted_key", encryptedByteArrayConverter.toStorage(it.ownerPrivateKey))
+            assertEquals(ERC20Token.ETHER_TOKEN.address, it.paymentTokenAddress)
+            assertEquals(ERC20Token.ETHER_TOKEN.symbol, it.paymentTokenSymbol)
+            assertEquals(ERC20Token.ETHER_TOKEN.name, it.paymentTokenName)
+            assertEquals(ERC20Token.ETHER_TOKEN.decimals, it.paymentTokenDecimals)
+            assertEquals(null, it.paymentTokenIcon)
+            true
+        }
     }
 
     private fun getMigratedRoomDatabase(): ApplicationDb {
@@ -92,26 +121,35 @@ class DbMigrationTest {
         return database
     }
 
-    private fun insertSafe(safe: Safe, db: SupportSQLiteDatabase) {
+    private fun SupportSQLiteDatabase.insertSafeInfo(safeAddress: Solidity.Address, ownerAddress: Solidity.Address, ownerKey: EncryptedByteArray) {
         val values = ContentValues()
-        values.put(GnosisSafeDb.COL_ADDRESS, safe.address.asEthereumAddressString())
-        db.insert(GnosisSafeDb.TABLE_NAME, SQLiteDatabase.CONFLICT_REPLACE, values)
+        values.put(GnosisSafeInfoDb.COL_SAFE_ADDRESS, safeAddress.asEthereumAddressString())
+        values.put(GnosisSafeInfoDb.COL_OWNER_ADDRESS, ownerAddress.asEthereumAddressString())
+        values.put(GnosisSafeInfoDb.COL_OWNER_PRIVATE_KEY, encryptedByteArrayConverter.toStorage(ownerKey))
+        insert(GnosisSafeInfoDb.TABLE_NAME, SQLiteDatabase.CONFLICT_REPLACE, values)
     }
 
-    private fun insertPendingSafe(pendingSafe: PendingSafe, db: SupportSQLiteDatabase) {
+    private fun SupportSQLiteDatabase.insertSafe(safe: Safe) {
+        val values = ContentValues()
+        values.put(GnosisSafeDb.COL_ADDRESS, safe.address.asEthereumAddressString())
+        insert(GnosisSafeDb.TABLE_NAME, SQLiteDatabase.CONFLICT_REPLACE, values)
+    }
+
+    private fun SupportSQLiteDatabase.insertPendingSafe(pendingSafe: PendingSafe) {
         val values = ContentValues()
         values.put(PendingGnosisSafeDb.COL_ADDRESS, pendingSafe.address.asEthereumAddressString())
         values.put(PendingGnosisSafeDb.COL_TX_HASH, BigInteger.ZERO.toHexString())
         values.put(PendingGnosisSafeDb.COL_PAYMENT_TOKEN, pendingSafe.paymentToken.asEthereumAddressString())
         values.put(PendingGnosisSafeDb.COL_PAYMENT_AMOUNT, pendingSafe.paymentAmount.toHexString())
         values.put(PendingGnosisSafeDb.COL_IS_FUNDED, pendingSafe.isFunded)
-        db.insert(PendingGnosisSafeDb.TABLE_NAME, SQLiteDatabase.CONFLICT_REPLACE, values)
+        insert(PendingGnosisSafeDb.TABLE_NAME, SQLiteDatabase.CONFLICT_REPLACE, values)
     }
 
     companion object {
         const val TEST_DB_NAME = "test-gnosis-safe-db"
         const val TEST_SAFE_ADDRESS = "0x1"
         const val TEST_PENDING_SAFE_ADDRESS = "0x2"
+        const val TEST_OWNER_ADDRESS = "0x71De9579cD3857ce70058a1ce19e3d8894f65Ab9"
     }
 }
 

@@ -10,7 +10,9 @@ import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
 import pm.gnosis.heimdall.data.db.models.*
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
+import pm.gnosis.utils.asEthereumAddressString
 
 @Database(
     entities = [
@@ -22,7 +24,7 @@ import pm.gnosis.svalinn.security.db.EncryptedByteArray
         RecoveringGnosisSafeDb::class,
         TransactionDescriptionDb::class,
         TransactionPublishStatusDb::class
-    ], version = 2
+    ], version = 3
 )
 @TypeConverters(BigIntegerConverter::class, SolidityAddressConverter::class, WeiConverter::class, EncryptedByteArray.Converter::class)
 abstract class ApplicationDb : RoomDatabase() {
@@ -37,6 +39,40 @@ abstract class ApplicationDb : RoomDatabase() {
                             `${GnosisSafeInfoDb.COL_OWNER_ADDRESS}` TEXT NOT NULL,
                             `${GnosisSafeInfoDb.COL_OWNER_PRIVATE_KEY}` TEXT NOT NULL,
                             PRIMARY KEY(`${GnosisSafeInfoDb.COL_SAFE_ADDRESS}`))"""
+                )
+            }
+        }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """ALTER TABLE `${GnosisSafeInfoDb.TABLE_NAME}`
+                            ADD COLUMN `${GnosisSafeInfoDb.COL_PAYMENT_TOKEN_ADDRESS}` TEXT NOT NULL
+                            DEFAULT '${ERC20Token.ETHER_TOKEN.address.asEthereumAddressString()}'
+                            """
+                )
+                database.execSQL(
+                    """ALTER TABLE `${GnosisSafeInfoDb.TABLE_NAME}`
+                            ADD COLUMN `${GnosisSafeInfoDb.COL_PAYMENT_TOKEN_SYMBOL}` TEXT NOT NULL
+                            DEFAULT '${ERC20Token.ETHER_TOKEN.symbol}'
+                            """
+                )
+                database.execSQL(
+                    """ALTER TABLE `${GnosisSafeInfoDb.TABLE_NAME}`
+                            ADD COLUMN `${GnosisSafeInfoDb.COL_PAYMENT_TOKEN_NAME}` TEXT NOT NULL
+                            DEFAULT '${ERC20Token.ETHER_TOKEN.name}'
+                            """
+                )
+                database.execSQL(
+                    """ALTER TABLE `${GnosisSafeInfoDb.TABLE_NAME}`
+                            ADD COLUMN `${GnosisSafeInfoDb.COL_PAYMENT_TOKEN_DECIMALS}` INTEGER NOT NULL
+                            DEFAULT ${ERC20Token.ETHER_TOKEN.decimals}
+                            """
+                )
+                database.execSQL(
+                    """ALTER TABLE `${GnosisSafeInfoDb.TABLE_NAME}`
+                            ADD COLUMN `${GnosisSafeInfoDb.COL_PAYMENT_TOKEN_ICON}` TEXT
+                            """
                 )
             }
         }

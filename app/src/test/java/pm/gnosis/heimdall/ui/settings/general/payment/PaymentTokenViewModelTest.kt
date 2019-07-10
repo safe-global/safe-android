@@ -75,24 +75,24 @@ class PaymentTokenViewModelTest {
 
     @Test
     fun setPaymentToken() {
-        given(tokenRepositoryMock.setPaymentToken(MockUtils.any())).willReturn(Completable.complete())
+        given(tokenRepositoryMock.setPaymentToken(MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
         val observer = TestObserver<Result<ERC20Token>>()
         viewModel.setPaymentToken(TEST_TOKEN).subscribe(observer)
         observer.assertResult(DataResult(TEST_TOKEN))
         then(context).shouldHaveZeroInteractions()
-        then(tokenRepositoryMock).should().setPaymentToken(TEST_TOKEN)
+        then(tokenRepositoryMock).should().setPaymentToken(null, TEST_TOKEN)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun setPaymentTokenError() {
         val error = IllegalArgumentException()
-        given(tokenRepositoryMock.setPaymentToken(MockUtils.any())).willReturn(Completable.error(error))
+        given(tokenRepositoryMock.setPaymentToken(MockUtils.any(), MockUtils.any())).willReturn(Completable.error(error))
         val observer = TestObserver<Result<ERC20Token>>()
         viewModel.setPaymentToken(TEST_TOKEN).subscribe(observer)
         observer.assertResult(ErrorResult(error))
         then(context).shouldHaveZeroInteractions()
-        then(tokenRepositoryMock).should().setPaymentToken(TEST_TOKEN)
+        then(tokenRepositoryMock).should().setPaymentToken(null, TEST_TOKEN)
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 

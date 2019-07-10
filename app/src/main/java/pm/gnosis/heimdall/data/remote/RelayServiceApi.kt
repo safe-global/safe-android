@@ -33,5 +33,5 @@ interface RelayServiceApi {
     fun creationEstimates(@Body params: CreationEstimatesParams): Single<List<CreationEstimates>>
 
     @GET("v1/safes/{address}/transactions/estimates/")
-    fun transactionEstimates(@Path("address") address: String, @Body params: EstimateParams): Single<RelayEstimate>
+    fun transactionEstimates(@Path("address") address: String, @Body params: EstimatesParams): Single<RelayEstimate>
 }

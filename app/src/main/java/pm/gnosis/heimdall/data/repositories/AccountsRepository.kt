@@ -5,6 +5,7 @@ import io.reactivex.Completable
 import io.reactivex.Single
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.TypeParceler
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.utils.EncryptedByteArrayParceler
 import pm.gnosis.heimdall.utils.SolidityAddressParceler
 import pm.gnosis.model.Solidity
@@ -19,6 +20,8 @@ interface AccountsRepository {
 
     fun createOwnersFromPhrase(phrase: String, ids: List<Long>): Single<List<SafeOwner>>
 
+    fun saveOwner(safeAddress: Solidity.Address, safeOwner: SafeOwner, paymentToken: ERC20Token): Completable
+
     fun signingOwner(safeAddress: Solidity.Address): Single<SafeOwner>
 
     fun sign(safeAddress: Solidity.Address, data: ByteArray): Single<Signature>
@@ -29,6 +32,4 @@ interface AccountsRepository {
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
     @TypeParceler<EncryptedByteArray, EncryptedByteArrayParceler>
     data class SafeOwner(val address: Solidity.Address, val privateKey: EncryptedByteArray) : Parcelable
-
-    fun saveOwner(safeAddress: Solidity.Address, safeOwner: SafeOwner): Completable
 }

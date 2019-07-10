@@ -236,7 +236,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
         signingAccounts: SigningAccounts,
         safeOwner: AccountsRepository.SafeOwner
     ) =
-        tokenRepository.loadPaymentToken()
+        tokenRepository.loadPaymentToken(safeInfo.address)
             .flatMap { executionRepository.loadExecuteInformation(safeInfo.address, it.address, transaction, safeOwner) }
             .flatMap { executionInfo ->
                 executionRepository.calculateHash(

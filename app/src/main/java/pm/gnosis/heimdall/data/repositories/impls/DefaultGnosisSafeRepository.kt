@@ -39,7 +39,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val addressBookRepository: AddressBookRepository,
     private val ethereumRepository: EthereumRepository,
-    private val pushServiceRepository: PushServiceRepository
+    private val pushServiceRepository: PushServiceRepository,
+    private val tokenRepository: TokenRepository
 ) : GnosisSafeRepository {
 
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
@@ -311,7 +312,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .map { it.map { tx -> TransactionStatus(tx.id, tx.timestamp, false) } }
 
     override fun saveOwner(safeAddress: Solidity.Address, safeOwner: AccountsRepository.SafeOwner) =
-        accountsRepository.saveOwner(safeAddress, safeOwner)
+        tokenRepository.loadPaymentToken(safeAddress)
+            .flatMapCompletable { accountsRepository.saveOwner(safeAddress, safeOwner, it) }
             .doOnComplete { pushServiceRepository.syncAuthentication(true) }
             .subscribeOn(Schedulers.io())
 

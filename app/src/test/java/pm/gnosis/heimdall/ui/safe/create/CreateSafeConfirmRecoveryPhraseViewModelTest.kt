@@ -105,7 +105,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         var safeAddress: Solidity.Address? = null
         var response: RelaySafeCreation? = null
 
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ETHER_TOKEN))
         val safeOwner = AccountsRepository.SafeOwner(ownerAddress, ownerKey)
         given(accountsRepositoryMock.createOwner()).willReturn(Single.just(safeOwner))
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any())).willReturn(
@@ -186,7 +186,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         var safeAddress: Solidity.Address? = null
         var response: RelaySafeCreation? = null
 
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ETHER_TOKEN))
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any())).willReturn(
             Single.just(
                 listOf(
@@ -267,7 +267,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         var response: RelaySafeCreation? = null
         val exception = Exception()
 
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(PAYMENT_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(PAYMENT_TOKEN))
         val safeOwner = AccountsRepository.SafeOwner(ownerAddress, ownerKey)
         given(accountsRepositoryMock.createOwner()).willReturn(Single.just(safeOwner))
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any())).willReturn(
@@ -354,7 +354,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         var saltNonce: Long? = null
         var response: RelaySafeCreation?
 
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ETHER_TOKEN))
         given(accountsRepositoryMock.createOwner()).willReturn(Single.just(AccountsRepository.SafeOwner(ownerAddress, ownerKey)))
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any())).willReturn(
             Single.just(
@@ -421,7 +421,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         val testObserver = TestObserver.create<Solidity.Address>()
         var saltNonce: Long? = null
 
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(paymentToken))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(paymentToken))
         given(accountsRepositoryMock.createOwner()).willReturn(Single.just(AccountsRepository.SafeOwner(ownerAddress, ownerKey)))
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any())).willReturn(
             Single.just(
@@ -753,7 +753,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         var saltNonce: Long? = null
         var response: RelaySafeCreation? = null
 
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ETHER_TOKEN))
         val safeOwner = AccountsRepository.SafeOwner(ownerAddress, ownerKey)
         given(accountsRepositoryMock.createOwner()).willReturn(Single.just(safeOwner))
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any())).willReturn(
@@ -835,7 +835,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         var saltNonce: Long? = null
         val exception = Exception()
 
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ETHER_TOKEN))
         val safeOwner = AccountsRepository.SafeOwner(ownerAddress, ownerKey)
         given(accountsRepositoryMock.createOwner()).willReturn(Single.just(safeOwner))
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any())).willReturn(
@@ -881,7 +881,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
         val exception = Exception()
 
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(PAYMENT_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(PAYMENT_TOKEN))
         val safeOwner = AccountsRepository.SafeOwner(ownerAddress, ownerKey)
         given(accountsRepositoryMock.createOwner()).willReturn(Single.just(safeOwner))
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
@@ -908,7 +908,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
         val exception = IllegalArgumentException()
 
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(PAYMENT_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(PAYMENT_TOKEN))
         given(accountsRepositoryMock.createOwner()).willReturn(Single.error(exception))
 
         // Setup parent class

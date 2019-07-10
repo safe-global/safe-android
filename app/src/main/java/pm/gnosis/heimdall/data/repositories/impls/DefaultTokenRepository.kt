@@ -8,25 +8,26 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.preferences.PreferencesToken
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.models.CreationEstimatesParams
+import pm.gnosis.heimdall.data.remote.models.EstimatesParams
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.models.fromDb
 import pm.gnosis.heimdall.data.repositories.models.toDb
+import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.ERC20
-import pm.gnosis.utils.hexAsBigIntegerOrNull
-import pm.gnosis.utils.hexStringToByteArrayOrNull
-import pm.gnosis.utils.nullOnThrow
-import pm.gnosis.utils.utf8String
+import pm.gnosis.utils.*
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,6 +45,7 @@ class DefaultTokenRepository @Inject constructor(
     )
 
     private val erc20TokenDao = appDb.erc20TokenDao()
+    private val safeDao = appDb.gnosisSafeDao()
 
     override fun observeEnabledTokens(): Flowable<List<ERC20Token>> =
         erc20TokenDao.observeTokens()
@@ -88,6 +90,7 @@ class DefaultTokenRepository @Inject constructor(
         hardcodedTokens[contractAddress]?.let { Single.just(it.toOptional()) }
             ?: loadPaymentToken().map {
                 if (it.address == contractAddress) it.toOptional()
+                // TODO: query from safe info
                 else None
             }
 
@@ -157,13 +160,36 @@ class DefaultTokenRepository @Inject constructor(
         return ethereumRepository.request(MappingBulkRequest(requests)).map { it.mapped() }
     }
 
-    override fun loadPaymentToken(): Single<ERC20Token> =
+    override fun loadPaymentToken(safe: Solidity.Address?): Single<ERC20Token> =
+        (safe?.let { safeDao.loadSafeInfo(safe) } ?: Single.error(NoSuchElementException()))
+            .map {
+                ERC20Token(it.paymentTokenAddress, it.paymentTokenName, it.paymentTokenSymbol, it.paymentTokenDecimals, it.paymentTokenIcon ?: "")
+            }
+            .onErrorResumeNext { loadDefaultPaymentToken() }
+
+    private fun loadDefaultPaymentToken() =
         Single.fromCallable {
             prefs.paymendToken
         }
             .subscribeOn(Schedulers.io())
 
-    override fun setPaymentToken(token: ERC20Token): Completable =
+    override fun setPaymentToken(safe: Solidity.Address?, token: ERC20Token): Completable =
+        (safe?.let { safeDao.loadSafeInfo(safe) } ?: Single.error(NoSuchElementException()))
+            .map {
+                safeDao.insertSafeInfo(
+                    it.copy(
+                        paymentTokenAddress = token.address,
+                        paymentTokenSymbol = token.symbol,
+                        paymentTokenDecimals = token.decimals,
+                        paymentTokenName = token.name,
+                        paymentTokenIcon = token.logoUrl
+                    )
+                )
+            }
+            .ignoreElement()
+            .onErrorResumeNext { setDefaultPaymentToken(token) }
+
+    private fun setDefaultPaymentToken(token: ERC20Token) =
         Completable.fromAction {
             prefs.paymendToken = token
         }
@@ -175,16 +201,27 @@ class DefaultTokenRepository @Inject constructor(
                 data.results.mapTo(mutableListOf(ETHER_TOKEN)) { it.fromNetwork() }
             }
 
-    override fun loadPaymentTokensWithCreationFees(): Single<List<Pair<ERC20Token, BigInteger>>> =
-        relayServiceApi.creationEstimates(CreationEstimatesParams(2))
+    override fun loadPaymentTokensWithCreationFees(numbersOwners: Long): Single<List<Pair<ERC20Token, BigInteger>>> =
+        relayServiceApi.creationEstimates(CreationEstimatesParams(numbersOwners))
             .map { data ->
-                // TODO
+                TODO("Not implemented yet")
             }
 
-    override fun loadPaymentTokensWithTransactionFees(): Single<List<Pair<ERC20Token, BigInteger>>> =
-        relayServiceApi.paymentTokens()
+    override fun loadPaymentTokensWithTransactionFees(
+        safe: Solidity.Address,
+        transaction: SafeTransaction
+    ): Single<List<Pair<ERC20Token, BigInteger>>> =
+        relayServiceApi.transactionEstimates(
+            safe.asEthereumAddressChecksumString(),
+            EstimatesParams(
+                transaction.wrapped.address.asEthereumAddressChecksumString(),
+                transaction.wrapped.value?.value?.asDecimalString() ?: "0",
+                transaction.wrapped.data ?: "0x",
+                transaction.operation.toInt()
+            )
+        )
             .map { data ->
-                // TODO
+                TODO("Not implemented yet")
             }
 
     private class TokenInfoRequest(
