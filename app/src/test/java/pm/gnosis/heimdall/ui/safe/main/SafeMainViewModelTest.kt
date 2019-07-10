@@ -37,15 +37,12 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Wei
-import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigInteger
-import pm.gnosis.utils.toHexString
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -160,7 +157,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun loadSelectedSafeNoSafes() {
-        preferences.remove(KEY_SELECTED_SAFE)
+        safePreferences.selectedSafe = null
         given(safeRepository.observeAllSafes()).willReturn(Flowable.just(emptyList()))
 
         val safeObserver = TestObserver<AbstractSafe>()
@@ -175,7 +172,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun loadSelectedSafeNoSelectedSafe() {
-        preferences.remove(KEY_SELECTED_SAFE)
+        safePreferences.selectedSafe = null
         given(safeRepository.observeAllSafes()).willReturn(
             Flowable.just(
                 listOf(
@@ -197,7 +194,7 @@ class SafeMainViewModelTest {
 
     @Test
     fun loadSelectedSafe() {
-        preferences.putString(KEY_SELECTED_SAFE, TEST_SAFE.asEthereumAddressString())
+        safePreferences.selectedSafe = TEST_SAFE
         given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.just(Safe(TEST_SAFE)))
 
         val safeObserver = TestObserver<AbstractSafe>()
@@ -213,7 +210,7 @@ class SafeMainViewModelTest {
     @Test
     fun loadSelectedSafePending() {
         val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
-        preferences.putString(KEY_SELECTED_SAFE, TEST_PENDING_SAFE.asEthereumAddressString())
+        safePreferences.selectedSafe = TEST_PENDING_SAFE
         given(safeRepository.loadSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
         given(safeRepository.loadPendingSafe(MockUtils.any())).willReturn(Single.just(pendingSafe))
 
@@ -235,7 +232,7 @@ class SafeMainViewModelTest {
         val safeObserver = TestObserver<AbstractSafe>()
         viewModel.selectSafe(TEST_SAFE).subscribe(safeObserver)
 
-        assertEquals(preferences.getString(KEY_SELECTED_SAFE, null), TEST_SAFE.value.toHexString())
+        assertEquals(safePreferences.selectedSafe, TEST_SAFE)
         safeObserver.assertResult(Safe(TEST_SAFE))
 
         then(safeRepository).should().loadSafe(TEST_SAFE)
@@ -251,7 +248,7 @@ class SafeMainViewModelTest {
         val safeObserver = TestObserver<AbstractSafe>()
         viewModel.selectSafe(TEST_PENDING_SAFE).subscribe(safeObserver)
 
-        assertEquals(preferences.getString(KEY_SELECTED_SAFE, null), TEST_PENDING_SAFE.asEthereumAddressString())
+        assertEquals(safePreferences.selectedSafe, TEST_PENDING_SAFE)
         safeObserver.assertResult(pendingSafe)
 
         then(safeRepository).should().loadSafe(TEST_PENDING_SAFE)
@@ -272,7 +269,7 @@ class SafeMainViewModelTest {
         val safeObserver = TestObserver<AbstractSafe>()
         viewModel.selectSafe(TEST_RECOVERING_SAFE).subscribe(safeObserver)
 
-        assertEquals(preferences.getString(KEY_SELECTED_SAFE, null), TEST_RECOVERING_SAFE.asEthereumAddressString())
+        assertEquals(safePreferences.selectedSafe, TEST_RECOVERING_SAFE)
         safeObserver.assertResult(recoveringSafe)
 
         then(safeRepository).should().loadSafe(TEST_RECOVERING_SAFE)
@@ -748,6 +745,5 @@ class SafeMainViewModelTest {
         private val TEST_RECOVERING_SAFE = "0xb36574155395D41b92664e7A215103262a14244A".asEthereumAddress()!!
         private val TEST_PAYMENT_TOKEN = ERC20Token.ETHER_TOKEN.address
         private val TEST_PAYMENT_AMOUNT = Wei.ether("0.1").value
-        private const val KEY_SELECTED_SAFE = "safe_main.string.selected_safe"
     }
 }

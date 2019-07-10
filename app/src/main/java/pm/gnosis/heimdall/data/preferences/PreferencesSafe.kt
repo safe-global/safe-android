@@ -19,7 +19,13 @@ class PreferencesSafe(context: Context) {
     var selectedSafe: Solidity.Address?
         get() = prefs.getString(KEY_SELECTED_SAFE, null)?.asEthereumAddress()
         set(value) {
-            prefs.edit { putString(KEY_SELECTED_SAFE, value?.asEthereumAddressString()) }
+            prefs.edit {
+                if (value == null) {
+                    remove(KEY_SELECTED_SAFE)
+                } else {
+                    putString(KEY_SELECTED_SAFE, value.asEthereumAddressString())
+                }
+            }
         }
 
     var lastSyncedData: String
