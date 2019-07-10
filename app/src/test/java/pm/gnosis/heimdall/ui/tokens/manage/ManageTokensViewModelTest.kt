@@ -15,6 +15,7 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
+import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -27,6 +28,7 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
 import java.math.BigInteger
+import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class ManageTokensViewModelTest {
@@ -53,14 +55,14 @@ class ManageTokensViewModelTest {
         val testObserver = TestObserver<Adapter.Data<ManageTokensContract.ERC20TokenEnabled>>()
         val verifiedToken = ERC20Token(Solidity.Address(BigInteger.TEN), "", "", 10, "")
         val enabledToken = TEST_TOKEN
-        val refreshEvents = PublishSubject.create<Unit>()
-        given(tokenRepositoryMock.loadVerifiedTokens()).willReturn(Single.just(listOf(verifiedToken)))
+        val loadEvents = PublishSubject.create<String>()
+        given(tokenRepositoryMock.loadVerifiedTokens(MockUtils.any())).willReturn(Single.just(listOf(verifiedToken)))
         given(tokenRepositoryMock.observeEnabledTokens()).willReturn(enabledTokensProcessor)
 
 
-        refreshEvents.compose(viewModel.observeVerifiedTokens()).subscribe(testObserver)
+        loadEvents.compose(viewModel.observeVerifiedTokens()).subscribe(testObserver)
         enabledTokensProcessor.offer(listOf(enabledToken))
-        refreshEvents.onNext(Unit)
+        loadEvents.onNext("")
 
         testObserver
             .assertValueCount(2)
@@ -89,8 +91,76 @@ class ManageTokensViewModelTest {
             })
             .assertNoErrors()
 
-        then(tokenRepositoryMock).should().loadVerifiedTokens()
+        then(tokenRepositoryMock).should().loadVerifiedTokens("")
         then(tokenRepositoryMock).should().observeEnabledTokens()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun observeVerifiedTokensFilter() {
+        val enabledTokensProcessor = PublishProcessor.create<List<ERC20Token>>()
+        val testObserver = TestObserver<Adapter.Data<ManageTokensContract.ERC20TokenEnabled>>()
+        val verifiedToken = ERC20Token(Solidity.Address(BigInteger.TEN), "", "", 10, "")
+        val verifiedToken2 = ERC20Token(Solidity.Address(23.toBigInteger()), "Not Filtered Token", "NFT", 10, "")
+        val enabledToken = TEST_TOKEN
+        val enabledToken2 = ERC20Token(Solidity.Address(42.toBigInteger()), "Filtered Token", "FT", 10, "")
+        val loadEvents = PublishSubject.create<String>()
+        given(tokenRepositoryMock.loadVerifiedTokens(MockUtils.any())).willReturn(Single.just(listOf(verifiedToken, verifiedToken2)))
+        given(tokenRepositoryMock.observeEnabledTokens()).willReturn(enabledTokensProcessor)
+
+
+        loadEvents.compose(viewModel.observeVerifiedTokens()).subscribe(testObserver)
+        then(tokenRepositoryMock).should().observeEnabledTokens()
+
+        enabledTokensProcessor.offer(listOf(enabledToken, enabledToken2))
+        loadEvents.onNext(TEST_TOKEN.name)
+        then(tokenRepositoryMock).should().loadVerifiedTokens(TEST_TOKEN.name)
+
+        // Backend tokens should not be filtered (only local tokens)
+        testObserver
+            .assertValueCount(2)
+            .assertValueAt(0, {
+                it.parentId == null && it.entries == emptyList<ManageTokensContract.ERC20TokenEnabled>()
+            })
+            .assertValueAt(1, {
+                it.entries == listOf(
+                    ManageTokensContract.ERC20TokenEnabled(verifiedToken, enabled = false),
+                    ManageTokensContract.ERC20TokenEnabled(verifiedToken2, enabled = false),
+                    ManageTokensContract.ERC20TokenEnabled(enabledToken, enabled = true)
+                ) && it.parentId == testObserver.values()[0].id
+            })
+            .assertNoErrors()
+
+        loadEvents.onNext("FT")
+        then(tokenRepositoryMock).should().loadVerifiedTokens("FT")
+
+        testObserver
+            .assertValueCount(3)
+            .assertValueAt(2, {
+                it.entries == listOf(
+                    ManageTokensContract.ERC20TokenEnabled(verifiedToken, enabled = false),
+                    ManageTokensContract.ERC20TokenEnabled(verifiedToken2, enabled = false),
+                    ManageTokensContract.ERC20TokenEnabled(enabledToken2, enabled = true)
+                ) && it.parentId == testObserver.values()[1].id
+            })
+            .assertNoErrors()
+
+        loadEvents.onNext("")
+        then(tokenRepositoryMock).should().loadVerifiedTokens("")
+
+        testObserver
+            .assertValueCount(4)
+            .assertValueAt(3, {
+                println(it)
+                it.entries == listOf(
+                    ManageTokensContract.ERC20TokenEnabled(verifiedToken, enabled = false),
+                    ManageTokensContract.ERC20TokenEnabled(verifiedToken2, enabled = false),
+                    ManageTokensContract.ERC20TokenEnabled(enabledToken, enabled = true),
+                    ManageTokensContract.ERC20TokenEnabled(enabledToken2, enabled = true)
+                ) && it.parentId == testObserver.values()[2].id
+            })
+            .assertNoErrors()
+
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
@@ -99,14 +169,14 @@ class ManageTokensViewModelTest {
         val testSubscriber = TestObserver<Adapter.Data<ManageTokensContract.ERC20TokenEnabled>>()
         val errorObserver = TestObserver<Throwable>()
         val exception = Exception()
-        val refreshEvents = PublishSubject.create<Unit>()
-        given(tokenRepositoryMock.loadVerifiedTokens()).willReturn(Single.error(exception))
+        val loadEvents = PublishSubject.create<String>()
+        given(tokenRepositoryMock.loadVerifiedTokens(MockUtils.any())).willReturn(Single.error(exception))
         given(tokenRepositoryMock.observeEnabledTokens()).willReturn(Flowable.just(listOf()))
 
-        refreshEvents.compose(viewModel.observeVerifiedTokens()).subscribe(testSubscriber)
+        loadEvents.compose(viewModel.observeVerifiedTokens()).subscribe(testSubscriber)
         viewModel.observeErrors().subscribe(errorObserver)
 
-        refreshEvents.onNext(Unit)
+        loadEvents.onNext("")
 
         errorObserver.assertValues(exception).assertNoErrors()
         testSubscriber
@@ -117,7 +187,7 @@ class ManageTokensViewModelTest {
                 it.parentId == testSubscriber.values()[0].id && it.entries == listOf<ManageTokensContract.ERC20TokenEnabled>()
             }).assertNotTerminated()
 
-        then(tokenRepositoryMock).should().loadVerifiedTokens()
+        then(tokenRepositoryMock).should().loadVerifiedTokens("")
         then(tokenRepositoryMock).should().observeEnabledTokens()
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }

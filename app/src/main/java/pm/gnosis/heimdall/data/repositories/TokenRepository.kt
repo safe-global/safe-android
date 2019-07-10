@@ -17,7 +17,7 @@ interface TokenRepository {
 
     fun enableToken(token: ERC20Token): Completable
     fun disableToken(address: Solidity.Address): Completable
-    fun loadVerifiedTokens(): Single<List<ERC20Token>>
+    fun loadVerifiedTokens(filter: String): Single<List<ERC20Token>>
 
     fun setPaymentToken(token: ERC20Token): Completable
     fun loadPaymentToken(): Single<ERC20Token>
