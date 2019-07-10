@@ -11,7 +11,12 @@ import com.squareup.moshi.Moshi
 import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -39,9 +44,7 @@ import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39Generator
 import pm.gnosis.mnemonic.android.AndroidWordListProvider
 import pm.gnosis.mnemonic.wordlists.WordListProvider
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.accounts.data.db.AccountsDatabase
-import pm.gnosis.svalinn.accounts.repositories.impls.KethereumAccountsRepository
 import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.ZxingQrCodeGenerator
@@ -64,6 +67,40 @@ class ApplicationModule(private val application: Application) {
     companion object {
         const val INFURA_REST_CLIENT = "infuraRestClient"
     }
+
+    data class AppCoroutineDispatchers(
+        val database: CoroutineDispatcher,
+        val disk: CoroutineDispatcher,
+        val network: CoroutineDispatcher,
+        val main: CoroutineDispatcher
+    )
+
+    data class AppRxSchedulers(
+        val database: Scheduler,
+        val disk: Scheduler,
+        val network: Scheduler,
+        val main: Scheduler
+    )
+
+    @Singleton
+    @Provides
+    fun provideDispatchers(schedulers: AppRxSchedulers) =
+        AppCoroutineDispatchers(
+            database = schedulers.database.asCoroutineDispatcher(),
+            disk = schedulers.disk.asCoroutineDispatcher(),
+            network = schedulers.network.asCoroutineDispatcher(),
+            main = Dispatchers.Main
+        )
+
+    @Singleton
+    @Provides
+    fun provideRxSchedulers() = AppRxSchedulers(
+        database = Schedulers.single(),
+        disk = Schedulers.io(),
+        network = Schedulers.io(),
+        main = AndroidSchedulers.mainThread()
+    )
+
 
     @Provides
     @Singleton
