@@ -25,10 +25,10 @@ import org.walletconnect.nullOnThrow
 import pm.gnosis.ethereum.rpc.models.JsonRpcError
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.preferences.PreferencesWalletConnect
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
-import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.services.BridgeService
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
@@ -36,7 +36,6 @@ import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
-import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import pm.gnosis.utils.hexAsBigIntegerOrNull
@@ -55,12 +54,10 @@ class WalletConnectBridgeRepository @Inject constructor(
     private val localNotificationManager: LocalNotificationManager,
     private val sessionStore: WCSessionStore,
     private val sessionBuilder: SessionBuilder,
-    appPreferencesManager: AppPreferencesManager,
+    private val prefs: PreferencesWalletConnect,
     executionRepository: TransactionExecutionRepository
 ) : BridgeRepository, TransactionExecutionRepository.TransactionEventsCallback {
 
-    private val bridgePreferences = appPreferencesManager.get(PREFERENCES_BRIDGE)
-    private val sessionsPreferences = appPreferencesManager.get(PREFERENCES_SESSIONS)
     private val sessionUpdates = BehaviorSubject.createDefault(Unit)
     private val sessions: MutableMap<String, Session> = ConcurrentHashMap()
 
@@ -117,8 +114,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                 .map { it.toSessionMeta() }
         }
 
-    private fun getSafeForSession(sessionId: String) =
-        sessionsPreferences.getString(KEY_PREFIX_SESSION_SAFE + sessionId, null)?.asEthereumAddress()
+    private fun getSafeForSession(sessionId: String) = prefs.safeForSession(sessionId)
 
     override fun observeSessions(safe: Solidity.Address?): Observable<List<BridgeRepository.SessionMeta>> =
         sessionUpdates.switchMapSingle { sessions(safe).onErrorReturnItem(emptyList()) }
@@ -223,7 +219,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                 override fun sessionApproved() {}
 
                 override fun sessionClosed() {
-                    sessionsPreferences.edit { remove(KEY_PREFIX_SESSION_SAFE + sessionId) }
+                    prefs.removeSession(sessionId)
                     sessions.remove(sessionId)
                     sessionUpdates.onNext(Unit)
                 }
@@ -268,7 +264,7 @@ class WalletConnectBridgeRepository @Inject constructor(
     override fun createSession(url: String, safe: Solidity.Address): String =
         Session.Config.fromWCUri(url).let { config ->
             val sessionId = config.handshakeTopic
-            sessionsPreferences.edit { putString(KEY_PREFIX_SESSION_SAFE + sessionId, safe.asEthereumAddressString()) }
+            prefs.saveSession(sessionId, safe)
             internalGetOrCreateSession(config)
             startBridgeService()
             sessionId
@@ -385,21 +381,17 @@ class WalletConnectBridgeRepository @Inject constructor(
 
     override fun shouldShowIntro(): Single<Boolean> =
         Single.fromCallable {
-            !bridgePreferences.getBoolean(KEY_INTRO_DONE, false)
+            !prefs.introDone
         }
             .subscribeOn(Schedulers.io())
 
     override fun markIntroDone(): Completable =
         Completable.fromAction {
-            bridgePreferences.edit { putBoolean(KEY_INTRO_DONE, true) }
+            prefs.introDone = true
         }
             .subscribeOn(Schedulers.io())
 
     companion object {
-        private const val KEY_PREFIX_SESSION_SAFE = "session_safe_"
-        private const val PREFERENCES_SESSIONS = "preferences.wallet_connect_bridge_repository.sessions"
-        private const val PREFERENCES_BRIDGE = "preferences.wallet_connect_bridge_repository.bridge"
-        private const val KEY_INTRO_DONE = "wallet_connect_bridge_repository.boolean.intro_done"
         private const val CHANNEL_WALLET_CONNECT_REQUESTS = "channel_wallet_connect_requests"
     }
 }

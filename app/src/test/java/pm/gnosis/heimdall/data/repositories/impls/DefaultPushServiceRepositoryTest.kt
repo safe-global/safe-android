@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import com.google.android.gms.tasks.OnFailureListener
@@ -18,10 +19,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
+import org.mockito.*
 import org.mockito.BDDMockito.*
-import org.mockito.Captor
-import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
@@ -31,6 +30,7 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
 import pm.gnosis.heimdall.data.db.models.GnosisSafeDb
 import pm.gnosis.heimdall.data.db.models.PendingGnosisSafeDb
+import pm.gnosis.heimdall.data.preferences.PreferencesSafe
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.push.*
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
@@ -42,7 +42,6 @@ import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asEthereumAddress
@@ -56,6 +55,9 @@ class DefaultPushServiceRepositoryTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
+
+    @Mock
+    private lateinit var applicationMock: Application
 
     @Mock
     private lateinit var contextMock: Context
@@ -82,9 +84,6 @@ class DefaultPushServiceRepositoryTest {
     private lateinit var cryptoHelperMock: CryptoHelper
 
     @Mock
-    private lateinit var preferencesManagerMock: PreferencesManager
-
-    @Mock
     private lateinit var pushServiceApiMock: PushServiceApi
 
     @Mock
@@ -108,9 +107,15 @@ class DefaultPushServiceRepositoryTest {
 
     private lateinit var pushServiceRepository: DefaultPushServiceRepository
 
+    private lateinit var safePrefs: PreferencesSafe
+
     @Before
     fun setUp() {
+        BDDMockito.given(applicationMock.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())).willReturn(testPreferences)
+        safePrefs = PreferencesSafe(applicationMock)
+
         given(dbMock.gnosisSafeDao()).willReturn(safeDaoMock)
+
         pushServiceRepository = DefaultPushServiceRepository(
             contextMock,
             dbMock,
@@ -119,10 +124,9 @@ class DefaultPushServiceRepositoryTest {
             firebaseInstanceIdMock,
             localNotificationManagerMock,
             moshiMock,
-            preferencesManagerMock,
+            safePrefs,
             pushServiceApiMock
         )
-        given(preferencesManagerMock.prefs).willReturn(testPreferences)
     }
 
     @Test
@@ -147,7 +151,7 @@ class DefaultPushServiceRepositoryTest {
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         assertEquals(
             bundlePushInfo(testFirebaseInstanceIdTask.result.token),
-            testPreferences.getString(LAST_SYNC_PUSH_INFO_PREFS_KEY, "")
+            safePrefs.lastSyncedData
         )
         then(firebaseInstanceIdMock).should().instanceId
         then(firebaseInstanceIdMock).shouldHaveNoMoreInteractions()
@@ -265,6 +269,8 @@ class DefaultPushServiceRepositoryTest {
 
     @Test
     fun pairExistingSafe() {
+        Mockito.verify(applicationMock, times(1)).getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
+
         given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(TEST_EXTENSION_ADDRESS)
 
         val safeOwner = AccountsRepository.SafeOwner(TEST_ACCOUNT_ADDRESS, encryptedByteArrayConverter.fromStorage("owner_pk"))
@@ -299,8 +305,7 @@ class DefaultPushServiceRepositoryTest {
             )
         )
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
-
-        then(preferencesManagerMock).shouldHaveZeroInteractions()
+        then(applicationMock).shouldHaveZeroInteractions()
         then(localNotificationManagerMock).shouldHaveZeroInteractions()
         then(moshiMock).shouldHaveZeroInteractions()
         then(contextMock).shouldHaveZeroInteractions()
@@ -310,6 +315,8 @@ class DefaultPushServiceRepositoryTest {
 
     @Test
     fun pairNewSafeOwner() {
+        Mockito.verify(applicationMock, times(1)).getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
+
         given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(TEST_EXTENSION_ADDRESS)
 
         val newAccountAddress = "0x2323".asEthereumAddress()!!
@@ -344,7 +351,7 @@ class DefaultPushServiceRepositoryTest {
         then(accountsRepositoryMock).should().sign(safeOwner, hash)
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
-        then(preferencesManagerMock).shouldHaveZeroInteractions()
+        then(applicationMock).shouldHaveZeroInteractions()
         then(localNotificationManagerMock).shouldHaveZeroInteractions()
         then(moshiMock).shouldHaveZeroInteractions()
         then(contextMock).shouldHaveZeroInteractions()
@@ -354,6 +361,8 @@ class DefaultPushServiceRepositoryTest {
 
     @Test
     fun pairPushServiceApiError() {
+        Mockito.verify(applicationMock, times(1)).getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
+
         given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(TEST_EXTENSION_ADDRESS)
 
         val safeOwner = AccountsRepository.SafeOwner(TEST_ACCOUNT_ADDRESS, encryptedByteArrayConverter.fromStorage("owner_pk"))
@@ -390,7 +399,7 @@ class DefaultPushServiceRepositoryTest {
         )
         then(pushServiceApiMock).shouldHaveNoMoreInteractions()
 
-        then(preferencesManagerMock).shouldHaveZeroInteractions()
+        then(applicationMock).shouldHaveZeroInteractions()
         then(localNotificationManagerMock).shouldHaveZeroInteractions()
         then(moshiMock).shouldHaveZeroInteractions()
         then(contextMock).shouldHaveZeroInteractions()
@@ -400,6 +409,8 @@ class DefaultPushServiceRepositoryTest {
 
     @Test
     fun pairSignError() {
+        Mockito.verify(applicationMock, times(1)).getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
+
         given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(TEST_EXTENSION_ADDRESS)
 
         val safeOwner = AccountsRepository.SafeOwner(TEST_ACCOUNT_ADDRESS, encryptedByteArrayConverter.fromStorage("owner_pk"))
@@ -426,7 +437,7 @@ class DefaultPushServiceRepositoryTest {
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
 
         then(pushServiceApiMock).shouldHaveZeroInteractions()
-        then(preferencesManagerMock).shouldHaveZeroInteractions()
+        then(applicationMock).shouldHaveZeroInteractions()
         then(localNotificationManagerMock).shouldHaveZeroInteractions()
         then(moshiMock).shouldHaveZeroInteractions()
         then(contextMock).shouldHaveZeroInteractions()
@@ -436,6 +447,8 @@ class DefaultPushServiceRepositoryTest {
 
     @Test
     fun pairRecoverError() {
+        Mockito.verify(applicationMock, times(1)).getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
+
         given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willReturn(TEST_EXTENSION_ADDRESS)
         val exception = IllegalStateException()
         given(cryptoHelperMock.recover(MockUtils.any(), MockUtils.any())).willThrow(exception)
@@ -454,7 +467,7 @@ class DefaultPushServiceRepositoryTest {
         then(cryptoHelperMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
         then(pushServiceApiMock).shouldHaveZeroInteractions()
-        then(preferencesManagerMock).shouldHaveZeroInteractions()
+        then(applicationMock).shouldHaveZeroInteractions()
         then(localNotificationManagerMock).shouldHaveZeroInteractions()
         then(moshiMock).shouldHaveZeroInteractions()
         then(contextMock).shouldHaveZeroInteractions()

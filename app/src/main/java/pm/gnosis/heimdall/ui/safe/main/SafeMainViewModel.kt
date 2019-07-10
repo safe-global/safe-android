@@ -10,6 +10,7 @@ import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.processors.BehaviorProcessor
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.preferences.PreferencesSafe
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
@@ -19,22 +20,18 @@ import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
-import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.heimdall.utils.scanToAdapterData
+import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.common.PreferencesManager
 import pm.gnosis.svalinn.common.utils.Result
-import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.svalinn.common.utils.mapToResult
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 class SafeMainViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addressBookRepository: AddressBookRepository,
     private val bridgeRepository: BridgeRepository,
-    private val preferenceManager: PreferencesManager,
+    private val prefs: PreferencesSafe,
     private val safeRepository: GnosisSafeRepository
 ) : SafeMainContract() {
 
@@ -53,7 +50,7 @@ class SafeMainViewModel @Inject constructor(
 
     override fun loadSelectedSafe(): Single<out AbstractSafe> =
         Single.fromCallable {
-            val selectedSafe = preferenceManager.prefs.getString(KEY_SELECTED_SAFE, null)?.asEthereumAddress()
+            val selectedSafe = prefs.selectedSafe
             selectedSafe.toOptional()
         }.flatMap<AbstractSafe> {
             it.toNullable()?.let {
@@ -74,7 +71,7 @@ class SafeMainViewModel @Inject constructor(
 
     override fun selectSafe(address: Solidity.Address): Single<out AbstractSafe> =
         Single.fromCallable {
-            preferenceManager.prefs.edit { putString(KEY_SELECTED_SAFE, address.asEthereumAddressString()) }
+            prefs.selectedSafe = address
         }.flatMap {
             loadSelectedSafe()
         }
@@ -106,8 +103,4 @@ class SafeMainViewModel @Inject constructor(
 
 
     override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)
-
-    companion object {
-        private const val KEY_SELECTED_SAFE = "safe_main.string.selected_safe"
-    }
 }

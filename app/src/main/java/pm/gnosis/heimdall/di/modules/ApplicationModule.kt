@@ -35,6 +35,9 @@ import pm.gnosis.ethereum.rpc.retrofit.RetrofitEthereumRpcConnector
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.adapters.*
 import pm.gnosis.heimdall.data.db.ApplicationDb
+import pm.gnosis.heimdall.data.preferences.PreferencesSafe
+import pm.gnosis.heimdall.data.preferences.PreferencesToken
+import pm.gnosis.heimdall.data.preferences.PreferencesWalletConnect
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.TokenServiceApi
@@ -268,6 +271,18 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesPreferencesManager(@ApplicationContext context: Context) = PreferencesManager(context)
+
+    @Provides
+    @Singleton
+    fun providesWalletConnectPreferences(@ApplicationContext context: Context) = PreferencesWalletConnect(context)
+
+    @Provides
+    @Singleton
+    fun providesSafePreferences(@ApplicationContext context: Context) = PreferencesSafe(context)
+
+    @Provides
+    @Singleton
+    fun providesTokenPreferences(@ApplicationContext context: Context) = PreferencesToken(context)
 
     @Provides
     @Singleton

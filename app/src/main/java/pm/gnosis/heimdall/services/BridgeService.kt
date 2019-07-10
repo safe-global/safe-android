@@ -14,7 +14,6 @@ import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.SessionIdAndSafe
-import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivity
@@ -30,9 +29,6 @@ class BridgeService : Service() {
 
     @Inject
     lateinit var localNotificationManager: LocalNotificationManager
-
-    @Inject
-    lateinit var preferencesManager: AppPreferencesManager
 
     private val disposables = CompositeDisposable()
 

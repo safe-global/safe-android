@@ -1,23 +1,25 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
+import android.app.Application
 import android.content.Context
 import com.squareup.moshi.Moshi
 import com.squareup.picasso.Picasso
 import io.reactivex.rxkotlin.subscribeBy
 import okhttp3.OkHttpClient
 import org.junit.Rule
-import org.mockito.BDDMockito.given
+import org.mockito.ArgumentMatchers
+import org.mockito.BDDMockito
+import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.walletconnect.impls.FileWCSessionStore
 import org.walletconnect.impls.MoshiPayloadAdapter
 import org.walletconnect.impls.OkHttpTransport
+import pm.gnosis.heimdall.data.preferences.PreferencesWalletConnect
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
-import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestPreferences
 import pm.gnosis.utils.asEthereumAddress
 import java.io.File
@@ -28,8 +30,16 @@ class WalletConnectBridgeRepositoryIntegrationTest {
     @Rule
     val rule = ImmediateSchedulersRule()
 
+    @Mock
+    private lateinit var application: Application
+
+
     //@Test
     fun integration() {
+
+        BDDMockito.given(application.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())).willReturn(TestPreferences())
+        val prefs = PreferencesWalletConnect(application)
+
         val client = OkHttpClient.Builder().pingInterval(1000, TimeUnit.MILLISECONDS).build()
         val moshi = Moshi.Builder().build()
         val sessionStore = FileWCSessionStore(File("build/tmp/test_store.json").apply { createNewFile() }, moshi)
@@ -37,8 +47,7 @@ class WalletConnectBridgeRepositoryIntegrationTest {
         val sessionTransportBuilder = OkHttpTransport.Builder(client, moshi)
         val sessionBuilder = WCSessionBuilder(sessionStore, sessionPayloadAdapter, sessionTransportBuilder)
         val rpcProxyApiMock = mock(RpcProxyApi::class.java)
-        val preferencesManager = mock(AppPreferencesManager::class.java)
-        given(preferencesManager.get(MockUtils.any())).willReturn(TestPreferences())
+
         val repo =
             WalletConnectBridgeRepository(
                 mock(Context::class.java),
@@ -48,7 +57,7 @@ class WalletConnectBridgeRepositoryIntegrationTest {
                 mock(LocalNotificationManager::class.java),
                 sessionStore,
                 sessionBuilder,
-                preferencesManager,
+                prefs,
                 mock(TransactionExecutionRepository::class.java)
             )
         val uri =
