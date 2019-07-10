@@ -21,8 +21,15 @@ class PreferencesSafe(context: Context) {
             prefs.edit { putString(KEY_SELECTED_SAFE, value?.asEthereumAddressString()) }
         }
 
+    var lastSyncedData: String
+        get() = prefs.getString(KEY_LAST_SYNC_PUSH_INFO, "")
+        set(value) {
+            prefs.edit { putString(KEY_LAST_SYNC_PUSH_INFO, value) }
+        }
+
     companion object {
         const val PREFERENCES_SAFE = "GnosisPrefs"
         private const val KEY_SELECTED_SAFE = "safe_main.string.selected_safe"
+        private const val KEY_LAST_SYNC_PUSH_INFO = "prefs.string.accounttoken"
     }
 }

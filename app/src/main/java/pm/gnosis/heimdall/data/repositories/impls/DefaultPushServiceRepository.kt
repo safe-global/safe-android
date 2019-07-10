@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.data.repositories.impls
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.room.EmptyResultSetException
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.InstanceIdResult
 import com.squareup.moshi.Moshi
@@ -14,8 +13,10 @@ import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
+import pm.gnosis.heimdall.data.preferences.PreferencesSafe
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.models.push.*
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository.TransactionResponse
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
@@ -31,9 +32,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
-import pm.gnosis.svalinn.common.PreferencesManager
-import pm.gnosis.svalinn.common.utils.edit
 import pm.gnosis.utils.*
 import timber.log.Timber
 import java.math.BigInteger
@@ -48,7 +46,7 @@ class DefaultPushServiceRepository @Inject constructor(
     private val firebaseInstanceId: FirebaseInstanceId,
     private val localNotificationManager: LocalNotificationManager,
     private val moshi: Moshi,
-    private val preferencesManager: PreferencesManager,
+    private val prefs: PreferencesSafe,
     private val pushServiceApi: PushServiceApi
 ) : PushServiceRepository {
 
@@ -67,7 +65,7 @@ class DefaultPushServiceRepository @Inject constructor(
     override fun syncAuthentication(forced: Boolean) {
         FirebaseInstanceIdSingle().create()
             .map { instanceId ->
-                val lastSyncedData = preferencesManager.prefs.getString(LAST_SYNC_PUSH_INFO_PREFS_KEY, "")
+                val lastSyncedData = prefs.lastSyncedData
                 val currentData = bundlePushInfo(instanceId.token)
                 (lastSyncedData != currentData) to instanceId.token
             }
@@ -111,9 +109,7 @@ class DefaultPushServiceRepository @Inject constructor(
             }
             .flatMapCompletable { pushServiceApi.auth(it) }
             .doOnComplete {
-                preferencesManager.prefs.edit {
-                    putString(LAST_SYNC_PUSH_INFO_PREFS_KEY, bundlePushInfo(pushToken))
-                }
+                prefs.lastSyncedData =  bundlePushInfo(pushToken)
             }
 
     // sha3("GNO" + <pushToken> + <build_number> + <version_name> + <client> + <bundle>)
@@ -366,7 +362,6 @@ class DefaultPushServiceRepository @Inject constructor(
     }
 
     companion object {
-        private const val LAST_SYNC_PUSH_INFO_PREFS_KEY = "prefs.string.accounttoken"
         private const val SIGNATURE_PREFIX = "GNO"
         private const val CLIENT = "android"
     }
