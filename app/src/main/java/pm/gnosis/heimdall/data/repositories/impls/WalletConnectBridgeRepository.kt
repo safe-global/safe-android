@@ -381,13 +381,13 @@ class WalletConnectBridgeRepository @Inject constructor(
 
     override fun shouldShowIntro(): Single<Boolean> =
         Single.fromCallable {
-            !prefs.keyIntroDone
+            !prefs.introDone
         }
             .subscribeOn(Schedulers.io())
 
     override fun markIntroDone(): Completable =
         Completable.fromAction {
-            prefs.keyIntroDone = true
+            prefs.introDone = true
         }
             .subscribeOn(Schedulers.io())
 

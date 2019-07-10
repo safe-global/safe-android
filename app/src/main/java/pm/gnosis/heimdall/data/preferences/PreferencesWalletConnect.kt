@@ -17,7 +17,7 @@ class PreferencesWalletConnect(context: Context) {
         sessionsPreferences = context.getSharedPreferences(PREFERENCES_SESSIONS, Context.MODE_PRIVATE)
     }
 
-    var keyIntroDone: Boolean
+    var introDone: Boolean
         get() = bridgePreferences.getBoolean(KEY_INTRO_DONE, false)
         set(value) {
             bridgePreferences.edit { putBoolean(KEY_INTRO_DONE, value) }
