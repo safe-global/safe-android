@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.data.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.annotation.VisibleForTesting
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
@@ -10,7 +11,8 @@ import pm.gnosis.utils.asEthereumAddress
 
 class PreferencesToken(context: Context) {
 
-    private val prefs: SharedPreferences
+    @VisibleForTesting
+    val prefs: SharedPreferences
 
     init {
         prefs = context.getSharedPreferences(PREFERENCES_TOKEN, Context.MODE_PRIVATE)

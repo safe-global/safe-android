@@ -109,7 +109,7 @@ class DefaultPushServiceRepository @Inject constructor(
             }
             .flatMapCompletable { pushServiceApi.auth(it) }
             .doOnComplete {
-                prefs.lastSyncedData =  bundlePushInfo(pushToken)
+                prefs.lastSyncedData = bundlePushInfo(pushToken)
             }
 
     // sha3("GNO" + <pushToken> + <build_number> + <version_name> + <client> + <bundle>)

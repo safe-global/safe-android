@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
+import android.app.Application
 import android.content.Context
 import com.squareup.picasso.Picasso
 import io.reactivex.functions.Predicate
@@ -9,11 +10,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
+import org.mockito.*
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
-import org.mockito.Captor
-import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
@@ -21,11 +20,11 @@ import org.walletconnect.Session
 import org.walletconnect.impls.WCSessionStore
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.preferences.PreferencesWalletConnect
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.SessionIdAndSafe
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.TransactionInfoRepository
-import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
@@ -43,10 +42,10 @@ class WalletConnectBridgeRepositoryTest {
     val rule = ImmediateSchedulersRule()
 
     @Mock
-    lateinit var contextMock: Context
+    private lateinit var applicationMock: Application
 
     @Mock
-    lateinit var appPreferencesManagerMock: AppPreferencesManager
+    lateinit var contextMock: Context
 
     @Mock
     lateinit var infoRepositoryMock: TransactionInfoRepository
@@ -76,20 +75,24 @@ class WalletConnectBridgeRepositoryTest {
 
     private lateinit var repository: WalletConnectBridgeRepository
 
+    private lateinit var wcPrefs: PreferencesWalletConnect
+
     @Before
     fun setUp() {
+        BDDMockito.given(applicationMock.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())).willReturn(testPreferences)
+        wcPrefs = PreferencesWalletConnect(applicationMock)
+
         testPreferences.clear()
-        given(appPreferencesManagerMock.get(MockUtils.any())).willReturn(testPreferences)
         repository = WalletConnectBridgeRepository(
             contextMock, rpcProxyApiMock, picassoMock, infoRepositoryMock, localNotificationManagerMock,
             sessionStoreMock, sessionBuilderMock,
-            appPreferencesManagerMock, executionRepositoryMock
+            wcPrefs, executionRepositoryMock
         )
         then(executionRepositoryMock).should().addTransactionEventsCallback(repository)
         then(executionRepositoryMock).shouldHaveNoMoreInteractions()
-        then(appPreferencesManagerMock).should().get("preferences.wallet_connect_bridge_repository.sessions")
-        then(appPreferencesManagerMock).should().get("preferences.wallet_connect_bridge_repository.bridge")
-        then(appPreferencesManagerMock).shouldHaveNoMoreInteractions()
+
+        Mockito.verify(applicationMock, BDDMockito.times(2)).getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())
+        then(applicationMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -137,7 +140,7 @@ class WalletConnectBridgeRepositoryTest {
         )
 
         val filteredSessionsObserver = TestObserver<List<BridgeRepository.SessionMeta>>()
-        testPreferences.putString(KEY_PREFIX + secondSession.config.handshakeTopic, "0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d")
+        wcPrefs.saveSession(secondSession.config.handshakeTopic, "0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d".asEthereumAddress()!!)
         repository.sessions("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d".asEthereumAddress()!!).subscribe(filteredSessionsObserver)
         then(sessionStoreMock).should(times(2)).list()
         then(sessionStoreMock).shouldHaveNoMoreInteractions()
@@ -156,7 +159,7 @@ class WalletConnectBridgeRepositoryTest {
         )
 
         val filteredUnapprovedSessionsObserver = TestObserver<List<BridgeRepository.SessionMeta>>()
-        testPreferences.putString(KEY_PREFIX + firstSession.config.handshakeTopic, "0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6a")
+        wcPrefs.saveSession(firstSession.config.handshakeTopic, "0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6a".asEthereumAddress()!!)
         repository.sessions("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6a".asEthereumAddress()!!).subscribe(filteredUnapprovedSessionsObserver)
         then(sessionStoreMock).should(times(3)).list()
         then(sessionStoreMock).shouldHaveNoMoreInteractions()
@@ -286,7 +289,7 @@ class WalletConnectBridgeRepositoryTest {
         val mockSession = mock(Session::class.java)
         given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
         assertEquals(config.handshakeTopic, repository.createSession(url, testSafe))
-        assertEquals(testPreferences.getString(KEY_PREFIX + config.handshakeTopic, null), testSafe.asEthereumAddressString())
+        assertEquals(wcPrefs.safeForSession(config.handshakeTopic), testSafe)
         then(sessionStoreMock).shouldHaveZeroInteractions()
         then(sessionBuilderMock).should().build(
             config,
@@ -300,7 +303,7 @@ class WalletConnectBridgeRepositoryTest {
         // Should only create once
         assertEquals(config.handshakeTopic, repository.createSession(url, testSafe))
         assertEquals(testPreferences.all.size, 1)
-        assertEquals(testPreferences.getString(KEY_PREFIX + config.handshakeTopic, null), testSafe.asEthereumAddressString())
+        assertEquals(wcPrefs.safeForSession(config.handshakeTopic), testSafe)
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
         then(contextMock).should(times(2)).startService(MockUtils.any())
         then(contextMock).shouldHaveNoMoreInteractions()
@@ -317,7 +320,7 @@ class WalletConnectBridgeRepositoryTest {
 
         given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
         assertEquals(config.handshakeTopic, repository.createSession(url, testSafe))
-        assertEquals(testPreferences.getString(KEY_PREFIX + config.handshakeTopic, null), testSafe.asEthereumAddressString())
+        assertEquals(wcPrefs.safeForSession(config.handshakeTopic), testSafe)
         then(sessionStoreMock).shouldHaveZeroInteractions()
         then(sessionBuilderMock).should().build(
             config,
@@ -345,7 +348,7 @@ class WalletConnectBridgeRepositoryTest {
         // Should only create once
         assertEquals(config.handshakeTopic, repository.createSession(url, testSafe))
         assertEquals(testPreferences.all.size, 1)
-        assertEquals(testPreferences.getString(KEY_PREFIX + config.handshakeTopic, null), testSafe.asEthereumAddressString())
+        assertEquals(wcPrefs.safeForSession(config.handshakeTopic), testSafe)
         then(sessionBuilderMock).shouldHaveNoMoreInteractions()
         then(contextMock).should(times(2)).startService(MockUtils.any())
         then(contextMock).shouldHaveNoMoreInteractions()
@@ -521,7 +524,7 @@ class WalletConnectBridgeRepositoryTest {
         // Setup sessions
         val firstSession = WCSessionStore.State(randomConfig(), randomClientData(), null, null, UUID.randomUUID().toString(), null)
         val firstSessionSafe = "0xbaddad".asEthereumAddress()!!
-        testPreferences.putString(KEY_PREFIX + firstSession.config.handshakeTopic, firstSessionSafe.asEthereumAddressString())
+        wcPrefs.saveSession(firstSession.config.handshakeTopic, firstSessionSafe)
         val secondSession = WCSessionStore.State(
             randomConfig(),
             randomClientData(),
@@ -531,7 +534,7 @@ class WalletConnectBridgeRepositoryTest {
             listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d")
         )
         val secondSessionSafe = "0xdeadbeef".asEthereumAddress()!!
-        testPreferences.putString(KEY_PREFIX + secondSession.config.handshakeTopic, secondSessionSafe.asEthereumAddressString())
+        wcPrefs.saveSession(secondSession.config.handshakeTopic, secondSessionSafe)
 
         // Activate first session, should trigger an update
         given(sessionStoreMock.load(firstSession.config.handshakeTopic)).willReturn(firstSession)
@@ -554,10 +557,5 @@ class WalletConnectBridgeRepositoryTest {
 
         then(sessionStoreMock).shouldHaveNoMoreInteractions()
     }
-
-    companion object {
-        private const val KEY_PREFIX = "session_safe_"
-    }
-
 }
 

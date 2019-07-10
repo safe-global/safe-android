@@ -3,36 +3,36 @@ package pm.gnosis.heimdall.data.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.svalinn.common.utils.edit
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
 class PreferencesWalletConnect(context: Context) {
 
-    private val bridgePreferences: SharedPreferences
-    private val sessionsPreferences: SharedPreferences
+    private val bridgePrefs: SharedPreferences
+    private val sessionsPrefs: SharedPreferences
 
     init {
-        bridgePreferences = context.getSharedPreferences(PREFERENCES_BRIDGE, Context.MODE_PRIVATE)
-        sessionsPreferences = context.getSharedPreferences(PREFERENCES_SESSIONS, Context.MODE_PRIVATE)
+        bridgePrefs = context.getSharedPreferences(PREFERENCES_BRIDGE, Context.MODE_PRIVATE)
+        sessionsPrefs = context.getSharedPreferences(PREFERENCES_SESSIONS, Context.MODE_PRIVATE)
     }
 
     var introDone: Boolean
-        get() = bridgePreferences.getBoolean(KEY_INTRO_DONE, false)
+        get() = bridgePrefs.getBoolean(KEY_INTRO_DONE, false)
         set(value) {
-            bridgePreferences.edit { putBoolean(KEY_INTRO_DONE, value) }
+            bridgePrefs.edit { putBoolean(KEY_INTRO_DONE, value) }
         }
 
     fun safeForSession(sessionId: String): Solidity.Address? {
-        return sessionsPreferences.getString(KEY_SESSION_SAFE_PREFIX + sessionId, null)?.asEthereumAddress()
+        return sessionsPrefs.getString(KEY_SESSION_SAFE_PREFIX + sessionId, null)?.asEthereumAddress()
     }
 
     fun saveSession(sessionId: String, safe: Solidity.Address) {
-        sessionsPreferences.edit { putString(KEY_SESSION_SAFE_PREFIX + sessionId, safe.asEthereumAddressString()) }
+        sessionsPrefs.edit { putString(KEY_SESSION_SAFE_PREFIX + sessionId, safe.asEthereumAddressString()) }
     }
 
     fun removeSession(sessionId: String) {
-        sessionsPreferences.edit { remove(KEY_SESSION_SAFE_PREFIX + sessionId) }
+        sessionsPrefs.edit { remove(KEY_SESSION_SAFE_PREFIX + sessionId) }
     }
 
     companion object {

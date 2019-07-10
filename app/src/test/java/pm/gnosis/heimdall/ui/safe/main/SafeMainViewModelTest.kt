@@ -26,6 +26,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.preferences.PreferencesSafe
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
@@ -71,15 +72,15 @@ class SafeMainViewModelTest {
     @Mock
     private lateinit var safeRepository: GnosisSafeRepository
 
-    private lateinit var preferencesManager: PreferencesManager
+    private lateinit var safePreferences: PreferencesSafe
 
     private lateinit var viewModel: SafeMainViewModel
 
     @Before
     fun setUp() {
         BDDMockito.given(application.getSharedPreferences(anyString(), anyInt())).willReturn(preferences)
-        preferencesManager = PreferencesManager(application)
-        viewModel = SafeMainViewModel(context, addressBookRepository, bridgeRepository, preferencesManager, safeRepository)
+        safePreferences = PreferencesSafe(application)
+        viewModel = SafeMainViewModel(context, addressBookRepository, bridgeRepository, safePreferences, safeRepository)
     }
 
     @Test
