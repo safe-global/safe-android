@@ -12,7 +12,8 @@ import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.preferences.PreferencesToken
-import pm.gnosis.heimdall.data.remote.TokenServiceApi
+import pm.gnosis.heimdall.data.remote.RelayServiceApi
+import pm.gnosis.heimdall.data.remote.models.CreationEstimatesParams
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -35,7 +36,7 @@ class DefaultTokenRepository @Inject constructor(
     appDb: ApplicationDb,
     private val ethereumRepository: EthereumRepository,
     private val prefs: PreferencesToken,
-    private val tokenServiceApi: TokenServiceApi
+    private val relayServiceApi: RelayServiceApi
 ) : TokenRepository {
 
     private val hardcodedTokens = mapOf(
@@ -81,7 +82,7 @@ class DefaultTokenRepository @Inject constructor(
         }.subscribeOn(Schedulers.io())
 
     override fun loadVerifiedTokens(filter: String): Single<List<ERC20Token>> =
-        tokenServiceApi.tokens(filter).map { resp -> resp.results.map { it.fromNetwork() } }
+        relayServiceApi.tokens(filter).map { resp -> resp.results.map { it.fromNetwork() } }
 
     private fun localToken(contractAddress: Solidity.Address): Single<Optional<ERC20Token>> =
         hardcodedTokens[contractAddress]?.let { Single.just(it.toOptional()) }
@@ -169,9 +170,21 @@ class DefaultTokenRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
 
     override fun loadPaymentTokens(): Single<List<ERC20Token>> =
-        tokenServiceApi.paymentTokens()
+        relayServiceApi.paymentTokens()
             .map { data ->
-                data.results.mapTo(mutableListOf(ERC20Token.ETHER_TOKEN)) { it.fromNetwork() }
+                data.results.mapTo(mutableListOf(ETHER_TOKEN)) { it.fromNetwork() }
+            }
+
+    override fun loadPaymentTokensWithCreationFees(): Single<List<Pair<ERC20Token, BigInteger>>> =
+        relayServiceApi.creationEstimates(CreationEstimatesParams(2))
+            .map { data ->
+                // TODO
+            }
+
+    override fun loadPaymentTokensWithTransactionFees(): Single<List<Pair<ERC20Token, BigInteger>>> =
+        relayServiceApi.paymentTokens()
+            .map { data ->
+                // TODO
             }
 
     private class TokenInfoRequest(

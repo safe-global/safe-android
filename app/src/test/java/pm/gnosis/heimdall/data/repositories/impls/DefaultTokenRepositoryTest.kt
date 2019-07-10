@@ -27,7 +27,6 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import pm.gnosis.heimdall.data.preferences.PreferencesToken
-import pm.gnosis.heimdall.data.remote.TokenServiceApi
 import pm.gnosis.heimdall.data.remote.models.PaginatedResults
 import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfo
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork

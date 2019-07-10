@@ -273,10 +273,11 @@ dependencies {
     })
 
     // Coroutines
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlinx_coroutines"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.kotlinx_coroutines"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.kotlinx_coroutines"
-    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlinx_coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.kotlinx_coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.kotlinx_coroutines"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
     implementation "androidx.room:room-ktx:$versions.androidx_room"
 
     // Testing

@@ -40,7 +40,6 @@ import pm.gnosis.heimdall.data.preferences.PreferencesToken
 import pm.gnosis.heimdall.data.preferences.PreferencesWalletConnect
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
-import pm.gnosis.heimdall.data.remote.TokenServiceApi
 import pm.gnosis.heimdall.data.repositories.impls.RpcProxyApi
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39

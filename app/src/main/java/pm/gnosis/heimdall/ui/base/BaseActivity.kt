@@ -27,7 +27,7 @@ abstract class BaseActivity : AppCompatActivity() {
     @Inject
     lateinit var eventTracker: EventTracker
 
-    protected val disposables = CompositeDisposable()
+    protected val disposables by lazy { CompositeDisposable() }
 
     private var performSecurityCheck = true
 

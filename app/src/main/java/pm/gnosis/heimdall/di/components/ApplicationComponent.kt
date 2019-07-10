@@ -21,6 +21,7 @@ import pm.gnosis.heimdall.services.BridgeService
 import pm.gnosis.heimdall.services.HeimdallFirebaseService
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
+import pm.gnosis.heimdall.di.modules.ApplicationModule.AppCoroutineDispatchers
 import pm.gnosis.heimdall.helpers.AppInitManager
 import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.security.EncryptionManager
@@ -54,6 +55,8 @@ interface ApplicationComponent {
     fun toolbarHelper(): ToolbarHelper
     fun picasso(): Picasso
     fun eip712JsonParser(): EIP712JsonParser
+
+    fun appDispatchers(): AppCoroutineDispatchers
 
     // Base injects
     fun inject(activity: BaseActivity)

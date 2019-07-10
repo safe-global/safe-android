@@ -71,6 +71,46 @@ data class RelayEstimate(
 )
 
 @JsonClass(generateAdapter = true)
+data class RelayEstimates(
+    @Json(name = "safeTxGas")
+    val safeTxGas: String,
+    @Json(name = "operationalGas")
+    val operationalGas: String,
+    @Json(name = "lastUsedNonce")
+    val lastUsedNonce: String?,
+    @Json(name = "estimations")
+    val estimations: List<RelayEstimatesDetails>
+)
+
+@JsonClass(generateAdapter = true)
+data class RelayEstimatesDetails(
+    @Json(name = "dataGas")
+    val dataGas: String,
+    @Json(name = "gasPrice")
+    val gasPrice: String,
+    @Json(name = "gasToken")
+    val gasToken: Solidity.Address
+)
+
+@JsonClass(generateAdapter = true)
+data class CreationEstimatesParams(
+    @Json(name = "numberOwners")
+    val numberOwners: Long
+)
+
+@JsonClass(generateAdapter = true)
+data class CreationEstimates(
+    @Json(name = "gas")
+    val gas: String,
+    @Json(name = "gasPrice")
+    val gasPrice: String,
+    @Json(name = "payment")
+    val payment: String,
+    @Json(name = "paymentToken")
+    val paymentToken: Solidity.Address
+)
+
+@JsonClass(generateAdapter = true)
 data class RelaySafeCreationParams(
     @Json(name = "owners") val owners: List<Solidity.Address>,
     @Json(name = "threshold") val threshold: Int,
