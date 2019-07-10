@@ -26,7 +26,6 @@
             android:layout_height="@dimen/toolbar_height"
             android:background="@drawable/selectable_circle_background"
             android:padding="16dp"
-            android:tint="@color/dark_slate_blue"
             app:layout_constraintStart_toStartOf="@+id/wallet_connect_safe_selection_toolbar_background"
             app:layout_constraintTop_toTopOf="@+id/wallet_connect_safe_selection_toolbar_background"
             app:srcCompat="@drawable/ic_close_24dp" />

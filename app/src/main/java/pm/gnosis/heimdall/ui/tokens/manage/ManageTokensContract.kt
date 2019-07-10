@@ -10,7 +10,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
 
 abstract class ManageTokensContract : ViewModel() {
-    abstract fun observeVerifiedTokens(): ObservableTransformer<Unit, Adapter.Data<ERC20TokenEnabled>>
+    abstract fun observeVerifiedTokens(): ObservableTransformer<String, Adapter.Data<ERC20TokenEnabled>>
     abstract fun enableToken(erC20Token: ERC20Token): Single<Result<Unit>>
     abstract fun disableToken(tokenAddress: Solidity.Address): Single<Result<Unit>>
     abstract fun observeErrors(): Observable<Throwable>
