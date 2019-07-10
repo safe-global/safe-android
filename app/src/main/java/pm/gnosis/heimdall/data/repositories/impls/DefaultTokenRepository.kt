@@ -8,10 +8,10 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
+import pm.gnosis.heimdall.data.preferences.PreferencesToken
 import pm.gnosis.heimdall.data.remote.TokenServiceApi
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -19,12 +19,13 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.data.repositories.models.fromDb
 import pm.gnosis.heimdall.data.repositories.models.toDb
-import pm.gnosis.heimdall.helpers.AppPreferencesManager
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.ERC20
-import pm.gnosis.svalinn.common.utils.edit
-import pm.gnosis.utils.*
+import pm.gnosis.utils.hexAsBigIntegerOrNull
+import pm.gnosis.utils.hexStringToByteArrayOrNull
+import pm.gnosis.utils.nullOnThrow
+import pm.gnosis.utils.utf8String
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,7 +34,7 @@ import javax.inject.Singleton
 class DefaultTokenRepository @Inject constructor(
     appDb: ApplicationDb,
     private val ethereumRepository: EthereumRepository,
-    private val preferencesManager: AppPreferencesManager,
+    private val prefs: PreferencesToken,
     private val tokenServiceApi: TokenServiceApi
 ) : TokenRepository {
 
@@ -157,31 +158,13 @@ class DefaultTokenRepository @Inject constructor(
 
     override fun loadPaymentToken(): Single<ERC20Token> =
         Single.fromCallable {
-            preferencesManager.get(PREF_KEY).run {
-                getString(KEY_CURRENT_PAYMENT_TOKEN_ADDRESS, null)?.let { tokenAddress ->
-                    ERC20Token(
-                        tokenAddress.asEthereumAddress()!!,
-                        getString(KEY_CURRENT_PAYMENT_TOKEN_NAME, null)!!,
-                        getString(KEY_CURRENT_PAYMENT_TOKEN_SYMBOL, null)!!,
-                        getInt(KEY_CURRENT_PAYMENT_TOKEN_DECIMALS, 0),
-                        getString(KEY_CURRENT_PAYMENT_TOKEN_LOGO, null) ?: ""
-                    )
-                } ?: ETHER_TOKEN
-            }
+            prefs.paymendToken
         }
             .subscribeOn(Schedulers.io())
 
     override fun setPaymentToken(token: ERC20Token): Completable =
         Completable.fromAction {
-            preferencesManager.get(PREF_KEY).run {
-                edit {
-                    putString(KEY_CURRENT_PAYMENT_TOKEN_ADDRESS, token.address.asEthereumAddressChecksumString())
-                    putString(KEY_CURRENT_PAYMENT_TOKEN_NAME, token.name)
-                    putString(KEY_CURRENT_PAYMENT_TOKEN_SYMBOL, token.symbol)
-                    putInt(KEY_CURRENT_PAYMENT_TOKEN_DECIMALS, token.decimals)
-                    putString(KEY_CURRENT_PAYMENT_TOKEN_LOGO, token.logoUrl)
-                }
-            }
+            prefs.paymendToken = token
         }
             .subscribeOn(Schedulers.io())
 
@@ -196,13 +179,4 @@ class DefaultTokenRepository @Inject constructor(
         val symbol: EthRequest<String>,
         val decimals: EthRequest<String>
     ) : BulkRequest(name, symbol, decimals)
-
-    companion object {
-        private const val PREF_KEY: String = "TokenRepoPreferences"
-        private const val KEY_CURRENT_PAYMENT_TOKEN_ADDRESS: String = "default_token_repo.string.current_payment_token_address"
-        private const val KEY_CURRENT_PAYMENT_TOKEN_NAME: String = "default_token_repo.string.current_payment_token_name"
-        private const val KEY_CURRENT_PAYMENT_TOKEN_SYMBOL: String = "default_token_repo.string.current_payment_token_symbol"
-        private const val KEY_CURRENT_PAYMENT_TOKEN_DECIMALS: String = "default_token_repo.int.current_payment_token_decimals"
-        private const val KEY_CURRENT_PAYMENT_TOKEN_LOGO: String = "default_token_repo.string.current_payment_token_logo"
-    }
 }

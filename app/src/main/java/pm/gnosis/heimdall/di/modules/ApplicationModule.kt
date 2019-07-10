@@ -36,6 +36,7 @@ import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.adapters.*
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.preferences.PreferencesSafe
+import pm.gnosis.heimdall.data.preferences.PreferencesToken
 import pm.gnosis.heimdall.data.preferences.PreferencesWalletConnect
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
@@ -278,6 +279,10 @@ class ApplicationModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesSafePreferences(@ApplicationContext context: Context) = PreferencesSafe(context)
+
+    @Provides
+    @Singleton
+    fun providesTokenPreferences(@ApplicationContext context: Context) = PreferencesToken(context)
 
     @Provides
     @Singleton
