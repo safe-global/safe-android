@@ -119,25 +119,28 @@ class PaymentTokensViewModel @Inject constructor(
 
     private suspend fun loadPaymentTokensWithBalances() {
         val tokens = tokenRepository.loadPaymentTokens().await()
-        updateState(
-            items = tokenRepository.loadTokenBalances(safe!!, tokens).awaitFirst()
-                .map { (token, balance) ->
-                    val selectable = balance == null || balance > BigInteger.ZERO
-                    val metricValue = balance?.let { token.displayString(balance, false) }
-                    PaymentToken(token, metricValue, selectable)
-                },
-            loading = false
-        )
+        finishLoadingItemsWithMethod(
+            tokenRepository.loadTokenBalances(safe!!, tokens).awaitFirst()
+        ) { balance -> balance == null || balance > BigInteger.ZERO }
     }
 
     private suspend fun loadPaymentTokensWithCreationFees(numbersOwners: Long) {
-        tokenRepository.loadPaymentTokensWithCreationFees(numbersOwners).await()
-        updateState(loading = false)
+        finishLoadingItemsWithMethod(tokenRepository.loadPaymentTokensWithCreationFees(numbersOwners).await())
     }
 
     private suspend fun loadPaymentTokensWithTransactionFees(transaction: SafeTransaction) {
-        tokenRepository.loadPaymentTokensWithTransactionFees(safe!!, transaction).await()
-        updateState(loading = false)
+        finishLoadingItemsWithMethod(tokenRepository.loadPaymentTokensWithTransactionFees(safe!!, transaction).await())
+    }
+
+    private suspend fun finishLoadingItemsWithMethod(
+        itemsWithMetric: List<Pair<ERC20Token, BigInteger?>>,
+        selectableCheck: ((BigInteger?) -> Boolean)? = null
+    ) {
+        val items = itemsWithMetric.map { (token, balance) ->
+            val metricValue = balance?.let { token.displayString(balance, false) }
+            PaymentToken(token, metricValue, selectableCheck?.invoke(balance) ?: true)
+        }
+        updateState(items = items, loading = false)
     }
 
     /*

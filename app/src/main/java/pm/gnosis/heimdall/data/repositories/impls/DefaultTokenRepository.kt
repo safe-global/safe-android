@@ -7,6 +7,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
@@ -202,27 +203,46 @@ class DefaultTokenRepository @Inject constructor(
             }
 
     override fun loadPaymentTokensWithCreationFees(numbersOwners: Long): Single<List<Pair<ERC20Token, BigInteger>>> =
-        relayServiceApi.creationEstimates(CreationEstimatesParams(numbersOwners))
-            .map { data ->
-                TODO("Not implemented yet")
+        Single.zip(
+            relayServiceApi.creationEstimates(CreationEstimatesParams(numbersOwners)),
+            relayServiceApi.paymentTokens(),
+            BiFunction { estimates, paymentTokens ->
+                val mappedTokens = paymentTokens.results.associate { it.address to it.fromNetwork() } + (ETHER_TOKEN.address to ETHER_TOKEN)
+                estimates.mapNotNull {
+                    val token = mappedTokens[it.paymentToken] ?: return@mapNotNull null
+                    val payment = it.payment.decimalAsBigInteger()
+                    token to payment
+                }
             }
+        )
 
     override fun loadPaymentTokensWithTransactionFees(
         safe: Solidity.Address,
         transaction: SafeTransaction
     ): Single<List<Pair<ERC20Token, BigInteger>>> =
-        relayServiceApi.transactionEstimates(
-            safe.asEthereumAddressChecksumString(),
-            EstimatesParams(
-                transaction.wrapped.address.asEthereumAddressChecksumString(),
-                transaction.wrapped.value?.value?.asDecimalString() ?: "0",
-                transaction.wrapped.data ?: "0x",
-                transaction.operation.toInt()
-            )
-        )
-            .map { data ->
-                TODO("Not implemented yet")
+        Single.zip(
+            relayServiceApi.transactionEstimates(
+                safe.asEthereumAddressChecksumString(),
+                EstimatesParams(
+                    transaction.wrapped.address.asEthereumAddressChecksumString(),
+                    transaction.wrapped.value?.value?.asDecimalString() ?: "0",
+                    transaction.wrapped.data ?: "0x",
+                    transaction.operation.toInt()
+                )
+            ),
+            relayServiceApi.paymentTokens(),
+            BiFunction { estimatesData, paymentTokens ->
+                val mappedTokens = paymentTokens.results.associate { it.address to it.fromNetwork() } + (ETHER_TOKEN.address to ETHER_TOKEN)
+                estimatesData.estimations.mapNotNull {
+                    val token = mappedTokens[it.gasToken] ?: return@mapNotNull null
+                    val txGas = estimatesData.safeTxGas.decimalAsBigInteger()
+                    val operationalGas = estimatesData.operationalGas.decimalAsBigInteger()
+                    val baseGas = it.baseGas.decimalAsBigInteger()
+                    val gasPrice = it.gasPrice.decimalAsBigInteger()
+                    token to (txGas + operationalGas + baseGas) * gasPrice
+                }
             }
+        )
 
     private class TokenInfoRequest(
         val name: EthRequest<String>,

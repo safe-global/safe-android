@@ -29,9 +29,9 @@ interface RelayServiceApi {
     @GET("v1/tokens/?limit=1000&ordering=relevance,name")
     fun tokens(@Query("search") search: String): Single<PaginatedResults<TokenInfo>>
 
-    @GET("v2/safes/estimates/")
+    @POST("v2/safes/estimates/")
     fun creationEstimates(@Body params: CreationEstimatesParams): Single<List<CreationEstimates>>
 
-    @GET("v1/safes/{address}/transactions/estimates/")
-    fun transactionEstimates(@Path("address") address: String, @Body params: EstimatesParams): Single<RelayEstimate>
+    @POST("v1/safes/{address}/transactions/estimates/")
+    fun transactionEstimates(@Path("address") address: String, @Body params: EstimatesParams): Single<RelayEstimates>
 }

@@ -96,8 +96,8 @@ data class RelayEstimates(
 
 @JsonClass(generateAdapter = true)
 data class RelayEstimatesDetails(
-    @Json(name = "dataGas")
-    val dataGas: String,
+    @Json(name = "baseGas")
+    val baseGas: String,
     @Json(name = "gasPrice")
     val gasPrice: String,
     @Json(name = "gasToken")

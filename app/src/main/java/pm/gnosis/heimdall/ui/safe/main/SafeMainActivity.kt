@@ -44,7 +44,6 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
-import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
 import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroActivity
 import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder

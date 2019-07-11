@@ -25,19 +25,22 @@ import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.toast
 import pm.gnosis.svalinn.utils.ethereum.ERC67Parser
 import pm.gnosis.utils.asEthereumAddress
+import java.lang.ref.WeakReference
 
 fun errorSnackbar(
     view: View,
     throwable: Throwable,
     duration: Int = Snackbar.LENGTH_LONG,
-    @StringRes defaultErrorMsg: Int = R.string.error_try_again
-) {
+    @StringRes defaultErrorMsg: Int = R.string.error_try_again,
+    action: Pair<String, (View) -> Unit>? = null
+): Snackbar {
     val message = (throwable as? LocalizedException)?.localizedMessage() ?: run {
         @Suppress("ConstantConditionIf")
         if (BuildConfig.VERBOSE_EXCEPTIONS) "${throwable.javaClass.simpleName}: ${throwable.message}"
         else view.context.getString(defaultErrorMsg)
     }
-    snackbar(view, message, duration)
+
+    return snackbar(view, message, duration, action)
 }
 
 fun Context.errorToast(throwable: Throwable, duration: Int = Toast.LENGTH_LONG) {
@@ -108,3 +111,5 @@ private fun TextView.setupEtherscanLink(url: String, text: String) {
         .appendText(" ", ImageSpan(linkDrawable, ImageSpan.ALIGN_BASELINE))
     setOnClickListener { this.context.openUrl(url) }
 }
+
+fun <T> weak(value: T) = WeakReference(value)
