@@ -1,7 +1,6 @@
 package pm.gnosis.heimdall.ui.tokens.payment
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -18,13 +17,9 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.di.modules.ApplicationModule
-import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
-import pm.gnosis.heimdall.ui.splash.ViewAction
-import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.model.Solidity
 import timber.log.Timber
-import java.lang.Exception
 import java.math.BigInteger
 import javax.inject.Inject
 
