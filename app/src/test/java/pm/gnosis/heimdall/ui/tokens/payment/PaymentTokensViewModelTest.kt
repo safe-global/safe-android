@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import io.reactivex.Completable
+import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -57,9 +58,6 @@ class PaymentTokensViewModelTest {
     fun teardown() {
         // reset main after the test is done
         Dispatchers.resetMain()
-        // call this to ensure TestCoroutineDispater doesn't
-        // accidentally carry state to the next test
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
@@ -70,6 +68,7 @@ class PaymentTokensViewModelTest {
         paymentTokensViewModel.setup(TEST_SAFE, PaymentTokensContract.MetricType.Balance)
 
         given(tokenRepository.setPaymentToken(TEST_SAFE, token)).willReturn(Completable.complete())
+        given(tokenRepository.loadPaymentToken(TEST_SAFE)).willReturn(Single.just(token))
 
         paymentTokensViewModel.setPaymentToken(token)
 
