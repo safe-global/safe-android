@@ -291,6 +291,7 @@ dependencies {
     testImplementation "org.powermock:powermock-module-junit4-rule:$versions.powermock"
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.kotlinx_coroutines"
+    testImplementation "androidx.arch.core:core-testing:2.0.0"
 
     // UI tests
     androidTestImplementation "org.mockito:mockito-android:$versions.mockito"
@@ -302,7 +303,6 @@ dependencies {
 
     androidTestImplementation "android.arch.persistence.room:testing:$versions.androidx_room"
 
-    androidTestImplementation "androidx.arch.core:core-testing:2.0.0"
 }
 
 apply plugin: 'com.google.gms.google-services'
