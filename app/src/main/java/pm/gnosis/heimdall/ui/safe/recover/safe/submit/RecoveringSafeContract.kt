@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.safe.recover.safe.submit
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -30,7 +31,7 @@ abstract class RecoveringSafeContract : ViewModel() {
         PENDING, // Transaction has been submitted
     }
 
-    data class RecoveryInfo(val safeAddress: String, val paymentToken: ERC20TokenWithBalance?, val paymentAmount: BigInteger)
+    data class RecoveryInfo(val safeAddress: String, val paymentToken: ERC20TokenWithBalance?, val paymentAmount: BigInteger, val qrCode: Bitmap?)
     data class RecoveryExecuteInfo(val balance: BigInteger, val paymentAmount: BigInteger, val paymentToken: ERC20Token, val canSubmit: Boolean)
 
 }

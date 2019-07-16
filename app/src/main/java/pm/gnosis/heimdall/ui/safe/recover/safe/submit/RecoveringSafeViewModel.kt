@@ -4,6 +4,7 @@ import android.content.Context
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -22,6 +23,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.asEthereumAddress
@@ -35,7 +37,8 @@ class RecoveringSafeViewModel @Inject constructor(
     private val cryptoHelper: CryptoHelper,
     private val executionRepository: TransactionExecutionRepository,
     private val safeRepository: GnosisSafeRepository,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private var qrCodeGenerator: QrCodeGenerator
 ) : RecoveringSafeContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
@@ -82,7 +85,8 @@ class RecoveringSafeViewModel @Inject constructor(
                         RecoveryInfo(
                             safeAddress,
                             null,
-                            requiredFunds
+                            requiredFunds,
+                            null
                         )
                     )
                 },
@@ -94,14 +98,25 @@ class RecoveringSafeViewModel @Inject constructor(
             .onErrorResumeNext { error: Throwable -> errorHandler.single(error) }
             .emitAndNext(
                 emit = {
-                    RecoveryInfo(safeAddress, ERC20TokenWithBalance(it, null), requiredFunds)
+                    RecoveryInfo(safeAddress, ERC20TokenWithBalance(it, null), requiredFunds, null)
                 },
                 next = { token ->
                     tokenRepository.loadTokenBalances(safeAddress.asEthereumAddress()!!, listOf(token))
                         .repeatWhen { it.delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS) }
                         .retryWhen { it.delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS) }
                         .map {
-                            RecoveryInfo(safeAddress, it.first().let { (token, balance) -> ERC20TokenWithBalance(token, balance) }, requiredFunds)
+                            it.first()
+                        }
+                        .flatMap { (token, balance) ->
+                            qrCodeGenerator.generateQrCode(safeAddress)
+                                .toObservable()
+                                .subscribeOn(Schedulers.computation())
+                                .map {
+                                    Triple(token, balance, it)
+                                }
+                        }
+                        .map {( token, balance, qrCode) ->
+                            RecoveryInfo(safeAddress, ERC20TokenWithBalance(token, balance), requiredFunds, qrCode)
                         }
                 }
             )
