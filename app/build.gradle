@@ -290,6 +290,8 @@ dependencies {
     testImplementation "org.powermock:powermock-core:$versions.powermock"
     testImplementation "org.powermock:powermock-module-junit4-rule:$versions.powermock"
 
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.kotlinx_coroutines"
+
     // UI tests
     androidTestImplementation "org.mockito:mockito-android:$versions.mockito"
     androidTestImplementation("androidx.test.espresso:espresso-intents:$versions.espresso")
@@ -299,6 +301,8 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$versions.androidx_test_ext"
 
     androidTestImplementation "android.arch.persistence.room:testing:$versions.androidx_room"
+
+    androidTestImplementation "androidx.arch.core:core-testing:2.0.0"
 }
 
 apply plugin: 'com.google.gms.google-services'
