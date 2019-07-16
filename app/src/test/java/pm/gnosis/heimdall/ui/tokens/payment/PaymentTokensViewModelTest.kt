@@ -21,10 +21,14 @@ class PaymentTokensViewModelTest{
     lateinit var paymentTokensViewModel:PaymentTokensViewModel
 
     @Mock
-    @Before
-    fun init(){
-        paymentTokensViewModel = PaymentTokensViewModel(context,dispatchers,tokenRepository )
-    }
+    lateinit var tokenRepository:TokenRepository
+
+    @Mock
+    lateinit var context: Context
+
+    private val dispatchers= ApplicationModule.AppCoroutineDispatchers(
+        Dispatchers.Unconfined, Dispatchers.Unconfined, Dispatchers.Unconfined,
+        Dispatchers.Unconfined,Dispatchers.Unconfined)
 
     @Test
     fun test_SendPaymentToken(){
