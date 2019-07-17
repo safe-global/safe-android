@@ -45,10 +45,10 @@ class PaymentTokensActivity : ViewModelActivity<PaymentTokensContract>() {
         val transaction = intent.getParcelableExtra<SafeTransaction>(EXTRA_TRANSACTION)
         val metricType = when {
             safe == null -> PaymentTokensContract.MetricType.CreationFees(2)
-            transaction != null -> PaymentTokensContract.MetricType.TransactionFees(transaction)
-            else -> PaymentTokensContract.MetricType.Balance
+            transaction != null -> PaymentTokensContract.MetricType.TransactionFees(safe, transaction)
+            else -> PaymentTokensContract.MetricType.Balance(safe)
         }
-        viewModel.setup(safe, metricType)
+        viewModel.setup(metricType)
         viewModel.state.observe(this, Observer { state ->
             payment_tokens_swipe_refresh.isRefreshing = state.loading
             adapter.submitList(state.items)
@@ -60,7 +60,7 @@ class PaymentTokensActivity : ViewModelActivity<PaymentTokensContract>() {
         payment_tokens_swipe_refresh.setOnRefreshListener { refreshList() }
         payment_tokens_header_metric_lbl.text = getString(
             when (metricType) {
-                PaymentTokensContract.MetricType.Balance ->
+                is PaymentTokensContract.MetricType.Balance ->
                     R.string.balance
                 is PaymentTokensContract.MetricType.TransactionFees, is PaymentTokensContract.MetricType.CreationFees ->
                     R.string.fee

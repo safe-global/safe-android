@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
@@ -27,7 +28,7 @@ abstract class PaymentTokensContract : ViewModel() {
     abstract val state: LiveData<State>
     abstract val paymentToken: LiveData<ERC20Token>
 
-    abstract fun setup(safe: Solidity.Address?, metricType: MetricType)
+    abstract fun setup(metricType: MetricType)
     abstract fun setPaymentToken(token: ERC20Token)
     abstract fun loadPaymentTokens()
 
@@ -40,8 +41,8 @@ abstract class PaymentTokensContract : ViewModel() {
     }
 
     sealed class MetricType {
-        object Balance : MetricType()
-        data class TransactionFees(val transaction: SafeTransaction) : MetricType()
+        data class Balance(val safe: Solidity.Address) : MetricType()
+        data class TransactionFees(val safe: Solidity.Address, val transaction: SafeTransaction) : MetricType()
         data class CreationFees(val numbersOwners: Long) : MetricType()
     }
 }
@@ -59,10 +60,9 @@ class PaymentTokensViewModel @Inject constructor(
     /*
      * Setup logic
      */
-    private var safe: Solidity.Address? = null
     private lateinit var metricType: MetricType
-    override fun setup(safe: Solidity.Address?, metricType: MetricType) {
-        this.safe = safe
+
+    override fun setup(metricType: MetricType) {
         this.metricType = metricType
     }
 
@@ -101,9 +101,9 @@ class PaymentTokensViewModel @Inject constructor(
                 updateState(loading = true)
                 metricType.let {
                     when (it) {
-                        MetricType.Balance -> loadPaymentTokensWithBalances()
+                        is MetricType.Balance -> loadPaymentTokensWithBalances(it.safe)
                         is MetricType.CreationFees -> loadPaymentTokensWithCreationFees(it.numbersOwners)
-                        is MetricType.TransactionFees -> loadPaymentTokensWithTransactionFees(it.transaction)
+                        is MetricType.TransactionFees -> loadPaymentTokensWithTransactionFees(it.safe, it.transaction)
                     }
                 }
             } catch (e: Exception) {
@@ -112,10 +112,10 @@ class PaymentTokensViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadPaymentTokensWithBalances() {
+    private suspend fun loadPaymentTokensWithBalances(safe: Solidity.Address) {
         val tokens = tokenRepository.loadPaymentTokens().await()
         finishLoadingItemsWithMethod(
-            tokenRepository.loadTokenBalances(safe!!, tokens).awaitFirst()
+            tokenRepository.loadTokenBalances(safe, tokens).awaitFirst()
         ) { balance -> balance == null || balance > BigInteger.ZERO }
     }
 
@@ -123,8 +123,8 @@ class PaymentTokensViewModel @Inject constructor(
         finishLoadingItemsWithMethod(tokenRepository.loadPaymentTokensWithCreationFees(numbersOwners).await())
     }
 
-    private suspend fun loadPaymentTokensWithTransactionFees(transaction: SafeTransaction) {
-        finishLoadingItemsWithMethod(tokenRepository.loadPaymentTokensWithTransactionFees(safe!!, transaction).await())
+    private suspend fun loadPaymentTokensWithTransactionFees(safe: Solidity.Address, transaction: SafeTransaction) {
+        finishLoadingItemsWithMethod(tokenRepository.loadPaymentTokensWithTransactionFees(safe, transaction).await())
     }
 
     private suspend fun finishLoadingItemsWithMethod(
@@ -143,6 +143,10 @@ class PaymentTokensViewModel @Inject constructor(
      */
     private val paymentTokenChannel = BroadcastChannel<ERC20Token>(Channel.CONFLATED)
 
+    private val paymentTokenErrorHandler = CoroutineExceptionHandler { _, e ->
+        viewModelScope.launch { updateState(viewAction = ViewAction.ShowError(errorHandler.translate(e))) }
+    }
+
     override val paymentToken = liveData {
         // Set initial value on channel
         loadPaymentToken()
@@ -150,17 +154,24 @@ class PaymentTokensViewModel @Inject constructor(
     }
 
     private suspend fun loadPaymentToken() {
-        viewModelScope.launch(dispatchers.background) {
-            paymentTokenChannel.send(tokenRepository.loadPaymentToken(safe).await())
+        viewModelScope.launch(dispatchers.background + paymentTokenErrorHandler) {
+            paymentTokenChannel.send(tokenRepository.loadPaymentToken(metricType.safe()).await())
         }
     }
 
     override fun setPaymentToken(token: ERC20Token) {
-        viewModelScope.launch(dispatchers.background) {
-            tokenRepository.setPaymentToken(safe, token).await()
+        viewModelScope.launch(dispatchers.background + paymentTokenErrorHandler) {
+            tokenRepository.setPaymentToken(metricType.safe(), token).await()
             paymentTokenChannel.send(token)
         }
     }
+
+    private fun MetricType.safe() =
+        when (this) {
+            is MetricType.Balance -> safe
+            is MetricType.TransactionFees -> safe
+            is MetricType.CreationFees -> null
+        }
 
     /*
      * Clean up

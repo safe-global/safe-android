@@ -3,7 +3,11 @@ package pm.gnosis.tests.utils
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
+import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
+import pm.gnosis.heimdall.ui.transactions.builder.TransactionBuilderTest
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.Transaction
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import java.math.BigInteger
 
@@ -22,3 +26,23 @@ fun testRecoveringSafe(
     signatures: List<Signature> = emptyList()
 ) =
     RecoveringSafe(address, transactionHash, recoverer, data, txGas, dataGas, operationalGas, gasToken, gasPrice, nonce, operation, signatures)
+
+
+fun testTransaction(
+    address: Solidity.Address,
+    value: Wei? = null,
+    data: String? = null
+) =
+    Transaction(
+        address,
+        value = value,
+        data = data
+    )
+
+fun testSafeTransaction(
+    address: Solidity.Address,
+    transaction: Transaction = testTransaction(address),
+    operation: TransactionExecutionRepository.Operation = TransactionExecutionRepository.Operation.CALL
+) =
+    SafeTransaction(transaction, operation)
+
