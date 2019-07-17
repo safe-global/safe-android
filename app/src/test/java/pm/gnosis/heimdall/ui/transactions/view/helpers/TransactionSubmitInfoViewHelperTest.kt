@@ -326,7 +326,7 @@ class TransactionSubmitInfoViewHelperTest {
         then(dataBalanceLabel).should().setTextColor(R.color.battleship_grey)
         then(dataBalanceLabel).shouldHaveNoMoreInteractions()
 
-        then(dataFees).should().text = "-0.1 ETH"
+        then(dataFees).should().text = "0.1 ETH"
         then(dataFees).shouldHaveNoMoreInteractions()
 
         then(dataError).should().visibility = View.GONE
@@ -384,7 +384,7 @@ class TransactionSubmitInfoViewHelperTest {
         then(dataBalanceLabel).should().setTextColor(R.color.tomato)
         then(dataBalanceLabel).shouldHaveNoMoreInteractions()
 
-        then(dataFees).should().text = "-0.1 ETH"
+        then(dataFees).should().text = "0.1 ETH"
         then(dataFees).shouldHaveNoMoreInteractions()
 
         then(dataError).should().visibility = View.VISIBLE
@@ -442,7 +442,7 @@ class TransactionSubmitInfoViewHelperTest {
         then(dataBalanceLabel).should().setTextColor(R.color.battleship_grey)
         then(dataBalanceLabel).shouldHaveNoMoreInteractions()
 
-        then(dataFees).should().text = "-1 GT"
+        then(dataFees).should().text = "1 GT"
         then(dataFees).shouldHaveNoMoreInteractions()
 
         then(dataError).should().visibility = View.GONE
