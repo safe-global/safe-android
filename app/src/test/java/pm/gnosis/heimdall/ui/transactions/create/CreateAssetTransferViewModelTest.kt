@@ -55,6 +55,16 @@ class CreateAssetTransferViewModelTest {
     }
 
     @Test
+    fun loadPaymentToken() {
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        val testObserver = TestObserver<ERC20Token>()
+        viewModel.loadPaymentToken(TEST_SAFE).subscribe(testObserver)
+        testObserver.assertValues(ERC20Token.ETHER_TOKEN)
+        then(tokenRepositoryMock).should().loadPaymentToken(TEST_SAFE)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
     fun processInputEtherTransfer() {
         given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))

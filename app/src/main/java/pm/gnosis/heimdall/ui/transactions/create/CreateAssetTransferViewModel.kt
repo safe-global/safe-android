@@ -6,6 +6,7 @@ import com.gojuno.koptional.Optional
 import com.gojuno.koptional.toOptional
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -34,6 +35,9 @@ class CreateAssetTransferViewModel @Inject constructor(
 ) : CreateAssetTransferContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
+
+    override fun loadPaymentToken(safe: Solidity.Address): Single<ERC20Token> =
+        tokenRepository.loadPaymentToken(safe)
 
     override fun processInput(
         safe: Solidity.Address,

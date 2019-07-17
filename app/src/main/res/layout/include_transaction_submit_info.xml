@@ -102,11 +102,11 @@
             android:gravity="end"
             android:paddingTop="12dp"
             android:text=""
-            android:textColor="@color/tomato"
+            android:textColor="@color/battleship_grey_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/include_transaction_submit_info_data_fees_info"
             app:layout_constraintTop_toBottomOf="@+id/include_transaction_submit_info_data_asset_balance_label"
-            tools:text="-0.0023 ETH" />
+            tools:text="0.0023 ETH" />
 
         <TextView
             android:id="@+id/include_transaction_submit_info_data_gas_token_balance_label"

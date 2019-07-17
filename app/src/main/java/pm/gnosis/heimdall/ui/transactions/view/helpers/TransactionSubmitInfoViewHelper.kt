@@ -107,7 +107,7 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
                 view.include_transaction_submit_info_data_gas_token_balance_label.setTextColor(balanceColor)
                 view.include_transaction_submit_info_data_gas_token_balance_value.setTextColor(balanceColor)
                 view.include_transaction_submit_info_data_gas_token_balance_value.text = update.gasToken.displayString()
-                view.include_transaction_submit_info_data_fees_value.text = "-${update.gasToken.token.displayString(update.networkFee)}"
+                view.include_transaction_submit_info_data_fees_value.text = update.gasToken.token.displayString(update.networkFee)
                 view.include_transaction_submit_info_data_fees_error.visible(!update.sufficientFunds)
                 view.include_transaction_submit_info_confirmations_group.visible(update.sufficientFunds)
                 view.include_transaction_submit_info_retry_button.visible(!update.sufficientFunds)

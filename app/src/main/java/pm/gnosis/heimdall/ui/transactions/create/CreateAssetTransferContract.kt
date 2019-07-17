@@ -4,12 +4,17 @@ import android.content.Intent
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
+import io.reactivex.Single
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
 import java.math.BigInteger
 
 abstract class CreateAssetTransferContract : ViewModel() {
+
+    abstract fun loadPaymentToken(safe: Solidity.Address): Single<ERC20Token>
+
     abstract fun processInput(
         safe: Solidity.Address,
         tokenAddress: Solidity.Address,

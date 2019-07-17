@@ -12,6 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.layout_create_asset_transfer.*
 import pm.gnosis.heimdall.R
@@ -23,15 +24,18 @@ import pm.gnosis.heimdall.helpers.AddressInputHelper
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract.ViewUpdate
 import pm.gnosis.heimdall.utils.InfoTipDialogBuilder
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.underline
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
+import timber.log.Timber
 import javax.inject.Inject
 
 class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContract>() {
@@ -46,6 +50,8 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
     lateinit var picasso: Picasso
 
     private val receiverInputSubject = BehaviorSubject.create<Solidity.Address>()
+
+    private var paymentToken: ERC20Token? = null
 
     private lateinit var addressInputHelper: AddressInputHelper
 
@@ -89,6 +95,8 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
             finish()
             return
         }
+
+        disableContinue()
         val reviewEvents = layout_create_asset_transfer_continue_button.clicks()
         disposables +=
             Observable.combineLatest(
@@ -122,6 +130,21 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
                 InfoTipDialogBuilder.build(this, R.layout.dialog_network_fee, R.string.ok).show()
             }
 
+        disposables += viewModel.loadPaymentToken(safe)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(onError = {
+                Timber.e(it)
+                updatePaymentToken(null)
+            }) {
+                updatePaymentToken(it)
+            }
+
+        disposables += layout_create_asset_transfer_fees_value.clicks()
+            .mergeWith(layout_create_asset_transfer_fees_settings.clicks())
+            .subscribeBy {
+                startActivity(PaymentTokensActivity.createIntent(this, safe))
+            }
+
         addressHelper.populateAddressInfo(
             layout_create_asset_transfer_safe_address,
             layout_create_asset_transfer_safe_name,
@@ -132,12 +155,23 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
         disposables += toolbarHelper.setupShadow(layout_create_asset_transfer_toolbar_shadow, layout_create_asset_transfer_title_content_scroll)
     }
 
+    private fun updatePaymentToken(token: ERC20Token?) {
+        // Clear if previous token
+        if (layout_create_asset_transfer_fees_value.text.toString() == paymentToken?.symbol)
+            layout_create_asset_transfer_fees_value.text = null
+        paymentToken = token
+        // Set new token if no estimate
+        if (layout_create_asset_transfer_fees_value.text.isEmpty()) {
+            layout_create_asset_transfer_fees_value.text = token?.symbol?.underline()
+        }
+    }
+
     private fun applyUpdate(update: ViewUpdate) {
         when (update) {
             is ViewUpdate.Estimate -> {
                 layout_create_asset_transfer_gas_token_balance_after_transfer_value.text =
                     update.gasToken.displayString()
-                layout_create_asset_transfer_fees_value.text = "-${update.gasToken.token.displayString(update.networkFee)}"
+                layout_create_asset_transfer_fees_value.text = update.gasToken.token.displayString(update.networkFee).underline()
                 layout_create_asset_transfer_continue_button.visible(update.sufficientFunds)
                 layout_create_asset_transfer_fees_error.visible(!update.sufficientFunds)
 
@@ -166,8 +200,10 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
                 layout_create_asset_transfer_safe_balance.text = update.value.displayString()
                 layout_create_asset_transfer_input_label.text = update.value.token.symbol
                 layout_create_asset_transfer_input_icon.setImageDrawable(null)
-                if (update.value.token == ETHER_TOKEN) layout_create_asset_transfer_input_icon.setImageResource(R.drawable.ic_ether_symbol)
-                else picasso.load(update.value.token.logoUrl).into(layout_create_asset_transfer_input_icon)
+                if (update.value.token == ETHER_TOKEN)
+                    layout_create_asset_transfer_input_icon.setImageResource(R.drawable.ic_ether_symbol)
+                else if (update.value.token.logoUrl.isBlank())
+                    picasso.load(update.value.token.logoUrl).into(layout_create_asset_transfer_input_icon)
             }
             is ViewUpdate.InvalidInput -> {
                 layout_create_asset_transfer_input_value.setTextColor(
@@ -187,7 +223,7 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
         layout_create_asset_transfer_asset_balance_after_transfer_value.visible(false)
         layout_create_asset_transfer_fees_error.visible(false)
         layout_create_asset_transfer_gas_token_balance_after_transfer_value.text = "-"
-        layout_create_asset_transfer_fees_value.text = "-"
+        layout_create_asset_transfer_fees_value.text = paymentToken?.symbol?.underline()
         layout_create_asset_transfer_continue_button.visible(false)
     }
 
