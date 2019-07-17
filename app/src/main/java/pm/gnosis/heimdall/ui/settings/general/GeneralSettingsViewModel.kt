@@ -11,7 +11,6 @@ import javax.inject.Inject
 
 class GeneralSettingsViewModel @Inject constructor(
     private val encryptionManager: EncryptionManager,
-    private val tokenRepository: TokenRepository,
     private val safeRepository: GnosisSafeRepository
 ) : GeneralSettingsContract() {
     override fun isFingerprintAvailable() = encryptionManager.canSetupFingerprint()
@@ -20,9 +19,6 @@ class GeneralSettingsViewModel @Inject constructor(
         encryptionManager.clearFingerprintData()
             .andThen(Single.just(Unit))
             .mapToResult()
-
-    override fun loadPaymentToken() =
-        tokenRepository.loadPaymentToken()
 
     override fun loadSafeAdresses(): Single<List<String>> =
         safeRepository.observeAllSafes()

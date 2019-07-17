@@ -7,6 +7,10 @@
         android:title="@string/edit_safe_name"
         app:showAsAction="never" />
     <item
+        android:id="@+id/safe_details_menu_payment_token"
+        android:title="@string/fee_method"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/safe_details_menu_wallet_connect"
         android:visible="false"
         android:title="@string/wallet_connect"

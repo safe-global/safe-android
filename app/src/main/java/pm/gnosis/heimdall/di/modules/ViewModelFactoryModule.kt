@@ -55,8 +55,6 @@ import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsViewModel
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordContract
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordViewModel
-import pm.gnosis.heimdall.ui.settings.general.payment.PaymentTokenContract
-import pm.gnosis.heimdall.ui.settings.general.payment.PaymentTokenViewModel
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.splash.SplashViewModel
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
@@ -166,11 +164,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(PasswordSetupContract::class)
     abstract fun bindsPasswordSetupContract(viewModel: PasswordSetupViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(PaymentTokenContract::class)
-    abstract fun bindsPaymentTokenContract(viewModel: PaymentTokenViewModel): ViewModel
 
     @Binds
     @IntoMap

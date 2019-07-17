@@ -24,8 +24,6 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.settings.general.changepassword.PasswordChangeActivity
 import pm.gnosis.heimdall.ui.settings.general.fingerprint.FingerprintDialog
-import pm.gnosis.heimdall.ui.settings.general.payment.PaymentTokenDialog
-import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.svalinn.common.utils.openUrl
 import pm.gnosis.svalinn.common.utils.snackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
@@ -55,11 +53,6 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
         disposables += layout_general_settings_password_background.clicks()
             .subscribeBy(onNext = {
                 startActivity(PasswordChangeActivity.createIntent(this))
-            }, onError = Timber::e)
-
-        disposables += layout_general_settings_payment_token_background.clicks()
-            .subscribeBy(onNext = {
-                showPaymentTokenDialog()
             }, onError = Timber::e)
 
         disposables += layout_general_settings_tos_background.clicks()
@@ -93,10 +86,6 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
             }, onError = Timber::e)
 
         disposables += toolbarHelper.setupShadow(layout_general_settings_toolbar_shadow, layout_general_settings_content_scroll)
-
-        disposables += viewModel.loadPaymentToken()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(Timber::e, ::displayPaymentToken)
     }
 
     private fun setupFingerprintAction() {
@@ -139,17 +128,6 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
         }
     }
 
-    private fun showPaymentTokenDialog() {
-        val dialog = PaymentTokenDialog.create()
-        dialog.show(supportFragmentManager, null)
-        dialog.successListener = {
-            displayPaymentToken(it)
-        }
-        dialog.errorListener = {
-            errorSnackbar(layout_general_settings_fingerprint_switch, it)
-        }
-    }
-
     private fun openPlayStore() {
         try {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
@@ -188,10 +166,6 @@ class GeneralSettingsActivity : ViewModelActivity<GeneralSettingsContract>() {
         } catch (ex: ActivityNotFoundException) {
             snackbar(layout_general_settings_feedback_background, getString(R.string.email_chooser_error), Snackbar.LENGTH_SHORT)
         }
-    }
-
-    private fun displayPaymentToken(token: ERC20Token) {
-        layout_general_settings_payment_token_info.text = "${token.symbol} (${token.name})"
     }
 
     companion object {
