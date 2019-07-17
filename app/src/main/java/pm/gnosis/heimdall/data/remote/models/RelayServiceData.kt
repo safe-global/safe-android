@@ -111,7 +111,7 @@ data class CreationEstimatesParams(
 )
 
 @JsonClass(generateAdapter = true)
-data class CreationEstimates(
+data class CreationEstimate(
     @Json(name = "gas")
     val gas: String,
     @Json(name = "gasPrice")

@@ -30,7 +30,7 @@ interface RelayServiceApi {
     fun tokens(@Query("search") search: String): Single<PaginatedResults<TokenInfo>>
 
     @POST("v2/safes/estimates/")
-    fun creationEstimates(@Body params: CreationEstimatesParams): Single<List<CreationEstimates>>
+    fun creationEstimates(@Body params: CreationEstimatesParams): Single<List<CreationEstimate>>
 
     @POST("v1/safes/{address}/transactions/estimates/")
     fun transactionEstimates(@Path("address") address: String, @Body params: EstimatesParams): Single<RelayEstimates>

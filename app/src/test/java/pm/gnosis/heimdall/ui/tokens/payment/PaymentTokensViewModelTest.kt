@@ -513,8 +513,8 @@ class PaymentTokensViewModelTest {
 
     companion object {
         private val TEST_SAFE = "0xA7e15e2e76Ab469F8681b576cFF168F37Aa246EC".asEthereumAddress()!!
-        val TEST_TOKEN = ERC20Token(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10)
-        val TEST_TOKEN_2 = ERC20Token(Solidity.Address(BigInteger.TEN), "Another Token", "AT", 12)
+        private val TEST_TOKEN = ERC20Token(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10)
+        private val TEST_TOKEN_2 = ERC20Token(Solidity.Address(BigInteger.TEN), "Another Token", "AT", 12)
         private val TEST_TRANSACTION = testSafeTransaction(TEST_SAFE)
     }
 }
