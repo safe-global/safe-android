@@ -11,6 +11,7 @@ import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import javax.inject.Inject
 
+@Deprecated("See PaymentTokensViewModel")
 class PaymentTokenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val tokenRepository: TokenRepository
@@ -25,7 +26,7 @@ class PaymentTokenViewModel @Inject constructor(
             .onErrorResumeNext { errorHandler.single(it) }
 
     override fun setPaymentToken(token: ERC20Token): Single<Result<ERC20Token>> =
-        tokenRepository.setPaymentToken(token)
+        tokenRepository.setPaymentToken(null, token)
             .andThen(Single.just(token))
             .mapToResult()
 }

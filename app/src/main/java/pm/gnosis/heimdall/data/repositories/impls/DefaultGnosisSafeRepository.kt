@@ -1,8 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
-import com.gojuno.koptional.None
-import com.gojuno.koptional.toOptional
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -25,7 +23,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger
@@ -39,7 +36,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
     private val accountsRepository: AccountsRepository,
     private val addressBookRepository: AddressBookRepository,
     private val ethereumRepository: EthereumRepository,
-    private val pushServiceRepository: PushServiceRepository
+    private val pushServiceRepository: PushServiceRepository,
+    private val tokenRepository: TokenRepository
 ) : GnosisSafeRepository {
 
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
@@ -311,7 +309,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .map { it.map { tx -> TransactionStatus(tx.id, tx.timestamp, false) } }
 
     override fun saveOwner(safeAddress: Solidity.Address, safeOwner: AccountsRepository.SafeOwner) =
-        accountsRepository.saveOwner(safeAddress, safeOwner)
+        tokenRepository.loadPaymentToken(safeAddress)
+            .flatMapCompletable { accountsRepository.saveOwner(safeAddress, safeOwner, it) }
             .doOnComplete { pushServiceRepository.syncAuthentication(true) }
             .subscribeOn(Schedulers.io())
 

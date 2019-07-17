@@ -40,7 +40,6 @@ import pm.gnosis.heimdall.data.preferences.PreferencesToken
 import pm.gnosis.heimdall.data.preferences.PreferencesWalletConnect
 import pm.gnosis.heimdall.data.remote.PushServiceApi
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
-import pm.gnosis.heimdall.data.remote.TokenServiceApi
 import pm.gnosis.heimdall.data.repositories.impls.RpcProxyApi
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.mnemonic.Bip39
@@ -72,6 +71,7 @@ class ApplicationModule(private val application: Application) {
     }
 
     data class AppCoroutineDispatchers(
+        val background: CoroutineDispatcher,
         val database: CoroutineDispatcher,
         val disk: CoroutineDispatcher,
         val network: CoroutineDispatcher,
@@ -89,6 +89,7 @@ class ApplicationModule(private val application: Application) {
     @Provides
     fun provideDispatchers(schedulers: AppRxSchedulers) =
         AppCoroutineDispatchers(
+            background = Dispatchers.Default,
             database = schedulers.database.asCoroutineDispatcher(),
             disk = schedulers.disk.asCoroutineDispatcher(),
             network = schedulers.network.asCoroutineDispatcher(),
@@ -189,17 +190,6 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesTokenServiceApi(moshi: Moshi, client: OkHttpClient): TokenServiceApi =
-        Retrofit.Builder()
-            .client(client)
-            .baseUrl(BuildConfig.RELAY_SERVICE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
-            .build()
-            .create(TokenServiceApi::class.java)
-
-    @Provides
-    @Singleton
     @Named(INFURA_REST_CLIENT)
     fun providesInfuraOkHttpClient(okHttpClient: OkHttpClient, @Named(InterceptorsModule.REST_CLIENT_INTERCEPTORS) interceptors: @JvmSuppressWildcards List<Interceptor>): OkHttpClient =
         okHttpClient.newBuilder().apply {
@@ -245,6 +235,7 @@ class ApplicationModule(private val application: Application) {
     fun providesDb(@ApplicationContext context: Context) =
         Room.databaseBuilder(context, ApplicationDb::class.java, ApplicationDb.DB_NAME)
             .addMigrations(ApplicationDb.MIGRATION_1_2)
+            .addMigrations(ApplicationDb.MIGRATION_2_3)
             .build()
 
     @Provides

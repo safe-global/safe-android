@@ -1,6 +1,8 @@
 package pm.gnosis.heimdall.data.db.models
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository.Operation.Companion.fromInt
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
@@ -38,7 +40,22 @@ data class GnosisSafeInfoDb(
     val ownerAddress: Solidity.Address,
 
     @ColumnInfo(name = COL_OWNER_PRIVATE_KEY)
-    var ownerPrivateKey: EncryptedByteArray
+    var ownerPrivateKey: EncryptedByteArray,
+
+    @ColumnInfo(name = COL_PAYMENT_TOKEN_ADDRESS)
+    var paymentTokenAddress: Solidity.Address,
+
+    @ColumnInfo(name = COL_PAYMENT_TOKEN_SYMBOL)
+    var paymentTokenSymbol: String,
+
+    @ColumnInfo(name = COL_PAYMENT_TOKEN_NAME)
+    var paymentTokenName: String,
+
+    @ColumnInfo(name = COL_PAYMENT_TOKEN_DECIMALS)
+    var paymentTokenDecimals: Int,
+
+    @ColumnInfo(name = COL_PAYMENT_TOKEN_ICON)
+    var paymentTokenIcon: String?
 
 ) {
     companion object {
@@ -46,6 +63,11 @@ data class GnosisSafeInfoDb(
         const val COL_SAFE_ADDRESS = "safe_address"
         const val COL_OWNER_ADDRESS = "owner_address"
         const val COL_OWNER_PRIVATE_KEY = "owner_private_key"
+        const val COL_PAYMENT_TOKEN_ADDRESS = "payment_token_address"
+        const val COL_PAYMENT_TOKEN_SYMBOL = "payment_token_symbol"
+        const val COL_PAYMENT_TOKEN_NAME = "payment_token_name"
+        const val COL_PAYMENT_TOKEN_DECIMALS = "payment_token_decimals"
+        const val COL_PAYMENT_TOKEN_ICON = "payment_token_icon"
     }
 }
 

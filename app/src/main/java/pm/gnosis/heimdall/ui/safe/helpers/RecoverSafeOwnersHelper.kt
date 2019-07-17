@@ -5,11 +5,10 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
-import pm.gnosis.crypto.KeyPair
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.MultiSend
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
@@ -18,13 +17,11 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
-import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.mnemonic.Bip39ValidationResult
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.mapToResult
@@ -236,7 +233,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
         signingAccounts: SigningAccounts,
         safeOwner: AccountsRepository.SafeOwner
     ) =
-        tokenRepository.loadPaymentToken()
+        tokenRepository.loadPaymentToken(safeInfo.address)
             .flatMap { executionRepository.loadExecuteInformation(safeInfo.address, it.address, transaction, safeOwner) }
             .flatMap { executionInfo ->
                 executionRepository.calculateHash(

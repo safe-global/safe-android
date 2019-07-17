@@ -39,6 +39,7 @@ import pm.gnosis.heimdall.ui.settings.general.payment.PaymentTokenContract
 import pm.gnosis.heimdall.ui.splash.SplashContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensContract
+import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensContract
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenContract
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionContract
@@ -131,6 +132,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesPaymentTokenContract(provider: ViewModelProvider) = provider[PaymentTokenContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesPaymentTokensContract(provider: ViewModelProvider) = provider[PaymentTokensContract::class.java]
 
     @Provides
     @ForView

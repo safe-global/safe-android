@@ -252,7 +252,7 @@
     <string name="status">Estado</string>
     <string name="transaction_fee">Coste da transacción</string>
     <string name="later">Máis tarde</string>
-    <string name="payment_token">Pagamento con tokens (para costes da rede)</string>
+    <string name="payment_token">Pagamento con tokens</string>
     <string name="safe_created_notification_message">A túa Safe coa dirección %s foi creada.</string>
     <string name="safe_created_notification_title">Safe creada</string>
     <string name="app_version">Versión da aplicación: %s</string>

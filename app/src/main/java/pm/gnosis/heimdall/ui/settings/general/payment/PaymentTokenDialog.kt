@@ -78,7 +78,7 @@ class PaymentTokenDialog : BaseDialog() {
 
     private fun onPaymentTokensLoaded(tokens: Adapter.Data<ERC20Token>) {
         adapter.updateData(tokens)
-        dialog.dialog_payment_token_loading.visible(false)
+        dialog?.dialog_payment_token_loading?.visible(false)
     }
 
     private fun onPaymentTokensError(throwable: Throwable) {

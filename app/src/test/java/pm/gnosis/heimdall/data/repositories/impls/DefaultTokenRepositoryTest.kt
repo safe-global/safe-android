@@ -27,10 +27,11 @@ import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
 import pm.gnosis.heimdall.data.db.models.ERC20TokenDb
 import pm.gnosis.heimdall.data.preferences.PreferencesToken
-import pm.gnosis.heimdall.data.remote.TokenServiceApi
-import pm.gnosis.heimdall.data.remote.models.PaginatedResults
+import pm.gnosis.heimdall.data.remote.RelayServiceApi
+import pm.gnosis.heimdall.data.remote.models.*
 import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfo
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
+import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
@@ -39,9 +40,7 @@ import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ERC20
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
-import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import pm.gnosis.tests.utils.MockUtils
-import pm.gnosis.tests.utils.TestPreferences
+import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.toHexString
 import java.math.BigInteger
@@ -68,7 +67,7 @@ class DefaultTokenRepositoryTest {
     private lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
-    private lateinit var tokenServiceApiMock: TokenServiceApi
+    private lateinit var relayServiceApiMock: RelayServiceApi
 
     private val testPreferences = TestPreferences()
 
@@ -87,7 +86,7 @@ class DefaultTokenRepositoryTest {
             dbMock,
             ethereumRepositoryMock,
             tokenPrefs,
-            tokenServiceApiMock
+            relayServiceApiMock
         )
     }
 
@@ -423,9 +422,9 @@ class DefaultTokenRepositoryTest {
             requests.forEachIndexed { index, request ->
                 when (request) {
                     is EthBalance -> request.response =
-                            expectedResults[index] as EthRequest.Response<Wei>
+                        expectedResults[index] as EthRequest.Response<Wei>
                     is EthCall -> request.response =
-                            expectedResults[index] as EthRequest.Response<String>
+                        expectedResults[index] as EthRequest.Response<String>
                     else ->
                         throw UnsupportedOperationException()
                 }
@@ -525,27 +524,27 @@ class DefaultTokenRepositoryTest {
             logoUri = ""
         )
         val verifiedTokensList = PaginatedResults(listOf(verifiedToken))
-        given(tokenServiceApiMock.tokens(MockUtils.any())).willReturn(Single.just(verifiedTokensList))
+        given(relayServiceApiMock.tokens(MockUtils.any())).willReturn(Single.just(verifiedTokensList))
 
         val randomSearch = UUID.randomUUID().toString()
         repository.loadVerifiedTokens(randomSearch).subscribe(testObserver)
 
         testObserver.assertResult(listOf(verifiedToken.fromNetwork()))
-        then(tokenServiceApiMock).should().tokens(randomSearch)
-        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
+        then(relayServiceApiMock).should().tokens(randomSearch)
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun loadVerifiedTokensError() {
         val testObserver = TestObserver<List<ERC20Token>>()
         val exception = Exception()
-        given(tokenServiceApiMock.tokens(MockUtils.any())).willReturn(Single.error(exception))
+        given(relayServiceApiMock.tokens(MockUtils.any())).willReturn(Single.error(exception))
 
         repository.loadVerifiedTokens("").subscribe(testObserver)
 
         testObserver.assertError(exception)
-        then(tokenServiceApiMock).should().tokens("")
-        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
+        then(relayServiceApiMock).should().tokens("")
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -558,9 +557,9 @@ class DefaultTokenRepositoryTest {
     }
 
     @Test
-    fun setAndloadPaymentToken() {
+    fun setAndloadDefaultPaymentToken() {
         val setObserver = TestObserver<Unit>()
-        repository.setPaymentToken(TEST_TOKEN).subscribe(setObserver)
+        repository.setPaymentToken(null, TEST_TOKEN).subscribe(setObserver)
         setObserver.assertResult()
 
         val token = tokenPrefs.paymendToken
@@ -605,26 +604,172 @@ class DefaultTokenRepositoryTest {
         val testObserver = TestObserver<List<ERC20Token>>()
         val tokenInfo = TokenInfo(TEST_TOKEN.address, TEST_TOKEN.name, TEST_TOKEN.symbol, TEST_TOKEN.decimals, TEST_TOKEN.logoUrl)
         val result = PaginatedResults(listOf(tokenInfo))
-        given(tokenServiceApiMock.paymentTokens()).willReturn(Single.just(result))
+        given(relayServiceApiMock.paymentTokens()).willReturn(Single.just(result))
 
         repository.loadPaymentTokens().subscribe(testObserver)
 
         testObserver.assertResult(listOf(ERC20Token.ETHER_TOKEN, TEST_TOKEN))
-        then(tokenServiceApiMock).should().paymentTokens()
-        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
+        then(relayServiceApiMock).should().paymentTokens()
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun loadPaymentTokensError() {
         val testObserver = TestObserver<List<ERC20Token>>()
         val exception = Exception()
-        given(tokenServiceApiMock.paymentTokens()).willReturn(Single.error(exception))
+        given(relayServiceApiMock.paymentTokens()).willReturn(Single.error(exception))
 
         repository.loadPaymentTokens().subscribe(testObserver)
 
         testObserver.assertError(exception)
-        then(tokenServiceApiMock).should().paymentTokens()
-        then(tokenServiceApiMock).shouldHaveNoMoreInteractions()
+        then(relayServiceApiMock).should().paymentTokens()
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadPaymentTokensWithCreationFee() {
+        val result = PaginatedResults(
+            listOf(
+                TokenInfo(TEST_TOKEN.address, TEST_TOKEN.name, TEST_TOKEN.symbol, TEST_TOKEN.decimals, TEST_TOKEN.logoUrl),
+                TokenInfo("0x23".asEthereumAddress()!!, "Token Without Estimate", "TWE", 0, "")
+            )
+        )
+        given(relayServiceApiMock.paymentTokens()).willReturn(Single.just(result))
+        val creationEstimatesResult = listOf(
+            CreationEstimate("123", "1", "7331", TEST_TOKEN.address),
+            CreationEstimate("No token info", "should not matter", "ignored", "0xdead".asEthereumAddress()!!)
+        )
+        given(relayServiceApiMock.creationEstimates(MockUtils.any())).willReturn(Single.just(creationEstimatesResult))
+
+        val testObserver = TestObserver<List<Pair<ERC20Token, BigInteger>>>()
+        repository.loadPaymentTokensWithCreationFees(23).subscribe(testObserver)
+
+        testObserver.assertResult(listOf(TEST_TOKEN to BigInteger.valueOf(7331)))
+        then(relayServiceApiMock).should().paymentTokens()
+        then(relayServiceApiMock).should().creationEstimates(CreationEstimatesParams(23))
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadPaymentTokensWithCreationFeeErrorLoadingPaymentTokens() {
+        val exception = Exception()
+        given(relayServiceApiMock.paymentTokens()).willReturn(Single.error(exception))
+        val creationEstimatesSingle = TestSingleFactory<List<CreationEstimate>>()
+        given(relayServiceApiMock.creationEstimates(MockUtils.any())).willReturn(creationEstimatesSingle.get())
+
+        val testObserver = TestObserver<List<Pair<ERC20Token, BigInteger>>>()
+        repository.loadPaymentTokensWithCreationFees(23).subscribe(testObserver)
+
+        testObserver.assertError(exception)
+        creationEstimatesSingle.assertAllCanceled()
+        then(relayServiceApiMock).should().paymentTokens()
+        then(relayServiceApiMock).should().creationEstimates(CreationEstimatesParams(23))
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadPaymentTokensWithCreationFeeErrorLoadingCreationEstimates() {
+        val tokenInfoSingle = TestSingleFactory<PaginatedResults<TokenInfo>>()
+        given(relayServiceApiMock.paymentTokens()).willReturn(tokenInfoSingle.get())
+        val exception = Exception()
+        given(relayServiceApiMock.creationEstimates(MockUtils.any())).willReturn(Single.error(exception))
+
+        val testObserver = TestObserver<List<Pair<ERC20Token, BigInteger>>>()
+        repository.loadPaymentTokensWithCreationFees(23).subscribe(testObserver)
+
+        testObserver.assertError(exception)
+        tokenInfoSingle.assertAllCanceled()
+        then(relayServiceApiMock).should().paymentTokens()
+        then(relayServiceApiMock).should().creationEstimates(CreationEstimatesParams(23))
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadPaymentTokensWithTransactionFee() {
+        val transaction = testSafeTransaction(TEST_SAFE)
+        val result = PaginatedResults(
+            listOf(
+                TokenInfo(TEST_TOKEN.address, TEST_TOKEN.name, TEST_TOKEN.symbol, TEST_TOKEN.decimals, TEST_TOKEN.logoUrl),
+                TokenInfo("0x23".asEthereumAddress()!!, "Token Without Estimate", "TWE", 0, "")
+            )
+        )
+        given(relayServiceApiMock.paymentTokens()).willReturn(Single.just(result))
+        val estimates = listOf(
+            RelayEstimatesDetails("123", "7331", TEST_TOKEN.address),
+            RelayEstimatesDetails("No token info", "should not matter", "0xdead".asEthereumAddress()!!)
+        )
+        val estimatesResult = RelayEstimates("10", "11", "5", estimates)
+        given(relayServiceApiMock.transactionEstimates(MockUtils.any(), MockUtils.any())).willReturn(Single.just(estimatesResult))
+
+        val testObserver = TestObserver<List<Pair<ERC20Token, BigInteger>>>()
+        repository.loadPaymentTokensWithTransactionFees(TEST_SAFE, transaction).subscribe(testObserver)
+
+        testObserver.assertResult(listOf(TEST_TOKEN to BigInteger.valueOf((123 + 11 + 10) * 7331)))
+        then(relayServiceApiMock).should().paymentTokens()
+        then(relayServiceApiMock).should().transactionEstimates(
+            TEST_SAFE.asEthereumAddressChecksumString(),
+            EstimatesParams(
+                transaction.wrapped.address.asEthereumAddressChecksumString(),
+                "0",
+                "0x",
+                0
+            )
+        )
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadPaymentTokensWithTransactionFeeErrorLoadingPaymentTokens() {
+        val exception = Exception()
+        given(relayServiceApiMock.paymentTokens()).willReturn(Single.error(exception))
+        val transactionEstimatesSingle = TestSingleFactory<RelayEstimates>()
+        given(relayServiceApiMock.transactionEstimates(MockUtils.any(), MockUtils.any())).willReturn(transactionEstimatesSingle.get())
+
+        val transaction =
+            testSafeTransaction(TEST_SAFE, testTransaction(TEST_SAFE, Wei(BigInteger.ONE)), TransactionExecutionRepository.Operation.DELEGATE_CALL)
+        val testObserver = TestObserver<List<Pair<ERC20Token, BigInteger>>>()
+        repository.loadPaymentTokensWithTransactionFees(TEST_SAFE, transaction).subscribe(testObserver)
+
+        testObserver.assertError(exception)
+        transactionEstimatesSingle.assertAllCanceled()
+        then(relayServiceApiMock).should().paymentTokens()
+        then(relayServiceApiMock).should().transactionEstimates(
+            TEST_SAFE.asEthereumAddressChecksumString(),
+            EstimatesParams(
+                transaction.wrapped.address.asEthereumAddressChecksumString(),
+                "1",
+                "0x",
+                1
+            )
+        )
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun loadPaymentTokensWithTransactionFeeErrorLoadingTransactionEstimates() {
+        val tokenInfoSingle = TestSingleFactory<PaginatedResults<TokenInfo>>()
+        given(relayServiceApiMock.paymentTokens()).willReturn(tokenInfoSingle.get())
+        val exception = Exception()
+        given(relayServiceApiMock.transactionEstimates(MockUtils.any(), MockUtils.any())).willReturn(Single.error(exception))
+
+        val transaction =
+            testSafeTransaction(TEST_SAFE, testTransaction(TEST_SAFE, data = "0xdeadbeef"), TransactionExecutionRepository.Operation.CREATE)
+        val testObserver = TestObserver<List<Pair<ERC20Token, BigInteger>>>()
+        repository.loadPaymentTokensWithTransactionFees(TEST_SAFE, transaction).subscribe(testObserver)
+
+        testObserver.assertError(exception)
+        tokenInfoSingle.assertAllCanceled()
+        then(relayServiceApiMock).should().paymentTokens()
+        then(relayServiceApiMock).should().transactionEstimates(
+            TEST_SAFE.asEthereumAddressChecksumString(),
+            EstimatesParams(
+                transaction.wrapped.address.asEthereumAddressChecksumString(),
+                "0",
+                "0xdeadbeef",
+                2
+            )
+        )
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
     }
 
     private fun assertEqualRequests(expected: List<EthRequest<*>>, actual: List<EthRequest<*>>) {
@@ -656,6 +801,7 @@ class DefaultTokenRepositoryTest {
     }
 
     companion object {
-        val TEST_TOKEN = ERC20Token(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10)
+        private val TEST_SAFE = "0xA7e15e2e76Ab469F8681b576cFF168F37Aa246EC".asEthereumAddress()!!
+        private val TEST_TOKEN = ERC20Token(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10)
     }
 }

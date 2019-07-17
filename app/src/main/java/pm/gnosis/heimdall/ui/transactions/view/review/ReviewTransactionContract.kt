@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.ui.transactions.view.review
 
 import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
-import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.ViewUpdate

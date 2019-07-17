@@ -1,11 +1,8 @@
 package pm.gnosis.heimdall.ui.walletconnect.link
 
 import androidx.lifecycle.ViewModel
-import com.gojuno.koptional.None
-import com.gojuno.koptional.Optional
 import io.reactivex.Flowable
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.utils.scanToAdapterData

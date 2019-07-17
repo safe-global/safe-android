@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.ui.splash
 
-import androidx.room.EmptyResultSetException
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.Before
@@ -11,12 +10,8 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import pm.gnosis.model.Solidity
-import pm.gnosis.svalinn.accounts.base.models.Account
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
-import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
 class SplashViewModelTest {

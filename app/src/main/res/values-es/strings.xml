@@ -252,7 +252,7 @@ Sin ambas, no podrás recuperar el acceso a tu Safe ni al dinero.</string>
     <string name="status">Estado</string>
     <string name="transaction_fee">Coste de la transacción</string>
     <string name="later">Más tarde</string>
-    <string name="payment_token">Pago con tokens (para costes de red)</string>
+    <string name="payment_token">Pago con tokens</string>
     <string name="safe_created_notification_message">Tu Safe con la dirección %s ha sido creada.</string>
     <string name="safe_created_notification_title">Safe creada</string>
     <string name="app_version">Versión de la aplicación: %s</string>

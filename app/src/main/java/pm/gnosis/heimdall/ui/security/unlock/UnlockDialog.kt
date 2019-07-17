@@ -67,7 +67,7 @@ class UnlockDialog : BaseDialog() {
 
     override fun onResume() {
         super.onResume()
-        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     override fun onStart() {
@@ -190,7 +190,7 @@ class UnlockDialog : BaseDialog() {
         super.onStop()
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         fingerPrintDisposable?.dispose()
         disposables.clear()
         super.onDismiss(dialog)

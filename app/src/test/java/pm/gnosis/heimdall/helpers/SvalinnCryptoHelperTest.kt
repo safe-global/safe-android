@@ -1,9 +1,8 @@
 package pm.gnosis.heimdall.helpers
 
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-
-import org.junit.Assert.*
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger

@@ -20,19 +20,17 @@ import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.*
+import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
-import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
-import java.lang.RuntimeException
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 

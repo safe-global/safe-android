@@ -15,7 +15,6 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.include_transaction_submit_info.*
 import kotlinx.android.synthetic.main.layout_review_transaction.*
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
@@ -35,7 +34,6 @@ import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
-import java.lang.Exception
 import javax.inject.Inject
 
 class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>(), UnlockDialog.UnlockCallback {

@@ -273,10 +273,11 @@ dependencies {
     })
 
     // Coroutines
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlinx_coroutines"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.kotlinx_coroutines"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.kotlinx_coroutines"
-    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlinx_coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.kotlinx_coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.kotlinx_coroutines"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
     implementation "androidx.room:room-ktx:$versions.androidx_room"
 
     // Testing
@@ -289,6 +290,9 @@ dependencies {
     testImplementation "org.powermock:powermock-core:$versions.powermock"
     testImplementation "org.powermock:powermock-module-junit4-rule:$versions.powermock"
 
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.kotlinx_coroutines"
+    testImplementation "androidx.arch.core:core-testing:2.0.0"
+
     // UI tests
     androidTestImplementation "org.mockito:mockito-android:$versions.mockito"
     androidTestImplementation("androidx.test.espresso:espresso-intents:$versions.espresso")
@@ -298,6 +302,7 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$versions.androidx_test_ext"
 
     androidTestImplementation "android.arch.persistence.room:testing:$versions.androidx_room"
+
 }
 
 apply plugin: 'com.google.gms.google-services'

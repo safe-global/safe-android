@@ -318,7 +318,7 @@
                     android:id="@+id/layout_safe_main_navigation_settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="layout_safe_main_tokens,layout_safe_main_general_settings,layout_safe_main_address_book,layout_safe_main_wallet_connect_container,layout_safe_main_account_container,layout_safe_main_debug_settings_container"
+                    app:constraint_referenced_ids="layout_safe_main_tokens,layout_safe_main_general_settings,layout_safe_main_address_book,layout_safe_main_debug_settings_container"
                     tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 

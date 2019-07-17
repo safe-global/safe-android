@@ -2,7 +2,6 @@ package pm.gnosis.heimdall.ui.safe.recover.recoveryphrase
 
 import android.content.Context
 import com.squareup.moshi.Moshi
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.Sha3Utils
@@ -14,7 +13,6 @@ import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.nullOnThrow

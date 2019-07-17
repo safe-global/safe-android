@@ -5,11 +5,11 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okio.ByteString
 import pm.gnosis.crypto.KeyGenerator
-import pm.gnosis.crypto.KeyPair
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeInfoDb
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
@@ -62,9 +62,20 @@ class SafeAccountRepository @Inject constructor(
             }
         }
 
-    override fun saveOwner(safeAddress: Solidity.Address, safeOwner: AccountsRepository.SafeOwner) =
+    override fun saveOwner(safeAddress: Solidity.Address, safeOwner: AccountsRepository.SafeOwner, paymentToken: ERC20Token) =
         Completable.fromCallable {
-            safeDao.insertSafeInfo(GnosisSafeInfoDb(safeAddress, safeOwner.address, safeOwner.privateKey))
+            safeDao.insertSafeInfo(
+                GnosisSafeInfoDb(
+                    safeAddress,
+                    safeOwner.address,
+                    safeOwner.privateKey,
+                    paymentToken.address,
+                    paymentToken.symbol,
+                    paymentToken.name,
+                    paymentToken.decimals,
+                    paymentToken.logoUrl
+                )
+            )
         }
             .subscribeOn(Schedulers.io())
 

@@ -56,7 +56,7 @@ class CreateAssetTransferViewModelTest {
 
     @Test
     fun processInputEtherTransfer() {
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         val balancesSubject = PublishSubject.create<List<Pair<ERC20Token, BigInteger?>>>()
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(balancesSubject)
@@ -156,7 +156,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValueCount(8)
         testObserver.assertValueAt(7) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
-        then(tokenRepositoryMock).should(times(3)).loadPaymentToken()
+        then(tokenRepositoryMock).should(times(3)).loadPaymentToken(TEST_SAFE)
         then(tokenRepositoryMock).should().loadToken(TEST_ETHER_TOKEN)
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(ERC20Token.ETHER_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
@@ -166,7 +166,7 @@ class CreateAssetTransferViewModelTest {
 
     @Test
     fun processInputTokenTransfer() {
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(TEST_GAS_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(TEST_GAS_TOKEN))
         val balancesSubject = PublishSubject.create<List<Pair<ERC20Token, BigInteger?>>>()
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(balancesSubject)
         val tokenSingleFactory = TestSingleFactory<ERC20Token>()
@@ -277,7 +277,7 @@ class CreateAssetTransferViewModelTest {
         testObserver.assertValueAt(7) { it is DataResult && it.data is CreateAssetTransferContract.ViewUpdate.StartReview }
 
         then(tokenRepositoryMock).should().loadToken(TEST_TOKEN_ADDRESS)
-        then(tokenRepositoryMock).should(times(3)).loadPaymentToken()
+        then(tokenRepositoryMock).should(times(3)).loadPaymentToken(TEST_SAFE)
         then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, listOf(TEST_TOKEN))
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
         then(relayRepositoryMock).should(times(3)).loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())

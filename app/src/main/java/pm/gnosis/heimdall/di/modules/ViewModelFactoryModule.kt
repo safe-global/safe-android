@@ -63,6 +63,8 @@ import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesContract
 import pm.gnosis.heimdall.ui.tokens.balances.TokenBalancesViewModel
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensContract
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensViewModel
+import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensContract
+import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensViewModel
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenContract
 import pm.gnosis.heimdall.ui.tokens.receive.ReceiveTokenViewModel
 import pm.gnosis.heimdall.ui.transactions.create.CreateAssetTransferContract
@@ -169,6 +171,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(PaymentTokenContract::class)
     abstract fun bindsPaymentTokenContract(viewModel: PaymentTokenViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PaymentTokensContract::class)
+    abstract fun bindsPaymentTokensContract(viewModel: PaymentTokensViewModel): ViewModel
 
     @Binds
     @IntoMap

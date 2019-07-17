@@ -39,11 +39,6 @@ subprojects {
                     minSdkVersion 19
                     targetSdkVersion 28
                 }
-
-                buildTypes {
-                    dev {
-                    }
-                }
                 lintOptions {
                     abortOnError false
                 }

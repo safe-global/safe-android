@@ -21,6 +21,7 @@ import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
+import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.tests.utils.TestCompletable
 
 @RunWith(MockitoJUnitRunner::class)
@@ -96,7 +97,7 @@ class GeneralSettingsViewModelTest {
     @Test
     fun loadPaymentToken() {
         val testObserver = TestObserver<ERC20Token>()
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
 
         viewModel.loadPaymentToken().subscribe(testObserver)
 
@@ -109,7 +110,7 @@ class GeneralSettingsViewModelTest {
     fun loadPaymentTokenError() {
         val exception = Exception()
         val testObserver = TestObserver<ERC20Token>()
-        given(tokenRepositoryMock.loadPaymentToken()).willReturn(Single.error(exception))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.error(exception))
 
         viewModel.loadPaymentToken().subscribe(testObserver)
 
