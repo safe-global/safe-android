@@ -1,16 +1,14 @@
 package pm.gnosis.heimdall.ui.safe.recover.recoveryphrase
 
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeInfo
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.ui.safe.helpers.RecoverSafeOwnersHelper
-import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import javax.inject.Inject
 
 class ConfirmNewRecoveryPhraseViewModel @Inject constructor(

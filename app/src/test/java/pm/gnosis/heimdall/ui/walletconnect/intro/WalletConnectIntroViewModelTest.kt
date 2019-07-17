@@ -3,10 +3,8 @@ package pm.gnosis.heimdall.ui.walletconnect.intro
 import io.reactivex.Completable
 import io.reactivex.observers.TestObserver
 import org.junit.Before
-import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then

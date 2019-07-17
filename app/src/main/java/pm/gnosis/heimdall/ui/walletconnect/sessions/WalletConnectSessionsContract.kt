@@ -4,7 +4,6 @@ import androidx.annotation.IdRes
 import androidx.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.ui.base.Adapter

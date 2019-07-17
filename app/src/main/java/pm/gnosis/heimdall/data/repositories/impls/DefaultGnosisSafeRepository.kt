@@ -1,8 +1,6 @@
 package pm.gnosis.heimdall.data.repositories.impls
 
 import android.content.Context
-import com.gojuno.koptional.None
-import com.gojuno.koptional.toOptional
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -25,7 +23,6 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.removeHexPrefix
 import java.math.BigInteger

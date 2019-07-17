@@ -12,7 +12,6 @@ import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.nullOnThrow
 import javax.inject.Inject

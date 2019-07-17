@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
-import pm.gnosis.heimdall.ui.safe.connect.ConnectExtensionActivity
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress

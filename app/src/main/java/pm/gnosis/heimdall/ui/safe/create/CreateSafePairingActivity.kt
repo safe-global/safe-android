@@ -8,10 +8,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_pairing.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
-import pm.gnosis.heimdall.ui.safe.connect.ConnectExtensionActivity
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.model.Solidity
-import pm.gnosis.utils.asEthereumAddress
 import timber.log.Timber
 
 class CreateSafePairingActivity : PairingActivity() {

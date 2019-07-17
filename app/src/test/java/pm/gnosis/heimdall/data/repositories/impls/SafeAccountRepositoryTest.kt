@@ -3,14 +3,12 @@ package pm.gnosis.heimdall.data.repositories.impls
 import androidx.room.EmptyResultSetException
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
+import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Test
-
-import org.junit.Assert.*
 import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
 import org.mockito.Captor
 import org.mockito.Mock
@@ -34,7 +32,6 @@ import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
 

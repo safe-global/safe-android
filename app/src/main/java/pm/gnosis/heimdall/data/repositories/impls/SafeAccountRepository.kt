@@ -5,7 +5,6 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okio.ByteString
 import pm.gnosis.crypto.KeyGenerator
-import pm.gnosis.crypto.KeyPair
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.GnosisSafeInfoDb
@@ -16,7 +15,6 @@ import pm.gnosis.mnemonic.Bip39
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.accounts.data.db.AccountsDatabase
-import pm.gnosis.svalinn.common.utils.ERC20
 import pm.gnosis.svalinn.security.EncryptionManager
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.utils.asBigInteger

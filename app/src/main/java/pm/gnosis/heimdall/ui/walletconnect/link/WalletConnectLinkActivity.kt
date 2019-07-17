@@ -14,7 +14,6 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivity
-import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsContract
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import timber.log.Timber
