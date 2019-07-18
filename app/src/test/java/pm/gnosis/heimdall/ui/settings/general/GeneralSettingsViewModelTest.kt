@@ -34,16 +34,13 @@ class GeneralSettingsViewModelTest {
     private lateinit var encryptionManagerMock: EncryptionManager
 
     @Mock
-    private lateinit var tokenRepositoryMock: TokenRepository
-
-    @Mock
     private lateinit var safeRepositoryMock: GnosisSafeRepository
 
     private lateinit var viewModel: GeneralSettingsViewModel
 
     @Before
     fun setUp() {
-        viewModel = GeneralSettingsViewModel(encryptionManagerMock, tokenRepositoryMock, safeRepositoryMock)
+        viewModel = GeneralSettingsViewModel(encryptionManagerMock, safeRepositoryMock)
     }
 
     @Test
@@ -92,30 +89,5 @@ class GeneralSettingsViewModelTest {
         then(encryptionManagerMock).should().clearFingerprintData()
         then(encryptionManagerMock).shouldHaveNoMoreInteractions()
         testObserver.assertResult(ErrorResult(exception))
-    }
-
-    @Test
-    fun loadPaymentToken() {
-        val testObserver = TestObserver<ERC20Token>()
-        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
-
-        viewModel.loadPaymentToken().subscribe(testObserver)
-
-        then(tokenRepositoryMock).should().loadPaymentToken()
-        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
-        testObserver.assertResult(ERC20Token.ETHER_TOKEN)
-    }
-
-    @Test
-    fun loadPaymentTokenError() {
-        val exception = Exception()
-        val testObserver = TestObserver<ERC20Token>()
-        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.error(exception))
-
-        viewModel.loadPaymentToken().subscribe(testObserver)
-
-        then(tokenRepositoryMock).should().loadPaymentToken()
-        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
-        testObserver.assertFailure(Predicate { it == exception })
     }
 }

@@ -8,6 +8,5 @@ import pm.gnosis.svalinn.common.utils.Result
 abstract class GeneralSettingsContract : ViewModel() {
     abstract fun isFingerprintAvailable(): Boolean
     abstract fun clearFingerprintData(): Single<Result<Unit>>
-    abstract fun loadPaymentToken(): Single<ERC20Token>
     abstract fun loadSafeAdresses(): Single<List<String>>
 }

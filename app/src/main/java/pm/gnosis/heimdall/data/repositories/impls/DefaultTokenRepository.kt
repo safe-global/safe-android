@@ -162,7 +162,7 @@ class DefaultTokenRepository @Inject constructor(
     }
 
     override fun loadPaymentToken(safe: Solidity.Address?): Single<ERC20Token> =
-        (safe?.let { safeDao.loadSafeInfo(safe) } ?: Single.error(NoSuchElementException()))
+        (safe?.let { safeDao.loadSafeInfo(safe).subscribeOn(Schedulers.io()) } ?: Single.error(NoSuchElementException()))
             .map {
                 ERC20Token(it.paymentTokenAddress, it.paymentTokenName, it.paymentTokenSymbol, it.paymentTokenDecimals, it.paymentTokenIcon ?: "")
             }
@@ -175,7 +175,7 @@ class DefaultTokenRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
 
     override fun setPaymentToken(safe: Solidity.Address?, token: ERC20Token): Completable =
-        (safe?.let { safeDao.loadSafeInfo(safe) } ?: Single.error(NoSuchElementException()))
+        (safe?.let { safeDao.loadSafeInfo(safe).subscribeOn(Schedulers.io()) } ?: Single.error(NoSuchElementException()))
             .map {
                 safeDao.insertSafeInfo(
                     it.copy(
