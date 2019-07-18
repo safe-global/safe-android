@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.base.LifecycleAdapter
+import pm.gnosis.heimdall.utils.loadTokenImage
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -39,7 +40,7 @@ class ManageTokensAdapter @Inject constructor(
             itemView.layout_manage_tokens_name.text = data.erc20Token.name
             itemView.layout_manage_tokens_switch.isChecked = data.enabled
 
-            picasso.load(data.erc20Token.logoUrl).into(itemView.layout_manage_tokens_icon)
+            itemView.layout_manage_tokens_icon.loadTokenImage(picasso, data.erc20Token)
             current = data
         }
 

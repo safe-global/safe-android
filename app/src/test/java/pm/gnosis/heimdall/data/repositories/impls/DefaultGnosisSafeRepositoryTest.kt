@@ -4,6 +4,7 @@ import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.functions.Predicate
 import io.reactivex.observers.TestObserver
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -13,26 +14,33 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
-import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.BuildConfig
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
 import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
-import pm.gnosis.heimdall.data.db.models.GnosisSafeInfoDb
+import pm.gnosis.heimdall.data.remote.RelayServiceApi
+import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation
+import pm.gnosis.heimdall.data.remote.models.RelaySafeCreationParams
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.SafeDeployment
 import pm.gnosis.model.Solidity
+import pm.gnosis.model.SolidityBase
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.toBytes
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
@@ -66,15 +74,14 @@ class DefaultGnosisSafeRepositoryTest {
     private lateinit var ethereumRepositoryMock: EthereumRepository
 
     @Mock
+    private lateinit var relayServiceApiMock: RelayServiceApi
+
+    @Mock
     private lateinit var tokenRepositoryMock: TokenRepository
 
     @Mock
     private lateinit var pushRepositoryMock: PushServiceRepository
-
-    @Captor
-    private lateinit var safeInfoCaptor: ArgumentCaptor<GnosisSafeInfoDb>
-
-
+    
     @Before
     fun setUp() {
         given(dbMock.gnosisSafeDao()).willReturn(safeDaoMock)
@@ -86,7 +93,449 @@ class DefaultGnosisSafeRepositoryTest {
             addressBookRepository,
             ethereumRepositoryMock,
             pushRepositoryMock,
+            relayServiceApiMock,
             tokenRepositoryMock
+        )
+    }
+
+    private fun calculateSafeAddress(setupData: String, saltNonce: Long): Solidity.Address {
+        val setupDataHash = Sha3Utils.keccak(setupData.hexToByteArray())
+        val salt = Sha3Utils.keccak(setupDataHash + Solidity.UInt256(saltNonce.toBigInteger()).encode().hexToByteArray())
+
+
+        val deploymentCode = PROXY_CODE + MASTER_COPY_ADDRESS.encode()
+        val codeHash = Sha3Utils.keccak(deploymentCode.hexToByteArray())
+        val create2Hash = Sha3Utils.keccak(byteArrayOf(0xff.toByte()) + PROXY_FACTORY_ADDRESS.value.toBytes(20) + salt + codeHash)
+        return Solidity.Address(BigInteger(1, create2Hash.copyOfRange(12, 32)))
+    }
+
+    private fun generateSafeCreationData(
+        owners: List<Solidity.Address>,
+        payment: BigInteger = BigInteger.ZERO,
+        paymentToken: ERC20Token = ETHER_TOKEN,
+        funder: Solidity.Address = TX_ORIGIN_ADDRESS
+    ): String = GnosisSafe.Setup.encode(
+        _owners = SolidityBase.Vector(owners),
+        _threshold = Solidity.UInt256(if (owners.size == 3) BigInteger.ONE else 2.toBigInteger()),
+        to = Solidity.Address(BigInteger.ZERO),
+        data = Solidity.Bytes(byteArrayOf()),
+        paymentToken = paymentToken.address,
+        payment = Solidity.UInt256(payment),
+        paymentReceiver = funder
+    ) + "0000000000000000000000000000000000000000000000000000000000000000"
+
+    @Test
+    fun triggerSafeDeployment() {
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        var saltNonce: Long? = null
+        var safeAddress: Solidity.Address? = null
+        var response: RelaySafeCreation? = null
+
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(TEST_TOKEN))
+        given(relayServiceApiMock.safeCreation(MockUtils.any())).willAnswer {
+            val request = it.arguments.first() as RelaySafeCreationParams
+            saltNonce = request.saltNonce
+            val setupData = generateSafeCreationData(
+                listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                BigInteger.TEN,
+                TEST_TOKEN
+            )
+            safeAddress = calculateSafeAddress(setupData, saltNonce!!)
+            response = RelaySafeCreation(
+                setupData = setupData,
+                safe = safeAddress!!,
+                masterCopy = MASTER_COPY_ADDRESS,
+                proxyFactory = PROXY_FACTORY_ADDRESS,
+                payment = BigInteger.TEN,
+                paymentToken = TEST_TOKEN.address,
+                paymentReceiver = TX_ORIGIN_ADDRESS
+            )
+            Single.just(response!!)
+        }
+
+        val testObserver = TestObserver.create<SafeDeployment>()
+        val owners = listOf(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1)
+        repository.triggerSafeDeployment(owners, 2).subscribe(testObserver)
+
+        testObserver.assertResult(SafeDeployment(safeAddress!!, TEST_TOKEN.address, BigInteger.TEN))
+
+        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+
+        then(relayServiceApiMock).should()
+            .safeCreation(
+                RelaySafeCreationParams(
+                    listOf(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                    2, saltNonce!!, TEST_TOKEN.address
+                )
+            )
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+    }
+
+
+    @Test
+    fun triggerSafeDeploymentAddressesNotMatching() {
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        val safeAddress = "ffff".asEthereumAddress()!!
+        var saltNonce: Long? = null
+        var response: RelaySafeCreation?
+
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ETHER_TOKEN))
+    
+        given(relayServiceApiMock.safeCreation(MockUtils.any())).willAnswer {
+            val request = it.arguments.first() as RelaySafeCreationParams
+            saltNonce = request.saltNonce
+            val setupData = generateSafeCreationData(
+                listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                BigInteger.ZERO, ETHER_TOKEN, FUNDER_ADDRESS
+            )
+            response = RelaySafeCreation(
+                setupData = setupData,
+                safe = safeAddress,
+                masterCopy = MASTER_COPY_ADDRESS,
+                proxyFactory = PROXY_FACTORY_ADDRESS,
+                payment = BigInteger.ZERO,
+                paymentToken = ETHER_TOKEN.address,
+                paymentReceiver = FUNDER_ADDRESS
+            )
+            Single.just(response!!)
+        }
+
+        val testObserver = TestObserver.create<SafeDeployment>()
+        val owners = listOf(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1)
+        repository.triggerSafeDeployment(owners, 2).subscribe(testObserver)
+
+        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+
+        then(relayServiceApiMock).should()
+            .safeCreation(
+                RelaySafeCreationParams(
+                    listOf(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                    2, saltNonce!!, ETHER_TOKEN.address
+                )
+            )
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+
+        testObserver.assertFailure(Predicate { error ->
+            error is IllegalStateException && error.message == "Unexpected safe address returned"
+        })
+    }
+
+    private fun testSafeCreationChecks(
+        ownerAddress: Solidity.Address,
+        mnemonicAddress0: Solidity.Address,
+        mnemonicAddress1: Solidity.Address,
+        chromeExtensionAddress: Solidity.Address?,
+        responseAnswer: (RelaySafeCreationParams) -> Single<RelaySafeCreation>,
+        failurePredicate: Predicate<Throwable>,
+        paymentToken: ERC20Token = ETHER_TOKEN
+    ) {
+        var saltNonce: Long? = null
+
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(paymentToken))
+        given(relayServiceApiMock.safeCreation(MockUtils.any())).willAnswer {
+            val request = it.arguments.first() as RelaySafeCreationParams
+            saltNonce = request.saltNonce
+            responseAnswer(request)
+        }
+
+        val testObserver = TestObserver.create<SafeDeployment>()
+        val owners = listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1)
+        repository.triggerSafeDeployment(owners, 2).subscribe(testObserver)
+
+        then(tokenRepositoryMock).should().loadPaymentToken()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
+
+        then(relayServiceApiMock).should()
+            .safeCreation(RelaySafeCreationParams(
+                listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                chromeExtensionAddress?.run { 2 } ?: 1, saltNonce!!, paymentToken.address)
+            )
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+
+        testObserver.assertFailure(failurePredicate)
+    }
+
+    @Test
+    fun triggerSafeDeploymentDifferentPaymentToken() {
+        val safeAddress = "ffff".asEthereumAddress()!!
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        testSafeCreationChecks(
+            ownerAddress, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
+            { request ->
+                Single.just(
+                    RelaySafeCreation(
+                        setupData = generateSafeCreationData(
+                            listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                            BigInteger.ZERO, PAYMENT_TOKEN
+                        ),
+                        safe = safeAddress,
+                        masterCopy = MASTER_COPY_ADDRESS,
+                        proxyFactory = PROXY_FACTORY_ADDRESS,
+                        payment = BigInteger.ZERO,
+                        paymentToken = PAYMENT_TOKEN.address,
+                        paymentReceiver = TX_ORIGIN_ADDRESS
+                    )
+                )
+            },
+            Predicate { error ->
+                error is IllegalStateException && error.message == "Unexpected payment token returned"
+            }
+        )
+    }
+
+    @Test
+    fun triggerSafeDeploymentDifferentMasterCopy() {
+        val safeAddress = "ffff".asEthereumAddress()!!
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        testSafeCreationChecks(
+            ownerAddress, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
+            { request ->
+                Single.just(
+                    RelaySafeCreation(
+                        setupData = generateSafeCreationData(
+                            listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                            BigInteger.ZERO, ETHER_TOKEN
+                        ),
+                        safe = safeAddress,
+                        masterCopy = PAYMENT_TOKEN.address,
+                        proxyFactory = PROXY_FACTORY_ADDRESS,
+                        payment = BigInteger.ZERO,
+                        paymentToken = ETHER_TOKEN.address,
+                        paymentReceiver = TX_ORIGIN_ADDRESS
+                    )
+                )
+            },
+            Predicate { error ->
+                error is IllegalStateException && error.message == "Unexpected master copy returned"
+            }
+        )
+    }
+
+    @Test
+    fun triggerSafeDeploymentDifferentProxyFactory() {
+        val safeAddress = "ffff".asEthereumAddress()!!
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        testSafeCreationChecks(
+            ownerAddress, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
+            { request ->
+                Single.just(
+                    RelaySafeCreation(
+                        setupData = generateSafeCreationData(
+                            listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                            BigInteger.ZERO, ETHER_TOKEN
+                        ),
+                        safe = safeAddress,
+                        masterCopy = MASTER_COPY_ADDRESS,
+                        proxyFactory = PAYMENT_TOKEN.address,
+                        payment = BigInteger.ZERO,
+                        paymentToken = ETHER_TOKEN.address,
+                        paymentReceiver = TX_ORIGIN_ADDRESS
+                    )
+                )
+            },
+            Predicate { error ->
+                error is IllegalStateException && error.message == "Unexpected proxy factory returned"
+            }
+        )
+    }
+
+    @Test
+    fun triggerSafeDeploymentUnknownReceiver() {
+        val safeAddress = "ffff".asEthereumAddress()!!
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        testSafeCreationChecks(
+            ownerAddress, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
+            { request ->
+                Single.just(
+                    RelaySafeCreation(
+                        setupData = generateSafeCreationData(
+                            listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                            BigInteger.ZERO, ETHER_TOKEN, PAYMENT_TOKEN.address
+                        ),
+                        safe = safeAddress,
+                        masterCopy = MASTER_COPY_ADDRESS,
+                        proxyFactory = PROXY_FACTORY_ADDRESS,
+                        payment = BigInteger.ZERO,
+                        paymentToken = ETHER_TOKEN.address,
+                        paymentReceiver = PAYMENT_TOKEN.address
+                    )
+                )
+            },
+            Predicate { error ->
+                error is IllegalStateException && error.message == "Unexpected payment receiver returned"
+            }
+        )
+    }
+
+    @Test
+    fun triggerSafeDeploymentInvalidSetupData() {
+        val safeAddress = "ffff".asEthereumAddress()!!
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        testSafeCreationChecks(
+            ownerAddress, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
+            { request ->
+                Single.just(
+                    RelaySafeCreation(
+                        setupData = "0000000000000000000000000000000000000000000000000000000000000000",
+                        safe = safeAddress,
+                        masterCopy = MASTER_COPY_ADDRESS,
+                        proxyFactory = PROXY_FACTORY_ADDRESS,
+                        payment = BigInteger.ZERO,
+                        paymentToken = ETHER_TOKEN.address,
+                        paymentReceiver = TX_ORIGIN_ADDRESS
+                    )
+                )
+            },
+            Predicate { error ->
+                error is IllegalStateException && error.message == "Unexpected setup data returned"
+            }
+        )
+    }
+
+    @Test
+    fun triggerSafeDeploymentDifferentOwnersInData() {
+        val safeAddress = "ffff".asEthereumAddress()!!
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        testSafeCreationChecks(
+            ownerAddress, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
+            { request ->
+                Single.just(
+                    RelaySafeCreation(
+                        setupData = generateSafeCreationData(
+                            listOfNotNull(PAYMENT_TOKEN.address, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                            BigInteger.ZERO, ETHER_TOKEN
+                        ),
+                        safe = safeAddress,
+                        masterCopy = MASTER_COPY_ADDRESS,
+                        proxyFactory = PROXY_FACTORY_ADDRESS,
+                        payment = BigInteger.ZERO,
+                        paymentToken = ETHER_TOKEN.address,
+                        paymentReceiver = TX_ORIGIN_ADDRESS
+                    )
+                )
+            },
+            Predicate { error ->
+                error is IllegalStateException && error.message == "Unexpected setup data returned"
+            }
+        )
+    }
+
+    @Test
+    fun triggerSafeDeploymentDifferentPaymentReceiverInData() {
+        val safeAddress = "ffff".asEthereumAddress()!!
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        testSafeCreationChecks(
+            ownerAddress, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
+            { request ->
+                Single.just(
+                    RelaySafeCreation(
+                        setupData = generateSafeCreationData(
+                            listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                            BigInteger.ZERO, ETHER_TOKEN, PAYMENT_TOKEN.address
+                        ),
+                        safe = safeAddress,
+                        masterCopy = MASTER_COPY_ADDRESS,
+                        proxyFactory = PROXY_FACTORY_ADDRESS,
+                        payment = BigInteger.ZERO,
+                        paymentToken = ETHER_TOKEN.address,
+                        paymentReceiver = TX_ORIGIN_ADDRESS
+                    )
+                )
+            },
+            Predicate { error ->
+                error is IllegalStateException && error.message == "Unexpected setup data returned"
+            }
+        )
+    }
+
+    @Test
+    fun triggerSafeDeploymentDifferentPaymentTokenInData() {
+        val safeAddress = "ffff".asEthereumAddress()!!
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        testSafeCreationChecks(
+            ownerAddress, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
+            { request ->
+                Single.just(
+                    RelaySafeCreation(
+                        setupData = generateSafeCreationData(
+                            listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                            BigInteger.ZERO, PAYMENT_TOKEN, TX_ORIGIN_ADDRESS
+                        ),
+                        safe = safeAddress,
+                        masterCopy = MASTER_COPY_ADDRESS,
+                        proxyFactory = PROXY_FACTORY_ADDRESS,
+                        payment = BigInteger.ZERO,
+                        paymentToken = ETHER_TOKEN.address,
+                        paymentReceiver = TX_ORIGIN_ADDRESS
+                    )
+                )
+            },
+            Predicate { error ->
+                error is IllegalStateException && error.message == "Unexpected setup data returned"
+            }
+        )
+    }
+
+    @Test
+    fun triggerSafeDeploymentDifferentPaymentInData() {
+        val safeAddress = "ffff".asEthereumAddress()!!
+        val ownerAddress = Solidity.Address(10.toBigInteger())
+        val mnemonicAddress0 = Solidity.Address(11.toBigInteger())
+        val mnemonicAddress1 = Solidity.Address(12.toBigInteger())
+        val chromeExtensionAddress = Solidity.Address(13.toBigInteger())
+        testSafeCreationChecks(
+            ownerAddress, mnemonicAddress0, mnemonicAddress1, chromeExtensionAddress,
+            { request ->
+                Single.just(
+                    RelaySafeCreation(
+                        setupData = generateSafeCreationData(
+                            listOfNotNull(ownerAddress, chromeExtensionAddress, mnemonicAddress0, mnemonicAddress1),
+                            BigInteger.TEN, ETHER_TOKEN, TX_ORIGIN_ADDRESS
+                        ),
+                        safe = safeAddress,
+                        masterCopy = MASTER_COPY_ADDRESS,
+                        proxyFactory = PROXY_FACTORY_ADDRESS,
+                        payment = BigInteger.ZERO,
+                        paymentToken = ETHER_TOKEN.address,
+                        paymentReceiver = TX_ORIGIN_ADDRESS
+                    )
+                )
+            },
+            Predicate { error ->
+                error is IllegalStateException && error.message == "Unexpected setup data returned"
+            }
         )
     }
 
@@ -198,5 +647,15 @@ class DefaultGnosisSafeRepositoryTest {
 
     companion object {
         private val TEST_SAFE = "0xdeadfeedbeaf".asEthereumAddress()!!
+        private val TEST_TOKEN = ERC20Token(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10)
+        private val MASTER_COPY_ADDRESS = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
+        private val PROXY_FACTORY_ADDRESS = BuildConfig.PROXY_FACTORY_ADDRESS.asEthereumAddress()!!
+        private val ETHER_TOKEN = ERC20Token.ETHER_TOKEN
+        private val PAYMENT_TOKEN = ERC20Token("0xdeadbeef".asEthereumAddress()!!, "Payment Token", "PT", 18)
+        private val FUNDER_ADDRESS = BuildConfig.SAFE_CREATION_FUNDER.asEthereumAddress()!!
+        private val TX_ORIGIN_ADDRESS = "0x0".asEthereumAddress()!!
+        private const val RECOVERY_PHRASE = "degree media athlete harvest rocket plate minute obey head toward coach senior"
+        private const val PROXY_CODE =
+            "0x608060405234801561001057600080fd5b506040516020806101a88339810180604052602081101561003057600080fd5b8101908080519060200190929190505050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614156100c7576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260248152602001806101846024913960400191505060405180910390fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050606e806101166000396000f3fe608060405273ffffffffffffffffffffffffffffffffffffffff600054163660008037600080366000845af43d6000803e6000811415603d573d6000fd5b3d6000f3fea165627a7a723058201e7d648b83cfac072cbccefc2ffc62a6999d4a050ee87a721942de1da9670db80029496e76616c6964206d617374657220636f707920616464726573732070726f7669646564"
     }
 }

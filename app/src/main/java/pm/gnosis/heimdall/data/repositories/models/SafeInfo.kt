@@ -2,6 +2,13 @@ package pm.gnosis.heimdall.data.repositories.models
 
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
+import java.math.BigInteger
+
+data class SafeDeployment(
+    val safe: Solidity.Address,
+    val paymentToken: Solidity.Address,
+    val payment: BigInteger
+)
 
 data class SafeInfo(
     val address: Solidity.Address,

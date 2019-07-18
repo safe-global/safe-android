@@ -274,6 +274,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
+        <activity android:name=".ui.safe.create.CreateSafePaymentTokenActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
+
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

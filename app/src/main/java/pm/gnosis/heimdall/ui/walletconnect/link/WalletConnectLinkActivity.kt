@@ -29,7 +29,7 @@ class WalletConnectLinkActivity : ViewModelActivity<WalletConnectLinkContract>()
 
     private var wcUrl: String? = null
 
-    override fun screenId(): ScreenId = ScreenId.WALLET_CONNECT_SESSIONS
+    override fun screenId(): ScreenId = ScreenId.WALLET_CONNECT_SAFE_SELECTION
 
     override fun layout(): Int = R.layout.screen_wallet_connect_safe_selection
 

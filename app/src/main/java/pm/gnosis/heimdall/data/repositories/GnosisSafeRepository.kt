@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
+import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
@@ -12,6 +13,9 @@ import java.math.BigInteger
 
 interface GnosisSafeRepository {
     fun observeAllSafes(): Flowable<List<AbstractSafe>>
+
+    // Safe deployment
+    fun triggerSafeDeployment(owners: List<Solidity.Address>, threshold: Int): Single<SafeDeployment>
 
     // Status
     fun loadInfo(address: Solidity.Address): Observable<SafeInfo>

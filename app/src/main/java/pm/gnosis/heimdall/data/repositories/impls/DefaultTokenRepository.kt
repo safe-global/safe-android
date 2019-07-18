@@ -15,8 +15,11 @@ import pm.gnosis.heimdall.ERC20Contract
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.preferences.PreferencesToken
 import pm.gnosis.heimdall.data.remote.RelayServiceApi
+import pm.gnosis.heimdall.data.remote.models.CreationEstimate
 import pm.gnosis.heimdall.data.remote.models.CreationEstimatesParams
 import pm.gnosis.heimdall.data.remote.models.EstimatesParams
+import pm.gnosis.heimdall.data.remote.models.PaginatedResults
+import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfo
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -25,20 +28,25 @@ import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.data.repositories.models.fromDb
 import pm.gnosis.heimdall.data.repositories.models.toDb
 import pm.gnosis.heimdall.data.repositories.toInt
+import pm.gnosis.heimdall.helpers.TimeProvider
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.common.utils.ERC20
 import pm.gnosis.utils.*
 import java.math.BigInteger
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
+
+typealias CacheEntry = Pair<Long, List<Pair<ERC20Token, BigInteger>>>
 
 @Singleton
 class DefaultTokenRepository @Inject constructor(
     appDb: ApplicationDb,
     private val ethereumRepository: EthereumRepository,
     private val prefs: PreferencesToken,
-    private val relayServiceApi: RelayServiceApi
+    private val relayServiceApi: RelayServiceApi,
+    private val timeProvider: TimeProvider
 ) : TokenRepository {
 
     private val hardcodedTokens = mapOf(
@@ -202,8 +210,23 @@ class DefaultTokenRepository @Inject constructor(
                 data.results.mapTo(mutableListOf(ETHER_TOKEN)) { it.fromNetwork() }
             }
 
-    override fun loadPaymentTokensWithCreationFees(numbersOwners: Long): Single<List<Pair<ERC20Token, BigInteger>>> =
-        Single.zip(
+    private val creationFeeCache: MutableMap<Long, CacheEntry> = ConcurrentHashMap()
+
+    private fun checkCreationFeeCache(numbersOwners: Long): Single<List<Pair<ERC20Token, BigInteger>>> =
+        Single.fromCallable {
+            creationFeeCache[numbersOwners]?.let { entry ->
+                if (entry.first >= timeProvider.currentTimeMs())
+                    entry.second
+                else {
+                    creationFeeCache.remove(numbersOwners)
+                    null
+                }
+            } ?: throw NoSuchElementException()
+        }
+            .subscribeOn(Schedulers.io())
+
+    private fun loadCreationFeeFromNetwork(numbersOwners: Long): Single<List<Pair<ERC20Token, BigInteger>>> =
+        Single.zip<List<CreationEstimate>, PaginatedResults<TokenInfo>, List<Pair<ERC20Token, BigInteger>>>(
             relayServiceApi.creationEstimates(CreationEstimatesParams(numbersOwners)),
             relayServiceApi.paymentTokens(),
             BiFunction { estimates, paymentTokens ->
@@ -215,6 +238,14 @@ class DefaultTokenRepository @Inject constructor(
                 }
             }
         )
+            .doOnSuccess {
+                creationFeeCache[numbersOwners] = (timeProvider.currentTimeMs() + CACHE_TIMEOUT_MS) to it
+            }
+
+    override fun loadPaymentTokensWithCreationFees(numbersOwners: Long): Single<List<Pair<ERC20Token, BigInteger>>> =
+        checkCreationFeeCache(numbersOwners)
+            .onErrorResumeNext { loadCreationFeeFromNetwork(numbersOwners) }
+
 
     override fun loadPaymentTokensWithTransactionFees(
         safe: Solidity.Address,
@@ -249,4 +280,8 @@ class DefaultTokenRepository @Inject constructor(
         val symbol: EthRequest<String>,
         val decimals: EthRequest<String>
     ) : BulkRequest(name, symbol, decimals)
+
+    companion object {
+        private const val CACHE_TIMEOUT_MS = 5 * 60 * 1000 // 5 Minutes
+    }
 }

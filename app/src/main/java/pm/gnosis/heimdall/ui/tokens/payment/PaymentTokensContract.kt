@@ -79,12 +79,12 @@ class PaymentTokensViewModel @Inject constructor(
     private suspend fun updateState(items: List<PaymentToken>? = null, viewAction: ViewAction? = null, loading: Boolean? = null) {
         try {
             val currentState = stateChannel.value
-            val newSate = currentState.copy(
+            val newState = currentState.copy(
                 items = items ?: currentState.items,
                 viewAction = if (viewAction == currentState.viewAction) null else viewAction,
                 loading = loading ?: currentState.loading
             )
-            stateChannel.send(newSate)
+            stateChannel.send(newState)
         } catch (e: Exception) {
             // Could not submit update
             Timber.e(e)

@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token.Companion.ETHER_TOKEN
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
+import pm.gnosis.heimdall.utils.loadTokenImage
 import javax.inject.Inject
 
 @ForView
@@ -69,11 +70,8 @@ class PaymentTokensAdapter @Inject constructor(
             itemView.payment_tokens_item_symbol.text = data.erc20Token.symbol
             itemView.payment_tokens_item_info.text = data.metricValue
 
-            when {
-                data.erc20Token.address == ETHER_TOKEN.address -> itemView.payment_tokens_item_icon.setImageResource(R.drawable.ic_ether_symbol)
-                data.erc20Token.logoUrl.isBlank() -> picasso.load(data.erc20Token.logoUrl).into(itemView.payment_tokens_item_icon)
-                else -> itemView.payment_tokens_item_icon.setImageDrawable(null)
-            }
+            itemView.payment_tokens_item_icon.loadTokenImage(picasso, data.erc20Token)
+
             current = data
 
             itemView.payment_tokens_item_radio.isSelected = false

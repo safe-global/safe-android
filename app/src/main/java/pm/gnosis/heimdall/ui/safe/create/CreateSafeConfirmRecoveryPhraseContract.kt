@@ -7,5 +7,5 @@ import pm.gnosis.model.Solidity
 
 abstract class CreateSafeConfirmRecoveryPhraseContract : ConfirmRecoveryPhraseViewModel() {
     abstract fun setup(browserExtensionAddress: Solidity.Address?, safeOwner: AccountsRepository.SafeOwner?)
-    abstract fun createSafe(): Single<Solidity.Address>
+    abstract fun loadOwnerData(): Single<Pair<AccountsRepository.SafeOwner?, List<Solidity.Address>>>
 }
