@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@color/pale_grey_two"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/create_safe_payment_token_content_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/create_safe_payment_token_next_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/create_safe_payment_token_title">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+            
+            <TextView
+                android:id="@+id/create_safe_payment_token_explainer_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="24dp"
+                android:text="@string/this_payment_will_be_used"
+                android:textColor="@color/battleship_grey"
+                android:textSize="13sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_scrollFlags="scroll|snap" />
+
+            <View
+                android:id="@+id/create_safe_payment_token_explainer_divider"
+                app:layout_constraintTop_toBottomOf="@+id/create_safe_payment_token_explainer_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider" />
+
+            <TextView
+                android:id="@+id/create_safe_payment_token_header_token_lbl"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:gravity="start|center_vertical"
+                android:padding="16dp"
+                android:text="@string/fee_method"
+                android:textAllCaps="true"
+                android:textColor="@color/battleship_grey"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/create_safe_payment_token_header_metric_lbl"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/create_safe_payment_token_explainer_divider"
+                tools:ignore="SmallSp"
+                tools:targetApi="lollipop" />
+
+            <TextView
+                android:id="@+id/create_safe_payment_token_header_metric_lbl"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:gravity="end|center_vertical"
+                android:padding="16dp"
+                android:text="@string/fee"
+                android:textAllCaps="true"
+                android:textColor="@color/battleship_grey"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/create_safe_payment_token_header_token_lbl"
+                app:layout_constraintTop_toBottomOf="@+id/create_safe_payment_token_explainer_divider"
+                tools:ignore="SmallSp"
+                tools:targetApi="lollipop" />
+
+            <View
+                android:id="@+id/create_safe_payment_token_header_divider"
+                app:layout_constraintTop_toBottomOf="@+id/create_safe_payment_token_header_metric_lbl"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_width"
+                android:background="@color/divider" />
+
+            <View
+                android:id="@+id/create_safe_payment_token_info_background"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/create_safe_payment_token_header_divider"
+                android:background="@color/white"
+                />
+
+            <ImageView
+                android:id="@+id/create_safe_payment_token_icon_img"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="@+id/create_safe_payment_token_info_background"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/create_safe_payment_token_info_background"
+                tools:src="@drawable/ic_ether_symbol" />
+
+            <TextView
+                android:id="@+id/create_safe_payment_token_symbol_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="2"
+                android:textColor="@color/dark_slate_blue"
+                android:textSize="16sp"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toBottomOf="@+id/create_safe_payment_token_info_background"
+                app:layout_constraintStart_toEndOf="@+id/create_safe_payment_token_icon_img"
+                app:layout_constraintEnd_toStartOf="@+id/create_safe_payment_token_fee_lbl"
+                app:layout_constraintTop_toTopOf="@+id/create_safe_payment_token_info_background"
+                tools:text="ETH" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/create_safe_payment_token_fee_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="end"
+                android:maxLines="2"
+                android:textColor="@color/dusk"
+                android:textSize="16sp"
+                android:textStyle="normal"
+                app:autoSizeMaxTextSize="16sp"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintBottom_toBottomOf="@+id/create_safe_payment_token_info_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/create_safe_payment_token_symbol_lbl"
+                app:layout_constraintTop_toTopOf="@+id/create_safe_payment_token_info_background"
+                tools:text="3342434.23545" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/create_safe_payment_token_title"
+        app:layout_constraintBottom_toBottomOf="@+id/create_safe_payment_token_title"
+        android:background="@color/white"
+        />
+
+    <ImageView
+        android:id="@+id/create_safe_payment_token_back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/dark_slate_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <TextView
+        android:id="@+id/create_safe_payment_token_title"
+        style="@style/WhiteTheme.ToolbarTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/toolbar_height"
+        android:text="@string/safe_creation_fee"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/create_safe_payment_token_back_btn"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/create_safe_payment_token_next_btn"
+        style="@style/PrimaryButton.Blue"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:text="@string/continue_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/create_safe_payment_token_change_token_btn"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/create_safe_payment_token_change_token_btn"
+        style="@style/TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:text="@string/change_fee_method"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/create_safe_payment_token_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/create_safe_payment_token_title"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
