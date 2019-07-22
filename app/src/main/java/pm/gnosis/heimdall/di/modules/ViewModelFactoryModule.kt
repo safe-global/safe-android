@@ -13,8 +13,6 @@ import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputViewModel
-import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageContract
-import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageViewModel
 import pm.gnosis.heimdall.ui.messagesigning.*
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupViewModel
@@ -98,16 +96,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(CheckSafeContract::class)
     abstract fun bindsCheckSafeContract(viewModel: CheckSafeViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(CollectMessageSignaturesContract::class)
-    abstract fun bindsCollectMessageSignaturesContract(viewModel: CollectMessageSignaturesViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ConfirmMessageContract::class)
-    abstract fun bindsConfirmMessageContract(viewModel: ConfirmMessageViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -209,11 +197,6 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ReplaceExtensionRecoveryPhraseContract::class)
     abstract fun bindsReplaceBrowserExtensionRecoveryPhraseContract(viewModel: ReplaceExtensionRecoveryPhraseViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ReviewPayloadContract::class)
-    abstract fun bindsReviewPayloadContract(viewModel: ReviewPayloadViewModel): ViewModel
 
     @Binds
     @IntoMap

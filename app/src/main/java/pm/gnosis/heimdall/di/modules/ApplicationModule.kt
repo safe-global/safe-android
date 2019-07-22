@@ -199,22 +199,21 @@ class ApplicationModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesOkHttpClient(): OkHttpClient =
-        OkHttpClient.Builder().apply {
-            connectTimeout(10, TimeUnit.SECONDS)
-            readTimeout(10, TimeUnit.SECONDS)
-            writeTimeout(10, TimeUnit.SECONDS)
-            pingInterval(5, TimeUnit.SECONDS)
-            certificatePinner(
-                CertificatePinner.Builder().apply {
-                    BuildConfig.PINNED_URLS.split(",").forEach { pinnedUrl ->
-                        BuildConfig.PINNED_ROOT_CERTIFICATE_HASHES.split(",").forEach { hash ->
-                            add(pinnedUrl, hash)
-                        }
+    fun providesOkHttpClient(): OkHttpClient = OkHttpClient.Builder().apply {
+        connectTimeout(10, TimeUnit.SECONDS)
+        readTimeout(10, TimeUnit.SECONDS)
+        writeTimeout(10, TimeUnit.SECONDS)
+        pingInterval(5, TimeUnit.SECONDS)
+        certificatePinner(
+            CertificatePinner.Builder().apply {
+                BuildConfig.PINNED_URLS.split(",").forEach { pinnedUrl ->
+                    BuildConfig.PINNED_ROOT_CERTIFICATE_HASHES.split(",").forEach { hash ->
+                        add(pinnedUrl, hash)
                     }
-                }.build()
-            )
-        }.build()
+                }
+            }.build()
+        )
+    }.build()
 
     @Provides
     @Singleton
@@ -255,7 +254,7 @@ class ApplicationModule(private val application: Application) {
         fingerprintHelper: FingerprintHelper,
         keyStorage: KeyStorage
     ): EncryptionManager =
-    // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
+        // We use 4k iterations to keep the memory used during password setup below 16mb (theoretical minimum vm heap for Android 4.4)
         AesEncryptionManager(application, preferencesManager, fingerprintHelper, keyStorage, 4096)
 
     @Provides

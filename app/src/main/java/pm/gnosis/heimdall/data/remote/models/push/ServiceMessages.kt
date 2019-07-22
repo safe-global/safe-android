@@ -55,6 +55,15 @@ sealed class ServiceMessage {
     ) : ServiceMessage()
 
     @JsonClass(generateAdapter = true)
+    data class TypedDataRejection(
+        @Json(name = "hash") val hash: String,
+        @Json(name = "r") val r: String,
+        @Json(name = "s") val s: String,
+        @Json(name = "v") val v: String,
+        @Json(name = "type") val type: String = "rejectSignTypedData" // Workaround since moshi is not parsing parent or non-constructor fields
+    ) : ServiceMessage()
+
+    @JsonClass(generateAdapter = true)
     data class TypedDataRequest(
         @Json(name = "payload") val payload: String,
         @Json(name = "safe") val safe: String,

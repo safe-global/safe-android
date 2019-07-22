@@ -47,14 +47,16 @@ class SignatureRequestActivity : ViewModelActivity<SignatureRequestContract>() {
         val payload = intent.getStringExtra(PAYLOAD_EXTRA) ?: run { finish(); return }
         val safe = intent.getStringExtra(SAFE_EXTRA)?.asEthereumAddress() ?: run { finish(); return }
         val extensionSignature = intent.getStringExtra(EXTENSION_SIGNATURE_EXTRA)?.let { Signature.from(it) }
+        val referenceId = if (intent.hasExtra(EXTRA_REFERENCE_ID)) intent.getLongExtra(EXTRA_REFERENCE_ID, 0) else null
+        val sessionId = intent.getStringExtra(EXTRA_SESSION_ID)
 
-        viewModel.setup(payload, safe, extensionSignature)
+        viewModel.setup(payload, safe, extensionSignature, referenceId, sessionId)
         viewModel.state.observe(this, Observer {
             onViewUpdate(it)
         })
 
         backBtn.setOnClickListener {
-            finish()
+            cancelAndFinish()
         }
 
         showMessageBtn.setOnClickListener {
@@ -145,17 +147,30 @@ class SignatureRequestActivity : ViewModelActivity<SignatureRequestContract>() {
         }
     }
 
+    override fun onBackPressed() {
+        cancelAndFinish()
+    }
+
+    private fun cancelAndFinish() {
+        viewModel.cancel()
+        finish()
+    }
+
     companion object {
 
         private const val PAYLOAD_EXTRA = "extra.string.payload"
         private const val SAFE_EXTRA = "extra.string.safe"
         private const val EXTENSION_SIGNATURE_EXTRA = "extra.string.extension_signature"
+        private const val EXTRA_REFERENCE_ID = "extra.long.reference_id"
+        private const val EXTRA_SESSION_ID = "extra.string.session_id"
 
-        fun createIntent(context: Context, payload: String, safe: Solidity.Address, extensionSignature: Signature? = null): Intent =
+        fun createIntent(context: Context, payload: String, safe: Solidity.Address, extensionSignature: Signature? = null, referenceId: Long? = null, sessionId: String? = null): Intent =
             Intent(context, SignatureRequestActivity::class.java).apply {
                 putExtra(PAYLOAD_EXTRA, payload)
                 putExtra(SAFE_EXTRA, safe.asEthereumAddressString())
                 putExtra(EXTENSION_SIGNATURE_EXTRA, extensionSignature?.toString())
+                putExtra(EXTRA_REFERENCE_ID, referenceId)
+                putExtra(EXTRA_SESSION_ID, sessionId)
                 addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             }
     }

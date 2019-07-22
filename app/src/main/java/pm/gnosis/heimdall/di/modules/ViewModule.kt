@@ -13,9 +13,6 @@ import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
-import pm.gnosis.heimdall.ui.messagesigning.CollectMessageSignaturesContract
-import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageContract
-import pm.gnosis.heimdall.ui.messagesigning.ReviewPayloadContract
 import pm.gnosis.heimdall.ui.messagesigning.SignatureRequestContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
@@ -74,14 +71,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesCheckSafeContract(provider: ViewModelProvider) = provider[CheckSafeContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesCollectMessageSignaturesContract(provider: ViewModelProvider) = provider[CollectMessageSignaturesContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesConfirmMessageContract(provider: ViewModelProvider) = provider[ConfirmMessageContract::class.java]
 
     @Provides
     @ForView
@@ -168,10 +157,6 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesRecoverSafeRecoveryPhraseContract(provider: ViewModelProvider) = provider[RecoverSafeRecoveryPhraseContract::class.java]
-
-    @Provides
-    @ForView
-    fun providesReviewPayloadContract(provider: ViewModelProvider) = provider[ReviewPayloadContract::class.java]
 
     @Provides
     @ForView

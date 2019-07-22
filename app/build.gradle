@@ -242,6 +242,7 @@ dependencies {
 
     // Logging
     implementation "com.jakewharton.timber:timber:$versions.timber"
+    implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
 
     // RxBinding
     implementation("com.jakewharton.rxbinding2:rxbinding-kotlin:$versions.rxbinding") {
@@ -303,7 +304,6 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$versions.androidx_test_ext"
 
     androidTestImplementation "android.arch.persistence.room:testing:$versions.androidx_room"
-
 }
 
 apply plugin: 'com.google.gms.google-services'

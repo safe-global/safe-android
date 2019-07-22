@@ -281,7 +281,7 @@ class WalletConnectBridgeRepository @Inject constructor(
     ) {
 
         val keyguard = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        val intent = SignatureRequestActivity.createIntent(context, payload, safe)//, referenceId, sessionId)
+        val intent = SignatureRequestActivity.createIntent(context, payload, safe, null, referenceId, sessionId)
         // Pre Android Q we will directly show the review activity if the phone is unlocked, else we show a notification
         // TODO: Adjust check when Q is released
         if (BuildCompat.isAtLeastQ() || Build.VERSION.SDK_INT > Build.VERSION_CODES.P || keyguard.isKeyguardLocked) {

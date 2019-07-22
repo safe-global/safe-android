@@ -92,7 +92,7 @@ class TwoStepPanel @JvmOverloads constructor(
 
     private fun applyAttributes(context: Context, a: TypedArray) {
         step = Step.from(a.getInt(R.styleable.TwoStepPanel_step, 0))
-        forwardLabel = a.getString(R.styleable.TwoStepPanel_forwardLabel)
+        forwardLabel = a.getString(R.styleable.TwoStepPanel_forwardLabel) ?: ""
 
         setForwardEnabled(a.getBoolean(R.styleable.TwoStepPanel_forwardEnabled, true))
         setBackEnabled(a.getBoolean(R.styleable.TwoStepPanel_backEnabled, true))

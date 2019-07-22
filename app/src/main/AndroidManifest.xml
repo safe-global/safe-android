@@ -257,11 +257,6 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.messagesigning.ConfirmMessageActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
-
-        <activity
             android:name=".ui.messagesigning.SignatureRequestActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
@@ -290,12 +285,6 @@
         <activity android:name=".ui.safe.create.CreateSafePaymentTokenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
-
-
-        <activity
-            android:name=".ui.messagesigning.CollectMessageSignaturesActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

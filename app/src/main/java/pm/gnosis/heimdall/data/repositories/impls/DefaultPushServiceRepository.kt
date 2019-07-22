@@ -26,7 +26,6 @@ import pm.gnosis.heimdall.data.repositories.toInt
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.helpers.CryptoHelper
 import pm.gnosis.heimdall.helpers.LocalNotificationManager
-import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageActivity
 import pm.gnosis.heimdall.ui.messagesigning.SignatureRequestActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.transactions.view.confirm.ConfirmTransactionActivity
@@ -56,7 +55,7 @@ class DefaultPushServiceRepository @Inject constructor(
 
     private val observedTransaction = HashMap<BigInteger, ReceiveSignatureObservable>()
 
-    private val signTypedDataConfirmationsSubject = PublishSubject.create<PushMessage.SignTypedDataConfirmation>()
+    private val signTypedDataSubject = PublishSubject.create<PushMessage>()
 
     /*
     * Situations where a sync might be needed:
@@ -226,6 +225,25 @@ class DefaultPushServiceRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
             .flatMapCompletable { sendNotification(it, safe, targets) }
 
+
+    override fun requestTypedDataRejection(
+        hash: ByteArray,
+        signature: Signature,
+        safe: Solidity.Address,
+        targets: Set<Solidity.Address>
+    ): Completable =
+        Single.fromCallable {
+            ServiceMessage.TypedDataRejection(
+                hash = hash.toHexString().addHexPrefix(),
+                r = signature.r.asDecimalString(),
+                s = signature.s.asDecimalString(),
+                v = signature.v.toInt().toString()
+            )
+        }
+            .subscribeOn(Schedulers.io())
+            .flatMapCompletable { sendNotification(it, safe, targets) }
+
+
     override fun requestTypedDataConfirmations(
         payload: String,
         appSignature: Signature,
@@ -237,7 +255,7 @@ class DefaultPushServiceRepository @Inject constructor(
                 payload = payload,
                 safe = safe.asEthereumAddressString(),
                 r = appSignature.r.asDecimalString(),
-                s = appSignature.s.asDecimalString() ,
+                s = appSignature.s.asDecimalString(),
                 v = appSignature.v.toString()
             )
         }
@@ -301,11 +319,12 @@ class DefaultPushServiceRepository @Inject constructor(
                 }
             }
             is PushMessage.SignTypedData -> showSignTypedDataNotification(pushMessage)
-            is PushMessage.SignTypedDataConfirmation -> signTypedDataConfirmationsSubject.onNext(pushMessage)
+            is PushMessage.SignTypedDataConfirmation -> signTypedDataSubject.onNext(pushMessage)
+            is PushMessage.RejectSignTypedData -> signTypedDataSubject.onNext(pushMessage)
         }
     }
 
-    override fun observeTypedDataConfirmationPushes(): Observable<PushMessage.SignTypedDataConfirmation> = signTypedDataConfirmationsSubject
+    override fun observeTypedDataPushes(): Observable<PushMessage> = signTypedDataSubject
 
     private fun showSafeCreatedNotification(safe: Solidity.Address) {
         localNotificationManager.show(

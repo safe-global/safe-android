@@ -4,6 +4,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexAsBigInteger
+import pm.gnosis.utils.hexToByteArray
 import java.math.BigInteger
 
 sealed class PushMessage(
@@ -114,15 +115,15 @@ sealed class PushMessage(
     }
 
     data class SignTypedDataConfirmation(
-        val hash: BigInteger,
-        val signature: BigInteger
+        val hash: ByteArray,
+        val signature: ByteArray
     ) : PushMessage(TYPE) {
         companion object {
             const val TYPE = "signTypedDataConfirmation"
             fun fromMap(params: Map<String, String>) =
                 SignTypedDataConfirmation(
-                    hash = params.getOrThrow("hash").hexAsBigInteger(),
-                    signature = params.getOrThrow("signature").hexAsBigInteger()
+                    hash = params.getOrThrow("hash").hexToByteArray(),
+                    signature = params.getOrThrow("signature").hexToByteArray()
                 )
         }
     }
@@ -134,9 +135,9 @@ sealed class PushMessage(
         val v: String
     ) : PushMessage(TYPE) {
         companion object {
-            const val TYPE = "rejectTypedData"
+            const val TYPE = "rejectSignTypedData"
             fun fromMap(params: Map<String, String>) =
-                RejectTransaction(
+                RejectSignTypedData(
                     params.getOrThrow("hash"),
                     params.getOrThrow("r"),
                     params.getOrThrow("s"),
