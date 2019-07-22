@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.utils.loadTokenImage
 import javax.inject.Inject
 
 @ForView
@@ -36,8 +37,7 @@ class TokenBalancesAdapter @Inject constructor(
         override fun bind(data: ERC20TokenWithBalance, payloads: List<Any>) {
             itemView.layout_tokens_item_balance_symbol.text = data.token.symbol
             itemView.layout_tokens_item_balance_balance.text = data.displayString(false)
-            if (data.token == ETHER_TOKEN) itemView.layout_tokens_item_balance_symbol_image.setImageResource(R.drawable.ic_ether_symbol)
-            else if (data.token.logoUrl.isNullOrBlank()) picasso.load(data.token.logoUrl).into(itemView.layout_tokens_item_balance_symbol_image)
+            itemView.layout_tokens_item_balance_symbol_image.loadTokenImage(picasso, data.token)
         }
 
         override fun onClick(v: View?) {

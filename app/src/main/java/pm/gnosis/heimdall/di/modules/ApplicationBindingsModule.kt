@@ -75,6 +75,10 @@ abstract class ApplicationBindingsModule {
     @Singleton
     abstract fun bindsSessionBuilder(builder: WCSessionBuilder): SessionBuilder
 
+    @Binds
+    @Singleton
+    abstract fun bindsTimeProvider(provider: LocalTimeProvider): TimeProvider
+
     /*
         Repositories
      */

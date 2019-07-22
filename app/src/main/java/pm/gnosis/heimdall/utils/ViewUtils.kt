@@ -11,6 +11,11 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.squareup.phrase.Phrase
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.layout_payment_tokens_item.view.*
+import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 
 fun View.disableAccessibility() {
@@ -26,6 +31,14 @@ fun TextView.setFormattedText(res: Int, vararg params: Pair<String, String>) {
 }
 
 fun ImageView.setColorFilterCompat(@ColorRes color: Int) = setColorFilter(context.getColorCompat(color))
+
+fun ImageView.loadTokenImage(picasso: Picasso, token: ERC20Token?) =
+    when {
+        token?.address == ERC20Token.ETHER_TOKEN.address -> setImageResource(R.drawable.ic_ether_symbol)
+        !token?.logoUrl.isNullOrBlank() -> picasso.load(token?.logoUrl).into(this)
+        else -> setImageDrawable(null)
+    }
+
 
 fun TextView.setCompoundDrawables(
     left: Drawable? = null,

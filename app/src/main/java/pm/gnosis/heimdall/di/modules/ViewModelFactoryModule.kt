@@ -23,6 +23,8 @@ import pm.gnosis.heimdall.ui.recoveryphrase.SetupRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.recoveryphrase.SetupRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeConfirmRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeConfirmRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.create.CreateSafePaymentTokenContract
+import pm.gnosis.heimdall.ui.safe.create.CreateSafePaymentTokenViewModel
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsViewModel
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
@@ -118,6 +120,11 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(CreateSafeConfirmRecoveryPhraseContract::class)
     abstract fun bindsCreateSafeConfirmRecoveryPhraseContract(viewModel: CreateSafeConfirmRecoveryPhraseViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CreateSafePaymentTokenContract::class)
+    abstract fun bindsCreateSafePaymentTokenContract(viewModel: CreateSafePaymentTokenViewModel): ViewModel
 
     @Binds
     @IntoMap

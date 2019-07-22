@@ -27,14 +27,17 @@ class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<Cr
     }
 
     override fun isRecoveryPhraseConfirmed() {
-        disposables += viewModel.createSafe()
+        disposables += viewModel.loadOwnerData()
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { bottomBarEnabled(false) }
-            .subscribeBy(onSuccess = ::onSafeCreated, onError = ::onSafeCreationError)
+            .subscribeBy(
+                onSuccess = { (deviceOwner, additionalOwners) -> onSafeOwners(deviceOwner, additionalOwners) },
+                onError = ::onSafeCreationError
+            )
     }
 
-    private fun onSafeCreated(address: Solidity.Address) {
-        startActivity(SafeMainActivity.createIntent(this, address))
+    private fun onSafeOwners(deviceOwner: AccountsRepository.SafeOwner?, additionalOwners: List<Solidity.Address>) {
+        startActivity(CreateSafePaymentTokenActivity.createIntent(this, deviceOwner, additionalOwners))
     }
 
     private fun onSafeCreationError(throwable: Throwable) {

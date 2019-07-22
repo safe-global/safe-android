@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.ui.recoveryphrase.RecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.ui.safe.connect.ConnectExtensionActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeConfirmRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
+import pm.gnosis.heimdall.ui.safe.create.CreateSafePaymentTokenActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeSetupRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsFragment
@@ -95,6 +96,7 @@ interface ViewComponent {
     fun inject(activity: CreateAssetTransferActivity)
     fun inject(activity: CreateSafeIntroActivity)
     fun inject(activity: CreateSafeConfirmRecoveryPhraseActivity)
+    fun inject(activity: CreateSafePaymentTokenActivity)
     fun inject(activity: CreateSafeSetupRecoveryPhraseActivity)
     fun inject(activity: DebugSettingsActivity)
     fun inject(activity: FingerprintSetupActivity)

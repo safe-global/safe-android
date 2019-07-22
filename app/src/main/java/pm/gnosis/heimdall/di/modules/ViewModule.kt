@@ -19,6 +19,7 @@ import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
 import pm.gnosis.heimdall.ui.recoveryphrase.ConfirmRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.recoveryphrase.SetupRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeConfirmRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.create.CreateSafePaymentTokenContract
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsContract
 import pm.gnosis.heimdall.ui.safe.details.transactions.SafeTransactionsContract
 import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
@@ -91,6 +92,10 @@ class ViewModule(val context: Context) {
     @ForView
     fun providesCreateSafeConfirmSetupRecoveryPhraseContract(provider: ViewModelProvider) =
         provider[CreateSafeConfirmRecoveryPhraseContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesCreateSafePaymentTokenContract(provider: ViewModelProvider) = provider[CreateSafePaymentTokenContract::class.java]
 
     @Provides
     @ForView

@@ -36,16 +36,16 @@ class PaymentTokensViewModelTest {
     val lifecycleRule = TestLifecycleRule()
 
     @Mock
-    lateinit var tokenRepository: TokenRepository
+    lateinit var tokenRepositoryMock: TokenRepository
 
     @Mock
-    lateinit var context: Context
+    lateinit var contextMock: Context
 
     private lateinit var viewModel: PaymentTokensViewModel
 
     @Before
     fun setup() {
-        viewModel = PaymentTokensViewModel(context, testAppDispatchers, tokenRepository)
+        viewModel = PaymentTokensViewModel(contextMock, testAppDispatchers, tokenRepositoryMock)
     }
 
     private fun List<ERC20Token>.tokensWithBalance() =
@@ -62,14 +62,14 @@ class PaymentTokensViewModelTest {
             PaymentTokensContract.PaymentToken(ERC20Token.ETHER_TOKEN, "0", false),
             PaymentTokensContract.PaymentToken(TEST_TOKEN, "1", true)
         )
-        given(tokenRepository.loadPaymentTokens()).willReturn(loadTokensSingle.get())
-        given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(
+        given(tokenRepositoryMock.loadPaymentTokens()).willReturn(loadTokensSingle.get())
+        given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(
             Observable.just(tokens.tokensWithBalance())
         )
 
         viewModel.setup(metric)
         // Only start loading once observed
-        then(tokenRepository).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
 
         val stateObserver = TestLiveDataObserver<PaymentTokensContract.State>()
         viewModel.state.observe(lifecycleRule, stateObserver)
@@ -77,8 +77,8 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(emptyList(), true, null))
             .clear() // Clear after check
-        then(tokenRepository).should().loadPaymentTokens()
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentTokens()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Finish loading
         loadTokensSingle.success(tokens)
@@ -86,15 +86,15 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(expectedTokens, false, null))
             .clear() // Clear after check
-        then(tokenRepository).should().loadTokenBalances(TEST_SAFE, tokens)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, tokens)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Trigger the flow manually again
         val newTokens = tokens + TEST_TOKEN_2
         val newExpectedTokens = expectedTokens +
                 PaymentTokensContract.PaymentToken(TEST_TOKEN_2, null, true)
 
-        given(tokenRepository.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(
+        given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any())).willReturn(
             Observable.just(newTokens.tokensWithBalance())
         )
 
@@ -102,8 +102,8 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(expectedTokens, true, null))
             .clear() // Clear after check
-        then(tokenRepository).should(times(2)).loadPaymentTokens()
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should(times(2)).loadPaymentTokens()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Finish loading
         loadTokensSingle.success(newTokens)
@@ -111,21 +111,21 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(newExpectedTokens, false, null))
             .clear() // Clear after check
-        then(tokenRepository).should().loadTokenBalances(TEST_SAFE, newTokens)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadTokenBalances(TEST_SAFE, newTokens)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeStateBalancesError() {
-        context.mockGetString()
+        contextMock.mockGetString()
         val error = UnknownHostException()
         val metric = PaymentTokensContract.MetricType.Balance(TEST_SAFE)
         val loadTokensSingle = TestSingleFactory<List<ERC20Token>>()
-        given(tokenRepository.loadPaymentTokens()).willReturn(loadTokensSingle.get())
+        given(tokenRepositoryMock.loadPaymentTokens()).willReturn(loadTokensSingle.get())
 
         viewModel.setup(metric)
         // Only start loading once observed
-        then(tokenRepository).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
 
         val stateObserver = TestLiveDataObserver<PaymentTokensContract.State>()
         viewModel.state.observe(lifecycleRule, stateObserver)
@@ -133,8 +133,8 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(emptyList(), true, null))
             .clear() // Clear after check
-        then(tokenRepository).should().loadPaymentTokens()
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentTokens()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Finish loading
         loadTokensSingle.error(error)
@@ -148,7 +148,7 @@ class PaymentTokensViewModelTest {
                 )
             )
             .clear() // Clear after check
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -163,11 +163,11 @@ class PaymentTokensViewModelTest {
             PaymentTokensContract.PaymentToken(ERC20Token.ETHER_TOKEN, "0.23", true),
             PaymentTokensContract.PaymentToken(TEST_TOKEN, "10", true)
         )
-        given(tokenRepository.loadPaymentTokensWithCreationFees(anyLong())).willReturn(loadTokensSingle.get())
+        given(tokenRepositoryMock.loadPaymentTokensWithCreationFees(anyLong())).willReturn(loadTokensSingle.get())
 
         viewModel.setup(metric)
         // Only start loading once observed
-        then(tokenRepository).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
 
         val stateObserver = TestLiveDataObserver<PaymentTokensContract.State>()
         viewModel.state.observe(lifecycleRule, stateObserver)
@@ -175,8 +175,8 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(emptyList(), true, null))
             .clear() // Clear after check
-        then(tokenRepository).should().loadPaymentTokensWithCreationFees(2)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentTokensWithCreationFees(2)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Finish loading
         loadTokensSingle.success(tokensWithFee)
@@ -184,7 +184,7 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(expectedTokens, false, null))
             .clear() // Clear after check
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Trigger the flow manually again
         val newTokensWithFee = tokensWithFee +
@@ -196,8 +196,8 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(expectedTokens, true, null))
             .clear() // Clear after check
-        then(tokenRepository).should(times(2)).loadPaymentTokensWithCreationFees(2)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should(times(2)).loadPaymentTokensWithCreationFees(2)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Finish loading
         loadTokensSingle.success(newTokensWithFee)
@@ -205,20 +205,20 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(newExpectedTokens, false, null))
             .clear() // Clear after check
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeStateCreationFeeError() {
-        context.mockGetString()
+        contextMock.mockGetString()
         val error = UnknownHostException()
         val metric = PaymentTokensContract.MetricType.CreationFees(1)
         val loadTokensSingle = TestSingleFactory<List<Pair<ERC20Token, BigInteger>>>()
-        given(tokenRepository.loadPaymentTokensWithCreationFees(anyLong())).willReturn(loadTokensSingle.get())
+        given(tokenRepositoryMock.loadPaymentTokensWithCreationFees(anyLong())).willReturn(loadTokensSingle.get())
 
         viewModel.setup(metric)
         // Only start loading once observed
-        then(tokenRepository).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
 
         val stateObserver = TestLiveDataObserver<PaymentTokensContract.State>()
         viewModel.state.observe(lifecycleRule, stateObserver)
@@ -226,8 +226,8 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(emptyList(), true, null))
             .clear() // Clear after check
-        then(tokenRepository).should().loadPaymentTokensWithCreationFees(1)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentTokensWithCreationFees(1)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Finish loading
         loadTokensSingle.error(error)
@@ -241,7 +241,7 @@ class PaymentTokensViewModelTest {
                 )
             )
             .clear() // Clear after check
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
@@ -256,11 +256,11 @@ class PaymentTokensViewModelTest {
             PaymentTokensContract.PaymentToken(ERC20Token.ETHER_TOKEN, "0.23", true),
             PaymentTokensContract.PaymentToken(TEST_TOKEN, "10", true)
         )
-        given(tokenRepository.loadPaymentTokensWithTransactionFees(MockUtils.any(), MockUtils.any())).willReturn(loadTokensSingle.get())
+        given(tokenRepositoryMock.loadPaymentTokensWithTransactionFees(MockUtils.any(), MockUtils.any())).willReturn(loadTokensSingle.get())
 
         viewModel.setup(metric)
         // Only start loading once observed
-        then(tokenRepository).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
 
         val stateObserver = TestLiveDataObserver<PaymentTokensContract.State>()
         viewModel.state.observe(lifecycleRule, stateObserver)
@@ -268,8 +268,8 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(emptyList(), true, null))
             .clear() // Clear after check
-        then(tokenRepository).should().loadPaymentTokensWithTransactionFees(TEST_SAFE, TEST_TRANSACTION)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentTokensWithTransactionFees(TEST_SAFE, TEST_TRANSACTION)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Finish loading
         loadTokensSingle.success(tokensWithFee)
@@ -277,7 +277,7 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(expectedTokens, false, null))
             .clear() // Clear after check
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Trigger the flow manually again
         val newTokensWithFee = tokensWithFee +
@@ -289,8 +289,8 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(expectedTokens, true, null))
             .clear() // Clear after check
-        then(tokenRepository).should(times(2)).loadPaymentTokensWithTransactionFees(TEST_SAFE, TEST_TRANSACTION)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should(times(2)).loadPaymentTokensWithTransactionFees(TEST_SAFE, TEST_TRANSACTION)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Finish loading
         loadTokensSingle.success(newTokensWithFee)
@@ -298,20 +298,20 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(newExpectedTokens, false, null))
             .clear() // Clear after check
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
     fun observeStateTransactionFeeError() {
-        context.mockGetString()
+        contextMock.mockGetString()
         val error = UnknownHostException()
         val metric = PaymentTokensContract.MetricType.TransactionFees(TEST_SAFE, TEST_TRANSACTION)
         val loadTokensSingle = TestSingleFactory<List<Pair<ERC20Token, BigInteger>>>()
-        given(tokenRepository.loadPaymentTokensWithTransactionFees(MockUtils.any(), MockUtils.any())).willReturn(loadTokensSingle.get())
+        given(tokenRepositoryMock.loadPaymentTokensWithTransactionFees(MockUtils.any(), MockUtils.any())).willReturn(loadTokensSingle.get())
 
         viewModel.setup(metric)
         // Only start loading once observed
-        then(tokenRepository).shouldHaveZeroInteractions()
+        then(tokenRepositoryMock).shouldHaveZeroInteractions()
 
         val stateObserver = TestLiveDataObserver<PaymentTokensContract.State>()
         viewModel.state.observe(lifecycleRule, stateObserver)
@@ -319,8 +319,8 @@ class PaymentTokensViewModelTest {
         stateObserver
             .assertValues(PaymentTokensContract.State(emptyList(), true, null))
             .clear() // Clear after check
-        then(tokenRepository).should().loadPaymentTokensWithTransactionFees(TEST_SAFE, TEST_TRANSACTION)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentTokensWithTransactionFees(TEST_SAFE, TEST_TRANSACTION)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Finish loading
         loadTokensSingle.error(error)
@@ -334,11 +334,11 @@ class PaymentTokensViewModelTest {
                 )
             )
             .clear() // Clear after check
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     private fun testLoadInitialPaymentToken(metric: PaymentTokensContract.MetricType, expectedSafe: Solidity.Address?) {
-        given(tokenRepository.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
 
         val stateObserver = TestLiveDataObserver<PaymentTokensContract.State>()
         viewModel.state.observe(lifecycleRule, stateObserver)
@@ -350,8 +350,8 @@ class PaymentTokensViewModelTest {
         viewModel.paymentToken.observe(lifecycleRule, testObserver)
 
         // Check initial load
-        then(tokenRepository).should().loadPaymentToken(expectedSafe)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentToken(expectedSafe)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         testObserver.assertValues(ERC20Token.ETHER_TOKEN)
 
@@ -360,7 +360,7 @@ class PaymentTokensViewModelTest {
         viewModel.paymentToken.observe(lifecycleRule, additionalObserver)
 
         additionalObserver.assertValues(ERC20Token.ETHER_TOKEN)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Should not have any state changes
         stateObserver.assertEmpty()
@@ -382,8 +382,8 @@ class PaymentTokensViewModelTest {
     }
 
     private fun testSetPaymentToken(metric: PaymentTokensContract.MetricType, expectedSafe: Solidity.Address?) {
-        given(tokenRepository.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
-        given(tokenRepository.setPaymentToken(MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        given(tokenRepositoryMock.setPaymentToken(MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
 
         val stateObserver = TestLiveDataObserver<PaymentTokensContract.State>()
         viewModel.state.observe(lifecycleRule, stateObserver)
@@ -396,22 +396,22 @@ class PaymentTokensViewModelTest {
 
         // Check initial load
         testObserver.assertValues(ERC20Token.ETHER_TOKEN)
-        then(tokenRepository).should().loadPaymentToken(expectedSafe)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentToken(expectedSafe)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Change payment token
         viewModel.setPaymentToken(TEST_TOKEN)
 
         testObserver.assertValues(ERC20Token.ETHER_TOKEN, TEST_TOKEN)
-        then(tokenRepository).should().setPaymentToken(expectedSafe, TEST_TOKEN)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().setPaymentToken(expectedSafe, TEST_TOKEN)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Should emit last without loading from repo again
         val additionalObserver = TestLiveDataObserver<ERC20Token>()
         viewModel.paymentToken.observe(lifecycleRule, additionalObserver)
 
         additionalObserver.assertValues(TEST_TOKEN)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Should not have any state changes
         stateObserver.assertEmpty()
@@ -434,10 +434,10 @@ class PaymentTokensViewModelTest {
 
     @Test
     fun setPaymentTokenError() {
-        context.mockGetString()
-        given(tokenRepository.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        contextMock.mockGetString()
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         val error = UnknownHostException()
-        given(tokenRepository.setPaymentToken(MockUtils.any(), MockUtils.any())).willReturn(Completable.error(error))
+        given(tokenRepositoryMock.setPaymentToken(MockUtils.any(), MockUtils.any())).willReturn(Completable.error(error))
 
         val stateObserver = TestLiveDataObserver<PaymentTokensContract.State>()
         viewModel.state.observe(lifecycleRule, stateObserver)
@@ -450,15 +450,15 @@ class PaymentTokensViewModelTest {
 
         // Check initial load
         testObserver.assertValues(ERC20Token.ETHER_TOKEN)
-        then(tokenRepository).should().loadPaymentToken(TEST_SAFE)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentToken(TEST_SAFE)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Change payment token
         viewModel.setPaymentToken(TEST_TOKEN)
 
         testObserver.assertValues(ERC20Token.ETHER_TOKEN)
-        then(tokenRepository).should().setPaymentToken(TEST_SAFE, TEST_TOKEN)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().setPaymentToken(TEST_SAFE, TEST_TOKEN)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         // Should display error via state changes
         stateObserver
@@ -473,10 +473,10 @@ class PaymentTokensViewModelTest {
 
     @Test
     fun loadInitialPaymentError() {
-        context.mockGetString()
+        contextMock.mockGetString()
         val error = UnknownHostException()
-        given(tokenRepository.loadPaymentToken(MockUtils.any())).willReturn(Single.error(error))
-        given(tokenRepository.setPaymentToken(MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.error(error))
+        given(tokenRepositoryMock.setPaymentToken(MockUtils.any(), MockUtils.any())).willReturn(Completable.complete())
 
         val stateObserver = TestLiveDataObserver<PaymentTokensContract.State>()
         viewModel.state.observe(lifecycleRule, stateObserver)
@@ -488,8 +488,8 @@ class PaymentTokensViewModelTest {
         viewModel.paymentToken.observe(lifecycleRule, testObserver)
 
         // Check initial load
-        then(tokenRepository).should().loadPaymentToken(TEST_SAFE)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().loadPaymentToken(TEST_SAFE)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
         testObserver.assertEmpty()
 
@@ -507,8 +507,8 @@ class PaymentTokensViewModelTest {
         viewModel.setPaymentToken(TEST_TOKEN)
 
         testObserver.assertValues(TEST_TOKEN)
-        then(tokenRepository).should().setPaymentToken(TEST_SAFE, TEST_TOKEN)
-        then(tokenRepository).shouldHaveNoMoreInteractions()
+        then(tokenRepositoryMock).should().setPaymentToken(TEST_SAFE, TEST_TOKEN)
+        then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
     }
 
     companion object {

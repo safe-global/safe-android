@@ -44,7 +44,7 @@ class PaymentTokensActivity : ViewModelActivity<PaymentTokensContract>() {
         val safe = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.let { it.asEthereumAddress()!! }
         val transaction = intent.getParcelableExtra<SafeTransaction>(EXTRA_TRANSACTION)
         val metricType = when {
-            safe == null -> PaymentTokensContract.MetricType.CreationFees(2)
+            safe == null -> PaymentTokensContract.MetricType.CreationFees(intent.getLongExtra(EXTRA_OWNER_COUNT, 4))
             transaction != null -> PaymentTokensContract.MetricType.TransactionFees(safe, transaction)
             else -> PaymentTokensContract.MetricType.Balance(safe)
         }
@@ -94,9 +94,11 @@ class PaymentTokensActivity : ViewModelActivity<PaymentTokensContract>() {
     companion object {
         private const val EXTRA_SAFE_ADDRESS = "extra.string.safe_address"
         private const val EXTRA_TRANSACTION = "extra.parcelable.transaction"
-        fun createIntent(context: Context, safeAddress: Solidity.Address?, transaction: SafeTransaction? = null) =
+        private const val EXTRA_OWNER_COUNT = "extra.integer.owner_count"
+        fun createIntent(context: Context, safeAddress: Solidity.Address? = null, transaction: SafeTransaction? = null, ownerCount: Long? = null) =
             Intent(context, PaymentTokensActivity::class.java).apply {
                 putExtra(EXTRA_SAFE_ADDRESS, safeAddress?.asEthereumAddressString())
+                putExtra(EXTRA_OWNER_COUNT, ownerCount)
                 putExtra(EXTRA_TRANSACTION, transaction)
             }
     }

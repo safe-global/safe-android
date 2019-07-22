@@ -19,6 +19,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.reset
+import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
@@ -33,6 +34,7 @@ import pm.gnosis.heimdall.data.remote.models.tokens.TokenInfo
 import pm.gnosis.heimdall.data.remote.models.tokens.fromNetwork
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.helpers.TimeProvider
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -69,6 +71,9 @@ class DefaultTokenRepositoryTest {
     @Mock
     private lateinit var relayServiceApiMock: RelayServiceApi
 
+    @Mock
+    private lateinit var timeProviderMock: TimeProvider
+
     private val testPreferences = TestPreferences()
 
     private lateinit var repository: DefaultTokenRepository
@@ -86,7 +91,8 @@ class DefaultTokenRepositoryTest {
             dbMock,
             ethereumRepositoryMock,
             tokenPrefs,
-            relayServiceApiMock
+            relayServiceApiMock,
+            timeProviderMock
         )
     }
 
@@ -640,6 +646,7 @@ class DefaultTokenRepositoryTest {
             CreationEstimate("No token info", "should not matter", "ignored", "0xdead".asEthereumAddress()!!)
         )
         given(relayServiceApiMock.creationEstimates(MockUtils.any())).willReturn(Single.just(creationEstimatesResult))
+        given(timeProviderMock.currentTimeMs()).willReturn(0L)
 
         val testObserver = TestObserver<List<Pair<ERC20Token, BigInteger>>>()
         repository.loadPaymentTokensWithCreationFees(23).subscribe(testObserver)
@@ -648,6 +655,41 @@ class DefaultTokenRepositoryTest {
         then(relayServiceApiMock).should().paymentTokens()
         then(relayServiceApiMock).should().creationEstimates(CreationEstimatesParams(23))
         then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+        then(timeProviderMock).should().currentTimeMs()
+        then(timeProviderMock).shouldHaveNoMoreInteractions()
+
+        // Different number of owners should not be cached
+        val notCachedObserver = TestObserver<List<Pair<ERC20Token, BigInteger>>>()
+        repository.loadPaymentTokensWithCreationFees(32).subscribe(notCachedObserver)
+
+        then(relayServiceApiMock).should(times(2)).paymentTokens()
+        then(relayServiceApiMock).should().creationEstimates(CreationEstimatesParams(32))
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+        then(timeProviderMock).should(times(2)).currentTimeMs()
+        then(timeProviderMock).shouldHaveNoMoreInteractions()
+
+        // Same number of owners should be cached
+        given(timeProviderMock.currentTimeMs()).willReturn(300000)
+        val cachedObserver = TestObserver<List<Pair<ERC20Token, BigInteger>>>()
+        repository.loadPaymentTokensWithCreationFees(23).subscribe(cachedObserver)
+
+        testObserver.assertResult(listOf(TEST_TOKEN to BigInteger.valueOf(7331)))
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+        then(timeProviderMock).should(times(3)).currentTimeMs()
+        then(timeProviderMock).shouldHaveNoMoreInteractions()
+
+        // Cache should be cleared after 5 minutes
+        given(timeProviderMock.currentTimeMs()).willReturn(300001)
+        val clearedObserver = TestObserver<List<Pair<ERC20Token, BigInteger>>>()
+        repository.loadPaymentTokensWithCreationFees(23).subscribe(clearedObserver)
+
+        testObserver.assertResult(listOf(TEST_TOKEN to BigInteger.valueOf(7331)))
+        then(relayServiceApiMock).should(times(3)).paymentTokens()
+        then(relayServiceApiMock).should(times(2)).creationEstimates(CreationEstimatesParams(23))
+        then(relayServiceApiMock).shouldHaveNoMoreInteractions()
+        // Invoked twice -> get and set
+        then(timeProviderMock).should(times(5)).currentTimeMs()
+        then(timeProviderMock).shouldHaveNoMoreInteractions()
     }
 
     @Test
