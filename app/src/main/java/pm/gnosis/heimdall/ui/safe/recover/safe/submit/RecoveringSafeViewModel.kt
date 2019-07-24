@@ -1,10 +1,10 @@
 package pm.gnosis.heimdall.ui.safe.recover.safe.submit
 
 import android.content.Context
+import android.graphics.Bitmap
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -78,27 +78,35 @@ class RecoveringSafeViewModel @Inject constructor(
 
     override fun observeRecoveryInfo(address: Solidity.Address): Observable<Result<RecoveryInfo>> =
         safeRepository.loadRecoveringSafe(address)
-            .map { Triple(it.address.asEthereumAddressChecksumString(), it.requiredFunds(), it.gasToken) }
+            .toObservable()
+            .flatMap {
+                safe ->
+                qrCodeGenerator.generateQrCode(address.asEthereumAddressChecksumString())
+                    .toObservable()
+                    .map {
+                        safe to it
+                    }
+            }
             .emitAndNext(
-                emit = { (safeAddress, requiredFunds) ->
+                emit = { (recoveringSafe, qrCode) ->
                     DataResult(
                         RecoveryInfo(
-                            safeAddress,
+                            recoveringSafe.address.asEthereumAddressChecksumString(),
                             null,
-                            requiredFunds,
-                            null
+                            recoveringSafe.requiredFunds(),
+                            qrCode
                         )
                     )
                 },
-                next = { (safeAddress, requiredFunds, gasToken) -> observeTokenRecoveryInfo(safeAddress, requiredFunds, gasToken) }
+                next = { (recoveringSafe, qrCode) -> observeTokenRecoveryInfo(recoveringSafe.address.asEthereumAddressChecksumString(), recoveringSafe.requiredFunds(), recoveringSafe.gasToken, qrCode) }
             )
 
-    private fun observeTokenRecoveryInfo(safeAddress: String, requiredFunds: BigInteger, gasTokenAddress: Solidity.Address) =
+    private fun observeTokenRecoveryInfo(safeAddress: String, requiredFunds: BigInteger, gasTokenAddress: Solidity.Address, qrCode: Bitmap) =
         tokenRepository.loadToken(gasTokenAddress)
             .onErrorResumeNext { error: Throwable -> errorHandler.single(error) }
             .emitAndNext(
                 emit = {
-                    RecoveryInfo(safeAddress, ERC20TokenWithBalance(it, null), requiredFunds, null)
+                    RecoveryInfo(safeAddress, ERC20TokenWithBalance(it, null), requiredFunds, qrCode)
                 },
                 next = { token ->
                     tokenRepository.loadTokenBalances(safeAddress.asEthereumAddress()!!, listOf(token))
@@ -107,15 +115,7 @@ class RecoveringSafeViewModel @Inject constructor(
                         .map {
                             it.first()
                         }
-                        .flatMap { (token, balance) ->
-                            qrCodeGenerator.generateQrCode(safeAddress)
-                                .toObservable()
-                                .subscribeOn(Schedulers.computation())
-                                .map {
-                                    Triple(token, balance, it)
-                                }
-                        }
-                        .map {( token, balance, qrCode) ->
+                        .map { (token, balance) ->
                             RecoveryInfo(safeAddress, ERC20TokenWithBalance(token, balance), requiredFunds, qrCode)
                         }
                 }

@@ -1,9 +1,11 @@
 package pm.gnosis.heimdall.ui.safe.pending
 
 import android.content.Context
+import android.graphics.Bitmap
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler
@@ -16,15 +18,19 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.model.Solidity
+import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
@@ -49,23 +55,34 @@ class SafeCreationFundViewModelTest {
     private lateinit var gnosisSafeRepositoryMock: GnosisSafeRepository
 
     @Mock
+    private lateinit var ethereumRepositoryMock: EthereumRepository
+
+    @Mock
     private lateinit var tokenRepositoryMock: TokenRepository
+
+    @Mock
+    private lateinit var qrGeneratorMock: QrCodeGenerator
+
+    @Mock
+    private lateinit var safeQrCodeMock: Bitmap
 
     private lateinit var viewModel: SafeCreationFundViewModel
 
     @Before
     fun setup() {
-        viewModel = SafeCreationFundViewModel(contextMock, gnosisSafeRepositoryMock, tokenRepositoryMock)
+        viewModel = SafeCreationFundViewModel(contextMock, gnosisSafeRepositoryMock, tokenRepositoryMock, ethereumRepositoryMock, qrGeneratorMock)
     }
 
     @Test
     fun observeCreationInfo() {
-        val safeAddress = "1"
+        val safeAddress = Solidity.Address(BigInteger.ZERO).asEthereumAddressChecksumString()
         val testObserver = TestObserver.create<Result<SafeCreationFundContract.CreationInfo>>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
+        given(ethereumRepositoryMock.getBalance(Solidity.Address(BigInteger.ZERO))).willReturn(Observable.just(Wei.ZERO))
         val tokenTestSingle = TestSingleFactory<ERC20Token>()
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(tokenTestSingle.get())
+        given(qrGeneratorMock.generateQrCode(safeAddress)).willReturn(Single.just(safeQrCodeMock))
 
         viewModel.setup(safeAddress)
         viewModel.observeCreationInfo().subscribe(testObserver)
@@ -75,7 +92,8 @@ class SafeCreationFundViewModelTest {
                 SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
                     null,
-                    BigInteger.ONE
+                    BigInteger.ONE,
+                    null
                 )
             )
         )
@@ -86,14 +104,16 @@ class SafeCreationFundViewModelTest {
                 SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
                     null,
-                    BigInteger.ONE
+                    BigInteger.ONE,
+                    null
                 )
             ),
             DataResult(
                 SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
-                    ERC20Token.ETHER_TOKEN,
-                    BigInteger.ONE
+                    ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN,  BigInteger.ZERO),
+                    BigInteger.ONE,
+                    safeQrCodeMock
                 )
             )
         )
@@ -122,7 +142,8 @@ class SafeCreationFundViewModelTest {
                 SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
                     null,
-                    BigInteger.ONE
+                    BigInteger.ONE,
+                    null
                 )
             )
         )
@@ -133,7 +154,8 @@ class SafeCreationFundViewModelTest {
                 SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
                     null,
-                    BigInteger.ONE
+                    BigInteger.ONE,
+                    null
                 )
             ),
             ErrorResult(SimpleLocalizedException(R.string.error_check_internet_connection.toString()))
