@@ -2,16 +2,20 @@ package pm.gnosis.heimdall.ui.safe.pending
 
 import android.content.Context
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
+import pm.gnosis.ethereum.EthereumRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
+import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.asEthereumAddress
@@ -22,7 +26,9 @@ import javax.inject.Inject
 class SafeCreationFundViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val gnosisSafeRepository: GnosisSafeRepository,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val ethereumRepository: EthereumRepository,
+    private var qrCodeGenerator: QrCodeGenerator
 ) : SafeCreationFundContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
@@ -38,15 +44,32 @@ class SafeCreationFundViewModel @Inject constructor(
         gnosisSafeRepository.observePendingSafe(safeAddress).toObservable()
             .doOnNext { this.pendingSafe = it }
             .emitAndNext(
-                emit = { DataResult(CreationInfo(it.address.asEthereumAddressChecksumString(), null, it.paymentAmount)) },
+                emit = { DataResult(CreationInfo(it.address.asEthereumAddressChecksumString(), null, it.paymentAmount, null)) },
                 next = { safe ->
                     tokenRepository.loadToken(safe.paymentToken)
                         .onErrorResumeNext { errorHandler.single(it) }
-                        .map { CreationInfo(safe.address.asEthereumAddressChecksumString(), it, safe.paymentAmount) }
                         .toObservable()
+                        .flatMap { token ->
+                            qrCodeGenerator.generateQrCode(safe.address.asEthereumAddressChecksumString())
+                                .toObservable()
+                                .subscribeOn(Schedulers.computation())
+                                .map {
+                                    token to it
+                                }
+                        }
+                        .flatMap { (token, qrCode) ->
+                            ethereumRepository.getBalance(safe.address)
+                                .map {
+                                    Triple(token, it, qrCode)
+                                }
+                        }
+                        .map { (token, balance, qrCode) ->
+                            CreationInfo(safe.address.asEthereumAddressChecksumString(), ERC20TokenWithBalance(token, balance.toEther().toBigInteger()), safe.paymentAmount, qrCode)
+                        }
                         .mapToResult()
                 }
             )
+
 
     override fun observeHasEnoughDeployBalance(): Observable<Unit> =
         gnosisSafeRepository.observePendingSafe(safeAddress).toObservable()

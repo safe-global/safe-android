@@ -377,9 +377,10 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="new_seed">New recovery phrase</string>
     <string name="scan_qr_code_title">Scan QR code</string>
     <string name="insufficient_funds">Insufficient funds</string>
-    <string name="recovering_requires_fee">Recovering your Safe requires a network fee. Please add funds to your Safe.</string>
+    <string name="recovering_requires_fee">Recovering your Safe requires a network fee.</string>
+    <string name="add_funds_to_safe">Please add funds to your Safe.</string>
     <string name="amount_needed">Amount needed</string>
-    <string name="send_remainder">Send at least the remainder to your new Safe:</string>
+    <string name="send_remainder">Send at least the remainder to your Safe</string>
     <string name="view_entry">View Entry</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="enter_safe_address_field">Enter Safe address</string>
@@ -437,6 +438,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="notification_new_transaction_request">New transaction request to review</string>
     <string name="select_safe_to_connect">Select a Safe to connect</string>
     <string name="search_select_tokens"><![CDATA[Search & select tokens…]]></string>
+
     <string name="this_payment_will_be_used">This payment method will be used to pay network fees in all transactions.</string>
     <string name="fee_method">Fee Payment Method</string>
     <string name="fee">Fee</string>

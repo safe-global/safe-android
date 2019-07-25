@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.safe.recover.safe.submit
 
 import android.content.Context
+import android.graphics.Bitmap
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
@@ -22,6 +23,7 @@ import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.DataResult
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.asEthereumAddress
@@ -35,7 +37,8 @@ class RecoveringSafeViewModel @Inject constructor(
     private val cryptoHelper: CryptoHelper,
     private val executionRepository: TransactionExecutionRepository,
     private val safeRepository: GnosisSafeRepository,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private var qrCodeGenerator: QrCodeGenerator
 ) : RecoveringSafeContract() {
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
@@ -75,33 +78,45 @@ class RecoveringSafeViewModel @Inject constructor(
 
     override fun observeRecoveryInfo(address: Solidity.Address): Observable<Result<RecoveryInfo>> =
         safeRepository.loadRecoveringSafe(address)
-            .map { Triple(it.address.asEthereumAddressChecksumString(), it.requiredFunds(), it.gasToken) }
+            .toObservable()
+            .flatMap {
+                safe ->
+                qrCodeGenerator.generateQrCode(address.asEthereumAddressChecksumString())
+                    .toObservable()
+                    .map {
+                        safe to it
+                    }
+            }
             .emitAndNext(
-                emit = { (safeAddress, requiredFunds) ->
+                emit = { (recoveringSafe, qrCode) ->
                     DataResult(
                         RecoveryInfo(
-                            safeAddress,
+                            recoveringSafe.address.asEthereumAddressChecksumString(),
                             null,
-                            requiredFunds
+                            recoveringSafe.requiredFunds(),
+                            qrCode
                         )
                     )
                 },
-                next = { (safeAddress, requiredFunds, gasToken) -> observeTokenRecoveryInfo(safeAddress, requiredFunds, gasToken) }
+                next = { (recoveringSafe, qrCode) -> observeTokenRecoveryInfo(recoveringSafe.address.asEthereumAddressChecksumString(), recoveringSafe.requiredFunds(), recoveringSafe.gasToken, qrCode) }
             )
 
-    private fun observeTokenRecoveryInfo(safeAddress: String, requiredFunds: BigInteger, gasTokenAddress: Solidity.Address) =
+    private fun observeTokenRecoveryInfo(safeAddress: String, requiredFunds: BigInteger, gasTokenAddress: Solidity.Address, qrCode: Bitmap) =
         tokenRepository.loadToken(gasTokenAddress)
             .onErrorResumeNext { error: Throwable -> errorHandler.single(error) }
             .emitAndNext(
                 emit = {
-                    RecoveryInfo(safeAddress, ERC20TokenWithBalance(it, null), requiredFunds)
+                    RecoveryInfo(safeAddress, ERC20TokenWithBalance(it, null), requiredFunds, qrCode)
                 },
                 next = { token ->
                     tokenRepository.loadTokenBalances(safeAddress.asEthereumAddress()!!, listOf(token))
                         .repeatWhen { it.delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS) }
                         .retryWhen { it.delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS) }
                         .map {
-                            RecoveryInfo(safeAddress, it.first().let { (token, balance) -> ERC20TokenWithBalance(token, balance) }, requiredFunds)
+                            it.first()
+                        }
+                        .map { (token, balance) ->
+                            RecoveryInfo(safeAddress, ERC20TokenWithBalance(token, balance), requiredFunds, qrCode)
                         }
                 }
             )

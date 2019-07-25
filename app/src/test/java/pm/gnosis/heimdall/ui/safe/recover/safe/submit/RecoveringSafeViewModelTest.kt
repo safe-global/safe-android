@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.safe.recover.safe.submit
 
 import android.content.Context
+import android.graphics.Bitmap
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -16,6 +17,7 @@ import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.crypto.utils.Sha3Utils
+import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
@@ -29,6 +31,7 @@ import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
+import pm.gnosis.svalinn.common.utils.QrCodeGenerator
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.*
 import pm.gnosis.utils.asBigInteger
@@ -60,11 +63,17 @@ class RecoveringSafeViewModelTest {
     @Mock
     private lateinit var tokenRepoMock: TokenRepository
 
+    @Mock
+    private lateinit var qrGeneratorMock: QrCodeGenerator
+
+    @Mock
+    private lateinit var safeQrCodeMock: Bitmap
+
     private lateinit var viewModel: RecoveringSafeViewModel
 
     @Before
     fun setUp() {
-        viewModel = RecoveringSafeViewModel(contextMock, cryptoHelperMock, execRepoMock, safeRepoMock, tokenRepoMock)
+        viewModel = RecoveringSafeViewModel(contextMock, cryptoHelperMock, execRepoMock, safeRepoMock, tokenRepoMock, qrGeneratorMock)
     }
 
     @Test
@@ -422,11 +431,12 @@ class RecoveringSafeViewModelTest {
         )
         given(safeRepoMock.loadRecoveringSafe(MockUtils.any())).willReturn(Single.just(safe))
         given(tokenRepoMock.loadToken(MockUtils.any())).willReturn(Single.error(UnknownHostException()))
+        given(qrGeneratorMock.generateQrCode(TEST_SAFE.asEthereumAddressChecksumString())).willReturn(Single.just(safeQrCodeMock))
 
         val observer = TestObserver<Result<RecoveringSafeContract.RecoveryInfo>>()
         viewModel.observeRecoveryInfo(TEST_SAFE).subscribe(observer)
         observer.assertResult(
-            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, null, BigInteger.valueOf(1110))),
+            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, null, BigInteger.valueOf(1110), safeQrCodeMock)),
             ErrorResult(SimpleLocalizedException(R.string.error_check_internet_connection.toString()))
         )
         then(safeRepoMock).should().loadRecoveringSafe(TEST_SAFE)
@@ -456,18 +466,19 @@ class RecoveringSafeViewModelTest {
             .willReturn(Observable.fromCallable {
                 response?.let { listOf(ERC20Token.ETHER_TOKEN to it) } ?: throw UnknownHostException()
             })
+        given(qrGeneratorMock.generateQrCode(TEST_SAFE.asEthereumAddressChecksumString())).willReturn(Single.just(safeQrCodeMock))
 
         val observer = TestObserver<Result<RecoveringSafeContract.RecoveryInfo>>()
         val expectedValues = mutableListOf(
-            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, null, BigInteger.valueOf(110))),
+            DataResult(RecoveringSafeContract.RecoveryInfo(TEST_SAFE_CHECK, null, BigInteger.valueOf(110), safeQrCodeMock)),
             DataResult(
                 RecoveringSafeContract.RecoveryInfo(
-                    TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null), BigInteger.valueOf(110)
+                    TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, null), BigInteger.valueOf(110), safeQrCodeMock
                 )
             ),
             DataResult(
                 RecoveringSafeContract.RecoveryInfo(
-                    TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, BigInteger.ONE), BigInteger.valueOf(110)
+                    TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, BigInteger.ONE), BigInteger.valueOf(110), safeQrCodeMock
                 )
             )
         )
@@ -487,7 +498,7 @@ class RecoveringSafeViewModelTest {
 
         expectedValues += DataResult(
             RecoveringSafeContract.RecoveryInfo(
-                TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, BigInteger.TEN), BigInteger.valueOf(110)
+                TEST_SAFE_CHECK, ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, BigInteger.TEN), BigInteger.valueOf(110), safeQrCodeMock
             )
         )
         observer.assertValueSequenceOnly(expectedValues)
