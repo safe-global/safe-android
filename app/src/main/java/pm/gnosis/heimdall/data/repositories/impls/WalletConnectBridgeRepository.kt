@@ -154,7 +154,7 @@ class WalletConnectBridgeRepository @Inject constructor(
             session.addCallback(object : Session.Callback {
 
                 @SuppressLint("CheckResult")
-                override fun handleMethodCall(call: Session.MethodCall) {
+                override fun onMethodCall(call: Session.MethodCall) {
                     when (call) {
                         is Session.MethodCall.SessionRequest -> {
                             getSafeForSession(sessionId)?.let {
@@ -216,12 +216,26 @@ class WalletConnectBridgeRepository @Inject constructor(
                     }
                 }
 
-                override fun sessionApproved() {}
+                override fun onStatus(status: Session.Status) {
+                    when (status) {
+                        Session.Status.Connected -> {
 
-                override fun sessionClosed() {
-                    prefs.removeSession(sessionId)
-                    sessions.remove(sessionId)
-                    sessionUpdates.onNext(Unit)
+                        }
+                        Session.Status.Disconnected -> {
+
+                        }
+                        Session.Status.Approved -> {
+
+                        }
+                        Session.Status.Closed -> {
+                            prefs.removeSession(sessionId)
+                            sessions.remove(sessionId)
+                            sessionUpdates.onNext(Unit)
+                        }
+                        is Session.Status.Error -> {
+                            Timber.e(status.throwable)
+                        }
+                    }
                 }
             })
             sessions[config.handshakeTopic] = session
@@ -299,7 +313,7 @@ class WalletConnectBridgeRepository @Inject constructor(
                 }
                 val cb = object : Session.Callback {
 
-                    override fun handleMethodCall(call: Session.MethodCall) {
+                    override fun onMethodCall(call: Session.MethodCall) {
                         when (call) {
                             is Session.MethodCall.SendTransaction ->
                                 call.apply {
@@ -308,13 +322,25 @@ class WalletConnectBridgeRepository @Inject constructor(
                         }
                     }
 
-                    override fun sessionClosed() {
-                        emitter.onNext(BridgeRepository.SessionEvent.Closed(sessionId))
-                        emitter.onComplete()
-                    }
+                    override fun onStatus(status: Session.Status) {
+                        when (status) {
+                            Session.Status.Connected -> {
 
-                    override fun sessionApproved() {
-                        sessionMeta(sessionId)?.let { emitter.onNext(it) }
+                            }
+                            Session.Status.Disconnected -> {
+
+                            }
+                            Session.Status.Approved -> {
+                                sessionMeta(sessionId)?.let { emitter.onNext(it) }
+                            }
+                            Session.Status.Closed -> {
+                                emitter.onNext(BridgeRepository.SessionEvent.Closed(sessionId))
+                                emitter.onComplete()
+                            }
+                            is Session.Status.Error -> {
+                                Timber.e(status.throwable)
+                            }
+                        }
                     }
                 }
                 emitter.setCancellable {

@@ -99,14 +99,15 @@ class WalletConnectBridgeRepositoryTest {
     fun sessions() {
         val mockSession = mock(Session::class.java)
         given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
-        val firstSession = WCSessionStore.State(randomConfig(), randomClientData(), null, null, UUID.randomUUID().toString(), null)
+        val firstSession = WCSessionStore.State(randomConfig(), randomClientData(), null, null, UUID.randomUUID().toString(), null, null)
         val secondSession = WCSessionStore.State(
             randomConfig(),
             randomClientData(),
             randomClientData("Peer"),
             5,
             UUID.randomUUID().toString(),
-            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d")
+            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d"),
+            null
         )
         given(sessionStoreMock.list()).willReturn(
             listOf(
@@ -199,7 +200,8 @@ class WalletConnectBridgeRepositoryTest {
             randomClientData("Peer"),
             5,
             UUID.randomUUID().toString(),
-            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d")
+            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d"),
+            null
         )
         given(sessionStoreMock.load(MockUtils.any())).willReturn(session)
         repository.activateSession(sessionId).subscribe()
@@ -231,7 +233,8 @@ class WalletConnectBridgeRepositoryTest {
             randomClientData("Peer"),
             5,
             UUID.randomUUID().toString(),
-            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d")
+            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d"),
+            null
         )
         given(sessionStoreMock.load(MockUtils.any())).willReturn(session)
         repository.session(sessionId).subscribe(testObserver)
@@ -335,12 +338,12 @@ class WalletConnectBridgeRepositoryTest {
         then(mockSession).shouldHaveNoMoreInteractions()
 
         val someId = System.currentTimeMillis()
-        callbackArgumentCaptor.value.handleMethodCall(Session.MethodCall.SessionRequest(someId, Session.PeerData(UUID.randomUUID().toString(), null)))
+        callbackArgumentCaptor.value.onMethodCall(Session.MethodCall.SessionRequest(someId, Session.PeerData(UUID.randomUUID().toString(), null)))
         then(mockSession).should().approve(listOf(testSafe.asEthereumAddressString()), BuildConfig.BLOCKCHAIN_CHAIN_ID)
         then(mockSession).shouldHaveNoMoreInteractions()
         // No safe for session should reject
         testPreferences.clear()
-        callbackArgumentCaptor.value.handleMethodCall(Session.MethodCall.SessionRequest(someId, Session.PeerData(UUID.randomUUID().toString(), null)))
+        callbackArgumentCaptor.value.onMethodCall(Session.MethodCall.SessionRequest(someId, Session.PeerData(UUID.randomUUID().toString(), null)))
         then(mockSession).should().reject()
         then(mockSession).shouldHaveNoMoreInteractions()
 
@@ -428,7 +431,7 @@ class WalletConnectBridgeRepositoryTest {
             "wc:12345678-4242-4242-4242-abcdef42abcd@1?bridge=https%3A%2F%2Fbridge.gnosis.pm&key=5eef4242e18349068f7ba3dbd909b3182be28475879d24e929c60e3cbb2d36ee"
         val config = Session.Config.fromWCUri(url)
         given(sessionStoreMock.load(MockUtils.any())).willReturn(
-            WCSessionStore.State(config, Session.PeerData("id", null), null, null, config.key, null)
+            WCSessionStore.State(config, Session.PeerData("id", null), null, null, config.key, null, null)
         )
         val mockSession = mock(Session::class.java)
         given(sessionBuilderMock.build(MockUtils.any(), MockUtils.any())).willReturn(mockSession)
@@ -473,14 +476,15 @@ class WalletConnectBridgeRepositoryTest {
         observer.assertValues(emptyList())
 
         // Setup sessions
-        val firstSession = WCSessionStore.State(randomConfig(), randomClientData(), null, null, UUID.randomUUID().toString(), null)
+        val firstSession = WCSessionStore.State(randomConfig(), randomClientData(), null, null, UUID.randomUUID().toString(), null, null)
         val secondSession = WCSessionStore.State(
             randomConfig(),
             randomClientData(),
             randomClientData("Peer"),
             5,
             UUID.randomUUID().toString(),
-            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d")
+            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d"),
+            null
         )
         given(sessionStoreMock.list()).willReturn(
             listOf(
@@ -522,7 +526,7 @@ class WalletConnectBridgeRepositoryTest {
         observer.assertValues(emptyList())
 
         // Setup sessions
-        val firstSession = WCSessionStore.State(randomConfig(), randomClientData(), null, null, UUID.randomUUID().toString(), null)
+        val firstSession = WCSessionStore.State(randomConfig(), randomClientData(), null, null, UUID.randomUUID().toString(), null, null)
         val firstSessionSafe = "0xbaddad".asEthereumAddress()!!
         wcPrefs.saveSession(firstSession.config.handshakeTopic, firstSessionSafe)
         val secondSession = WCSessionStore.State(
@@ -531,7 +535,8 @@ class WalletConnectBridgeRepositoryTest {
             randomClientData("Peer"),
             5,
             UUID.randomUUID().toString(),
-            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d")
+            listOf("0xb3a4Bc89d8517E0e2C9B66703d09D3029ffa1e6d"),
+            null
         )
         val secondSessionSafe = "0xdeadbeef".asEthereumAddress()!!
         wcPrefs.saveSession(secondSession.config.handshakeTopic, secondSessionSafe)
