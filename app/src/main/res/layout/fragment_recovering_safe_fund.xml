@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pale_grey_two">
+
+    <View
+        android:id="@+id/recovering_safe_toolbar_shadow"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/recovering_safe_scroll_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_toolbar_shadow">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/recovering_safe_insufficient_funds_warning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:drawableLeft="@drawable/ic_error"
+                android:drawablePadding="10dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="4sp"
+                android:text="@string/insufficient_funds"
+                android:textColor="@color/dark_slate_blue"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/recovering_safe_qr_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="@dimen/primary_button_radius"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recovering_safe_add_funds_label">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/recovering_safe_safe_balance_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="7sp"
+                        android:text="@string/safe_balance"
+                        android:textColor="@color/battleship_grey"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/recovering_safe_amount_needed_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="7sp"
+                        android:text="@string/amount_needed"
+                        android:textColor="@color/battleship_grey"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_safe_balance_label" />
+
+                    <TextView
+                        android:id="@+id/recovering_safe_safe_balance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="monospace"
+                        android:gravity="end"
+                        android:lineSpacingExtra="7sp"
+                        android:textColor="@color/battleship_grey"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintBottom_toBottomOf="@+id/recovering_safe_safe_balance_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/recovering_safe_safe_balance_label"
+                        tools:text="0.00039 ETH" />
+
+                    <TextView
+                        android:id="@+id/recovering_safe_amount_needed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="monospace"
+                        android:gravity="end"
+                        android:lineSpacingExtra="7sp"
+                        android:textColor="@color/battleship_grey"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintBottom_toBottomOf="@+id/recovering_safe_amount_needed_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/recovering_safe_amount_needed_label"
+                        tools:text="0.00039 ETH" />
+
+                    <View
+                        android:id="@+id/recovering_safe_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/pale_grey_two"
+                        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_remainder"
+                        tools:layout_editor_absoluteX="0dp" />
+
+                    <pm.gnosis.blockies.BlockiesImageView
+                        android:id="@+id/recovering_safe_safe_image"
+                        android:layout_width="@dimen/info_blockies"
+                        android:layout_height="@dimen/info_blockies"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/recovering_safe_safe_address"
+                        app:layout_constraintEnd_toStartOf="@+id/recovering_safe_safe_address"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/recovering_safe_safe_address"
+                        tools:background="@drawable/circle_settings" />
+
+                    <TextView
+                        android:id="@+id/recovering_safe_safe_address"
+                        style="@style/NormalText"
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="monospace"
+                        android:letterSpacing="-0.04"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toEndOf="@+id/recovering_safe_safe_image"
+                        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_divider"
+                        tools:text="0xf1511FAB6b7347899f51f9db027A32b39caE3910" />
+
+                    <FrameLayout
+                        android:id="@+id/recovering_safe_qr_code_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_safe_address">
+
+                        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                            android:id="@+id/recovering_safe_qr_progress"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_gravity="center" />
+
+                        <ImageView
+                            android:id="@+id/recovering_safe_qr_image"
+                            style="@style/PrimaryButton.White"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:scaleType="fitCenter"
+                            tools:background="@color/pale_grey" />
+
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:id="@+id/recovering_safe_share_button"
+                        style="@style/PrimaryButton.Blue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="24dp"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_only_send_x">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:tint="@color/white"
+                            app:srcCompat="@drawable/ic_share_24dp" />
+
+                        <TextView
+                            style="@style/PrimaryButton.White.Text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginBottom="1dp"
+                            android:text="@string/share"
+                            android:textColor="@color/white" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/recovering_safe_only_send_x"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="7sp"
+                        tools:text="Please only send ETH"
+                        android:textColor="#ea3f52"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_qr_code_container" />
+
+                    <TextView
+                        android:id="@+id/recovering_safe_send_at_least_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingExtra="7sp"
+                        android:text="@string/send_remainder"
+                        android:textColor="@color/battleship_grey"
+                        android:textSize="13sp"
+                        android:textStyle="normal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_amount_needed_label" />
+
+                    <TextView
+                        android:id="@+id/recovering_safe_remainder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="monospace-medium"
+                        android:gravity="center_horizontal"
+                        android:lineSpacingExtra="5sp"
+                        android:textColor="@color/dark_slate_blue"
+                        android:textStyle="normal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_send_at_least_label"
+                        tools:text="0.00002 ETH" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/recovering_safe_fee_required_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:lineSpacingExtra="5sp"
+                android:text="@string/recovering_requires_fee"
+                android:textColor="@color/battleship_grey"
+                android:textSize="13sp"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recovering_safe_insufficient_funds_warning" />
+
+            <TextView
+                android:id="@+id/recovering_safe_add_funds_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="5sp"
+                android:text="@string/add_funds_to_safe"
+                android:textColor="@color/battleship_grey"
+                android:textSize="13sp"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recovering_safe_fee_required_label" />
+
+            <TextView
+                android:id="@+id/recovering_safe_fees_info"
+                style="@style/NormalText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/tip_link"
+                android:textColor="@color/link"
+                app:layout_constraintBottom_toBottomOf="@+id/recovering_safe_add_funds_label"
+                app:layout_constraintStart_toEndOf="@+id/recovering_safe_add_funds_label"
+                app:layout_constraintTop_toTopOf="@+id/recovering_safe_add_funds_label" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
