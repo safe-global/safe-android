@@ -54,7 +54,7 @@ class ManageTokensActivity : ViewModelActivity<ManageTokensContract>() {
 
         disposables += layout_manage_tokens_back_arrow.clicks()
             .subscribeBy(onNext = {
-                if (layout_manage_tokens_search_input.visibility == View.VISIBLE) {
+                if (layout_manage_tokens_search_input.visibility != View.VISIBLE) {
                     onBackPressed()
                 } else {
                     toggleSearch(false)
