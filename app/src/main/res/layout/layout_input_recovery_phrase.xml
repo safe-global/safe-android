@@ -93,7 +93,7 @@
             android:layout_height="@dimen/toolbar_height"
             android:background="@drawable/selectable_circle_background"
             android:padding="16dp"
-            android:tint="@color/dark_slate_blue"
+            android:tint="@color/blue"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back_24dp" />
@@ -118,21 +118,18 @@
             app:layout_constraintTop_toBottomOf="@id/layout_input_recovery_phrase_title"
             tools:alpha="1" />
 
-        <TextView
+        <pm.gnosis.heimdall.views.TwoStepPanel
             android:id="@+id/layout_input_recovery_phrase_next"
-            style="@style/PrimaryButton.Blue.FullWidth"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="46dp"
-            android:drawablePadding="8dp"
-            android:enabled="false"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="end|center_vertical"
-            android:text="@string/continue_text"
-            android:textColor="@color/white"
+            android:background="@drawable/two_step_panel"
+            app:backVisible="false"
+            app:forwardLabel="@string/confirm"
+            app:colorTextDisabled="@color/disabled_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:drawableEnd="@drawable/ic_arrow_forward_24dp" />
+            app:step="none" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

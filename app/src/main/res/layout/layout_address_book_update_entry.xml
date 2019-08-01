@@ -32,7 +32,7 @@
                     android:id="@+id/layout_address_book_update_entry_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/dark_slate_blue"
+                    android:textColor="@color/blue"
                     android:textSize="16sp"
                     tools:text="Test Safe" />
 
@@ -52,7 +52,7 @@
                     android:id="@+id/layout_address_book_update_entry_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/dark_slate_blue"
+                    android:textColor="@color/blue"
                     android:textSize="16sp"
                     tools:text="0x20000207d9B4364480d69a38044B752c850aF9A8" />
 
@@ -73,7 +73,7 @@
                 android:layout_height="@dimen/toolbar_height"
                 android:background="@drawable/selectable_circle_background"
                 android:padding="16dp"
-                android:tint="@color/dark_slate_blue"
+                android:tint="@color/blue"
                 app:layout_constraintStart_toStartOf="@+id/layout_address_book_update_entry_toolbar_container"
                 app:layout_constraintTop_toTopOf="@+id/layout_address_book_update_entry_toolbar_container"
                 app:srcCompat="@drawable/ic_arrow_back_24dp" />

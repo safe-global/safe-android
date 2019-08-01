@@ -44,7 +44,7 @@
         android:minHeight="@dimen/toolbar_height"
         android:paddingEnd="16dp"
         android:text="@string/receive_funds"
-        android:textColor="@color/dark_slate_blue"
+        android:textColor="@color/blue"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/layout_receive_token_back_button"
@@ -201,7 +201,7 @@
                     <ImageView
                         android:layout_width="16dp"
                         android:layout_height="16dp"
-                        android:tint="@color/azure"
+                        android:tint="@color/safe_green"
                         app:srcCompat="@drawable/ic_share_24dp" />
 
                     <TextView

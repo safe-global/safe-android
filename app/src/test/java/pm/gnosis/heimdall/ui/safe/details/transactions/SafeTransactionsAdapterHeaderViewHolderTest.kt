@@ -169,7 +169,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(targetImageView).should().setAddress(TEST_ADDRESS)
         then(targetImageView).shouldHaveNoMoreInteractions()
 
-        then(targetTextView).should().setTextColor(R.color.dark_slate_blue)
+        then(targetTextView).should().setTextColor(R.color.blue)
         then(targetTextView).shouldHaveNoMoreInteractions()
 
         then(timestampTextView).should().text = R.string.just_a_moment_ago.toString()
@@ -267,7 +267,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(targetImageView).should().setAddress(TEST_ADDRESS)
         then(targetImageView).shouldHaveNoMoreInteractions()
 
-        then(targetTextView).should().setTextColor(R.color.dark_slate_blue)
+        then(targetTextView).should().setTextColor(R.color.blue)
         then(targetTextView).shouldHaveNoMoreInteractions()
 
         then(timestampTextView).should().text = R.string.just_a_moment_ago.toString()
@@ -309,7 +309,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
 
         viewHolder.start()
 
-        then(targetTextView).should().setTextColor(R.color.dark_slate_blue)
+        then(targetTextView).should().setTextColor(R.color.blue)
         then(targetTextView).shouldHaveNoMoreInteractions()
 
         then(timestampTextView).should().text = R.string.transaction_details_error.toString()
@@ -361,7 +361,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
 
         viewHolder.start()
 
-        then(targetTextView).should().setTextColor(R.color.dark_slate_blue)
+        then(targetTextView).should().setTextColor(R.color.blue)
         then(targetTextView).shouldHaveNoMoreInteractions()
 
         statusSubject.onNext(TransactionExecutionRepository.PublishStatus.Unknown)
@@ -477,7 +477,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
 
         then(valueTextView).should().text = null
         then(valueTextView).should().visibility = View.GONE
-        then(valueTextView).should().setTextColor(R.color.dark_slate_blue)
+        then(valueTextView).should().setTextColor(R.color.blue)
         then(valueTextView).shouldHaveNoMoreInteractions()
 
         then(infoTextView).should().text = R.string.replaced_recovery_phrase.toString()
@@ -487,7 +487,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(targetImageView).should().setAddress(TEST_SAFE)
         then(targetImageView).shouldHaveNoMoreInteractions()
 
-        then(targetTextView).should().setTextColor(R.color.dark_slate_blue)
+        then(targetTextView).should().setTextColor(R.color.blue)
         then(targetTextView).shouldHaveNoMoreInteractions()
 
         then(timestampTextView).should().text = R.string.just_a_moment_ago.toString()
@@ -533,7 +533,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
 
         viewHolder.start()
 
-        then(targetTextView).should().setTextColor(R.color.dark_slate_blue)
+        then(targetTextView).should().setTextColor(R.color.blue)
         then(targetTextView).shouldHaveNoMoreInteractions()
 
         then(viewModel).should().loadTransactionInfo("id_1")
@@ -575,7 +575,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
 
         viewHolder.start()
 
-        then(targetTextView).should().setTextColor(R.color.dark_slate_blue)
+        then(targetTextView).should().setTextColor(R.color.blue)
         then(targetTextView).shouldHaveNoMoreInteractions()
 
         then(viewModel).should().loadTransactionInfo("id_1")

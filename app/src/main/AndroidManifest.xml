@@ -207,7 +207,8 @@
         <activity
             android:name=".ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/GreyBackgroundTheme" />
+            android:theme="@style/GreyBackgroundTheme"
+            android:windowSoftInputMode="adjustResize"/>
 
         <activity
             android:name=".ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity"

@@ -18,7 +18,7 @@
         android:paddingStart="24dp"
         android:paddingTop="20dp"
         android:text="@string/review_safe_recovery"
-        android:textColor="@color/dark_slate_blue"
+        android:textColor="@color/blue"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
