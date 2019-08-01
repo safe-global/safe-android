@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/replace_extension_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/replace_extension_content_scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/replace_extension_progress_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/replace_extension_title">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/replace_extension_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/img_authenticator_qr" />
+
+            <TextView
+                android:id="@+id/replace_extension_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="36dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="sans-serif"
+                android:gravity="center_horizontal"
+                android:lineSpacingExtra="7sp"
+                android:text="@string/once_process_is_complete"
+                android:textColor="#5d6d74"
+                android:textSize="13sp"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/replace_extension_image" />
+
+            <View
+                android:id="@+id/replace_extension_divider"
+                android:layout_width="wrap_content"
+                android:layout_height="3dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/pale_grey_two"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/replace_extension_info" />
+
+
+            <include
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/replace_extension_divider"
+                layout="@layout/include_transfer_summary" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/replace_extension_progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/signature_request_barrier_bottom_panel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:mpb_indeterminateTint="@color/azure"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/layout_create_safe_intro_back_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/dark_slate_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <TextView
+        android:id="@+id/replace_extension_title"
+        style="@style/WhiteTheme.ToolbarTitle"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_create_safe_intro_back_arrow"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/connect" />
+
+    <View
+        android:id="@+id/replace_extension_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/replace_extension_title"
+        tools:visibility="visible" />
+
+
+    <pm.gnosis.heimdall.views.TwoStepPanel
+        android:id="@+id/signature_request_barrier_bottom_panel"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@drawable/two_step_panel"
+        app:backVisible="false"
+        app:forwardLabel="@string/start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:step="none" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
