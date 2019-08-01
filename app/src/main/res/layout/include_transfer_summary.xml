@@ -18,6 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/transfer_data_safe_balance_before_label" />
 
+
     <TextView
         android:id="@+id/transfer_data_fees_info"
         style="@style/NormalText"
@@ -84,7 +85,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="sans-serif"
         android:gravity="start"
@@ -105,14 +106,9 @@
         android:layout_height="wrap_content"
         style="@style/NormalText"
         android:fontFamily="monospace-medium"
-
-
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-
         android:text="@string/safe_balance"
-
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -122,14 +118,10 @@
         android:layout_height="wrap_content"
         style="@style/NormalText"
         android:fontFamily="monospace-medium"
-
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:gravity="end"
-
-
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/transfer_data_safe_balance_before_label"
         app:layout_constraintTop_toTopOf="parent"
