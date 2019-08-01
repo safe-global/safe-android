@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.multibindings.IntKey
 import dagger.multibindings.IntoMap
 import okhttp3.Interceptor
+import okhttp3.logging.HttpLoggingInterceptor
 import pm.gnosis.heimdall.BuildConfig
 import javax.inject.Named
 import javax.inject.Singleton
@@ -35,6 +36,17 @@ class InterceptorsModule {
             val builder = request.url().newBuilder()
             val url = builder.addPathSegment(BuildConfig.INFURA_API_KEY).build()
             it.proceed(request.newBuilder().url(url).build())
+        }
+    }
+
+    @Provides
+    @Singleton
+    @IntoMap
+    @IntKey(1)
+    @Named(INTERCEPTORS_WITH_PRIORITY)
+    fun providesLoggingInterceptor(): Interceptor {
+        return HttpLoggingInterceptor().apply {
+            level = if(BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
         }
     }
 }

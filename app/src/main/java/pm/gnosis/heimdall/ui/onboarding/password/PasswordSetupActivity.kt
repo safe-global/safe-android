@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.helpers.PasswordHelper
 import pm.gnosis.heimdall.helpers.PasswordValidationCondition
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.utils.colorStatusBar
 import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.subscribeForResult
@@ -28,7 +29,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
-        colorStatusBar(R.color.safe_green)
+        window.colorStatusBar(R.color.safe_green)
         super.onCreate(savedInstanceState)
 
         layout_password_setup_password.disableAccessibility()

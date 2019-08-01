@@ -121,9 +121,15 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.safe.create.CreateSafePairingActivity"
+            android:name=".ui.two_factor.authenticator.PairingAuthenticatorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.pairing.PairingSubmitActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
 
         <activity
             android:name=".ui.safe.recover.safe.CheckSafeActivity"
@@ -194,17 +200,35 @@
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
 
+
         <activity
-            android:name=".ui.safe.recover.extension.ReplaceAuthenticatorSubmitActivity"
+            android:name=".ui.safe.pairing.connect.Connect2FaStartActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.pairing.replace.Replace2FaStartActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.pairing.remove.Remove2FaStartActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+
+        <activity
+            android:name=".ui.safe.pairing.replace.Replace2FaRecoveryPhraseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.safe.recover.extension.ReplaceAuthenticatorRecoveryPhraseActivity"
+            android:name=".ui.safe.pairing.remove.Remove2FaRecoveryPhraseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
+
 
         <activity
             android:name=".ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity"
@@ -282,37 +306,37 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.authenticator.SetupAuthenticatorActivity"
+            android:name=".ui.two_factor.Setup2FaActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
         <activity
-            android:name=".ui.authenticator.SelectAuthenticatorActivity"
+            android:name=".ui.two_factor.Select2FaActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
         <activity
-            android:name=".ui.keycard.KeycardIntroActivity"
+            android:name="pm.gnosis.heimdall.ui.two_factor.keycard.KeycardIntroActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
         <activity
-            android:name=".ui.keycard.KeycardInitializeActivity"
+            android:name="pm.gnosis.heimdall.ui.two_factor.keycard.KeycardInitializeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
         <activity
-            android:name=".ui.authenticator.ConnectAuthenticatorActivity"
+            android:name=".ui.two_factor.Connect2FaActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
         <activity
-            android:name=".ui.safe.recover.extension.ReplaceAuthenticatorActivity"
+            android:name=".ui.two_factor.Replace2FaActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
         <activity
-            android:name=".ui.safe.recover.safe.RecoverSafeAuthenticatorActivity"
+            android:name=".ui.safe.recover.safe.RecoverSafe2FAActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 

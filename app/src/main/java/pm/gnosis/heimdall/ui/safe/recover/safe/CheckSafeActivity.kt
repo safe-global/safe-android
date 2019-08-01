@@ -81,6 +81,13 @@ class CheckSafeActivity : ViewModelActivity<CheckSafeContract>() {
         disposables += layout_check_safe_back_arrow.clicks().subscribeBy { onBackPressed() }
     }
 
+    override fun onResume() {
+        super.onResume()
+        currentAddress?.let {
+            layout_check_safe_next.isEnabled = true
+        }
+    }
+
     private fun updateAddress(address: Solidity.Address?) {
         currentAddress = address
         if (address != null) {
@@ -126,7 +133,7 @@ class CheckSafeActivity : ViewModelActivity<CheckSafeContract>() {
             VALID_SAFE_WITH_EXTENSION -> {
                 setCheckIcon(R.drawable.ic_green_check)
                 layout_check_safe_address_info.text = null
-                nextIntent = currentAddress?.let { RecoverSafeAuthenticatorActivity.createIntent(this, it) }
+                nextIntent = currentAddress?.let { RecoverSafe2FAActivity.createIntent(this, it) }
                 layout_check_safe_next.isEnabled = true
             }
         }

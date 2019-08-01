@@ -244,6 +244,7 @@ dependencies {
 
     // Logging
     implementation "com.jakewharton.timber:timber:$versions.timber"
+    implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
 
     // RxBinding
     implementation("com.jakewharton.rxbinding2:rxbinding-kotlin:$versions.rxbinding") {
@@ -281,6 +282,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$versions.kotlinx_coroutines"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.androidx_lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$versions.androidx_lifecycle"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx_lifecycle"
     implementation "androidx.room:room-ktx:$versions.androidx_room"
 
     // Testing

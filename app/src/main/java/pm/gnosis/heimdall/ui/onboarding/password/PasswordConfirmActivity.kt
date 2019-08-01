@@ -16,6 +16,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.utils.colorStatusBar
 import pm.gnosis.heimdall.utils.disableAccessibility
 import pm.gnosis.heimdall.utils.setCompoundDrawables
 import pm.gnosis.svalinn.common.utils.*
@@ -30,7 +31,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
-        colorStatusBar(R.color.safe_green)
+        window.colorStatusBar(R.color.safe_green)
         super.onCreate(savedInstanceState)
 
         intent.getByteArrayExtra(EXTRA_PASSWORD_HASH)?.let { passwordHash = it } ?: run {

@@ -40,6 +40,11 @@
         android:visible="false"
         app:showAsAction="never" />
     <item
+        android:id="@+id/safe_details_menu_remove_2fa"
+        android:title="@string/disable_2fa"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/safe_details_menu_delete"
         android:title="@string/remove_from_device"
         app:showAsAction="never" />
