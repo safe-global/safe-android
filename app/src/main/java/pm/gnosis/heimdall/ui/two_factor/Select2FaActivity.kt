@@ -51,7 +51,7 @@ open class Select2FaActivity : NfcActivity() {
         select_authenticator_keycard_description.alpha = alpha
     }
 
-    protected fun getSelectAuthenticatorExtras(): Solidity.Address? = intent.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
+    protected open fun getSelectAuthenticatorExtras(): Solidity.Address? = intent.getStringExtra(EXTRA_SAFE)?.asEthereumAddress()
 
     protected fun isOnboarding(): Boolean = intent.getBooleanExtra(EXTRA_ONBOARDING, false)
 
