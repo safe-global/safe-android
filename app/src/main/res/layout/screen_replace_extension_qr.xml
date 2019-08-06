@@ -29,10 +29,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                app:srcCompat="@drawable/img_authenticator_qr"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/img_authenticator_qr" />
 
             <TextView
                 android:id="@+id/replace_extension_info"
@@ -81,18 +81,23 @@
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:id="@+id/replace_extension_progress_bar"
+        style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
         android:layout_width="0dp"
-        android:layout_height="12dp"
+        android:layout_height="4dp"
         android:indeterminate="true"
+        android:minHeight="4dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/signature_request_barrier_bottom_panel"
+        app:layout_constraintBottom_toTopOf="@+id/replace_extension_bottom_panel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:mpb_indeterminateTint="@color/azure"
+        app:mpb_indeterminateTint="@color/safe_green"
+        app:mpb_progressStyle="horizontal"
+        app:mpb_setBothDrawables="true"
+        app:mpb_useIntrinsicPadding="false"
         tools:visibility="visible" />
 
     <ImageView
-        android:id="@+id/layout_create_safe_intro_back_arrow"
+        android:id="@+id/replace_extension_back_arrow"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/toolbar_height"
         android:background="@drawable/selectable_circle_background"
@@ -108,10 +113,10 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/toolbar_height"
         android:gravity="center_vertical"
+        android:text="@string/scan_qr_code"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/layout_create_safe_intro_back_arrow"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/scan_qr_code" />
+        app:layout_constraintStart_toEndOf="@+id/replace_extension_back_arrow"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/replace_extension_toolbar_shadow"
@@ -123,7 +128,7 @@
 
 
     <pm.gnosis.heimdall.views.TwoStepPanel
-        android:id="@+id/signature_request_barrier_bottom_panel"
+        android:id="@+id/replace_extension_bottom_panel"
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:background="@drawable/two_step_panel"
