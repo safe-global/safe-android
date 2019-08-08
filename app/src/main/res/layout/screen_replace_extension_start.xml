@@ -96,7 +96,7 @@
         android:layout_height="@dimen/toolbar_height"
         android:background="@drawable/selectable_circle_background"
         android:padding="16dp"
-        android:tint="@color/dark_slate_blue"
+        android:tint="@color/blue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_arrow_back_24dp" />

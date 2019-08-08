@@ -27,6 +27,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
+import java.math.BigInteger
 import java.math.RoundingMode
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -167,11 +168,12 @@ class ReplaceExtensionStartViewModel @Inject constructor(
                 .awaitFirst()[0]
 
 
-            val safeOwners = safeInfo.owners.subList(1, safeInfo.owners.size)
+            val owner = safeInfo.owners[0]
+            val extension = Solidity.Address(owner.value.add(BigInteger.valueOf(1)))
             val transaction = recoverSafeOwnersHelper.buildRecoverTransaction(
                 safeInfo,
-                safeOwners.toSet(),
-                setOf(Solidity.Address(safeInfo.owners[0].value.add(1.toBigInteger())))
+                safeInfo.owners.subList(2, safeInfo.owners.size).toSet(),
+                setOf(owner, extension)
             )
             val executeInfo = transactionExecutionRepository.loadExecuteInformation(safeAddress, paymentToken.address, transaction).await()
 

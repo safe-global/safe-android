@@ -10,6 +10,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_replace_browser_extension.*
 import kotlinx.android.synthetic.main.layout_replace_browser_extension_info.*
 import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_fees_value as feesValue
+import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_fees_error as feesError
 import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_safe_balance_after_value as balanceAfterValue
 import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_safe_balance_before_value as balanceBeforeValue
 import pm.gnosis.heimdall.R
@@ -105,7 +106,7 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
     }
 
     override fun onConfirmationDialogDismiss() {
-        startActivity(SafeMainActivity.createIntent(this, viewModel.getSafeTransaction().wrapped.address, selectedTab = 1))
+        startActivity(SafeMainActivity.createIntent(this, viewModel.getSafeTransaction().wrapped.address, selectedTab = 1).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP))
     }
 
     private fun onSafeBalance(status: ReplaceExtensionSubmitContract.SubmitStatus) {

@@ -40,14 +40,15 @@ class ConfirmationDialog : BaseDialog() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.layout_safe_transaction_confirmation, container, false)
+        return inflater.inflate(R.layout.layout_safe_transaction_confirmation, container, false)
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         arguments?.let {
             congratulations_text.text = getString(it[ARG_TEXT_RES] as Int)
             congratulations_check.setImageResource(it[ARG_IMAGE_RES] as Int)
         }
-
-        return root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

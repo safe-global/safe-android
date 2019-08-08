@@ -6,7 +6,6 @@
     <color name="window_background">@color/safe_green</color>
     <color name="toolbar_action">@color/blue</color>
 
-
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="white_alpha_70">#b3ffffff</color>
