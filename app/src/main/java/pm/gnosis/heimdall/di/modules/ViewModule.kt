@@ -26,7 +26,9 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainContract
 import pm.gnosis.heimdall.ui.safe.pairing.PairingContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionQrContract
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionStartContract
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
@@ -140,6 +142,18 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesReceiveTokenContract(provider: ViewModelProvider) = provider[ReceiveTokenContract::class.java]
+
+
+
+
+    @Provides
+    @ForView
+    fun providesReplaceExtensionStartContract(provider: ViewModelProvider) = provider[ReplaceExtensionStartContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesReplaceExtensionQrContract(provider: ViewModelProvider) = provider[ReplaceExtensionQrContract::class.java]
+
 
     @Provides
     @ForView

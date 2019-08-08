@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.ui.dialogs.base.ConfirmationDialog
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.utils.errorSnackbar
 import pm.gnosis.model.Solidity
@@ -34,7 +35,7 @@ import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_da
 import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_safe_balance_after_value as balanceAfterValue
 import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_safe_balance_before_value as balanceBeforeValue
 
-class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitContract>() {
+class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitContract>(), ConfirmationDialog.OnDismissListener {
     private var submissionInProgress = false
 
     @Inject
@@ -92,12 +93,16 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = {
-                startActivity(SafeMainActivity.createIntent(this, viewModel.getSafeTransaction().wrapped.address, selectedTab = 1))
-
+                ConfirmationDialog.create(R.drawable.img_authenticator_replace, R.string.feedback_text)
+                    .show(supportFragmentManager, null)
             }, onError = ::onSubmitTransactionError)
 
         disposables += layout_replace_browser_extension_back_arrow.clicks()
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
+    }
+
+    override fun onConfirmationDialogDismiss() {
+        startActivity(SafeMainActivity.createIntent(this, viewModel.getSafeTransaction().wrapped.address, selectedTab = 1))
     }
 
     private fun onSafeBalance(status: ReplaceExtensionSubmitContract.SubmitStatus) {

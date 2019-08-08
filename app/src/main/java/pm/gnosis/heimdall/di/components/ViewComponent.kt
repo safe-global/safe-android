@@ -28,7 +28,9 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionQrActivity
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseActivity
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionStartActivity
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
@@ -125,6 +127,9 @@ interface ViewComponent {
     fun inject(activity: WalletConnectIntroActivity)
     fun inject(activity: WalletConnectLinkActivity)
     fun inject(activity: WalletConnectSessionsActivity)
+
+    fun inject(activity: ReplaceExtensionStartActivity)
+    fun inject(activity: ReplaceExtensionQrActivity)
 
     // Dialogs
 

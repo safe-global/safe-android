@@ -38,6 +38,7 @@ import pm.gnosis.heimdall.ui.safe.list.SafeAdapter
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
 import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionPairingActivity
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionStartActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
@@ -381,7 +382,10 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                         )
                     }
                     R.id.safe_details_menu_replace_browser_extension -> selectedSafe?.let { safe ->
-                        startActivity(ReplaceExtensionPairingActivity.createIntent(this, safe.address()))
+
+                        startActivity(ReplaceExtensionStartActivity.createIntent(this, safe.address()))
+
+                        //startActivity(ReplaceExtensionPairingActivity.createIntent(this, safe.address()))
                     }
                     R.id.safe_details_menu_show_on_etherscan -> selectedSafe?.let { safe ->
                         openUrl(getString(R.string.etherscan_address_url, safe.address().asEthereumAddressString()))

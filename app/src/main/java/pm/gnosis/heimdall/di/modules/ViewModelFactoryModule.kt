@@ -189,6 +189,24 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(RecoverSafeRecoveryPhraseContract::class)
     abstract fun bindsRecoverInputRecoveryPhraseContract(viewModel: RecoverSafeRecoveryPhraseViewModel): ViewModel
 
+
+
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ReplaceExtensionStartContract::class)
+    abstract fun bindsReplaceExtensionStartContract(viewModel: ReplaceExtensionStartViewModel): ViewModel
+
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ReplaceExtensionQrContract::class)
+    abstract fun bindsReplaceExtensionQrContract(viewModel: ReplaceExtensionQrViewModel): ViewModel
+
+
+
+
+
     @Binds
     @IntoMap
     @ViewModelKey(ReplaceExtensionSubmitContract::class)

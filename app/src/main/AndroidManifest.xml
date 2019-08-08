@@ -193,6 +193,21 @@
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
 
+
+
+        <activity
+            android:name=".ui.safe.recover.extension.ReplaceExtensionStartActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+
+        <activity
+            android:name=".ui.safe.recover.extension.ReplaceExtensionQrActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+
+
         <activity
             android:name=".ui.safe.recover.extension.ReplaceExtensionPairingActivity"
             android:screenOrientation="portrait"
