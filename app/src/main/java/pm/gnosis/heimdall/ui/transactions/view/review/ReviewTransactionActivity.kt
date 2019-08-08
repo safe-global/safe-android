@@ -20,9 +20,9 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.ui.dialogs.base.ConfirmationDialog
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
-import pm.gnosis.heimdall.ui.transactions.TransactionSubmissionConfirmationDialog
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.ViewUpdate
@@ -37,7 +37,7 @@ import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import javax.inject.Inject
 
-class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>(), UnlockDialog.UnlockCallback {
+class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>(), UnlockDialog.UnlockCallback, ConfirmationDialog.OnDismissListener {
 
     @Inject
     lateinit var infoViewHelper: TransactionSubmitInfoViewHelper
@@ -158,13 +158,26 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
                 setupViewHolder(update.viewHolder)
             is ViewUpdate.TransactionSubmitted -> {
                 if (update.success) {
-                    TransactionSubmissionConfirmationDialog.create(referenceId).show(supportFragmentManager, null)
+                    ConfirmationDialog.create(R.drawable.ic_congratulations, R.string.transaction_submitted).show(supportFragmentManager, null)
+                } else {
                     infoViewHelper.toggleReadyState(true)
                 }
             }
             else ->
                 infoViewHelper.applyUpdate(update)?.let { disposables += it }
         }
+    }
+
+    override fun onConfirmationDialogDismiss() {
+        // If we have a reference id then we have been opened from a external request and should just close the screen without opening a new one
+        if (referenceId ?: 0 < 0)
+            startActivity(
+                SafeMainActivity.createIntent(
+                    this,
+                    null,
+                    R.string.tab_title_transactions
+                )
+            )
     }
 
     private fun toggleReadyState(isReady: Boolean) {

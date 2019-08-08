@@ -10,7 +10,7 @@ import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import kotlinx.android.synthetic.main.layout_safe_transaction_confirmation.*
+import kotlinx.android.synthetic.main.screen_confirmation_dialog.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.svalinn.common.utils.getColorCompat
 
@@ -40,7 +40,7 @@ class ConfirmationDialog : BaseDialog() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.layout_safe_transaction_confirmation, container, false)
+        return inflater.inflate(R.layout.screen_confirmation_dialog, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
