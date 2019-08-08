@@ -9,6 +9,9 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_replace_browser_extension.*
 import kotlinx.android.synthetic.main.layout_replace_browser_extension_info.*
+import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_fees_value as feesValue
+import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_safe_balance_after_value as balanceAfterValue
+import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_safe_balance_before_value as balanceBeforeValue
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.di.components.ViewComponent

@@ -33,8 +33,8 @@ import javax.inject.Inject
 import kotlinx.android.synthetic.main.include_transfer_summary.transfer_data_fees_error as feesError
 import kotlinx.android.synthetic.main.include_transfer_summary.transfer_data_fees_info as feesInfo
 import kotlinx.android.synthetic.main.include_transfer_summary.transfer_data_fees_value as feesValue
-import kotlinx.android.synthetic.main.include_transfer_summary.transfer_data_gas_token_balance_value as balanceAfterValue
-import kotlinx.android.synthetic.main.include_transfer_summary.transfer_data_safe_balance_value as balanceBeforeValue
+import kotlinx.android.synthetic.main.include_transfer_summary.transfer_data_safe_balance_after_value as balanceAfterValue
+import kotlinx.android.synthetic.main.include_transfer_summary.transfer_data_safe_balance_before_value as balanceBeforeValue
 import kotlinx.android.synthetic.main.screen_replace_extension_start.replace_extension_back_arrow as backArrow
 import kotlinx.android.synthetic.main.screen_replace_extension_start.replace_extension_bottom_panel as bottomPanel
 import kotlinx.android.synthetic.main.screen_replace_extension_start.replace_extension_progress_bar as progressBar
@@ -53,7 +53,7 @@ class ReplaceExtensionStartActivity : ViewModelActivity<ReplaceExtensionStartCon
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val safe = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() ?: run {
+        safe = intent.getStringExtra(EXTRA_SAFE_ADDRESS)?.asEthereumAddress() ?: run {
             finish()
             return
         }
@@ -97,7 +97,7 @@ class ReplaceExtensionStartActivity : ViewModelActivity<ReplaceExtensionStartCon
                 InfoTipDialogBuilder.build(this, R.layout.dialog_network_fee, R.string.ok).show()
             }
 
-        disposables += bottomPanel.forwardClicks.subscribe {
+        disposables += bottomPanel.forwardClicks.subscribeBy {
             startActivity(ReplaceExtensionQrActivity.createIntent(this, safe))
         }
 
