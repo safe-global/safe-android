@@ -110,7 +110,7 @@
             android:layout_height="@dimen/toolbar_height"
             android:background="@drawable/selectable_circle_background"
             android:padding="16dp"
-            android:tint="@color/dark_slate_blue"
+            android:tint="@color/blue"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back_24dp" />
@@ -124,7 +124,7 @@
             android:minHeight="@dimen/toolbar_height"
             android:paddingEnd="16dp"
             android:text="@string/my_account"
-            android:textColor="@color/dark_slate_blue"
+            android:textColor="@color/blue"
             android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/layout_account_overflow"
             app:layout_constraintStart_toEndOf="@id/layout_account_back_button"

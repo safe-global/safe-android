@@ -49,7 +49,7 @@
         android:layout_marginRight="16dp"
         android:fontFamily="sans-serif-medium"
         android:maxLines="2"
-        android:textColor="@color/dark_slate_blue"
+        android:textColor="@color/blue"
         android:textSize="16sp"
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"

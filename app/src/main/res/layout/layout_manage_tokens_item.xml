@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:fontFamily="sans-serif-medium"
-        android:textColor="@color/dark_slate_blue"
+        android:textColor="@color/blue"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/layout_manage_tokens_name"
         app:layout_constraintEnd_toStartOf="@+id/layout_manage_tokens_switch"

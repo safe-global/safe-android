@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.layout_safe_transaction_confirmation.*
+import kotlinx.android.synthetic.main.screen_confirmation_dialog.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.ui.dialogs.base.BaseDialog
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
@@ -22,7 +22,7 @@ class TransactionSubmissionConfirmationDialog : BaseDialog() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.layout_safe_transaction_confirmation, container, false)
+        return inflater.inflate(R.layout.screen_confirmation_dialog, container, false)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

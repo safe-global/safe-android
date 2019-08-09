@@ -12,7 +12,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.layout_create_asset_transfer.*
 import pm.gnosis.heimdall.R
@@ -102,7 +101,7 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
             Observable.combineLatest(
                 layout_create_asset_transfer_input_value.textChanges()
                     .doOnNext {
-                        layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
+                        layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.blue))
                     },
                 receiverInputSubject,
                 BiFunction { value: CharSequence, receiver: Solidity.Address ->
@@ -181,14 +180,14 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
                     layout_create_asset_transfer_asset_balance_after_transfer_label.visible(true)
                     layout_create_asset_transfer_asset_balance_after_transfer_value.visible(true)
                 } else {
-                    layout_create_asset_transfer_gas_token_balance_after_transfer_label.setTextColor(getColorCompat(R.color.dark_slate_blue))
+                    layout_create_asset_transfer_gas_token_balance_after_transfer_label.setTextColor(getColorCompat(R.color.blue))
                     layout_create_asset_transfer_asset_balance_after_transfer_label.visible(false)
                     layout_create_asset_transfer_asset_balance_after_transfer_value.visible(false)
                 }
 
                 if (!update.sufficientFunds) layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.tomato))
                 else {
-                    layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.dark_slate_blue))
+                    layout_create_asset_transfer_input_value.setTextColor(getColorCompat(R.color.blue))
                 }
             }
             is ViewUpdate.EstimateError -> {
@@ -208,7 +207,7 @@ class CreateAssetTransferActivity : ViewModelActivity<CreateAssetTransferContrac
             is ViewUpdate.InvalidInput -> {
                 layout_create_asset_transfer_input_value.setTextColor(
                     getColorCompat(
-                        if (update.amount) R.color.tomato else R.color.dark_slate_blue
+                        if (update.amount) R.color.tomato else R.color.blue
                     )
                 )
             }

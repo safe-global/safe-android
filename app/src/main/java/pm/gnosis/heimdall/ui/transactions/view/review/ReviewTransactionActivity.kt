@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.ToolbarHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.ui.transactions.TransactionSubmissionConfirmationDialog
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
@@ -158,7 +159,6 @@ class ReviewTransactionActivity : ViewModelActivity<ReviewTransactionContract>()
             is ViewUpdate.TransactionSubmitted -> {
                 if (update.success) {
                     TransactionSubmissionConfirmationDialog.create(referenceId).show(supportFragmentManager, null)
-                } else {
                     infoViewHelper.toggleReadyState(true)
                 }
             }

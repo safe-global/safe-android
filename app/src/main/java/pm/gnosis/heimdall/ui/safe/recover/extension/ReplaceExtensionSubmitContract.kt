@@ -31,7 +31,7 @@ abstract class ReplaceExtensionSubmitContract : ViewModel() {
     abstract fun getSafeTransaction(): SafeTransaction
     abstract fun loadSafe(): Single<Safe>
 
-    data class SubmitStatus(val balance: ERC20TokenWithBalance, val canSubmit: Boolean)
+    data class SubmitStatus(val balance: ERC20TokenWithBalance, val balanceAfter: ERC20TokenWithBalance, val canSubmit: Boolean)
 
     class NoTokenBalanceException : Exception()
 }

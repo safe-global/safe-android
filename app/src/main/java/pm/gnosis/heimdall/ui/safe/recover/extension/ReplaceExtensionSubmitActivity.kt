@@ -29,6 +29,10 @@ import timber.log.Timber
 import java.math.BigInteger
 import java.math.RoundingMode
 import javax.inject.Inject
+import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_fees_error as feesError
+import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_fees_value as feesValue
+import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_safe_balance_after_value as balanceAfterValue
+import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_safe_balance_before_value as balanceBeforeValue
 
 class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitContract>() {
     private var submissionInProgress = false
@@ -66,7 +70,7 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
         layout_replace_browser_extension_submit.isEnabled = false
 
         disposables += viewModel.loadFeeInfo()
-            .subscribeBy { layout_replace_browser_extension_fee.text = it.displayString(roundingMode = RoundingMode.UP) }
+            .subscribeBy { feesValue.text = it.displayString(roundingMode = RoundingMode.UP) }
 
         addressHelper.populateAddressInfo(
             layout_replace_browser_extension_info_safe_address,
@@ -89,6 +93,7 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = {
                 startActivity(SafeMainActivity.createIntent(this, viewModel.getSafeTransaction().wrapped.address, selectedTab = 1))
+
             }, onError = ::onSubmitTransactionError)
 
         disposables += layout_replace_browser_extension_back_arrow.clicks()
@@ -97,15 +102,17 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
 
     private fun onSafeBalance(status: ReplaceExtensionSubmitContract.SubmitStatus) {
         layout_replace_browser_extension_submit.isEnabled = status.canSubmit && !submissionInProgress
-        layout_replace_browser_extension_fees_error.visible(!status.canSubmit)
-        layout_replace_browser_extension_gas_token_balance.text = status.balance.displayString()
+        balanceBeforeValue.text = status.balance.displayString()
+        balanceAfterValue.text = status.balanceAfter.displayString()
+        feesError.text = getString(R.string.insufficient_funds_please_add, status.balance.token.symbol)
+        feesError.visible(!status.canSubmit)
     }
 
     private fun onSafeBalanceError(throwable: Throwable) {
         if (throwable !is ReplaceExtensionSubmitContract.NoTokenBalanceException) Timber.e(throwable)
-        layout_replace_browser_extension_fees_error.visible(false)
-        layout_replace_browser_extension_gas_token_balance.text = getString(R.string.error_retrieving_safe_balance)
+        balanceBeforeValue.text = getString(R.string.error_retrieving_safe_balance)
         layout_replace_browser_extension_submit.isEnabled = false
+        feesError.visible(false)
     }
 
     private fun onSubmitTransactionProgress(isLoading: Boolean) {

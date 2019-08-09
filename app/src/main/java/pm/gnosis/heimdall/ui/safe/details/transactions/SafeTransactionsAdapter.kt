@@ -98,7 +98,7 @@ class SafeTransactionsAdapter @Inject constructor(
             // Make sure no disposable are left over
             disposables.clear()
             val transactionId = currentData?.id ?: return
-            itemView.layout_safe_transactions_item_target_label.setTextColor(context.getColorCompat(R.color.dark_slate_blue))
+            itemView.layout_safe_transactions_item_target_label.setTextColor(context.getColorCompat(R.color.blue))
             disposables += viewModel.loadTransactionInfo(transactionId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(::updateInfo, {
@@ -173,7 +173,7 @@ class SafeTransactionsAdapter @Inject constructor(
                         address = info.safe,
                         infoText = context.getString(R.string.replaced_recovery_phrase),
                         valueText = null,
-                        valueColor = R.color.dark_slate_blue,
+                        valueColor = R.color.blue,
                         iconRes = R.drawable.ic_transaction_white_24dp
                     )
                 }
@@ -182,7 +182,7 @@ class SafeTransactionsAdapter @Inject constructor(
                         address = info.safe,
                         infoText = context.getString(R.string.connected_extension),
                         valueText = null,
-                        valueColor = R.color.dark_slate_blue,
+                        valueColor = R.color.blue,
                         iconRes = R.drawable.ic_transaction_white_24dp
                     )
                 }

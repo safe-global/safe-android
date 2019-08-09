@@ -132,7 +132,7 @@ class TransactionSubmitInfoViewHelperTest {
         then(mocks.confirmationsImage).shouldHaveNoMoreInteractions()
 
         then(mocks.confirmationsInfo).should().setTextColor(
-            if (rejected) R.color.tomato else R.color.dark_slate_blue
+            if (rejected) R.color.tomato else R.color.blue
         )
         then(mocks.confirmationsInfo).should().text =
             if (rejected) R.string.rejected_by_extension.toString() else R.string.confirm_with_extension.toString()

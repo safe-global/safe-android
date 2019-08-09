@@ -66,7 +66,7 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
             if (rejected) R.drawable.ic_rejected_extension else R.drawable.ic_confirmations_waiting
         )
         view.include_transaction_submit_info_confirmations_info.setTextColor(
-            context.getColorCompat(if (rejected) R.color.tomato else R.color.dark_slate_blue)
+            context.getColorCompat(if (rejected) R.color.tomato else R.color.blue)
         )
         view.include_transaction_submit_info_confirmations_info.text =
                 context.getString(if (rejected) R.string.rejected_by_extension else R.string.confirm_with_extension)

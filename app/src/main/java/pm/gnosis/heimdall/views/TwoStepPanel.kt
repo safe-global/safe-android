@@ -92,7 +92,7 @@ class TwoStepPanel @JvmOverloads constructor(
         setBackEnabled(a.getBoolean(R.styleable.TwoStepPanel_backEnabled, true))
 
         val textColorEnabled = a.getColor(R.styleable.TwoStepPanel_colorTextEnabled, context.getColorCompat(R.color.white))
-        val textColorDisabled = a.getColor(R.styleable.TwoStepPanel_colorTextEnabled, context.getColorCompat(R.color.blue_grey))
+        val textColorDisabled = a.getColor(R.styleable.TwoStepPanel_colorTextDisabled, context.getColorCompat(R.color.blue_grey))
 
         val colorStateList = ColorStateList(
             arrayOf(intArrayOf(android.R.attr.state_enabled), intArrayOf(android.R.attr.state_enabled)),

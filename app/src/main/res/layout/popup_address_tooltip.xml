@@ -12,7 +12,7 @@
 
         <shape>
 
-            <solid android:color="@color/dark_slate_blue" />
+            <solid android:color="@color/blue" />
 
             <corners android:radius="6dp" />
 

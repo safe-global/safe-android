@@ -12,8 +12,8 @@
     <string name="error_check_internet_connection">Please make sure to have an internet connection.</string>
     <string name="error_ssl_handshake">Please check whether the time is correctly set.</string>
     <string name="tab_title_transactions">Transactions</string>
-    <string name="tab_title_assets">Assets</string>
-    <string name="address_clipboard_success">Address copied to your clipboard!</string>
+    <string name="tab_title_assets">Tokens</string>
+    <string name="address_clipboard_success">Address copied to clipboard</string>
     <string name="share_address">Share address</string>
     <string name="x_data_bytes">%d bytes included</string>
     <string name="submit_transaction">Submit Transaction</string>
@@ -21,7 +21,7 @@
     <string name="invalid_ethereum_address">Invalid ethereum address</string>
     <string name="transaction_details_error">Error fetching transaction details</string>
     <string name="safe_remove_success">Removed %s from this device</string>
-    <string name="loading">Loading …</string>
+    <string name="loading">Loading…</string>
     <string name="remove_from_device">Remove from device</string>
     <string name="settings">Settings</string>
     <string name="no_entries">No entries</string>
@@ -76,17 +76,17 @@
     <string name="next">Next</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="confirm_password_hint">Confirm password</string>
+    <string name="choose_password_hint">Choose passwrod</string>
     <string name="confirm_password_info">Please enter your password again to confirm.</string>
     <string name="onboarding_intro_info">Your multi-sig wallet for securely and conveniently managing ETH &amp; ERC-20 tokens.</string>
     <string name="create_password">Create Password</string>
-    <string name="choose_password_hint">Choose password</string>
     <string name="password_doesnt_match">Password doesn\'t match</string>
     <string name="confirm">Confirm</string>
     <string name="setup_fingerprint_place">Place your finger on the sensor to confirm your device fingerprint</string>
     <string name="setup_fingerprint_description">Once enabled you can use your fingerprint to unlock the app and confirm transactions.</string>
     <string name="skip">Skip</string>
     <string name="setup_fingerprint">Setup Fingerprint</string>
-    <string name="fingerprint_confirmed">Fingerprint confirmed successfully!</string>
+    <string name="fingerprint_confirmed">Fingerprint confirmed!</string>
     <string name="finish">Finish</string>
     <string name="password_validation_identical_characters">No triple characters</string>
     <string name="password_validation_minimum_characters">Use a minimum of 8 characters</string>
@@ -97,8 +97,8 @@
     <string name="agree">Agree</string>
     <string name="personal_edition">Personal Edition</string>
     <string name="safe_balance">Safe balance</string>
-    <string name="confirm_with_extension">Confirm this transaction with the browser extension</string>
-    <string name="rejected_by_extension">The transaction was rejected in the browser extension.</string>
+    <string name="confirm_with_extension">Confirm this transaction with the Authenticator</string>
+    <string name="rejected_by_extension">The transaction was rejected by the Authenticator</string>
     <string name="request_confirmation_wait_x_s">Please wait %s sec before resending request.</string>
     <string name="request_confirmation">Resend confirmation request</string>
     <string name="unknown_token">Unknown Token</string>
@@ -131,14 +131,14 @@
     <string name="default_safe_name">Safe</string>
     <string name="send">Send</string>
     <string name="receive">Receive</string>
-    <string name="safe_intro_message_1">Your Safe will be connected to:\n 
-\t\t1. This mobile app.\n 
-\t\t2. The Gnosis Safe browser extension.\n 
+    <string name="safe_intro_message_1">Your Safe will be connected to:\n
+\t\t1. This mobile app.\n
+\t\t2. The Authenticator.\n
 \t\t3. Its 12-word recovery phrase.</string>
     <string name="safe_intro_message_2">Your funds are held securely in this mobile Safe and cannot be accessed by Gnosis Ltd.</string>
     <string name="safe_intro_message_3"><![CDATA[You need this Safe’s <font color=#f02525>recovery phrase</font> to access your funds when you change or lose your phone.\n
 (Get ready to note it down and keep it somewhere safe.)]]></string>
-    <string name="pairing_info">All transactions need to be approved by both this device and the browser extension.</string>
+    <string name="pairing_info">All transactions need to be approved by both this device and the Authenticator.</string>
     <string name="scan_qr_code">Scan QR Code</string>
     <string name="pending_safe_deposit_value">Send at least %s to your Safe\'s address:</string>
     <string name="fingerprint_many_tries">Too many tries. Switching to password</string>
@@ -148,7 +148,7 @@
     <string name="devices_paired_successfuly">Devices paired successfully</string>
     <string name="error_pairing_devices">Error pairing devices</string>
     <string name="mnemonic_error_invalid">Error (Invalid recovery key)</string>
-    <string name="sync_with_extension">Sync with extension</string>
+    <string name="sync_with_extension">Sync with Authenticator</string>
     <string name="sync_successful">Sync successful</string>
     <string name="error_syncing">Error syncing</string>
     <string name="no_safe_added">No Safe added yet</string>
@@ -195,7 +195,7 @@
     <string name="review_safe_recovery">Review Safe recovery</string>
     <string name="submit">Submit</string>
     <string name="recover_existing_safe">Recover Existing Safe</string>
-    <string name="recover_safe_description">The existing Safe will be recovered and associated with this device and the connected browser extension.</string>
+    <string name="recover_safe_description">The existing Safe will be recovered and associated with this device and the connected Authenticator.</string>
     <string name="recovery_error">Transaction params have changed</string>
     <string name="safe_already_exists">Safe already exists</string>
     <string name="next_step">Next step:</string>
@@ -205,7 +205,7 @@
     <string name="guidelines">Guidelines</string>
     <string name="got_it">Got it!</string>
     <string name="connect">Connect</string>
-    <string name="set_up_your_browser_extension">Set-up your browser extension.</string>
+    <string name="set_up_your_browser_extension">Set-up your Authenticator.</string>
     <string name="invalid_safe_address">Invalid Safe Address</string>
     <string name="receive_funds">Receive Funds</string>
     <string name="make_your_first_deposit">Make your first deposit.</string>
@@ -214,16 +214,16 @@
     <string name="layout_pending_safe_description">Scan the QR code or share your address with the account or person sending funds below.</string>
     <string name="safe_address">Safe Address:</string>
     <string name="type">Type</string>
-    <string name="replace_browser_extension">Replace browser extension</string>
+    <string name="replace_browser_extension">Replace Authenticator</string>
     <string name="no_recovery_necessary">There were no configuration changes to this Safe. No recovery is necessary</string>
-    <string name="replace_browser_extension_transaction_info">The currently connected browser extension will be replaced with the new browser extension.</string>
+    <string name="replace_browser_extension_transaction_info">The currently connected Authenticator will be replaced with the new Authenticator.</string>
     <string name="error_retrieving_safe_balance">Error retrieving Safe balance</string>
     <string name="cannot_delete_safe_from_address_book">It is not possible to delete an active Safe from the address book.</string>
     <string name="settings_change">Settings change</string>
     <string name="replace_recovery_phrase">Replace recovery phrase</string>
-    <string name="scan_your_browser_extension">Scan your browser extension</string>
+    <string name="scan_your_browser_extension">Scan your Authenticator</string>
     <string name="replace_recovery_phrase_description">In order to replace the recovery phrase for this Safe please do the following:\n\n
-        <b>1.</b> Open the browser extension and select the Safe which recovery phrase you want to replace\n
+        <b>1.</b> Open the Authenticator and select the Safe which recovery phrase you want to replace\n
         <b>2.</b> Open the side menu and click on \"Replace recovery phrase\"\n
         <b>3.</b> Scan the generated QR code by clicking the button below</string>
     <string name="confirm_recovery_phrase_incorrect_sequence">Invalid recovery phrase. Please input the correct sequence.</string>
@@ -240,21 +240,23 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="i_have_a_copy">I have a copy</string>
     <string name="replaced_recovery_phrase">Replaced recovery phrase</string>
     <string name="confirm_new_recovery_phrase_error">Error creating the transaction. Please try again.</string>
-    <string name="scan_extension_invalid_format">QR code format is not valid. Please scan the QR code generated by the browser extension.</string>
+    <string name="scan_extension_invalid_format">QR code format is not valid. Please scan the QR code generated by the Authenticator.</string>
     <string name="scan_extension_invalid_signature">QR code does not contain a valid signature</string>
-    <string name="scan_extension_not_owner">The browser extension is not connected to this Safe.</string>
+    <string name="scan_extension_not_owner">The Authenticator is not connected to this Safe.</string>
     <string name="recover_safe_fee_explainer">Recovering a Safe requires a transaction which needs to be paid with ETH. This will be either funded with the ETH balance of the Safe you\'re recovering or you\'ll be asked to send the minimum amount of ETH to cover for the transaction cost.</string>
     <string name="recover_safe_info_explainer">Please keep your Safe\'s address and recovery phrase ready, consisting of 12 unique words.</string>
     <string name="start_recovery">Start recovery</string>
-    <string name="connected_extension">Connected extension</string>
-    <string name="connect_browser_extension">Connect browser\nextension</string>
-    <string name="connect_extension_description">This transaction will connect this Safe with the browser extension. Future transactions require confirmation from both devices.</string>
-    <string name="pairing_first_step"><![CDATA[1. Download the <font color=#27a0ff>Gnosis Safe browser extension</font>.]]></string>
-    <string name="pairing_second_step">2. Scan the QR code in the browser extension.</string>
+    <string name="connected_extension">Connected Authenticator</string>
+    <string name="connect_browser_extension">Connect Authenticator</string>
+    <string name="connect_extension_description">This transaction will connect this Safe with the Authenticator. Future transactions require confirmation from both devices.</string>
+    <string name="pairing_first_step"><![CDATA[1. Download the <font color=#27a0ff>Authenticator</font>.]]></string>
+    <string name="pairing_second_step">2. Scan the QR code in the Authenticator.</string>
     <string name="submitted">Submitted</string>
     <string name="status">Status</string>
     <string name="transaction_fee">Network fee</string>
+    <string name="get_started">Get started</string>
     <string name="later">Later</string>
+    <string name="payment_token">Payment token (for network fees)</string>
     <string name="safe_created_notification_message">Your Safe with the address %s has been created.</string>
     <string name="safe_created_notification_title">Safe created</string>
     <string name="app_version">App version: %s</string>
@@ -267,10 +269,9 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="review_message">Review message</string>
     <string name="sign_message_notification_title">Sign Message</string>
     <string name="sign_message_notification_description">You have been requested to sign a message</string>
-    <string name="wallet_connect">WalletConnect</string>
+    <string name="wallet_connect">WalletConnect Beta</string>
     <string name="wallet_connect_sessions">WalletConnect Sessions</string>
     <string name="deny">Deny</string>
-    <string name="approve">Approve</string>
     <string name="activate">Activate</string>
     <string name="balance_after_transfer">Balance after transfer</string>
     <string name="amount">Amount</string>
@@ -283,14 +284,14 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="close">Close</string>
     <string name="transaction_fee_explanation">This is the fee required by the blockchain to execute the transaction.</string>
     <string name="authentication_required">Authentication required</string>
-    <string name="authentication_explanation">Open the browser extension to confirm this transaction.</string>
+    <string name="authentication_explanation">Open the Authenticator to confirm this transaction.</string>
     <string name="resend">Resend</string>
     <string name="rejected">Rejected</string>
     <string name="confirmed">Confirmed</string>
-    <string name="browser_extension_approved">The browser extension has approved this transaction.</string>
+    <string name="browser_extension_approved">The Authenticator has approved this transaction.</string>
     <string name="congratulations">Congratulations!</string>
     <string name="transaction_has_been_submitted">Your transaction has been submitted.</string>
-    <string name="insufficient_funds_please_add">Insufficient funds.\nPlease add %s to your Safe.</string>
+    <string name="insufficient_funds_please_add">Insufficient funds. Please add %s to your Safe or choose a different token as the payment method.</string>
     <string name="this_will_generate_new_seed">This will generate a new recovery phrase and invalidate your current one.</string>
     <string name="menu">Menu</string>
     <string name="start">Start</string>
@@ -301,16 +302,16 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="please_review_terms_and_privacy_policy">Please review our Terms of Use and Privacy Policy.</string>
     <string name="privacy_policy_link"> <a href="https://safe.gnosis.io/privacy" target="_blank">Privacy Policy</a></string>
     <string name="terms_link"><a href="https://safe.gnosis.io/terms" target="_blank">Terms of Use</a></string>
-    <string name="transaction_connects_safe_to_2FA">This transaction connects this Safe with the browser extension. Future transactions require confirmation from both devices.</string>
+    <string name="transaction_connects_safe_to_2FA">This transaction connects this Safe with the Authenticator. Future transactions require confirmation from both devices.</string>
     <string name="your_safe_consists_of">Your Safe consists of:</string>
     <string name="safe_consists_list">1. This mobile app.\n
-2. Its browser extension.\n
+2. Its Authenticator.\n
 3. A recovery phrase.</string>
     <string name="funds_held_securely">Your funds are held securely in this mobile Safe and cannot be accessed by Gnosis Ltd.</string>
     <string name="loose_or_change_phone">If you lose or change your phone, use the Safe address and recovery phrase to recover access to your digital assets.</string>
     <string name="add_token">Add Token</string>
-    <string name="transactions_capitalized">TRANSACTIONS</string>
-    <string name="assets_capitalized">ASSETS</string>
+    <string name="transactions">Transactions</string>
+    <string name="assets">Assets</string>
     <string name="address_already_in_app">Address already exists in your app</string>
     <string name="enter_safe_address">Enter your Safe address</string>
     <string name="recover_safe_title">Recover Safe</string>
@@ -318,7 +319,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="incorrect_seed">Incorrect recovery phrase</string>
     <string name="enter_recovery">Enter recovery phrase</string>
     <string name="transaction_details_here">View transaction details here</string>
-    <string name="tx_submitted_replace_be">The transaction has been submitted and should take a couple of minutes. Replacing browser extension is in progress.</string>
+    <string name="tx_submitted_replace_be">The transaction has been submitted and should take a couple of minutes. Replacing the Authenticator is in progress.</string>
     <string name="new_entry">New Entry</string>
     <string name="enter_name">Enter name</string>
     <string name="what_is_network_fee">What is the network fee?</string>
@@ -342,8 +343,8 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="incorrect_password">Incorrect password</string>
     <string name="incoming_tx">Incoming transfer</string>
     <string name="current_balance">Current balance</string>
-    <string name="recovered_safe">Recovered\nSafe</string>
-    <string name="today_capitalized">TODAY</string>
+    <string name="recovered_safe">Recovered Safe</string>
+    <string name="today">Today</string>
     <string name="existing_safe_recovered">The existing Safe will be recovered and associated with this device.</string>
     <string name="name_too_long">The name is too long. Max 120 characters.</string>
     <string name="transaction_submitted_safe_being_created">Your transaction was submitted. Your Safe will be created now. This might take a couple of minutes.</string>
@@ -353,14 +354,14 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="please_have_safe_address_ready">Please have your Safe\'s address and recovery phrase ready.</string>
     <string name="recovery_fee_will_be_deducted">A recovery fee will be automatically deducted from the balance of the recovered Safe.</string>
     <string name="if_funds_insufficient">If the Safe has insufficient funds, you will be asked to deposit the minimum amount required to cover the fee.</string>
-    <string name="new_be">New browser extension</string>
+    <string name="new_be">New Authenticator</string>
     <string name="yesterday">YESTERDAY</string>
     <string name="pending_captalized">PENDING</string>
     <string name="done">Done</string>
     <string name="error_or_invalid_qr">Error pairing devices or invalid QR code</string>
     <string name="error">Error</string>
     <string name="network_fee_creation">This is the fee required by the blockchain to create your Safe. Any additional funds will show up in your new Safe.</string>
-    <string name="connecting_in_progress">Connecting the browser extension is now in progress. The transaction has been submitted and should take a couple of minutes.</string>
+    <string name="connecting_in_progress">Connecting the Authenticator is now in progress. The transaction has been submitted and should take a couple of minutes.</string>
     <string name="safe_creation_fee">Safe creation fee</string>
     <string name="network_fee_required">A network fee is required to create your new Safe.</string>
     <string name="send_this_amount">Send at least this amount to your new Safe:</string>
@@ -369,9 +370,9 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="create_safe_title">Create Safe</string>
     <string name="cancel_safe_creation">Cancel Safe creation?</string>
     <string name="cancel_creation_warning">If you cancel, all progress will be lost and you won\'t be able to use this address.</string>
-    <string name="enable_2fa">Enable 2-factor authentication by connecting your Safe to the browser extension.</string>
-    <string name="open_be_link">1. Open the <a href="https://chrome.google.com/webstore/detail/gnosis-safe-mainnet-beta/iecodoenhaghdlpodmhooppdhjhmibde?hl=en" target="_blank">link to the Chrome browser extension</a> on your desktop computer.</string>
-    <string name="install_browser_extension">2. Install browser extension on your desktop computer and scan its QR code.</string>
+    <string name="enable_2fa">Enable 2-factor authentication by connecting your Safe to the Authenticator.</string>
+    <string name="open_be_link">1. Open the <a href="https://chrome.google.com/webstore/detail/gnosis-safe-mainnet-beta/iecodoenhaghdlpodmhooppdhjhmibde?hl=en" target="_blank">link to the Authenticator</a> on your desktop computer.</string>
+    <string name="install_browser_extension">2. Install the Authenticator on your desktop computer and scan its QR code.</string>
     <string name="skip_setup_later">Skip and setup later</string>
     <string name="scan">Scan</string>
     <string name="new_seed">New recovery phrase</string>
@@ -380,7 +381,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="recovering_requires_fee">Recovering your Safe requires a network fee.</string>
     <string name="add_funds_to_safe">Please add funds to your Safe.</string>
     <string name="amount_needed">Amount needed</string>
-    <string name="send_remainder">Send at least the remainder to your Safe</string>
+    <string name="send_remainder">Send at least the remainder to your new Safe:</string>
     <string name="view_entry">View Entry</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="enter_safe_address_field">Enter Safe address</string>
@@ -388,21 +389,19 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="amount_received">Amount received</string>
     <string name="share_your_address">Share your address with contracts or enable senders to scan your QR code to receive Ether and tokens.</string>
     <string name="share_your_address_to_receive_funds">Share your address with contacts or scan your QR code to receive Ether and tokens.</string>
-    <string name="once_process_is_complete">Once this process is complete, you can only use the new browser extension to confirm transactions.\n\nPlease have your Safe recovery phrase ready to confirm the recovery.</string>
+    <string name="once_process_is_complete">Once this process is complete, you can only use the new Authenticator to confirm transactions. Please have your Safe recovery phrase ready to confirm the recovery.</string>
     <string name="future_tx_approved_by_both">All future transactions will need to be approved by both devices.</string>
-    <string name="ios_open_be_link_text">1. Open the link to the Chrome browser extension on your desktop computer.</string>
-    <string name="disconnect_browser_extension">Disconnect browser\nextension</string>
+    <string name="disconnect_browser_extension">Disconnect Authenticator</string>
     <string name="layout_recovered_safe_info_description">The existing Safe was recovered.</string>
-    <string name="layout_connect_browser_extension_info_description">This transaction connects this Safe with the browser extension. Future transactions require a confirmation from both devices.</string>
-    <string name="layout_disconnect_browser_extension_info_description">This transaction disconnects this Safe from the browser extension. Future transactions will not require confirmations.</string>
-    <string name="layout_replace_browser_extension_info_description">The existing browser extension connection was replaced by the new browser extension.</string>
+    <string name="layout_connect_browser_extension_info_description">This transaction connects this Safe with the Authenticator. Future transactions require a confirmation from both devices.</string>
+    <string name="layout_disconnect_browser_extension_info_description">This transaction disconnects this Safe from the Authenticator. Future transactions will not require confirmations.</string>
+    <string name="layout_replace_browser_extension_info_description">The existing Authenticator connection was replaced by the new Authenticator.</string>
     <string name="hide">Hide</string>
-    <string name="disconnect_2fa_description">Once this process is complete, you won\'t need to confirm transactions with browser extension.\n\nPlease have your Safe recovery phrase ready to confirm the disconnect.</string>
+    <string name="disconnect_2fa_description">Once this process is complete, you won\'t need to confirm transactions with the Authenticator.\n\nPlease have your Safe recovery phrase ready to confirm the disconnect.</string>
     <string name="info">Info</string>
     <string name="sync_with_extension_sent">Resync notification sent successfully</string>
     <string name="open_in_play_store">Open in Play Store</string>
     <string name="open_mail_client">Open Mail Client</string>
-
     <string name="feedback_subject">Feedback for %1$s</string>
     <string name="feedback_text"><![CDATA[
     <p>App version: Android - %1$s</p>
@@ -418,16 +417,40 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="address_input_clipboard">Paste from clipboard</string>
     <string name="ens_input_title">Input ENS Name</string>
     <string name="error_resolve_ens">Could not load address</string>
-    <string name="get_started">Get started</string>
-    <string name="welcome_to_walletconnect">Welcome to WalletConnect</string>
-    <string name="walletconnect_is">WalletConnect is a protocol that allows you to connect the Safe to desktop Dapps. The Safe will notify you when the Dapp wants to make a transaction.</string>
-    <string name="how_does_it_work">How does it work?</string>
-    <string name="you_can_manage_connections">You can manage connections using the list of active sessions. Transaction requests from Dapps can be confirmed using your Safe.</string>
+    <string name="choose_how_to_pay_creation_fee">Choose how to pay the creation fee.</string>
+    <string name="transaction_submitted_safe_being_recovered">Your transaction was submitted. Your Safe will be recovered now. This might take a couple of minutes.</string>
+    <string name="get_in_touch">Get In Touch</string>
+    <string name="create_new_safe">Create new Safe</string>
+    <string name="recover_existing_safe_menu">Recover existing Safe</string>
+    <string name="deposit_received_creating_safe">Deposit received! Creating Safe...</string>
+    <string name="switch_safes">Switch Safes</string>
+    <string name="lost_recovery_phrase">Lost your recovery phrase?</string>
+    <string name="remove_safe">Remove Safe</string>
+    <string name="do_you_have_backup">Do you have a backup?</string>
+    <string name="safe_will_be_remove_description">This Safe will be removed from your device. To recover this Safe or to add it to another device you will need the recovery phrase and this Safe\'s address.</string>
+    <string name="i_have_a_backup">I have a backup</string>
+    <string name="walletconnect">WalletConnect</string>
+    <string name="replace_recovery_phrase_menu">Replace Recovery Phrase</string>
+    <string name="manage_tokens_assetview">Manage tokens</string>
+    <string name="what_is_safe_recovery_fee">What is the Safe recovery fee?</string>
+    <string name="network_fee_recovery">This is the fee required by the blockchain to recover your Safe.</string>
+    <string name="search_select_tokens">Search &amp; select tokens...</string>
+    <string name="sign">Sign</string>
+    <string name="contract">Contract</string>
+    <string name="signature_request">Signature request</string>
+    <string name="open_be_approve_singature">Open the Authenticator to approve this signature request.</string>
+    <string name="request_rejected">The signature request was rejected by the Authenticator.</string>
     <string name="lets_get_started">Let\'s get started</string>
     <string name="to_connect_to_dapp">To connect your Safe to the desktop Dapp, scan its QR code.</string>
     <string name="unknown_dapp">Unknown dapp</string>
     <string name="please_wait">Please wait…</string>
     <string name="connecting">Connecting…</string>
+    <string name="how_does_it_work">How does it work?</string>
+    <string name="you_can_manage_connections">You can manage connections using the list of active sessions. Transaction requests from Dapps can be confirmed using your Safe.</string>
+    <string name="welcome_to_walletconnect">Welcome to WalletConnect</string>
+    <string name="walletconnect_is">WalletConnect is a protocol that allows you to connect the Safe to desktop Dapps. The Safe will notify you when the Dapp wants to make a transaction. </string>
+    <string name="this_will_disconnect_active_session">This will disconnect the active session with %s</string>
+    <string name="dapp_session_already_active">Dapp session is already active</string>
     <string name="no_active_sessions">No active sessions</string>
     <string name="disconnect">Disconnect</string>
     <string name="disconnect_from_dapp">Disconnect from Dapp?</string>
@@ -436,9 +459,20 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="channel_description_wallect_connect_requests">Requests from WalletConnect sessions</string>
     <string name="channel_description_wallect_connect_sessions">Updates for WalletConnect sessions</string>
     <string name="notification_new_transaction_request">New transaction request to review</string>
+    <string name="dapp_session_disconnected">Dapp session disconnected</string>
+    <string name="turn_on">Turn on</string>
+    <string name="turn_on_notifications">Turn on notifications to not miss any transaction requests from Dapps.</string>
+    <string name="disconnecting_in_progress">Disconnecting the Authenticator is now in progress. The transaction has been submitted and should take a couple of minutes.</string>
+    <string name="replaceseed_in_progress">The transaction has been submitted and should take a couple of minutes. Replacing the recovery phrase is in progress. </string>
+    <string name="password_changed">Your password has been changed.</string>
+    <string name="backup_recovery">Backup your recovery phrase</string>
+    <string name="use_phrase_on_next_screen">Use the phrase on the next screen, together with your Safe address, to recovery your wallet in case you lose access to it.</string>
+    <string name="we_recommend_password_manager">We recommend using a password manager or writing the phrase down and store the paper-copy in a safe place that only you have access to.</string>
+    <string name="failed_to_connect">Failed to connect.</string>
+    <string name="please_try_again_later">Please try again later.</string>
+    <string name="safe_recovery_fee">Safe recovery fee</string>
+    <string name="safe_recovery_fee_required">A network fee will be deducted from your Safe balance to recover your Safe.</string>
     <string name="select_safe_to_connect">Select a Safe to connect</string>
-    <string name="search_select_tokens"><![CDATA[Search & select tokens…]]></string>
-
     <string name="this_payment_will_be_used">This payment method will be used to pay network fees in all transactions.</string>
     <string name="fee_method">Fee Payment Method</string>
     <string name="fee">Fee</string>

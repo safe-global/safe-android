@@ -86,7 +86,7 @@ class UnlockActivity : ViewModelActivity<UnlockContract>() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (visible) {
                 window.clearFlags(FLAG_TRANSLUCENT_NAVIGATION)
-                window.navigationBarColor = getColorCompat(R.color.dark_slate_blue)
+                window.navigationBarColor = getColorCompat(R.color.safe_green)
             } else {
                 window.addFlags(FLAG_TRANSLUCENT_NAVIGATION)
             }

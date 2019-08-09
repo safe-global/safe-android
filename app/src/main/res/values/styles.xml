@@ -36,21 +36,21 @@
     <style name="MountainTheme" parent="MountainThemeBase" />
 
     <style name="SmallFlatButton" parent="Theme.AppCompat.Light">
-        <item name="colorControlHighlight">@color/azure</item>
-        <item name="android:textColor">@color/azure</item>
+        <item name="colorControlHighlight">@color/safe_green</item>
+        <item name="android:textColor">@color/safe_green</item>
     </style>
 
     <!-- White theme (will be the main theme for the app) -->
 
     <style name="WhiteThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@color/white</item>
-        <item name="colorAccent">@color/azure</item>
+        <item name="colorAccent">@color/safe_green</item>
     </style>
 
     <style name="WhiteTheme" parent="WhiteThemeBase" />
 
     <style name="WhiteTheme.FloatingLabel" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/azure</item>
+        <item name="android:textColor">@color/safe_green</item>
     </style>
 
     <style name="FullScreenDialogStyle" parent="WhiteTheme">
@@ -62,14 +62,14 @@
 
     <style name="TabLayout" parent="Widget.Design.TabLayout">
         <item name="android:background">@color/white</item>
-        <item name="tabIndicatorColor">@color/azure</item>
+        <item name="tabIndicatorColor">@color/safe_green</item>
         <item name="tabIndicatorHeight">2dp</item>
         <item name="tabMode">fixed</item>
         <item name="tabInlineLabel">true</item>
         <item name="tabIconTint">@color/tab_item</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">36dp</item>
-        <item name="tabSelectedTextColor">@color/azure</item>
+        <item name="tabSelectedTextColor">@color/safe_green</item>
         <item name="tabTextAppearance">@style/TabText</item>
     </style>
 
@@ -88,13 +88,13 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="PrimaryButton.Blue">
-        <item name="android:background">@drawable/primary_button_blue</item>
+    <style name="PrimaryButton.Green">
+        <item name="android:background">@drawable/primary_button_green</item>
         <item name="android:textColor">@color/primary_white_text</item>
         <item name="android:textSize">@dimen/primary_button_text_size</item>
     </style>
 
-    <style name="PrimaryButton.Blue.Round">
+    <style name="PrimaryButton.Green.Round">
         <item name="android:background">@drawable/round_button_fill</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:paddingStart">24dp</item>
@@ -108,7 +108,7 @@
         <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/dark_slate_blue</item>
+        <item name="android:textColor">@color/blue</item>
     </style>
 
     <style name="WhiteTheme.SubtitleBold">
@@ -117,7 +117,7 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
         <item name="android:lineSpacingExtra">4sp</item>
-        <item name="android:textColor">@color/dark_slate_blue</item>
+        <item name="android:textColor">@color/blue</item>
     </style>
 
     <style name="WhiteTheme.FlatTextCenter">
@@ -143,7 +143,7 @@
         <item name="android:textSize">@dimen/primary_button_text_size</item>
     </style>
 
-    <style name="PrimaryButton.Blue.FullWidth">
+    <style name="PrimaryButton.Green.FullWidth">
         <item name="android:background">@drawable/primary_button_full_width</item>
         <item name="android:minHeight">@dimen/primary_button_height</item>
         <item name="android:paddingTop">8dp</item>
@@ -163,7 +163,7 @@
     </style>
 
     <style name="TextButton" parent="TextAppearance.AppCompat.Button">
-        <item name="android:textColor">@color/gnosis_blue</item>
+        <item name="android:textColor">@color/safe_green</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">false</item>
@@ -247,7 +247,7 @@
 
     <style name="DarkText" parent="Text">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/dark_slate_blue</item>
+        <item name="android:textColor">@color/blue</item>
     </style>
 
     <style name="NavigationText" parent="DarkText">

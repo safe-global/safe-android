@@ -82,7 +82,7 @@
         android:fontFamily="sans-serif-medium"
         android:maxLines="1"
         android:text="@string/replace_recovery_phrase"
-        android:textColor="@color/dark_slate_blue"
+        android:textColor="@color/blue"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="@+id/layout_replace_recovery_phrase_transaction_divider"
         app:layout_constraintEnd_toEndOf="parent"

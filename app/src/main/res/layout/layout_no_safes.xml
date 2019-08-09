@@ -15,7 +15,7 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/setup_successful"
-        android:textColor="@color/dark_slate_blue"
+        android:textColor="@color/blue"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/layout_no_safes_guideline"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/next_step"
-        android:textColor="@color/dark_slate_blue"
+        android:textColor="@color/blue"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/layout_no_safes_add_safe_button"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +46,7 @@
 
     <TextView
         android:id="@+id/layout_no_safes_add_safe_button"
-        style="@style/PrimaryButton.Blue.Round"
+        style="@style/PrimaryButton.Green.Round"
         android:layout_width="264dp"
         android:layout_height="46dp"
         android:layout_marginTop="12dp"

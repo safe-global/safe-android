@@ -15,5 +15,5 @@
     <string name="feedback_email" translatable="false">safe@gnosis.io</string>
     <string name="licenses_link" translatable="false">https://safe.gnosis.io/licenses#android</string>
     <string name="tip_link" translatable="false">[?]</string>
-    
+    <string name="authenticator_link" translatable="false">https://chrome.google.com/webstore/detail/gnosis-safe-rinkeby/gkiklnclpcbphbiaickiepnnnahefkoc</string>
 </resources>

@@ -44,7 +44,7 @@
                 android:fontFamily="sans-serif"
                 android:lineSpacingExtra="4sp"
                 android:text="@string/insufficient_funds"
-                android:textColor="@color/dark_slate_blue"
+                android:textColor="@color/blue"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -194,7 +194,7 @@
 
                     <LinearLayout
                         android:id="@+id/recovering_safe_share_button"
-                        style="@style/PrimaryButton.Blue"
+                        style="@style/PrimaryButton.Green"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -268,7 +268,7 @@
                         android:fontFamily="monospace-medium"
                         android:gravity="center_horizontal"
                         android:lineSpacingExtra="5sp"
-                        android:textColor="@color/dark_slate_blue"
+                        android:textColor="@color/blue"
                         android:textStyle="normal"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

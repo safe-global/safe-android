@@ -37,10 +37,7 @@ import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressViewModel
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundViewModel
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseViewModel
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitContract
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitViewModel
+import pm.gnosis.heimdall.ui.safe.recover.extension.*
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract

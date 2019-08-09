@@ -34,7 +34,7 @@
 
     <TextView
         android:id="@+id/congratulations_continue"
-        style="@style/PrimaryButton.Blue"
+        style="@style/PrimaryButton.Green"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

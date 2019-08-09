@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:background="@color/azure">
+    tools:background="@color/safe_green">
 
     <View
         android:id="@+id/dialog_unlock_alpha_background"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/black_alpha_70"
+        android:background="@color/safe_green"
         app:layout_constraintBottom_toTopOf="@id/dialog_unlock_content_background"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,7 +39,7 @@
         android:gravity="center"
         android:hint="@string/enter_master_password"
         android:inputType="textPassword"
-        android:textColor="@color/dark_slate_blue"
+        android:textColor="@color/safe_green"
         android:textColorHint="@color/blue_grey"
         android:textSize="18sp"
         android:textStyle="normal"
@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"
         android:text="@string/switch_to_password"
-        android:textColor="@color/azure"
+        android:textColor="@color/safe_green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

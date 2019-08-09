@@ -24,8 +24,8 @@ object CustomAlertDialogBuilder {
         confirmCallback: ((DialogInterface) -> Unit)?,
         @StringRes cancelRes: Int = android.R.string.cancel,
         cancelCallback: ((DialogInterface) -> Unit)? = { dialog -> dialog.dismiss() },
-        @ColorRes confirmColor: Int = R.color.azure,
-        @ColorRes cancelColor: Int = R.color.azure,
+        @ColorRes confirmColor: Int = R.color.safe_green,
+        @ColorRes cancelColor: Int = R.color.safe_green,
         dismissCallback: DialogInterface.OnDismissListener? = null
     ): AlertDialog =
         AlertDialog.Builder(context).apply {
@@ -63,8 +63,12 @@ object CustomAlertDialogBuilder {
 }
 
 object InfoTipDialogBuilder {
-
-    fun build(context: Context, @LayoutRes contentRes: Int, @StringRes confirmRes: Int): AlertDialog {
+    fun build(
+        context: Context,
+        @LayoutRes contentRes: Int,
+        @StringRes confirmRes: Int,
+        @ColorRes confirmColor: Int = R.color.safe_green
+    ): AlertDialog {
         val alertContent = LayoutInflater.from(context).inflate(contentRes, null)
         return AlertDialog.Builder(context)
             .setView(alertContent)
@@ -72,5 +76,12 @@ object InfoTipDialogBuilder {
                 dialog.dismiss()
             }
             .create()
+            .apply {
+                setOnShowListener { dialog ->
+                    getButton(Dialog.BUTTON_POSITIVE).apply {
+                        setTextColor(context.getColorCompat(confirmColor))
+                    }
+                }
+            }
     }
 }

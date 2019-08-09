@@ -30,7 +30,7 @@
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:text="@string/how_this_works"
-                android:textColor="@color/dark_slate_blue"
+                android:textColor="@color/blue"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -116,7 +116,7 @@
         android:layout_height="@dimen/toolbar_height"
         android:background="@drawable/selectable_circle_background"
         android:padding="16dp"
-        android:tint="@color/dark_slate_blue"
+        android:tint="@color/blue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_arrow_back_24dp" />
