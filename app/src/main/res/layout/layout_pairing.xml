@@ -100,7 +100,7 @@
 
     <TextView
         android:id="@+id/layout_pairing_scan"
-        style="@style/PrimaryButton.Blue.Round"
+        style="@style/PrimaryButton.Green.Round"
         android:layout_width="0dp"
         android:layout_height="46dp"
         android:layout_marginStart="16dp"
@@ -135,7 +135,7 @@
         app:layout_constraintBottom_toTopOf="@+id/layout_pairing_scan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:mpb_indeterminateTint="@color/azure"
+        app:mpb_indeterminateTint="@color/safe_green"
         tools:visibility="visible" />
 
     <ImageView

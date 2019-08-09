@@ -107,7 +107,7 @@
 
         <TextView
             android:id="@+id/layout_replace_browser_extension_submit"
-            style="@style/PrimaryButton.Blue.FullWidth"
+            style="@style/PrimaryButton.Green.FullWidth"
             android:layout_width="0dp"
             android:layout_height="@dimen/primary_button_height"
             android:enabled="false"

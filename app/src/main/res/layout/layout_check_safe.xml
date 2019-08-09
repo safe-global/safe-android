@@ -129,7 +129,7 @@
 
         <TextView
             android:id="@+id/layout_check_safe_next"
-            style="@style/PrimaryButton.Blue.FullWidth"
+            style="@style/PrimaryButton.Green.FullWidth"
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:drawablePadding="8dp"

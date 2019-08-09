@@ -183,7 +183,7 @@
 
     <TextView
         android:id="@+id/create_safe_payment_token_next_btn"
-        style="@style/PrimaryButton.Blue"
+        style="@style/PrimaryButton.Green"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_margin="16dp"

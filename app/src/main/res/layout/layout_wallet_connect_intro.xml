@@ -54,7 +54,7 @@
 
         <TextView
             android:id="@+id/layout_wallet_connect_intro_button"
-            style="@style/PrimaryButton.Blue"
+            style="@style/PrimaryButton.Green"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="144dp"

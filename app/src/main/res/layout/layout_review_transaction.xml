@@ -142,7 +142,7 @@
 
     <TextView
         android:id="@+id/layout_review_transaction_submit_button"
-        style="@style/PrimaryButton.Blue.FullWidth"
+        style="@style/PrimaryButton.Green.FullWidth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/submit_transaction"

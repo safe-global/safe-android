@@ -103,7 +103,7 @@
 
     <TextView
         android:id="@+id/layout_confirm_transaction_reject_button"
-        style="@style/PrimaryButton.Blue.FullWidth"
+        style="@style/PrimaryButton.Green.FullWidth"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/selectable_background"
@@ -117,7 +117,7 @@
 
     <TextView
         android:id="@+id/layout_confirm_transaction_confirm_button"
-        style="@style/PrimaryButton.Blue.FullWidth"
+        style="@style/PrimaryButton.Green.FullWidth"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/confirm"

@@ -13,7 +13,7 @@
 
     <ImageView
         android:id="@+id/dialog_address_share_share"
-        style="@style/PrimaryButton.Blue.FullWidth"
+        style="@style/PrimaryButton.Green.FullWidth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

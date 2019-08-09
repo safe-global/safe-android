@@ -65,7 +65,7 @@
 
     <TextView
         android:id="@+id/layout_extension_address_scan"
-        style="@style/PrimaryButton.Blue.Round"
+        style="@style/PrimaryButton.Green.Round"
         android:layout_width="0dp"
         android:layout_height="46dp"
         android:layout_marginStart="16dp"

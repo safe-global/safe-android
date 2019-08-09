@@ -241,7 +241,7 @@
 
             <TextView
                 android:id="@+id/layout_recovering_safe_submit_button"
-                style="@style/PrimaryButton.Blue.Round"
+                style="@style/PrimaryButton.Green.Round"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
