@@ -152,11 +152,6 @@ class WalletConnectBridgeRepository @Inject constructor(
         ).let { session ->
             val sessionId = config.handshakeTopic
             session.addCallback(object : Session.Callback {
-                override fun transportStatus(status: Session.Transport.Status) {
-                    when(status) {
-                        is Session.Transport.Status.Error -> Timber.e(status.throwable)
-                    }
-                }
 
                 @SuppressLint("CheckResult")
                 override fun onMethodCall(call: Session.MethodCall) {
@@ -317,7 +312,6 @@ class WalletConnectBridgeRepository @Inject constructor(
                     return@create
                 }
                 val cb = object : Session.Callback {
-                    override fun transportStatus(status: Session.Transport.Status) {}
 
                     override fun onMethodCall(call: Session.MethodCall) {
                         when (call) {
