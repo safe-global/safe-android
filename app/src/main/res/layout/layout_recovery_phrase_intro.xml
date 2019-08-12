@@ -101,7 +101,7 @@
         android:id="@+id/layout_recovery_phrase_intro_bottom_bar"
         android:layout_width="0dp"
         android:layout_height="@dimen/toolbar_height"
-        android:background="@color/azure"
+        android:background="@color/safe_green"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
