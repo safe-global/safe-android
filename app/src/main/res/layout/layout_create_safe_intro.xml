@@ -43,7 +43,7 @@
                 android:layout_height="6dp"
                 android:layout_marginTop="6dp"
                 android:src="@drawable/white_circle"
-                android:tint="@color/azure"
+                android:tint="@color/safe_green"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/layout_create_safe_intro_first_text" />
 
@@ -66,7 +66,7 @@
                 android:layout_height="6dp"
                 android:layout_marginTop="6dp"
                 android:src="@drawable/white_circle"
-                android:tint="@color/azure"
+                android:tint="@color/safe_green"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/layout_create_safe_intro_second_text" />
 
@@ -89,7 +89,7 @@
                 android:layout_height="6dp"
                 android:layout_marginTop="6dp"
                 android:src="@drawable/white_circle"
-                android:tint="@color/azure"
+                android:tint="@color/safe_green"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/layout_create_safe_intro_third_text" />
 
@@ -137,7 +137,7 @@
         android:id="@+id/layout_create_safe_intro_bottom_bar"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/bottom_bar_height"
-        android:background="@color/azure"
+        android:background="@color/safe_green"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
