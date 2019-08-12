@@ -60,5 +60,7 @@
     <color name="safe_green_dark">#005546</color>
     <color name="safe_green_light">#80005546</color>
 
+    <color name="ic_launcher_background">#a1d2ca</color>
+
     <color name="blue">#001e3b</color>
 </resources>
