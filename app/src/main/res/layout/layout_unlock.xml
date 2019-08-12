@@ -13,48 +13,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/layout_unlock_logo"
-            android:layout_width="@dimen/safe_logo_size"
-            android:layout_height="@dimen/safe_logo_size"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/selectable_background"
-            android:src="@drawable/ic_logo_splash"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/layout_unlock_personal_edition_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:gravity="center"
-            android:letterSpacing="0.21"
-            android:lineSpacingExtra="17sp"
-            android:padding="8dp"
-            android:text="@string/personal_edition"
-            android:textAllCaps="true"
-            android:textColor="@color/white_alpha_70"
-            android:textSize="7sp"
-            app:layout_constraintTop_toBottomOf="@+id/layout_unlock_logo" />
 
         <ImageView
             android:id="@+id/layout_unlock_door_hole"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:src="@drawable/ic_door_hole_unlock"
+            android:layout_marginTop="56dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.491"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_unlock_personal_edition_text" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/img_app" />
 
         <ImageView
             android:id="@+id/layout_unlock_fingerprint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="96dp"
+            android:layout_marginTop="52dp"
             android:src="@drawable/ic_authenticate_light"
+            android:tint="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layout_unlock_door_hole" />
@@ -68,7 +45,7 @@
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
             android:text="@string/place_your_finger_to_unlock"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -79,11 +56,14 @@
             style="@style/TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:fontFamily="sans-serif"
-            android:text="@string/use_password"
-            android:textColor="#a5ffffff"
             android:textSize="13sp"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:textColor="#001428"
+            android:lineSpacingExtra="13sp"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="24dp"
+            android:text="@string/use_password"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

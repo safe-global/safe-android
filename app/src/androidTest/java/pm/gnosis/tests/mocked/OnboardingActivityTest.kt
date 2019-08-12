@@ -61,11 +61,12 @@ class OnboardingActivityTest: BaseUiTest() {
     private fun checkBottomSheet(visible: Boolean) {
         val matcher = if (visible) matches(isDisplayed()) else doesNotExist()
         onView(withId(R.id.bottom_sheet_terms_and_conditions_title)).check(matcher)
-        onView(withId(R.id.bottom_sheet_terms_and_conditions_description)).check(matcher)
         onView(withId(R.id.bottom_sheet_terms_and_conditions_first_bullet)).check(matcher)
         onView(withId(R.id.bottom_sheet_terms_and_conditions_first_bullet_text)).check(matcher)
         onView(withId(R.id.bottom_sheet_terms_and_conditions_second_bullet)).check(matcher)
         onView(withId(R.id.bottom_sheet_terms_and_conditions_second_bullet_text)).check(matcher)
+        onView(withId(R.id.bottom_sheet_terms_and_conditions_third_bullet)).check(matcher)
+        onView(withId(R.id.bottom_sheet_terms_and_conditions_third_bullet_text)).check(matcher)
         onView(withId(R.id.bottom_sheet_terms_and_conditions_reject)).check(matcher)
         onView(withId(R.id.bottom_sheet_terms_and_conditions_agree)).check(matcher)
     }
@@ -77,7 +78,6 @@ class OnboardingActivityTest: BaseUiTest() {
         onView(withId(R.id.layout_onboarding_intro_logo)).check(matches(isCompletelyDisplayed()))
         onView(withId(R.id.layout_onboarding_intro_get_started)).check(matches(isCompletelyDisplayed()))
         onView(withId(R.id.layout_onboarding_intro_info)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.onboarding_intro_info))))
-        onView(withText(R.string.personal_edition)).check(matches(isCompletelyDisplayed()))
         checkBottomSheet(false)
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()

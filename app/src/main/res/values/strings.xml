@@ -78,7 +78,7 @@
     <string name="confirm_password_hint">Confirm password</string>
     <string name="choose_password_hint">Choose passwrod</string>
     <string name="confirm_password_info">Please enter your password again to confirm.</string>
-    <string name="onboarding_intro_info">Your multi-sig wallet for securely and conveniently managing ETH &amp; ERC-20 tokens.</string>
+    <string name="onboarding_intro_info">The most secure way to manage your crypto funds</string>
     <string name="create_password">Create Password</string>
     <string name="password_doesnt_match">Password doesn\'t match</string>
     <string name="confirm">Confirm</string>
@@ -179,6 +179,7 @@
     <string name="new_address">New address</string>
     <string name="terms_first_bullet">We do not collect demographic data such as age and gender.</string>
     <string name="terms_second_bullet">We collect anonymized app usage data and crash reports to ensure the quality of our app.</string>
+    <string name="terms_third_bullet">By continuing you accept and agree with the  <a href="https://safe.gnosis.io/terms">Terms of Use</a> and a <a href="https://safe.gnosis.io/privacy">Privacy Policy</a>.</string>
     <string name="input_safe_address">Input Safe address</string>
     <string name="display_qr_code">Display QR Code</string>
     <string name="share">Share</string>
