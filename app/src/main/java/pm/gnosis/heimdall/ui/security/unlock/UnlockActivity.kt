@@ -15,7 +15,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_unlock.*
-import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.Event
@@ -48,8 +47,6 @@ class UnlockActivity : ViewModelActivity<UnlockContract>() {
         }
 
         layout_unlock_password_input.disableAccessibility()
-
-        layout_unlock_door_hole.setImageResource(if (BuildConfig.MAINNET) R.drawable.img_app_mainnet else R.drawable.img_app_rinkeby)
     }
 
     override fun onStart() {

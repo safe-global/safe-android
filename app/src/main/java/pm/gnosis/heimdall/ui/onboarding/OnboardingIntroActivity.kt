@@ -11,7 +11,6 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.bottom_sheet_terms_and_conditions.*
 import kotlinx.android.synthetic.main.layout_onboarding_intro.*
-import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
@@ -28,8 +27,6 @@ class OnboardingIntroActivity : BaseActivity() {
         skipSecurityCheck()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_onboarding_intro)
-
-        layout_onboarding_intro_logo.setImageResource(if(BuildConfig.MAINNET) R.drawable.img_app_mainnet else R.drawable.img_app_rinkeby)
 
         termsBottomSheetDialog = TermsBottomSheetDialog(this).apply {
             setContentView(layoutInflater.inflate(R.layout.bottom_sheet_terms_and_conditions, null))

@@ -23,7 +23,7 @@
             app:layout_constraintHorizontal_bias="0.491"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/img_app_mainnet" />
+            app:srcCompat="@drawable/img_app" />
 
         <ImageView
             android:id="@+id/layout_unlock_fingerprint"
