@@ -70,12 +70,14 @@
 
     <TextView
         android:id="@+id/layout_no_safes_recover_safe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginEnd="45dp"
         android:layout_marginBottom="24dp"
         android:background="@drawable/selectable_background"
         android:fontFamily="sans-serif-medium"
-        android:padding="16dp"
+        android:gravity="center"
         android:text="@string/recover_safe"
         android:textColor="@color/safe_green"
         android:textSize="14sp"
