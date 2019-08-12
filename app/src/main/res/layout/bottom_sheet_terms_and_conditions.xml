@@ -2,42 +2,28 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:fitsSystemWindows="true">
 
     <TextView
-        android:id="@+id/bottom_sheet_terms_and_conditions_title"
+        android:id="@+id/bottom_sheet_terms_and_conditions_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:fontFamily="sans-serif"
-        android:text="@string/terms"
-        android:textColor="@color/blue"
-        android:textSize="14sp"
+        android:gravity="center_horizontal"
+        android:text="@string/please_review_terms_and_privacy_policy"
+        android:textColor="#001428"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/bottom_sheet_terms_and_conditions_description"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
-        android:fontFamily="sans-serif"
-        android:text="@string/terms_info"
-        android:textColor="@color/blue"
-        android:textSize="13sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_title" />
-
 
     <ImageView
         android:id="@+id/bottom_sheet_terms_and_conditions_first_bullet"
@@ -54,7 +40,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:text="@string/terms_first_bullet"
         android:textColor="@color/blue"
@@ -87,38 +73,67 @@
         app:layout_constraintStart_toEndOf="@+id/bottom_sheet_terms_and_conditions_second_bullet"
         app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_first_bullet_text" />
 
+
+    <ImageView
+        android:id="@+id/bottom_sheet_terms_and_conditions_third_bullet"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="6dp"
+        android:src="@drawable/white_circle"
+        android:tint="@color/safe_green"
+        app:layout_constraintStart_toStartOf="@+id/bottom_sheet_terms_and_conditions_first_bullet"
+        app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_third_bullet_text" />
+
+    <TextView
+        android:id="@+id/bottom_sheet_terms_and_conditions_third_bullet_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:autoLink="web"
+        android:text="@string/terms_third_bullet"
+        android:textColor="@color/blue"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bottom_sheet_terms_and_conditions_third_bullet"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_second_bullet_text" />
+
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_reject"
-        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
-        android:autoLink="web"
         android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:lineSpacingExtra="0sp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:text="@string/no_thanks"
-        android:textAllCaps="true"
-        android:textSize="13sp"
-        android:theme="@style/SmallFlatButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/bottom_sheet_terms_and_conditions_agree"
-        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_second_bullet_text" />
+        android:textColor="#008c73"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_agree" />
 
     <TextView
         android:id="@+id/bottom_sheet_terms_and_conditions_agree"
         style="@style/PrimaryButton.Green"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
         android:fontFamily="sans-serif-medium"
         android:text="@string/agree"
         android:textAllCaps="true"
         android:textSize="13sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/bottom_sheet_terms_and_conditions_reject"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_third_bullet_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
