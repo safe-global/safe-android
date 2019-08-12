@@ -9,7 +9,7 @@
     android:fitsSystemWindows="true">
 
     <TextView
-        android:id="@+id/bottom_sheet_terms_and_conditions_description"
+        android:id="@+id/bottom_sheet_terms_and_conditions_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -32,7 +32,7 @@
         android:layout_marginTop="6dp"
         android:src="@drawable/white_circle"
         android:tint="@color/safe_green"
-        app:layout_constraintStart_toStartOf="@+id/bottom_sheet_terms_and_conditions_description"
+        app:layout_constraintStart_toStartOf="@+id/bottom_sheet_terms_and_conditions_title"
         app:layout_constraintTop_toTopOf="@+id/bottom_sheet_terms_and_conditions_first_bullet_text" />
 
     <TextView
@@ -47,7 +47,7 @@
         android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/bottom_sheet_terms_and_conditions_first_bullet"
-        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_description" />
+        app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_terms_and_conditions_title" />
 
     <ImageView
         android:id="@+id/bottom_sheet_terms_and_conditions_second_bullet"
