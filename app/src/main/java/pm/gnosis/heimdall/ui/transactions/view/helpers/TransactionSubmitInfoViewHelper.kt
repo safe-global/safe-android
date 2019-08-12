@@ -58,7 +58,7 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
             max = 100
             progress = 100
             progressTintList =
-                    ColorStateList.valueOf(context.getColorCompat(if (rejected) R.color.tomato_15 else R.color.azure))
+                    ColorStateList.valueOf(context.getColorCompat(if (rejected) R.color.tomato_15 else R.color.safe_green))
             progressTintMode = PorterDuff.Mode.SRC_IN
         }
 

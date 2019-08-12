@@ -162,7 +162,7 @@ abstract class ConfirmRecoveryPhraseActivity<VM : ConfirmRecoveryPhraseContract>
 
     protected fun bottomBarEnabled(enable: Boolean) {
         layout_confirm_recovery_phrase_submit.isEnabled = enable
-        layout_confirm_recovery_phrase_bottom_bar_container.setBackgroundColor(getColorCompat(if (enable) R.color.azure else R.color.blue_grey))
+        layout_confirm_recovery_phrase_bottom_bar_container.setBackgroundColor(getColorCompat(if (enable) R.color.safe_green else R.color.blue_grey))
     }
 
     override fun onDestroy() {

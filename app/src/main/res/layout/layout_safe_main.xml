@@ -133,7 +133,7 @@
                         android:layout_width="@dimen/navigation_item_icon"
                         android:layout_height="@dimen/navigation_item_icon"
                         android:layout_marginStart="16dp"
-                        android:background="@drawable/circle_azure"
+                        android:background="@drawable/circle_green"
                         android:padding="4dp"
                         android:visibility="gone"
                         app:mpb_indeterminateTint="@color/white"
