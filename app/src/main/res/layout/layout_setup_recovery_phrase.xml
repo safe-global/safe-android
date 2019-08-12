@@ -117,7 +117,7 @@
             android:id="@+id/layout_setup_recovery_phrase_container"
             android:layout_width="0dp"
             android:layout_height="@dimen/bottom_bar_height"
-            android:background="@color/azure"
+            android:background="@color/safe_green"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

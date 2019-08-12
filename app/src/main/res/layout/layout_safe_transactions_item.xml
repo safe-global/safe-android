@@ -124,7 +124,7 @@
         android:background="@color/pale_grey"
         app:layout_constraintTop_toBottomOf="@+id/layout_safe_transactions_item_progress_barrier"
         app:mpb_progressStyle="horizontal"
-        app:mpb_progressTint="@color/azure"
+        app:mpb_progressTint="@color/safe_green"
         app:mpb_setBothDrawables="true"
         app:mpb_showProgressBackground="false"
         app:mpb_useIntrinsicPadding="false" />
