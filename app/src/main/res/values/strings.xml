@@ -78,7 +78,7 @@
     <string name="confirm_password_hint">Confirm password</string>
     <string name="choose_password_hint">Choose passwrod</string>
     <string name="confirm_password_info">Please enter your password again to confirm.</string>
-    <string name="onboarding_intro_info">Your multi-sig wallet for securely and conveniently managing ETH &amp; ERC-20 tokens.</string>
+    <string name="onboarding_intro_info">The most secure way to manage your crypto funds</string>
     <string name="create_password">Create Password</string>
     <string name="password_doesnt_match">Password doesn\'t match</string>
     <string name="confirm">Confirm</string>
