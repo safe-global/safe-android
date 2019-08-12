@@ -58,7 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_recovering_safe_pending_subtitle"
-        app:mpb_indeterminateTint="@color/azure"
+        app:mpb_indeterminateTint="@color/safe_green"
         app:mpb_progressStyle="horizontal"
         app:mpb_setBothDrawables="true" />
 

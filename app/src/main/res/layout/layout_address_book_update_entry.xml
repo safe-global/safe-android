@@ -99,7 +99,7 @@
                 android:gravity="center"
                 android:padding="16dp"
                 android:text="@string/save"
-                android:textColor="@color/azure"
+                android:textColor="@color/safe_green"
                 android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="@+id/layout_address_book_update_entry_toolbar_container"
                 app:layout_constraintEnd_toEndOf="@+id/layout_address_book_update_entry_toolbar_container"

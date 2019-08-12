@@ -64,7 +64,7 @@
     <string name="sign_transaction_request_message">You have been requested to sign a transaction</string>
     <string name="sign_transaction_request_title">Sign request</string>
     <string name="transaction_details">Transaction Details</string>
-    <string name="view_transaction_on"><![CDATA[<font color=#27a0ff>View transaction on Etherscan.io</font>]]></string>
+    <string name="view_transaction_on"><![CDATA[<font color=#008c73>View transaction on Etherscan.io</font>]]></string>
     <string name="no_safe_selected">No Safe selected</string>
     <string name="channel_signing_request_name">Signing Requests</string>
     <string name="channel_signing_request_description">Requests to sign transactions.</string>
@@ -143,8 +143,8 @@
     <string name="pending_safe_deposit_value">Send at least %s to your Safe\'s address:</string>
     <string name="fingerprint_many_tries">Too many tries. Switching to password</string>
     <string name="deposit_received">Deposit received.</string>
-    <string name="creating_your_new_safe">Creating your new Safe…</string>
-    <string name="deploy_safe_description"><![CDATA[This process should take a couple of minutes. Follow progress on <font color=#27a0ff>Etherscan.io</font>]]></string>
+    <string name="creating_your_new_safe">Creating your new Safe</string>
+    <string name="deploy_safe_description"><![CDATA[This process should take a couple of minutes. Follow progress on <font color=#008c73>Etherscan.io</font>]]></string>
     <string name="devices_paired_successfuly">Devices paired successfully</string>
     <string name="error_pairing_devices">Error pairing devices</string>
     <string name="mnemonic_error_invalid">Error (Invalid recovery key)</string>
@@ -161,7 +161,7 @@
     <string name="remove_safe_title">Are you sure you want to remove your Safe \'%s\'?</string>
     <string name="remove_safe_notice_1">By removing this Safe, the Safe remains existing and your funds will not be lost. You simply remove it from this device.</string>
     <string name="remove_safe_notice_2">To add it again to this or any other device, you will need your recovery phrase.</string>
-    <string name="missing_token_manage"><![CDATA[Missing a token? <font color=#28b2fa><u>Manage your token list</u></font>]]></string>
+    <string name="missing_token_manage"><![CDATA[Missing a token? <font color=#008c73><u>Manage your token list</u></font>]]></string>
     <string name="manage_tokens_description">Select token(s) to use with ALL your Safes</string>
     <string name="general_settings">General settings</string>
     <string name="disabled">Disabled</string>
@@ -249,7 +249,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="connected_extension">Connected Authenticator</string>
     <string name="connect_browser_extension">Connect Authenticator</string>
     <string name="connect_extension_description">This transaction will connect this Safe with the Authenticator. Future transactions require confirmation from both devices.</string>
-    <string name="pairing_first_step"><![CDATA[1. Download the <font color=#27a0ff>Authenticator</font>.]]></string>
+    <string name="pairing_first_step"><![CDATA[1. Download the <font color=#008c73>Authenticator</font>.]]></string>
     <string name="pairing_second_step">2. Scan the QR code in the Authenticator.</string>
     <string name="submitted">Submitted</string>
     <string name="status">Status</string>
@@ -348,7 +348,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="existing_safe_recovered">The existing Safe will be recovered and associated with this device.</string>
     <string name="name_too_long">The name is too long. Max 120 characters.</string>
     <string name="transaction_submitted_safe_being_created">Your transaction was submitted. Your Safe will be created now. This might take a couple of minutes.</string>
-    <string name="follow_progress_on_etherscan">&lt;font color=#27a0ff&gt;Follow progress on Etherscan.io&lt;/font&gt;</string>
+    <string name="follow_progress_on_etherscan">&lt;font color=#008c73&gt;Follow progress on Etherscan.io&lt;/font&gt;</string>
     <string name="safe_title">Safe</string>
     <string name="bytes_included">%s bytes included</string>
     <string name="please_have_safe_address_ready">Please have your Safe\'s address and recovery phrase ready.</string>
