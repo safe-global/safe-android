@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
-                android:src="@drawable/ic_browser_extension_qr"
+                app:srcCompat="@drawable/img_authenticator_qr"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layout_extension_address_browser_extension_label" />
@@ -86,7 +86,7 @@
         app:layout_constraintBottom_toTopOf="@+id/layout_extension_address_scan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:mpb_indeterminateTint="@color/azure"
+        app:mpb_indeterminateTint="@color/safe_green"
         tools:visibility="visible" />
 
     <ImageView
