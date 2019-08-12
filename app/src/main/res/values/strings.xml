@@ -143,7 +143,7 @@
     <string name="pending_safe_deposit_value">Send at least %s to your Safe\'s address:</string>
     <string name="fingerprint_many_tries">Too many tries. Switching to password</string>
     <string name="deposit_received">Deposit received.</string>
-    <string name="creating_your_new_safe">Creating your new Safe…</string>
+    <string name="creating_your_new_safe">Creating your new Safe</string>
     <string name="deploy_safe_description"><![CDATA[This process should take a couple of minutes. Follow progress on <font color=#27a0ff>Etherscan.io</font>]]></string>
     <string name="devices_paired_successfuly">Devices paired successfully</string>
     <string name="error_pairing_devices">Error pairing devices</string>

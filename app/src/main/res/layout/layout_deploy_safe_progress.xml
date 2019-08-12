@@ -6,46 +6,68 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:paddingEnd="16dp"
-    android:paddingStart="16dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="4sp"
+        android:text="@string/creating_your_new_safe"
+        android:textColor="#001428"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/layout_deploy_safe_progress_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="20dp"
         android:src="@drawable/ic_safe_inprogress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <TextView
         android:id="@+id/layout_deploy_safe_progress_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:lineSpacingExtra="4sp"
-        android:textColor="@color/blue"
-        android:textSize="16sp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="7sp"
+        android:text="@string/transaction_submitted_safe_being_created"
+        android:textColor="#5d6d74"
+        android:textSize="13sp"
+        android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_deploy_safe_progress_image"
-        tools:text="Deposit received. 
-Creating your new Safe..." />
+        app:layout_constraintTop_toBottomOf="@+id/layout_deploy_safe_progress_image" />
 
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:id="@+id/layout_deploy_safe_progress_progress_bar"
         style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="12dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
         android:indeterminate="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_deploy_safe_progress_title"
-        app:mpb_indeterminateTint="@color/azure"
+        app:mpb_indeterminateTint="@color/safe_green"
         app:mpb_progressStyle="horizontal"
         app:mpb_setBothDrawables="true" />
 
@@ -54,12 +76,17 @@ Creating your new Safe..." />
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:gravity="center"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="7sp"
+        android:textColor="#008c73"
+        android:textSize="13sp"
+        android:textStyle="normal"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layout_deploy_safe_progress_progress_bar"
-        tools:text="This process should take a couple of minutes.
-Follow progress on Etherscan.io"
-        android:visibility="gone"/>
+        tools:text="Follow progress on Etherscan.io"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
