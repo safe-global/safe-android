@@ -51,7 +51,7 @@ class PasswordHelperTest {
             then(context).should().getString(it.messageRes)
             val color = when {
                 password.isEmpty() -> R.color.dark_grey
-                it.valid -> R.color.green
+                it.valid -> R.color.safe_green
                 else -> R.color.tomato
             }
             colorCounts[color] = (colorCounts[color] ?: 0) + 1
