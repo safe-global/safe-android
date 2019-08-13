@@ -55,7 +55,7 @@
                 android:layout_marginTop="24dp"
                 android:lineSpacingExtra="7sp"
                 android:text="@string/safe_intro_message_1"
-                android:textColor="@color/battleship_grey"
+                android:textColor="@color/dark_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/layout_create_safe_intro_first_bullet"
                 app:layout_constraintTop_toBottomOf="@+id/layout_create_safe_intro_sub_title" />
@@ -78,7 +78,7 @@
                 android:layout_marginTop="24dp"
                 android:lineSpacingExtra="7sp"
                 android:text="@string/safe_intro_message_2"
-                android:textColor="@color/battleship_grey"
+                android:textColor="@color/dark_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/layout_create_safe_intro_second_bullet"
                 app:layout_constraintTop_toBottomOf="@+id/layout_create_safe_intro_first_text" />
@@ -100,7 +100,7 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="24dp"
                 android:lineSpacingExtra="7sp"
-                android:textColor="@color/battleship_grey"
+                android:textColor="@color/dark_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/layout_create_safe_intro_second_bullet"
                 app:layout_constraintTop_toBottomOf="@+id/layout_create_safe_intro_second_text"

@@ -402,7 +402,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(typeImageView).should().visibility = View.VISIBLE
         then(typeImageView).should().setImageResource(R.drawable.ic_transaction_failed)
         then(targetImageView).should().visibility = View.INVISIBLE
-        then(valueTextView).should().setTextColor(R.color.battleship_grey)
+        then(valueTextView).should().setTextColor(R.color.dark_grey)
         then(targetTextView).should().setTextColor(R.color.tomato)
 
         then(progressView).shouldHaveNoMoreInteractions()

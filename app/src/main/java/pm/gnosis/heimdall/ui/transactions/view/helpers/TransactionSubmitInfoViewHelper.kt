@@ -95,7 +95,7 @@ class TransactionSubmitInfoViewHelper @Inject constructor() {
     fun applyUpdate(update: SubmitTransactionHelper.ViewUpdate): Disposable? {
         when (update) {
             is SubmitTransactionHelper.ViewUpdate.Estimate -> {
-                val balanceColor = context.getColorCompat(if (update.sufficientFunds) R.color.battleship_grey else R.color.tomato)
+                val balanceColor = context.getColorCompat(if (update.sufficientFunds) R.color.dark_grey else R.color.tomato)
                 update.assetBalanceAfterTransfer?.let {
                     view.include_transaction_submit_info_data_asset_balance_label.visible(true)
                     view.include_transaction_submit_info_data_asset_balance_value.visible(true)

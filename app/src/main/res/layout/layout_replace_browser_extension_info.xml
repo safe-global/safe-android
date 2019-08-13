@@ -103,7 +103,7 @@
         android:layout_marginTop="8dp"
         android:lineSpacingExtra="3sp"
         android:text="@string/replace_browser_extension_transaction_info"
-        android:textColor="@color/battleship_grey"
+        android:textColor="@color/dark_grey"
         android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

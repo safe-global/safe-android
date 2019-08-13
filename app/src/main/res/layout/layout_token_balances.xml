@@ -47,7 +47,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/layout_token_balances_list"
-                    tools:textColor="@color/battleship_grey" />
+                    tools:textColor="@color/dark_grey" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

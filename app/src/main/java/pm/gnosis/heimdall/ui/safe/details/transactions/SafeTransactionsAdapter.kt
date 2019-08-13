@@ -132,7 +132,7 @@ class SafeTransactionsAdapter @Inject constructor(
                     itemView.layout_safe_transactions_item_progress.isIndeterminate = true
                 }
                 is TransactionExecutionRepository.PublishStatus.Failed -> {
-                    itemView.layout_safe_transactions_item_value.setTextColor(context.getColorCompat(R.color.battleship_grey))
+                    itemView.layout_safe_transactions_item_value.setTextColor(context.getColorCompat(R.color.dark_grey))
                     itemView.layout_safe_transactions_item_target_label.setTextColor(context.getColorCompat(R.color.tomato))
                     itemView.layout_safe_transactions_item_type_image.visible(true)
                     itemView.layout_safe_transactions_item_type_image.setImageResource(R.drawable.ic_transaction_failed)

@@ -40,7 +40,7 @@
         android:hint="@string/enter_master_password"
         android:inputType="textPassword"
         android:textColor="@color/safe_green"
-        android:textColorHint="@color/blue_grey"
+        android:textColorHint="@color/medium_grey"
         android:textSize="18sp"
         android:textStyle="normal"
         android:visibility="gone"

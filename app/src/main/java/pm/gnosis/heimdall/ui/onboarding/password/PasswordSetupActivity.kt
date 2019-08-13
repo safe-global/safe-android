@@ -30,7 +30,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         skipSecurityCheck()
-        colorStatusBar(R.color.aqua_blue)
+        colorStatusBar(R.color.safe_green)
         super.onCreate(savedInstanceState)
 
         layout_password_setup_password.disableAccessibility()
@@ -69,8 +69,8 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
 
     private fun enableNext(enable: Boolean) {
         layout_password_setup_next.isEnabled = enable
-        layout_password_setup_next_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.blue_grey))
-        layout_password_setup_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.blue_grey)
+        layout_password_setup_next_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.medium_grey))
+        layout_password_setup_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.medium_grey)
     }
 
     override fun layout() = R.layout.layout_password_setup

@@ -92,10 +92,10 @@ class TwoStepPanel @JvmOverloads constructor(
         setBackEnabled(a.getBoolean(R.styleable.TwoStepPanel_backEnabled, true))
 
         val textColorEnabled = a.getColor(R.styleable.TwoStepPanel_colorTextEnabled, context.getColorCompat(R.color.white))
-        val textColorDisabled = a.getColor(R.styleable.TwoStepPanel_colorTextDisabled, context.getColorCompat(R.color.blue_grey))
+        val textColorDisabled = a.getColor(R.styleable.TwoStepPanel_colorTextDisabled, context.getColorCompat(R.color.dark_grey))
 
         val colorStateList = ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_enabled), intArrayOf(android.R.attr.state_enabled)),
+            arrayOf(intArrayOf(android.R.attr.state_enabled), intArrayOf(-android.R.attr.state_enabled)),
             intArrayOf(textColorEnabled, textColorDisabled)
         )
 
@@ -109,13 +109,13 @@ class TwoStepPanel @JvmOverloads constructor(
 
     fun setForwardEnabled(enabled: Boolean) {
         forwardEnabled = enabled
-        forward_text.setTextColor(context.getColorCompat(if (enabled) R.color.white else R.color.blue_grey))
-        forward_icon.setColorFilterCompat(if (enabled) R.color.white else R.color.blue_grey)
+        forward_text.isEnabled = enabled
+        forward_icon.setColorFilterCompat(if (enabled) R.color.white else R.color.medium_grey)
     }
 
     fun setBackEnabled(enabled: Boolean) {
         backEnabled = enabled
-        back_icon.setColorFilterCompat(if (enabled) R.color.white else R.color.blue_grey)
+        back_icon.setColorFilterCompat(if (enabled) R.color.white else R.color.medium_grey)
     }
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
@@ -137,7 +137,7 @@ class TwoStepPanel @JvmOverloads constructor(
                         if (!disabled) {
                             R.color.white
                         } else {
-                            R.color.battleship_grey
+                            R.color.dark_grey
                         }
                     )
                 )
@@ -145,9 +145,9 @@ class TwoStepPanel @JvmOverloads constructor(
                     indicator_step_2,
                     context.getColorCompat(
                         if (!disabled) {
-                            R.color.blue_grey
+                            R.color.medium_grey
                         } else {
-                            R.color.blue_grey
+                            R.color.medium_grey
                         }
                     )
                 )
@@ -157,9 +157,9 @@ class TwoStepPanel @JvmOverloads constructor(
                     indicator_step_1,
                     context.getColorCompat(
                         if (!disabled) {
-                            R.color.blue_grey
+                            R.color.medium_grey
                         } else {
-                            R.color.blue_grey
+                            R.color.medium_grey
                         }
                     )
                 )
@@ -169,7 +169,7 @@ class TwoStepPanel @JvmOverloads constructor(
                         if (!disabled) {
                             R.color.white
                         } else {
-                            R.color.battleship_grey
+                            R.color.dark_grey
                         }
                     )
                 )
