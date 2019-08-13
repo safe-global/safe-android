@@ -50,7 +50,7 @@ class AddressBookEditEntryActivity : ViewModelActivity<AddressBookContract>() {
         }
 
         layout_address_book_update_entry_address.isEnabled = false
-        layout_address_book_update_entry_address.setTextColor(getColorCompat(R.color.blue_grey))
+        layout_address_book_update_entry_address.setTextColor(getColorCompat(R.color.medium_grey))
     }
 
     override fun onStart() {

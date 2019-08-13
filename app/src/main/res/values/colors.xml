@@ -34,20 +34,20 @@
     <!-- New Design colors -->
     <color name="aqua_blue">#00b8e0</color>
     <color name="pale_grey">#e4e8f1</color>
-    <color name="blue_grey">#a2a8ba</color>
+    <color name="light_grey">#d4d5d3</color>
+    <color name="medium_grey">#b2b5b2</color>
     <color name="pale_grey_two">#f4f4f9</color>
     <color name="battleship_grey_light">#64707f</color>
-    <color name="battleship_grey">#65707e</color>
+    <color name="dark_grey">#4e6474</color>
     <color name="tomato">#ff3b30</color>
-    <color name="green_teal">#09a862</color>
-    <color name="dark_slate_blue_15">#2721435a</color>
+    <color name="green">#79b722</color>
     <color name="pale_grey_three">#f4f5f9</color>
     <color name="tomato_15">#f0d6d6</color>
     <color name="pale_grey_four">#e3e5ec</color>
     <color name="dusk">#4a5579</color>
     <color name="shamrock">#00a95f</color>
 
-    <color name="word_recovery_phrase">#2a56c6</color>
+    <color name="word_recovery_phrase">@color/safe_green</color>
     <color name="word_recovery_phrase_selectable">#b34a4a4a</color>
     <color name="word_recovery_phrase_picker">#b24a4a4a</color>
     <color name="word_recovery_phrase_picker_disabled">#664a4a4a</color>
@@ -63,4 +63,5 @@
     <color name="ic_launcher_background">#a1d2ca</color>
 
     <color name="blue">#001e3b</color>
+    <color name="blue_15">#27001e3b</color>
 </resources>

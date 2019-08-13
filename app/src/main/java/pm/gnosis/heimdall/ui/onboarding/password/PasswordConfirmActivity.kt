@@ -106,8 +106,8 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
 
     private fun enableConfirm(enable: Boolean) {
         layout_password_confirm_confirm.isEnabled = enable
-        layout_password_confirm_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.blue_grey))
-        layout_password_confirm_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.blue_grey)
+        layout_password_confirm_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.medium_grey))
+        layout_password_confirm_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.medium_grey)
     }
 
     override fun layout() = R.layout.layout_password_confirm

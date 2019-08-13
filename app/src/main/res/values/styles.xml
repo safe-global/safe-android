@@ -74,7 +74,7 @@
     </style>
 
     <style name="TabText" parent="TextAppearance.Design.Tab">
-        <item name="android:textColor">@color/blue_grey</item>
+        <item name="android:textColor">@color/medium_grey</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textSize">13sp</item>
     </style>
@@ -126,7 +126,7 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">normal</item>
         <item name="android:lineSpacingExtra">7sp</item>
-        <item name="android:textColor">@color/battleship_grey</item>
+        <item name="android:textColor">@color/dark_grey</item>
     </style>
 
     <!-- Start: Button styles -->
@@ -199,7 +199,7 @@
 
     <style name="CapsText">
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/blue_grey</item>
+        <item name="android:textColor">@color/medium_grey</item>
         <item name="android:textSize">12sp</item>
     </style>
 
@@ -237,12 +237,12 @@
 
     <style name="LightText" parent="Text">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/blue_grey</item>
+        <item name="android:textColor">@color/medium_grey</item>
     </style>
 
     <style name="NormalText" parent="Text">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/battleship_grey</item>
+        <item name="android:textColor">@color/dark_grey</item>
     </style>
 
     <style name="DarkText" parent="Text">

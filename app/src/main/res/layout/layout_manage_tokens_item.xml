@@ -39,7 +39,7 @@
         android:id="@+id/layout_manage_tokens_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/battleship_grey"
+        android:textColor="@color/dark_grey"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/layout_manage_tokens_switch"

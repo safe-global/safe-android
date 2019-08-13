@@ -62,8 +62,8 @@ object PasswordHelper {
             conditions.forEachIndexed { index, condition ->
                 validPassword = validPassword && condition.valid
                 val color = when {
-                    emptyPassword -> context.getColorCompat(R.color.battleship_grey)
-                    condition.valid -> context.getColorCompat(R.color.green_teal)
+                    emptyPassword -> context.getColorCompat(R.color.dark_grey)
+                    condition.valid -> context.getColorCompat(R.color.green)
                     else -> context.getColorCompat(R.color.tomato)
                 }
                 message.appendText(

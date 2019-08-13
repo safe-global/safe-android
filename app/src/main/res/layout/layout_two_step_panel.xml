@@ -35,7 +35,7 @@
 
             <shape android:shape="oval">
 
-                <solid android:color="@color/blue_grey" />
+                <solid android:color="@color/medium_grey" />
 
             </shape>
 

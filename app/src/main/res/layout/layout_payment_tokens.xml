@@ -63,7 +63,7 @@
                 android:gravity="center_horizontal"
                 android:padding="24dp"
                 android:text="@string/this_payment_will_be_used"
-                android:textColor="@color/battleship_grey"
+                android:textColor="@color/dark_grey"
                 android:textSize="13sp"
                 app:layout_scrollFlags="scroll|snap" />
 
@@ -85,7 +85,7 @@
                     android:padding="16dp"
                     android:text="@string/fee_method"
                     android:textAllCaps="true"
-                    android:textColor="@color/battleship_grey"
+                    android:textColor="@color/dark_grey"
                     android:textSize="10sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/payment_tokens_header_metric_lbl"
@@ -102,7 +102,7 @@
                     android:padding="16dp"
                     android:text="@string/balance"
                     android:textAllCaps="true"
-                    android:textColor="@color/battleship_grey"
+                    android:textColor="@color/dark_grey"
                     android:textSize="10sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"

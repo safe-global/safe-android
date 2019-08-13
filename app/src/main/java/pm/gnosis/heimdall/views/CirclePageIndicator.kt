@@ -38,7 +38,7 @@ class CirclePageIndicator @JvmOverloads constructor(
         color = context.getColorCompat(R.color.safe_green)
     }
     private val inactivePaint = Paint(activePaint).apply {
-        color = context.getColorCompat(R.color.blue_grey)
+        color = context.getColorCompat(R.color.medium_grey)
     }
 
     fun setActiveColor(@ColorInt color: Int) {

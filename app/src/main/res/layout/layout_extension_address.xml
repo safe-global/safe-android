@@ -53,7 +53,7 @@
                 android:layout_marginTop="40dp"
                 android:lineSpacingExtra="5sp"
                 android:text="@string/replace_recovery_phrase_description"
-                android:textColor="@color/battleship_grey"
+                android:textColor="@color/dark_grey"
                 android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

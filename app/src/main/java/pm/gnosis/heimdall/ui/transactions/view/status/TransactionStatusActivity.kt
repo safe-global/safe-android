@@ -70,7 +70,7 @@ class TransactionStatusActivity : ViewModelActivity<TransactionStatusContract>()
             is TransactionExecutionRepository.PublishStatus.Success -> {
                 layout_transaction_status_status_value.text =
                         SpannableStringBuilder()
-                            .appendText(getString(R.string.status_success), ForegroundColorSpan(getColorCompat(R.color.green_teal)))
+                            .appendText(getString(R.string.status_success), ForegroundColorSpan(getColorCompat(R.color.green)))
                             .append(" - ")
                             .append(DateTimeUtils.getLongTimeString(this, status.timestamp))
             }
