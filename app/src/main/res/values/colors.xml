@@ -3,7 +3,7 @@
     <color name="primary">@color/safe_green</color>
     <color name="primary_dark">@color/safe_green_dark</color>
     <color name="accent">@color/blue</color>
-    <color name="window_background">@color/safe_green</color>
+    <color name="window_background">@color/white</color>
     <color name="toolbar_action">@color/blue</color>
 
     <color name="white">#ffffff</color>
