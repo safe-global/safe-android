@@ -103,7 +103,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
     }
 
     private fun enableConfirm(enable: Boolean) {
-        layout_password_confirm_bottom_panel.disabled = !enable
+        layout_password_confirm_bottom_panel.setForwardEnabled(enable)
     }
 
     override fun layout() = R.layout.layout_password_confirm

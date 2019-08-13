@@ -66,7 +66,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
     }
 
     private fun enableNext(enable: Boolean) {
-        layout_password_setup_bottom_container.disabled = !enable
+        layout_password_setup_bottom_container.setForwardEnabled(enable)
     }
 
     override fun layout() = R.layout.layout_password_setup
