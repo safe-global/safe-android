@@ -222,12 +222,12 @@ class PasswordSetupActivityTest : BaseUiTest() {
         // We started the confirm password screen
         then(eventTrackerMock).should().submit(Event.ScreenView(ScreenId.PASSWORD_CONFIRM))
 
-        onView(withId(R.id.layout_password_confirm_text)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.confirm))))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.confirm))))
         onView(withId(R.id.layout_password_setup_title)).check(doesNotExist())
-        onView(withId(R.id.layout_password_confirm_back)).perform(click())
+        onView(withId(R.id.back_icon)).perform(click())
 
         onView(withId(R.id.layout_password_setup_title)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.create_password))))
-        onView(withId(R.id.layout_password_confirm_text)).check(doesNotExist())
+        onView(withId(R.id.forward_text)).check(doesNotExist())
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
         // Contract interaction

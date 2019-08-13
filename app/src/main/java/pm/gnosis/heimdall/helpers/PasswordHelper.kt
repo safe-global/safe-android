@@ -63,7 +63,7 @@ object PasswordHelper {
                 validPassword = validPassword && condition.valid
                 val color = when {
                     emptyPassword -> context.getColorCompat(R.color.dark_grey)
-                    condition.valid -> context.getColorCompat(R.color.green)
+                    condition.valid -> context.getColorCompat(R.color.safe_green)
                     else -> context.getColorCompat(R.color.tomato)
                 }
                 message.appendText(
