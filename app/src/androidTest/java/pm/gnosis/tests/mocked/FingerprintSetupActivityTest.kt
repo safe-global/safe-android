@@ -224,8 +224,6 @@ class FingerprintSetupActivityTest : BaseUiTest() {
         Thread.sleep(3000)
 
         onView(withId(R.id.layout_fingerprint_setup_continue_label)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.finish))))
-        // Check drawable change
-        onView(withId(R.id.layout_fingerprint_setup_image)).check(matches(withDrawable(R.drawable.ic_fingerprint_confirmed)))
 
         onView(withId(R.id.layout_fingerprint_setup_continue)).perform(ViewActions.click())
 

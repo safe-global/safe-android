@@ -32,8 +32,8 @@ class OnboardingIntroActivity : BaseActivity() {
             setContentView(layoutInflater.inflate(R.layout.bottom_sheet_terms_and_conditions, null))
         }
 
-        termsBottomSheetDialog.bottom_sheet_terms_and_conditions_title.apply {
-            text = Html.fromHtml(getString(R.string.terms_info))
+        termsBottomSheetDialog.bottom_sheet_terms_and_conditions_third_bullet_text.apply {
+            text = Html.fromHtml(getString(R.string.terms_third_bullet))
             movementMethod = LinkMovementMethod.getInstance()
         }
     }

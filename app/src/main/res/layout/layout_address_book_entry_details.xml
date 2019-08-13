@@ -86,7 +86,7 @@
                     android:layout_width="18dp"
                     android:layout_height="18dp"
                     android:tint="@color/safe_green"
-                    app:srcCompat="@drawable/ic_qrcode_scan_azure" />
+                    app:srcCompat="@drawable/ic_qrcode_scan_green" />
 
                 <TextView
                     style="@style/PrimaryButton.White.Text"

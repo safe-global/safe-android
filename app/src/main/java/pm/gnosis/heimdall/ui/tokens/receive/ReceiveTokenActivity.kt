@@ -76,6 +76,7 @@ class ReceiveTokenActivity : ViewModelActivity<ReceiveTokenContract>() {
                 layout_receive_token_safe_name.text = update.name
             is ReceiveTokenContract.ViewUpdate.QrCode -> {
                 layout_receive_token_qr_progress.visible(false)
+                layout_receive_token_qr_image.visible(true)
                 layout_receive_token_qr_image.setImageBitmap(update.qrCode)
             }
         }

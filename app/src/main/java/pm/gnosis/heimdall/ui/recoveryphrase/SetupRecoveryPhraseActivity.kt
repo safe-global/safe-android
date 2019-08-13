@@ -3,11 +3,9 @@ package pm.gnosis.heimdall.ui.recoveryphrase
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.DisplayMetrics
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jakewharton.rxbinding2.view.clicks
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
@@ -57,14 +55,6 @@ abstract class SetupRecoveryPhraseActivity<VM : SetupRecoveryPhraseContract> : V
 
     override fun onStart() {
         super.onStart()
-        disposables += Single.fromCallable {
-            val displayMetrics = DisplayMetrics()
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-            displayMetrics.widthPixels
-        }
-            .flatMap { viewModel.loadScaledBackgroundResource(it) }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(onSuccess = { layout_setup_recovery_phrase_waves.setImageBitmap(it) }, onError = Timber::e)
 
         disposables += toolbarHelper.setupShadow(layout_setup_recovery_phrase_toolbar_shadow, layout_setup_recovery_phrase_scroll_view)
 

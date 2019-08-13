@@ -69,11 +69,11 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         Intents.assertNoUnverifiedIntents()
 
         // Bottom Bar
-        onView(withId(R.id.layout_password_confirm_confirm)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
-        onView(withId(R.id.layout_password_confirm_bottom_container)).check(matches(isCompletelyDisplayed()))
-        onView(withId(R.id.layout_password_confirm_back)).check(matches(isCompletelyDisplayed()))
-        onView(withId(R.id.layout_password_confirm_next_arrow)).check(matches(isCompletelyDisplayed()))
-        onView(withId(R.id.layout_password_confirm_text)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.confirm))))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
+        onView(withId(R.id.layout_password_confirm_bottom_panel)).check(matches(isCompletelyDisplayed()))
+        onView(withId(R.id.back_icon)).check(matches(isCompletelyDisplayed()))
+        onView(withId(R.id.forward_icon)).check(matches(isCompletelyDisplayed()))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.confirm))))
 
         // Title
         onView(withId(R.id.layout_password_confirm_title)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.confirm_password))))
@@ -106,7 +106,7 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         // Wait for input delay
         Thread.sleep(600)
         // Error: nothing changes
-        onView(withId(R.id.layout_password_confirm_confirm)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
         onView(withId(R.id.layout_password_confirm_info)).check(matches(withText("")))
 
 
@@ -115,7 +115,7 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         onView(withId(R.id.layout_password_confirm_password)).perform(ViewActions.typeText("lo F"))
         // Wait for input delay
         Thread.sleep(600)
-        onView(withId(R.id.layout_password_confirm_confirm)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
         onView(withId(R.id.layout_password_confirm_info)).check(matches(isDisplayed()))
 
 
@@ -124,7 +124,7 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         onView(withId(R.id.layout_password_confirm_password)).perform(ViewActions.typeText("red"))
         // Wait for input delay
         Thread.sleep(600)
-        onView(withId(R.id.layout_password_confirm_confirm)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
         onView(withId(R.id.layout_password_confirm_info)).check(matches(withText(R.string.password_confirmed)))
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()
@@ -153,13 +153,13 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         onView(withId(R.id.layout_password_confirm_password)).perform(ViewActions.typeText("Modest Mouse - Float On"))
         // Wait for input delay
         Thread.sleep(600)
-        onView(withId(R.id.layout_password_confirm_confirm)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
 
         // Test password too short
         given(passwordSetupContract.createAccount(UIMockUtils.any(), UIMockUtils.any()))
             .willReturn(Single.just(ErrorResult(PasswordInvalidException(PasswordNotLongEnough(5, 6)))))
 
-        onView(withId(R.id.layout_password_confirm_confirm)).perform(ViewActions.click())
+        onView(withId(R.id.forward_text)).perform(ViewActions.click())
         // Error: show snackbar
         onView(withText(context.getString(R.string.password_too_short))).check(matches(isDisplayed()))
 
@@ -188,13 +188,13 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         onView(withId(R.id.layout_password_confirm_password)).perform(ViewActions.typeText("Modest Mouse - Float On"))
         // Wait for input delay
         Thread.sleep(600)
-        onView(withId(R.id.layout_password_confirm_confirm)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
 
         // Test password doesn't match
         given(passwordSetupContract.createAccount(UIMockUtils.any(), UIMockUtils.any()))
             .willReturn(Single.just(ErrorResult(PasswordInvalidException(PasswordsNotEqual))))
 
-        onView(withId(R.id.layout_password_confirm_confirm)).perform(ViewActions.click())
+        onView(withId(R.id.forward)).perform(ViewActions.click())
         // Error: show snackbar
         onView(allOf(isDisplayed(), withText(context.getString(R.string.passwords_do_not_match)))).check(matches(isDisplayed()))
 
@@ -223,13 +223,13 @@ class PasswordConfirmActivityTest : BaseUiTest() {
         onView(withId(R.id.layout_password_confirm_password)).perform(ViewActions.typeText("Modest Mouse - Float On"))
         // Wait for input delay
         Thread.sleep(600)
-        onView(withId(R.id.layout_password_confirm_confirm)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
 
         val intent = Intent("Riders on the storm")
         given(passwordSetupContract.createAccount(UIMockUtils.any(), UIMockUtils.any()))
             .willReturn(Single.just(DataResult(intent)))
 
-        onView(withId(R.id.layout_password_confirm_confirm)).perform(ViewActions.click())
+        onView(withId(R.id.forward_text)).perform(ViewActions.click())
         Intents.intended(matchesIntentExactly(intent))
 
         then(encryptionManagerMock).shouldHaveZeroInteractions()

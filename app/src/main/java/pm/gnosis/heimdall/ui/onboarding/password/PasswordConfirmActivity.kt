@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
-import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.editorActions
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.Observable
@@ -18,7 +17,6 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
-import pm.gnosis.heimdall.utils.setColorFilterCompat
 import pm.gnosis.heimdall.utils.setCompoundDrawables
 import pm.gnosis.svalinn.common.utils.*
 import timber.log.Timber
@@ -48,7 +46,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
     override fun onStart() {
         super.onStart()
         disposables += Observable.merge(
-            layout_password_confirm_confirm.clicks(),
+            layout_password_confirm_bottom_panel.forwardClicks,
             layout_password_confirm_password.editorActions()
                 .filter { it == EditorInfo.IME_ACTION_DONE || it == EditorInfo.IME_NULL }
                 .map { Unit }
@@ -62,7 +60,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeForResult(onNext = ::onCreateAccount, onError = ::onPasswordSetupError)
 
-        disposables += layout_password_confirm_back.clicks()
+        disposables += layout_password_confirm_bottom_panel.backClicks
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
 
         disposables += layout_password_confirm_password.textChanges()
@@ -105,9 +103,7 @@ class PasswordConfirmActivity : ViewModelActivity<PasswordSetupContract>() {
     }
 
     private fun enableConfirm(enable: Boolean) {
-        layout_password_confirm_confirm.isEnabled = enable
-        layout_password_confirm_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.medium_grey))
-        layout_password_confirm_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.medium_grey)
+        layout_password_confirm_bottom_panel.setForwardEnabled(enable)
     }
 
     override fun layout() = R.layout.layout_password_confirm
