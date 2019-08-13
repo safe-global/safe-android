@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
-import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.layout_password_setup.*
+import kotlinx.android.synthetic.main.layout_two_step_panel.view.*
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.helpers.PasswordHelper
@@ -16,9 +16,7 @@ import pm.gnosis.heimdall.helpers.PasswordValidationCondition
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.disableAccessibility
-import pm.gnosis.heimdall.utils.setColorFilterCompat
 import pm.gnosis.svalinn.common.utils.DataResult
-import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.subscribeForResult
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -38,7 +36,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
         layout_password_setup_password.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_DONE, EditorInfo.IME_NULL ->
-                    layout_password_setup_next.performClick()
+                    layout_password_setup_bottom_container.forward.performClick()
             }
             true
         }
@@ -46,7 +44,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
 
     override fun onStart() {
         super.onStart()
-        disposables += layout_password_setup_next.clicks()
+        disposables += layout_password_setup_bottom_container.forwardClicks
             // We validate again the password on each click
             .switchMapSingle { viewModel.validatePassword(layout_password_setup_password.text.toString()) }
             .filter { it is DataResult && it.data.all { it.valid } }
@@ -68,9 +66,7 @@ class PasswordSetupActivity : ViewModelActivity<PasswordSetupContract>() {
     }
 
     private fun enableNext(enable: Boolean) {
-        layout_password_setup_next.isEnabled = enable
-        layout_password_setup_next_text.setTextColor(getColorCompat(if (enable) R.color.white else R.color.medium_grey))
-        layout_password_setup_next_arrow.setColorFilterCompat(if (enable) R.color.white else R.color.medium_grey)
+        layout_password_setup_bottom_container.disabled = !enable
     }
 
     override fun layout() = R.layout.layout_password_setup

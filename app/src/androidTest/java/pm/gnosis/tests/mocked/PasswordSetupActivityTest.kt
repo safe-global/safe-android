@@ -73,10 +73,10 @@ class PasswordSetupActivityTest : BaseUiTest() {
         val activity = activityRule.launchActivity(null)
 
         // Bottom Bar
-        onView(withId(R.id.layout_password_setup_next)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
         onView(withId(R.id.layout_password_setup_bottom_container)).check(matches(isCompletelyDisplayed()))
-        onView(withId(R.id.layout_password_setup_next_arrow)).check(matches(isCompletelyDisplayed()))
-        onView(withId(R.id.layout_password_setup_next_text)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.next))))
+        onView(withId(R.id.back_icon)).check(matches(isCompletelyDisplayed()))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.next))))
 
         // Title
         onView(withId(R.id.layout_password_setup_title)).check(matches(allOf(isCompletelyDisplayed(), withText(R.string.create_password))))
@@ -111,7 +111,7 @@ class PasswordSetupActivityTest : BaseUiTest() {
         val checkedResult = PasswordHelper.Handler.handleConditions(context, emptyPassword, conditions)
         onView(withId(R.id.layout_password_setup_validation_info)).check(matches(allOf(isDisplayed(), withText(checkedResult.message.toString()))))
         val nextEnabledMatcher = if (checkedResult.validPassword) isEnabled() else not(isEnabled())
-        onView(withId(R.id.layout_password_setup_next)).check(matches(allOf(isDisplayed(), nextEnabledMatcher)))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isDisplayed(), nextEnabledMatcher)))
     }
 
     @Test
@@ -121,7 +121,7 @@ class PasswordSetupActivityTest : BaseUiTest() {
         Intents.intended(hasComponent(PasswordSetupActivity::class.java.name))
         Intents.assertNoUnverifiedIntents()
 
-        onView(withId(R.id.layout_password_setup_next)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
+        onView(withId(R.id.forward_text)).check(matches(allOf(isCompletelyDisplayed(), not(isEnabled()))))
         onView(withId(R.id.layout_password_setup_validation_info)).check(matches(allOf(isDisplayed(), withText(""))))
         // Wait for initial input delay
         Thread.sleep(600)
@@ -172,15 +172,15 @@ class PasswordSetupActivityTest : BaseUiTest() {
 
         // Wait for input delay
         Thread.sleep(600)
-        onView(withId(R.id.layout_password_setup_next)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
+        onView(withId(R.id.forward)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
         onView(withId(R.id.layout_password_setup_validation_info)).check(matches(allOf(isDisplayed(), withText(""))))
 
         given(passwordSetupContract.passwordToHash(UIMockUtils.any())).willReturn(Single.just(ErrorResult(IllegalStateException())))
-        onView(withId(R.id.layout_password_setup_next)).perform(click())
+        onView(withId(R.id.forward)).perform(click())
         Intents.assertNoUnverifiedIntents()
 
         given(passwordSetupContract.passwordToHash(UIMockUtils.any())).willReturn(Single.just(DataResult("01020304".hexToByteArray())))
-        onView(withId(R.id.layout_password_setup_next)).perform(click())
+        onView(withId(R.id.forward)).perform(click())
         Intents.intended(matchesIntentExactly(PasswordConfirmActivity.createIntent(activity, "01020304".hexToByteArray())))
         Intents.assertNoUnverifiedIntents()
 
@@ -211,11 +211,11 @@ class PasswordSetupActivityTest : BaseUiTest() {
 
         // Wait for input delay
         Thread.sleep(600)
-        onView(withId(R.id.layout_password_setup_next)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
+        onView(withId(R.id.forward)).check(matches(allOf(isCompletelyDisplayed(), isEnabled())))
         onView(withId(R.id.layout_password_setup_validation_info)).check(matches(allOf(isDisplayed(), withText(""))))
 
         given(passwordSetupContract.passwordToHash(UIMockUtils.any())).willReturn(Single.just(DataResult("01020304".hexToByteArray())))
-        onView(withId(R.id.layout_password_setup_next)).perform(click())
+        onView(withId(R.id.forward)).perform(click())
         Intents.intended(matchesIntentExactly(PasswordConfirmActivity.createIntent(activity, "01020304".hexToByteArray())))
         Intents.assertNoUnverifiedIntents()
 

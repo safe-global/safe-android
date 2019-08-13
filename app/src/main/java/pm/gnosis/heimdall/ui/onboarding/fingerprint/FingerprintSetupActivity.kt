@@ -46,9 +46,7 @@ class FingerprintSetupActivity : ViewModelActivity<FingerprintSetupContract>() {
 
     private fun onFingerprintResult(isSuccessful: Boolean) {
         if (isSuccessful) {
-            layout_fingerprint_setup_image.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fingerprint_confirmed))
             layout_fingerprint_setup_continue_label.text = getString(R.string.finish)
-
             snackbar(layout_fingerprint_setup_coordinator, R.string.fingerprint_confirmed)
             vibrate(200)
         } else {
