@@ -14,9 +14,9 @@
     <color name="pressed_shade">#33000000</color>
     <color name="gnosis_blue">#10b3d4</color>
     <color name="gnosis_blue_shade">#0083a3</color>
-    <color name="gnosis_dark_blue">#21435a</color>
-    <color name="gnosis_dark_blue_alpha_50">#7f21435a</color>
-    <color name="gnosis_dark_blue_alpha_70">#b221435a</color>
+    <color name="gnosis_dark_blue">#001428</color>
+    <color name="gnosis_dark_blue_alpha_50">#7f001428</color>
+    <color name="gnosis_dark_blue_alpha_70">#b2001428</color>
 
     <color name="secondary_button">#c8ced4</color>
     <color name="secondary_button_disabled">#e8eaec</color>
@@ -32,7 +32,6 @@
     <color name="divider">#e3e5ec</color>
 
     <!-- New Design colors -->
-    <color name="aqua_blue">#00b8e0</color>
     <color name="pale_grey">#e4e8f1</color>
     <color name="light_grey">#d4d5d3</color>
     <color name="medium_grey">#b2b5b2</color>
@@ -60,7 +59,9 @@
     <color name="safe_green_dark">#005546</color>
     <color name="safe_green_light">#80005546</color>
 
-    <color name="ic_launcher_background">#a1d2ca</color>
+    <color name="light_green">#a1d2ca</color>
+
+    <color name="ic_launcher_background">@color/light_green</color>
 
     <color name="blue">#001e3b</color>
     <color name="blue_15">#27001e3b</color>
