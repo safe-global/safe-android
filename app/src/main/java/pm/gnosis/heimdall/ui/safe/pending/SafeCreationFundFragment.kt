@@ -112,7 +112,11 @@ class SafeCreationFundFragment : BaseFragment() {
             pending_safe_remainder.text = it.token.displayString(info.paymentAmount - it.balance, roundingMode = RoundingMode.UP)
         }
 
-        info.qrCode?.let { pending_safe_qr_image.setImageBitmap(it) }
+        info.qrCode?.let {
+            pending_safe_qr_progress.visible(false)
+            pending_safe_qr_image.visible(true)
+            pending_safe_qr_image.setImageBitmap(it)
+        }
 
         disposables +=  pending_safe_fees_info.clicks()
             .subscribeBy {

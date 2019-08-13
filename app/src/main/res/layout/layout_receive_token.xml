@@ -155,22 +155,21 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/layout_receive_token_safe_address">
 
-                        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-                            android:id="@+id/layout_receive_token_qr_progress"
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:layout_gravity="center" />
-
                         <ImageView
                             android:id="@+id/layout_receive_token_qr_image"
                             style="@style/PrimaryButton.White"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:minHeight="128dp"
-                            android:minWidth="128dp"
                             android:layout_gravity="center"
                             android:scaleType="fitCenter"
+                            android:visibility="gone"
                             tools:background="@color/pale_grey" />
+
+                        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                            android:id="@+id/layout_receive_token_qr_progress"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_gravity="center" />
 
                     </FrameLayout>
 

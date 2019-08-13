@@ -7,22 +7,11 @@
     android:layout_height="match_parent"
     android:background="@color/pale_grey_two">
 
-    <View
-        android:id="@+id/pending_safe_toolbar_shadow"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/toolbar_shadow_size"
-        android:background="@drawable/toolbar_dropshadow"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/pending_safe_scroll_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
         android:clipToPadding="false"
-        android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,8 +43,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:layout_marginTop="16dp"
                 app:cardCornerRadius="@dimen/primary_button_radius"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/pending_safe_add_funds_label">
@@ -173,12 +162,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/pending_safe_safe_address">
 
-                        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
-                            android:id="@+id/pending_safe_qr_progress"
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:layout_gravity="center" />
-
                         <ImageView
                             android:id="@+id/pending_safe_qr_image"
                             style="@style/PrimaryButton.White"
@@ -186,7 +169,14 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:scaleType="fitCenter"
+                            android:visibility="gone"
                             tools:background="@color/pale_grey" />
+
+                        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+                            android:id="@+id/pending_safe_qr_progress"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_gravity="center" />
 
                     </FrameLayout>
 
@@ -232,13 +222,13 @@
                         android:layout_marginEnd="8dp"
                         android:fontFamily="sans-serif"
                         android:lineSpacingExtra="7sp"
-                        tools:text="Please only send ETH"
                         android:textColor="#ea3f52"
                         android:textSize="13sp"
                         android:textStyle="normal"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/pending_safe_qr_code_container" />
+                        app:layout_constraintTop_toBottomOf="@+id/pending_safe_qr_code_container"
+                        tools:text="Please only send ETH" />
 
                     <TextView
                         android:id="@+id/pending_safe_send_at_least_label"
@@ -309,6 +299,15 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:id="@+id/pending_safe_toolbar_shadow"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

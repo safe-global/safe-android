@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.fragment_recovering_safe_fund.recovering_s
 import kotlinx.android.synthetic.main.fragment_recovering_safe_fund.recovering_safe_scroll_view as scrollView
 import kotlinx.android.synthetic.main.fragment_recovering_safe_fund.recovering_safe_qr_code_container as qrCodeContainer
 import kotlinx.android.synthetic.main.fragment_recovering_safe_fund.recovering_safe_qr_image as qrImage
+import kotlinx.android.synthetic.main.fragment_recovering_safe_fund.recovering_safe_qr_progress as qrProgress
 import kotlinx.android.synthetic.main.fragment_recovering_safe_fund.recovering_safe_share_button as shareBtn
 import kotlinx.android.synthetic.main.fragment_recovering_safe_fund.recovering_safe_safe_address as safeAddressTxt
 import kotlinx.android.synthetic.main.fragment_recovering_safe_fund.recovering_safe_safe_image as safeImage
@@ -117,6 +118,12 @@ class RecoveringSafeFundFragment : BaseFragment() {
             onlySendTxt.text = getString(R.string.please_send_x, it.token.symbol)
             safeBalanceTxt.text = it.token.displayString(it.balance!!, roundingMode = RoundingMode.UP)
             remainderTxt.text = it.token.displayString(info.paymentAmount - it.balance, roundingMode = RoundingMode.UP)
+        }
+
+        info.qrCode?.let {
+            qrProgress.visible(false)
+            qrImage.visible(true)
+            qrImage.setImageBitmap(it)
         }
     }
 

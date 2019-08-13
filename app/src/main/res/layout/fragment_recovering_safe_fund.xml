@@ -188,6 +188,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:scaleType="fitCenter"
+                            android:visibility="gone"
                             tools:background="@color/pale_grey" />
 
                     </FrameLayout>
@@ -233,13 +234,13 @@
                         android:layout_marginEnd="8dp"
                         android:fontFamily="sans-serif"
                         android:lineSpacingExtra="7sp"
-                        tools:text="Please only send ETH"
                         android:textColor="#ea3f52"
                         android:textSize="13sp"
                         android:textStyle="normal"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_qr_code_container" />
+                        app:layout_constraintTop_toBottomOf="@+id/recovering_safe_qr_code_container"
+                        tools:text="Please only send ETH" />
 
                     <TextView
                         android:id="@+id/recovering_safe_send_at_least_label"

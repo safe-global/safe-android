@@ -12,7 +12,7 @@
         android:id="@+id/dialog_unlock_alpha_background"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/safe_green"
+        android:background="@color/black_alpha_70"
         app:layout_constraintBottom_toTopOf="@id/dialog_unlock_content_background"
         app:layout_constraintTop_toTopOf="parent" />
 
