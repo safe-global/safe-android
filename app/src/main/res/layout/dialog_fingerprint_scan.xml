@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:background="@color/azure">
+    tools:background="@color/safe_green">
 
     <View
         android:id="@+id/dialog_fingerprint_scan_alpha_background"
