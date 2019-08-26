@@ -480,4 +480,5 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="balance">Balance</string>
     <string name="change_fee_method">Change fee payment method</string>
     <string name="pay_with">Pay with %s</string>
+    <string name="choose_input_method">Choose input method</string>
 </resources>
