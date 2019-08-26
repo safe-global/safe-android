@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.lifecycle.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.layout_create_safe_payment_token.*
-import kotlinx.android.synthetic.main.layout_payment_tokens.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -183,7 +182,7 @@ class CreateSafePaymentTokenActivity : ViewModelActivity<CreateSafePaymentTokenC
     private fun performAction(viewAction: CreateSafePaymentTokenContract.ViewAction): Any =
         when (viewAction) {
             is CreateSafePaymentTokenContract.ViewAction.ShowError ->
-                errorSnackbar(payment_tokens_recycler_view, viewAction.error)
+                errorSnackbar(create_safe_payment_token_content_scroll, viewAction.error)
             is CreateSafePaymentTokenContract.ViewAction.ShowSafe ->
                 startActivity(SafeMainActivity.createIntent(this, viewAction.safe))
         }
