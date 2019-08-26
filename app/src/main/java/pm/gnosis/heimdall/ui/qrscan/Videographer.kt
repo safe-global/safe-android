@@ -121,7 +121,7 @@ class Videographer @Inject constructor(@ViewContext context: Context, private va
                 isOpen = true
 
                 capture()
-            } catch (e: RuntimeException) {
+            } catch (e: Exception) {
                 // https://github.com/walleth/walleth/issues/139
                 Timber.e(e)
             }
