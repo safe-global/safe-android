@@ -66,7 +66,7 @@ by the browser extension." />
         android:fontFamily="sans-serif-medium"
         android:gravity="center_horizontal|top"
         android:lineSpacingExtra="4sp"
-        android:textColor="@color/azure"
+        android:textColor="@color/safe_green"
         android:textSize="16sp"
         android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -77,7 +77,7 @@ by the browser extension." />
 
     <TextView
         android:id="@+id/confirm_reject_panel_action_primary"
-        style="@style/PrimaryButton.Blue"
+        style="@style/PrimaryButton.Green"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

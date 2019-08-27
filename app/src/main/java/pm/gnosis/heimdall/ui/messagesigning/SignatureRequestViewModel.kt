@@ -26,6 +26,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.security.EncryptionManager
+import pm.gnosis.utils.addHexPrefix
 import pm.gnosis.utils.hexStringToByteArray
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
@@ -53,6 +54,7 @@ class SignatureRequestViewModel @Inject constructor(
 
     private lateinit var safe: Solidity.Address
     private lateinit var safeOwners: Set<Solidity.Address>
+    private var requiredSignatures: Long = Long.MAX_VALUE
     private lateinit var extensionSignature: Signature
     private lateinit var payload: String
     private lateinit var domain: Struct712
@@ -64,13 +66,13 @@ class SignatureRequestViewModel @Inject constructor(
 
     override val state: MutableLiveData<ViewUpdate> = MutableLiveData()
 
-    private val signatures: MutableMap<Solidity.Address, Signature> = HashMap<Solidity.Address, Signature>()
+    private val signatures: MutableMap<Solidity.Address, Signature> = HashMap()
 
-    val pushChannel: ReceiveChannel<PushMessage>
+    val pushChannel: ReceiveChannel<PushMessage> = pushServiceRepository.observeTypedDataPushes().openSubscription()
 
     private val errorHandler = CoroutineExceptionHandler { _, e ->
         viewModelScope.launch {
-
+            Timber.e(e)
         }
     }
 
@@ -86,12 +88,14 @@ class SignatureRequestViewModel @Inject constructor(
                     val address = cryptoHelper.recover(payloadHash, signature)
                     if (safeOwners.contains(address)) {
                         Timber.d("adding signature from ${address.asEthereumAddressChecksumString()}")
-                        signatures.put(address, signature)
+                        signatures[address] = signature
                     }
 
-                    _viewData = _viewData.copy(
-                        status = Status.AUTHORIZATION_APPROVED
-                    )
+                    if (signatures.size >= requiredSignatures) {
+                        _viewData = _viewData.copy(
+                            status = Status.AUTHORIZATION_APPROVED
+                        )
+                    }
 
                     state.postValue(
                         ViewUpdate(
@@ -125,8 +129,7 @@ class SignatureRequestViewModel @Inject constructor(
     }
 
     init {
-        pushChannel = pushServiceRepository.observeTypedDataPushes().openSubscription()
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + errorHandler) {
             handlePushMessages()
         }
     }
@@ -134,30 +137,28 @@ class SignatureRequestViewModel @Inject constructor(
 
     override fun setup(payload: String, safe: Solidity.Address, extensionSignature: Signature?, referenceId: Long?, sessionId: String?) {
 
-        viewModelScope.launch(Dispatchers.IO) {
+        this.referenceId = referenceId
+        this.sessionId = sessionId
+        this.safe = safe
+        this.payload = payload
 
-            this@SignatureRequestViewModel.referenceId = referenceId
-            this@SignatureRequestViewModel.sessionId = sessionId
-            this@SignatureRequestViewModel.safe = safe
-            this@SignatureRequestViewModel.payload = payload
+        viewModelScope.launch(Dispatchers.IO + errorHandler) {
 
-            val domainWithMessage = eiP712JsonParser.parseMessage(payload) ?: throw InvalidPayload
+            val domainWithMessage = eiP712JsonParser.parseMessage(payload)
 
             domain = domainWithMessage.domain
             message = domainWithMessage.message
-
-            val (safeName, safeAddress) = async {
+            val (safeName, _) =
                 addressBookRepository.observeAddressBookEntry(safe)
                     .map { it.name to it.address.shortChecksumString() }
                     .awaitFirst()
-            }.await()
 
-            val safeInfo = async {
-                gnosisSafeRepository.loadInfo(safe).awaitFirst()
-            }.await()
+            val safeInfo = gnosisSafeRepository.loadInfo(safe).awaitFirst()
 
-            val deviceOwner = async { gnosisAccountRepository.signingOwner(safe).await() }.await()
+            val deviceOwner =  gnosisAccountRepository.signingOwner(safe).await()
+
             safeOwners = safeInfo.owners.toSet().minus(deviceOwner.address)
+            requiredSignatures = safeInfo.requiredConfirmations
 
             val safeBalance = ERC20Token.ETHER_TOKEN.displayString(safeInfo.balance.value)
 
@@ -271,7 +272,7 @@ class SignatureRequestViewModel @Inject constructor(
     }
 
     override fun resend() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + errorHandler) {
 
             try {
                 pushServiceRepository.requestTypedDataConfirmations(
@@ -301,23 +302,22 @@ class SignatureRequestViewModel @Inject constructor(
 
     override fun sign() {
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + errorHandler) {
 
-            val finalSignature = signatures.map {
-                it.value.toString().hexStringToByteArray()
-            }
-                .sortedBy { BigInteger(it) }
+            val finalSignature = signatures.keys.sortedBy { it.value }
+                .mapNotNull { signatures[it]?.toString() }
                 .reduce { acc, bytes ->
                     acc + bytes
                 }
+                .addHexPrefix()
 
             Timber.d("safe message hash: ${safeMessageHash.toHexString()}")
-            Timber.d("final signature: ${finalSignature.toHexString()}")
+            Timber.d("final signature: $finalSignature")
 
-            bridgeRepository.approveRequest(referenceId!!, finalSignature.toHexString()).await()
+            bridgeRepository.approveRequest(referenceId!!, finalSignature).await()
 
             //FIXME: payloadEip712Hash vs safeMessageHash?
-            val data = GnosisSafe.IsValidSignature.encode(Solidity.Bytes(payloadEip712Hash), Solidity.Bytes(finalSignature))
+            val data = GnosisSafe.IsValidSignature.encode(Solidity.Bytes(payloadEip712Hash), Solidity.Bytes(finalSignature.hexStringToByteArray()))
 
             try {
 
@@ -325,7 +325,7 @@ class SignatureRequestViewModel @Inject constructor(
                     .subscribeOn(Schedulers.io())
                     .awaitFirst()
 
-                if (result.result() == GnosisSafe.IsValidSignature.METHOD_ID) {
+                if (GnosisSafe.IsValidSignature.decode(result.result()!!).param0.bytes.toHexString() == GnosisSafe.IsValidSignature.METHOD_ID) {
                     Timber.d("valid signature")
                 } else {
                     Timber.d("invalid signature")
@@ -347,7 +347,7 @@ class SignatureRequestViewModel @Inject constructor(
 
     override fun confirmPayload() {
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + errorHandler) {
 
             state.postValue(
                 ViewUpdate(
@@ -398,9 +398,9 @@ class SignatureRequestViewModel @Inject constructor(
     }
 
     override fun cancel() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO + errorHandler) {
             try {
-                pushServiceRepository.requestTypedDataRejection(
+                pushServiceRepository.sendTypedDataRejection(
                     safeMessageHash,
                     deviceSignature,
                     safe,

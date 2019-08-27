@@ -436,9 +436,6 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="what_is_safe_recovery_fee">What is the Safe recovery fee?</string>
     <string name="network_fee_recovery">This is the fee required by the blockchain to recover your Safe.</string>
     <string name="search_select_tokens">Search &amp; select tokens...</string>
-    <string name="sign">Sign</string>
-    <string name="contract">Contract</string>
-    <string name="signature_request">Signature request</string>
     <string name="open_be_approve_singature">Open the Authenticator to approve this signature request.</string>
     <string name="request_rejected">The signature request was rejected by the Authenticator.</string>
     <string name="lets_get_started">Let\'s get started</string>
@@ -480,7 +477,6 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="balance">Balance</string>
     <string name="change_fee_method">Change fee payment method</string>
     <string name="pay_with">Pay with %s</string>
-
     <string name="signature_request">Signature request</string>
     <string name="signature_request_explanation_authentication">Open the browser extension to confirm the signature request.</string>
     <string name="signature_request_explanation_rejected">The signature request was rejected by the browser extension.</string>

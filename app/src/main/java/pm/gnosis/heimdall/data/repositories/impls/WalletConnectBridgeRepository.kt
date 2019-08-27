@@ -202,28 +202,21 @@ class WalletConnectBridgeRepository @Inject constructor(
                         is Session.MethodCall.Custom ->
                             call.apply {
                                 sessionRequests[id] = sessionId
-                                //FIXME: create separate Session.MethodCall for this case in kotlin-walletconnect-lib
-                                if (method == "eth_signTypedData") {
-
-                                    val mapAdapter = moshi.adapter<Map<String, Any?>>(
-                                        Types.newParameterizedType(
-                                            Map::class.java,
-                                            String::class.java,
-                                            Any::class.java
+                                try {
+                                    //FIXME: create separate Session.MethodCall for this case in kotlin-walletconnect-lib
+                                    if (method == "wallet_signTypedData") {
+                                        val safe = (params!![0] as String).asEthereumAddress()!!
+                                        val mapAdapter = moshi.adapter<Map<String, Any?>>(
+                                            Types.newParameterizedType(
+                                                Map::class.java,
+                                                String::class.java,
+                                                Any::class.java
+                                            )
                                         )
-                                    )
+                                        val payload = mapAdapter.toJson(params!![1] as Map<String, Any?>)
+                                        showSignTypedDataNotification(session.peerMeta(), safe, payload, id, sessionId)
 
-                                    val safe = (params!![0] as String).asEthereumAddress()!!
-                                    var payload = mapAdapter.toJson(params!![1] as Map<String, Any?>)
-                                    payload = payload.replace("\"chainId\":1.0", "\"chainId\":\"1\"")
-
-
-                                    Timber.d(payload)
-
-                                    showSignTypedDataNotification(session.peerMeta(), safe, payload, id, sessionId)
-
-                                } else {
-                                    try {
+                                    } else {
                                         rpcProxyApi.proxy(RpcProxyApi.ProxiedRequest(method, (params as? List<Any>) ?: emptyList(), id))
                                             .subscribeBy(onError = { t ->
                                                 rejectRequest(id, 42, t.message ?: "Could not handle custom call")
@@ -235,10 +228,10 @@ class WalletConnectBridgeRepository @Inject constructor(
                                                     approveRequest(id, result.result ?: "").subscribe()
                                                 }
                                             }
-                                    } catch (e: Exception) {
-                                        Timber.e(e)
-                                        rejectRequest(id, 42, "Could not handle custom call: $e").subscribe()
                                     }
+                                } catch (e: Exception) {
+                                    Timber.e(e)
+                                    rejectRequest(id, 42, "Could not handle custom call: $e").subscribe()
                                 }
                             }
                     }

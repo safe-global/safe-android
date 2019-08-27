@@ -226,7 +226,7 @@ class DefaultPushServiceRepository @Inject constructor(
             .flatMapCompletable { sendNotification(it, safe, targets) }
 
 
-    override fun requestTypedDataRejection(
+    override fun sendTypedDataRejection(
         hash: ByteArray,
         signature: Signature,
         safe: Solidity.Address,
