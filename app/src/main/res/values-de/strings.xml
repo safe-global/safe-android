@@ -248,11 +248,7 @@
     <string name="transaction_fee">Transaktionsgebühr</string>
     <string name="later">Später</string>
     <string name="close">Schließen</string>
-    <string name="transaction_fee_explanation"></string>
     <string name="authentication_required">Authentifizierung erforderlich</string>
-    <string name="authentication_explanation"></string>
-    <string name="resend"></string>
-    <string name="rejected"></string>
     <string name="confirmed">Bestätigt</string>
     <string name="recovering_requires_fee">Die Wiederherstellung Ihres Safes erfordert eine Netzwerkgebühr. Bitte fügen Sie Ihrem Safe Geld hinzu.</string>
     <string name="amount_needed">Benötigter Betrag</string>
@@ -265,14 +261,4 @@
     <string name="share_your_address">Teilen Sie Ihre Adresse mit oder ermöglichen Sie es Absendern, Ihren QR-Code zu scannen, um Ether und Tokens zu empfangen.</string>
     <string name="once_process_is_complete">Sobald dieser Prozess abgeschlossen ist, können Sie nur noch die neue Browsererweiterung zur Bestätigung von Transaktionen verwenden.\n\nBitte halten Sie Ihre Safe Recovery Phrase bereit, um die Wiederherstellung zu bestätigen.</string>
     <string name="future_tx_approved_by_both">Alle zukünftigen Transaktionen müssen von beiden Geräten genehmigt werden.</string>
-    <string name="ios_open_be_link_text"></string>
-    <string name="disconnect_browser_extension"></string>
-    <string name="layout_recovered_safe_info_description"></string>
-    <string name="layout_connect_browser_extension_info_description"></string>
-    <string name="layout_disconnect_browser_extension_info_description"></string>
-    <string name="layout_replace_browser_extension_info_description"></string>
-    <string name="hide"></string>
-    <string name="disconnect_2fa_description"></string>
-    <string name="info"></string>
-    <string name="sync_with_extension_sent"></string>
 </resources>
