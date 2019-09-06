@@ -14,6 +14,8 @@ import pm.gnosis.heimdall.data.preferences.PreferencesSafe
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository.Companion.CURRENT_MASTER_COPY
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository.Companion.SUPPORTED_SAFE_MASTER_COPIES
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
@@ -93,13 +95,19 @@ class SafeMainViewModel @Inject constructor(
     override fun shouldShowWalletConnectIntro(): Single<Boolean> =
         bridgeRepository.shouldShowIntro()
 
-    override fun isConnectedToBrowserExtension(safe: AbstractSafe): Single<Result<Boolean>> =
+    override fun loadSafeConfig(safe: AbstractSafe): Single<Result<Pair<Solidity.Address?, Boolean>>> =
         if (safe is Safe)
-            safeRepository.checkSafe(safe.address).firstOrError()
-                .map { (_, isExtensionConnected) -> isExtensionConnected }
+            safeRepository.observePendingTransactions(safe.address).filter {
+                // Wait with check until all transactions are done, in case of pending update transaction
+                it.isEmpty()
+            }.firstOrError()
+                .flatMap { safeRepository.checkSafe(safe.address).firstOrError() }
+                .map { (masterCopy, isExtensionConnected) ->
+                    (if (masterCopy != CURRENT_MASTER_COPY && SUPPORTED_SAFE_MASTER_COPIES.contains(masterCopy)) CURRENT_MASTER_COPY else null) to
+                            isExtensionConnected
+                }
                 .mapToResult()
-        else Single.just(false).mapToResult()
-
+        else Single.just<Pair<Solidity.Address?, Boolean>>(null to false).mapToResult()
 
 
     override fun syncWithChromeExtension(address: Solidity.Address) = safeRepository.sendSafeCreationPush(address)

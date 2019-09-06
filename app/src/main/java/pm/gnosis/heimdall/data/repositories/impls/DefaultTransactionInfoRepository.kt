@@ -69,6 +69,7 @@ class DefaultTransactionInfoRepository @Inject constructor(
                     parseTokenTransfer(tx)
                 isMultiSend(transaction) && isReplaceRecoveryPhrase(transaction) -> TransactionData.ReplaceRecoveryPhrase(transaction)
                 data.isSolidityMethod(GnosisSafe.AddOwnerWithThreshold.METHOD_ID) -> parseAddOwnerWithThreshold(tx)
+                data.isSolidityMethod(GnosisSafe.ChangeMasterCopy.METHOD_ID) -> parseChangeMasterCopy(tx)
                 else ->
                     TransactionData.Generic(tx.address, tx.value?.value ?: BigInteger.ZERO, tx.data)
             }
@@ -97,6 +98,11 @@ class DefaultTransactionInfoRepository @Inject constructor(
     private fun parseTokenTransfer(transaction: Transaction): TransactionData.AssetTransfer {
         val arguments = transaction.data!!.removeSolidityMethodPrefix(ERC20Contract.Transfer.METHOD_ID)
         return ERC20Contract.Transfer.decodeArguments(arguments).let { TransactionData.AssetTransfer(transaction.address, it._value.value, it._to) }
+    }
+
+    private fun parseChangeMasterCopy(transaction: Transaction): TransactionData.UpdateMasterCopy {
+        val arguments = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.ChangeMasterCopy.METHOD_ID)
+        return GnosisSafe.ChangeMasterCopy.decodeArguments(arguments).let { TransactionData.UpdateMasterCopy(it._mastercopy) }
     }
 
     private fun parseAddOwnerWithThreshold(transaction: Transaction): TransactionData.ConnectExtension {

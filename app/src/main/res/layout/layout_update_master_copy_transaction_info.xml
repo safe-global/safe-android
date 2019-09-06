@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <pm.gnosis.blockies.BlockiesImageView
+        android:id="@+id/update_master_copy_transaction_info_safe_image"
+        android:layout_width="@dimen/info_blockies"
+        android:layout_height="@dimen/info_blockies"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@drawable/circle_settings" />
+
+    <TextView
+        android:id="@+id/update_master_copy_transaction_info_safe_name"
+        style="@style/DarkText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/update_master_copy_transaction_info_safe_address"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/update_master_copy_transaction_info_safe_image"
+        app:layout_constraintTop_toTopOf="@+id/update_master_copy_transaction_info_safe_image"
+        tools:text="My Safe" />
+
+    <TextView
+        android:id="@+id/update_master_copy_transaction_info_safe_address"
+        style="@style/LightText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/update_master_copy_transaction_info_safe_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/update_master_copy_transaction_info_safe_name"
+        app:layout_constraintTop_toBottomOf="@+id/update_master_copy_transaction_info_safe_name"
+        tools:text="0x9bebe3b9e7a461e35775ec935336891edf856da2" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/layout_replace_recovery_phrase_transaction_top_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="layout_replace_recovery_phrase_transaction_divider,layout_replace_recovery_phrase_transaction_arrow,update_master_copy_transaction_info_value" />
+
+    <ImageView
+        android:id="@+id/layout_replace_recovery_phrase_transaction_arrow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/ic_tx_arrow_down"
+        app:layout_constraintEnd_toEndOf="@+id/update_master_copy_transaction_info_safe_image"
+        app:layout_constraintStart_toStartOf="@+id/update_master_copy_transaction_info_safe_image"
+        app:layout_constraintTop_toBottomOf="@+id/update_master_copy_transaction_info_safe_image" />
+
+    <View
+        android:id="@+id/layout_replace_recovery_phrase_transaction_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/divider"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_replace_recovery_phrase_transaction_arrow"
+        app:layout_constraintEnd_toStartOf="@+id/update_master_copy_transaction_info_value"
+        app:layout_constraintStart_toEndOf="@+id/layout_replace_recovery_phrase_transaction_arrow"
+        app:layout_constraintTop_toTopOf="@+id/layout_replace_recovery_phrase_transaction_arrow" />
+
+    <TextView
+        android:id="@+id/update_master_copy_transaction_info_value"
+        style="@style/LightText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:text="@string/contract_upgrade"
+        android:textColor="@color/blue"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_replace_recovery_phrase_transaction_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layout_replace_recovery_phrase_transaction_divider"
+        app:layout_constraintTop_toTopOf="@+id/layout_replace_recovery_phrase_transaction_divider" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/layout_replace_recovery_phrase_transaction_bottom_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="layout_replace_recovery_phrase_transaction_divider,layout_replace_recovery_phrase_transaction_arrow,update_master_copy_transaction_info_value" />
+
+    <TextView
+        android:id="@+id/update_master_copy_transaction_info_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:lineSpacingExtra="3sp"
+        android:text=""
+        android:textColor="@color/dark_grey"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_replace_recovery_phrase_transaction_bottom_barrier" />
+</merge>

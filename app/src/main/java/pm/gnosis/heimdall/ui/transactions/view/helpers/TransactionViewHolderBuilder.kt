@@ -6,10 +6,7 @@ import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.ConnectExtensionViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.ReplaceRecoveryPhraseViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.viewholders.*
 import pm.gnosis.model.Solidity
 import javax.inject.Inject
 
@@ -44,6 +41,12 @@ class DefaultTransactionViewHolderBuilder @Inject constructor(
                         extension = transactionData.extension,
                         safe = safe,
                         safeRepository = safeRepository
+                    )
+                is TransactionData.UpdateMasterCopy ->
+                    UpdateMasterCopyViewHolder(
+                        addressHelper = addressHelper,
+                        data = transactionData,
+                        safe = safe
                     )
             }
         }

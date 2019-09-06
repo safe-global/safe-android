@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.dialog_content_edit_name.view.*
 import kotlinx.android.synthetic.main.layout_safe_main.*
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
@@ -45,6 +46,7 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
+import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroActivity
 import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
@@ -130,13 +132,16 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
                 eventTracker.submit(Event.ScreenView(ScreenId.SAFE_SETTINGS))
             }
 
+        layout_safe_main_upgrade_warning_container.visible(false)
         // Hide menu options until we get the correct state of the safe
         hideMenuOptions()
         disposables += safeSubject
-            // TODO: Should we retry this?
-            .switchMapSingle { viewModel.isConnectedToBrowserExtension(it) }
+            .switchMapSingle { viewModel.loadSafeConfig(it) }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeForResult(onNext = ::isConnectedToBrowserExtension, onError = ::isConnectedToBrowserExtensionError)
+            .subscribeForResult(
+                onNext = { (newMasterCopy, extensionConnected) -> handleSafeConfig(newMasterCopy, extensionConnected) },
+                onError = Timber::e
+            )
 
         updateToolbar()
         setupNavigation()
@@ -258,6 +263,8 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             selectTab()
             return
         }
+
+        layout_safe_main_upgrade_warning_container.visible(false)
         hideMenuOptions()
         safeSubject.onNext(safe)
         supportFragmentManager.transaction {
@@ -405,15 +412,19 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = false
     }
 
-    private fun isConnectedToBrowserExtension(isConnected: Boolean) {
+    private fun handleSafeConfig(newMasterCopy: Solidity.Address?, isConnected: Boolean) {
         isConnectedToExtension = isConnected
+        val safe = safeSubject.value as? Safe
+        val canUpgrade = safe != null && newMasterCopy != null
+        layout_safe_main_upgrade_warning_container.visible(canUpgrade)
+        if (canUpgrade) {
+            layout_safe_main_upgrade_warning_card.setOnClickListener {
+                startActivity(ReviewTransactionActivity.createIntent(this, safe!!.address, TransactionData.UpdateMasterCopy(newMasterCopy!!)))
+            }
+        }
         popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = isConnected && selectedSafe is Safe
         popupMenu.menu.findItem(R.id.safe_details_menu_replace_browser_extension).isVisible = isConnected && selectedSafe is Safe
         popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = !isConnected && selectedSafe is Safe
-    }
-
-    private fun isConnectedToBrowserExtensionError(throwable: Throwable) {
-        Timber.e(throwable)
     }
 
     private fun renameSafe(safe: AbstractSafe) {

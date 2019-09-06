@@ -481,4 +481,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="change_fee_method">Change fee payment method</string>
     <string name="pay_with">Pay with %s</string>
     <string name="choose_input_method">Choose input method</string>
+    <string name="contract_upgrade">Contract upgrade</string>
+    <string name="this_will_upgrade">This will upgrade \'%s\' to the latest version of the Gnosis Safe contract.</string>
+    <string name="security_upgrade_required">Security upgrade required</string>
 </resources>

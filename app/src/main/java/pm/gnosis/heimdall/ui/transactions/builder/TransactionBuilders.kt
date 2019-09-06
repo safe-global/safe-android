@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.transactions.builder
 
 import pm.gnosis.heimdall.ERC20Contract
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -9,12 +10,9 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 
-interface TransactionBuilder<in T : TransactionData> {
-    fun build(data: T): SafeTransaction
-}
 
-object GenericTransactionBuilder : TransactionBuilder<TransactionData.Generic> {
-    override fun build(data: TransactionData.Generic) =
+object GenericTransactionBuilder {
+    fun build(data: TransactionData.Generic) =
         SafeTransaction(
             Transaction(
                 data.to,
@@ -24,8 +22,8 @@ object GenericTransactionBuilder : TransactionBuilder<TransactionData.Generic> {
         )
 }
 
-object AssetTransferTransactionBuilder : TransactionBuilder<TransactionData.AssetTransfer> {
-    override fun build(data: TransactionData.AssetTransfer) =
+object AssetTransferTransactionBuilder {
+    fun build(data: TransactionData.AssetTransfer) =
         if (data.token == ERC20Token.ETHER_TOKEN.address)
             SafeTransaction(
                 Transaction(
@@ -40,4 +38,15 @@ object AssetTransferTransactionBuilder : TransactionBuilder<TransactionData.Asse
                     data = ERC20Contract.Transfer.encode(data.receiver, Solidity.UInt256(data.amount))
                 ), TransactionExecutionRepository.Operation.CALL
             )
+}
+
+
+object UpdateMasterCopyTransactionBuilder {
+    fun build(safe: Solidity.Address, data: TransactionData.UpdateMasterCopy): SafeTransaction =
+        SafeTransaction(
+            Transaction(
+                safe,
+                data = GnosisSafe.ChangeMasterCopy.encode(data.masterCopy)
+            ), TransactionExecutionRepository.Operation.CALL
+        )
 }

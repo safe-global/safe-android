@@ -22,6 +22,7 @@ import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation
 import pm.gnosis.heimdall.data.remote.models.RelaySafeCreationParams
 import pm.gnosis.heimdall.data.repositories.*
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository.Companion.CURRENT_MASTER_COPY
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.model.Solidity
@@ -85,7 +86,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
         val paymentToken = response.paymentToken
         if (request.paymentToken != paymentToken)
             throw IllegalStateException("Unexpected payment token returned")
-        if (response.masterCopy != MASTER_COPY_ADDRESS)
+        if (response.masterCopy != CURRENT_MASTER_COPY)
             throw IllegalStateException("Unexpected master copy returned")
         if (response.proxyFactory != PROXY_FACTORY_ADDRESS)
             throw IllegalStateException("Unexpected proxy factory returned")
@@ -111,7 +112,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
         val salt = Sha3Utils.keccak(setupDataHash + Solidity.UInt256(request.saltNonce.toBigInteger()).encode().hexToByteArray())
 
 
-        val deploymentCode = PROXY_CODE + MASTER_COPY_ADDRESS.encode()
+        val deploymentCode = PROXY_CODE + CURRENT_MASTER_COPY.encode()
         val codeHash = Sha3Utils.keccak(deploymentCode.hexToByteArray())
         val create2Hash = Sha3Utils.keccak(byteArrayOf(0xff.toByte()) + PROXY_FACTORY_ADDRESS.value.toBytes(20) + salt + codeHash)
         val address = Solidity.Address(BigInteger(1, create2Hash.copyOfRange(12, 32)))
@@ -166,7 +167,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
                 SafeInfo(address, balance, threshold, owners, isOwner, modules, version)
             }
 
-    override fun checkSafe(address: Solidity.Address): Observable<Pair<Boolean, Boolean>> =
+    override fun checkSafe(address: Solidity.Address): Observable<Pair<Solidity.Address?, Boolean>> =
         ethereumRepository.request(
             CheckSafeRequest(
                 masterCopy = EthGetStorageAt(from = address, location = BigInteger.ZERO, id = 0),
@@ -175,8 +176,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
         )
             .map { r ->
                 r.masterCopy.result().let {
-                    !it?.removeHexPrefix().isNullOrBlank() &&
-                            SUPPORTED_SAFE_MASTER_COPIES.contains(Proxy.Implementation.decode(it!!).param0)
+                    it?.let { encoded -> Proxy.Implementation.decode(encoded).param0 }
                 } to r.threshold.result().let {
                     !it?.removeHexPrefix().isNullOrBlank() &&
                             GetThreshold.decode(it!!).param0.value > NO_EXTENSION_THRESHOLD
@@ -399,10 +399,8 @@ class DefaultGnosisSafeRepository @Inject constructor(
     ) : BulkRequest(masterCopy, threshold)
 
     companion object {
-        private val SUPPORTED_SAFE_MASTER_COPIES = BuildConfig.SUPPORTED_SAFE_MASTER_COPY_ADDRESSES.split(",").map { it.asEthereumAddress()!! }
         private val NO_EXTENSION_THRESHOLD = BigInteger.ONE
 
-        private val MASTER_COPY_ADDRESS = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
         private val PROXY_FACTORY_ADDRESS = BuildConfig.PROXY_FACTORY_ADDRESS.asEthereumAddress()!!
         private val FUNDER_ADDRESS = BuildConfig.SAFE_CREATION_FUNDER.asEthereumAddress()!!
         private val TX_ORIGIN_ADDRESS = "0x0".asEthereumAddress()!!

@@ -5,6 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.EthereumRepository
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
@@ -76,8 +77,8 @@ class SafeCreationFundViewModel @Inject constructor(
             .switchMap { pendingSafe ->
                 gnosisSafeRepository.checkSafe(safeAddress)
                     .retryWhen { errors -> errors.flatMap { Observable.just(it).delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS) } }
-                    .switchMapCompletable { (deployed) ->
-                        if (deployed)
+                    .switchMapCompletable { (masterCopy) ->
+                        if (GnosisSafeRepository.SUPPORTED_SAFE_MASTER_COPIES.contains(masterCopy))
                             gnosisSafeRepository.pendingSafeToDeployedSafe(pendingSafe)
                         else
                             checkFunding(pendingSafe)

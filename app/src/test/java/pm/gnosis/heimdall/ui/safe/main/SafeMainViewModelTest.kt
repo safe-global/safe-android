@@ -645,7 +645,7 @@ class SafeMainViewModelTest {
         val testObserver = TestObserver.create<Result<Boolean>>()
         given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(true to true))
 
-        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+        viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
 
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
@@ -657,7 +657,7 @@ class SafeMainViewModelTest {
         val testObserver = TestObserver.create<Result<Boolean>>()
         given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(true to false))
 
-        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+        viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
 
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
@@ -669,7 +669,7 @@ class SafeMainViewModelTest {
         val testObserver = TestObserver.create<Result<Boolean>>()
         given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
 
-        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+        viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
 
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
@@ -681,7 +681,7 @@ class SafeMainViewModelTest {
         val testObserver = TestObserver.create<Result<Boolean>>()
         val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
 
-        viewModel.isConnectedToBrowserExtension(pendingSafe).subscribe(testObserver)
+        viewModel.loadSafeConfig(pendingSafe).subscribe(testObserver)
 
         then(safeRepository).shouldHaveZeroInteractions()
         testObserver.assertResult(DataResult(false))
@@ -694,7 +694,7 @@ class SafeMainViewModelTest {
             TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, gasToken = TEST_PAYMENT_TOKEN
         )
 
-        viewModel.isConnectedToBrowserExtension(recoveringSafe).subscribe(testObserver)
+        viewModel.loadSafeConfig(recoveringSafe).subscribe(testObserver)
 
         then(safeRepository).shouldHaveZeroInteractions()
         testObserver.assertResult(DataResult(false))
@@ -706,7 +706,7 @@ class SafeMainViewModelTest {
         val exception = IllegalStateException()
         given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.error(exception))
 
-        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+        viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
 
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
