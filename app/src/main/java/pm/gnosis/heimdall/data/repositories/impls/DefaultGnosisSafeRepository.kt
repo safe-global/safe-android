@@ -30,10 +30,7 @@ import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.hexToByteArray
-import pm.gnosis.utils.removeHexPrefix
-import pm.gnosis.utils.toBytes
+import pm.gnosis.utils.*
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -175,12 +172,11 @@ class DefaultGnosisSafeRepository @Inject constructor(
             )
         )
             .map { r ->
-                r.masterCopy.result().let {
-                    it?.let { encoded -> Proxy.Implementation.decode(encoded).param0 }
-                } to r.threshold.result().let {
-                    !it?.removeHexPrefix().isNullOrBlank() &&
-                            GetThreshold.decode(it!!).param0.value > NO_EXTENSION_THRESHOLD
-                }
+                r.masterCopy.result()?.asEthereumAddress() to
+                        r.threshold.result().let {
+                            !it?.removeHexPrefix().isNullOrBlank() &&
+                                    GetThreshold.decode(it!!).param0.value > NO_EXTENSION_THRESHOLD
+                        }
             }
 
     override fun loadAbstractSafe(address: Solidity.Address): Single<AbstractSafe> =

@@ -111,7 +111,7 @@ class SafeCreationFundViewModelTest {
             DataResult(
                 SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
-                    ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN,  BigInteger.ZERO),
+                    ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, BigInteger.ZERO),
                     BigInteger.ONE,
                     safeQrCodeMock
                 )
@@ -397,7 +397,7 @@ class SafeCreationFundViewModelTest {
         val testObserver = TestObserver.create<Unit>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
 
-        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(null to false))
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(GnosisSafeRepository.CURRENT_MASTER_COPY to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(MockUtils.any())).willReturn(Completable.complete())
 
@@ -426,7 +426,7 @@ class SafeCreationFundViewModelTest {
         given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any()))
             .willReturn(Observable.fromCallable {
                 if (shouldThrow) throw exception
-                "0xdeadbeef".asEthereumAddress()!! to true
+                GnosisSafeRepository.CURRENT_MASTER_COPY to true
             })
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(MockUtils.any())).willReturn(Completable.complete())
