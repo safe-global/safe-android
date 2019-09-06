@@ -541,6 +541,7 @@ class DefaultGnosisSafeRepositoryTest {
 
     @Test
     fun checkSafeInvalidMasterCopyThresholdTooLow() {
+        val masterCopy = "0xdeadbeef".asEthereumAddress()!!
         given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
             val bulk = it.arguments.first() as BulkRequest
             val requests = bulk.requests
@@ -548,14 +549,14 @@ class DefaultGnosisSafeRepositoryTest {
             assertEquals(TEST_SAFE, ethGetStorageAt.from)
             assertEquals(BigInteger.ZERO, ethGetStorageAt.location)
             assertEquals(Block.PENDING, ethGetStorageAt.block)
-            ethGetStorageAt.response = EthRequest.Response.Success("0xdeadbeef".asEthereumAddress()!!.encode())
+            ethGetStorageAt.response = EthRequest.Response.Success(masterCopy.encode())
 
             (requests[1] as EthCall).response = EthRequest.Response.Success(Solidity.UInt256(BigInteger.ONE).encode())
             Observable.just(bulk)
         }
-        val observer = TestObserver<Pair<Boolean, Boolean>>()
+        val observer = TestObserver<Pair<Solidity.Address?, Boolean>>()
         repository.checkSafe(TEST_SAFE).subscribe(observer)
-        observer.assertResult(false to false)
+        observer.assertResult(masterCopy to false)
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
     }
 
@@ -572,14 +573,15 @@ class DefaultGnosisSafeRepositoryTest {
             (requests[1] as EthCall).response = EthRequest.Response.Success(Solidity.UInt256(BigInteger.ONE).encode())
             Observable.just(bulk)
         }
-        val observer = TestObserver<Pair<Boolean, Boolean>>()
+        val observer = TestObserver<Pair<Solidity.Address?, Boolean>>()
         repository.checkSafe(TEST_SAFE).subscribe(observer)
-        observer.assertResult(false to false)
+        observer.assertResult(null to false)
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
     }
 
     @Test
     fun checkSafeThresholdFailure() {
+        val masterCopy = "0xdeadbeef".asEthereumAddress()!!
         given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
             val bulk = it.arguments.first() as BulkRequest
             val requests = bulk.requests
@@ -587,17 +589,18 @@ class DefaultGnosisSafeRepositoryTest {
             assertEquals(TEST_SAFE, ethGetStorageAt.from)
             assertEquals(BigInteger.ZERO, ethGetStorageAt.location)
             assertEquals(Block.PENDING, ethGetStorageAt.block)
-            ethGetStorageAt.response = EthRequest.Response.Success("0xdeadbeef".asEthereumAddress()!!.encode())
+            ethGetStorageAt.response = EthRequest.Response.Success(masterCopy.encode())
             (requests[1] as EthCall).response = EthRequest.Response.Failure("EVM error")
             Observable.just(bulk)
         }
-        val observer = TestObserver<Pair<Boolean, Boolean>>()
+        val observer = TestObserver<Pair<Solidity.Address?, Boolean>>()
         repository.checkSafe(TEST_SAFE).subscribe(observer)
-        observer.assertResult(false to false)
+        observer.assertResult(masterCopy to false)
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
     }
 
     private fun testMasterCopy(masterCopy: String, threshold: Int) {
+        val masterCopyAddress = masterCopy.asEthereumAddress()!!
         given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
             val bulk = it.arguments.first() as BulkRequest
             val requests = bulk.requests
@@ -605,13 +608,13 @@ class DefaultGnosisSafeRepositoryTest {
             assertEquals(TEST_SAFE, ethGetStorageAt.from)
             assertEquals(BigInteger.ZERO, ethGetStorageAt.location)
             assertEquals(Block.PENDING, ethGetStorageAt.block)
-            ethGetStorageAt.response = EthRequest.Response.Success(masterCopy.asEthereumAddress()!!.encode())
+            ethGetStorageAt.response = EthRequest.Response.Success(masterCopyAddress.encode())
                 (requests[1] as EthCall).response = EthRequest.Response.Success(Solidity.UInt256(BigInteger.valueOf(threshold.toLong())).encode())
             Observable.just(bulk)
         }
-        val observer = TestObserver<Pair<Boolean, Boolean>>()
+        val observer = TestObserver<Pair<Solidity.Address?, Boolean>>()
         repository.checkSafe(TEST_SAFE).subscribe(observer)
-        observer.assertResult(true to true)
+        observer.assertResult(masterCopyAddress to true)
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
         Mockito.reset(ethereumRepositoryMock)
     }

@@ -119,7 +119,7 @@ class CheckSafeViewModelTest {
     fun checkSafeInvalidSafe() {
         contextMock.mockGetString()
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
-        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
+        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(null to false))
 
         val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0x1f81fff89Bd57811983a35650296681f99C65C7E").subscribe(observer)
@@ -134,7 +134,7 @@ class CheckSafeViewModelTest {
     fun checkSafeValidSafeWithExtension() {
         contextMock.mockGetString()
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
-        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(true to true))
+        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just("0xdeadbeef".asEthereumAddress()!! to true))
 
         val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0x1f81fff89Bd57811983a35650296681f99C65C7E").subscribe(observer)
@@ -149,7 +149,7 @@ class CheckSafeViewModelTest {
     fun checkSafeValidSafeWithoutExtension() {
         contextMock.mockGetString()
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
-        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(true to false))
+        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just("0xdeadbeef".asEthereumAddress()!! to false))
 
         val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0x1f81fff89Bd57811983a35650296681f99C65C7E").subscribe(observer)

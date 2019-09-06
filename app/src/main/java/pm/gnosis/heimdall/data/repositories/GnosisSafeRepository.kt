@@ -23,7 +23,7 @@ interface GnosisSafeRepository {
 
     /**
      * Checks that at the passed address a valid safe exists. This is based on the proxy code and the master copy address
-     * First value of the pair indicates if it is a Safe
+     * First value of the pair is the current mastercopy
      * Second value of the pair indicates if a browser extension is attached
      */
     fun checkSafe(address: Solidity.Address): Observable<Pair<Solidity.Address?, Boolean>>
