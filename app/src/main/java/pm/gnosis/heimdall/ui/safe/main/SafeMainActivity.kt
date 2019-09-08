@@ -18,9 +18,9 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.dialog_content_edit_name.view.*
 import kotlinx.android.synthetic.main.layout_safe_main.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
@@ -43,10 +43,10 @@ import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressAct
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
+import pm.gnosis.heimdall.ui.safe.upgrade.UpgradeMasterCopyActivity
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
-import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
 import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroActivity
 import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivity
 import pm.gnosis.heimdall.utils.CustomAlertDialogBuilder
@@ -133,6 +133,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
             }
 
         layout_safe_main_upgrade_warning_container.visible(false)
+        layout_safe_main_menu_upgrade_warning.visible(false)
         // Hide menu options until we get the correct state of the safe
         hideMenuOptions()
         disposables += safeSubject
@@ -265,6 +266,7 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
 
         layout_safe_main_upgrade_warning_container.visible(false)
+        layout_safe_main_menu_upgrade_warning.visible(false)
         hideMenuOptions()
         safeSubject.onNext(safe)
         supportFragmentManager.transaction {
@@ -412,14 +414,19 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         popupMenu.menu.findItem(R.id.safe_details_menu_connect).isVisible = false
     }
 
+    @ExperimentalCoroutinesApi
     private fun handleSafeConfig(newMasterCopy: Solidity.Address?, isConnected: Boolean) {
         isConnectedToExtension = isConnected
         val safe = safeSubject.value as? Safe
         val canUpgrade = safe != null && newMasterCopy != null
         layout_safe_main_upgrade_warning_container.visible(canUpgrade)
+        layout_safe_main_menu_upgrade_warning.visible(canUpgrade)
         if (canUpgrade) {
             layout_safe_main_upgrade_warning_card.setOnClickListener {
-                startActivity(ReviewTransactionActivity.createIntent(this, safe!!.address, TransactionData.UpdateMasterCopy(newMasterCopy!!)))
+                startActivity(UpgradeMasterCopyActivity.createIntent(this, safe!!.address))
+            }
+            layout_safe_main_menu_upgrade_warning.setOnClickListener {
+                startActivity(UpgradeMasterCopyActivity.createIntent(this, safe!!.address))
             }
         }
         popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = isConnected && selectedSafe is Safe

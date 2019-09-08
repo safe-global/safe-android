@@ -483,5 +483,8 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="choose_input_method">Choose input method</string>
     <string name="contract_upgrade">Contract upgrade</string>
     <string name="this_will_upgrade">This will upgrade \'%s\' to the latest version of the Gnosis Safe contract.</string>
-    <string name="security_upgrade_required">Security upgrade required</string>
+    <string name="upgrade_required">Security upgrade required</string>
+    <string name="security_upgrade_required">Upgrade to the latest audited smart contract version and make your funds even more secure!</string>
+    <string name="upgrade_now">Upgrade now</string>
+    <string name="insufficient_funds_please_add_tokenpayment">Insufficient funds. Please add %s to your Safe or choose a different token as the payment method.</string>
 </resources>

@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.di.ViewModelFactory
 import pm.gnosis.heimdall.di.ViewModelKey
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
@@ -48,6 +50,8 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeViewModel
+import pm.gnosis.heimdall.ui.safe.upgrade.UpgradeMasterCopyContract
+import pm.gnosis.heimdall.ui.safe.upgrade.UpgradeMasterCopyViewModel
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockViewModel
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
@@ -153,7 +157,6 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(ManageTokensContract::class)
     abstract fun bindsManageTokensContract(viewModel: ManageTokensViewModel): ViewModel
 
-
     @Binds
     @IntoMap
     @ViewModelKey(ConfirmNewRecoveryPhraseContract::class)
@@ -253,6 +256,12 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(UnlockContract::class)
     abstract fun bindsUnlockContract(viewModel: UnlockViewModel): ViewModel
+
+    @ExperimentalCoroutinesApi
+    @Binds
+    @IntoMap
+    @ViewModelKey(UpgradeMasterCopyContract::class)
+    abstract fun bindsUpgradeMasterCopyContract(viewModel: UpgradeMasterCopyViewModel): ViewModel
 
     @Binds
     @IntoMap

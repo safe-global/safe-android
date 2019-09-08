@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
@@ -33,6 +34,7 @@ import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressCon
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
+import pm.gnosis.heimdall.ui.safe.upgrade.UpgradeMasterCopyContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordContract
@@ -201,6 +203,11 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesUnlockContract(provider: ViewModelProvider) = provider[UnlockContract::class.java]
+
+    @ExperimentalCoroutinesApi
+    @Provides
+    @ForView
+    fun provideUpgradeMasterCopyContract(provider: ViewModelProvider) = provider[UpgradeMasterCopyContract::class.java]
 
     @Provides
     @ForView

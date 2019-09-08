@@ -101,7 +101,7 @@
     <View
         android:id="@+id/layout_recover_safe_intro_bottom_bar"
         android:layout_width="0dp"
-        android:layout_height="@dimen/toolbar_height"
+        android:layout_height="@dimen/bottom_bar_height"
         android:background="@drawable/primary_button_full_width"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

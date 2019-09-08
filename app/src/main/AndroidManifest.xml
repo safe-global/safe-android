@@ -280,6 +280,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
+        <activity android:name=".ui.safe.upgrade.UpgradeMasterCopyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme"  />
+
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
