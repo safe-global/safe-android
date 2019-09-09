@@ -43,7 +43,7 @@ import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressAct
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
-import pm.gnosis.heimdall.ui.safe.upgrade.UpgradeMasterCopyActivity
+import pm.gnosis.heimdall.ui.safe.upgrade.UpgradeMasterCopyIntroActivity
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
 import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
@@ -423,10 +423,10 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         layout_safe_main_menu_upgrade_warning.visible(canUpgrade)
         if (canUpgrade) {
             layout_safe_main_upgrade_warning_card.setOnClickListener {
-                startActivity(UpgradeMasterCopyActivity.createIntent(this, safe!!.address))
+                startActivity(UpgradeMasterCopyIntroActivity.createIntent(this, safe!!.address))
             }
             layout_safe_main_menu_upgrade_warning.setOnClickListener {
-                startActivity(UpgradeMasterCopyActivity.createIntent(this, safe!!.address))
+                startActivity(UpgradeMasterCopyIntroActivity.createIntent(this, safe!!.address))
             }
         }
         popupMenu.menu.findItem(R.id.safe_details_menu_sync).isVisible = isConnected && selectedSafe is Safe
