@@ -472,7 +472,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
 
         assertNotNull(rxClickListener)
 
-        then(typeIconImageView).should().setImageResource(R.drawable.ic_transaction_white_24dp)
+        then(typeIconImageView).should().setImageResource(R.drawable.ic_transaction_settings)
         then(typeIconImageView).shouldHaveNoMoreInteractions()
 
         then(valueTextView).should().text = null
