@@ -17,6 +17,7 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.di.components.ViewComponent
+import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
@@ -36,7 +37,10 @@ import java.math.BigInteger
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-abstract class UpgradeMasterCopyContract(context: Context) : BaseStateViewModel<UpgradeMasterCopyContract.State>(context) {
+abstract class UpgradeMasterCopyContract(
+    context: Context,
+    appDispatcher: ApplicationModule.AppCoroutineDispatchers
+) : BaseStateViewModel<UpgradeMasterCopyContract.State>(context, appDispatcher) {
 
     abstract fun setup(safe: Solidity.Address)
 
@@ -63,11 +67,12 @@ abstract class UpgradeMasterCopyContract(context: Context) : BaseStateViewModel<
 @ExperimentalCoroutinesApi
 class UpgradeMasterCopyViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
+    appDispatcher: ApplicationModule.AppCoroutineDispatchers,
     private val addressBookRepository: AddressBookRepository,
     private val executionRepository: TransactionExecutionRepository,
     private val safeRepository: GnosisSafeRepository,
     private val tokenRepository: TokenRepository
-) : UpgradeMasterCopyContract(context) {
+) : UpgradeMasterCopyContract(context, appDispatcher) {
     override val state = liveData {
         loadSafeName()
         for (state in stateChannel.openSubscription()) emit(state)

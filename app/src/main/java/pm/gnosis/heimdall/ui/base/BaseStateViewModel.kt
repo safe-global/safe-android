@@ -7,11 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import timber.log.Timber
 
 @ExperimentalCoroutinesApi
-abstract class BaseStateViewModel<T : BaseStateViewModel.State>(context: Context) : ViewModel() {
+abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
+    context: Context,
+    private val appDispatcher: ApplicationModule.AppCoroutineDispatchers
+) : ViewModel() {
     abstract val state: LiveData<T>
 
     private val errorHandler = SimpleLocalizedException.networkErrorHandlerBuilder(context).build()
@@ -51,5 +55,5 @@ abstract class BaseStateViewModel<T : BaseStateViewModel.State>(context: Context
     }
 
     protected fun safeLaunch(errorHandler: CoroutineExceptionHandler = coroutineErrorHandler, block: suspend CoroutineScope.() -> Unit) =
-        viewModelScope.launch(Dispatchers.IO + errorHandler, block = block)
+        viewModelScope.launch(appDispatcher.background + errorHandler, block = block)
 }
