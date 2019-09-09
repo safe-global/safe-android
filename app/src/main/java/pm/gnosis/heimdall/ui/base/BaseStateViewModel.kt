@@ -32,17 +32,17 @@ abstract class BaseStateViewModel<T : BaseStateViewModel.State>(context: Context
 
     protected val coroutineErrorHandler = CoroutineExceptionHandler { _, e ->
         Timber.e(e)
-        viewModelScope.launch { updateState { viewAction = ViewAction.ShowError(errorHandler.translate(e)); this } }
+        viewModelScope.launch { updateState(true) { viewAction = ViewAction.ShowError(errorHandler.translate(e)); this } }
     }
 
     protected fun currentState(): T = stateChannel.value
 
-    protected suspend fun updateState(update: T.() -> T) {
+    protected suspend fun updateState(forceViewAction: Boolean = false, update: T.() -> T) {
         try {
             val currentState = currentState()
             val nextState = currentState.run(update)
             // Reset view action if the same
-            if (nextState.viewAction === currentState.viewAction) nextState.viewAction = null
+            if (!forceViewAction && nextState.viewAction === currentState.viewAction) nextState.viewAction = null
             stateChannel.send(nextState)
         } catch (e: Exception) {
             // Could not submit update

@@ -7,9 +7,9 @@ import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.android.synthetic.main.layout_upgrade_master_copy.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.rx2.awaitFirst
 import pm.gnosis.heimdall.R
@@ -55,6 +55,7 @@ abstract class UpgradeMasterCopyContract(context: Context) : BaseStateViewModel<
         val safeBalance: BigInteger?,
         val safeBalanceAfterTx: BigInteger?,
         val showFeeError: Boolean,
+        val loading: Boolean,
         override var viewAction: ViewAction?
     ) : BaseStateViewModel.State
 }
@@ -70,6 +71,11 @@ class UpgradeMasterCopyViewModel @Inject constructor(
     override val state = liveData {
         loadSafeName()
         for (state in stateChannel.openSubscription()) emit(state)
+    }
+
+    private val loadingErrorHandler = CoroutineExceptionHandler { context, e ->
+        viewModelScope.launch { updateState { copy(loading = false) } }
+        coroutineErrorHandler.handleException(context, e)
     }
 
     private lateinit var safe: Solidity.Address
@@ -90,8 +96,8 @@ class UpgradeMasterCopyViewModel @Inject constructor(
     override fun loadEstimates() {
         // Check if already loading
         if (estimatesJob?.isActive == true) return
-        estimatesJob = safeLaunch {
-            updateState { copy(feeToken = null, fees = null, safeBalance = null, safeBalanceAfterTx = null, showFeeError = false) }
+        estimatesJob = loadingLaunch {
+            updateState { copy(loading = true, feeToken = null, fees = null, safeBalance = null, safeBalanceAfterTx = null, showFeeError = false) }
             val paymentToken = tokenRepository.loadPaymentToken(safe).await()
             updateState { copy(feeToken = paymentToken) }
             val (masterCopy) = safeRepository.checkSafe(safe).awaitFirst()
@@ -101,7 +107,9 @@ class UpgradeMasterCopyViewModel @Inject constructor(
             val safeBalance = estimate.balance
             val fees = estimate.gasCosts()
             val balanceAfterTx = safeBalance - fees
-            updateState { copy(fees = fees, safeBalance = safeBalance, safeBalanceAfterTx = balanceAfterTx, showFeeError = fees > safeBalance) }
+            updateState {
+                copy(loading = false, fees = fees, safeBalance = safeBalance, safeBalanceAfterTx = balanceAfterTx, showFeeError = fees > safeBalance)
+            }
         }
     }
 
@@ -124,7 +132,9 @@ class UpgradeMasterCopyViewModel @Inject constructor(
         }
     }
 
-    override fun initialState() = State(null, null, null, null, null, false, null)
+    private fun loadingLaunch(block: suspend CoroutineScope.() -> Unit) = safeLaunch(loadingErrorHandler, block)
+
+    override fun initialState() = State(null, null, null, null, null, false, false, null)
 }
 
 @ExperimentalCoroutinesApi
@@ -148,6 +158,7 @@ class UpgradeMasterCopyActivity : ViewModelActivity<UpgradeMasterCopyContract>()
         upgrade_master_copy_fees_info.setOnClickListener { InfoTipDialogBuilder.build(this, R.layout.dialog_network_fee, R.string.ok).show() }
         upgrade_master_copy_fees_value.setOnClickListener(paymentTokenClickListener)
         upgrade_master_copy_fees_settings.setOnClickListener(paymentTokenClickListener)
+        upgrade_master_copy_refresh.setOnRefreshListener { viewModel.loadEstimates() }
 
         upgrade_master_copy_next.setCompoundDrawableResource(right = R.drawable.ic_arrow_forward_24dp)
     }
@@ -156,6 +167,7 @@ class UpgradeMasterCopyActivity : ViewModelActivity<UpgradeMasterCopyContract>()
         upgrade_master_copy_fee_explainer.text = getString(R.string.this_will_upgrade, state.safeName ?: getString(R.string.default_safe_name))
         upgrade_master_copy_fees_error.visible(state.showFeeError)
         val canUpgrade = state.fees != null && !state.showFeeError
+        upgrade_master_copy_refresh.isRefreshing = state.loading
         upgrade_master_copy_bottom_bar.isEnabled = canUpgrade
         upgrade_master_copy_next.isEnabled = canUpgrade
         upgrade_master_copy_safe_balance_after_transfer_value.setTextColor(getColorCompat(if (state.showFeeError) R.color.tomato else R.color.dark_grey))
