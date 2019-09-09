@@ -81,7 +81,7 @@
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         android:maxLines="1"
-        android:text="@string/connect_browser_extension"
+        android:text="@string/connect_authenticator"
         android:textColor="@color/blue"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="@+id/layout_replace_recovery_phrase_transaction_divider"

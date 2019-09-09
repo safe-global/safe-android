@@ -105,9 +105,9 @@ class DefaultTransactionInfoRepository @Inject constructor(
         return GnosisSafe.ChangeMasterCopy.decodeArguments(arguments).let { TransactionData.UpdateMasterCopy(it._mastercopy) }
     }
 
-    private fun parseAddOwnerWithThreshold(transaction: Transaction): TransactionData.ConnectExtension {
+    private fun parseAddOwnerWithThreshold(transaction: Transaction): TransactionData.ConnectAuthenticator {
         val arguments = transaction.data!!.removeSolidityMethodPrefix(GnosisSafe.AddOwnerWithThreshold.METHOD_ID)
-        return GnosisSafe.AddOwnerWithThreshold.decodeArguments(arguments).let { TransactionData.ConnectExtension(it.owner) }
+        return GnosisSafe.AddOwnerWithThreshold.decodeArguments(arguments).let { TransactionData.ConnectAuthenticator(it.owner) }
     }
 
     override fun loadTransactionInfo(id: String): Single<TransactionInfo> =

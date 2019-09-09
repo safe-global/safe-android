@@ -20,7 +20,7 @@ class ConnectExtensionActivity : PairingActivity() {
             ReviewTransactionActivity.createIntent(
                 context = this,
                 safe = intent.getStringExtra(EXTRA_SAFE_ADDRESS).asEthereumAddress()!!,
-                txData = TransactionData.ConnectExtension(extension)
+                txData = TransactionData.ConnectAuthenticator(extension)
             )
         )
     }

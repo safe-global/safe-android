@@ -105,10 +105,13 @@ class DefaultTransactionTriggerManagerTest {
                 )
             ),
             TransactionData.ReplaceRecoveryPhrase::class to SubmittedTestData(TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)),
-            TransactionData.ConnectExtension::class to SubmittedTestData(
-                TransactionData.ConnectExtension(TEST_ADDRESS),
+            TransactionData.ConnectAuthenticator::class to SubmittedTestData(
+                TransactionData.ConnectAuthenticator(TEST_ADDRESS),
                 pushRepoSetup = Consumer { given(it.propagateSafeCreation(MockUtils.any(), MockUtils.any())).willReturn(Completable.complete()) },
                 pushRepoCheck = Consumer { then(it).should().propagateSafeCreation(TEST_SAFE, setOf(TEST_ADDRESS)) }
+            ),
+            TransactionData.UpdateMasterCopy::class to SubmittedTestData(
+                TransactionData.UpdateMasterCopy(TEST_ADDRESS)
             )
         )
     }

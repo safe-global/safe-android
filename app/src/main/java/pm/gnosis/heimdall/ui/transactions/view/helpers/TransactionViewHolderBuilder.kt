@@ -35,8 +35,8 @@ class DefaultTransactionViewHolderBuilder @Inject constructor(
                     )
                 is TransactionData.ReplaceRecoveryPhrase ->
                     ReplaceRecoveryPhraseViewHolder(addressHelper, safe, transactionData.safeTransaction)
-                is TransactionData.ConnectExtension ->
-                    ConnectExtensionViewHolder(
+                is TransactionData.ConnectAuthenticator ->
+                    ConnectAuthenticatorViewHolder(
                         addressHelper = addressHelper,
                         extension = transactionData.extension,
                         safe = safe,

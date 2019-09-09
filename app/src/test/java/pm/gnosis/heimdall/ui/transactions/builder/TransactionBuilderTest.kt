@@ -2,6 +2,7 @@ package pm.gnosis.heimdall.ui.transactions.builder
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
@@ -39,6 +40,17 @@ class TransactionBuilderTest {
                 ), TransactionExecutionRepository.Operation.CALL
             ),
             AssetTransferTransactionBuilder.build(TransactionData.AssetTransfer(TEST_TOKEN, BigInteger("421000000"), TEST_ADDRESS))
+        )
+    }
+
+    @Test
+    fun testUpdateMasterCopyTransactionBuilder() {
+        assertEquals(
+            SafeTransaction(
+                Transaction(TEST_TOKEN, data = "0x7de7edef${TEST_ADDRESS.value.toString(16).padStart(64, '0')}"),
+                TransactionExecutionRepository.Operation.CALL
+            ),
+            UpdateMasterCopyTransactionBuilder.build(TEST_TOKEN, TransactionData.UpdateMasterCopy(TEST_ADDRESS))
         )
     }
 

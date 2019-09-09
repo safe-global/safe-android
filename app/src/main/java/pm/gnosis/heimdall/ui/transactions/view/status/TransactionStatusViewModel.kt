@@ -49,7 +49,7 @@ class TransactionStatusViewModel @Inject constructor(
             is TransactionData.Generic -> R.string.transaction_type_generic
             is TransactionData.AssetTransfer -> R.string.transaction_type_asset_transfer
             is TransactionData.ReplaceRecoveryPhrase -> R.string.settings_change
-            is TransactionData.ConnectExtension -> R.string.settings_change
+            is TransactionData.ConnectAuthenticator -> R.string.settings_change
             is TransactionData.UpdateMasterCopy -> R.string.contract_upgrade
         }
 }

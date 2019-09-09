@@ -177,10 +177,10 @@ class SafeTransactionsAdapter @Inject constructor(
                         iconRes = R.drawable.ic_transaction_settings
                     )
                 }
-                is TransactionData.ConnectExtension -> {
+                is TransactionData.ConnectAuthenticator -> {
                     updateViews(
                         address = info.safe,
-                        infoText = context.getString(R.string.connected_extension),
+                        infoText = context.getString(R.string.connect_authenticator),
                         valueText = null,
                         valueColor = R.color.blue,
                         iconRes = R.drawable.ic_transaction_settings

@@ -401,14 +401,24 @@ class DefaultTransactionInfoRepositoryTest {
                             TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)
                         )
                     ),
-            TransactionData.ConnectExtension::class to
+            TransactionData.ConnectAuthenticator::class to
                     listOf(
                         TestData(
                             transaction = SafeTransaction(
                                 Transaction(
                                     TEST_SAFE, data = GnosisSafe.AddOwnerWithThreshold.encode(TEST_ADDRESS, Solidity.UInt256(2.toBigInteger()))
-                                ), operation = TransactionExecutionRepository.Operation.CALL
-                            ), expected = TransactionData.ConnectExtension(TEST_ADDRESS)
+                                ), operation = CALL
+                            ), expected = TransactionData.ConnectAuthenticator(TEST_ADDRESS)
+                        )
+                    ),
+            TransactionData.UpdateMasterCopy::class to
+                    listOf(
+                        TestData(
+                            transaction = SafeTransaction(
+                                Transaction(
+                                    TEST_SAFE, data = GnosisSafe.ChangeMasterCopy.encode(TEST_ADDRESS)
+                                ), operation = CALL
+                            ), expected = TransactionData.UpdateMasterCopy(TEST_ADDRESS)
                         )
                     )
         )

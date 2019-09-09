@@ -248,7 +248,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="recover_safe_info_explainer">Please keep your Safe\'s address and recovery phrase ready, consisting of 12 unique words.</string>
     <string name="start_recovery">Start recovery</string>
     <string name="connected_extension">Connected Authenticator</string>
-    <string name="connect_browser_extension">Connect Authenticator</string>
+    <string name="connect_authenticator">Connect Authenticator</string>
     <string name="connect_extension_description">This transaction will connect this Safe with the Authenticator. Future transactions require confirmation from both devices.</string>
     <string name="pairing_first_step"><![CDATA[1. Download the <font color=#008c73>Authenticator</font>.]]></string>
     <string name="pairing_second_step">2. Scan the QR code in the Authenticator.</string>

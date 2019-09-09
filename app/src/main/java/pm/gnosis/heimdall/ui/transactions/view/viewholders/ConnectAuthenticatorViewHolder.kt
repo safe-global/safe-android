@@ -23,7 +23,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import java.math.BigInteger
 
-class ConnectExtensionViewHolder(
+class ConnectAuthenticatorViewHolder(
     private val addressHelper: AddressHelper,
     private val extension: Solidity.Address,
     private val safe: Solidity.Address,

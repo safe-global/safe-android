@@ -46,7 +46,7 @@ sealed class TransactionData : Parcelable {
 
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
-    data class ConnectExtension(val extension: Solidity.Address) : TransactionData()
+    data class ConnectAuthenticator(val extension: Solidity.Address) : TransactionData()
 
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
@@ -63,7 +63,7 @@ sealed class TransactionData : Parcelable {
             is Generic -> TYPE_GENERIC
             is AssetTransfer -> TYPE_ASSET_TRANSFER
             is ReplaceRecoveryPhrase -> TYPE_REPLACE_RECOVERY_PHRASE
-            is ConnectExtension -> TYPE_CONNECT_EXTENSION
+            is ConnectAuthenticator -> TYPE_CONNECT_EXTENSION
             is UpdateMasterCopy -> TYPE_UPDATE_MASTER_COPY
         }
 
@@ -83,7 +83,7 @@ sealed class TransactionData : Parcelable {
                     TYPE_GENERIC -> getParcelable<Generic>(EXTRA_DATA)
                     TYPE_ASSET_TRANSFER -> getParcelable<AssetTransfer>(EXTRA_DATA)
                     TYPE_REPLACE_RECOVERY_PHRASE -> getParcelable<ReplaceRecoveryPhrase>(EXTRA_DATA)
-                    TYPE_CONNECT_EXTENSION -> getParcelable<ConnectExtension>(EXTRA_DATA)
+                    TYPE_CONNECT_EXTENSION -> getParcelable<ConnectAuthenticator>(EXTRA_DATA)
                     TYPE_UPDATE_MASTER_COPY -> getParcelable<UpdateMasterCopy>(EXTRA_DATA)
                     else -> throw IllegalArgumentException("Unknown transaction data type")
                 }

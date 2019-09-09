@@ -36,7 +36,7 @@ import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
 @RunWith(MockitoJUnitRunner::class)
-class ConnectExtensionViewHolderTest {
+class ConnectAuthenticatorViewHolderTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -65,11 +65,11 @@ class ConnectExtensionViewHolderTest {
     @Mock
     private lateinit var imageViewMock: BlockiesImageView
 
-    private lateinit var viewHolder: ConnectExtensionViewHolder
+    private lateinit var viewHolder: ConnectAuthenticatorViewHolder
 
     @Before
     fun setUp() {
-        viewHolder = ConnectExtensionViewHolder(addressHelperMock, TEST_EXTENSION, TEST_SAFE, safeRepositoryMock)
+        viewHolder = ConnectAuthenticatorViewHolder(addressHelperMock, TEST_EXTENSION, TEST_SAFE, safeRepositoryMock)
     }
 
     @Test
