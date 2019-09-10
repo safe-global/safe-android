@@ -52,7 +52,7 @@ import pm.gnosis.heimdall.ui.walletconnect.link.WalletConnectLinkContract
 import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsContract
 
 @Module
-class ViewModule(val context: Context) {
+class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
     @Provides
     @ForView
     @ViewContext
@@ -224,10 +224,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesViewModelProvider(factory: ViewModelProvider.Factory): ViewModelProvider {
-        return when (context) {
-            is Fragment -> ViewModelProviders.of(context, factory)
-            is FragmentActivity -> ViewModelProviders.of(context, factory)
-            else -> throw IllegalArgumentException("Unsupported context $context")
+        return when (val provider = viewModelProvider ?: context) {
+            is Fragment -> ViewModelProviders.of(provider, factory)
+            is FragmentActivity -> ViewModelProviders.of(provider, factory)
+            else -> throw IllegalArgumentException("Unsupported context $provider")
         }
     }
 }

@@ -33,6 +33,7 @@ import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeDeployment
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
@@ -621,7 +622,11 @@ class DefaultGnosisSafeRepositoryTest {
 
     @Test
     fun checkSafe() {
-        val masterCopyAddresses = BuildConfig.SUPPORTED_SAFE_MASTER_COPY_ADDRESSES.split(",") + BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS
+        val masterCopyAddresses = listOf(
+            BuildConfig.SAFE_MASTER_COPY_0_0_2,
+            BuildConfig.SAFE_MASTER_COPY_0_1_0,
+            BuildConfig.SAFE_MASTER_COPY_1_0_0
+        )
         masterCopyAddresses.forEachIndexed { index, address -> testMasterCopy(address, index + 2) }
     }
 
@@ -651,7 +656,7 @@ class DefaultGnosisSafeRepositoryTest {
     companion object {
         private val TEST_SAFE = "0xdeadfeedbeaf".asEthereumAddress()!!
         private val TEST_TOKEN = ERC20Token(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10)
-        private val MASTER_COPY_ADDRESS = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
+        private val MASTER_COPY_ADDRESS = SafeContractUtils.currentMasterCopy()
         private val PROXY_FACTORY_ADDRESS = BuildConfig.PROXY_FACTORY_ADDRESS.asEthereumAddress()!!
         private val ETHER_TOKEN = ERC20Token.ETHER_TOKEN
         private val PAYMENT_TOKEN = ERC20Token("0xdeadbeef".asEthereumAddress()!!, "Payment Token", "PT", 18)

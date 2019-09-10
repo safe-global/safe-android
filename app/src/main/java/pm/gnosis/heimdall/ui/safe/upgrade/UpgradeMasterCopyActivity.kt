@@ -24,10 +24,7 @@ import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
 import pm.gnosis.heimdall.ui.transactions.builder.UpdateMasterCopyTransactionBuilder
 import pm.gnosis.heimdall.ui.transactions.view.review.ReviewTransactionActivity
-import pm.gnosis.heimdall.utils.InfoTipDialogBuilder
-import pm.gnosis.heimdall.utils.LifecycleBoundObserver
-import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.heimdall.utils.setCompoundDrawableResource
+import pm.gnosis.heimdall.utils.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.getColorCompat
 import pm.gnosis.svalinn.common.utils.visible
@@ -95,23 +92,28 @@ class UpgradeMasterCopyViewModel @Inject constructor(
         }
     }
 
-    private val transactionData by lazy { TransactionData.UpdateMasterCopy(GnosisSafeRepository.CURRENT_MASTER_COPY) }
+    private var transactionData: TransactionData.UpdateMasterCopy? = null
 
     private var estimatesJob: Job? = null
     override fun loadEstimates() {
         // Check if already loading
         if (estimatesJob?.isActive == true) return
         estimatesJob = loadingLaunch {
+            transactionData = null
             updateState { copy(loading = true, feeToken = null, fees = null, safeBalance = null, safeBalanceAfterTx = null, showFeeError = false) }
             val paymentToken = tokenRepository.loadPaymentToken(safe).await()
             updateState { copy(feeToken = paymentToken) }
             val (masterCopy) = safeRepository.checkSafe(safe).awaitFirst()
-            check(!(masterCopy == GnosisSafeRepository.CURRENT_MASTER_COPY || !GnosisSafeRepository.SUPPORTED_SAFE_MASTER_COPIES.contains(masterCopy))) { "No upgrade possible!" }
-            val transaction = UpdateMasterCopyTransactionBuilder.build(safe, transactionData)
+            val newMasterCopy = SafeContractUtils.checkForUpdate(masterCopy)
+            check(newMasterCopy != null) { "No upgrade possible!" }
+            val data = TransactionData.UpdateMasterCopy(newMasterCopy)
+            val transaction = UpdateMasterCopyTransactionBuilder.build(safe, data)
             val estimate = executionRepository.loadExecuteInformation(safe, paymentToken.address, transaction).await()
             val safeBalance = estimate.balance
             val fees = estimate.gasCosts()
             val balanceAfterTx = safeBalance - fees
+            // Master copy update could be estimated, therefore we should cache the data
+            transactionData = data
             updateState {
                 copy(loading = false, fees = fees, safeBalance = safeBalance, safeBalanceAfterTx = balanceAfterTx, showFeeError = fees > safeBalance)
             }
@@ -127,7 +129,9 @@ class UpgradeMasterCopyViewModel @Inject constructor(
 
     override fun next() {
         safeLaunch {
-            updateState { copy(viewAction = ViewAction.StartActivity(ReviewTransactionActivity.createIntent(context, safe, transactionData))) }
+            transactionData?.let { data ->
+                updateState { copy(viewAction = ViewAction.StartActivity(ReviewTransactionActivity.createIntent(context, safe, data))) }
+            }
         }
     }
 

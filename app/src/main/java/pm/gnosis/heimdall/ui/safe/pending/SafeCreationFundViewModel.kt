@@ -13,6 +13,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -78,7 +79,7 @@ class SafeCreationFundViewModel @Inject constructor(
                 gnosisSafeRepository.checkSafe(safeAddress)
                     .retryWhen { errors -> errors.flatMap { Observable.just(it).delay(BALANCE_REQUEST_INTERVAL_SECONDS, TimeUnit.SECONDS) } }
                     .switchMapCompletable { (masterCopy) ->
-                        if (GnosisSafeRepository.SUPPORTED_SAFE_MASTER_COPIES.contains(masterCopy))
+                        if (SafeContractUtils.isSupported(masterCopy))
                             gnosisSafeRepository.pendingSafeToDeployedSafe(pendingSafe)
                         else
                             checkFunding(pendingSafe)

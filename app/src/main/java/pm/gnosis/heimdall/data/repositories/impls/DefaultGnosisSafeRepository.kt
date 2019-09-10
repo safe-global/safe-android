@@ -12,9 +12,7 @@ import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.crypto.utils.asEthereumAddressChecksumString
 import pm.gnosis.ethereum.*
 import pm.gnosis.heimdall.BuildConfig
-import pm.gnosis.heimdall.GnosisSafe
 import pm.gnosis.heimdall.GnosisSafe.*
-import pm.gnosis.heimdall.Proxy
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.db.ApplicationDb
 import pm.gnosis.heimdall.data.db.models.*
@@ -22,9 +20,9 @@ import pm.gnosis.heimdall.data.remote.RelayServiceApi
 import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation
 import pm.gnosis.heimdall.data.remote.models.RelaySafeCreationParams
 import pm.gnosis.heimdall.data.repositories.*
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository.Companion.CURRENT_MASTER_COPY
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
@@ -83,7 +81,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
         val paymentToken = response.paymentToken
         if (request.paymentToken != paymentToken)
             throw IllegalStateException("Unexpected payment token returned")
-        if (response.masterCopy != CURRENT_MASTER_COPY)
+        if (response.masterCopy != SafeContractUtils.currentMasterCopy())
             throw IllegalStateException("Unexpected master copy returned")
         if (response.proxyFactory != PROXY_FACTORY_ADDRESS)
             throw IllegalStateException("Unexpected proxy factory returned")
@@ -109,7 +107,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
         val salt = Sha3Utils.keccak(setupDataHash + Solidity.UInt256(request.saltNonce.toBigInteger()).encode().hexToByteArray())
 
 
-        val deploymentCode = PROXY_CODE + CURRENT_MASTER_COPY.encode()
+        val deploymentCode = PROXY_CODE + SafeContractUtils.currentMasterCopy().encode()
         val codeHash = Sha3Utils.keccak(deploymentCode.hexToByteArray())
         val create2Hash = Sha3Utils.keccak(byteArrayOf(0xff.toByte()) + PROXY_FACTORY_ADDRESS.value.toBytes(20) + salt + codeHash)
         val address = Solidity.Address(BigInteger(1, create2Hash.copyOfRange(12, 32)))

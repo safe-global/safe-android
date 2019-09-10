@@ -87,9 +87,4 @@ interface GnosisSafeRepository {
     fun saveOwner(safeAddress: Solidity.Address, safeOwner: AccountsRepository.SafeOwner): Completable
 
     fun sign(safeAddress: Solidity.Address, data: ByteArray): Single<Signature>
-
-    companion object {
-        val CURRENT_MASTER_COPY = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
-        val SUPPORTED_SAFE_MASTER_COPIES = BuildConfig.SUPPORTED_SAFE_MASTER_COPY_ADDRESSES.split(",").map { it.asEthereumAddress()!! }
-    }
 }

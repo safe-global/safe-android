@@ -14,14 +14,13 @@ import pm.gnosis.heimdall.data.preferences.PreferencesSafe
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository.Companion.CURRENT_MASTER_COPY
-import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository.Companion.SUPPORTED_SAFE_MASTER_COPIES
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.data.repositories.models.RecoveringSafe
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.heimdall.utils.scanToAdapterData
 import pm.gnosis.heimdall.utils.shortChecksumString
 import pm.gnosis.model.Solidity
@@ -103,8 +102,7 @@ class SafeMainViewModel @Inject constructor(
             }.firstOrError()
                 .flatMap { safeRepository.checkSafe(safe.address).firstOrError() }
                 .map { (masterCopy, isExtensionConnected) ->
-                    (if (masterCopy != CURRENT_MASTER_COPY && SUPPORTED_SAFE_MASTER_COPIES.contains(masterCopy)) CURRENT_MASTER_COPY else null) to
-                            isExtensionConnected
+                    SafeContractUtils.checkForUpdate(masterCopy) to isExtensionConnected
                 }
                 .mapToResult()
         else Single.just<Pair<Solidity.Address?, Boolean>>(null to false).mapToResult()

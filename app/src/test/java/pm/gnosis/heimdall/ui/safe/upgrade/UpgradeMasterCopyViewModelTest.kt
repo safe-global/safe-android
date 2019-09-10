@@ -29,6 +29,7 @@ import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel.ViewAction.ShowError
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Transaction
@@ -329,7 +330,7 @@ class UpgradeMasterCopyViewModelTest {
         given(tokenRepositoryMock.loadPaymentToken(MockUtils.any()))
             .willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         given(safeRepositoryMock.checkSafe(MockUtils.any()))
-            .willReturn(Observable.just("0xAC6072986E985aaBE7804695EC2d8970Cf7541A2".asEthereumAddress()!! to true))
+            .willReturn(Observable.just(TEST_MASTER_COPY to true))
         given(executionRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
             .willReturn(
                 Single.just(
@@ -381,9 +382,52 @@ class UpgradeMasterCopyViewModelTest {
             .assertValueAt(0) { assertNull(it.viewAction) }
 
         viewModel.next()
+        // Need to call estimate before
         stateObserver
-            .assertValueCount(2)
-            .assertValueAt(1) { assertTrue(it.viewAction is BaseStateViewModel.ViewAction.StartActivity) }
+            .assertValueCount(1)
+
+        given(tokenRepositoryMock.loadPaymentToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
+        given(safeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(TEST_MASTER_COPY to false))
+        viewModel.loadEstimates()
+
+        stateObserver
+            .assertValueCount(5)
+
+        viewModel.next()
+        // Needs successful estimate
+        stateObserver
+            .assertValueCount(5)
+
+        given(executionRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any()))
+            .willReturn(
+                Single.just(
+                    TransactionExecutionRepository.ExecuteInformation(
+                        TEST_TRANSACTION_HASH,
+                        TEST_TRANSACTION,
+                        TEST_OWNERS[2],
+                        TEST_OWNERS.size,
+                        TEST_OWNERS,
+                        SemVer(1, 0, 0),
+                        ERC20Token.ETHER_TOKEN.address,
+                        BigInteger.ONE,
+                        BigInteger.TEN,
+                        BigInteger.ZERO,
+                        BigInteger.ZERO,
+                        BigInteger.ZERO
+                    )
+                )
+            )
+
+        viewModel.loadEstimates()
+
+        stateObserver
+            .assertValueCount(8)
+        viewModel.next()
+        
+        println(stateObserver.values())
+        stateObserver
+            .assertValueCount(9)
+            .assertValueAt(8) { assertTrue(it.viewAction is BaseStateViewModel.ViewAction.StartActivity) }
 
         then(addressBookRepositoryMock).should().loadAddressBookEntry(TEST_SAFE)
         then(addressBookRepositoryMock).shouldHaveNoMoreInteractions()
@@ -416,5 +460,6 @@ class UpgradeMasterCopyViewModelTest {
             SafeTransaction(Transaction(Solidity.Address(BigInteger.ZERO), nonce = BigInteger.TEN), TransactionExecutionRepository.Operation.CALL)
         private val TEST_SIGNERS = listOf(BigInteger.valueOf(7), BigInteger.valueOf(13)).map { Solidity.Address(it) }
         private val TEST_OWNERS = TEST_SIGNERS + Solidity.Address(BigInteger.valueOf(5))
+        private val TEST_MASTER_COPY = "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2".asEthereumAddress()!!
     }
 }

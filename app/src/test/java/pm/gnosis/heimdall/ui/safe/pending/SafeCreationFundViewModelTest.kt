@@ -26,6 +26,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -397,7 +398,7 @@ class SafeCreationFundViewModelTest {
         val testObserver = TestObserver.create<Unit>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
 
-        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(GnosisSafeRepository.CURRENT_MASTER_COPY to false))
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(SafeContractUtils.currentMasterCopy() to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(MockUtils.any())).willReturn(Completable.complete())
 
@@ -426,7 +427,7 @@ class SafeCreationFundViewModelTest {
         given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any()))
             .willReturn(Observable.fromCallable {
                 if (shouldThrow) throw exception
-                GnosisSafeRepository.CURRENT_MASTER_COPY to true
+                SafeContractUtils.currentMasterCopy() to true
             })
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(MockUtils.any())).willReturn(Completable.complete())

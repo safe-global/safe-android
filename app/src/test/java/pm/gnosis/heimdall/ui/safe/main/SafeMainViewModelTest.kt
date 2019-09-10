@@ -25,6 +25,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.preferences.PreferencesSafe
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
@@ -33,6 +34,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.impls.capture
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Wei
@@ -643,7 +645,7 @@ class SafeMainViewModelTest {
     fun isConnectedToBrowserExtension() {
         val testObserver = TestObserver.create<Result<Pair<Solidity.Address?, Boolean>>>()
         given(safeRepository.observePendingTransactions(MockUtils.any())).willReturn(Flowable.just(emptyList()))
-        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(GnosisSafeRepository.CURRENT_MASTER_COPY to true))
+        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(SafeContractUtils.currentMasterCopy() to true))
 
         viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
 
@@ -672,14 +674,14 @@ class SafeMainViewModelTest {
         val testObserver = TestObserver.create<Result<Pair<Solidity.Address?, Boolean>>>()
         given(safeRepository.observePendingTransactions(MockUtils.any())).willReturn(Flowable.just(emptyList()))
         given(safeRepository.checkSafe(MockUtils.any()))
-            .willReturn(Observable.just(GnosisSafeRepository.SUPPORTED_SAFE_MASTER_COPIES.first() to false))
+            .willReturn(Observable.just(TEST_MASTER_COPY to false))
 
         viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
 
         then(safeRepository).should().observePendingTransactions(TEST_SAFE)
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
-        testObserver.assertResult(DataResult(GnosisSafeRepository.CURRENT_MASTER_COPY to false))
+        testObserver.assertResult(DataResult(SafeContractUtils.currentMasterCopy() to false))
     }
 
     @Test
@@ -767,5 +769,6 @@ class SafeMainViewModelTest {
         private val TEST_RECOVERING_SAFE = "0xb36574155395D41b92664e7A215103262a14244A".asEthereumAddress()!!
         private val TEST_PAYMENT_TOKEN = ERC20Token.ETHER_TOKEN.address
         private val TEST_PAYMENT_AMOUNT = Wei.ether("0.1").value
+        private val TEST_MASTER_COPY = BuildConfig.SAFE_MASTER_COPY_0_0_2.asEthereumAddress()!!
     }
 }
