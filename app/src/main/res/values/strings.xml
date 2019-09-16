@@ -524,4 +524,12 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="enter_pin">Enter the PIN of your Keycard.</string>
     <string name="pairing_failed_pin">Pairing failed: Incorrect PIN code.</string>
     <string name="pairing_failed_password">Pairing failed: Incorrect pairing password.</string>
+
+    <string name="three_steps">The three steps to security</string>
+    <string name="three_steps_1">Password protected app</string>
+    <string name="three_steps_2">2FA device (Optional)</string>
+    <string name="three_steps_3">Recovery phrase</string>
+    <string name="three_steps_1_desc">1. Set up password to protect this app</string>
+    <string name="three_steps_2_desc">2. (Optional) Set up a two-factor authentication method</string>
+    <string name="three_steps_3_desc">2. Securely store your recovery phrase to restore your Safe in case you loose access to this device</string>
 </resources>
