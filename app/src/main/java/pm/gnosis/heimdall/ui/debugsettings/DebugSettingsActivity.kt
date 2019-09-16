@@ -80,7 +80,7 @@ class DebugSettingsActivity : BaseActivity() {
                     toast("Devices paired successfully")
                     finish()
                 }, onError = {
-                    toast("Error sessionKey devices")
+                    toast("Error pairing devices")
                     Timber.e(it)
                 })
         })

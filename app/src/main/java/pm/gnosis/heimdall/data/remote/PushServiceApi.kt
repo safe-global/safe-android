@@ -11,7 +11,7 @@ interface PushServiceApi {
     @POST("v2/auth/")
     fun auth(@Body pushServiceAuth: PushServiceAuth): Completable
 
-    @POST("v1/sessionKey/")
+    @POST("v1/pairing/")
     fun pair(@Body pushServicePairing: PushServicePairing): Completable
 
     @POST("v1/notifications/")

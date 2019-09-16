@@ -7,7 +7,7 @@ import pm.gnosis.model.Solidity
 
 abstract class PairingContract : ViewModel() {
     /**
-     * @param signingSafe to indicate which key should be used for sessionKey. @null if a new key should be generated
+     * @param signingSafe to indicate which key should be used for pairing. @null if a new key should be generated
      */
     abstract fun pair(payload: String, signingSafe: Solidity.Address?): Single<Pair<AccountsRepository.SafeOwner, Solidity.Address>>
 }
