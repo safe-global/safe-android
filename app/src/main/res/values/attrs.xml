@@ -7,6 +7,8 @@
 
     <declare-styleable name="TwoStepPanel">
 
+        <attr name="disabled" format="boolean"/>
+
         <attr name="step" format="enum">
             <enum name="none" value="0" />
             <enum name="one" value="1" />
@@ -22,6 +24,19 @@
 
         <attr name="colorTextEnabled" format="color" />
         <attr name="colorTextDisabled" format="color" />
+
+    </declare-styleable>
+    
+    <declare-styleable name="StepIndicator">
+
+        <attr name="number" format="integer"/>
+        <attr name="label" format="string"/>
+        <attr name="stepState" format="enum">
+            <enum name="uncompleted_inactive" value="0" />
+            <enum name="uncompleted_active" value="1" />
+            <enum name="skipped" value="2" />
+            <enum name="completed" value="3" />
+        </attr>
 
     </declare-styleable>
 
