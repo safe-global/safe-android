@@ -248,7 +248,7 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="recover_safe_info_explainer">Please keep your Safe\'s address and recovery phrase ready, consisting of 12 unique words.</string>
     <string name="start_recovery">Start recovery</string>
     <string name="connected_extension">Connected Authenticator</string>
-    <string name="connect_browser_extension">Connect Authenticator</string>
+    <string name="connect_authenticator">Connect Authenticator</string>
     <string name="connect_extension_description">This transaction will connect this Safe with the Authenticator. Future transactions require confirmation from both devices.</string>
     <string name="pairing_first_step"><![CDATA[1. Download the <font color=#008c73>Authenticator</font>.]]></string>
     <string name="pairing_second_step">2. Scan the QR code in the Authenticator.</string>
@@ -481,4 +481,16 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="change_fee_method">Change fee payment method</string>
     <string name="pay_with">Pay with %s</string>
     <string name="choose_input_method">Choose input method</string>
+    <string name="contract_upgrade">Contract upgrade</string>
+    <string name="this_will_upgrade">This will upgrade \'%s\' to the latest version of the Gnosis Safe contract.</string>
+    <string name="upgrade_required">Security upgrade required</string>
+    <string name="security_upgrade_required">Upgrade to the latest audited smart contract version and make your funds even more secure!</string>
+    <string name="upgrade_now">Upgrade now</string>
+    <string name="insufficient_funds_please_add_tokenpayment">Insufficient funds. Please add %s to your Safe or choose a different token as the payment method.</string>
+    <string name="what_is_this_about">What is this about?</string>
+    <string name="we_performed_formal_verification">We performed formal verification of our smart contract. Upgrade now to take advantage of the highest security standards available.</string>
+    <string name="more_info_in_our_blog"><![CDATA[More info in our <font color=#008c73><u>blog.</u></font>]]></string>
+    <string name="why_upgrade">Why upgrade?</string>
+    <string name="current_version">The current version of your smart contract is outdated. If you don’t upgrade you’ll still be able to use your Safe, but we recommend upgrading now to enjoy the latest security updates.</string>
+    <string name="need_confirm_upgrade">You will need to confirm the smart contract upgrade just like a normal transaction. Please make sure your Safe has enough funds to pay the network fee.</string>
 </resources>

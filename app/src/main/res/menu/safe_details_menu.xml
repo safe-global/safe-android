@@ -17,7 +17,7 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/safe_details_menu_connect"
-        android:title="@string/connect_browser_extension"
+        android:title="@string/connect_authenticator"
         android:visible="false"
         app:showAsAction="never" />
     <item

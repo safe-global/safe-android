@@ -25,7 +25,7 @@ class DefaultTransactionTriggerManager @Inject constructor(
         transactionInfoRepository.parseTransactionData(transaction)
             .flatMapCompletable {
                 when (it) {
-                    is TransactionData.ConnectExtension -> notifySafeCreated(safeAddress, it.extension)
+                    is TransactionData.ConnectAuthenticator -> notifySafeCreated(safeAddress, it.extension)
                     else -> Completable.complete()
                 }
             }

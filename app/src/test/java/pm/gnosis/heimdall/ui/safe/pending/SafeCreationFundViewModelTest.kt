@@ -26,6 +26,7 @@ import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.PendingSafe
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -111,7 +112,7 @@ class SafeCreationFundViewModelTest {
             DataResult(
                 SafeCreationFundContract.CreationInfo(
                     pendingSafe.address.asEthereumAddressChecksumString(),
-                    ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN,  BigInteger.ZERO),
+                    ERC20TokenWithBalance(ERC20Token.ETHER_TOKEN, BigInteger.ZERO),
                     BigInteger.ONE,
                     safeQrCodeMock
                 )
@@ -190,7 +191,7 @@ class SafeCreationFundViewModelTest {
         val testObserver = TestObserver.create<Unit>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.ZERO), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
-        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(null to false))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
             .willReturn(Observable.just(listOf(ERC20Token.ETHER_TOKEN to BigInteger.valueOf(100))))
         given(gnosisSafeRepositoryMock.updatePendingSafe(MockUtils.any())).willReturn(Completable.complete())
@@ -220,7 +221,7 @@ class SafeCreationFundViewModelTest {
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         var enoughBalance = false
 
-        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(null to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
             .willReturn(Observable.fromCallable {
@@ -257,7 +258,7 @@ class SafeCreationFundViewModelTest {
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         var enoughBalance = false
 
-        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(null to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
             .willReturn(Observable.fromCallable {
@@ -292,7 +293,7 @@ class SafeCreationFundViewModelTest {
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         val exception = Exception()
 
-        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(null to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
             .willReturn(Observable.just(listOf(ERC20Token.ETHER_TOKEN to BigInteger.valueOf(100))))
@@ -324,7 +325,7 @@ class SafeCreationFundViewModelTest {
         var shouldThrow = true
         val exception = Exception()
 
-        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(null to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(gnosisSafeRepositoryMock.updatePendingSafe(MockUtils.any())).willReturn(Completable.complete())
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
@@ -362,7 +363,7 @@ class SafeCreationFundViewModelTest {
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
         var shouldReturnInvalid = true
 
-        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(null to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(gnosisSafeRepositoryMock.updatePendingSafe(MockUtils.any())).willReturn(Completable.complete())
         given(tokenRepositoryMock.loadTokenBalances(MockUtils.any(), MockUtils.any()))
@@ -397,7 +398,7 @@ class SafeCreationFundViewModelTest {
         val testObserver = TestObserver.create<Unit>()
         val pendingSafe = PendingSafe(Solidity.Address(BigInteger.TEN), ERC20Token.ETHER_TOKEN.address, BigInteger.ONE)
 
-        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(true to false))
+        given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any())).willReturn(Observable.just(SafeContractUtils.currentMasterCopy() to false))
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(MockUtils.any())).willReturn(Completable.complete())
 
@@ -426,7 +427,7 @@ class SafeCreationFundViewModelTest {
         given(gnosisSafeRepositoryMock.checkSafe(MockUtils.any()))
             .willReturn(Observable.fromCallable {
                 if (shouldThrow) throw exception
-                true to true
+                SafeContractUtils.currentMasterCopy() to true
             })
         given(gnosisSafeRepositoryMock.observePendingSafe(MockUtils.any())).willReturn(Flowable.just(pendingSafe))
         given(gnosisSafeRepositoryMock.pendingSafeToDeployedSafe(MockUtils.any())).willReturn(Completable.complete())

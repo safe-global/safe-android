@@ -22,12 +22,9 @@ android {
         // External Link
         buildConfigField javaTypes.STRING, "CHROME_EXTENSION_URL", asString(getKey("CHROME_EXTENSION_URL", "https://safe.gnosis.io/#personal"))
         // Contracts
-        buildConfigField javaTypes.STRING, "SUPPORTED_SAFE_MASTER_COPY_ADDRESSES", asString(getKey("SUPPORTED_SAFE_MASTER_COPY_ADDRESSES",
-                "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2," + // Version 0.0.2-alpha (Mainnet)
-                        "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af," + // Version 0.1.0 (All networks)
-                        "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A" // Version 1.0.0 (All networks)
-        ))
-        buildConfigField javaTypes.STRING, "CURRENT_SAFE_MASTER_COPY_ADDRESS", asString(getKey("CURRENT_SAFE_MASTER_COPY_ADDRESS", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A"))
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_0_2", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xAC6072986E985aaBE7804695EC2d8970Cf7541A2")) // Version 0.0.2-alpha (Mainnet)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_0_1_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0x8942595A2dC5181Df0465AF0D7be08c8f23C93af")) // Version 0.1.0 (All networks)
+        buildConfigField javaTypes.STRING, "SAFE_MASTER_COPY_1_0_0", asString(getKey("SAFE_MASTER_COPY_1_0_0", "0xb6029EA3B2c51D09a50B53CA8012FeEB05bDa35A")) // Version 1.0.0 (All networks)
         buildConfigField javaTypes.STRING, "PROXY_FACTORY_ADDRESS", asString(getKey("PROXY_FACTORY_ADDRESS", "0x12302fE9c02ff50939BaAaaf415fc226C078613C"))
         buildConfigField javaTypes.STRING, "MULTI_SEND_ADDRESS", asString(getKey("MULTI_SEND_ADDRESS", "0xe74d6af1670fb6560dd61ee29eb57c7bc027ce4e"))
         buildConfigField javaTypes.STRING, "ENS_REGISTRY", asString(getKey("ENS_REGISTRY", "0xe7410170f87102df0055eb195163a03b7f2bff4a"))

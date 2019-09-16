@@ -4,10 +4,11 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
-import pm.gnosis.heimdall.data.remote.models.RelaySafeCreation
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
+import pm.gnosis.utils.asEthereumAddress
 import java.math.BigInteger
 
 
@@ -22,10 +23,10 @@ interface GnosisSafeRepository {
 
     /**
      * Checks that at the passed address a valid safe exists. This is based on the proxy code and the master copy address
-     * First value of the pair indicates if it is a Safe
+     * First value of the pair is the current mastercopy
      * Second value of the pair indicates if a browser extension is attached
      */
-    fun checkSafe(address: Solidity.Address): Observable<Pair<Boolean, Boolean>>
+    fun checkSafe(address: Solidity.Address): Observable<Pair<Solidity.Address?, Boolean>>
 
     /**
      * Loads an abstract Safe (could be any type of Safe)

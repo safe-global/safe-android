@@ -18,6 +18,7 @@ import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract.CheckResult
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.svalinn.common.utils.DataResult
 import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
@@ -119,7 +120,7 @@ class CheckSafeViewModelTest {
     fun checkSafeInvalidSafe() {
         contextMock.mockGetString()
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
-        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
+        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(null to false))
 
         val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0x1f81fff89Bd57811983a35650296681f99C65C7E").subscribe(observer)
@@ -134,7 +135,7 @@ class CheckSafeViewModelTest {
     fun checkSafeValidSafeWithExtension() {
         contextMock.mockGetString()
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
-        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(true to true))
+        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(SafeContractUtils.currentMasterCopy() to true))
 
         val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0x1f81fff89Bd57811983a35650296681f99C65C7E").subscribe(observer)
@@ -149,7 +150,7 @@ class CheckSafeViewModelTest {
     fun checkSafeValidSafeWithoutExtension() {
         contextMock.mockGetString()
         given(safeRepoMock.loadAbstractSafe(MockUtils.any())).willReturn(Single.error(EmptyResultSetException("")))
-        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(true to false))
+        given(safeRepoMock.checkSafe(MockUtils.any())).willReturn(Observable.just(SafeContractUtils.currentMasterCopy() to false))
 
         val observer = TestObserver<Result<CheckResult>>()
         viewModel.checkSafe("0x1f81fff89Bd57811983a35650296681f99C65C7E").subscribe(observer)

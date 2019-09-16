@@ -25,16 +25,17 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
+import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.preferences.PreferencesSafe
 import pm.gnosis.heimdall.data.repositories.AddressBookRepository
 import pm.gnosis.heimdall.data.repositories.BridgeRepository
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
-import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
-import pm.gnosis.heimdall.data.repositories.models.ERC20Token
-import pm.gnosis.heimdall.data.repositories.models.PendingSafe
-import pm.gnosis.heimdall.data.repositories.models.Safe
+import pm.gnosis.heimdall.data.repositories.impls.capture
+import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.ui.base.Adapter
+import pm.gnosis.heimdall.utils.SafeContractUtils
+import pm.gnosis.model.Solidity
 import pm.gnosis.models.AddressBookEntry
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.common.utils.DataResult
@@ -642,72 +643,95 @@ class SafeMainViewModelTest {
 
     @Test
     fun isConnectedToBrowserExtension() {
-        val testObserver = TestObserver.create<Result<Boolean>>()
-        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(true to true))
+        val testObserver = TestObserver.create<Result<Pair<Solidity.Address?, Boolean>>>()
+        given(safeRepository.observePendingTransactions(MockUtils.any())).willReturn(Flowable.just(emptyList()))
+        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(SafeContractUtils.currentMasterCopy() to true))
 
-        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+        viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
 
+        then(safeRepository).should().observePendingTransactions(TEST_SAFE)
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
-        testObserver.assertResult(DataResult(true))
+        testObserver.assertResult(DataResult(null to true))
+    }
+
+    @Test
+    fun isConnectedToBrowserExtensionPendingTx() {
+        val testObserver = TestObserver.create<Result<Pair<Solidity.Address?, Boolean>>>()
+        val testFlowable = TestFlowableFactory<List<TransactionStatus>>()
+        given(safeRepository.observePendingTransactions(MockUtils.any())).willReturn(testFlowable.get())
+
+        viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
+
+        testFlowable.offer(listOf(TransactionStatus("id", 9, true)))
+        then(safeRepository).should().observePendingTransactions(TEST_SAFE)
+        then(safeRepository).shouldHaveNoMoreInteractions()
+        testObserver.assertEmpty()
     }
 
     @Test
     fun isNotConnectedToBrowserExtension() {
-        val testObserver = TestObserver.create<Result<Boolean>>()
-        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(true to false))
+        val testObserver = TestObserver.create<Result<Pair<Solidity.Address?, Boolean>>>()
+        given(safeRepository.observePendingTransactions(MockUtils.any())).willReturn(Flowable.just(emptyList()))
+        given(safeRepository.checkSafe(MockUtils.any()))
+            .willReturn(Observable.just(TEST_MASTER_COPY to false))
 
-        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+        viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
 
+        then(safeRepository).should().observePendingTransactions(TEST_SAFE)
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
-        testObserver.assertResult(DataResult(false))
+        testObserver.assertResult(DataResult(SafeContractUtils.currentMasterCopy() to false))
     }
 
     @Test
     fun isConnectedToBrowserExtensionIsNotSafe() {
-        val testObserver = TestObserver.create<Result<Boolean>>()
-        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(false to false))
+        val testObserver = TestObserver.create<Result<Pair<Solidity.Address?, Boolean>>>()
+        given(safeRepository.observePendingTransactions(MockUtils.any())).willReturn(Flowable.just(emptyList()))
+        given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.just(null to false))
 
-        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+        viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
 
+        then(safeRepository).should().observePendingTransactions(TEST_SAFE)
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
-        testObserver.assertResult(DataResult(false))
+        testObserver.assertResult(DataResult(null to false))
     }
 
     @Test
     fun isConnectedToBrowserExtensionIsPendingSafe() {
-        val testObserver = TestObserver.create<Result<Boolean>>()
+        val testObserver = TestObserver.create<Result<Pair<Solidity.Address?, Boolean>>>()
         val pendingSafe = PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT)
 
-        viewModel.isConnectedToBrowserExtension(pendingSafe).subscribe(testObserver)
+        viewModel.loadSafeConfig(pendingSafe).subscribe(testObserver)
 
         then(safeRepository).shouldHaveZeroInteractions()
-        testObserver.assertResult(DataResult(false))
+        testObserver.assertResult(DataResult(null to false))
     }
 
     @Test
     fun isConnectedToBrowserExtensionIsRecoveringSafe() {
-        val testObserver = TestObserver.create<Result<Boolean>>()
+        val testObserver = TestObserver.create<Result<Pair<Solidity.Address?, Boolean>>>()
         val recoveringSafe = testRecoveringSafe(
             TEST_RECOVERING_SAFE, TEST_TX_HASH, TEST_SAFE, gasToken = TEST_PAYMENT_TOKEN
         )
 
-        viewModel.isConnectedToBrowserExtension(recoveringSafe).subscribe(testObserver)
+        viewModel.loadSafeConfig(recoveringSafe).subscribe(testObserver)
 
         then(safeRepository).shouldHaveZeroInteractions()
-        testObserver.assertResult(DataResult(false))
+        testObserver.assertResult(DataResult(null to false))
     }
 
     @Test
     fun isConnectedToBrowserExtensionError() {
-        val testObserver = TestObserver.create<Result<Boolean>>()
+        val testObserver = TestObserver.create<Result<Pair<Solidity.Address?, Boolean>>>()
         val exception = IllegalStateException()
+        given(safeRepository.observePendingTransactions(MockUtils.any())).willReturn(Flowable.just(emptyList()))
         given(safeRepository.checkSafe(MockUtils.any())).willReturn(Observable.error(exception))
 
-        viewModel.isConnectedToBrowserExtension(Safe(TEST_SAFE)).subscribe(testObserver)
+        viewModel.loadSafeConfig(Safe(TEST_SAFE)).subscribe(testObserver)
 
+        then(safeRepository).should().observePendingTransactions(TEST_SAFE)
         then(safeRepository).should().checkSafe(TEST_SAFE)
         then(safeRepository).shouldHaveNoMoreInteractions()
         testObserver.assertResult(ErrorResult(exception))
@@ -745,5 +769,6 @@ class SafeMainViewModelTest {
         private val TEST_RECOVERING_SAFE = "0xb36574155395D41b92664e7A215103262a14244A".asEthereumAddress()!!
         private val TEST_PAYMENT_TOKEN = ERC20Token.ETHER_TOKEN.address
         private val TEST_PAYMENT_AMOUNT = Wei.ether("0.1").value
+        private val TEST_MASTER_COPY = BuildConfig.SAFE_MASTER_COPY_0_0_2.asEthereumAddress()!!
     }
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
@@ -33,6 +34,7 @@ import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressCon
 import pm.gnosis.heimdall.ui.safe.recover.safe.CheckSafeContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeContract
+import pm.gnosis.heimdall.ui.safe.upgrade.UpgradeMasterCopyContract
 import pm.gnosis.heimdall.ui.security.unlock.UnlockContract
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsContract
 import pm.gnosis.heimdall.ui.settings.general.changepassword.ChangePasswordContract
@@ -50,7 +52,7 @@ import pm.gnosis.heimdall.ui.walletconnect.link.WalletConnectLinkContract
 import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsContract
 
 @Module
-class ViewModule(val context: Context) {
+class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
     @Provides
     @ForView
     @ViewContext
@@ -202,6 +204,11 @@ class ViewModule(val context: Context) {
     @ForView
     fun providesUnlockContract(provider: ViewModelProvider) = provider[UnlockContract::class.java]
 
+    @ExperimentalCoroutinesApi
+    @Provides
+    @ForView
+    fun provideUpgradeMasterCopyContract(provider: ViewModelProvider) = provider[UpgradeMasterCopyContract::class.java]
+
     @Provides
     @ForView
     fun providesWalletConnectIntroContract(provider: ViewModelProvider) = provider[WalletConnectIntroContract::class.java]
@@ -217,10 +224,10 @@ class ViewModule(val context: Context) {
     @Provides
     @ForView
     fun providesViewModelProvider(factory: ViewModelProvider.Factory): ViewModelProvider {
-        return when (context) {
-            is Fragment -> ViewModelProviders.of(context, factory)
-            is FragmentActivity -> ViewModelProviders.of(context, factory)
-            else -> throw IllegalArgumentException("Unsupported context $context")
+        return when (val provider = viewModelProvider ?: context) {
+            is Fragment -> ViewModelProviders.of(provider, factory)
+            is FragmentActivity -> ViewModelProviders.of(provider, factory)
+            else -> throw IllegalArgumentException("Unsupported context $provider")
         }
     }
 }

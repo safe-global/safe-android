@@ -174,7 +174,7 @@ class TransactionStatusViewModelTest {
 
     @Test
     fun observeConnectExtension() {
-        val transactionData = TransactionData.ConnectExtension("0x42".asEthereumAddress()!!)
+        val transactionData = TransactionData.ConnectAuthenticator("0x42".asEthereumAddress()!!)
         testObserve(ERC20Token.ETHER_TOKEN.address, DataResult(ERC20Token.ETHER_TOKEN), transactionData, R.string.settings_change)
     }
 

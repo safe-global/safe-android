@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="pm.gnosis.heimdall">
 
@@ -19,9 +18,9 @@
         android:name="pm.gnosis.heimdall.HeimdallApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/WhiteTheme"
         tools:ignore="GoogleAppIndexingWarning">
@@ -209,7 +208,7 @@
             android:name=".ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity"
@@ -276,9 +275,20 @@
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
-        <activity android:name=".ui.safe.create.CreateSafePaymentTokenActivity"
+        <activity
+            android:name=".ui.safe.create.CreateSafePaymentTokenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
+
+        <activity
+            android:name=".ui.safe.upgrade.UpgradeMasterCopyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
+
+        <activity
+            android:name=".ui.safe.upgrade.UpgradeMasterCopyIntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/WhiteTheme" />
 
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>

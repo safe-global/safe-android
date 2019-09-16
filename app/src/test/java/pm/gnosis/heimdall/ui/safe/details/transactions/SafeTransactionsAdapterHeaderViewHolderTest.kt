@@ -421,8 +421,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(viewModel).shouldHaveNoMoreInteractions()
     }
 
-    @Test
-    fun testBindTransactionEntryReplaceRecoveryPhrase() {
+    private fun testSettingsEntry(entry: TransactionData, text: String) {
         context.mockGetString()
         context.mockGetColor()
         itemView.mockFindViewById(R.id.layout_safe_transactions_item_timestamp, timestampTextView)
@@ -438,13 +437,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
                     "id_1",
                     "chain_hash",
                     TEST_SAFE,
-                    TransactionData.ReplaceRecoveryPhrase(
-                        SafeTransaction(
-                            Transaction(
-                                address = Solidity.Address(100.toBigInteger())
-                            ), operation = TransactionExecutionRepository.Operation.DELEGATE_CALL
-                        )
-                    ),
+                    entry,
                     TEST_TIMESTAMP,
                     TEST_GAS_LIMIT,
                     TEST_GAS_PRICE,
@@ -472,7 +465,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
 
         assertNotNull(rxClickListener)
 
-        then(typeIconImageView).should().setImageResource(R.drawable.ic_transaction_white_24dp)
+        then(typeIconImageView).should().setImageResource(R.drawable.ic_transaction_settings)
         then(typeIconImageView).shouldHaveNoMoreInteractions()
 
         then(valueTextView).should().text = null
@@ -480,7 +473,7 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         then(valueTextView).should().setTextColor(R.color.blue)
         then(valueTextView).shouldHaveNoMoreInteractions()
 
-        then(infoTextView).should().text = R.string.replaced_recovery_phrase.toString()
+        then(infoTextView).should().text = text
         then(infoTextView).should().visibility = View.VISIBLE
         then(infoTextView).shouldHaveNoMoreInteractions()
 
@@ -512,6 +505,27 @@ class SafeTransactionsAdapterHeaderViewHolderTest {
         rxClickListener!!.onClick(itemView)
         then(transactionSubject).should().onNext("id_1")
         then(transactionSubject).shouldHaveNoMoreInteractions()
+    }
+
+    @Test
+    fun testBindTransactionEntryReplaceRecoveryPhrase() {
+        testSettingsEntry(TransactionData.ReplaceRecoveryPhrase(
+            SafeTransaction(
+                Transaction(
+                    address = Solidity.Address(100.toBigInteger())
+                ), operation = TransactionExecutionRepository.Operation.DELEGATE_CALL
+            )
+        ), R.string.replaced_recovery_phrase.toString())
+    }
+
+    @Test
+    fun testBindTransactionEntryUpdateMasterCopy() {
+        testSettingsEntry(TransactionData.UpdateMasterCopy(TEST_ADDRESS), R.string.contract_upgrade.toString())
+    }
+
+    @Test
+    fun testBindTransactionEntryConnectExtension() {
+        testSettingsEntry(TransactionData.ConnectAuthenticator(TEST_ADDRESS), R.string.connect_authenticator.toString())
     }
 
     @Test

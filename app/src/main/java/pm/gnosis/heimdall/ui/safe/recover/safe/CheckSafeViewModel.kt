@@ -8,6 +8,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
@@ -32,9 +33,9 @@ class CheckSafeViewModel @Inject constructor(
             .subscribeOn(Schedulers.computation())
             .flatMap(::checkSafeExists)
             .flatMap { safeRepository.checkSafe(it).firstOrError() }
-            .map { (isSafe, isExtensionConnected) ->
+            .map { (masterCopy, isExtensionConnected) ->
                 when {
-                    !isSafe -> CheckResult.INVALID_SAFE
+                    !SafeContractUtils.isSupported(masterCopy) -> CheckResult.INVALID_SAFE
                     !isExtensionConnected -> CheckResult.VALID_SAFE_WITHOUT_EXTENSION
                     else -> CheckResult.VALID_SAFE_WITH_EXTENSION
                 }

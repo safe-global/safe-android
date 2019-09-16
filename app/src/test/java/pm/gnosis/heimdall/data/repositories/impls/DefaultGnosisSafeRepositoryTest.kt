@@ -33,6 +33,7 @@ import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.TokenRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.SafeDeployment
+import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
@@ -541,6 +542,7 @@ class DefaultGnosisSafeRepositoryTest {
 
     @Test
     fun checkSafeInvalidMasterCopyThresholdTooLow() {
+        val masterCopy = "0xdeadbeef".asEthereumAddress()!!
         given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
             val bulk = it.arguments.first() as BulkRequest
             val requests = bulk.requests
@@ -548,14 +550,14 @@ class DefaultGnosisSafeRepositoryTest {
             assertEquals(TEST_SAFE, ethGetStorageAt.from)
             assertEquals(BigInteger.ZERO, ethGetStorageAt.location)
             assertEquals(Block.PENDING, ethGetStorageAt.block)
-            ethGetStorageAt.response = EthRequest.Response.Success("0xdeadbeef".asEthereumAddress()!!.encode())
+            ethGetStorageAt.response = EthRequest.Response.Success(masterCopy.encode())
 
             (requests[1] as EthCall).response = EthRequest.Response.Success(Solidity.UInt256(BigInteger.ONE).encode())
             Observable.just(bulk)
         }
-        val observer = TestObserver<Pair<Boolean, Boolean>>()
+        val observer = TestObserver<Pair<Solidity.Address?, Boolean>>()
         repository.checkSafe(TEST_SAFE).subscribe(observer)
-        observer.assertResult(false to false)
+        observer.assertResult(masterCopy to false)
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
     }
 
@@ -572,14 +574,15 @@ class DefaultGnosisSafeRepositoryTest {
             (requests[1] as EthCall).response = EthRequest.Response.Success(Solidity.UInt256(BigInteger.ONE).encode())
             Observable.just(bulk)
         }
-        val observer = TestObserver<Pair<Boolean, Boolean>>()
+        val observer = TestObserver<Pair<Solidity.Address?, Boolean>>()
         repository.checkSafe(TEST_SAFE).subscribe(observer)
-        observer.assertResult(false to false)
+        observer.assertResult(null to false)
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
     }
 
     @Test
     fun checkSafeThresholdFailure() {
+        val masterCopy = "0xdeadbeef".asEthereumAddress()!!
         given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
             val bulk = it.arguments.first() as BulkRequest
             val requests = bulk.requests
@@ -587,17 +590,18 @@ class DefaultGnosisSafeRepositoryTest {
             assertEquals(TEST_SAFE, ethGetStorageAt.from)
             assertEquals(BigInteger.ZERO, ethGetStorageAt.location)
             assertEquals(Block.PENDING, ethGetStorageAt.block)
-            ethGetStorageAt.response = EthRequest.Response.Success("0xdeadbeef".asEthereumAddress()!!.encode())
+            ethGetStorageAt.response = EthRequest.Response.Success(masterCopy.encode())
             (requests[1] as EthCall).response = EthRequest.Response.Failure("EVM error")
             Observable.just(bulk)
         }
-        val observer = TestObserver<Pair<Boolean, Boolean>>()
+        val observer = TestObserver<Pair<Solidity.Address?, Boolean>>()
         repository.checkSafe(TEST_SAFE).subscribe(observer)
-        observer.assertResult(false to false)
+        observer.assertResult(masterCopy to false)
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
     }
 
     private fun testMasterCopy(masterCopy: String, threshold: Int) {
+        val masterCopyAddress = masterCopy.asEthereumAddress()!!
         given(ethereumRepositoryMock.request(MockUtils.any<BulkRequest>())).will {
             val bulk = it.arguments.first() as BulkRequest
             val requests = bulk.requests
@@ -605,20 +609,24 @@ class DefaultGnosisSafeRepositoryTest {
             assertEquals(TEST_SAFE, ethGetStorageAt.from)
             assertEquals(BigInteger.ZERO, ethGetStorageAt.location)
             assertEquals(Block.PENDING, ethGetStorageAt.block)
-            ethGetStorageAt.response = EthRequest.Response.Success(masterCopy.asEthereumAddress()!!.encode())
+            ethGetStorageAt.response = EthRequest.Response.Success(masterCopyAddress.encode())
                 (requests[1] as EthCall).response = EthRequest.Response.Success(Solidity.UInt256(BigInteger.valueOf(threshold.toLong())).encode())
             Observable.just(bulk)
         }
-        val observer = TestObserver<Pair<Boolean, Boolean>>()
+        val observer = TestObserver<Pair<Solidity.Address?, Boolean>>()
         repository.checkSafe(TEST_SAFE).subscribe(observer)
-        observer.assertResult(true to true)
+        observer.assertResult(masterCopyAddress to true)
         then(ethereumRepositoryMock).should().request(MockUtils.any<BulkRequest>())
         Mockito.reset(ethereumRepositoryMock)
     }
 
     @Test
     fun checkSafe() {
-        val masterCopyAddresses = BuildConfig.SUPPORTED_SAFE_MASTER_COPY_ADDRESSES.split(",") + BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS
+        val masterCopyAddresses = listOf(
+            BuildConfig.SAFE_MASTER_COPY_0_0_2,
+            BuildConfig.SAFE_MASTER_COPY_0_1_0,
+            BuildConfig.SAFE_MASTER_COPY_1_0_0
+        )
         masterCopyAddresses.forEachIndexed { index, address -> testMasterCopy(address, index + 2) }
     }
 
@@ -648,7 +656,7 @@ class DefaultGnosisSafeRepositoryTest {
     companion object {
         private val TEST_SAFE = "0xdeadfeedbeaf".asEthereumAddress()!!
         private val TEST_TOKEN = ERC20Token(Solidity.Address(BigInteger.ONE), "Hello Token", "HT", 10)
-        private val MASTER_COPY_ADDRESS = BuildConfig.CURRENT_SAFE_MASTER_COPY_ADDRESS.asEthereumAddress()!!
+        private val MASTER_COPY_ADDRESS = SafeContractUtils.currentMasterCopy()
         private val PROXY_FACTORY_ADDRESS = BuildConfig.PROXY_FACTORY_ADDRESS.asEthereumAddress()!!
         private val ETHER_TOKEN = ERC20Token.ETHER_TOKEN
         private val PAYMENT_TOKEN = ERC20Token("0xdeadbeef".asEthereumAddress()!!, "Payment Token", "PT", 18)

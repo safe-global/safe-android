@@ -71,8 +71,6 @@ class SafeAdapterViewHolderTest {
 
     @Test
     fun bindWrongType() {
-        itemView.mockFindViewById(R.id.layout_safe_item_address, safeAddressTextView)
-        itemView.mockFindViewById(R.id.layout_safe_item_name, safeNameTextView)
         val safeObserver = TestObserver<AbstractSafe>()
         safeSubject.subscribe(safeObserver)
         viewHolder.bind(PendingSafe(TEST_PENDING_SAFE, TEST_PAYMENT_TOKEN, TEST_PAYMENT_AMOUNT), emptyList())

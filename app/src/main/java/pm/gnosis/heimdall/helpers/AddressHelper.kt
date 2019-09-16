@@ -21,6 +21,31 @@ import javax.inject.Singleton
 class AddressHelper @Inject constructor(
     private val addressBookRepository: AddressBookRepository
 ) {
+    fun buildAddressInfoSingle(
+        addressView: TextView,
+        nameView: TextView,
+        address: Solidity.Address
+    ) =
+        Single.fromCallable {
+            address.shortChecksumString() to address.asEthereumAddressChecksumString()
+        }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { (displayAddress, fullAddress) ->
+                addressView.text = displayAddress
+                addressView.setOnClickListener {
+                    AddressTooltip(addressView.context, fullAddress).showAsDropDown(addressView)
+                }
+            }
+            .flatMap {
+                addressBookRepository.loadAddressBookEntry(address).map { it.name }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess {
+                nameView.visible(true)
+                nameView.text = it
+            }
+
     fun populateAddressInfo(
         addressView: TextView,
         nameView: TextView,
@@ -28,29 +53,6 @@ class AddressHelper @Inject constructor(
         address: Solidity.Address
     ): List<Disposable> {
         imageView?.setAddress(address)
-        return listOf(
-            Single.fromCallable {
-                address.shortChecksumString() to address.asEthereumAddressChecksumString()
-            }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess { (displayAddress, fullAddress) ->
-                    addressView.text = displayAddress
-                    addressView.setOnClickListener {
-                        AddressTooltip(addressView.context, fullAddress).showAsDropDown(addressView)
-                    }
-                }
-                .flatMap {
-                    addressBookRepository.loadAddressBookEntry(address).map { it.name }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onSuccess = {
-                        nameView.visible(true)
-                        nameView.text = it
-                    },
-                    onError = Timber::e
-                )
-        )
+        return listOf(buildAddressInfoSingle(addressView, nameView, address).subscribeBy(onError = Timber::e))
     }
 }

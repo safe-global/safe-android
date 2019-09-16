@@ -174,16 +174,25 @@ class SafeTransactionsAdapter @Inject constructor(
                         infoText = context.getString(R.string.replaced_recovery_phrase),
                         valueText = null,
                         valueColor = R.color.blue,
-                        iconRes = R.drawable.ic_transaction_white_24dp
+                        iconRes = R.drawable.ic_transaction_settings
                     )
                 }
-                is TransactionData.ConnectExtension -> {
+                is TransactionData.ConnectAuthenticator -> {
                     updateViews(
                         address = info.safe,
-                        infoText = context.getString(R.string.connected_extension),
+                        infoText = context.getString(R.string.connect_authenticator),
                         valueText = null,
                         valueColor = R.color.blue,
-                        iconRes = R.drawable.ic_transaction_white_24dp
+                        iconRes = R.drawable.ic_transaction_settings
+                    )
+                }
+                is TransactionData.UpdateMasterCopy -> {
+                    updateViews(
+                        address = info.safe,
+                        infoText = context.getString(R.string.contract_upgrade),
+                        valueText = null,
+                        valueColor = R.color.blue,
+                        iconRes = R.drawable.ic_transaction_settings
                     )
                 }
             }

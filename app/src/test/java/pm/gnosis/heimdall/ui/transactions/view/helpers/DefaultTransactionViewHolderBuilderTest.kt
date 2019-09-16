@@ -11,10 +11,7 @@ import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.AssetTransferViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.ConnectExtensionViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.GenericTransactionViewHolder
-import pm.gnosis.heimdall.ui.transactions.view.viewholders.ReplaceRecoveryPhraseViewHolder
+import pm.gnosis.heimdall.ui.transactions.view.viewholders.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -40,7 +37,7 @@ class DefaultTransactionViewHolderBuilderTest {
     @Rule
     val rule = ImmediateSchedulersRule()
 
-    lateinit var builder: DefaultTransactionViewHolderBuilder
+    private lateinit var builder: DefaultTransactionViewHolderBuilder
 
     @Before
     fun setUp() {
@@ -114,8 +111,10 @@ class DefaultTransactionViewHolderBuilderTest {
                     TestData(TransactionData.AssetTransfer(TEST_ETHER_TOKEN, TEST_ETH_AMOUNT, TEST_ADDRESS)) { it is AssetTransferViewHolder },
             TransactionData.ReplaceRecoveryPhrase::class to
                     TestData(TransactionData.ReplaceRecoveryPhrase(REPLACE_RECOVERY_PHRASE_TX)) { it is ReplaceRecoveryPhraseViewHolder },
-            TransactionData.ConnectExtension::class to
-                    TestData(TransactionData.ConnectExtension(TEST_ADDRESS)) { it is ConnectExtensionViewHolder }
+            TransactionData.ConnectAuthenticator::class to
+                    TestData(TransactionData.ConnectAuthenticator(TEST_ADDRESS)) { it is ConnectAuthenticatorViewHolder },
+            TransactionData.UpdateMasterCopy::class to
+                    TestData(TransactionData.UpdateMasterCopy(TEST_ADDRESS)) { it is UpdateMasterCopyViewHolder }
         )
     }
 }

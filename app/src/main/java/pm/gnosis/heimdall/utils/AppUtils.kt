@@ -92,7 +92,7 @@ fun TextView.setupEtherscanTransactionUrl(transactionHash: String, @StringRes st
 }
 
 fun TextView.setupEtherscanTransactionUrl(transactionHash: String, text: String) {
-    setupEtherscanLink(context.getString(R.string.etherscan_transaction_url, transactionHash), text)
+    setupLink(context.getString(R.string.etherscan_transaction_url, transactionHash), text)
 }
 
 fun TextView.setupEtherscanAddressUrl(address: String, @StringRes stringId: Int) {
@@ -100,10 +100,10 @@ fun TextView.setupEtherscanAddressUrl(address: String, @StringRes stringId: Int)
 }
 
 fun TextView.setupEtherscanAddressUrl(address: String, text: String) {
-    setupEtherscanLink(context.getString(R.string.etherscan_address_url, address), text)
+    setupLink(context.getString(R.string.etherscan_address_url, address), text)
 }
 
-private fun TextView.setupEtherscanLink(url: String, text: String) {
+fun TextView.setupLink(url: String, text: String) {
     val linkDrawable = ContextCompat.getDrawable(this.context, R.drawable.ic_external_link)!!
     linkDrawable.setBounds(0, 0, linkDrawable.intrinsicWidth, linkDrawable.intrinsicHeight)
     this.text = SpannableStringBuilder(Html.fromHtml(text))

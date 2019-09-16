@@ -46,7 +46,11 @@ sealed class TransactionData : Parcelable {
 
     @Parcelize
     @TypeParceler<Solidity.Address, SolidityAddressParceler>
-    data class ConnectExtension(val extension: Solidity.Address) : TransactionData()
+    data class ConnectAuthenticator(val extension: Solidity.Address) : TransactionData()
+
+    @Parcelize
+    @TypeParceler<Solidity.Address, SolidityAddressParceler>
+    data class UpdateMasterCopy(val masterCopy: Solidity.Address) : TransactionData()
 
     fun addToBundle(bundle: Bundle) =
         bundle.let {
@@ -59,7 +63,8 @@ sealed class TransactionData : Parcelable {
             is Generic -> TYPE_GENERIC
             is AssetTransfer -> TYPE_ASSET_TRANSFER
             is ReplaceRecoveryPhrase -> TYPE_REPLACE_RECOVERY_PHRASE
-            is ConnectExtension -> TYPE_CONNECT_EXTENSION
+            is ConnectAuthenticator -> TYPE_CONNECT_EXTENSION
+            is UpdateMasterCopy -> TYPE_UPDATE_MASTER_COPY
         }
 
     companion object {
@@ -70,6 +75,7 @@ sealed class TransactionData : Parcelable {
         private const val TYPE_ASSET_TRANSFER = 1
         private const val TYPE_REPLACE_RECOVERY_PHRASE = 2
         private const val TYPE_CONNECT_EXTENSION = 3
+        private const val TYPE_UPDATE_MASTER_COPY = 4
 
         fun fromBundle(bundle: Bundle): TransactionData? =
             bundle.run {
@@ -77,7 +83,8 @@ sealed class TransactionData : Parcelable {
                     TYPE_GENERIC -> getParcelable<Generic>(EXTRA_DATA)
                     TYPE_ASSET_TRANSFER -> getParcelable<AssetTransfer>(EXTRA_DATA)
                     TYPE_REPLACE_RECOVERY_PHRASE -> getParcelable<ReplaceRecoveryPhrase>(EXTRA_DATA)
-                    TYPE_CONNECT_EXTENSION -> getParcelable<ConnectExtension>(EXTRA_DATA)
+                    TYPE_CONNECT_EXTENSION -> getParcelable<ConnectAuthenticator>(EXTRA_DATA)
+                    TYPE_UPDATE_MASTER_COPY -> getParcelable<UpdateMasterCopy>(EXTRA_DATA)
                     else -> throw IllegalArgumentException("Unknown transaction data type")
                 }
             }

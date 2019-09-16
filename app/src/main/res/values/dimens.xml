@@ -29,7 +29,7 @@
     <dimen name="divider_offset">4dp</dimen>
     <dimen name="navigation_item_padding">16dp</dimen>
     <dimen name="navigation_item_icon">32dp</dimen>
-    <dimen name="bottom_bar_height">46dp</dimen>
+    <dimen name="bottom_bar_height">48dp</dimen>
 
     <dimen name="primary_button_radius">6dp</dimen>
     <dimen name="round_button_radius">10dp</dimen>

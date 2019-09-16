@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/upgrade_master_copy_refresh"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/upgrade_master_copy_bottom_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/upgrade_master_copy_toolbar_background">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/upgrade_master_copy_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/upgrade_master_copy_image"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/contract_upgrade"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/upgrade_master_copy_fee_explainer"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:gravity="center"
+                    android:paddingStart="56dp"
+                    android:paddingEnd="56dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/upgrade_master_copy_image"
+                    tools:text="@string/this_will_upgrade" />
+
+                <View
+                    android:id="@+id/upgrade_master_copy_explainer_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/divider_width"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/divider"
+                    app:layout_constraintTop_toBottomOf="@id/upgrade_master_copy_fee_explainer" />
+
+                <TextView
+                    android:id="@+id/upgrade_master_copy_safe_balance_label"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/safe_balance"
+                    app:layout_constraintEnd_toStartOf="@+id/upgrade_master_copy_safe_balance_value"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/upgrade_master_copy_explainer_divider" />
+
+                <TextView
+                    android:id="@+id/upgrade_master_copy_safe_balance_value"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:fontFamily="monospace"
+                    android:gravity="end"
+                    android:paddingBottom="4dp"
+                    android:text="-"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/upgrade_master_copy_safe_balance_label"
+                    app:layout_constraintTop_toBottomOf="@+id/upgrade_master_copy_explainer_divider"
+                    tools:text="42.4242 ETH" />
+
+                <TextView
+                    android:id="@+id/upgrade_master_copy_fees_label"
+                    style="@style/NormalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="monospace-medium"
+                    android:paddingBottom="4dp"
+                    android:text="@string/transaction_fee"
+                    app:layout_constraintEnd_toStartOf="@+id/upgrade_master_copy_fees_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/upgrade_master_copy_safe_balance_value" />
+
+                <TextView
+                    android:id="@+id/upgrade_master_copy_fees_info"
+                    style="@style/NormalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/tip_link"
+                    android:textColor="@color/link"
+                    app:layout_constraintBottom_toBottomOf="@+id/upgrade_master_copy_fees_label"
+                    app:layout_constraintEnd_toStartOf="@+id/upgrade_master_copy_fees_value"
+                    app:layout_constraintStart_toEndOf="@+id/upgrade_master_copy_fees_label"
+                    app:layout_constraintTop_toTopOf="@+id/upgrade_master_copy_fees_label"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/upgrade_master_copy_fees_value"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="monospace"
+                    android:gravity="end"
+                    android:paddingBottom="4dp"
+                    android:text="-"
+                    android:textColor="@color/safe_green"
+                    app:layout_constraintEnd_toStartOf="@+id/upgrade_master_copy_fees_settings"
+                    app:layout_constraintStart_toEndOf="@+id/upgrade_master_copy_fees_info"
+                    app:layout_constraintTop_toBottomOf="@+id/upgrade_master_copy_safe_balance_value"
+                    tools:text="0.0023 ETH" />
+
+                <ImageView
+                    android:id="@+id/upgrade_master_copy_fees_settings"
+                    style="@style/NormalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selectable_background"
+                    android:fontFamily="monospace-medium"
+                    android:gravity="end"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="4dp"
+                    android:textColor="@color/safe_green"
+                    android:tint="@color/safe_green"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/upgrade_master_copy_fees_value"
+                    app:layout_constraintTop_toBottomOf="@+id/upgrade_master_copy_safe_balance_value"
+                    app:srcCompat="@drawable/ic_general_settings" />
+
+                <TextView
+                    android:id="@+id/upgrade_master_copy_safe_balance_after_transfer_label"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:paddingBottom="4dp"
+                    android:text="@string/balance_after_transfer"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/upgrade_master_copy_safe_balance_after_transfer_value"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/upgrade_master_copy_fees_label" />
+
+                <TextView
+                    android:id="@+id/upgrade_master_copy_safe_balance_after_transfer_value"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:fontFamily="monospace"
+                    android:gravity="end"
+                    android:paddingBottom="4dp"
+                    android:text="-"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/upgrade_master_copy_safe_balance_after_transfer_label"
+                    app:layout_constraintTop_toBottomOf="@+id/upgrade_master_copy_fees_value"
+                    tools:text="42.4242 ETH" />
+
+                <TextView
+                    android:id="@+id/upgrade_master_copy_fees_error"
+                    style="@style/NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:fontFamily="monospace-medium"
+                    android:gravity="start"
+                    android:text="@string/exceeds_funds"
+                    android:textColor="@color/tomato"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/upgrade_master_copy_safe_balance_after_transfer_label"
+                    tools:visibility="visible" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <View
+        android:id="@+id/upgrade_master_copy_toolbar_background"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/upgrade_master_copy_back_button"
+        android:layout_width="@dimen/toolbar_height"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <TextView
+        android:id="@+id/upgrade_master_copy_toolbar_title"
+        style="@style/Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingEnd="16dp"
+        android:text="@string/contract_upgrade"
+        android:textColor="@color/blue"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/upgrade_master_copy_back_button"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/upgrade_master_copy_bottom_bar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/bottom_bar_height"
+        android:background="@drawable/primary_button_full_width"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:enabled="true" />
+
+    <TextView
+        android:id="@+id/upgrade_master_copy_next"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@drawable/selectable_background"
+        android:drawablePadding="16dp"
+        android:gravity="center"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="@string/start"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/upgrade_master_copy_bottom_bar"
+        app:layout_constraintEnd_toEndOf="@+id/upgrade_master_copy_bottom_bar"
+        app:layout_constraintTop_toTopOf="@+id/upgrade_master_copy_bottom_bar"
+        tools:drawableEnd="@drawable/ic_arrow_forward_24dp"
+        tools:enabled="false" />
+
+    <View
+        android:id="@+id/upgrade_master_copy_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/upgrade_master_copy_toolbar_background" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

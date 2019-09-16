@@ -574,7 +574,6 @@ class DefaultRecoverSafeOwnersHelperTest {
 
     @Test
     fun processLoadPaymentTokenError() {
-        contextMock.mockGetString()
         val phraseSubject = PublishSubject.create<CharSequence>()
         val retrySubject = PublishSubject.create<Unit>()
         val createSubject = PublishSubject.create<Unit>()

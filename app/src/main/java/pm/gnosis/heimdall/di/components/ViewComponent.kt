@@ -40,6 +40,7 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFundFragment
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafePendingFragment
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeSubmitFragment
+import pm.gnosis.heimdall.ui.safe.upgrade.UpgradeMasterCopyActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockActivity
 import pm.gnosis.heimdall.ui.security.unlock.UnlockDialog
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
@@ -122,6 +123,7 @@ interface ViewComponent {
     fun inject(activity: SplashActivity)
     fun inject(activity: TransactionStatusActivity)
     fun inject(activity: UnlockActivity)
+    fun inject(activity: UpgradeMasterCopyActivity)
     fun inject(activity: WalletConnectIntroActivity)
     fun inject(activity: WalletConnectLinkActivity)
     fun inject(activity: WalletConnectSessionsActivity)
