@@ -17,6 +17,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlinx.android.synthetic.main.view_step_indicator_step.view.*
 import android.graphics.Shader.TileMode
+import kotlin.math.min
 
 
 class StepIndicator @JvmOverloads constructor(
@@ -141,6 +142,7 @@ class Step @JvmOverloads constructor(
         set(value) {
             circle.number = value
             field = value
+            invalidate()
         }
 
     var text: String = ""
@@ -278,9 +280,9 @@ class StepCircle @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val cx = canvas.width.toFloat() / 2
-        val cy = canvas.height.toFloat() / 2
-        val radius = Math.min(canvas.width.toFloat() / 2, canvas.height.toFloat() / 2)
+        val cx = width.toFloat() / 2
+        val cy = height.toFloat() / 2
+        val radius = min(width.toFloat() / 2, height.toFloat() / 2)
 
         // draw step circle shape
         canvas.drawCircle(cx, cy, radius, backgroundPaint)
@@ -289,7 +291,7 @@ class StepCircle @JvmOverloads constructor(
         when (state) {
 
             StepState.UNCOMPLETED_ACTIVE, StepState.UNCOMPLETED_INACTIVE -> {
-                canvas.drawText(number.toString(), cx - numberRect.width().toFloat() / 2, cy + numberRect.height().toFloat() / 2, textPaint)
+                canvas.drawText(number.toString(), cx - numberRect.width().toFloat() / 2, cy + numberRect.height().toFloat() / 4, textPaint)
             }
             StepState.SKIPPED -> {
                 // draw x
