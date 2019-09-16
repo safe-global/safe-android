@@ -30,7 +30,7 @@ class StepIndicator @JvmOverloads constructor(
         gravity = Gravity.CENTER
         backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         backgroundPaint.style = Paint.Style.FILL_AND_STROKE
-        backgroundPaint.strokeWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f, resources.displayMetrics)
+        backgroundPaint.strokeWidth = resources.getDimension(R.dimen.step_indicator_edge_width)
     }
 
     fun updateStep(index: Int, stepState: StepState) {
@@ -67,30 +67,17 @@ class StepIndicator @JvmOverloads constructor(
                 if (child1.state == StepState.UNCOMPLETED_INACTIVE || child1.state == StepState.SKIPPED) {
 
                     if (child2.state == StepState.UNCOMPLETED_INACTIVE || child2.state == StepState.SKIPPED)
-                        Pair(
-                            ContextCompat.getColor(context, R.color.disabled_button),
-                            ContextCompat.getColor(context, R.color.disabled_button)
-                        )
+                        ContextCompat.getColor(context, R.color.disabled_button) to ContextCompat.getColor(context, R.color.disabled_button)
                     else
-                        Pair(
-                            ContextCompat.getColor(context, R.color.disabled_button),
-                            ContextCompat.getColor(context, R.color.safe_green)
-                        )
+                        ContextCompat.getColor(context, R.color.disabled_button) to ContextCompat.getColor(context, R.color.safe_green)
 
                 } else {
 
                     if (child2.state == StepState.UNCOMPLETED_INACTIVE || child2.state == StepState.SKIPPED)
-                        Pair(
-                            ContextCompat.getColor(context, R.color.safe_green),
-                            ContextCompat.getColor(context, R.color.disabled_button)
-                        )
+                        ContextCompat.getColor(context, R.color.safe_green) to ContextCompat.getColor(context, R.color.disabled_button)
                     else
-                        Pair(
-                            ContextCompat.getColor(context, R.color.safe_green),
-                            ContextCompat.getColor(context, R.color.safe_green)
-                        )
+                        ContextCompat.getColor(context, R.color.safe_green) to ContextCompat.getColor(context, R.color.safe_green)
                 }
-
 
             val shader = LinearGradient(
                 child1.getCircleCenter().x + child1.radius(),
@@ -102,7 +89,7 @@ class StepIndicator @JvmOverloads constructor(
                 TileMode.CLAMP
             )
 
-            backgroundPaint.setShader(shader)
+            backgroundPaint.shader = shader
 
             canvas.drawLine(
                 child1.getCircleCenter().x + child1.radius(),
@@ -281,10 +268,6 @@ class StepCircle @JvmOverloads constructor(
 
     private fun applyAttributes(context: Context, a: TypedArray) {
         number = a.getInt(R.styleable.StepIndicator_number, 1)
-    }
-
-    private fun applyChanges() {
-
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

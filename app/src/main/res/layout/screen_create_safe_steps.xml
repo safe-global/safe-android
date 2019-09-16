@@ -127,9 +127,11 @@
 
             <pm.gnosis.heimdall.views.StepIndicator
                 android:id="@+id/steps_step_indicator"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <pm.gnosis.heimdall.views.Step
@@ -163,9 +165,9 @@
         android:id="@+id/steps_botton_panel"
         android:layout_width="match_parent"
         android:layout_height="46dp"
-        app:disabled="false"
         android:background="@drawable/two_step_panel"
         app:backVisible="false"
+        app:disabled="false"
         app:forwardLabel="@string/next"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
