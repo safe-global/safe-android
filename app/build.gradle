@@ -260,6 +260,7 @@ dependencies {
     implementation "com.squareup.picasso:picasso:$versions.picasso"
 
     // More
+    implementation "com.github.status-im.status-keycard-java:android:$versions.status_keycard"
     implementation "com.google.zxing:core:$versions.zxing"
     implementation "com.github.clans:fab:$versions.floating_action_button"
     implementation("me.zhanghai.android.materialprogressbar:library:$versions.material_progressbar") {
