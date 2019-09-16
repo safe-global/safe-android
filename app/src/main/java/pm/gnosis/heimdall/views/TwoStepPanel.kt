@@ -26,6 +26,7 @@ class TwoStepPanel @JvmOverloads constructor(
     var disabled: Boolean = false
         set(value) {
             field = value
+            isEnabled = !disabled
             setForwardEnabled(!disabled)
             setBackEnabled(!disabled)
             refreshDrawableState()
@@ -68,7 +69,6 @@ class TwoStepPanel @JvmOverloads constructor(
 
         forwardClicks = forward.clicks().filter { forwardEnabled }
         backClicks = back_icon.clicks().filter { backEnabled }
-
     }
 
     private fun readAttributesAndSetupFields(context: Context, attrs: AttributeSet?) {
@@ -86,7 +86,8 @@ class TwoStepPanel @JvmOverloads constructor(
 
     private fun applyAttributes(context: Context, a: TypedArray) {
         step = Step.from(a.getInt(R.styleable.TwoStepPanel_step, 0))
-        forwardLabel = a.getString(R.styleable.TwoStepPanel_forwardLabel)
+        forwardLabel = a.getString(R.styleable.TwoStepPanel_forwardLabel) ?: ""
+        disabled = a.getBoolean(R.styleable.TwoStepPanel_disabled, false)
 
         setForwardEnabled(a.getBoolean(R.styleable.TwoStepPanel_forwardEnabled, true))
         setBackEnabled(a.getBoolean(R.styleable.TwoStepPanel_backEnabled, true))

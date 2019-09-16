@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:drawable="@color/safe_green" app:state_disabled="false"/>
     <item android:drawable="@color/pale_grey" app:state_disabled="true" />
-    <item android:drawable="@color/safe_green" />
 </selector>
