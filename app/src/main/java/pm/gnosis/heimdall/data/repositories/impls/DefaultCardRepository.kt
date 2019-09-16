@@ -59,11 +59,16 @@ class DefaultCardRepository @Inject constructor(
         manager.init(initParams)
     }
 
-    override suspend fun pairCard(manager: CardRepository.CardManager, pairingParams: CardRepository.CardManager.PairingParams, label: String, keyIndex: BigInteger): Solidity.Address {
+    override suspend fun pairCard(
+        manager: CardRepository.CardManager,
+        pairingParams: CardRepository.CardManager.PairingParams,
+        label: String,
+        keyIndex: BigInteger
+    ): Solidity.Address {
         try {
             val status = manager.start()
             check(status is CardStatus.Initialized) { "Card not initialized" }
-            when(val info = getCardInfo(status.id)) {
+            when (val info = getCardInfo(status.id)) {
                 null -> {
                     addCardInfo(status.id, manager.pair(pairingParams), label)
                 }
@@ -82,8 +87,9 @@ class DefaultCardRepository @Inject constructor(
             return walletAddress
         } catch (e: Exception) {
             // In case of an error clear up all stored info
-            manager.clear()
-            (manager.status() as? CardStatus.Initialized)?.let { removeCardInfo(it.id) }
+            if (manager.clear()) {
+                (manager.status() as? CardStatus.Initialized)?.let { removeCardInfo(it.id) }
+            }
             throw e
         }
     }

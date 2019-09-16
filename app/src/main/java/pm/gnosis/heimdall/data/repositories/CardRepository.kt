@@ -48,7 +48,7 @@ interface CardRepository {
 
         fun sign(hash: ByteArray, keyPath: String): Pair<Solidity.Address, ECDSASignature>
 
-        fun clear()
+        fun clear(): Boolean
 
         sealed class CardStatus {
             object Uninitialized: CardStatus()

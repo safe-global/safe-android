@@ -70,8 +70,10 @@ class StatusKeyCardManager(private val cmdSet: KeycardCommandSet) : CardReposito
                 signature.run { ECDSASignature(r.asBigInteger(), s.asBigInteger()).apply { v = (recId + 27).toByte() } }
     }
 
-    override fun clear() {
-        if (cmdSet.pairing != null) cmdSet.autoUnpair()
+    override fun clear(): Boolean {
+        val unpair = cmdSet.pairing != null
+        if (unpair) cmdSet.autoUnpair()
+        return unpair
     }
 
     private fun ApplicationInfo.toStatus() =
