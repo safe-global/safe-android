@@ -10,20 +10,18 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.ui.recoveryphrase.ConfirmRecoveryPhraseActivity
-import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.getAuthenticatorInfo
+import pm.gnosis.heimdall.utils.put
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.toast
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
 import timber.log.Timber
 
 class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<CreateSafeConfirmRecoveryPhraseContract>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.setup(
-            intent.getStringExtra(EXTRA_BROWSER_EXTENSION_ADDRESS)?.run { asEthereumAddress()!! },
-            intent.getParcelableExtra(EXTRA_SAFE_OWNER)
-        )
+        val authenticatorInfo = intent.getAuthenticatorInfo()
+        viewModel.setup(authenticatorInfo?.address, authenticatorInfo?.safeOwner)
     }
 
     override fun isRecoveryPhraseConfirmed() {
@@ -49,19 +47,14 @@ class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<Cr
     override fun inject(component: ViewComponent) = component.inject(this)
 
     companion object {
-        private const val EXTRA_BROWSER_EXTENSION_ADDRESS = "extra.string.browser_extension_address"
-        private const val EXTRA_SAFE_OWNER = "extra.parcelable.safe_owner"
-
         fun createIntent(
             context: Context,
             recoveryPhrase: String,
-            browserExtensionAddress: Solidity.Address?,
-            safeOwner: AccountsRepository.SafeOwner?
+            authenticatorInfo: AuthenticatorInfo?
         ) =
             Intent(context, CreateSafeConfirmRecoveryPhraseActivity::class.java).apply {
                 putExtra(EXTRA_RECOVERY_PHRASE, recoveryPhrase)
-                putExtra(EXTRA_BROWSER_EXTENSION_ADDRESS, browserExtensionAddress?.asEthereumAddressString())
-                putExtra(EXTRA_SAFE_OWNER, safeOwner)
+                authenticatorInfo.put(this)
             }
     }
 }

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="@color/pale_grey_two">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/select_authenticator_scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/select_authenticator_setup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/select_authenticator_toolbar_background">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/select_authenticator_keycard_background"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/primary_button_full_width_white"
+                app:layout_constraintBottom_toBottomOf="@+id/select_authenticator_keycard_description"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <RadioButton
+                android:id="@+id/select_authenticator_keycard_radio"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="16dp"
+                android:checked="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/select_authenticator_keycard_img"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="16dp"
+                app:layout_constraintStart_toEndOf="@id/select_authenticator_keycard_radio"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/img_app" />
+
+            <TextView
+                android:id="@+id/select_authenticator_keycard_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:gravity="center"
+                android:minHeight="32dp"
+                android:text="Status Keycard"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/select_authenticator_keycard_img"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/select_authenticator_keycard_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="The Keycard is a smartcard you can use to safely receive, store and send cryptocurrencies."
+                app:layout_constraintTop_toBottomOf="@+id/select_authenticator_keycard_lbl" />
+
+            <View
+                android:id="@+id/select_authenticator_keycard_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/divider"
+                app:layout_constraintTop_toBottomOf="@id/select_authenticator_keycard_description" />
+
+            <View
+                android:id="@+id/select_authenticator_extension_background"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/primary_button_full_width_white"
+                app:layout_constraintBottom_toBottomOf="@+id/select_authenticator_extension_description"
+                app:layout_constraintTop_toBottomOf="@id/select_authenticator_keycard_divider" />
+
+            <RadioButton
+                android:id="@+id/select_authenticator_extension_radio"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/select_authenticator_keycard_divider"
+                tools:checked="true" />
+
+            <ImageView
+                android:id="@+id/select_authenticator_extension_img"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="16dp"
+                app:layout_constraintStart_toEndOf="@id/select_authenticator_extension_radio"
+                app:layout_constraintTop_toBottomOf="@id/select_authenticator_keycard_divider"
+                app:srcCompat="@drawable/img_app" />
+
+            <TextView
+                android:id="@+id/select_authenticator_extension_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:gravity="center"
+                android:minHeight="32dp"
+                android:text="Gnosis Safe Authenticator"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/select_authenticator_extension_img"
+                app:layout_constraintTop_toBottomOf="@id/select_authenticator_keycard_divider" />
+
+            <TextView
+                android:id="@+id/select_authenticator_extension_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="The Authenticator is an extension for Google Chrome connected to the Safe."
+                app:layout_constraintTop_toBottomOf="@+id/select_authenticator_extension_lbl" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:id="@+id/select_authenticator_toolbar_background"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/select_authenticator_back_button"
+        android:layout_width="@dimen/toolbar_height"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/selectable_circle_background"
+        android:padding="16dp"
+        android:tint="@color/blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_arrow_back_24dp" />
+
+    <TextView
+        android:id="@+id/select_authenticator_toolbar_title"
+        style="@style/Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/toolbar_height"
+        android:paddingEnd="16dp"
+        android:text="@string/connect_authenticator"
+        android:textColor="@color/blue"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/select_authenticator_back_button"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/select_authenticator_setup"
+        style="@style/PrimaryButton.Green.Round"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/use_selected_device"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/select_authenticator_toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_shadow_size"
+        android:background="@drawable/toolbar_dropshadow"
+        app:layout_constraintTop_toBottomOf="@id/select_authenticator_toolbar_background" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

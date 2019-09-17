@@ -10,11 +10,11 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
     private val accountsRepository: AccountsRepository
 ) : CreateSafeConfirmRecoveryPhraseContract() {
 
-    private var browserExtensionAddress: Solidity.Address? = null
+    private var authenticatorAddress: Solidity.Address? = null
     private var safeOwner: AccountsRepository.SafeOwner? = null
 
-    override fun setup(browserExtensionAddress: Solidity.Address?, safeOwner: AccountsRepository.SafeOwner?) {
-        this.browserExtensionAddress = browserExtensionAddress
+    override fun setup(authenticatorAddress: Solidity.Address?, safeOwner: AccountsRepository.SafeOwner?) {
+        this.authenticatorAddress = authenticatorAddress
         this.safeOwner = safeOwner
     }
 
@@ -23,7 +23,7 @@ class CreateSafeConfirmRecoveryPhraseViewModel @Inject constructor(
             .map { accounts ->
                 safeOwner to
                         listOfNotNull(
-                            browserExtensionAddress,
+                            authenticatorAddress,
                             accounts[0].address,
                             accounts[1].address
                         )

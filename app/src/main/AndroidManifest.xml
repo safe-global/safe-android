@@ -290,6 +290,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 
+        <activity
+            android:name=".ui.authenticator.SetupAuthenticatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
+
+        <activity
+            android:name=".ui.authenticator.SelectAuthenticatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
+
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

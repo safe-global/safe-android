@@ -1,0 +1,49 @@
+package pm.gnosis.heimdall.ui.authenticator
+
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import kotlinx.android.synthetic.main.layout_setup_authenticator.*
+import pm.gnosis.heimdall.R
+import pm.gnosis.heimdall.data.repositories.AccountsRepository
+import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.ui.base.BaseActivity
+import pm.gnosis.heimdall.ui.safe.create.CreateSafeRecoveryPhraseIntroActivity
+import pm.gnosis.heimdall.utils.getAuthenticatorInfo
+import pm.gnosis.model.Solidity
+
+class SetupAuthenticatorActivity : BaseActivity() {
+    override fun screenId() = ScreenId.SETUP_AUTHENTICATOR
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.layout_setup_authenticator)
+
+        setup_authenticator_back_button.setOnClickListener { onBackPressed() }
+        setup_authenticator_skip.setOnClickListener { onAddress(null, null) }
+        setup_authenticator_setup.setOnClickListener {
+            startActivityForResult(SelectAuthenticatorActivity.createIntent(this), AUTHENTICATOR_REQUEST_CODE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == AUTHENTICATOR_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                val (authenticatorAddress, safeOwner) = data.getAuthenticatorInfo()
+                onAddress(authenticatorAddress, safeOwner)
+            }
+        } else
+            super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun onAddress(authenticatorAddress: Solidity.Address?, safeOwner: AccountsRepository.SafeOwner?) {
+        startActivity(CreateSafeRecoveryPhraseIntroActivity.createIntent(this, authenticatorAddress = authenticatorAddress, safeOwner = safeOwner))
+    }
+
+    companion object {
+        private const val AUTHENTICATOR_REQUEST_CODE = 4242
+
+        fun createIntent(context: Context) = Intent(context, SetupAuthenticatorActivity::class.java)
+    }
+}
