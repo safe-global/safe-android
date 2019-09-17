@@ -320,7 +320,8 @@ class StepCircle @JvmOverloads constructor(
         when (state) {
 
             StepState.UNCOMPLETED_ACTIVE, StepState.UNCOMPLETED_INACTIVE -> {
-                canvas.drawText(number.toString(), cx - numberRect.width().toFloat() / 2, cy + numberRect.height().toFloat() / 4, textPaint)
+                //FIXME: preivew in android studio shows incorrect vertical alignment of this number label; on phone it works though
+                canvas.drawText(number.toString(), cx - numberRect.width().toFloat() / 2, cy + numberRect.height().toFloat() / 2, textPaint)
             }
             StepState.SKIPPED -> {
                 // draw x
