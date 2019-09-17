@@ -300,6 +300,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 
+        <activity
+            android:name=".ui.keycard.KeycardIntroActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
+
         <service android:name=".services.HeimdallFirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
