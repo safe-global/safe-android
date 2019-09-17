@@ -105,7 +105,7 @@ class StepIndicator @JvmOverloads constructor(
                         activeActiveEdgeColor
                 }
 
-            if (edgeShaders.size() < i) {
+            if (edgeShaders.size() <= i) {
                 edgeShaders.put(
                     i, LinearGradient(
                         child1.getCircleCenter().x + child1.radius(),
