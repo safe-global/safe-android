@@ -35,7 +35,7 @@ class FingerprintDialog : BaseDialog() {
     var successListener: ((Boolean) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setStyle(DialogFragment.STYLE_NO_FRAME, 0)
+        setStyle(STYLE_NO_FRAME, 0)
         super.onCreate(savedInstanceState)
         inject()
     }

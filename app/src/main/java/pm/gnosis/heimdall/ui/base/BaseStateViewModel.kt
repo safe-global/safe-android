@@ -29,6 +29,7 @@ abstract class BaseStateViewModel<T : BaseStateViewModel.State>(
     sealed class ViewAction {
         data class ShowError(val error: Throwable) : ViewAction()
         data class StartActivity(val intent: Intent) : ViewAction()
+        object CloseScreen : ViewAction()
     }
 
     @Suppress("LeakingThis")

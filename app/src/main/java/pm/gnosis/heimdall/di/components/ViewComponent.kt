@@ -10,6 +10,7 @@ import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
+import pm.gnosis.heimdall.ui.keycard.KeycardPairingDialog
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageActivity
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordConfirmActivity
@@ -134,4 +135,5 @@ interface ViewComponent {
     fun inject(dialog: FingerprintDialog)
     fun inject(dialog: SimpleAddressShareDialog)
     fun inject(dialog: UnlockDialog)
+    fun inject(dialog: KeycardPairingDialog)
 }
