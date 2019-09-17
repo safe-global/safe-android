@@ -40,6 +40,7 @@ ext {
             rxbinding                 : '2.1.1',
             rxjava                    : '2.2.1',
             rxkotlin                  : '2.3.0',
+            status_keycard            : '2.2.1',
             svalinn                   : 'v0.9.0',
             timber                    : '4.7.1',
             wallet_connect            : '0.9.3',
