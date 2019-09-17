@@ -74,6 +74,11 @@ class StepIndicator @JvmOverloads constructor(
         }
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        edgeShaders.clear()
+    }
+
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
 
@@ -100,7 +105,7 @@ class StepIndicator @JvmOverloads constructor(
                         activeActiveEdgeColor
                 }
 
-            if (edgeShaders.size() < childCount - 1) {
+            if (edgeShaders.size() < i) {
                 edgeShaders.put(
                     i, LinearGradient(
                         child1.getCircleCenter().x + child1.radius(),
