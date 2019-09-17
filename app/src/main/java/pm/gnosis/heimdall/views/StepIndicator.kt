@@ -17,6 +17,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlinx.android.synthetic.main.view_step_indicator_step.view.*
 import android.graphics.Shader.TileMode
+import android.util.SparseArray
 import kotlin.math.min
 
 
@@ -26,17 +27,34 @@ class StepIndicator @JvmOverloads constructor(
 
     private val backgroundPaint: Paint
 
+    private val inactiveInactiveEdgeColor: Pair<Int, Int>
+    private val inactiveActiveEdgeColor: Pair<Int, Int>
+    private val activeInactiveEdgeColor: Pair<Int, Int>
+    private val activeActiveEdgeColor: Pair<Int, Int>
+
+    private val edgeShaders: SparseArray<LinearGradient> = SparseArray()
+
     init {
         orientation = HORIZONTAL
         gravity = Gravity.CENTER
         backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         backgroundPaint.style = Paint.Style.FILL_AND_STROKE
         backgroundPaint.strokeWidth = resources.getDimension(R.dimen.step_indicator_edge_width)
+
+        inactiveInactiveEdgeColor =
+            ContextCompat.getColor(context, R.color.disabled_button) to ContextCompat.getColor(context, R.color.disabled_button)
+        inactiveActiveEdgeColor =
+            ContextCompat.getColor(context, R.color.disabled_button) to ContextCompat.getColor(context, R.color.safe_green)
+        activeInactiveEdgeColor =
+            ContextCompat.getColor(context, R.color.safe_green) to ContextCompat.getColor(context, R.color.disabled_button)
+        activeActiveEdgeColor =
+            ContextCompat.getColor(context, R.color.safe_green) to ContextCompat.getColor(context, R.color.safe_green)
     }
 
     fun updateStep(index: Int, stepState: StepState) {
         val step = getChildAt(index) as Step
         step.state = stepState
+        edgeShaders.clear()
         invalidate()
     }
 
@@ -59,38 +77,44 @@ class StepIndicator @JvmOverloads constructor(
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
 
+        var colorPair: Pair<Int, Int>
+
         for (i in 0 until childCount - 1) {
 
             val child1 = getChildAt(i) as Step
             val child2 = getChildAt(i + 1) as Step
 
-            val colorPair =
+            colorPair =
                 if (child1.state == StepState.UNCOMPLETED_INACTIVE || child1.state == StepState.SKIPPED) {
 
                     if (child2.state == StepState.UNCOMPLETED_INACTIVE || child2.state == StepState.SKIPPED)
-                        ContextCompat.getColor(context, R.color.disabled_button) to ContextCompat.getColor(context, R.color.disabled_button)
+                        inactiveInactiveEdgeColor
                     else
-                        ContextCompat.getColor(context, R.color.disabled_button) to ContextCompat.getColor(context, R.color.safe_green)
+                        inactiveActiveEdgeColor
 
                 } else {
 
                     if (child2.state == StepState.UNCOMPLETED_INACTIVE || child2.state == StepState.SKIPPED)
-                        ContextCompat.getColor(context, R.color.safe_green) to ContextCompat.getColor(context, R.color.disabled_button)
+                        activeInactiveEdgeColor
                     else
-                        ContextCompat.getColor(context, R.color.safe_green) to ContextCompat.getColor(context, R.color.safe_green)
+                        activeActiveEdgeColor
                 }
 
-            val shader = LinearGradient(
-                child1.getCircleCenter().x + child1.radius(),
-                child1.getCircleCenter().y,
-                child2.getCircleCenter().x - child2.radius(),
-                child2.getCircleCenter().y,
-                colorPair.first,
-                colorPair.second,
-                TileMode.CLAMP
-            )
+            if (edgeShaders.size() < childCount - 1) {
+                edgeShaders.put(
+                    i, LinearGradient(
+                        child1.getCircleCenter().x + child1.radius(),
+                        child1.getCircleCenter().y,
+                        child2.getCircleCenter().x - child2.radius(),
+                        child2.getCircleCenter().y,
+                        colorPair.first,
+                        colorPair.second,
+                        TileMode.CLAMP
+                    )
+                )
+            }
 
-            backgroundPaint.shader = shader
+            backgroundPaint.shader = edgeShaders[i]
 
             canvas.drawLine(
                 child1.getCircleCenter().x + child1.radius(),
