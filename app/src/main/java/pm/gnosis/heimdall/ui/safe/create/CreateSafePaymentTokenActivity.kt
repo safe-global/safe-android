@@ -25,9 +25,7 @@ import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
-import pm.gnosis.heimdall.utils.errorSnackbar
-import pm.gnosis.heimdall.utils.loadTokenImage
-import pm.gnosis.heimdall.utils.weak
+import pm.gnosis.heimdall.utils.*
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
@@ -40,7 +38,7 @@ import javax.inject.Inject
 abstract class CreateSafePaymentTokenContract : ViewModel() {
     abstract val state: LiveData<State>
 
-    abstract fun setup(deviceOwner: AccountsRepository.SafeOwner?, additionalOwners: List<Solidity.Address>)
+    abstract fun setup(authenticatorInfo: AuthenticatorInfo?, additionalOwners: List<Solidity.Address>)
 
     data class State(val paymentToken: ERC20Token?, val fee: BigInteger?, val canGoNext: Boolean, val viewAction: ViewAction?)
 
@@ -71,11 +69,11 @@ class CreateSafePaymentTokenViewModel @Inject constructor(
     /*
      * Setup logic
      */
-    private var deviceOwner: AccountsRepository.SafeOwner? = null
+    private var authenticatorInfo: AuthenticatorInfo? = null
     private lateinit var additionalOwners: List<Solidity.Address>
 
-    override fun setup(deviceOwner: AccountsRepository.SafeOwner?, additionalOwners: List<Solidity.Address>) {
-        this.deviceOwner = deviceOwner
+    override fun setup(authenticatorInfo: AuthenticatorInfo?, additionalOwners: List<Solidity.Address>) {
+        this.authenticatorInfo = authenticatorInfo
         this.additionalOwners = additionalOwners
     }
 
@@ -124,7 +122,7 @@ class CreateSafePaymentTokenViewModel @Inject constructor(
         if (deploymentJob?.get()?.isActive == true) return
         deploymentJob = weak(viewModelScope.launch(dispatchers.background + coroutineErrorHandler) {
             updateState { copy(canGoNext = false) }
-            val owner = deviceOwner ?: accountsRepository.createOwner().await()
+            val owner = authenticatorInfo?.safeOwner ?: accountsRepository.createOwner().await()
             val owners = listOf(owner.address) + additionalOwners
             val deploymentData = safeRepository.triggerSafeDeployment(owners, owners.size - 2).await()
             safeRepository.addPendingSafe(deploymentData.safe, null, deploymentData.payment, deploymentData.paymentToken).await()
@@ -153,7 +151,7 @@ class CreateSafePaymentTokenActivity : ViewModelActivity<CreateSafePaymentTokenC
                 finish()
                 return
             }
-        viewModel.setup(intent.getParcelableExtra(EXTRA_SAFE_OWNER), additionalOwners)
+        viewModel.setup(intent.getAuthenticatorInfo(), additionalOwners)
         viewModel.state.observe(this, Observer { state ->
             create_safe_payment_token_next_btn.isEnabled = state.canGoNext
             create_safe_payment_token_change_token_btn.isEnabled = state.canGoNext
@@ -189,15 +187,14 @@ class CreateSafePaymentTokenActivity : ViewModelActivity<CreateSafePaymentTokenC
 
     companion object {
         private const val EXTRA_ADDITIONAL_OWNERS = "extra.list_string.additional_owners"
-        private const val EXTRA_SAFE_OWNER = "extra.parcelable.safe_owner"
 
         fun createIntent(
             context: Context,
-            safeOwner: AccountsRepository.SafeOwner?,
+            authenticatorInfo: AuthenticatorInfo?,
             additionalOwners: List<Solidity.Address>
         ) =
             Intent(context, CreateSafePaymentTokenActivity::class.java).apply {
-                putExtra(EXTRA_SAFE_OWNER, safeOwner)
+                authenticatorInfo.put(this)
                 putStringArrayListExtra(EXTRA_ADDITIONAL_OWNERS, additionalOwners.mapTo(ArrayList()) { it.asEthereumAddressString() })
             }
     }

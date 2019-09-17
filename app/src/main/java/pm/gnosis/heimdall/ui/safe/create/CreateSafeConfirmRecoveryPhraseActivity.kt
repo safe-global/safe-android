@@ -7,7 +7,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.rxkotlin.subscribeBy
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.ui.recoveryphrase.ConfirmRecoveryPhraseActivity
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
@@ -20,8 +19,7 @@ import timber.log.Timber
 class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<CreateSafeConfirmRecoveryPhraseContract>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val authenticatorInfo = intent.getAuthenticatorInfo()
-        viewModel.setup(authenticatorInfo?.address, authenticatorInfo?.safeOwner)
+        viewModel.setup(intent.getAuthenticatorInfo())
     }
 
     override fun isRecoveryPhraseConfirmed() {
@@ -29,13 +27,13 @@ class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<Cr
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { bottomBarEnabled(false) }
             .subscribeBy(
-                onSuccess = { (deviceOwner, additionalOwners) -> onSafeOwners(deviceOwner, additionalOwners) },
+                onSuccess = { (authenticatorInfo, additionalOwners) -> onSafeOwners(authenticatorInfo, additionalOwners) },
                 onError = ::onSafeCreationError
             )
     }
 
-    private fun onSafeOwners(deviceOwner: AccountsRepository.SafeOwner?, additionalOwners: List<Solidity.Address>) {
-        startActivity(CreateSafePaymentTokenActivity.createIntent(this, deviceOwner, additionalOwners))
+    private fun onSafeOwners(authenticatorInfo: AuthenticatorInfo?, additionalOwners: List<Solidity.Address>) {
+        startActivity(CreateSafePaymentTokenActivity.createIntent(this, authenticatorInfo, additionalOwners))
     }
 
     private fun onSafeCreationError(throwable: Throwable) {

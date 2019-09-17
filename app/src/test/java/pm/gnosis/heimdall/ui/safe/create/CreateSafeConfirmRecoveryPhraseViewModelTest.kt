@@ -12,6 +12,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -50,42 +51,11 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
             .willReturn(Single.just(listOf(MNEMONIC_1_ADDRESS.asOwner(), MNEMONIC_2_ADDRESS.asOwner())))
 
-        viewModel.setup(null, null)
+        viewModel.setup(null)
 
-        val testObserver = TestObserver<Pair<AccountsRepository.SafeOwner?, List<Solidity.Address>>>()
+        val testObserver = TestObserver<Pair<AuthenticatorInfo?, List<Solidity.Address>>>()
         viewModel.loadOwnerData().subscribe(testObserver)
         testObserver.assertResult(null to listOf(MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
-
-        then(accountsRepositoryMock).should().createOwnersFromPhrase(RECOVERY_PHRASE, listOf(0, 1))
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun loadOwnerDataBrowserExtensionOnly() {
-        given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
-            .willReturn(Single.just(listOf(MNEMONIC_1_ADDRESS.asOwner(), MNEMONIC_2_ADDRESS.asOwner())))
-
-        viewModel.setup(BROWSER_EXTENSION_ADDRESS, null)
-
-        val testObserver = TestObserver<Pair<AccountsRepository.SafeOwner?, List<Solidity.Address>>>()
-        viewModel.loadOwnerData().subscribe(testObserver)
-        testObserver.assertResult(null to listOf(BROWSER_EXTENSION_ADDRESS, MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
-
-        then(accountsRepositoryMock).should().createOwnersFromPhrase(RECOVERY_PHRASE, listOf(0, 1))
-        then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
-    }
-
-    @Test
-    fun loadOwnerDataOwnerOnly() {
-        given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
-            .willReturn(Single.just(listOf(MNEMONIC_1_ADDRESS.asOwner(), MNEMONIC_2_ADDRESS.asOwner())))
-
-        val deviceOwner = DEVICE_OWNER_ADDRESS.asOwner()
-        viewModel.setup(null, deviceOwner)
-
-        val testObserver = TestObserver<Pair<AccountsRepository.SafeOwner?, List<Solidity.Address>>>()
-        viewModel.loadOwnerData().subscribe(testObserver)
-        testObserver.assertResult(deviceOwner to listOf(MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
 
         then(accountsRepositoryMock).should().createOwnersFromPhrase(RECOVERY_PHRASE, listOf(0, 1))
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -97,11 +67,12 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             .willReturn(Single.just(listOf(MNEMONIC_1_ADDRESS.asOwner(), MNEMONIC_2_ADDRESS.asOwner())))
 
         val deviceOwner = DEVICE_OWNER_ADDRESS.asOwner()
-        viewModel.setup(BROWSER_EXTENSION_ADDRESS, deviceOwner)
+        val info = AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, BROWSER_EXTENSION_ADDRESS, deviceOwner)
+        viewModel.setup(info)
 
-        val testObserver = TestObserver<Pair<AccountsRepository.SafeOwner?, List<Solidity.Address>>>()
+        val testObserver = TestObserver<Pair<AuthenticatorInfo?, List<Solidity.Address>>>()
         viewModel.loadOwnerData().subscribe(testObserver)
-        testObserver.assertResult(deviceOwner to listOf(BROWSER_EXTENSION_ADDRESS, MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
+        testObserver.assertResult(info to listOf(BROWSER_EXTENSION_ADDRESS, MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
 
         then(accountsRepositoryMock).should().createOwnersFromPhrase(RECOVERY_PHRASE, listOf(0, 1))
         then(accountsRepositoryMock).shouldHaveNoMoreInteractions()
@@ -113,9 +84,10 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
             .willReturn(Single.error(error))
 
-        viewModel.setup(BROWSER_EXTENSION_ADDRESS, DEVICE_OWNER_ADDRESS.asOwner())
+        val info = AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, BROWSER_EXTENSION_ADDRESS, DEVICE_OWNER_ADDRESS.asOwner())
+        viewModel.setup(info)
 
-        val testObserver = TestObserver<Pair<AccountsRepository.SafeOwner?, List<Solidity.Address>>>()
+        val testObserver = TestObserver<Pair<AuthenticatorInfo?, List<Solidity.Address>>>()
         viewModel.loadOwnerData().subscribe(testObserver)
         testObserver.assertFailure(Predicate { it == error })
 
