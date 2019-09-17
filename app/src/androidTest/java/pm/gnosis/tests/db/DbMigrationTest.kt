@@ -76,10 +76,23 @@ class DbMigrationTest {
             encryptedByteArrayConverter.fromStorage("encrypted_key")
         )
 
-        // Re-open the database with version 2 and provide MIGRATION_1_2 as the migration process.
-        migrationTestHelper.runMigrationsAndValidate(
+        // Re-open the database with version 3 and provide MIGRATION_2_3 as the migration process.
+        val db3 = migrationTestHelper.runMigrationsAndValidate(
             TEST_DB_NAME, 3, true,
             ApplicationDb.MIGRATION_2_3
+        )
+
+        db3.insertSafeInfo(
+            TEST_SAFE_2_ADDRESS,
+            TEST_OWNER_ADDRESS.asEthereumAddress()!!,
+            encryptedByteArrayConverter.fromStorage("encrypted_key_2"),
+            TEST_TOKEN
+        )
+
+        // Re-open the database with version 4 and provide MIGRATION_3_4 as the migration process.
+        migrationTestHelper.runMigrationsAndValidate(
+            TEST_DB_NAME, 4, true,
+            ApplicationDb.MIGRATION_3_4
         )
 
         // Get the latest, migrated, version of the database
@@ -107,6 +120,20 @@ class DbMigrationTest {
             assertEquals(null, it.paymentTokenIcon)
             true
         }
+
+        val safe2InfoObserver = TestObserver<GnosisSafeInfoDb>()
+        migratedDb.gnosisSafeDao().loadSafeInfo(TEST_SAFE_2_ADDRESS).subscribe(safe2InfoObserver)
+        safe2InfoObserver.assertValueCount(1).assertNoErrors().assertValue {
+            assertEquals(TEST_SAFE_2_ADDRESS, it.safeAddress)
+            assertEquals(TEST_OWNER_ADDRESS.asEthereumAddress()!!, it.ownerAddress)
+            assertEquals("encrypted_key_2", encryptedByteArrayConverter.toStorage(it.ownerPrivateKey))
+            assertEquals(TEST_TOKEN.address, it.paymentTokenAddress)
+            assertEquals(TEST_TOKEN.symbol, it.paymentTokenSymbol)
+            assertEquals(TEST_TOKEN.name, it.paymentTokenName)
+            assertEquals(TEST_TOKEN.decimals, it.paymentTokenDecimals)
+            assertEquals(TEST_TOKEN.logoUrl, it.paymentTokenIcon)
+            true
+        }
     }
 
     private fun getMigratedRoomDatabase(): ApplicationDb {
@@ -121,11 +148,20 @@ class DbMigrationTest {
         return database
     }
 
-    private fun SupportSQLiteDatabase.insertSafeInfo(safeAddress: Solidity.Address, ownerAddress: Solidity.Address, ownerKey: EncryptedByteArray) {
+    private fun SupportSQLiteDatabase.insertSafeInfo(
+        safeAddress: Solidity.Address, ownerAddress: Solidity.Address, ownerKey: EncryptedByteArray, paymentToken: ERC20Token? = null
+    ) {
         val values = ContentValues()
         values.put(GnosisSafeInfoDb.COL_SAFE_ADDRESS, safeAddress.asEthereumAddressString())
         values.put(GnosisSafeInfoDb.COL_OWNER_ADDRESS, ownerAddress.asEthereumAddressString())
         values.put(GnosisSafeInfoDb.COL_OWNER_PRIVATE_KEY, encryptedByteArrayConverter.toStorage(ownerKey))
+        paymentToken?.let {
+            values.put(GnosisSafeInfoDb.COL_PAYMENT_TOKEN_ADDRESS, paymentToken.address.asEthereumAddressString())
+            values.put(GnosisSafeInfoDb.COL_PAYMENT_TOKEN_SYMBOL, paymentToken.symbol)
+            values.put(GnosisSafeInfoDb.COL_PAYMENT_TOKEN_NAME, paymentToken.name)
+            values.put(GnosisSafeInfoDb.COL_PAYMENT_TOKEN_DECIMALS, paymentToken.decimals)
+            values.put(GnosisSafeInfoDb.COL_PAYMENT_TOKEN_ICON, paymentToken.logoUrl)
+        }
         insert(GnosisSafeInfoDb.TABLE_NAME, SQLiteDatabase.CONFLICT_REPLACE, values)
     }
 
@@ -146,10 +182,13 @@ class DbMigrationTest {
     }
 
     companion object {
-        const val TEST_DB_NAME = "test-gnosis-safe-db"
-        const val TEST_SAFE_ADDRESS = "0x1"
-        const val TEST_PENDING_SAFE_ADDRESS = "0x2"
-        const val TEST_OWNER_ADDRESS = "0x71De9579cD3857ce70058a1ce19e3d8894f65Ab9"
+        private const val TEST_DB_NAME = "test-gnosis-safe-db"
+        private const val TEST_SAFE_ADDRESS = "0x1"
+        private const val TEST_PENDING_SAFE_ADDRESS = "0x2"
+        private const val TEST_OWNER_ADDRESS = "0x71De9579cD3857ce70058a1ce19e3d8894f65Ab9"
+        private val TEST_SAFE_2_ADDRESS = "0x11".asEthereumAddress()!!
+        private val TEST_TOKEN_ADDRESS = "0xa7e15e2e76ab469f8681b576cff168f37aa246ec".asEthereumAddress()!!
+        private val TEST_TOKEN = ERC20Token(TEST_TOKEN_ADDRESS, "Test Token", "TT", 10, "")
     }
 }
 

@@ -17,6 +17,7 @@ import pm.gnosis.utils.asEthereumAddressString
 @Database(
     entities = [
         AddressBookEntryDb::class,
+        AuthenticatorInfoDb::class,
         ERC20TokenDb::class,
         GnosisSafeInfoDb::class,
         GnosisSafeDb::class,
@@ -24,7 +25,7 @@ import pm.gnosis.utils.asEthereumAddressString
         RecoveringGnosisSafeDb::class,
         TransactionDescriptionDb::class,
         TransactionPublishStatusDb::class
-    ], version = 3
+    ], version = 4
 )
 @TypeConverters(BigIntegerConverter::class, SolidityAddressConverter::class, WeiConverter::class, EncryptedByteArray.Converter::class)
 abstract class ApplicationDb : RoomDatabase() {
@@ -77,6 +78,17 @@ abstract class ApplicationDb : RoomDatabase() {
             }
         }
 
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """CREATE TABLE IF NOT EXISTS `${AuthenticatorInfoDb.TABLE_NAME}`
+                            (`${AuthenticatorInfoDb.COL_ADDRESS}` TEXT NOT NULL,
+                            `${AuthenticatorInfoDb.COL_TYPE}` INTEGER NOT NULL,
+                            `${AuthenticatorInfoDb.COL_KEY_INDEX}` TEXT,
+                            PRIMARY KEY(`${AuthenticatorInfoDb.COL_ADDRESS}`))"""
+                )
+            }
+        }
     }
 
     abstract fun addressBookDao(): AddressBookDao
