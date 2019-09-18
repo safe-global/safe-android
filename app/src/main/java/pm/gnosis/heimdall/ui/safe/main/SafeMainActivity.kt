@@ -19,7 +19,6 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.dialog_content_edit_name.view.*
 import kotlinx.android.synthetic.main.layout_safe_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import pm.gnosis.crypto.utils.Sha3Utils
 import pm.gnosis.heimdall.BuildConfig
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.models.AbstractSafe
@@ -29,11 +28,10 @@ import pm.gnosis.heimdall.data.repositories.models.Safe
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.Event
 import pm.gnosis.heimdall.reporting.ScreenId
+import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.base.Adapter
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
-import pm.gnosis.heimdall.ui.keycard.KeycardPairingDialog
-import pm.gnosis.heimdall.ui.keycard.KeycardSigningDialog
 import pm.gnosis.heimdall.ui.safe.connect.ConnectExtensionActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.details.SafeDetailsFragment
@@ -47,6 +45,7 @@ import pm.gnosis.heimdall.ui.safe.recover.safe.RecoverSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.recover.safe.submit.RecoveringSafeFragment
 import pm.gnosis.heimdall.ui.safe.upgrade.UpgradeMasterCopyIntroActivity
 import pm.gnosis.heimdall.ui.settings.general.GeneralSettingsActivity
+import pm.gnosis.heimdall.ui.tokens.manage.ManageTokensActivity
 import pm.gnosis.heimdall.ui.tokens.payment.PaymentTokensActivity
 import pm.gnosis.heimdall.ui.walletconnect.intro.WalletConnectIntroActivity
 import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivity
@@ -57,9 +56,7 @@ import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.*
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.toHex
 import timber.log.Timber
-import java.math.BigInteger
 import javax.inject.Inject
 
 class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
@@ -166,15 +163,12 @@ class SafeMainActivity : ViewModelActivity<SafeMainContract>() {
         }
 
         layout_safe_main_address_book.setOnClickListener {
-            KeycardPairingDialog().show(supportFragmentManager, null)
-            //startActivity(AddressBookActivity.createIntent(this))
+            startActivity(AddressBookActivity.createIntent(this))
             closeDrawer()
         }
 
         layout_safe_main_tokens.setOnClickListener {
-            KeycardSigningDialog.create(Solidity.Address(BigInteger.ZERO), Sha3Utils.sha3("I am fucking tired".toByteArray()).toHex())
-                .show(supportFragmentManager, null)
-            //startActivity(ManageTokensActivity.createIntent(this))
+            startActivity(ManageTokensActivity.createIntent(this))
             closeDrawer()
         }
 
