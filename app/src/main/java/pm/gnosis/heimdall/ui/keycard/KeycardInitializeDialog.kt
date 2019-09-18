@@ -7,18 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import im.status.keycard.applet.KeycardCommandSet
-import im.status.keycard.io.CardChannel
-import im.status.keycard.io.CardListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.rx2.await
-import kotlinx.coroutines.suspendCancellableCoroutine
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
@@ -31,11 +27,10 @@ import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.toKeyIndex
 import pm.gnosis.svalinn.common.utils.transaction
-import timber.log.Timber
 import javax.inject.Inject
-import kotlin.math.absoluteValue
 
 @ExperimentalCoroutinesApi
 abstract class KeycardInitializeContract(
@@ -56,7 +51,7 @@ abstract class KeycardInitializeContract(
             override fun withAction(viewAction: ViewAction?) = copy(viewAction = viewAction)
         }
 
-        data class InitializationDone(val authenticatorInfo: AuthenticatorInfo, override var viewAction: ViewAction?) : State() {
+        data class InitializationDone(val authenticatorInfo: AuthenticatorSetupInfo, override var viewAction: ViewAction?) : State() {
             override fun withAction(viewAction: ViewAction?) = copy(viewAction = viewAction)
         }
 
@@ -101,11 +96,13 @@ class KeycardInitializeViewModel @Inject constructor(
                             "",
                             keyIndex
                         )
-                        val authenticatorInfo = AuthenticatorInfo(
-                            AuthenticatorInfo.Type.KEYCARD,
-                            cardAddress,
+                        val authenticatorInfo = AuthenticatorSetupInfo(
                             safeOwner,
-                            keyIndex
+                            AuthenticatorInfo(
+                                AuthenticatorInfo.Type.KEYCARD,
+                                cardAddress,
+                                keyIndex
+                            )
                         )
                         updateState { State.InitializationDone(authenticatorInfo, null) }
                     } catch (e: Exception) {
@@ -237,7 +234,7 @@ class KeycardInitializeDialog private constructor() : DialogFragment() {
     }
 
     interface PairingCallback {
-        fun onPaired(authenticatorInfo: AuthenticatorInfo)
+        fun onPaired(authenticatorInfo: AuthenticatorSetupInfo)
     }
 
     companion object {

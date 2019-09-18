@@ -6,10 +6,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
-import pm.gnosis.heimdall.data.repositories.PushServiceRepository
-import pm.gnosis.heimdall.data.repositories.TokenRepository
-import pm.gnosis.heimdall.data.repositories.TransactionData
-import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
+import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
@@ -17,6 +14,7 @@ import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.Events
 import pm.gnosis.heimdall.ui.transactions.view.helpers.SubmitTransactionHelper.ViewUpdate
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.heimdall.utils.emitAndNext
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
@@ -25,6 +23,7 @@ import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.svalinn.common.utils.mapToResult
 import pm.gnosis.utils.addHexPrefix
+import pm.gnosis.utils.nullOnThrow
 import pm.gnosis.utils.toHexString
 import timber.log.Timber
 import java.math.BigInteger
@@ -56,6 +55,7 @@ interface SubmitTransactionHelper {
         ) : ViewUpdate()
 
         object EstimateError : ViewUpdate()
+        data class RequireConfirmations(val authenticatorInfo: AuthenticatorInfo, val hash: String) : ViewUpdate()
         data class Confirmations(val isReady: Boolean) : ViewUpdate()
         object ConfirmationsRequested : ViewUpdate()
         object ConfirmationsError : ViewUpdate()
@@ -66,6 +66,7 @@ interface SubmitTransactionHelper {
 
 class DefaultSubmitTransactionHelper @Inject constructor(
     private val executionRepository: TransactionExecutionRepository,
+    private val safeRepository: GnosisSafeRepository,
     private val signaturePushRepository: PushServiceRepository,
     private val signatureStore: SignatureStore,
     private val tokenRepository: TokenRepository,
@@ -224,41 +225,66 @@ class DefaultSubmitTransactionHelper @Inject constructor(
         if ((params.requiredConfirmation == initialConfirmations.size + (if (params.isOwner) 1 else 0)))
             Observable.empty<Result<ViewUpdate>>()
         else
-            events.requestConfirmations
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .startWith(Unit)
-                .flatMapSingle { signatureStore.load() }
-                .switchMapSingle {
-                    val targets = params.owners - params.sender - it.keys
-                    if (targets.isEmpty()) {
-                        // Nothing to push
-                        return@switchMapSingle Single.just(DataResult(Unit))
+            signatureStore.observe().map { confirmations ->
+                val targets = params.owners - params.sender - confirmations.keys
+                if (targets.isEmpty() || params.requiredConfirmation == confirmations.size + (if (params.isOwner) 1 else 0))
+                    return@map false to null
+                for (target in targets) {
+                    nullOnThrow { safeRepository.loadAuthenticatorInfo(target) }?.let {
+                        return@map true to it
                     }
-                    executionRepository.calculateHash(
-                        safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken, params.safeVersion
-                    )
-                        .flatMapCompletable { hash ->
-                            signaturePushRepository.requestConfirmations(
-                                hash.toHexString().addHexPrefix(),
-                                safe,
-                                params.transaction,
-                                params.txGas,
-                                params.dataGas,
-                                params.operationalGas,
-                                params.gasPrice,
-                                params.gasToken,
-                                targets.toSet()
-                            )
+                }
+                true to AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, targets.first(), null)
+            }
+                .filter { (needsConfirmations, _) -> needsConfirmations }
+                .distinctUntilChanged { (_, info) -> info!! }
+                .switchMap { (_, info) ->
+                    val update = Observable.just<Result<ViewUpdate>>(DataResult(ViewUpdate.RequireConfirmations(info!!, params.transactionHash)))
+                    if (info.type == AuthenticatorInfo.Type.EXTENSION) {
+                        update.concatWith(requestConfirmationViaPush(events, params))
+                    }
+                    update
+                }
 
-                        }
-                        .mapToResult()
+    private fun requestConfirmationViaPush(
+        events: Events,
+        params: TransactionExecutionRepository.ExecuteInformation
+    ) =
+        events.requestConfirmations
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .startWith(Unit)
+            .flatMapSingle { signatureStore.load() }
+            .switchMapSingle {
+                val targets = params.owners - params.sender - it.keys
+                if (targets.isEmpty()) {
+                    // Nothing to push
+                    return@switchMapSingle Single.just(DataResult(Unit))
                 }
-                .flatMap {
-                    when (it) {
-                        is DataResult -> Observable.just(DataResult(ViewUpdate.ConfirmationsRequested))
-                        is ErrorResult -> Observable.fromArray(DataResult(ViewUpdate.ConfirmationsError), ErrorResult<ViewUpdate>(it.error))
+                executionRepository.calculateHash(
+                    safe, params.transaction, params.txGas, params.dataGas, params.gasPrice, params.gasToken, params.safeVersion
+                )
+                    .flatMapCompletable { hash ->
+                        signaturePushRepository.requestConfirmations(
+                            hash.toHexString().addHexPrefix(),
+                            safe,
+                            params.transaction,
+                            params.txGas,
+                            params.dataGas,
+                            params.operationalGas,
+                            params.gasPrice,
+                            params.gasToken,
+                            targets.toSet()
+                        )
+
                     }
+                    .mapToResult()
+            }
+            .flatMap {
+                when (it) {
+                    is DataResult -> Observable.just(DataResult(ViewUpdate.ConfirmationsRequested))
+                    is ErrorResult -> Observable.fromArray(DataResult(ViewUpdate.ConfirmationsError), ErrorResult<ViewUpdate>(it.error))
                 }
+            }
 
     private fun submitTransaction(params: TransactionExecutionRepository.ExecuteInformation, signatures: Map<Solidity.Address, Signature>) =
         executionRepository.submit(

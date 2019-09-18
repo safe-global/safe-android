@@ -3,7 +3,6 @@ package pm.gnosis.heimdall.ui.keycard
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
 import kotlinx.android.synthetic.main.screen_keycard_initialize.*
@@ -15,11 +14,8 @@ import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
-import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import javax.inject.Inject
-import im.status.keycard.globalplatform.Crypto
-import im.status.keycard.globalplatform.Crypto.randomLong
-import pm.gnosis.heimdall.ui.keycard.KeycardCredentialsContract
 import java.security.SecureRandom
 
 
@@ -97,7 +93,7 @@ class KeycardInitializeActivity : ViewModelActivity<KeycardCredentialsContract>(
         })
     }
 
-    override fun onPaired(authenticatorInfo: AuthenticatorInfo) {
+    override fun onPaired(authenticatorInfo: AuthenticatorSetupInfo) {
         println("onPaired $authenticatorInfo")
     }
 

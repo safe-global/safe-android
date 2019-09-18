@@ -7,19 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import im.status.keycard.applet.KeycardCommandSet
-import im.status.keycard.io.CardChannel
-import im.status.keycard.io.CardListener
 import kotlinx.android.synthetic.main.screen_keycard_pairing_input.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.rx2.await
-import kotlinx.coroutines.suspendCancellableCoroutine
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
@@ -32,15 +28,12 @@ import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.toKeyIndex
 import pm.gnosis.svalinn.common.utils.transaction
 import pm.gnosis.svalinn.common.utils.visible
 import pm.gnosis.utils.asEthereumAddressString
-import timber.log.Timber
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
-import kotlin.math.absoluteValue
 
 @ExperimentalCoroutinesApi
 abstract class KeycardPairingContract(
@@ -73,7 +66,7 @@ abstract class KeycardPairingContract(
             override fun withAction(viewAction: ViewAction?) = copy(viewAction = viewAction)
         }
 
-        data class PairingDone(val authenticatorInfo: AuthenticatorInfo, override var viewAction: ViewAction?) : State() {
+        data class PairingDone(val authenticatorInfo: AuthenticatorSetupInfo, override var viewAction: ViewAction?) : State() {
             override fun withAction(viewAction: ViewAction?) = copy(viewAction = viewAction)
         }
 
@@ -114,13 +107,15 @@ class KeycardPairingViewModel @Inject constructor(
                                 "",
                                 keyIndex
                             )
-                        val authenticatorInfo = AuthenticatorInfo(
-                            AuthenticatorInfo.Type.KEYCARD,
-                            cardAddress,
+                        val authenticatorInfo = AuthenticatorSetupInfo(
                             safeOwner,
-                            keyIndex
+                            AuthenticatorInfo(
+                                AuthenticatorInfo.Type.KEYCARD,
+                                cardAddress,
+                                keyIndex
+                            )
                         )
-                        println("Authenticator: ${authenticatorInfo.address.asEthereumAddressString()}")
+                        println("Authenticator: ${authenticatorInfo.authenticator.address.asEthereumAddressString()}")
                         updateState { State.PairingDone(authenticatorInfo, null) }
                     } catch (e: Exception) {
                         updateState { State.ReadingCard(true, e.message, null) }
@@ -279,6 +274,6 @@ class KeycardPairingDialog : DialogFragment() {
     }
 
     interface PairingCallback {
-        fun onPaired(authenticatorInfo: AuthenticatorInfo)
+        fun onPaired(authenticatorInfo: AuthenticatorSetupInfo)
     }
 }

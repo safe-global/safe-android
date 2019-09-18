@@ -22,13 +22,17 @@ import pm.gnosis.heimdall.data.remote.models.RelaySafeCreationParams
 import pm.gnosis.heimdall.data.repositories.*
 import pm.gnosis.heimdall.data.repositories.models.*
 import pm.gnosis.heimdall.di.ApplicationContext
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.heimdall.utils.SafeContractUtils
 import pm.gnosis.model.Solidity
 import pm.gnosis.model.SolidityBase
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
 import pm.gnosis.svalinn.accounts.base.models.Signature
-import pm.gnosis.utils.*
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.removeHexPrefix
+import pm.gnosis.utils.toBytes
 import java.math.BigInteger
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,6 +51,7 @@ class DefaultGnosisSafeRepository @Inject constructor(
 
     private val safeDao = gnosisAuthenticatorDb.gnosisSafeDao()
     private val descriptionsDao = gnosisAuthenticatorDb.descriptionsDao()
+    private val authenticatorInfoDao = gnosisAuthenticatorDb.authenticatorInfoDao()
 
     override fun observeAllSafes() =
         Flowable.combineLatest(
@@ -377,6 +382,13 @@ class DefaultGnosisSafeRepository @Inject constructor(
             .subscribeOn(Schedulers.io())
 
     override fun sign(safeAddress: Solidity.Address, data: ByteArray): Single<Signature> = accountsRepository.sign(safeAddress, data)
+
+    override fun saveAuthenticatorInfo(info: AuthenticatorInfo) {
+        authenticatorInfoDao.insertAuthenticatorInfo(info.toDb())
+    }
+
+    override fun loadAuthenticatorInfo(address: Solidity.Address) =
+        authenticatorInfoDao.loadAuthenticatorInfo(address).fromDb()
 
     private class SafeInfoRequest(
         val balance: EthRequest<Wei>,

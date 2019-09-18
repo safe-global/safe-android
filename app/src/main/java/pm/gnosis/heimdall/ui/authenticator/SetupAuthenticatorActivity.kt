@@ -9,7 +9,7 @@ import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeRecoveryPhraseIntroActivity
-import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.getAuthenticatorInfo
 
 class SetupAuthenticatorActivity : BaseActivity() {
@@ -35,7 +35,7 @@ class SetupAuthenticatorActivity : BaseActivity() {
             super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun onAuthenticatorSelected(authenticatorInfo: AuthenticatorInfo?) {
+    private fun onAuthenticatorSelected(authenticatorInfo: AuthenticatorSetupInfo?) {
         startActivity(CreateSafeRecoveryPhraseIntroActivity.createIntent(this, authenticatorInfo))
     }
 

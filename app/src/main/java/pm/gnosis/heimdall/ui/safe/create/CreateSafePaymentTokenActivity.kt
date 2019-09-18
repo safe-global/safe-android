@@ -38,7 +38,7 @@ import javax.inject.Inject
 abstract class CreateSafePaymentTokenContract : ViewModel() {
     abstract val state: LiveData<State>
 
-    abstract fun setup(authenticatorInfo: AuthenticatorInfo?, additionalOwners: List<Solidity.Address>)
+    abstract fun setup(authenticatorInfo: AuthenticatorSetupInfo?, additionalOwners: List<Solidity.Address>)
 
     data class State(val paymentToken: ERC20Token?, val fee: BigInteger?, val canGoNext: Boolean, val viewAction: ViewAction?)
 
@@ -69,10 +69,10 @@ class CreateSafePaymentTokenViewModel @Inject constructor(
     /*
      * Setup logic
      */
-    private var authenticatorInfo: AuthenticatorInfo? = null
+    private var authenticatorInfo: AuthenticatorSetupInfo? = null
     private lateinit var additionalOwners: List<Solidity.Address>
 
-    override fun setup(authenticatorInfo: AuthenticatorInfo?, additionalOwners: List<Solidity.Address>) {
+    override fun setup(authenticatorInfo: AuthenticatorSetupInfo?, additionalOwners: List<Solidity.Address>) {
         this.authenticatorInfo = authenticatorInfo
         this.additionalOwners = additionalOwners
     }
@@ -125,12 +125,12 @@ class CreateSafePaymentTokenViewModel @Inject constructor(
             val owner = authenticatorInfo?.safeOwner ?: accountsRepository.createOwner().await()
             val owners = listOf(owner.address) + additionalOwners
             val deploymentData = safeRepository.triggerSafeDeployment(owners, owners.size - 2).await()
+            authenticatorInfo?.let { safeRepository.saveAuthenticatorInfo(it.authenticator) }
             safeRepository.addPendingSafe(deploymentData.safe, null, deploymentData.payment, deploymentData.paymentToken).await()
             safeRepository.saveOwner(deploymentData.safe, owner).await()
             updateState { copy(viewAction = ViewAction.ShowSafe(deploymentData.safe)) }
         })
     }
-
 }
 
 class CreateSafePaymentTokenActivity : ViewModelActivity<CreateSafePaymentTokenContract>() {
@@ -190,7 +190,7 @@ class CreateSafePaymentTokenActivity : ViewModelActivity<CreateSafePaymentTokenC
 
         fun createIntent(
             context: Context,
-            authenticatorInfo: AuthenticatorInfo?,
+            authenticatorInfo: AuthenticatorSetupInfo?,
             additionalOwners: List<Solidity.Address>
         ) =
             Intent(context, CreateSafePaymentTokenActivity::class.java).apply {

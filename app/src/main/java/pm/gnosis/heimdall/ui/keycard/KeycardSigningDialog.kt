@@ -18,8 +18,10 @@ import kotlinx.coroutines.cancel
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
-import pm.gnosis.heimdall.data.repositories.AccountsRepository
+import pm.gnosis.heimdall.data.remote.models.push.PushMessage
 import pm.gnosis.heimdall.data.repositories.CardRepository
+import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
+import pm.gnosis.heimdall.data.repositories.PushServiceRepository
 import pm.gnosis.heimdall.data.repositories.impls.StatusKeyCardManager
 import pm.gnosis.heimdall.di.ApplicationContext
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
@@ -30,9 +32,7 @@ import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.transaction
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddress
-import pm.gnosis.utils.asEthereumAddressString
-import pm.gnosis.utils.hexToByteArray
+import pm.gnosis.utils.*
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -76,8 +76,9 @@ abstract class KeycardSigningContract(
 class KeycardSigningViewModel @Inject constructor(
     @ApplicationContext context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers,
-    private val accountsRepository: AccountsRepository,
-    private val cardRepository: CardRepository
+    private val cardRepository: CardRepository,
+    private val pushServiceRepository: PushServiceRepository,
+    private val safeRepository: GnosisSafeRepository
 ) : KeycardSigningContract(context, appDispatchers) {
 
     override val state: LiveData<State> = liveData {
@@ -103,17 +104,25 @@ class KeycardSigningViewModel @Inject constructor(
                 safeLaunch {
                     updateState { State.ReadingCard(true, null, null) }
                     try {
-                        //val owner = accountsRepository.signingOwner(address).await()
-                        val keyIndex = 0L
+                        val info = safeRepository.loadAuthenticatorInfo(address)
                         // TODO: add proper exceptions to handle different cases
                         val signature =
                             cardRepository.signWithCard(
                                 StatusKeyCardManager(KeycardCommandSet(it)),
                                 StatusKeyCardManager.UnlockParams(pin),
                                 hash,
-                                keyIndex
+                                info.keyIndex ?: 0
                             )
                         println("Signer: ${signature.first.asEthereumAddressString()}")
+                        // Small hack to propagate signature
+                        pushServiceRepository.handlePushMessage(
+                            PushMessage.ConfirmTransaction(
+                                hash.toHexString().addHexPrefix(),
+                                signature.second.r.asDecimalString(),
+                                signature.second.s.asDecimalString(),
+                                signature.second.v.toString(10)
+                            )
+                        )
                         updateState { State.SigningDone(signature, null) }
                     } catch (e: Exception) {
                         updateState { State.ReadingCard(true, e.message, null) }
@@ -194,7 +203,7 @@ class KeycardSigningInputFragment : KeycardSigningBaseFragment() {
 }
 
 @ExperimentalCoroutinesApi
-class KeycardSigningDialog private constructor(): DialogFragment() {
+class KeycardSigningDialog private constructor() : DialogFragment() {
 
     @Inject
     lateinit var viewModel: KeycardSigningContract

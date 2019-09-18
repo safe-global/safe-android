@@ -20,6 +20,7 @@ import pm.gnosis.heimdall.data.repositories.models.SafeDeployment
 import pm.gnosis.heimdall.ui.exceptions.SimpleLocalizedException
 import pm.gnosis.heimdall.ui.safe.create.CreateSafePaymentTokenContract.ViewAction.*
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.*
@@ -252,7 +253,8 @@ class CreateSafePaymentTokenViewModelTest {
 
     @Test
     fun createSafeWithOwner() {
-        val info = AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, BROWSER_EXTENSION_ADDRESS, DEVICE_OWNER_ADDRESS.asOwner())
+        val deviceOwner = DEVICE_OWNER_ADDRESS.asOwner()
+        val info = AuthenticatorSetupInfo(deviceOwner, AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, BROWSER_EXTENSION_ADDRESS))
         viewModel.setup(info, listOf(MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
 
         val testObserver = TestLiveDataObserver<ViewState>()

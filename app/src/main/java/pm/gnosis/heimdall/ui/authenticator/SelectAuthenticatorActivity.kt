@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import kotlinx.android.synthetic.main.layout_select_authenticator.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
@@ -12,6 +13,7 @@ import pm.gnosis.heimdall.ui.keycard.KeycardIntroActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafePairingActivity
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
 
+@ExperimentalCoroutinesApi
 class SelectAuthenticatorActivity : BaseActivity() {
 
     private var selectedAuthenticator = AuthenticatorInfo.Type.KEYCARD

@@ -14,5 +14,5 @@ interface AuthenticatorInfoDao {
     fun insertAuthenticatorInfo(info: AuthenticatorInfoDb)
 
     @Query("SELECT * FROM ${AuthenticatorInfoDb.TABLE_NAME} WHERE ${AuthenticatorInfoDb.COL_ADDRESS} = :address")
-    fun loadAuthenticatorInfo(address: Solidity.Address): ERC20TokenDb
+    fun loadAuthenticatorInfo(address: Solidity.Address): AuthenticatorInfoDb
 }

@@ -9,7 +9,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.ui.recoveryphrase.ConfirmRecoveryPhraseActivity
-import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.getAuthenticatorInfo
 import pm.gnosis.heimdall.utils.put
 import pm.gnosis.model.Solidity
@@ -32,7 +32,7 @@ class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<Cr
             )
     }
 
-    private fun onSafeOwners(authenticatorInfo: AuthenticatorInfo?, additionalOwners: List<Solidity.Address>) {
+    private fun onSafeOwners(authenticatorInfo: AuthenticatorSetupInfo?, additionalOwners: List<Solidity.Address>) {
         startActivity(CreateSafePaymentTokenActivity.createIntent(this, authenticatorInfo, additionalOwners))
     }
 
@@ -48,7 +48,7 @@ class CreateSafeConfirmRecoveryPhraseActivity : ConfirmRecoveryPhraseActivity<Cr
         fun createIntent(
             context: Context,
             recoveryPhrase: String,
-            authenticatorInfo: AuthenticatorInfo?
+            authenticatorInfo: AuthenticatorSetupInfo?
         ) =
             Intent(context, CreateSafeConfirmRecoveryPhraseActivity::class.java).apply {
                 putExtra(EXTRA_RECOVERY_PHRASE, recoveryPhrase)

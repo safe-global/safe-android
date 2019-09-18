@@ -5,7 +5,7 @@ import android.content.Intent
 import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.ui.recoveryphrase.SetupRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.recoveryphrase.SetupRecoveryPhraseContract
-import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.getAuthenticatorInfo
 import pm.gnosis.heimdall.utils.put
 
@@ -24,7 +24,7 @@ class CreateSafeSetupRecoveryPhraseActivity : SetupRecoveryPhraseActivity<SetupR
 
     companion object {
 
-        fun createIntent(context: Context, authenticatorInfo: AuthenticatorInfo?) =
+        fun createIntent(context: Context, authenticatorInfo: AuthenticatorSetupInfo?) =
             Intent(context, CreateSafeSetupRecoveryPhraseActivity::class.java).apply {
                 authenticatorInfo.put(this)
             }

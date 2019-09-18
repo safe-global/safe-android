@@ -55,6 +55,9 @@ class DefaultSubmitTransactionHelperTest {
     private lateinit var signaturePushRepository: PushServiceRepository
 
     @Mock
+    private lateinit var safeRepository: GnosisSafeRepository
+
+    @Mock
     private lateinit var tokenRepository: TokenRepository
 
     @Mock
@@ -85,7 +88,7 @@ class DefaultSubmitTransactionHelperTest {
         addressHelper = AddressHelper(addressBookRepository)
         submitTransactionHelper =
             DefaultSubmitTransactionHelper(
-                relayRepositoryMock, signaturePushRepository, signatureStore,
+                relayRepositoryMock, safeRepository, signaturePushRepository, signatureStore,
                 tokenRepository, transactionViewHolderBuilder
             )
     }

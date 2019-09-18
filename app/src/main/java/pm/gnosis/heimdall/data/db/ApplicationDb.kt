@@ -5,10 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import pm.gnosis.heimdall.data.db.daos.AddressBookDao
-import pm.gnosis.heimdall.data.db.daos.DescriptionsDao
-import pm.gnosis.heimdall.data.db.daos.ERC20TokenDao
-import pm.gnosis.heimdall.data.db.daos.GnosisSafeDao
+import pm.gnosis.heimdall.data.db.daos.*
 import pm.gnosis.heimdall.data.db.models.*
 import pm.gnosis.heimdall.data.repositories.models.ERC20Token
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
@@ -92,6 +89,7 @@ abstract class ApplicationDb : RoomDatabase() {
     }
 
     abstract fun addressBookDao(): AddressBookDao
+    abstract fun authenticatorInfoDao(): AuthenticatorInfoDao
     abstract fun descriptionsDao(): DescriptionsDao
     abstract fun erc20TokenDao(): ERC20TokenDao
     abstract fun gnosisSafeDao(): GnosisSafeDao

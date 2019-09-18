@@ -13,6 +13,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.security.db.EncryptedByteArray
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
@@ -53,7 +54,7 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
 
         viewModel.setup(null)
 
-        val testObserver = TestObserver<Pair<AuthenticatorInfo?, List<Solidity.Address>>>()
+        val testObserver = TestObserver<Pair<AuthenticatorSetupInfo?, List<Solidity.Address>>>()
         viewModel.loadOwnerData().subscribe(testObserver)
         testObserver.assertResult(null to listOf(MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
 
@@ -67,10 +68,10 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
             .willReturn(Single.just(listOf(MNEMONIC_1_ADDRESS.asOwner(), MNEMONIC_2_ADDRESS.asOwner())))
 
         val deviceOwner = DEVICE_OWNER_ADDRESS.asOwner()
-        val info = AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, BROWSER_EXTENSION_ADDRESS, deviceOwner)
+        val info = AuthenticatorSetupInfo(deviceOwner, AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, BROWSER_EXTENSION_ADDRESS))
         viewModel.setup(info)
 
-        val testObserver = TestObserver<Pair<AuthenticatorInfo?, List<Solidity.Address>>>()
+        val testObserver = TestObserver<Pair<AuthenticatorSetupInfo?, List<Solidity.Address>>>()
         viewModel.loadOwnerData().subscribe(testObserver)
         testObserver.assertResult(info to listOf(BROWSER_EXTENSION_ADDRESS, MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS))
 
@@ -84,10 +85,11 @@ class CreateSafeConfirmRecoveryPhraseViewModelTest {
         given(accountsRepositoryMock.createOwnersFromPhrase(MockUtils.any(), MockUtils.any()))
             .willReturn(Single.error(error))
 
-        val info = AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, BROWSER_EXTENSION_ADDRESS, DEVICE_OWNER_ADDRESS.asOwner())
+        val deviceOwner = DEVICE_OWNER_ADDRESS.asOwner()
+        val info = AuthenticatorSetupInfo(deviceOwner, AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, BROWSER_EXTENSION_ADDRESS))
         viewModel.setup(info)
 
-        val testObserver = TestObserver<Pair<AuthenticatorInfo?, List<Solidity.Address>>>()
+        val testObserver = TestObserver<Pair<AuthenticatorSetupInfo?, List<Solidity.Address>>>()
         viewModel.loadOwnerData().subscribe(testObserver)
         testObserver.assertFailure(Predicate { it == error })
 

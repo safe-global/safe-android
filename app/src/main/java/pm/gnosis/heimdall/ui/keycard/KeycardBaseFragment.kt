@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.di.components.DaggerViewComponent
