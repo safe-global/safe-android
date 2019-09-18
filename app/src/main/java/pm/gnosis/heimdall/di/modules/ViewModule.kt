@@ -14,6 +14,10 @@ import pm.gnosis.heimdall.di.ViewContext
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
+import pm.gnosis.heimdall.ui.keycard.KeycardCredentialsContract
+import pm.gnosis.heimdall.ui.keycard.KeycardInitializeContract
+import pm.gnosis.heimdall.ui.keycard.KeycardPairingContract
+import pm.gnosis.heimdall.ui.keycard.KeycardSigningContract
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageContract
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupContract
@@ -118,6 +122,21 @@ class ViewModule(val context: Context, val viewModelProvider: Any? = null) {
     @Provides
     @ForView
     fun providesGeneralSettingsContract(provider: ViewModelProvider) = provider[GeneralSettingsContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesKeycardCredentialsContract(provider: ViewModelProvider) = provider[KeycardCredentialsContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesKeycardInitializeContract(provider: ViewModelProvider) = provider[KeycardInitializeContract::class.java]
+    @Provides
+    @ForView
+    fun providesKeycardPairingContract(provider: ViewModelProvider) = provider[KeycardPairingContract::class.java]
+
+    @Provides
+    @ForView
+    fun providesKeycardSigningContract(provider: ViewModelProvider) = provider[KeycardSigningContract::class.java]
 
     @Provides
     @ForView

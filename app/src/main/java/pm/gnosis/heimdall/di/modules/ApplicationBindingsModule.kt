@@ -97,6 +97,10 @@ abstract class ApplicationBindingsModule {
 
     @Binds
     @Singleton
+    abstract fun bindsCardRepository(repository: DefaultCardRepository): CardRepository
+
+    @Binds
+    @Singleton
     abstract fun bindsEnsRepository(repository: DefaultEnsRepository): EnsRepository
 
     @Binds

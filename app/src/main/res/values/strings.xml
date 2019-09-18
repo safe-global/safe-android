@@ -494,4 +494,6 @@ Without it, you won’t be able to recover your Safe and money.</string>
     <string name="current_version">The current version of your smart contract is outdated. If you don’t upgrade you’ll still be able to use your Safe, but we recommend upgrading now to enjoy the latest security updates.</string>
     <string name="need_confirm_upgrade">You will need to confirm the smart contract upgrade just like a normal transaction. Please make sure your Safe has enough funds to pay the network fee.</string>
     <string name="use_selected_device">Use selected device</string>
+    <string name="waiting_for_keycard">Waiting for Keycard…</string>
+    <string name="reading_keycard">Reading Keycard...\nKeep the card to your phone.</string>
 </resources>

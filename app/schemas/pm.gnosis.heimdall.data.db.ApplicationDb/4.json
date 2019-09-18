@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "7faad17f989bb409b597d99364331a02",
+    "identityHash": "cd497903c22c441432c2cb02fd99d009",
     "entities": [
       {
         "tableName": "address_book",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "authenticator_info",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `type` INTEGER NOT NULL, `key_index` TEXT, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address` TEXT NOT NULL, `type` INTEGER NOT NULL, `key_index` INTEGER, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "address",
@@ -55,7 +55,7 @@
           {
             "fieldPath": "keyIndex",
             "columnName": "key_index",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": false
           }
         ],
@@ -458,7 +458,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7faad17f989bb409b597d99364331a02')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cd497903c22c441432c2cb02fd99d009')"
     ]
   }
 }

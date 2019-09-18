@@ -15,7 +15,7 @@ data class AuthenticatorInfoDb(
     var type: Int,
 
     @ColumnInfo(name = COL_KEY_INDEX)
-    var keyIndex: String?
+    var keyIndex: Long?
 ) {
     companion object {
         const val TABLE_NAME = "authenticator_info"

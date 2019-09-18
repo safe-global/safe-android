@@ -7,19 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import im.status.keycard.applet.KeycardCommandSet
-import im.status.keycard.io.CardChannel
-import im.status.keycard.io.CardListener
-import kotlinx.android.synthetic.main.screen_keycard_pairing_input.view.*
+import kotlinx.android.synthetic.main.screen_keycard_signing_input.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.rx2.await
-import kotlinx.coroutines.suspendCancellableCoroutine
+import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.heimdall.HeimdallApplication
 import pm.gnosis.heimdall.R
 import pm.gnosis.heimdall.data.repositories.AccountsRepository
@@ -31,33 +27,32 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
-import pm.gnosis.heimdall.utils.AuthenticatorInfo
-import pm.gnosis.heimdall.utils.toKeyIndex
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.transaction
 import pm.gnosis.svalinn.common.utils.visible
+import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
-import timber.log.Timber
+import pm.gnosis.utils.hexToByteArray
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
-import kotlin.math.absoluteValue
 
 @ExperimentalCoroutinesApi
-abstract class KeycardPairingContract(
+abstract class KeycardSigningContract(
     context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers
-) : BaseStateViewModel<KeycardPairingContract.State>(context, appDispatchers) {
+) : BaseStateViewModel<KeycardSigningContract.State>(context, appDispatchers) {
+
+    abstract fun setup(address: Solidity.Address, hash: String)
 
     abstract fun callback(): NfcAdapter.ReaderCallback
 
-    abstract fun startPairing(pin: String, pairingKey: String)
+    abstract fun startSigning(pin: String)
 
-    abstract fun stopPairing()
+    abstract fun stopSigning()
 
     abstract fun cancel()
 
     sealed class State : BaseStateViewModel.State {
-        data class WaitingForInput(val pinError: String?, val pairingKeyError: String?, override var viewAction: ViewAction?) : State() {
+        data class WaitingForInput(val pinError: String?, override var viewAction: ViewAction?) : State() {
             override fun withAction(viewAction: ViewAction?) = copy(viewAction = viewAction)
         }
 
@@ -69,11 +64,7 @@ abstract class KeycardPairingContract(
             override fun withAction(viewAction: ViewAction?) = copy(viewAction = viewAction)
         }
 
-        data class NoSlotsAvailable(override var viewAction: ViewAction?) : State() {
-            override fun withAction(viewAction: ViewAction?) = copy(viewAction = viewAction)
-        }
-
-        data class PairingDone(val authenticatorInfo: AuthenticatorInfo, override var viewAction: ViewAction?) : State() {
+        data class SigningDone(val signature: Pair<Solidity.Address, ECDSASignature>, override var viewAction: ViewAction?) : State() {
             override fun withAction(viewAction: ViewAction?) = copy(viewAction = viewAction)
         }
 
@@ -82,12 +73,12 @@ abstract class KeycardPairingContract(
 }
 
 @ExperimentalCoroutinesApi
-class KeycardPairingViewModel @Inject constructor(
+class KeycardSigningViewModel @Inject constructor(
     @ApplicationContext context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers,
     private val accountsRepository: AccountsRepository,
     private val cardRepository: CardRepository
-) : KeycardPairingContract(context, appDispatchers) {
+) : KeycardSigningContract(context, appDispatchers) {
 
     override val state: LiveData<State> = liveData {
         for (event in stateChannel.openSubscription()) emit(event)
@@ -95,33 +86,35 @@ class KeycardPairingViewModel @Inject constructor(
 
     private val manager = WrappedManager()
 
+    private lateinit var address: Solidity.Address
+    private lateinit var hash: ByteArray
+
+    override fun setup(address: Solidity.Address, hash: String) {
+        this.address = address
+        this.hash = hash.hexToByteArray()
+    }
+
     override fun callback(): NfcAdapter.ReaderCallback = manager.callback()
 
-    override fun startPairing(pin: String, pairingKey: String) {
+    override fun startSigning(pin: String) {
         safeLaunch {
             updateState { State.ReadingCard(false, null, null) }
             manager.performOnChannel {
                 safeLaunch {
                     updateState { State.ReadingCard(true, null, null) }
                     try {
-                        val safeOwner = accountsRepository.createOwner().await()
-                        val keyIndex = safeOwner.address.toKeyIndex()
+                        //val owner = accountsRepository.signingOwner(address).await()
+                        val keyIndex = 0L
                         // TODO: add proper exceptions to handle different cases
-                        val cardAddress =
-                            cardRepository.pairCard(
+                        val signature =
+                            cardRepository.signWithCard(
                                 StatusKeyCardManager(KeycardCommandSet(it)),
-                                StatusKeyCardManager.PairingParams(pin, pairingKey),
-                                "",
+                                StatusKeyCardManager.UnlockParams(pin),
+                                hash,
                                 keyIndex
                             )
-                        val authenticatorInfo = AuthenticatorInfo(
-                            AuthenticatorInfo.Type.KEYCARD,
-                            cardAddress,
-                            safeOwner,
-                            keyIndex
-                        )
-                        println("Authenticator: ${authenticatorInfo.address.asEthereumAddressString()}")
-                        updateState { State.PairingDone(authenticatorInfo, null) }
+                        println("Signer: ${signature.first.asEthereumAddressString()}")
+                        updateState { State.SigningDone(signature, null) }
                     } catch (e: Exception) {
                         updateState { State.ReadingCard(true, e.message, null) }
                     }
@@ -130,7 +123,7 @@ class KeycardPairingViewModel @Inject constructor(
         }
     }
 
-    override fun stopPairing() {
+    override fun stopSigning() {
         safeLaunch {
             updateState { withAction(ViewAction.CloseScreen) }
         }
@@ -139,18 +132,19 @@ class KeycardPairingViewModel @Inject constructor(
     override fun cancel() =
         viewModelScope.cancel()
 
-    override fun initialState(): State = State.WaitingForInput(null, null, null)
+    override fun initialState(): State = State.WaitingForInput(null, null)
+
 }
 
 @ExperimentalCoroutinesApi
-abstract class KeycardPairingBaseFragment : KeycardBaseFragment<KeycardPairingContract.State, KeycardPairingContract>() {
+abstract class KeycardSigningBaseFragment : KeycardBaseFragment<KeycardSigningContract.State, KeycardSigningContract>() {
 
     @Inject
-    override lateinit var viewModel: KeycardPairingContract
+    override lateinit var viewModel: KeycardSigningContract
 }
 
 @ExperimentalCoroutinesApi
-class KeycardPairingReadingCardFragment : KeycardPairingBaseFragment(), ReadingCardScreen {
+class KeycardSigningReadingCardFragment : KeycardSigningBaseFragment(), ReadingCardScreen {
     override val layout = R.layout.screen_keycard_reading
 
     override val screen: View
@@ -161,11 +155,11 @@ class KeycardPairingReadingCardFragment : KeycardPairingBaseFragment(), ReadingC
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupView(cancelListener = { viewModel.stopPairing() })
+        setupView(cancelListener = { viewModel.stopSigning() })
     }
 
-    override fun updateState(state: KeycardPairingContract.State) {
-        if (state !is KeycardPairingContract.State.ReadingCard) return
+    override fun updateState(state: KeycardSigningContract.State) {
+        if (state !is KeycardSigningContract.State.ReadingCard) return
         updateView(state.reading, state.error)
     }
 
@@ -173,55 +167,54 @@ class KeycardPairingReadingCardFragment : KeycardPairingBaseFragment(), ReadingC
 }
 
 @ExperimentalCoroutinesApi
-class KeycardPairingInputFragment : KeycardPairingBaseFragment() {
+class KeycardSigningInputFragment : KeycardSigningBaseFragment() {
 
-    override val layout = R.layout.screen_keycard_pairing_input
+    override val layout = R.layout.screen_keycard_signing_input
 
     override fun inject(component: ViewComponent) = component.inject(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.keycard_pairing_input_init_button.setOnClickListener {
-            startActivity(KeycardInitializeActivity.createIntent(context!!))
-            viewModel.stopPairing()
+        view.keycard_signing_input_cancel_button.setOnClickListener {
+            viewModel.stopSigning()
         }
-        view.keycard_pairing_input_pair_button.setOnClickListener {
-            val pin = view.keycard_pairing_input_pin.text.toString()
-            val pairingKey = view.keycard_pairing_input_pairing_key.text.toString()
-            viewModel.startPairing(pin, pairingKey)
+        view.keycard_signing_input_confirm_button.setOnClickListener {
+            val pin = view.keycard_signing_input_pin.text.toString()
+            viewModel.startSigning(pin)
         }
     }
 
-    override fun updateState(state: KeycardPairingContract.State) {
-        if (state !is KeycardPairingContract.State.WaitingForInput) return
-        view!!.keycard_pairing_input_pin_error.apply {
+    override fun updateState(state: KeycardSigningContract.State) {
+        if (state !is KeycardSigningContract.State.WaitingForInput) return
+        view!!.keycard_signing_input_pin_error.apply {
             visible(state.pinError != null)
             text = state.pinError
-        }
-        view!!.keycard_pairing_input_pairing_key_error.apply {
-            visible(state.pairingKeyError != null)
-            text = state.pairingKeyError
         }
     }
 }
 
 @ExperimentalCoroutinesApi
-class KeycardPairingDialog : DialogFragment() {
+class KeycardSigningDialog private constructor(): DialogFragment() {
 
     @Inject
-    lateinit var viewModel: KeycardPairingContract
+    lateinit var viewModel: KeycardSigningContract
 
-    private var currentState: KeycardPairingContract.State? = null
+    private var currentState: KeycardSigningContract.State? = null
 
     private lateinit var adapter: NfcAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
-        adapter = context?.let { NfcAdapter.getDefaultAdapter(it) } ?: run {
+        val adapter = context?.let { NfcAdapter.getDefaultAdapter(it) }
+        val address = arguments?.getString(ARGUMENTS_ADDRESS)?.asEthereumAddress()
+        val hash = arguments?.getString(ARGUMENTS_HASH)
+        if (adapter == null || address == null || hash == null) {
             dismiss()
             return
         }
+        this.adapter = adapter
+        viewModel.setup(address, hash)
     }
 
     override fun onStart() {
@@ -243,7 +236,7 @@ class KeycardPairingDialog : DialogFragment() {
         viewModel.state.observe(this, Observer { updateState(it) })
     }
 
-    private fun updateState(state: KeycardPairingContract.State) {
+    private fun updateState(state: KeycardSigningContract.State) {
         if (state.viewAction == BaseStateViewModel.ViewAction.CloseScreen) {
             dismiss()
             return
@@ -251,12 +244,11 @@ class KeycardPairingDialog : DialogFragment() {
         if (state == currentState) return
         currentState = state
         when (state) {
-            is KeycardPairingContract.State.WaitingForInput -> KeycardPairingInputFragment()
-            is KeycardPairingContract.State.ReadingCard -> KeycardPairingReadingCardFragment()
-            is KeycardPairingContract.State.CardBlocked -> TODO()
-            is KeycardPairingContract.State.NoSlotsAvailable -> TODO()
-            is KeycardPairingContract.State.PairingDone -> {
-                ((activity ?: context) as? PairingCallback)?.onPaired(state.authenticatorInfo)
+            is KeycardSigningContract.State.WaitingForInput -> KeycardSigningInputFragment()
+            is KeycardSigningContract.State.ReadingCard -> KeycardSigningReadingCardFragment()
+            is KeycardSigningContract.State.CardBlocked -> TODO()
+            is KeycardSigningContract.State.SigningDone -> {
+                ((activity ?: context) as? SigningCallback)?.onSigned(state.signature)
                 dismiss()
                 null
             }
@@ -278,7 +270,20 @@ class KeycardPairingDialog : DialogFragment() {
             .inject(this)
     }
 
-    interface PairingCallback {
-        fun onPaired(authenticatorInfo: AuthenticatorInfo)
+    interface SigningCallback {
+        fun onSigned(signature: Pair<Solidity.Address, ECDSASignature>)
+    }
+
+    companion object {
+        private const val ARGUMENTS_HASH = "argument.string.hash"
+        private const val ARGUMENTS_ADDRESS = "argument.string.address"
+
+        fun create(address: Solidity.Address, hash: String) =
+            KeycardSigningDialog().apply {
+                arguments = Bundle().apply {
+                    putString(ARGUMENTS_HASH, hash)
+                    putString(ARGUMENTS_ADDRESS, address.asEthereumAddressString())
+                }
+            }
     }
 }

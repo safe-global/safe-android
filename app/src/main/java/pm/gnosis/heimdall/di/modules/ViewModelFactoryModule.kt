@@ -6,7 +6,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import pm.gnosis.heimdall.data.repositories.TransactionData
 import pm.gnosis.heimdall.di.ViewModelFactory
 import pm.gnosis.heimdall.di.ViewModelKey
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
@@ -15,6 +14,7 @@ import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputViewModel
+import pm.gnosis.heimdall.ui.keycard.*
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageContract
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageViewModel
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupContract
@@ -39,7 +39,10 @@ import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressViewModel
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundViewModel
-import pm.gnosis.heimdall.ui.safe.recover.extension.*
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitViewModel
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
@@ -109,6 +112,11 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(ConfirmNewRecoveryPhraseContract::class)
+    abstract fun bindsConfirmNewRecoveryPhraseContract(viewModel: ConfirmNewRecoveryPhraseViewModel): ViewModel
+
+    @Binds
+    @IntoMap
     @ViewModelKey(ConfirmTransactionContract::class)
     abstract fun bindsConfirmTransactionContract(viewModel: ConfirmTransactionViewModel): ViewModel
 
@@ -122,6 +130,7 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(CreateSafeConfirmRecoveryPhraseContract::class)
     abstract fun bindsCreateSafeConfirmRecoveryPhraseContract(viewModel: CreateSafeConfirmRecoveryPhraseViewModel): ViewModel
 
+    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(CreateSafePaymentTokenContract::class)
@@ -152,15 +161,34 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(GeneralSettingsContract::class)
     abstract fun bindsGeneralSettingsContract(viewModel: GeneralSettingsViewModel): ViewModel
 
+    @ExperimentalCoroutinesApi
+    @Binds
+    @IntoMap
+    @ViewModelKey(KeycardCredentialsContract::class)
+    abstract fun bindsKeycardCredentialsContract(viewModel: KeycardCredentialsViewModel): ViewModel
+
+    @ExperimentalCoroutinesApi
+    @Binds
+    @IntoMap
+    @ViewModelKey(KeycardInitializeContract::class)
+    abstract fun bindsKeycardInitializeContract(viewModel: KeycardInitializeViewModel): ViewModel
+
+    @ExperimentalCoroutinesApi
+    @Binds
+    @IntoMap
+    @ViewModelKey(KeycardPairingContract::class)
+    abstract fun bindsKeycardPairingContract(viewModel: KeycardPairingViewModel): ViewModel
+
+    @ExperimentalCoroutinesApi
+    @Binds
+    @IntoMap
+    @ViewModelKey(KeycardSigningContract::class)
+    abstract fun bindsKeycardSigningContract(viewModel: KeycardSigningViewModel): ViewModel
+
     @Binds
     @IntoMap
     @ViewModelKey(ManageTokensContract::class)
     abstract fun bindsManageTokensContract(viewModel: ManageTokensViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ConfirmNewRecoveryPhraseContract::class)
-    abstract fun bindsConfirmNewRecoveryPhraseContract(viewModel: ConfirmNewRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -172,6 +200,7 @@ abstract class ViewModelFactoryModule {
     @ViewModelKey(PasswordSetupContract::class)
     abstract fun bindsPasswordSetupContract(viewModel: PasswordSetupViewModel): ViewModel
 
+    @ExperimentalCoroutinesApi
     @Binds
     @IntoMap
     @ViewModelKey(PaymentTokensContract::class)

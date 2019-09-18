@@ -84,7 +84,7 @@ abstract class ApplicationDb : RoomDatabase() {
                     """CREATE TABLE IF NOT EXISTS `${AuthenticatorInfoDb.TABLE_NAME}`
                             (`${AuthenticatorInfoDb.COL_ADDRESS}` TEXT NOT NULL,
                             `${AuthenticatorInfoDb.COL_TYPE}` INTEGER NOT NULL,
-                            `${AuthenticatorInfoDb.COL_KEY_INDEX}` TEXT,
+                            `${AuthenticatorInfoDb.COL_KEY_INDEX}` INTEGER,
                             PRIMARY KEY(`${AuthenticatorInfoDb.COL_ADDRESS}`))"""
                 )
             }

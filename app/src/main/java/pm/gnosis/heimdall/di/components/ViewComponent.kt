@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.di.components
 
 import dagger.Component
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pm.gnosis.heimdall.di.ForView
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
@@ -10,7 +11,7 @@ import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
-import pm.gnosis.heimdall.ui.keycard.KeycardPairingDialog
+import pm.gnosis.heimdall.ui.keycard.*
 import pm.gnosis.heimdall.ui.messagesigning.ConfirmMessageActivity
 import pm.gnosis.heimdall.ui.onboarding.fingerprint.FingerprintSetupActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordConfirmActivity
@@ -68,10 +69,23 @@ import pm.gnosis.heimdall.ui.walletconnect.sessions.WalletConnectSessionsActivit
     dependencies = [ApplicationComponent::class],
     modules = [ViewModule::class]
 )
+
 interface ViewComponent {
     // Fragments
 
+    fun inject(fragment: ChangePasswordEnterOldFragment)
+    fun inject(fragment: ChangePasswordEnterNewFragment)
     fun inject(fragment: DeploySafeProgressFragment)
+    @ExperimentalCoroutinesApi
+    fun inject(fragment: KeycardInitializeReadingCardFragment)
+    @ExperimentalCoroutinesApi
+    fun inject(fragment: KeycardPairingInputFragment)
+    @ExperimentalCoroutinesApi
+    fun inject(fragment: KeycardPairingReadingCardFragment)
+    @ExperimentalCoroutinesApi
+    fun inject(fragment: KeycardSigningReadingCardFragment)
+    @ExperimentalCoroutinesApi
+    fun inject(fragment: KeycardSigningInputFragment)
     fun inject(fragment: NoSafesFragment)
     fun inject(fragment: RecoveringSafeFragment)
     fun inject(fragment: RecoveringSafeFundFragment)
@@ -81,8 +95,6 @@ interface ViewComponent {
     fun inject(fragment: SafeDetailsFragment)
     fun inject(fragment: SafeTransactionsFragment)
     fun inject(fragment: TokenBalancesFragment)
-    fun inject(fragment: ChangePasswordEnterOldFragment)
-    fun inject(fragment: ChangePasswordEnterNewFragment)
 
     // Activities
 
@@ -103,6 +115,8 @@ interface ViewComponent {
     fun inject(activity: DebugSettingsActivity)
     fun inject(activity: FingerprintSetupActivity)
     fun inject(activity: GeneralSettingsActivity)
+    @ExperimentalCoroutinesApi
+    fun inject(activity: KeycardInitializeActivity)
     fun inject(activity: ManageTokensActivity)
     fun inject(activity: PairingActivity)
     fun inject(activity: PasswordConfirmActivity)
@@ -124,6 +138,7 @@ interface ViewComponent {
     fun inject(activity: SplashActivity)
     fun inject(activity: TransactionStatusActivity)
     fun inject(activity: UnlockActivity)
+    @ExperimentalCoroutinesApi
     fun inject(activity: UpgradeMasterCopyActivity)
     fun inject(activity: WalletConnectIntroActivity)
     fun inject(activity: WalletConnectLinkActivity)
@@ -133,7 +148,12 @@ interface ViewComponent {
 
     fun inject(dialog: EnsInputDialog)
     fun inject(dialog: FingerprintDialog)
+    @ExperimentalCoroutinesApi
+    fun inject(dialog: KeycardInitializeDialog)
+    @ExperimentalCoroutinesApi
+    fun inject(dialog: KeycardPairingDialog)
+    @ExperimentalCoroutinesApi
+    fun inject(dialog: KeycardSigningDialog)
     fun inject(dialog: SimpleAddressShareDialog)
     fun inject(dialog: UnlockDialog)
-    fun inject(dialog: KeycardPairingDialog)
 }

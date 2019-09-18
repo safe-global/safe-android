@@ -1,6 +1,5 @@
 package pm.gnosis.heimdall.data.repositories
 
-import im.status.keycard.io.CardChannel
 import pm.gnosis.crypto.ECDSASignature
 import pm.gnosis.model.Solidity
 import java.math.BigInteger
@@ -17,14 +16,14 @@ interface CardRepository {
         manager: CardManager,
         pairingParams: CardManager.PairingParams,
         label: String,
-        keyIndex: BigInteger = BigInteger.ZERO
+        keyIndex: Long = 0L
     ): Solidity.Address
 
     suspend fun signWithCard(
         manager: CardManager,
         unlockParams: CardManager.UnlockParams,
         hash: ByteArray,
-        keyIndex: BigInteger = BigInteger.ZERO
+        keyIndex: Long = 0L
     ): Pair<Solidity.Address, ECDSASignature>
 
     data class CardInfo(val cardId: String, val label: String, val paired: Long, val sessionKey: String)

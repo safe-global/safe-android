@@ -63,17 +63,19 @@ class DefaultCardRepository @Inject constructor(
         manager: CardRepository.CardManager,
         pairingParams: CardRepository.CardManager.PairingParams,
         label: String,
-        keyIndex: BigInteger
+        keyIndex: Long
     ): Solidity.Address {
         try {
             val status = manager.start()
             check(status is CardStatus.Initialized) { "Card not initialized" }
+            print(status)
             when (val info = getCardInfo(status.id)) {
                 null -> {
                     addCardInfo(status.id, manager.pair(pairingParams), label)
                 }
                 else -> manager.pair(info.sessionKey)
             }
+            print(pairingParams)
             manager.unlock(pairingParams)
             manager.setupCrypto()
             val hash = Sha3Utils.keccak("Gnosis".toByteArray())
@@ -98,7 +100,7 @@ class DefaultCardRepository @Inject constructor(
         manager: CardRepository.CardManager,
         unlockParams: CardRepository.CardManager.UnlockParams,
         hash: ByteArray,
-        keyIndex: BigInteger
+        keyIndex: Long
     ): Pair<Solidity.Address, ECDSASignature> {
         val status = manager.start()
         check(status is CardStatus.Initialized) { "Card not initialized" }
