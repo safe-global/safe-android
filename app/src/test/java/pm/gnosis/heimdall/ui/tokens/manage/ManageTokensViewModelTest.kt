@@ -149,7 +149,6 @@ class ManageTokensViewModelTest {
         testObserver
             .assertValueCount(4)
             .assertValueAt(3, {
-                println(it)
                 it.entries == listOf(
                     ManageTokensContract.ERC20TokenEnabled(verifiedToken, enabled = false),
                     ManageTokensContract.ERC20TokenEnabled(verifiedToken2, enabled = false),

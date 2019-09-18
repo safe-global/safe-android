@@ -1,6 +1,7 @@
 package pm.gnosis.heimdall.ui.keycard
 
 import android.content.Context
+import android.content.Intent
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -115,7 +116,6 @@ class KeycardPairingViewModel @Inject constructor(
                                 keyIndex
                             )
                         )
-                        println("Authenticator: ${authenticatorInfo.authenticator.address.asEthereumAddressString()}")
                         updateState { State.PairingDone(authenticatorInfo, null) }
                     } catch (e: Exception) {
                         updateState { State.ReadingCard(true, e.message, null) }
@@ -177,6 +177,7 @@ class KeycardPairingInputFragment : KeycardPairingBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.keycard_pairing_input_init_button.setOnClickListener {
+            // TODO: start activity for result
             startActivity(KeycardInitializeActivity.createIntent(context!!))
             viewModel.stopPairing()
         }

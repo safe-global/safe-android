@@ -94,7 +94,7 @@ class KeycardInitializeActivity : ViewModelActivity<KeycardCredentialsContract>(
     }
 
     override fun onPaired(authenticatorInfo: AuthenticatorSetupInfo) {
-        println("onPaired $authenticatorInfo")
+        // TODO: go to next or back or something
     }
 
     companion object {

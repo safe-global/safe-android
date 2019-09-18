@@ -113,7 +113,6 @@ class KeycardSigningViewModel @Inject constructor(
                                 hash,
                                 info.keyIndex ?: 0
                             )
-                        println("Signer: ${signature.first.asEthereumAddressString()}")
                         // Small hack to propagate signature
                         pushServiceRepository.handlePushMessage(
                             PushMessage.ConfirmTransaction(

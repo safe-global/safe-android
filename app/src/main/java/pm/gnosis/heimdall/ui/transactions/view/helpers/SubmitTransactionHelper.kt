@@ -239,9 +239,9 @@ class DefaultSubmitTransactionHelper @Inject constructor(
                 .filter { (needsConfirmations, _) -> needsConfirmations }
                 .distinctUntilChanged { (_, info) -> info!! }
                 .switchMap { (_, info) ->
-                    val update = Observable.just<Result<ViewUpdate>>(DataResult(ViewUpdate.RequireConfirmations(info!!, params.transactionHash)))
+                    var update = Observable.just<Result<ViewUpdate>>(DataResult(ViewUpdate.RequireConfirmations(info!!, params.transactionHash)))
                     if (info.type == AuthenticatorInfo.Type.EXTENSION) {
-                        update.concatWith(requestConfirmationViaPush(events, params))
+                        update = update.concatWith(requestConfirmationViaPush(events, params))
                     }
                     update
                 }

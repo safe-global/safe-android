@@ -79,7 +79,6 @@ class KeycardInitializeViewModel @Inject constructor(
         safeLaunch {
             updateState { State.ReadingCard(false, null, null) }
             manager.performOnChannel {
-                println("performOnChannel")
                 safeLaunch {
                     updateState { State.ReadingCard(true, null, null) }
                     try {
@@ -151,7 +150,6 @@ class KeycardInitializeReadingCardFragment : KeycardInitializeBaseFragment(), Re
 
     override fun updateState(state: KeycardInitializeContract.State) {
         if (state !is KeycardInitializeContract.State.ReadingCard) return
-        println("state $state")
         updateView(state.reading, state.error)
     }
 

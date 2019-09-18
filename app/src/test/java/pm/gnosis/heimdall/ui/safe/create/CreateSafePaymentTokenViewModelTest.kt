@@ -276,6 +276,7 @@ class CreateSafePaymentTokenViewModelTest {
             .triggerSafeDeployment(listOf(DEVICE_OWNER_ADDRESS, MNEMONIC_1_ADDRESS, MNEMONIC_2_ADDRESS), 1)
         then(safeRepositoryMock).should().addPendingSafe(TEST_SAFE, null, BigInteger.TEN, TEST_TOKEN.address)
         then(safeRepositoryMock).should().saveOwner(TEST_SAFE, info.safeOwner)
+        then(safeRepositoryMock).should().saveAuthenticatorInfo(info.authenticator)
         then(safeRepositoryMock).shouldHaveNoMoreInteractions()
         then(accountsRepositoryMock).shouldHaveZeroInteractions()
         then(tokenRepositoryMock).shouldHaveZeroInteractions()

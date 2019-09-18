@@ -26,6 +26,7 @@ import pm.gnosis.heimdall.data.repositories.models.SemVer
 import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.helpers.SignatureStore
 import pm.gnosis.heimdall.ui.transactions.view.TransactionInfoViewHolder
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.models.Transaction
 import pm.gnosis.models.Wei
@@ -35,6 +36,7 @@ import pm.gnosis.svalinn.common.utils.ErrorResult
 import pm.gnosis.svalinn.common.utils.Result
 import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
+import pm.gnosis.tests.utils.TestObservableFactory
 import pm.gnosis.tests.utils.TestSingleFactory
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.hexToByteArray
@@ -104,6 +106,8 @@ class DefaultSubmitTransactionHelperTest {
         given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
         val signatureSingleFactory = TestSingleFactory<Map<Solidity.Address, Signature>>()
         given(signatureStore.load()).willReturn(signatureSingleFactory.get())
+        val signaturePublisher = PublishSubject.create<Map<Solidity.Address, Signature>>()
+        given(signatureStore.observe()).willReturn(signaturePublisher)
         val pushMessageSubject = PublishSubject.create<PushServiceRepository.TransactionResponse>()
         given(signaturePushRepository.observe(anyString())).willReturn(pushMessageSubject)
         val hashSingleFactory = TestSingleFactory<ByteArray>()
@@ -256,7 +260,11 @@ class DefaultSubmitTransactionHelperTest {
             testGasToken.address, BigInteger.ONE, BigInteger.TEN, BigInteger.ZERO, BigInteger.ZERO,
             BigInteger("21")
         )
-        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(Single.just(info))
+        given(relayRepositoryMock.loadExecuteInformation(MockUtils.any(), MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(
+            Single.just(
+                info
+            )
+        )
         given(transactionViewHolder.loadAssetChange()).willReturn(Single.just(None))
         retryEvents.onNext(Unit)
 
@@ -301,6 +309,16 @@ class DefaultSubmitTransactionHelperTest {
             )
         )
             .willReturn(Completable.error(error))
+        signaturePublisher.onNext(emptyMap())
+        updates += {
+            it == DataResult(
+                SubmitTransactionHelper.ViewUpdate.RequireConfirmations(
+                    AuthenticatorInfo(AuthenticatorInfo.Type.EXTENSION, TEST_OWNERS[0]),
+                    TEST_TRANSACTION_HASH
+                )
+            )
+        }
+        testObserver.assertUpdates(updates)
         signatureSingleFactory.success(emptyMap())
         hashSingleFactory.success("7e4cb4cd190aedb510e8c4d366a87a8ee948921796ea7d720c74db3fc4be4db3".hexToByteArray())
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.ConfirmationsError) }
@@ -645,9 +663,9 @@ class DefaultSubmitTransactionHelperTest {
         given(tokenRepository.loadToken(MockUtils.any())).willReturn(Single.just(ERC20Token.ETHER_TOKEN))
         val signatureSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
         given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
-        // Return a single that will not emit an value
-        val testSingleFactory = TestSingleFactory<Map<Solidity.Address, Signature>>()
-        given(signatureStore.load()).willReturn(testSingleFactory.get())
+        // Return a observable that will not emit an value
+        val testObservableFactory = TestObservableFactory<Map<Solidity.Address, Signature>>()
+        given(signatureStore.observe()).willReturn(testObservableFactory.get())
         val pushMessageSubject = PublishSubject.create<PushServiceRepository.TransactionResponse>()
         given(signaturePushRepository.observe(anyString())).willReturn(pushMessageSubject)
         given(
@@ -701,7 +719,7 @@ class DefaultSubmitTransactionHelperTest {
         signatureSubject.onNext(emptyMap())
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(false)) }
         testObserver.assertUpdates(updates)
-        testSingleFactory.assertCount(1)
+        testObservableFactory.assertCount(1)
 
         then(signatureStore).should().flatMapInfo(MockUtils.eq(TEST_SAFE), MockUtils.eq(info), MockUtils.eq(emptyMap()))
     }
@@ -713,8 +731,8 @@ class DefaultSubmitTransactionHelperTest {
         val signatureSubject = PublishSubject.create<Map<Solidity.Address, Signature>>()
         given(signatureStore.flatMapInfo(MockUtils.any(), MockUtils.any(), MockUtils.any())).willReturn(signatureSubject)
         // Return a single that will not emit an value
-        val testSingleFactory = TestSingleFactory<Map<Solidity.Address, Signature>>()
-        given(signatureStore.load()).willReturn(testSingleFactory.get())
+        val testObservableFactory = TestObservableFactory<Map<Solidity.Address, Signature>>()
+        given(signatureStore.observe()).willReturn(testObservableFactory.get())
         val pushMessageSubject = PublishSubject.create<PushServiceRepository.TransactionResponse>()
         given(signaturePushRepository.observe(anyString())).willReturn(pushMessageSubject)
         given(
@@ -768,7 +786,7 @@ class DefaultSubmitTransactionHelperTest {
         signatureSubject.onNext(emptyMap())
         updates += { it == DataResult(SubmitTransactionHelper.ViewUpdate.Confirmations(false)) }
         testObserver.assertUpdates(updates)
-        testSingleFactory.assertCount(1)
+        testObservableFactory.assertCount(1)
 
         then(signatureStore).should().flatMapInfo(
             MockUtils.eq(TEST_SAFE), MockUtils.eq(info), MockUtils.eq(mapOf(Solidity.Address(BigInteger.ONE) to TEST_SIGNATURE))

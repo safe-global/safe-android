@@ -6,6 +6,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
@@ -215,7 +216,8 @@ class StatusKeyCardManagerTest {
     @Test
     fun sign() {
         val publicKey = "0414bcddd11fc0b4c6202574c82583c2bafc1f0639aec7017fd43a72b9407a1dd9fa99ba615abebb2de3c73c61b41ef0f9fb260f50f59a06d03901ccdaad7674cf".hexToByteArray()
-        given(cmdSetMock.signWithPath(MockUtils.any(), anyString(), anyBoolean())).willReturn(responseMock)
+        given(cmdSetMock.deriveKey(anyString())).willReturn(responseMock)
+        given(cmdSetMock.sign(MockUtils.any())).willReturn(responseMock)
         given(responseMock.checkOK()).willReturn(responseMock)
         given(responseMock.data).willReturn(
             byteArrayOf(
