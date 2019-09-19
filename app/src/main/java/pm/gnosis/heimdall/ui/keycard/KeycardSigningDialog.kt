@@ -49,8 +49,6 @@ abstract class KeycardSigningContract(
 
     abstract fun stopSigning()
 
-    abstract fun cancel()
-
     sealed class State : BaseStateViewModel.State {
         data class WaitingForInput(val pinError: String?, override var viewAction: ViewAction?) : State() {
             override fun withAction(viewAction: ViewAction?) = copy(viewAction = viewAction)
@@ -136,9 +134,6 @@ class KeycardSigningViewModel @Inject constructor(
             updateState { withAction(ViewAction.CloseScreen) }
         }
     }
-
-    override fun cancel() =
-        viewModelScope.cancel()
 
     override fun initialState(): State = State.WaitingForInput(null, null)
 
@@ -232,7 +227,6 @@ class KeycardSigningDialog private constructor() : DialogFragment() {
 
     override fun onStop() {
         activity?.let { adapter.disableReaderMode(it) }
-        viewModel.cancel()
         super.onStop()
     }
 

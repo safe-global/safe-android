@@ -44,8 +44,6 @@ abstract class KeycardInitializeContract(
 
     abstract fun stopInitialization()
 
-    abstract fun cancel()
-
     sealed class State : BaseStateViewModel.State {
         data class ReadingCard(val reading: Boolean, val error: String?, override var viewAction: ViewAction?) : State() {
             override fun withAction(viewAction: ViewAction?) = copy(viewAction = viewAction)
@@ -119,10 +117,6 @@ class KeycardInitializeViewModel @Inject constructor(
         }
     }
 
-    override fun cancel() {
-        viewModelScope.cancel()
-    }
-
     override fun initialState(): State = State.ReadingCard(false, null, null)
 }
 
@@ -187,7 +181,6 @@ class KeycardInitializeDialog private constructor() : DialogFragment() {
 
     override fun onStop() {
         activity?.let { adapter.disableReaderMode(it) }
-        viewModel.cancel()
         super.onStop()
     }
 

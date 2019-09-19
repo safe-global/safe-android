@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.keycard
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -15,6 +16,7 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
+import pm.gnosis.heimdall.utils.put
 import javax.inject.Inject
 import java.security.SecureRandom
 
@@ -94,7 +96,8 @@ class KeycardInitializeActivity : ViewModelActivity<KeycardCredentialsContract>(
     }
 
     override fun onPaired(authenticatorInfo: AuthenticatorSetupInfo) {
-        // TODO: go to next or back or something
+        setResult(Activity.RESULT_OK, authenticatorInfo.put(Intent()))
+        finish()
     }
 
     companion object {

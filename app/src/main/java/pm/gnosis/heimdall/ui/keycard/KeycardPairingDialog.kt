@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.keycard
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.nfc.NfcAdapter
@@ -30,10 +31,10 @@ import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
+import pm.gnosis.heimdall.utils.getAuthenticatorInfo
 import pm.gnosis.heimdall.utils.toKeyIndex
 import pm.gnosis.svalinn.common.utils.transaction
 import pm.gnosis.svalinn.common.utils.visible
-import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -42,13 +43,13 @@ abstract class KeycardPairingContract(
     appDispatchers: ApplicationModule.AppCoroutineDispatchers
 ) : BaseStateViewModel<KeycardPairingContract.State>(context, appDispatchers) {
 
+    abstract fun handleInitResult(authenticatorInfo: AuthenticatorSetupInfo)
+
     abstract fun callback(): NfcAdapter.ReaderCallback
 
     abstract fun startPairing(pin: String, pairingKey: String)
 
     abstract fun stopPairing()
-
-    abstract fun cancel()
 
     sealed class State : BaseStateViewModel.State {
         data class WaitingForInput(val pinError: String?, val pairingKeyError: String?, override var viewAction: ViewAction?) : State() {
@@ -91,6 +92,12 @@ class KeycardPairingViewModel @Inject constructor(
 
     override fun callback(): NfcAdapter.ReaderCallback = manager.callback()
 
+    override fun handleInitResult(authenticatorInfo: AuthenticatorSetupInfo) {
+        safeLaunch {
+            updateState { State.PairingDone(authenticatorInfo, null) }
+        }
+    }
+
     override fun startPairing(pin: String, pairingKey: String) {
         safeLaunch {
             updateState { State.ReadingCard(false, null, null) }
@@ -130,9 +137,6 @@ class KeycardPairingViewModel @Inject constructor(
             updateState { withAction(ViewAction.CloseScreen) }
         }
     }
-
-    override fun cancel() =
-        viewModelScope.cancel()
 
     override fun initialState(): State = State.WaitingForInput(null, null, null)
 }
@@ -174,12 +178,20 @@ class KeycardPairingInputFragment : KeycardPairingBaseFragment() {
 
     override fun inject(component: ViewComponent) = component.inject(this)
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_CODE_INIT) {
+            if (resultCode == Activity.RESULT_OK && data != null)
+                data.getAuthenticatorInfo()?.let { viewModel.handleInitResult(it) }
+        } else
+            super.onActivityResult(requestCode, resultCode, data)
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.keycard_pairing_input_init_button.setOnClickListener {
             // TODO: start activity for result
-            startActivity(KeycardInitializeActivity.createIntent(context!!))
-            viewModel.stopPairing()
+            startActivityForResult(KeycardInitializeActivity.createIntent(context!!), REQUEST_CODE_INIT)
         }
         view.keycard_pairing_input_pair_button.setOnClickListener {
             val pin = view.keycard_pairing_input_pin.text.toString()
@@ -198,6 +210,10 @@ class KeycardPairingInputFragment : KeycardPairingBaseFragment() {
             visible(state.pairingKeyError != null)
             text = state.pairingKeyError
         }
+    }
+
+    companion object {
+        private const val REQUEST_CODE_INIT = 4521
     }
 }
 
@@ -227,7 +243,6 @@ class KeycardPairingDialog : DialogFragment() {
 
     override fun onStop() {
         activity?.let { adapter.disableReaderMode(it) }
-        viewModel.cancel()
         super.onStop()
     }
 
