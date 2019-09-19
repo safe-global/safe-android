@@ -15,6 +15,7 @@ import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
+import pm.gnosis.heimdall.ui.base.handleViewAction
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.put
 import pm.gnosis.model.Solidity
@@ -95,6 +96,8 @@ class KeycardInitializeActivity : ViewModelActivity<KeycardCredentialsContract>(
                 }
             else
                 keycard_initialize_continue.setOnLongClickListener(null)
+
+            keycard_initialize_scroll.handleViewAction(state.viewAction) { finish() }
         })
     }
 

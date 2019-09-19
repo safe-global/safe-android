@@ -35,7 +35,7 @@ import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
 @RunWith(MockitoJUnitRunner::class)
-class ReplaceExtensionViewModelTest {
+class ReplaceAuthenticatorViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -55,11 +55,11 @@ class ReplaceExtensionViewModelTest {
     @Mock
     private lateinit var transactionExecutionRepositoryMock: TransactionExecutionRepository
 
-    private lateinit var viewModel: ReplaceExtensionSubmitViewModel
+    private lateinit var viewModel: ReplaceAuthenticatorSubmitViewModel
 
     @Before
     fun setUp() {
-        viewModel = ReplaceExtensionSubmitViewModel(
+        viewModel = ReplaceAuthenticatorSubmitViewModel(
             cryptoHelper,
             gnosisSafeRepositoryMock,
             pushServiceRepositoryMock,
@@ -118,7 +118,7 @@ class ReplaceExtensionViewModelTest {
         val testScheduler = TestScheduler()
         RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
 
-        val testObserver = TestObserver.create<Result<ReplaceExtensionSubmitContract.SubmitStatus>>()
+        val testObserver = TestObserver.create<Result<ReplaceAuthenticatorSubmitContract.SubmitStatus>>()
         val safeAddress = SAFE_TRANSACTION.wrapped.address
         val token = listOf(GAS_TOKEN)
         var balanceToReturn: BigInteger? = BigInteger.ZERO
@@ -156,21 +156,21 @@ class ReplaceExtensionViewModelTest {
         testScheduler.advanceTimeBy(0, TimeUnit.SECONDS)
         then(tokenRepositoryMock).should().loadTokenBalances(safeAddress, token)
         testObserver.assertValueAt(
-            0, DataResult(ReplaceExtensionSubmitContract.SubmitStatus(ERC20TokenWithBalance(GAS_TOKEN, (-18000000).toBigInteger()), ERC20TokenWithBalance(GAS_TOKEN, (-36000000).toBigInteger()), false))
+            0, DataResult(ReplaceAuthenticatorSubmitContract.SubmitStatus(ERC20TokenWithBalance(GAS_TOKEN, (-18000000).toBigInteger()), ERC20TokenWithBalance(GAS_TOKEN, (-36000000).toBigInteger()), false))
         )
 
         // Second emission with error
         balanceToReturn = null
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS)
         then(tokenRepositoryMock).should(times(2)).loadTokenBalances(safeAddress, token)
-        testObserver.assertValueAt(1) { it is ErrorResult && it.error is ReplaceExtensionSubmitContract.NoTokenBalanceException }
+        testObserver.assertValueAt(1) { it is ErrorResult && it.error is ReplaceAuthenticatorSubmitContract.NoTokenBalanceException }
 
         // Third successful emission
         balanceToReturn = 18000000.toBigInteger()
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS)
         then(tokenRepositoryMock).should(times(3)).loadTokenBalances(safeAddress, token)
         testObserver.assertValueAt(
-            2, DataResult(ReplaceExtensionSubmitContract.SubmitStatus(ERC20TokenWithBalance(GAS_TOKEN, BigInteger.ZERO), ERC20TokenWithBalance(GAS_TOKEN, (-18000000).toBigInteger()), true))
+            2, DataResult(ReplaceAuthenticatorSubmitContract.SubmitStatus(ERC20TokenWithBalance(GAS_TOKEN, BigInteger.ZERO), ERC20TokenWithBalance(GAS_TOKEN, (-18000000).toBigInteger()), true))
         )
         then(tokenRepositoryMock).shouldHaveNoMoreInteractions()
 
@@ -182,7 +182,7 @@ class ReplaceExtensionViewModelTest {
         val testScheduler = TestScheduler()
         RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
 
-        val testObserver = TestObserver.create<Result<ReplaceExtensionSubmitContract.SubmitStatus>>()
+        val testObserver = TestObserver.create<Result<ReplaceAuthenticatorSubmitContract.SubmitStatus>>()
         val exception = Exception()
 
         given(tokenRepositoryMock.loadToken(MockUtils.any())).willReturn(Single.error(exception))
@@ -210,7 +210,7 @@ class ReplaceExtensionViewModelTest {
         val testScheduler = TestScheduler()
         RxJavaPlugins.setComputationSchedulerHandler { _ -> testScheduler }
 
-        val testObserver = TestObserver.create<Result<ReplaceExtensionSubmitContract.SubmitStatus>>()
+        val testObserver = TestObserver.create<Result<ReplaceAuthenticatorSubmitContract.SubmitStatus>>()
         val safeAddress = SAFE_TRANSACTION.wrapped.address
         val token = listOf(GAS_TOKEN)
         val exception = Exception()

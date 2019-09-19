@@ -8,6 +8,7 @@ import pm.gnosis.heimdall.ui.addressbook.add.AddressBookAddEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.detail.AddressBookEntryDetailsActivity
 import pm.gnosis.heimdall.ui.addressbook.edit.AddressBookEditEntryActivity
 import pm.gnosis.heimdall.ui.addressbook.list.AddressBookActivity
+import pm.gnosis.heimdall.ui.authenticator.ConnectAuthenticatorActivity
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsActivity
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputDialog
 import pm.gnosis.heimdall.ui.dialogs.share.SimpleAddressShareDialog
@@ -18,7 +19,6 @@ import pm.gnosis.heimdall.ui.onboarding.password.PasswordConfirmActivity
 import pm.gnosis.heimdall.ui.onboarding.password.PasswordSetupActivity
 import pm.gnosis.heimdall.ui.qrscan.QRCodeScanActivity
 import pm.gnosis.heimdall.ui.recoveryphrase.RecoveryPhraseIntroActivity
-import pm.gnosis.heimdall.ui.safe.connect.ConnectExtensionActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeConfirmRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeIntroActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafePaymentTokenActivity
@@ -30,8 +30,8 @@ import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
 import pm.gnosis.heimdall.ui.safe.pairing.PairingActivity
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressFragment
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundFragment
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseActivity
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitActivity
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorRecoveryPhraseActivity
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorSubmitActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressActivity
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.SetupNewRecoveryPhraseActivity
@@ -106,7 +106,8 @@ interface ViewComponent {
     fun inject(activity: ConfirmTransactionActivity)
     fun inject(activity: ConfirmMessageActivity)
     fun inject(activity: ConfirmNewRecoveryPhraseActivity)
-    fun inject(activity: ConnectExtensionActivity)
+    @ExperimentalCoroutinesApi
+    fun inject(activity: ConnectAuthenticatorActivity)
     fun inject(activity: CreateAssetTransferActivity)
     fun inject(activity: CreateSafeIntroActivity)
     fun inject(activity: CreateSafeConfirmRecoveryPhraseActivity)
@@ -128,8 +129,8 @@ interface ViewComponent {
     fun inject(activity: RecoverSafeIntroActivity)
     fun inject(activity: RecoverSafeRecoveryPhraseActivity)
     fun inject(activity: RecoveryPhraseIntroActivity)
-    fun inject(activity: ReplaceExtensionSubmitActivity)
-    fun inject(activity: ReplaceExtensionRecoveryPhraseActivity)
+    fun inject(activity: ReplaceAuthenticatorSubmitActivity)
+    fun inject(activity: ReplaceAuthenticatorRecoveryPhraseActivity)
     fun inject(activity: ReviewTransactionActivity)
     fun inject(activity: SafeMainActivity)
     fun inject(activity: ScanExtensionAddressActivity)

@@ -12,12 +12,15 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.keycard.KeycardIntroActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafePairingActivity
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
+import pm.gnosis.heimdall.utils.getAuthenticatorInfo
+import pm.gnosis.heimdall.utils.put
 import pm.gnosis.model.Solidity
 import pm.gnosis.utils.asEthereumAddress
 import pm.gnosis.utils.asEthereumAddressString
 
 @ExperimentalCoroutinesApi
-class SelectAuthenticatorActivity : BaseActivity() {
+open class SelectAuthenticatorActivity : BaseActivity() {
 
     private var selectedAuthenticator = AuthenticatorInfo.Type.KEYCARD
 
@@ -33,9 +36,11 @@ class SelectAuthenticatorActivity : BaseActivity() {
         select_authenticator_setup.setOnClickListener { startSetupForSelectedAuthenticator() }
     }
 
+    protected fun getSelectAuthenticatorExtras(): Solidity.Address? = intent.getStringExtra(EXTRA_SAFE).asEthereumAddress()
+
     private fun startSetupForSelectedAuthenticator() {
         val intent = when (selectedAuthenticator) {
-            AuthenticatorInfo.Type.KEYCARD -> KeycardIntroActivity.createIntent(this, intent.getStringExtra(EXTRA_SAFE).asEthereumAddress())
+            AuthenticatorInfo.Type.KEYCARD -> KeycardIntroActivity.createIntent(this, getSelectAuthenticatorExtras())
             AuthenticatorInfo.Type.EXTENSION -> CreateSafePairingActivity.createIntent(this)
         }
         startActivityForResult(intent, AUTHENTICATOR_REQUEST_CODE)
@@ -50,21 +55,26 @@ class SelectAuthenticatorActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == AUTHENTICATOR_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null) {
-                // Forward result
-                setResult(Activity.RESULT_OK, data)
-                finish()
+                data.getAuthenticatorInfo()?.let { onAuthenticatorSetupInfo(it) }
             }
         } else
             super.onActivityResult(requestCode, resultCode, data)
     }
 
+    open fun onAuthenticatorSetupInfo(info: AuthenticatorSetupInfo) {
+        setResult(Activity.RESULT_OK, info.put(Intent()))
+        finish()
+    }
+
     companion object {
         private const val AUTHENTICATOR_REQUEST_CODE = 4242
 
+        fun Intent.addSelectAuthenticatorExtras(safe: Solidity.Address?): Intent = apply {
+            putExtra(EXTRA_SAFE, safe?.asEthereumAddressString())
+        }
+
         private const val EXTRA_SAFE = "extra.string.safe"
         fun createIntent(context: Context, safe: Solidity.Address?) =
-            Intent(context, SelectAuthenticatorActivity::class.java).apply {
-                putExtra(EXTRA_SAFE, safe?.asEthereumAddressString())
-            }
+            Intent(context, SelectAuthenticatorActivity::class.java).addSelectAuthenticatorExtras(safe)
     }
 }

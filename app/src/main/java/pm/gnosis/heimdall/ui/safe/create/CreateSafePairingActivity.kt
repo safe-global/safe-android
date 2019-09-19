@@ -11,6 +11,7 @@ import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.put
 import pm.gnosis.model.Solidity
 
+// TODO: merge with abstract class (title could be parameter)
 class CreateSafePairingActivity : PairingActivity() {
     override fun titleRes(): Int = R.string.connect
 

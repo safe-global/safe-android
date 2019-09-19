@@ -1,5 +1,6 @@
 package pm.gnosis.heimdall.ui.safe.recover.extension
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import pm.gnosis.heimdall.data.repositories.GnosisSafeRepository
@@ -9,6 +10,8 @@ import pm.gnosis.heimdall.data.repositories.TransactionExecutionRepository
 import pm.gnosis.heimdall.data.repositories.models.ERC20TokenWithBalance
 import pm.gnosis.heimdall.data.repositories.models.SafeTransaction
 import pm.gnosis.heimdall.helpers.CryptoHelper
+import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.Result
@@ -17,13 +20,13 @@ import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ReplaceExtensionSubmitViewModel @Inject constructor(
+class ReplaceAuthenticatorSubmitViewModel @Inject constructor(
     private val cryptoHelper: CryptoHelper,
     private val gnosisSafeRepository: GnosisSafeRepository,
     private val pushServiceRepository: PushServiceRepository,
     private val tokenRepository: TokenRepository,
     private val transactionExecutionRepository: TransactionExecutionRepository
-) : ReplaceExtensionSubmitContract() {
+) : ReplaceAuthenticatorSubmitContract() {
     private lateinit var safeTransaction: SafeTransaction
     private lateinit var signature1: Signature
     private lateinit var signature2: Signature
@@ -32,7 +35,7 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
     private lateinit var operationalGas: BigInteger
     private lateinit var gasPrice: BigInteger
     private lateinit var gasToken: Solidity.Address
-    private lateinit var newChromeExtension: Solidity.Address
+    private lateinit var authenticatorSetupInfo: AuthenticatorSetupInfo
     private lateinit var txHash: ByteArray
 
     override fun setup(
@@ -44,7 +47,7 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
         operationalGas: BigInteger,
         gasPrice: BigInteger,
         gasToken: Solidity.Address,
-        newChromeExtension: Solidity.Address,
+        authenticatorSetupInfo: AuthenticatorSetupInfo,
         txHash: ByteArray
     ) {
         this.safeTransaction = safeTransaction
@@ -55,7 +58,7 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
         this.operationalGas = operationalGas
         this.gasPrice = gasPrice
         this.gasToken = gasToken
-        this.newChromeExtension = newChromeExtension
+        this.authenticatorSetupInfo = authenticatorSetupInfo
         this.txHash = txHash
     }
 
@@ -75,7 +78,11 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
                                 tokenBalances.first().let { (token, balance) ->
                                     val balanceAfterTx = (balance ?: BigInteger.ZERO) - requiredFunds()
                                     val canSubmit = balanceAfterTx >= BigInteger.ZERO
-                                    SubmitStatus(ERC20TokenWithBalance(token, balanceAfterTx), ERC20TokenWithBalance(token, balanceAfterTx - requiredFunds()), canSubmit)
+                                    SubmitStatus(
+                                        ERC20TokenWithBalance(token, balanceAfterTx),
+                                        ERC20TokenWithBalance(token, balanceAfterTx - requiredFunds()),
+                                        canSubmit
+                                    )
                                 }
                             }
                             .mapToResult()
@@ -129,7 +136,13 @@ class ReplaceExtensionSubmitViewModel @Inject constructor(
                     }
             }
             .flatMapCompletable {
-                pushServiceRepository.propagateSafeCreation(safeTransaction.wrapped.address, setOf(newChromeExtension)).onErrorComplete()
+                gnosisSafeRepository.saveAuthenticatorInfo(authenticatorSetupInfo.authenticator)
+                if (authenticatorSetupInfo.authenticator.type == AuthenticatorInfo.Type.EXTENSION) {
+                    pushServiceRepository.propagateSafeCreation(safeTransaction.wrapped.address, setOf(authenticatorSetupInfo.authenticator.address))
+                        .onErrorComplete()
+                } else {
+                    Completable.complete()
+                }
             }
             .mapToResult()
 

@@ -16,7 +16,10 @@ import pm.gnosis.heimdall.helpers.AddressHelper
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.ui.safe.main.SafeMainActivity
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.errorSnackbar
+import pm.gnosis.heimdall.utils.getAuthenticatorInfo
+import pm.gnosis.heimdall.utils.put
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.accounts.base.models.Signature
 import pm.gnosis.svalinn.common.utils.subscribeForResult
@@ -34,7 +37,7 @@ import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_da
 import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_safe_balance_after_value as balanceAfterValue
 import kotlinx.android.synthetic.main.include_transfer_summary_final.transfer_data_safe_balance_before_value as balanceBeforeValue
 
-class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitContract>() {
+class ReplaceAuthenticatorSubmitActivity : ViewModelActivity<ReplaceAuthenticatorSubmitContract>() {
     private var submissionInProgress = false
 
     @Inject
@@ -58,11 +61,10 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
         val safeTransaction = intent.getParcelableExtra<SafeTransaction>(EXTRA_SAFE_TRANSACTION) ?: run { finish(); return }
         val signature1 = nullOnThrow { Signature.from(intent.getStringExtra(EXTRA_SIGNATURE_1)) } ?: run { finish(); return }
         val signature2 = nullOnThrow { Signature.from(intent.getStringExtra(EXTRA_SIGNATURE_2)) } ?: run { finish(); return }
-        val chromeExtensionAddress =
-            nullOnThrow { intent.getStringExtra(EXTRA_CHROME_EXTENSION_ADDRESS).asEthereumAddress()!! } ?: run { finish(); return }
+        val authenticatorInfo = intent.getAuthenticatorInfo() ?: run { finish(); return }
         val txHash = nullOnThrow { intent.getStringExtra(EXTRA_TX_HASH).hexStringToByteArray() } ?: run { finish(); return }
 
-        viewModel.setup(safeTransaction, signature1, signature2, txGas, dataGas, operationalGas, gasPrice, gasToken, chromeExtensionAddress, txHash)
+        viewModel.setup(safeTransaction, signature1, signature2, txGas, dataGas, operationalGas, gasPrice, gasToken, authenticatorInfo, txHash)
     }
 
     override fun onStart() {
@@ -100,7 +102,7 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
     }
 
-    private fun onSafeBalance(status: ReplaceExtensionSubmitContract.SubmitStatus) {
+    private fun onSafeBalance(status: ReplaceAuthenticatorSubmitContract.SubmitStatus) {
         layout_replace_browser_extension_submit.isEnabled = status.canSubmit && !submissionInProgress
         balanceBeforeValue.text = status.balance.displayString()
         balanceAfterValue.text = status.balanceAfter.displayString()
@@ -109,7 +111,7 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
     }
 
     private fun onSafeBalanceError(throwable: Throwable) {
-        if (throwable !is ReplaceExtensionSubmitContract.NoTokenBalanceException) Timber.e(throwable)
+        if (throwable !is ReplaceAuthenticatorSubmitContract.NoTokenBalanceException) Timber.e(throwable)
         balanceBeforeValue.text = getString(R.string.error_retrieving_safe_balance)
         layout_replace_browser_extension_submit.isEnabled = false
         feesError.visible(false)
@@ -134,7 +136,6 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
         private const val EXTRA_OPERATIONAL_GAS = "extra.string.operational_gas"
         private const val EXTRA_GAS_PRICE = "extra.string.gas_price"
         private const val EXTRA_GAS_TOKEN = "extra.string.gas_token"
-        private const val EXTRA_CHROME_EXTENSION_ADDRESS = "extra.string.chrome_extension_address"
         private const val EXTRA_TX_HASH = "extra.string.tx_hash"
 
         fun createIntent(
@@ -147,10 +148,10 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
             operationalGas: BigInteger,
             gasPrice: BigInteger,
             gasToken: Solidity.Address,
-            chromeExtensionAddress: Solidity.Address,
+            authenticatorSetupInfo: AuthenticatorSetupInfo,
             txHash: String
         ) =
-            Intent(context, ReplaceExtensionSubmitActivity::class.java).apply {
+            Intent(context, ReplaceAuthenticatorSubmitActivity::class.java).apply {
                 putExtra(EXTRA_SAFE_TRANSACTION, safeTransaction)
                 putExtra(EXTRA_SIGNATURE_1, signature1.toString())
                 putExtra(EXTRA_SIGNATURE_2, signature2.toString())
@@ -159,8 +160,8 @@ class ReplaceExtensionSubmitActivity : ViewModelActivity<ReplaceExtensionSubmitC
                 putExtra(EXTRA_OPERATIONAL_GAS, operationalGas.toString())
                 putExtra(EXTRA_GAS_PRICE, gasPrice.toString())
                 putExtra(EXTRA_GAS_TOKEN, gasToken.asEthereumAddressString())
-                putExtra(EXTRA_CHROME_EXTENSION_ADDRESS, chromeExtensionAddress.asEthereumAddressString())
                 putExtra(EXTRA_TX_HASH, txHash)
+                authenticatorSetupInfo.put(this)
             }
     }
 }

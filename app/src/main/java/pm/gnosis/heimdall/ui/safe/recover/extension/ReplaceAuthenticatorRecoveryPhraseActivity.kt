@@ -7,11 +7,12 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseActivity
 import pm.gnosis.heimdall.ui.safe.mnemonic.InputRecoveryPhraseContract
+import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
+import pm.gnosis.heimdall.utils.getAuthenticatorInfo
 import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.toast
-import pm.gnosis.utils.asEthereumAddress
 
-class ReplaceExtensionRecoveryPhraseActivity : InputRecoveryPhraseActivity<ReplaceExtensionRecoveryPhraseContract>() {
+class ReplaceAuthenticatorRecoveryPhraseActivity : InputRecoveryPhraseActivity<ReplaceAuthenticatorRecoveryPhraseContract>() {
     override fun onSuccess(recoverData: InputRecoveryPhraseContract.ViewUpdate.RecoverData) {
         if (recoverData.signatures.size != 2) {
             finish()
@@ -19,7 +20,7 @@ class ReplaceExtensionRecoveryPhraseActivity : InputRecoveryPhraseActivity<Repla
         }
 
         startActivity(
-            ReplaceExtensionSubmitActivity.createIntent(
+            ReplaceAuthenticatorSubmitActivity.createIntent(
                 this,
                 safeTransaction = recoverData.executionInfo.transaction,
                 signature1 = recoverData.signatures[0],
@@ -29,7 +30,7 @@ class ReplaceExtensionRecoveryPhraseActivity : InputRecoveryPhraseActivity<Repla
                 operationalGas = recoverData.executionInfo.operationalGas,
                 gasPrice = recoverData.executionInfo.gasPrice,
                 gasToken = recoverData.executionInfo.gasToken,
-                chromeExtensionAddress = intent.getStringExtra(EXTRA_EXTENSION_ADDRESS).asEthereumAddress()!!,
+                authenticatorSetupInfo = intent.getAuthenticatorInfo()!!,
                 txHash = recoverData.executionInfo.transactionHash
             )
         )
@@ -43,11 +44,11 @@ class ReplaceExtensionRecoveryPhraseActivity : InputRecoveryPhraseActivity<Repla
     override fun screenId() = ScreenId.REPLACE_BROWSER_EXTENSION_RECOVERY_PHRASE
 
     companion object {
-        fun createIntent(context: Context, safeAddress: Solidity.Address, extensionAddress: Solidity.Address) =
+        fun createIntent(context: Context, safeAddress: Solidity.Address, authenticatorInfo: AuthenticatorSetupInfo) =
             addExtras(
-                Intent(context, ReplaceExtensionRecoveryPhraseActivity::class.java),
+                Intent(context, ReplaceAuthenticatorRecoveryPhraseActivity::class.java),
                 safeAddress,
-                extensionAddress
+                authenticatorInfo
             )
     }
 }

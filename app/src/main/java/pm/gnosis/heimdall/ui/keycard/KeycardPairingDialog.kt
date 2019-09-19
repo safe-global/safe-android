@@ -14,7 +14,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import im.status.keycard.applet.KeycardCommandSet
+import kotlinx.android.synthetic.main.screen_keycard_initialize.*
 import kotlinx.android.synthetic.main.screen_keycard_pairing_input.view.*
+import kotlinx.android.synthetic.main.screen_single_fragment.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.rx2.await
@@ -29,6 +31,7 @@ import pm.gnosis.heimdall.di.components.ViewComponent
 import pm.gnosis.heimdall.di.modules.ApplicationModule
 import pm.gnosis.heimdall.di.modules.ViewModule
 import pm.gnosis.heimdall.ui.base.BaseStateViewModel
+import pm.gnosis.heimdall.ui.base.handleViewAction
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.getAuthenticatorInfo
@@ -279,11 +282,10 @@ class KeycardPairingDialog private constructor(): DialogFragment() {
     }
 
     private fun updateState(state: KeycardPairingContract.State) {
-        if (state.viewAction == BaseStateViewModel.ViewAction.CloseScreen) {
+        single_fragment_content.handleViewAction(state.viewAction) {
             dismiss()
-            return
         }
-        if (state == currentState) return
+        if (currentState?.let { state::class == it::class } == true) return
         currentState = state
         when (state) {
             is KeycardPairingContract.State.WaitingForInput -> KeycardPairingInputFragment.create(safe)

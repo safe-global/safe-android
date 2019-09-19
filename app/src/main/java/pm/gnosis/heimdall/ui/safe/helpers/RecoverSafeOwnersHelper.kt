@@ -44,7 +44,7 @@ interface RecoverSafeOwnersHelper {
     fun process(
         input: InputRecoveryPhraseContract.Input,
         safeAddress: Solidity.Address,
-        extensionAddress: Solidity.Address?,
+        authenticatorAddress: Solidity.Address?,
         safeOwner: AccountsRepository.SafeOwner?
     ):
             Observable<InputRecoveryPhraseContract.ViewUpdate>
@@ -75,7 +75,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
 
     override fun process(
         input: InputRecoveryPhraseContract.Input,
-        safeAddress: Solidity.Address,
+        authenticatorAddress: Solidity.Address,
         extensionAddress: Solidity.Address?,
         safeOwner: AccountsRepository.SafeOwner?
     ): Observable<InputRecoveryPhraseContract.ViewUpdate> =
@@ -83,7 +83,7 @@ class DefaultRecoverSafeOwnersHelper @Inject constructor(
             .subscribeOn(AndroidSchedulers.mainThread())
             .startWith(Unit)
             .switchMap {
-                safeRepository.loadInfo(safeAddress)
+                safeRepository.loadInfo(authenticatorAddress)
                     .onErrorResumeNext { error: Throwable -> errorHandler.observable(error) }
                     .mapToResult()
             }

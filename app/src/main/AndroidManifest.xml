@@ -126,11 +126,6 @@
             android:theme="@style/WhiteTheme" />
 
         <activity
-            android:name=".ui.safe.recover.safe.RecoverSafePairingActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
-
-        <activity
             android:name=".ui.safe.recover.safe.CheckSafeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
@@ -195,18 +190,13 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.safe.recover.extension.ReplaceExtensionPairingActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
-
-        <activity
-            android:name=".ui.safe.recover.extension.ReplaceExtensionSubmitActivity"
+            android:name=".ui.safe.recover.extension.ReplaceAuthenticatorSubmitActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseActivity"
+            android:name=".ui.safe.recover.extension.ReplaceAuthenticatorRecoveryPhraseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme"
             android:windowSoftInputMode="adjustResize" />
@@ -248,11 +238,6 @@
 
         <activity
             android:name=".ui.safe.recover.safe.RecoverSafeIntroActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/WhiteTheme" />
-
-        <activity
-            android:name=".ui.safe.connect.ConnectExtensionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/WhiteTheme" />
 
@@ -308,6 +293,21 @@
 
         <activity
             android:name=".ui.keycard.KeycardInitializeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
+
+        <activity
+            android:name=".ui.authenticator.ConnectAuthenticatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
+
+        <activity
+            android:name=".ui.safe.recover.extension.ReplaceAuthenticatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/GreyBackgroundTheme" />
+
+        <activity
+            android:name=".ui.safe.recover.safe.RecoverSafeAuthenticatorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/GreyBackgroundTheme" />
 

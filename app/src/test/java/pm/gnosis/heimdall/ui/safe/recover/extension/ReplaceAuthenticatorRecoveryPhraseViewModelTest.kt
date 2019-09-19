@@ -17,7 +17,7 @@ import pm.gnosis.tests.utils.ImmediateSchedulersRule
 import pm.gnosis.tests.utils.MockUtils
 
 @RunWith(MockitoJUnitRunner::class)
-class ReplaceExtensionRecoveryPhraseViewModelTest {
+class ReplaceAuthenticatorRecoveryPhraseViewModelTest {
     @JvmField
     @Rule
     val rule = ImmediateSchedulersRule()
@@ -25,11 +25,11 @@ class ReplaceExtensionRecoveryPhraseViewModelTest {
     @Mock
     lateinit var recoverSafeOwnersHelperMock: RecoverSafeOwnersHelper
 
-    private lateinit var viewModel: ReplaceExtensionRecoveryPhraseViewModel
+    private lateinit var viewModel: ReplaceAuthenticatorRecoveryPhraseViewModel
 
     @Before
     fun setup() {
-        viewModel = ReplaceExtensionRecoveryPhraseViewModel(recoverSafeOwnersHelperMock)
+        viewModel = ReplaceAuthenticatorRecoveryPhraseViewModel(recoverSafeOwnersHelperMock)
     }
 
     @Test

@@ -10,6 +10,8 @@ import pm.gnosis.heimdall.di.ViewModelFactory
 import pm.gnosis.heimdall.di.ViewModelKey
 import pm.gnosis.heimdall.ui.addressbook.AddressBookContract
 import pm.gnosis.heimdall.ui.addressbook.AddressBookViewModel
+import pm.gnosis.heimdall.ui.authenticator.ConnectAuthenticatorContract
+import pm.gnosis.heimdall.ui.authenticator.ConnectAuthenticatorViewModel
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsContract
 import pm.gnosis.heimdall.ui.debugsettings.DebugSettingsViewModel
 import pm.gnosis.heimdall.ui.dialogs.ens.EnsInputContract
@@ -39,10 +41,10 @@ import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressContract
 import pm.gnosis.heimdall.ui.safe.pending.DeploySafeProgressViewModel
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundContract
 import pm.gnosis.heimdall.ui.safe.pending.SafeCreationFundViewModel
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseContract
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionRecoveryPhraseViewModel
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitContract
-import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceExtensionSubmitViewModel
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorRecoveryPhraseContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorRecoveryPhraseViewModel
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorSubmitContract
+import pm.gnosis.heimdall.ui.safe.recover.extension.ReplaceAuthenticatorSubmitViewModel
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseContract
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ConfirmNewRecoveryPhraseViewModel
 import pm.gnosis.heimdall.ui.safe.recover.recoveryphrase.ScanExtensionAddressContract
@@ -119,6 +121,12 @@ abstract class ViewModelFactoryModule {
     @IntoMap
     @ViewModelKey(ConfirmTransactionContract::class)
     abstract fun bindsConfirmTransactionContract(viewModel: ConfirmTransactionViewModel): ViewModel
+
+    @ExperimentalCoroutinesApi
+    @Binds
+    @IntoMap
+    @ViewModelKey(ConnectAuthenticatorContract::class)
+    abstract fun bindsConnectAuthenticatorContract(viewModel: ConnectAuthenticatorViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -223,13 +231,13 @@ abstract class ViewModelFactoryModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ReplaceExtensionSubmitContract::class)
-    abstract fun bindsReplaceBrowserExtensionContract(viewModel: ReplaceExtensionSubmitViewModel): ViewModel
+    @ViewModelKey(ReplaceAuthenticatorSubmitContract::class)
+    abstract fun bindsReplaceBrowserExtensionContract(viewModel: ReplaceAuthenticatorSubmitViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(ReplaceExtensionRecoveryPhraseContract::class)
-    abstract fun bindsReplaceBrowserExtensionRecoveryPhraseContract(viewModel: ReplaceExtensionRecoveryPhraseViewModel): ViewModel
+    @ViewModelKey(ReplaceAuthenticatorRecoveryPhraseContract::class)
+    abstract fun bindsReplaceBrowserExtensionRecoveryPhraseContract(viewModel: ReplaceAuthenticatorRecoveryPhraseViewModel): ViewModel
 
     @Binds
     @IntoMap
