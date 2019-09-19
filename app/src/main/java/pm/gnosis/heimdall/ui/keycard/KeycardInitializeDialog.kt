@@ -29,7 +29,10 @@ import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.toKeyIndex
+import pm.gnosis.model.Solidity
 import pm.gnosis.svalinn.common.utils.transaction
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -37,6 +40,8 @@ abstract class KeycardInitializeContract(
     context: Context,
     appDispatchers: ApplicationModule.AppCoroutineDispatchers
 ) : BaseStateViewModel<KeycardInitializeContract.State>(context, appDispatchers) {
+
+    abstract fun setup(safe: Solidity.Address?)
 
     abstract fun callback(): NfcAdapter.ReaderCallback
 
@@ -71,6 +76,12 @@ class KeycardInitializeViewModel @Inject constructor(
 
     private val manager = WrappedManager()
 
+    private var safe: Solidity.Address? = null
+
+    override fun setup(safe: Solidity.Address?) {
+        this.safe = safe
+    }
+
     override fun callback(): NfcAdapter.ReaderCallback = manager.callback()
 
     override fun startInitialization(pin: String, puk: String, pairingKey: String) {
@@ -80,7 +91,7 @@ class KeycardInitializeViewModel @Inject constructor(
                 safeLaunch {
                     updateState { State.ReadingCard(true, null, null) }
                     try {
-                        val safeOwner = accountsRepository.createOwner().await()
+                        val safeOwner = (safe?.let { accountsRepository.signingOwner(it) } ?: accountsRepository.createOwner()).await()
                         val keyIndex = safeOwner.address.toKeyIndex()
                         // TODO: add proper exceptions to handle different cases
                         cardRepository.initCard(
@@ -164,6 +175,7 @@ class KeycardInitializeDialog private constructor() : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inject()
+        viewModel.setup(arguments?.getString(ARGUMENTS_SAFE)?.asEthereumAddress())
         adapter = context?.let { NfcAdapter.getDefaultAdapter(it) } ?: run {
             dismiss()
             return
@@ -229,13 +241,15 @@ class KeycardInitializeDialog private constructor() : DialogFragment() {
     }
 
     companion object {
+        private const val ARGUMENTS_SAFE = "argument.string.safe"
         private const val ARGUMENTS_PIN = "argument.string.pin"
         private const val ARGUMENTS_PUK = "argument.string.puk"
         private const val ARGUMENTS_PAIRING_KEY = "argument.string.pairing_key"
 
-        fun create(pin: String, puk: String, pairingKey: String) =
+        fun create(safe: Solidity.Address?, pin: String, puk: String, pairingKey: String) =
             KeycardInitializeDialog().apply {
                 arguments = Bundle().apply {
+                    putString(ARGUMENTS_SAFE, safe?.asEthereumAddressString())
                     putString(ARGUMENTS_PIN, pin)
                     putString(ARGUMENTS_PUK, puk)
                     putString(ARGUMENTS_PAIRING_KEY, pairingKey)

@@ -11,6 +11,9 @@ import pm.gnosis.heimdall.reporting.ScreenId
 import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.put
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 
 @ExperimentalCoroutinesApi
 class KeycardIntroActivity : BaseActivity(), KeycardPairingDialog.PairingCallback {
@@ -23,7 +26,7 @@ class KeycardIntroActivity : BaseActivity(), KeycardPairingDialog.PairingCallbac
 
         keycard_intro_back_button.setOnClickListener { onBackPressed() }
         keycard_intro_setup.setOnClickListener {
-            KeycardPairingDialog().show(supportFragmentManager, null)
+            KeycardPairingDialog.create(intent.getStringExtra(EXTRA_SAFE).asEthereumAddress()).show(supportFragmentManager, null)
         }
     }
     override fun onPaired(authenticatorInfo: AuthenticatorSetupInfo) {
@@ -32,7 +35,11 @@ class KeycardIntroActivity : BaseActivity(), KeycardPairingDialog.PairingCallbac
     }
 
     companion object {
-        fun createIntent(context: Context) = Intent(context, KeycardIntroActivity::class.java)
+        private const val EXTRA_SAFE = "extra.string.safe"
+        fun createIntent(context: Context, safe: Solidity.Address?) =
+            Intent(context, KeycardIntroActivity::class.java).apply {
+                putExtra(EXTRA_SAFE, safe?.asEthereumAddressString())
+            }
     }
 
 }

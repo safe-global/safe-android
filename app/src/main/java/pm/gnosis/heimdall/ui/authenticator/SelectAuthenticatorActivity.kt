@@ -12,6 +12,9 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.keycard.KeycardIntroActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafePairingActivity
 import pm.gnosis.heimdall.utils.AuthenticatorInfo
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 
 @ExperimentalCoroutinesApi
 class SelectAuthenticatorActivity : BaseActivity() {
@@ -32,7 +35,7 @@ class SelectAuthenticatorActivity : BaseActivity() {
 
     private fun startSetupForSelectedAuthenticator() {
         val intent = when (selectedAuthenticator) {
-            AuthenticatorInfo.Type.KEYCARD -> KeycardIntroActivity.createIntent(this)
+            AuthenticatorInfo.Type.KEYCARD -> KeycardIntroActivity.createIntent(this, intent.getStringExtra(EXTRA_SAFE).asEthereumAddress())
             AuthenticatorInfo.Type.EXTENSION -> CreateSafePairingActivity.createIntent(this)
         }
         startActivityForResult(intent, AUTHENTICATOR_REQUEST_CODE)
@@ -58,6 +61,10 @@ class SelectAuthenticatorActivity : BaseActivity() {
     companion object {
         private const val AUTHENTICATOR_REQUEST_CODE = 4242
 
-        fun createIntent(context: Context) = Intent(context, SelectAuthenticatorActivity::class.java)
+        private const val EXTRA_SAFE = "extra.string.safe"
+        fun createIntent(context: Context, safe: Solidity.Address?) =
+            Intent(context, SelectAuthenticatorActivity::class.java).apply {
+                putExtra(EXTRA_SAFE, safe?.asEthereumAddressString())
+            }
     }
 }

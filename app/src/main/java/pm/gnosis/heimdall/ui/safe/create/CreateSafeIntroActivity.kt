@@ -39,7 +39,7 @@ class CreateSafeIntroActivity : BaseActivity() {
             .subscribeBy(onNext = { onBackPressed() }, onError = Timber::e)
 
         disposables += layout_create_safe_intro_next.clicks()
-            .subscribeBy(onNext = { startActivity(SetupAuthenticatorActivity.createIntent(this)) }, onError = Timber::e)
+            .subscribeBy(onNext = { startActivity(SetupAuthenticatorActivity.createIntent(this, null)) }, onError = Timber::e)
 
         disposables += toolbarHelper.setupShadow(layout_create_safe_intro_toolbar_shadow, layout_create_safe_intro_content_scroll)
     }

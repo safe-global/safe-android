@@ -17,8 +17,11 @@ import pm.gnosis.heimdall.ui.base.BaseStateViewModel
 import pm.gnosis.heimdall.ui.base.ViewModelActivity
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.put
-import javax.inject.Inject
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 import java.security.SecureRandom
+import javax.inject.Inject
 
 
 @ExperimentalCoroutinesApi
@@ -87,7 +90,7 @@ class KeycardInitializeActivity : ViewModelActivity<KeycardCredentialsContract>(
             if (state.pin != null && state.puk != null && state.pairingKey != null)
                 keycard_initialize_continue.setOnClickListener {
                     KeycardInitializeDialog.create(
-                        state.pin, state.puk, state.pairingKey
+                        intent.getStringExtra(EXTRA_SAFE).asEthereumAddress(), state.pin, state.puk, state.pairingKey
                     ).show(supportFragmentManager, null)
                 }
             else
@@ -101,7 +104,11 @@ class KeycardInitializeActivity : ViewModelActivity<KeycardCredentialsContract>(
     }
 
     companion object {
-        fun createIntent(context: Context) = Intent(context, KeycardInitializeActivity::class.java)
+        private const val EXTRA_SAFE = "extra.string.safe"
+        fun createIntent(context: Context, safe: Solidity.Address?) =
+            Intent(context, KeycardInitializeActivity::class.java).apply {
+                putExtra(EXTRA_SAFE, safe?.asEthereumAddressString())
+            }
     }
 
 }

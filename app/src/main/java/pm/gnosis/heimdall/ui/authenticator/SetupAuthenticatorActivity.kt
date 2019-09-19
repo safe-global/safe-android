@@ -11,6 +11,9 @@ import pm.gnosis.heimdall.ui.base.BaseActivity
 import pm.gnosis.heimdall.ui.safe.create.CreateSafeRecoveryPhraseIntroActivity
 import pm.gnosis.heimdall.utils.AuthenticatorSetupInfo
 import pm.gnosis.heimdall.utils.getAuthenticatorInfo
+import pm.gnosis.model.Solidity
+import pm.gnosis.utils.asEthereumAddress
+import pm.gnosis.utils.asEthereumAddressString
 
 class SetupAuthenticatorActivity : BaseActivity() {
     override fun screenId() = ScreenId.SETUP_AUTHENTICATOR
@@ -22,7 +25,10 @@ class SetupAuthenticatorActivity : BaseActivity() {
         setup_authenticator_back_button.setOnClickListener { onBackPressed() }
         setup_authenticator_skip.setOnClickListener { onAuthenticatorSelected(null) }
         setup_authenticator_setup.setOnClickListener {
-            startActivityForResult(SelectAuthenticatorActivity.createIntent(this), AUTHENTICATOR_REQUEST_CODE)
+            startActivityForResult(
+                SelectAuthenticatorActivity.createIntent(this, intent.getStringExtra(EXTRA_SAFE).asEthereumAddress()),
+                AUTHENTICATOR_REQUEST_CODE
+            )
         }
     }
 
@@ -42,6 +48,10 @@ class SetupAuthenticatorActivity : BaseActivity() {
     companion object {
         private const val AUTHENTICATOR_REQUEST_CODE = 4242
 
-        fun createIntent(context: Context) = Intent(context, SetupAuthenticatorActivity::class.java)
+        private const val EXTRA_SAFE = "extra.string.safe"
+        fun createIntent(context: Context, safe: Solidity.Address?) =
+            Intent(context, SetupAuthenticatorActivity::class.java).apply {
+                putExtra(EXTRA_SAFE, safe?.asEthereumAddressString())
+            }
     }
 }
